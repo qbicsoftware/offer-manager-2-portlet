@@ -6,10 +6,9 @@ package life.qbic.portal.portlet.offers
  *
  * <detailed description>
  *
- * @since: <versiontag>
+ * @since: 1.0.0
  * @author: Tobias Koch
- * * */
-
+ */
 interface OfferExporter {
 
 }

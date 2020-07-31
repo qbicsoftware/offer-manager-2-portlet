@@ -1,4 +1,4 @@
-package life.qbic.portal.portlet.customers.create
+package life.qbic.portal.portlet.offers.create
 
 import spock.lang.Specification
 
@@ -7,8 +7,8 @@ import spock.lang.Specification
  *
  * <detailed description>
  *
- * @since: 1.0.0
+ * @since: <versiontag>
  * @author: Tobias Koch
  */
-class CreateCustomerTest extends Specification {
+class CreateOfferTest extends Specification {
 }
