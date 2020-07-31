@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>qOffer_2.0</artifactId>
-        <groupId>life.qbic</groupId>
-        <version>1.0.0-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <artifactId>qoffer-domain</artifactId>
+  <dependencies>
+    <dependency>
+      <artifactId>data-model-lib</artifactId>
+      <groupId>life.qbic</groupId>
+      <scope>compile</scope>
+      <version>1.9.4</version>
+    </dependency>
+  </dependencies>
 
-    <artifactId>qoffer-domain</artifactId>
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <artifactId>qOffer_2.0</artifactId>
+    <groupId>life.qbic</groupId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
 
 </project>
