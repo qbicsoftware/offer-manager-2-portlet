@@ -7,7 +7,7 @@ import spock.lang.Specification
  *
  * <detailed description>
  *
- * @since: <versiontag>
+ * @since: 1.0.0
  * @author: Tobias Koch
  */
 class CustomerTest extends Specification {
