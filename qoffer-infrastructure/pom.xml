@@ -9,8 +9,6 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
-
-
     <artifactId>qoffer-infrastructure</artifactId>
     <dependencies>
         <dependency>
@@ -22,7 +20,10 @@
         <dependency>
             <groupId>life.qbic</groupId>
             <artifactId>data-model-lib</artifactId>
-            <version>1.7.0</version>
+        </dependency>
+        <dependency>
+            <groupId>life.qbic</groupId>
+            <artifactId>portal-utils-lib</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -3,6 +3,9 @@
 .project
 .settings/
 
+# Maven
+.flattened-pom.xml
+
 # VS Code
 .vscode
 

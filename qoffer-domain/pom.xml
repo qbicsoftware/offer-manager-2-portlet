@@ -3,20 +3,17 @@
   xmlns="http://maven.apache.org/POM/4.0.0"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <artifactId>qoffer-domain</artifactId>
-  <dependencies>
-    <dependency>
-      <artifactId>data-model-lib</artifactId>
-      <groupId>life.qbic</groupId>
-      <scope>compile</scope>
-      <version>1.9.4</version>
-    </dependency>
-  </dependencies>
-
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <artifactId>qOffer_2.0</artifactId>
     <groupId>life.qbic</groupId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-
+    <artifactId>qoffer-domain</artifactId>
+    <dependencies>
+        <dependency>
+            <groupId>life.qbic</groupId>
+            <artifactId>data-model-lib</artifactId>
+        </dependency>
+    </dependencies>
 </project>
