@@ -1,9 +1,11 @@
 package life.qbic
 
 /**
- * Handles the ViewModel shown to the user of qoffer-2
+ * Class which connects the view elements with the ViewModel and the Controller
  *
- * This class stores the data and properties of the corresponding views of the qoffer-2 portlet
+ * This class acts as connector between the individual view elements, the ViewModel {@link ViewModel}
+ * and the PortletController {@link Controller} and provides the initial listeners
+ * and layout upon which the views are presented
  *
  * @since: 1.0.0
  * @author: Jennifer Bödker
