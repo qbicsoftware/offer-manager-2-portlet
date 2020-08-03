@@ -21,5 +21,9 @@
             <groupId>life.qbic</groupId>
             <artifactId>data-model-lib</artifactId>
         </dependency>
+        <dependency>
+            <groupId>life.qbic</groupId>
+            <artifactId>portal-utils-lib</artifactId>
+        </dependency>
     </dependencies>
 </project>
