@@ -11,6 +11,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Create empty infrastructure classes
 * Create usecase classes and interfaces
 * Created the project using QUBE
 
