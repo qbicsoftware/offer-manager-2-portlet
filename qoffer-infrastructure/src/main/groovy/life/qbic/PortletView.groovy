@@ -6,7 +6,7 @@ package life.qbic
  * This class is responsible for the representation of the internal data
  * in the form of individual portlet components presented to the user
  *
- * @since: 1.0
+ * @since: 1.0.0
  * @author: Jennifer Bödker
  *
  */
