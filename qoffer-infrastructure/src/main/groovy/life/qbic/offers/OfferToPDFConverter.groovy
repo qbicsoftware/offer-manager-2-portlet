@@ -7,7 +7,7 @@ import life.qbic.portal.portlet.offers.OfferExporter
  *
  * Implements {@link OfferExporter} and is responsible for converting an offer into PDF Format
  *
- * @since: 1.0
+ * @since: 1.0.0
  * @author: Jennifer Bödker
  *
  */
