@@ -9,11 +9,10 @@
     <groupId>life.qbic</groupId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
-    <artifactId>qoffer-domain</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>life.qbic</groupId>
-            <artifactId>data-model-lib</artifactId>
-        </dependency>
-    </dependencies>
+  <dependencies>
+      <dependency>
+          <groupId>life.qbic</groupId>
+          <artifactId>data-model-lib</artifactId>
+      </dependency>
+  </dependencies>
 </project>
