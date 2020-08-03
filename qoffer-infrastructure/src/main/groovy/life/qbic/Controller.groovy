@@ -6,7 +6,7 @@ package life.qbic
  * This class creates instances of qoffer-2 classes and injects them as described in the architectural draft.
  *
  *
- * @since: 1.0
+ * @since: 1.0.0
  * @author: Jennifer Bödker
  * @see <a href="https://github.com/qbicsoftware/qoffer-2-portlet/tree/master/docs/"</a>
  */
