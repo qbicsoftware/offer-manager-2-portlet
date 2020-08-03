@@ -13,7 +13,7 @@ import life.qbic.portal.portlet.offers.update.UpdateOfferOutput
  *  and should be used to transfer data between these components.
  *  It converts the use case output into a presentable data format for the viewModel implementing {@link PortletView}.
  *
- * @since: 1.0
+ * @since: 1.0.0
  * @author: Jennifer Bödker
  *
  */
