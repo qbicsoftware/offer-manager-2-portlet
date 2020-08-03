@@ -2,9 +2,10 @@ package life.qbic.portal.portlet.offers
 
 
 /**
- * <short description>
+ * Classes implementing this interface export {@link life.qbic.portal.portlet.offers.Offer}
  *
- * <detailed description>
+ * Internally represented offers can be exported by classes that implement this interface.
+ * The export could for example be a PDF file containing all information from the exported offer.
  *
  * @since: 1.0.0
  * @author: Tobias Koch
