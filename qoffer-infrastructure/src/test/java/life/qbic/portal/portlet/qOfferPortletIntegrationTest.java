@@ -1,5 +1,6 @@
 package life.qbic.portal.portlet;
 
+import life.qbic.portal.portlet.qOfferPortlet;
 import org.junit.Test;
 
 /**
