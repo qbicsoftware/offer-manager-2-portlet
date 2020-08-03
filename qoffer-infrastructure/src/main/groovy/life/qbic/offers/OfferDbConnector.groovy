@@ -7,7 +7,7 @@ import life.qbic.portal.portlet.offers.OfferDbGateway
  *
  * Implements {@link OfferDbGateway} and is responsible for transferring data between the offer database and qOffer
  *
- * @since: 1.0
+ * @since: 1.0.0
  * @author: Jennifer Bödker
  *
  */
