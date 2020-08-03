@@ -11,7 +11,7 @@ import life.qbic.portal.portlet.offers.update.UpdateOfferOutput
  *
  *  This class acts as connector between the use cases of qoffer-2.0 and its viewModel
  *  and should be used to transfer data between these components.
- *  It prepares the view model, which can then be displayed by the view implementing {@link PortletView}.
+ *  It converts the use case output into a presentable data format for the viewModel implementing {@link PortletView}.
  *
  * @since: 1.0
  * @author: Jennifer Bödker
