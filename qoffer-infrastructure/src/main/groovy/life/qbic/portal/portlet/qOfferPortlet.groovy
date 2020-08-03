@@ -12,7 +12,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 
 /**
- * Entry point for portlet qoffer_2.0. This class derives from {@link QBiCPortletUI}, which is found in the {@code portal-utils-lib} library.
+ * Entry point for the application. This class derives from {@link QBiCPortletUI}.
  *
  * @since: 1.0.0
  * @author: Jennifer Bödker
