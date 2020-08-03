@@ -3,9 +3,9 @@ package life.qbic.customers
 import life.qbic.portal.portlet.customers.CustomerDbGateway
 
 /**
- * <class short description - One Line!>
+ * Handles the connection to the customer database
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * This class implements {@link CustomerDbGateway} and is responsible for transferring data from the database into qOffer
  *
  * @since: 1.0
  * @author: Jennifer Bödker

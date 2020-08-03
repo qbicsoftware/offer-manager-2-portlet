@@ -3,9 +3,9 @@ package life.qbic.offers
 import life.qbic.portal.portlet.offers.OfferDbGateway
 
 /**
- * <class short description - One Line!>
+ * Handles the connection to the offer database
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * Implements {@link OfferDbGateway} and is responsible for transferring data between the offer database and qOffer
  *
  * @since: 1.0
  * @author: Jennifer Bödker

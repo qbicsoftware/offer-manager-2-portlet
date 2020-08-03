@@ -3,9 +3,9 @@ package life.qbic.offers
 import life.qbic.portal.portlet.offers.OfferExporter
 
 /**
- * <class short description - One Line!>
+ * Handles the convertion of offers to pdf files
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * Implements {@link OfferExporter} and is responsible
  *
  * @since: 1.0
  * @author: Jennifer Bödker
