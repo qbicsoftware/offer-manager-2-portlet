@@ -52,7 +52,7 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-sql</artifactId>
-      <version>2.5.7</version>
+      <version>3.0.5</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
