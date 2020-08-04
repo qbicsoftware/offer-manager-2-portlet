@@ -4,7 +4,7 @@ import life.qbic.datamodel.persons.Person
 import life.qbic.portal.portlet.customers.CustomerDbGateway
 
 /**
- * Handles the connection to the customer database
+ * Provides operations on QBiC customer data
  *
  * This class implements {@link CustomerDbGateway} and is responsible for transferring data from the database into qOffer
  *
