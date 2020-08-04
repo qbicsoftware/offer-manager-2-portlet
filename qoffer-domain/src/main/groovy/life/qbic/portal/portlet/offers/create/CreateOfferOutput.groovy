@@ -2,14 +2,11 @@ package life.qbic.portal.portlet.offers.create
 
 
 /**
- * <short description>
+ * Output interface for the {@link life.qbic.portal.portlet.offers.create.CreateOffer} use case
  *
- * <detailed description>
- *
- * @since: <versiontag>
+ * @since: 1.0.0
  * @author: Tobias Koch
- * * */
-
+ */
 interface CreateOfferOutput {
 
 }
