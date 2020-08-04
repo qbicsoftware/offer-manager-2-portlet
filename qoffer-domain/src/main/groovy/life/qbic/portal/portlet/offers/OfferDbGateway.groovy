@@ -2,14 +2,14 @@ package life.qbic.portal.portlet.offers
 
 
 /**
- * <short description>
+ * A gateway to access information from an offer database
  *
- * <detailed description>
+ * This class specifies how the application can access external resources.
+ * It is meant to be implemented outside the domain layer.
  *
- * @since: <versiontag>
+ * @since: 1.0.0
  * @author: Tobias Koch
- * * */
-
+ */
 interface OfferDbGateway {
 
 }
