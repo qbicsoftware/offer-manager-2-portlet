@@ -23,15 +23,14 @@ import com.vaadin.ui.TextField
  */
 
 @Log4j2
-class CreateCustomerView extends VerticalLayout {
+class CreateCustomerView extends GridLayout{
     final private Controller controller
     final private ViewModel viewModel
 
-    // This should be provided from the backend
-    List<Affiliation> affiliationList
-
+    // This should be provided from the backend right now an empty list is provided for testing purposes
+    List<Affiliation> affiliationList = new ArrayList<>()
     // This Map stores the UserInput and will be transferred to the Customer Creation Interface
-    Map userInputMap
+    Map userInputMap = new HashMap()
 
     CreateCustomerView(Controller controller, ViewModel viewModel) {
         super()
@@ -45,7 +44,8 @@ class CreateCustomerView extends VerticalLayout {
      * @return
      */
     private def initLayout() {
-        GridLayout grid = new GridLayout(2, 4);
+
+        GridLayout grid = new GridLayout(2, 5);
         grid.addStyleName("example-gridlayout")
 
         //Add Labels to Gridlayout
@@ -64,15 +64,15 @@ class CreateCustomerView extends VerticalLayout {
 
         // Add Submit Button to trigger Customer Generation with the set Values
         grid.addComponent(generateSubmitButton(), 1, 4)
-
+        this.addComponent(grid)
     }
 
     /**
      * Generates a Label Field with the provided labelText
      * @param labelText:
-     * @return
+     * @return Label Vaadin Component
      */
-    private def generateLabel(String labelText) {
+    public def generateLabel(String labelText) {
         Label label = new Label(labelText)
         return label
     }
@@ -81,7 +81,7 @@ class CreateCustomerView extends VerticalLayout {
      * Generates a Textfield for user input and
      * retrieves the provided information for later customer creation
      * @param textFieldLabel:
-     * @return
+     * @return Vaadin Textfield with Listener
      */
     private def generateInputTextField(String textFieldLabel) {
 
@@ -91,7 +91,7 @@ class CreateCustomerView extends VerticalLayout {
         inputTextField.addValueChangeListener({ value ->
 
             //Add input Value to Map
-            userInputMap.update(textFieldLabel, value.value)
+            userInputMap.put(textFieldLabel, value.value)
         })
         inputTextField.setValueChangeMode(ValueChangeMode.BLUR)
 
@@ -108,8 +108,9 @@ class CreateCustomerView extends VerticalLayout {
 
 
         ComboBox<Affiliation> affiliationComboBox =
-                new ComboBox<Affiliation>("Select an Affiliation");
+                new ComboBox<>("Select an Affiliation");
         affiliationComboBox.setItems(affiliationList)
+        affiliationComboBox.setItemCaptionGenerator(Affiliation.&GroupName);
         affiliationComboBox.addSelectionListener({ selectionEvent ->
             //Add selected value to Map
             userInputMap.update("Affiliation", selectionEvent.selectedItem)
@@ -134,7 +135,7 @@ class CreateCustomerView extends VerticalLayout {
 
         })
 
-        return generateSubmitButton()
+        return submitButton
 
     }
 }
