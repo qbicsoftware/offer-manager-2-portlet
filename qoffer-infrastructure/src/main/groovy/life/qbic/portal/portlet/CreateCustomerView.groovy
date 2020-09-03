@@ -3,28 +3,27 @@ package life.qbic.portal.portlet
 import com.vaadin.shared.ui.ValueChangeMode
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
+import com.vaadin.ui.FormLayout
 import com.vaadin.ui.GridLayout
-import com.vaadin.ui.Label
 import com.vaadin.ui.Notification
-import com.vaadin.ui.VerticalLayout
 import groovy.util.logging.Log4j2
-import life.qbic.Controller
 import life.qbic.ViewModel
 import life.qbic.datamodel.persons.Affiliation
 import com.vaadin.ui.TextField
 
 /**
- * <class short description - One Line!>
+ * This class generates a Form Layout in which the user
+ * can input the necessary information for the creation of a new customer
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * CreateCustomerView will be integrated into the qOffer 2.0 Portlet and provides an User Interface
+ * with the intention of enabling a user the creation of a new Customer in the QBiC Database
  *
- * @since: <versiontag>
+ * @since: 1.0.0
  *
  */
 
 @Log4j2
 class CreateCustomerView extends GridLayout{
-    final private Controller controller
     final private ViewModel viewModel
 
     // This should be provided from the backend right now an empty list is provided for testing purposes
@@ -32,65 +31,46 @@ class CreateCustomerView extends GridLayout{
     // This Map stores the UserInput and will be transferred to the Customer Creation Interface
     Map userInputMap = new HashMap()
 
-    CreateCustomerView(Controller controller, ViewModel viewModel) {
+    CreateCustomerView(ViewModel viewModel) {
         super()
-        this.controller = controller
         this.viewModel = viewModel
         initLayout()
     }
 
     /**
-     *
-     * @return
+     * Generates a vaadin Form Layout as an UserInterface consisting of vaadin components
+     * to enable user input for Customer creation
      */
     private def initLayout() {
 
-        GridLayout grid = new GridLayout(2, 5);
-        grid.addStyleName("example-gridlayout")
-
-        //Add Labels to Gridlayout
-        grid.addComponent(generateLabel("First Name"), 0, 0)
-        grid.addComponent(generateLabel("Last Name"), 0, 1)
-        grid.addComponent(generateLabel("Email Address"), 0, 2)
-        grid.addComponent(generateLabel("Affiliation"), 0, 3)
+        FormLayout form = new FormLayout();
 
         //Add TextFields for User Input
-        grid.addComponent(generateInputTextField("First Name"), 1, 0)
-        grid.addComponent(generateInputTextField("Last Name"), 1, 1)
-        grid.addComponent(generateInputTextField("Email Address"), 1, 2)
+        form.addComponent(generateInputTextField("First Name"))
+        form.addComponent(generateInputTextField("Last Name"))
+        form.addComponent(generateInputTextField("Email Address"))
 
         // Add Selection Component to select Affiliation from List
-        grid.addComponent(generateAffiliationSelector(affiliationList), 1, 3)
+        form.addComponent(generateAffiliationSelector(affiliationList))
 
         // Add Submit Button to trigger Customer Generation with the set Values
-        grid.addComponent(generateSubmitButton(), 1, 4)
-        this.addComponent(grid)
-    }
-
-    /**
-     * Generates a Label Field with the provided labelText
-     * @param labelText:
-     * @return Label Vaadin Component
-     */
-    public def generateLabel(String labelText) {
-        Label label = new Label(labelText)
-        return label
+        form.addComponent(generateSubmitButton())
+        this.addComponent(form)
     }
 
     /**
      * Generates a Textfield for user input and
-     * retrieves the provided information for later customer creation
+     * retrieves the provided information for customer creation
      * @param textFieldLabel:
-     * @return Vaadin Textfield with Listener
+     * @return Vaadin Textfield component with integrated ValueChangeListener
      */
     private def generateInputTextField(String textFieldLabel) {
 
-        TextField inputTextField = new TextField()
-        inputTextField.setValue("Write your stuff here!")
+        TextField inputTextField = new TextField(textFieldLabel)
+        inputTextField.setPlaceholder("Write your stuff here!")
 
         inputTextField.addValueChangeListener({ value ->
 
-            //Add input Value to Map
             userInputMap.put(textFieldLabel, value.value)
         })
         inputTextField.setValueChangeMode(ValueChangeMode.BLUR)
@@ -100,17 +80,18 @@ class CreateCustomerView extends GridLayout{
     }
 
     /**
-     *
+     * Generates a Combobox, which can be used for Affiliation selection by the user
+     * and retrieves the selected Affiliation for customer creation
      * @param affiliationList:
-     * @return
+     * @return Vaadin Combobox component with integrated Selectionlistener
      */
     private def generateAffiliationSelector(List<Affiliation> affiliationList) {
-
 
         ComboBox<Affiliation> affiliationComboBox =
                 new ComboBox<>("Select an Affiliation");
         affiliationComboBox.setItems(affiliationList)
         affiliationComboBox.setItemCaptionGenerator(Affiliation.&GroupName);
+        affiliationComboBox.setEmptySelectionAllowed(false)
         affiliationComboBox.addSelectionListener({ selectionEvent ->
             //Add selected value to Map
             userInputMap.update("Affiliation", selectionEvent.selectedItem)
@@ -120,8 +101,9 @@ class CreateCustomerView extends GridLayout{
     }
 
     /**
-     *
-     * @return
+     * Generates a Button component, which sends the customer information to the backend
+     * and checks if the provided information is correct
+     * @return Vaadin Button component with integrated ClickeventListener
      */
     private generateSubmitButton() {
         Button submitButton = new Button("Create Customer");
