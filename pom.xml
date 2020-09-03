@@ -10,7 +10,7 @@
   </modules>
   <parent>
     <groupId>life.qbic</groupId>
-    <artifactId>portal-parent-pom</artifactId>
+    <artifactId>portlet-parent-pom</artifactId>
     <version>2.2.5</version>
   </parent>
   <artifactId>qOffer_2.0</artifactId>
