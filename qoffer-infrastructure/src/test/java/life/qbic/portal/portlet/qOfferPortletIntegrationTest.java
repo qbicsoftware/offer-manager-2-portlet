@@ -1,10 +1,10 @@
 package life.qbic.portal.portlet;
 
-import life.qbic.portal.portlet.qOfferPortlet;
+import life.qbic.portal.qoffer2.QOfferPortlet;
 import org.junit.Test;
 
 /**
- * Tests for {@link qOfferPortlet}.
+ * Tests for {@link QOfferPortlet}.
  */
 public class qOfferPortletIntegrationTest {
 

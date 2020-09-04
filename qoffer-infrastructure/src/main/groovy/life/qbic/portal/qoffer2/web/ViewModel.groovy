@@ -1,4 +1,4 @@
-package life.qbic
+package life.qbic.portal.qoffer2.web
 
 /**
  * A simple DTO for data displayed in the PortletView

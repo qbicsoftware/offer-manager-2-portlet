@@ -1,4 +1,7 @@
-package life.qbic
+package life.qbic.portal.qoffer2.web
+
+
+import com.vaadin.ui.VerticalLayout
 
 /**
  * Class which connects the view elements with the ViewModel and the Controller
@@ -11,6 +14,6 @@ package life.qbic
  * @author: Jennifer Bödker
  *
  */
-class PortletView {
+class PortletView extends VerticalLayout {
 
 }
