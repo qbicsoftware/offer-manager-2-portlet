@@ -1,5 +1,7 @@
 package life.qbic.portal.qoffer2.web
 
+import life.qbic.portal.portlet.customers.Customer
+
 /**
  * Controller class responsible for the data flow into qoffer-2
  *
@@ -11,4 +13,5 @@ package life.qbic.portal.qoffer2.web
  * @see <a href="https://github.com/qbicsoftware/qoffer-2-portlet/tree/master/docs/"</a>
  */
 class Controller {
+    void createNewCustomer(Customer customer){}
 }
