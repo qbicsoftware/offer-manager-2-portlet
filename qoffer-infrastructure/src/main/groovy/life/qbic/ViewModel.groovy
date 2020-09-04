@@ -1,5 +1,8 @@
 package life.qbic
 
+import life.qbic.datamodel.persons.Affiliation
+
+
 /**
  * A simple DTO for data displayed in the PortletView
  *
@@ -10,4 +13,18 @@ package life.qbic
  * @author: Tobias Koch
  */
 class ViewModel {
+    final ObservableList affiliations
+    final ObservableList successNotifications
+    final ObservableList failureNotifications
+
+    ViewModel() {
+        this(new ArrayList<Affiliation>(), new ArrayList<String>(), new ArrayList<String>())
+    }
+
+    ViewModel(List<Affiliation> affiliations, List<String> successNotifications,
+              List<String> failureNotifications) {
+        this.affiliations = new ObservableList(affiliations)
+        this.successNotifications = new ObservableList(successNotifications)
+        this.failureNotifications = new ObservableList(failureNotifications)
+    }
 }
