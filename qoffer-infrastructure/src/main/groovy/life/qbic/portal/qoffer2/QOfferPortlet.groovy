@@ -33,7 +33,7 @@ class QOfferPortlet extends QBiCPortletUI {
         try {
             init()
         } catch (Exception e) {
-            log.error("Could not initialize {}", this.getClass().getCanonicalName(), e)
+            log.error("Could not initialize {}", QOfferPortlet.getCanonicalName(), e)
         } catch (Error error) {
             log.error("Unexpected runtime error.", error)
         }
