@@ -23,7 +23,7 @@ import com.vaadin.ui.TextField
  */
 
 @Log4j2
-class CreateCustomerView extends GridLayout{
+class CreateCustomerView extends FormLayout{
     final private ViewModel viewModel
 
     // This should be provided from the backend right now an empty list is provided for testing purposes
@@ -43,19 +43,20 @@ class CreateCustomerView extends GridLayout{
      */
     private def initLayout() {
 
-        FormLayout form = new FormLayout();
+        FormLayout createCustomerForm = new FormLayout();
 
         //Add TextFields for User Input
-        form.addComponent(generateInputTextField("First Name"))
-        form.addComponent(generateInputTextField("Last Name"))
-        form.addComponent(generateInputTextField("Email Address"))
+        createCustomerForm.addComponent(generateInputTextField("First Name"))
+        createCustomerForm.addComponent(generateInputTextField("Last Name"))
+        createCustomerForm.addComponent(generateInputTextField("Email Address"))
 
         // Add Selection Component to select Affiliation from List
-        form.addComponent(generateAffiliationSelector(affiliationList))
+        createCustomerForm.addComponent(generateAffiliationSelector(affiliationList))
 
         // Add Submit Button to trigger Customer Generation with the set Values
-        form.addComponent(generateSubmitButton())
-        this.addComponent(form)
+        createCustomerForm.addComponent(generateSubmitButton())
+
+        this.addComponent(createCustomerForm)
     }
 
     /**
