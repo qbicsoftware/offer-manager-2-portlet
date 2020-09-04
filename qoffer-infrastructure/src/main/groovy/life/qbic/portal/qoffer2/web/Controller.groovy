@@ -1,4 +1,4 @@
-package life.qbic
+package life.qbic.portal.qoffer2.web
 
 /**
  * Controller class responsible for the data flow into qoffer-2

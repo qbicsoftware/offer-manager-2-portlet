@@ -1,4 +1,4 @@
-package life.qbic.customers
+package life.qbic.portal.qoffer2.customers
 
 import life.qbic.datamodel.persons.Person
 import life.qbic.portal.portlet.customers.CustomerDbGateway
