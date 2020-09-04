@@ -106,7 +106,7 @@ class CreateCustomer extends FormLayout {
 
     private def submitCustomer() {
         if (affiliationBinder.writeBeanIfValid(editableCustomer)) {
-            controller.createCustomer(editableCustomer)
+            controller.createNewCustomer(editableCustomer)
             viewModel.successNotifications.add("Customer ${firstNameField.value} ${lastNameField.value} could be added correctly")
         } else {
             BinderValidationStatus<Customer> validate = affiliationBinder.validate();
