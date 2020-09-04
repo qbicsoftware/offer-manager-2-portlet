@@ -1,4 +1,4 @@
-package life.qbic
+package life.qbic.portal.qoffer2.web
 
 import life.qbic.datamodel.persons.Affiliation
 
