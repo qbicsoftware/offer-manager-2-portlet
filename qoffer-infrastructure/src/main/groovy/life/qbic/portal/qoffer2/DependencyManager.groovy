@@ -1,7 +1,10 @@
 package life.qbic.portal.qoffer2
 
 import groovy.util.logging.Log4j2
+import life.qbic.portal.portlet.CreateCustomer
+import life.qbic.portal.qoffer2.web.Controller
 import life.qbic.portal.qoffer2.web.PortletView
+import life.qbic.portal.qoffer2.web.ViewModel
 
 /**
  * Class that manages all the dependency injections and class instance creations
@@ -15,26 +18,57 @@ import life.qbic.portal.qoffer2.web.PortletView
 
 @Log4j2
 class DependencyManager {
-    private PortletView portletView;
-
+    private PortletView portletView
+    private Controller portletController
+    private ViewModel viewModel
     /**
      * Public constructor.
      *
      * This constructor creates a dependency manager with all the instances of required classes.
      * It ensures that the {@link #portletView} field is set.
      */
-    public DependencyManager() {
+    DependencyManager() {
         initializeDependencies()
     }
 
     private void initializeDependencies() {
-        //TODO implement
+
+        try {
+            this.portletController = new Controller()
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${Controller.getSimpleName()} setup.", e)
+            throw e
+        }
+
+        // setup view models
+        try {
+            this.viewModel = new ViewModel()
+        } catch (Exception e) {
+            log.error("Unexpected excpetion during ${ViewModel.getSimpleName()} view model setup.", e)
+            throw e
+        }
+
+        CreateCustomer createCustomer
+        try {
+            createCustomer = new CreateCustomer(this.portletController, this.viewModel)
+        } catch (Exception e) {
+            log.error("Could not create ${createCustomer.getSimpleName()} view.", e)
+            throw e
+        }
+
+        PortletView portletView
+        try {
+            portletView = new PortletView(this.portletController, this.viewModel, createCustomer)
+            this.portletView = portletView
+        } catch (Exception e) {
+            log.error("Could not create ${PortletView.getSimpleName()} view.", e)
+            throw e
+        }
     }
 
-    public PortletView getPortletView(){
-        return this.getPortletView();
+    protected PortletView getPortletView() {
+        return this.portletView
     }
-
 
 
 }
