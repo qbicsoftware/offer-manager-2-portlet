@@ -32,7 +32,7 @@ class CreateCustomer extends FormLayout {
     final private Controller controller
 
     private Customer editableCustomer
-    private Binder<Affiliation> affiliationBinder
+    private Binder<Affiliation> customerBinder
     private TextField firstNameField
     private TextField lastNameField
     private TextField emailField
@@ -55,7 +55,7 @@ class CreateCustomer extends FormLayout {
 
         //Generate FormLayout and the individual components
         FormLayout createCustomerForm = new FormLayout()
-        this.affiliationBinder = new Binder<>()
+        this.customerBinder = new Binder<>()
 
         this.firstNameField = new TextField("First Name")
         firstNameField.setPlaceholder("First Name")
@@ -76,12 +76,12 @@ class CreateCustomer extends FormLayout {
         createCustomerForm.addComponent(submitButton)
 
         // Retrieve user input from fields and add them to the the Binder if entries are valid
-        Binder.Binding<Customer, String> bindFirstName = affiliationBinder.forField(firstNameField).withValidator(new StringLengthValidator(
+        Binder.Binding<Customer, String> bindFirstName = customerBinder.forField(firstNameField).withValidator(new StringLengthValidator(
                 "Please add the first name", 1, null)).bind(Customer.&setFirstName, Customer.&getFirstName)
-        Binding<Customer, String> bindLastName = affiliationBinder.forField(lastNameField).withValidator(new StringLengthValidator(
+        Binding<Customer, String> bindLastName = customerBinder.forField(lastNameField).withValidator(new StringLengthValidator(
                 "Please add the last name", 1, null)).bind(Customer.&setLastName, Customer.&getLastName)
-        Binding<Customer, String> bindEmail = affiliationBinder.forField(emailField).withValidator(new EmailValidator()).bind(Customer.&setEmail, Customer.&getEmail)
-        Binding<Customer, Affiliation> bindAffiliation = affiliationBinder.forField(affiliationComboBox).withValidator(new BeanValidator(Affiliation)).bind(Customer.&setAffiliation, Customer.&getAffiliation)
+        Binding<Customer, String> bindEmail = customerBinder.forField(emailField).withValidator(new EmailValidator()).bind(Customer.&setEmail, Customer.&getEmail)
+        Binding<Customer, Affiliation> bindAffiliation = customerBinder.forField(affiliationComboBox).withValidator(new BeanValidator(Affiliation)).bind(Customer.&setAffiliation, Customer.&getAffiliation)
 
         this.addComponent(createCustomerForm)
 
@@ -106,11 +106,11 @@ class CreateCustomer extends FormLayout {
      */
 
     private def submitCustomer() {
-        if (affiliationBinder.writeBeanIfValid(editableCustomer)) {
+        if (customerBinder.writeBeanIfValid(editableCustomer)) {
             controller.createNewCustomer(editableCustomer)
             viewModel.successNotifications.add("Customer ${firstNameField.value} ${lastNameField.value} could be added correctly")
         } else {
-            BinderValidationStatus<Customer> validate = affiliationBinder.validate();
+            BinderValidationStatus<Customer> validate = customerBinder.validate();
             String errorText = validate.getFieldValidationStatuses()
                     .stream().filter(BindingValidationStatus.&isError)
                     .map(BindingValidationStatus.&getMessage)
