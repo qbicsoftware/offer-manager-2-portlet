@@ -1,6 +1,7 @@
 package life.qbic.portal.portlet
 
 import com.vaadin.data.Binder
+import com.vaadin.data.Binder.Binding
 import com.vaadin.data.BinderValidationStatus
 import com.vaadin.data.validator.BeanValidator
 import com.vaadin.data.validator.EmailValidator
@@ -75,7 +76,7 @@ class CreateCustomer extends FormLayout {
         createCustomerForm.addComponent(submitButton)
 
         // Retrieve user input from fields and add them to the the Binder if entries are valid
-        Binding<Customer, String> bindFirstName = affiliationBinder.forField(firstNameField).withValidator(new StringLengthValidator(
+        Binder.Binding<Customer, String> bindFirstName = affiliationBinder.forField(firstNameField).withValidator(new StringLengthValidator(
                 "Please add the first name", 1, null)).bind(Customer.&setFirstName, Customer.&getFirstName)
         Binding<Customer, String> bindLastName = affiliationBinder.forField(lastNameField).withValidator(new StringLengthValidator(
                 "Please add the last name", 1, null)).bind(Customer.&setLastName, Customer.&getLastName)
