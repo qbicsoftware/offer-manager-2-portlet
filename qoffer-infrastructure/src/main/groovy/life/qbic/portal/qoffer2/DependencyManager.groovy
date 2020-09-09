@@ -52,7 +52,7 @@ class DependencyManager {
         try {
             createCustomer = new CreateCustomerView(this.portletController, this.viewModel)
         } catch (Exception e) {
-            log.error("Could not create ${createCustomer.getSimpleName()} view.", e)
+            log.error("Could not create ${createCustomer.toString()} view.", e)
             throw e
         }
 
