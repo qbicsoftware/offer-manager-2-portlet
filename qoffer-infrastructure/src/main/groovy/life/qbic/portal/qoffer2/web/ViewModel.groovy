@@ -23,7 +23,9 @@ class ViewModel {
 
     ViewModel(List<Affiliation> affiliations, List<String> successNotifications,
               List<String> failureNotifications) {
-        this.affiliations = new ObservableList(affiliations)
+        //this.affiliations = new ObservableList(affiliations)
+        Affiliation affiliation = new Affiliation(5,"groupname","acronym","organihzation","institute","faculty","contact","head","street","zip","city","country","webpage")
+        this.affiliations = new ObservableList([affiliation,affiliation,affiliation])
         this.successNotifications = new ObservableList(successNotifications)
         this.failureNotifications = new ObservableList(failureNotifications)
     }
