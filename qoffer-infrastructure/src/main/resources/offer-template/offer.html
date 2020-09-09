@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Offer Template</title>
+    <link rel="stylesheet" href="stylesheet.css">
+</head>
+<form> 
+        <input type="button" value="Print" id="print-button"
+               onclick="window.print()" /> 
+</form> 
+<body>
+    <div class="grid-container">
+        <div class="header"><img src="offer_header.png"/></div>
+        <div class="customer">
+            <div class="addressee">Dr. Max Mustermann</div>
+            <div class="description">Quantitative Biology Center</div>
+            <div class="street">Auf der Morgenstelle 10</div>
+            <div class="zipcode">72076</div>
+            <div class="town">Tübingen</div>
+            <div class="country">-</div>
+        </div>
+        <div class="qbic-affiliation">
+            <div class="qbic-ad">Quantitative Biology Center (QBiC) <br> and 
+                Technology Platforms</div>
+            
+            <div class="small-spacer"></div>
+            <div class="info-title">Project manager</div>
+            <div id="project-manager">Dr. Doctore Doctores</div>
+            
+            <div id="project-manager-street">Auf der Morgenstelle 10</div>
+            <div class="project-manager-street-postal">72076 Tübingen</div>
+            
+            <div class="small-spacer"></div>
+
+            <div id="project-manager-email">doctore.doctores@qbic.uni-tuebingen.de</div>
+        </div>
+        <div class="small-spacer"></div>
+        
+        <div class="doctype">Quotation</div>
+        <div class="date">Monday, 7 March 2020</div>
+
+        <div class="small-spacer"></div>
+
+        <div class="common-quote-information">
+            <div class="info-title">Reference number</div>
+            <div id="quote-number">ae2a-xxxx-01</div>
+            
+            <div class="small-spacer"></div>
+            
+            <div class="info-title">Offer valid until</div>
+            <div id="offer-expiry-date">30-06-2021</div>
+            
+            <div class="small-spacer"></div>
+            
+            <div class="info-title">Delivery time</div>
+            <div id="offer-expiry-date">Approx. 4-8 weeks upon data retrieval.</div>
+
+        </div>
+        <div class="project-section">
+            <div id="project-title">Project title</div>
+            <div class="project-content-topic">Objective</div>
+            <div id="objective" class="project-content">Describe what the project is about here. Make sure not to write in too much detail as we want to prevent unauthorized people to get too much knowledge about the project.
+            </div>
+
+            <div class="project-content-topic">Experimental design</div>
+            <div id="experimental-design" class="project-content">Explain the experimental design in detail.</div>
+
+            <div class="project-content-topic">Bioinformatics analysis</div>
+            <div id="analysis" class="project-content">Explain in short what analysis will be performed.</div>
+
+            <div id="quote-description" class="project-content">Describe what is included in the quotation/cost estimation and some general information.</div>
+
+            <div class="cost-summary">
+                <div class="">Estimated total (net)</div>
+                <div id ="total-costs">1,000.00 €</div>
+            </div>
+        </div>
+        <div class="signature">
+            <hr width="30%" align="left"/>
+            <p>Date, Signature</p>  
+    
+        </div>     
+    </div>
+    
+    <hr size="1" noshade/>
+    <footer>
+        <div class="grid-container-footer">
+            <div>
+               <strong>Quantitative Biology</br> Center (QBiC)</strong> </br>
+               Dr. Sven Nahnsen </br>
+               Auf der Morgenstelle 10 </br>
+               72076 Tübingen
+            </div>
+            <div>
+                <strong>Institute for Medical Genetics and Applied Genomics (IMGAG)</strong> </br>
+                Prof. Dr. Olaf Rieß </br>
+                Calwerstr. 7 </br>
+                72076 Tübingen
+             </div>
+            <div>
+                <strong>Institute for Medical Microbiology and Hygiene </br>(MGM)</strong> </br>
+                Prof. Dr. Julia-Stefanie Frick </br>
+                Elfriede-Aulhorn-Str. 6 </br>
+                72076 Tübingen
+            </div>
+            <div>
+                <strong>Proteome Center </br>Tübingen (PCT) </strong></br>
+                Prof. Dr. Boris Macek </br>
+                Auf der Morgenstelle 15 </br>
+                72076 Tübingen
+            </div>
+            <div>
+                <strong>Core Facility for Medical Bioanalytics (CFMB) </strong></br>
+                Prof. Dr. Marius Üffing </br>
+                Elfriede-Aulhorn-Str. 7 </br>
+                72076 Tübingen
+            </div>
+        </div>
+    </footer>
+    <div class="grid-container">
+        <div class="items-introduction-text">
+            <h1>Quotation Details</h1>
+            <p>The following table shows a detailed listing of 
+                the cost information for individual service items and the calculated total:</p>          
+        </div>
+        <div class="items-overview">
+            <table id="items-table">
+                    <tr class="header">
+                        <th>Pos.</th>
+                        <th>Service Description</th>
+                        <th class="price-value">Amount</th>
+                        <th>Unit</th>
+                        <th class="price-value">Price/Unit (€)</th>
+                        <th class="price-value">Total (€)</th>
+                    </tr>
+                    <tr class="item">
+                        <td>1</td>
+                        <td>Geo-redundant raw data and meta-data storage service for ten years.</td>
+                        <td class="price-value">40</td>
+                        <td>Terabyte</td>
+                        <td class="price-value">250.00</td>
+                        <td class="price-value">10,000.00</td>
+                    </tr>
+                    <tr class="item">
+                        <td>2</td>
+                        <td>Another data management service</td>
+                        <td class="price-value">10</td>
+                        <td>Terabyte</td>
+                        <td class="price-value">250.00</td>
+                        <td class="price-value">2,500.00</td>
+                    </tr>
+                    <tr class="total-costs">
+                        <td colspan="5" class="cost-summary-field">Estimated total (net):</td>
+                        <td id="total-cost-value-net" class="price-value">12,500.00</td>
+                    </tr>
+                    <tr class="total-costs">
+                        <td colspan="5" class="cost-summary-field">VAT (19%):</td>
+                        <td id="vat-cost-value" class="price-value">0.00</td>
+                    </tr>
+                    <tr class="total-costs">
+                        <td colspan="5" class="cost-summary-field">Estimtated total (VAT included)</td>
+                        <td id="final-cost-value" class="price-value">12,500.00</td>
+                    </tr>
+            </table>
+        </div>
+        <div class="items-outroduction-text">
+            <p>This is some outro text   </p>      
+        </div>
+        
+    </div>
+    <div class="agreement-section">
+        <h2>Agreement declaration</h2>
+        <p>
+            The invoice will be issued after completion of the project.
+        </p>
+            
+        <p>
+            Quality control at all steps of the data processing will guarantee that the processed data is in accordance to DFG (German research foundation) guidance for good scientific practice. All project related data will be kept securely on our local infrastructure. 
+            Any publication that contains information based on counselling with or data generated by QBiC and the involved technology platforms requires at least the acknowledgement of the scientists at QBiC and the 
+            involved technology platforms, e.g. by stating “the xyz part of the work was supported by the Quantitative Biology Center (QBiC) and its technology platforms of the University of Tübingen”. 
+        </p>
+        <p>
+            This is required because QBiC is subsidized by the university and other external funding, and therefore needs recognition. 
+        </p> 
+        <p>
+            Depending on the extent of involvement, either co-authorship (e.g. downstream analysis, analytical method development) or acknowledgement (e.g. direct pipeline output) will be required. Should the project deviate from the plan outlined above, the customer will be contacted by QBiC or one of the involved technology platforms again in order to discuss the continuation of the project.
+           
+        </p>  
+        <p> If you agree with this offer, please return a <strong>signed copy.</strong</p>
+        </div>
+    <div id="header"></div>
+    
+</body>
+</html>
