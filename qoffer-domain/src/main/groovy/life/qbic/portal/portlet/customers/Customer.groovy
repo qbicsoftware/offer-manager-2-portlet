@@ -1,5 +1,7 @@
 package life.qbic.portal.portlet.customers
 
+import life.qbic.datamodel.persons.Affiliation
+
 /**
  * A QBiC customer in the context of finance and accounting.
  *
@@ -12,4 +14,15 @@ package life.qbic.portal.portlet.customers
  * @author: Tobias Koch
  */
 class Customer {
+    String firstName
+    String lastName
+    String email
+    Affiliation affiliation
+
+    Customer(String firstName, String lastName, String email){
+        this.firstName = firstName
+        this.lastName = lastName
+        this.email = email
+        this.affiliation = affiliation
+    }
 }
