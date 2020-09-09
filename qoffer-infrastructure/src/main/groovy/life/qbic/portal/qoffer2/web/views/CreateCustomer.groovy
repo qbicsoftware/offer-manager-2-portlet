@@ -55,6 +55,7 @@ class CreateCustomer extends FormLayout {
 
         //Generate FormLayout and the individual components
         FormLayout createCustomerForm = new FormLayout()
+        println createCustomerForm
         this.customerBinder = new Binder<>()
 
         this.firstNameField = new TextField("First Name")
@@ -75,6 +76,7 @@ class CreateCustomer extends FormLayout {
         createCustomerForm.addComponent(affiliationComboBox)
         createCustomerForm.addComponent(submitButton)
 
+        /*
         // Retrieve user input from fields and add them to the the Binder if entries are valid
         Binder.Binding<Customer, String> bindFirstName = customerBinder.forField(firstNameField).withValidator(new StringLengthValidator(
                 "Please add the first name", 1, null)).bind(Customer.&setFirstName, Customer.&getFirstName)
@@ -82,7 +84,7 @@ class CreateCustomer extends FormLayout {
                 "Please add the last name", 1, null)).bind(Customer.&setLastName, Customer.&getLastName)
         Binding<Customer, String> bindEmail = customerBinder.forField(emailField).withValidator(new EmailValidator()).bind(Customer.&setEmail, Customer.&getEmail)
         Binding<Customer, Affiliation> bindAffiliation = customerBinder.forField(affiliationComboBox).withValidator(new BeanValidator(Affiliation)).bind(Customer.&setAffiliation, Customer.&getAffiliation)
-
+         */
         this.addComponent(createCustomerForm)
 
     }
