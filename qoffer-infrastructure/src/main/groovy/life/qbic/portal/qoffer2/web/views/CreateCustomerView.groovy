@@ -3,6 +3,7 @@ package life.qbic.portal.portlet
 import com.vaadin.data.Binder
 import com.vaadin.data.Binder.Binding
 import com.vaadin.data.BinderValidationStatus
+import com.vaadin.data.BindingValidationStatus
 import com.vaadin.data.validator.BeanValidator
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.data.validator.StringLengthValidator
@@ -27,7 +28,7 @@ import life.qbic.portal.portlet.customers.Customer
  */
 
 @Log4j2
-class CreateCustomer extends FormLayout {
+class CreateCustomerView extends FormLayout {
     final private ViewModel viewModel
     final private Controller controller
 
@@ -39,7 +40,7 @@ class CreateCustomer extends FormLayout {
     private ComboBox affiliationComboBox
     private Button submitButton
 
-    CreateCustomer(Controller controller, ViewModel viewModel) {
+    CreateCustomerView(Controller controller, ViewModel viewModel) {
         super()
         this.controller = controller
         this.viewModel = viewModel
@@ -76,7 +77,7 @@ class CreateCustomer extends FormLayout {
         createCustomerForm.addComponent(affiliationComboBox)
         createCustomerForm.addComponent(submitButton)
 
-        /*
+
         // Retrieve user input from fields and add them to the the Binder if entries are valid
         Binder.Binding<Customer, String> bindFirstName = customerBinder.forField(firstNameField).withValidator(new StringLengthValidator(
                 "Please add the first name", 1, null)).bind(Customer.&setFirstName, Customer.&getFirstName)
@@ -84,7 +85,7 @@ class CreateCustomer extends FormLayout {
                 "Please add the last name", 1, null)).bind(Customer.&setLastName, Customer.&getLastName)
         Binding<Customer, String> bindEmail = customerBinder.forField(emailField).withValidator(new EmailValidator()).bind(Customer.&setEmail, Customer.&getEmail)
         Binding<Customer, Affiliation> bindAffiliation = customerBinder.forField(affiliationComboBox).withValidator(new BeanValidator(Affiliation)).bind(Customer.&setAffiliation, Customer.&getAffiliation)
-         */
+
         this.addComponent(createCustomerForm)
 
     }

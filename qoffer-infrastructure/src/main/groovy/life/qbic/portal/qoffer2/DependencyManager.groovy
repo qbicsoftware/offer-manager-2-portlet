@@ -1,7 +1,7 @@
 package life.qbic.portal.qoffer2
 
 import groovy.util.logging.Log4j2
-import life.qbic.portal.portlet.CreateCustomer
+import life.qbic.portal.portlet.CreateCustomerView
 import life.qbic.portal.qoffer2.web.Controller
 import life.qbic.portal.qoffer2.web.PortletView
 import life.qbic.portal.qoffer2.web.ViewModel
@@ -48,9 +48,9 @@ class DependencyManager {
             throw e
         }
 
-        CreateCustomer createCustomer
+        CreateCustomerView createCustomer
         try {
-            createCustomer = new CreateCustomer(this.portletController, this.viewModel)
+            createCustomer = new CreateCustomerView(this.portletController, this.viewModel)
         } catch (Exception e) {
             log.error("Could not create ${createCustomer.getSimpleName()} view.", e)
             throw e
