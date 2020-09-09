@@ -2,16 +2,13 @@ package life.qbic.portal.portlet
 
 import com.vaadin.data.Binder
 import com.vaadin.data.Binder.Binding
-import com.vaadin.data.BinderValidationStatus
-import com.vaadin.data.BindingValidationStatus
 import com.vaadin.data.ValidationException
-import com.vaadin.data.validator.BeanValidator
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.data.validator.StringLengthValidator
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.FormLayout
-import com.vaadin.ui.Notification
+import com.vaadin.ui.ItemCaptionGenerator
 import groovy.util.logging.Log4j2
 import life.qbic.portal.qoffer2.web.Controller
 import life.qbic.portal.qoffer2.web.ViewModel
@@ -136,9 +133,10 @@ class CreateCustomerView extends FormLayout {
                 new ComboBox<>("Select an Affiliation")
         affiliationComboBox.setPlaceholder("Select Affiliation")
         affiliationComboBox.setItems(affiliationList)
-        affiliationComboBox.setItemCaptionGenerator(Affiliation.&GroupName);
+        affiliationComboBox.setItemCaptionGenerator({Affiliation af -> af.groupName})
         affiliationComboBox.setEmptySelectionAllowed(false)
 
         return affiliationComboBox
     }
+
 }
