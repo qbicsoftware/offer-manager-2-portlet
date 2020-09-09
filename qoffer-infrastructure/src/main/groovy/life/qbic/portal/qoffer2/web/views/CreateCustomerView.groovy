@@ -4,12 +4,14 @@ import com.vaadin.data.Binder
 import com.vaadin.data.Binder.Binding
 import com.vaadin.data.BinderValidationStatus
 import com.vaadin.data.BindingValidationStatus
+import com.vaadin.data.ValidationException
 import com.vaadin.data.validator.BeanValidator
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.data.validator.StringLengthValidator
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.FormLayout
+import com.vaadin.ui.Notification
 import groovy.util.logging.Log4j2
 import life.qbic.portal.qoffer2.web.Controller
 import life.qbic.portal.qoffer2.web.ViewModel
@@ -33,7 +35,7 @@ class CreateCustomerView extends FormLayout {
     final private Controller controller
 
     private Customer editableCustomer
-    private Binder<Affiliation> customerBinder
+    private Binder<Customer> customerBinder
     private TextField firstNameField
     private TextField lastNameField
     private TextField emailField
@@ -56,16 +58,15 @@ class CreateCustomerView extends FormLayout {
 
         //Generate FormLayout and the individual components
         FormLayout createCustomerForm = new FormLayout()
-        println createCustomerForm
-        this.customerBinder = new Binder<>()
+        this.customerBinder = new Binder<Customer>()
 
         this.firstNameField = new TextField("First Name")
         firstNameField.setPlaceholder("First Name")
 
         this.lastNameField = new TextField("Last Name")
-        lastNameField.setPlaceholder("First Name")
+        lastNameField.setPlaceholder("Last Name")
         this.emailField = new TextField("Email Address")
-        emailField.setPlaceholder("First Name")
+        emailField.setPlaceholder("Email Address")
 
         this.affiliationComboBox = generateAffiliationSelector(viewModel.affiliations)
         this.submitButton = new Button("Create Customer")
@@ -77,21 +78,22 @@ class CreateCustomerView extends FormLayout {
         createCustomerForm.addComponent(affiliationComboBox)
         createCustomerForm.addComponent(submitButton)
 
-
+        customerBinder.setBean(editableCustomer)
         // Retrieve user input from fields and add them to the the Binder if entries are valid
         Binder.Binding<Customer, String> bindFirstName = customerBinder.forField(firstNameField).withValidator(new StringLengthValidator(
                 "Please add the first name", 1, null)).bind(Customer.&setFirstName, Customer.&getFirstName)
         Binding<Customer, String> bindLastName = customerBinder.forField(lastNameField).withValidator(new StringLengthValidator(
                 "Please add the last name", 1, null)).bind(Customer.&setLastName, Customer.&getLastName)
-        Binding<Customer, String> bindEmail = customerBinder.forField(emailField).withValidator(new EmailValidator()).bind(Customer.&setEmail, Customer.&getEmail)
-        Binding<Customer, Affiliation> bindAffiliation = customerBinder.forField(affiliationComboBox).withValidator(new BeanValidator(Affiliation)).bind(Customer.&setAffiliation, Customer.&getAffiliation)
+
+        Binding<Customer, String> bindEmail = customerBinder.forField(emailField).withValidator(new EmailValidator("Given email address is not valid")).bind(Customer.&setEmail, Customer.&getEmail)
+
+        Binding<Customer, Affiliation> bindAffiliation = customerBinder.forField(affiliationComboBox).bind(Customer.&setAffiliation, Customer.&getAffiliation)
 
         this.addComponent(createCustomerForm)
-
     }
 
     /**
-     * This method calls the individual Listener generating methods
+     * This method calls the individual Listener generation methods
      */
 
     private def registerListeners() {
@@ -109,18 +111,16 @@ class CreateCustomerView extends FormLayout {
      */
 
     private def submitCustomer() {
+        try {
         if (customerBinder.writeBeanIfValid(editableCustomer)) {
             controller.createNewCustomer(editableCustomer)
             viewModel.successNotifications.add("Customer ${firstNameField.value} ${lastNameField.value} could be added correctly")
-        } else {
-            BinderValidationStatus<Customer> validate = customerBinder.validate();
-            String errorText = validate.getFieldValidationStatuses()
-                    .stream().filter(BindingValidationStatus.&isError)
-                    .map(BindingValidationStatus.&getMessage)
-                    .map(Optional.&get).distinct()
-                    .collect(Collectors.joining(", "))
-            viewModel.failureNotifications.add("Errors in Fields ${errorText}")
-            log.warn("Field ${errorText} not filled out correctly")
+        }
+        }catch(NullPointerException nullException){
+            viewModel.failureNotifications.add("Values missing for Customer ${firstNameField.value} ${lastNameField.value}")
+        }
+        catch(ValidationException validationException){
+            viewModel.failureNotifications.add("Invalid Values set for Customer ${firstNameField.value} ${lastNameField.value}")
         }
     }
 
