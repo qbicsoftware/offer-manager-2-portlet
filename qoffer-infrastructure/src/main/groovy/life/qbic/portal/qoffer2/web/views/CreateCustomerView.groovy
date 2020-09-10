@@ -75,6 +75,10 @@ class CreateCustomerView extends FormLayout {
         createCustomerForm.addComponent(affiliationComboBox)
         createCustomerForm.addComponent(submitButton)
 
+        editableCustomer = new Customer()
+        //todo do we want to use this here? see Vaadin
+        //"When using the setBean method, the business object instance will be updated whenever the user changes the value in any bound field.
+        // If some other part of the application is also using the same instance, then that part might show changes before the user has clicked the save button."
         customerBinder.setBean(editableCustomer)
         // Retrieve user input from fields and add them to the the Binder if entries are valid
         Binder.Binding<Customer, String> bindFirstName = customerBinder.forField(firstNameField).withValidator(new StringLengthValidator(
@@ -109,6 +113,8 @@ class CreateCustomerView extends FormLayout {
 
     private def submitCustomer() {
         try {
+            println "i am pressed"
+            println editableCustomer
         if (customerBinder.writeBeanIfValid(editableCustomer)) {
             controller.createNewCustomer(editableCustomer)
             viewModel.successNotifications.add("Customer ${firstNameField.value} ${lastNameField.value} could be added correctly")
