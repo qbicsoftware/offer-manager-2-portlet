@@ -1,7 +1,7 @@
 package life.qbic.portal.portlet.customers
 
 
-import life.qbic.portal.portlet.offers.SearchCriteria
+import life.qbic.portal.portlet.SearchCriteria
 
 /**
  * A gateway to access information from a customer database
