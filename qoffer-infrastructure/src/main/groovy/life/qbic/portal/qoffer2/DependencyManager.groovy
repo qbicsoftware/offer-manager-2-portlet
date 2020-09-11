@@ -31,7 +31,7 @@ class DependencyManager {
         //TODO implement
     }
 
-    public PortletView getPortletView(){
+    PortletView getPortletView(){
         return this.getPortletView();
     }
 
