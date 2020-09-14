@@ -13,5 +13,5 @@ import life.qbic.portal.portlet.customers.Customer
  * @see <a href="https://github.com/qbicsoftware/qoffer-2-portlet/tree/master/docs/"</a>
  */
 class Controller {
-    void createNewCustomer(Customer customer){}
+    void createNewCustomer(HashMap customerInfo){}
 }
