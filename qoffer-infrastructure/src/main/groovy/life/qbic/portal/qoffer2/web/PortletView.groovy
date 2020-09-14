@@ -15,15 +15,13 @@ import life.qbic.portal.portlet.CreateCustomerView
  */
 class PortletView extends VerticalLayout {
 
-    final private Controller controller
     final private ViewModel portletViewModel
 
     private CreateCustomerView createCustomer
 
-    PortletView(Controller portletController, ViewModel portletViewModel,
+    PortletView(ViewModel portletViewModel,
                 CreateCustomerView createCustomer) {
         super()
-        this.controller = portletController
         this.portletViewModel = portletViewModel
         this.createCustomer = createCustomer
         initLayout()

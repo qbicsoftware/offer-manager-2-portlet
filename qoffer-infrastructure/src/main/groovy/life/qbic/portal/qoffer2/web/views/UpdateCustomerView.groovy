@@ -12,7 +12,6 @@ import com.vaadin.ui.TextField
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.persons.Affiliation
 import life.qbic.portal.portlet.customers.Customer
-import life.qbic.portal.qoffer2.web.Controller
 import life.qbic.portal.qoffer2.web.ViewModel
 
 /**
@@ -28,7 +27,6 @@ import life.qbic.portal.qoffer2.web.ViewModel
 @Log4j2
 class UpdateCustomerView extends FormLayout {
     final private ViewModel viewModel
-    final private Controller controller
 
     private Customer editableCustomer
     private Binder<Customer> customerBinder
@@ -38,7 +36,7 @@ class UpdateCustomerView extends FormLayout {
     private ComboBox affiliationComboBox
     private Button submitButton
 
-    UpdateCustomerView(Controller controller, ViewModel viewModel, Customer editableCustomer) {
+    UpdateCustomerView(ViewModel viewModel, Customer editableCustomer) {
         super()
         this.controller = controller
         this.viewModel = viewModel
