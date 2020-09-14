@@ -3,6 +3,7 @@ package life.qbic.portal.qoffer2.customers
 import life.qbic.datamodel.people.Person
 import life.qbic.datamodel.persons.Affiliation
 import life.qbic.portal.portlet.customers.Customer
+import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -54,17 +55,16 @@ class CustomerDatabaseQueries {
                     fetchAffiliationForPerson(rs.getString(1).toInteger())
                     res <<  new Person(rs.getString(2),rs.getString(3),rs.getString(4))
                 }
-
                 return res
-            } catch (SQLException e) {
-                LOG.error("SQL operation unsuccessful: " + e.getMessage())
-                e.printStackTrace()
+            } catch (DatabaseQueryException sqlException) {
+                LOG.error("SQL operation unsuccessful: " + sqlException.getMessage())
+                sqlException.printStackTrace()
             } finally {
                 DatabaseSession.logout(databaseConnection)
             }
             return null
-        }catch(RuntimeException e) {
-            LOG.error e
+        }catch(DatabaseQueryException sqlException) {
+            LOG.error sqlException
             DatabaseSession.logout(databaseConnection)
         }
         return null
