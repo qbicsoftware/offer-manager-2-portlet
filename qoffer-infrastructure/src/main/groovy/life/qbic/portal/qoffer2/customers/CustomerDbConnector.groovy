@@ -44,6 +44,7 @@ class CustomerDbConnector implements CustomerDbGateway{
       case CriteriaType.CITY:
             return databaseQueries.findCustomerByCity(searchCondition)
       default:
+        //todo throw an exception
         return null
     }
 
