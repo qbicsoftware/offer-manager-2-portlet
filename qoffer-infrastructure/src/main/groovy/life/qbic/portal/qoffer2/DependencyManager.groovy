@@ -2,9 +2,11 @@ package life.qbic.portal.qoffer2
 
 import groovy.util.logging.Log4j2
 import life.qbic.portal.portlet.CreateCustomerView
-import life.qbic.portal.qoffer2.web.Controller
+import life.qbic.portal.portlet.customers.create.CreateCustomer
+import life.qbic.portal.portlet.customers.create.CreateCustomerInput
 import life.qbic.portal.qoffer2.web.PortletView
 import life.qbic.portal.qoffer2.web.ViewModel
+import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 
 /**
  * Class that manages all the dependency injections and class instance creations
@@ -19,7 +21,7 @@ import life.qbic.portal.qoffer2.web.ViewModel
 @Log4j2
 class DependencyManager {
     private PortletView portletView
-    private Controller portletController
+    private CreateCustomerController createCustomerController
     private ViewModel viewModel
     /**
      * Public constructor.
@@ -33,13 +35,6 @@ class DependencyManager {
 
     private void initializeDependencies() {
 
-        try {
-            this.portletController = new Controller()
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${Controller.getSimpleName()} setup.", e)
-            throw e
-        }
-
         // setup view models
         try {
             this.viewModel = new ViewModel()
@@ -48,17 +43,28 @@ class DependencyManager {
             throw e
         }
 
-        CreateCustomerView createCustomer
+        CreateCustomerView createCustomerView
         try {
-            createCustomer = new CreateCustomerView(this.portletController, this.viewModel)
+            createCustomerView = new CreateCustomerView(this.viewModel)
         } catch (Exception e) {
-            log.error("Could not create ${createCustomer.toString()} view.", e)
+            log.error("Could not create ${createCustomerView.toString()} view.", e)
             throw e
         }
 
+        CreateCustomerInput createCustomerUseCase = new CreateCustomer()
+
+        try {
+            this.createCustomerController = new CreateCustomerController(createCustomerView,
+                createCustomerUseCase)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${createCustomerController.getSimpleName()} setup.", e)
+            throw e
+        }
+
+
         PortletView portletView
         try {
-            portletView = new PortletView(this.portletController, this.viewModel, createCustomer)
+            portletView = new PortletView(this.viewModel, createCustomerView)
             this.portletView = portletView
         } catch (Exception e) {
             log.error("Could not create ${PortletView.getSimpleName()} view.", e)
