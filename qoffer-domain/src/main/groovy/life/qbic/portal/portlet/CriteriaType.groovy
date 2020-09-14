@@ -5,7 +5,7 @@ package life.qbic.portal.portlet
  *
  * A customer can be searched based on
  *
- * @since: <versiontag>
+ * @since: 1.0.0
  * @author: Jennifer Bödker
  *
  */

@@ -25,8 +25,11 @@ class DatabaseSessionSpecification extends Specification{
         Connection con = DatabaseSession.getDatabaseInstanceAlternative(properties)
         CustomerDatabaseQueries queries = new CustomerDatabaseQueries(con)
 
-        queries.findCustomerByName("Zender")
-
+        when:
+        List res = queries.findPersonByName("Zender")
         DatabaseSession.logout(con)
+
+        then:
+        res.get(0).firstName == "Lars"
     }
 }

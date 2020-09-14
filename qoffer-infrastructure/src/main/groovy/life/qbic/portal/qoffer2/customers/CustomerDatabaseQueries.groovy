@@ -1,5 +1,7 @@
 package life.qbic.portal.qoffer2.customers
 
+import life.qbic.datamodel.people.Person
+import life.qbic.datamodel.persons.Affiliation
 import life.qbic.portal.portlet.customers.Customer
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import org.apache.logging.log4j.LogManager
@@ -22,7 +24,7 @@ import java.sql.SQLException
  */
 class CustomerDatabaseQueries {
 
-    Connection databaseConnection
+    private final Connection databaseConnection
 
     private static final Logger LOG = LogManager.getLogger(CustomerDatabaseQueries.class)
 
@@ -36,10 +38,10 @@ class CustomerDatabaseQueries {
      * @param lastName of the customer
      * @return a list of customers with a matching last name
      */
-    List<Customer> findCustomerByName(String lastName){
-        List<String> res = []
+    List<Person> findPersonByName(String lastName){
+        List<Person> res = []
         try{
-            String sql = "SELECT id from persons WHERE family_name = ?"
+            String sql = "SELECT id, first_name, family_name, email from persons WHERE family_name = ?"
 
             PreparedStatement statement = null
             try{
@@ -48,10 +50,12 @@ class CustomerDatabaseQueries {
                 ResultSet rs = statement.executeQuery()
                 println rs
 
-                if (rs.next()) {
-                    println rs.getString(1)
-                    res << rs.getString(1)
+                while (rs.next()) {
+                    fetchAffiliationForPerson(rs.getString(1).toInteger())
+                    res <<  new Person(rs.getString(2),rs.getString(3),rs.getString(4))
                 }
+
+                return res
             } catch (SQLException e) {
                 LOG.error("SQL operation unsuccessful: " + e.getMessage())
                 e.printStackTrace()
@@ -63,6 +67,13 @@ class CustomerDatabaseQueries {
             LOG.error e
             DatabaseSession.logout(databaseConnection)
         }
+        return null
+    }
+
+    //todo fetch the information for the affiliation by an working optimal sql statement
+    Affiliation fetchAffiliationForPerson(int personId){
+        //Affiliation affiliation = new Affiliation("group","acrony","orga","institute","faculty","contact","head","street","zip","city","country","webpage")
+        //todo
         return null
     }
 
