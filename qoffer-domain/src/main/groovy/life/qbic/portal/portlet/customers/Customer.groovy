@@ -25,4 +25,5 @@ class Customer {
         this.title = title
         this.offerAffiliation = affiliation
     }
+
 }

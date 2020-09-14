@@ -8,6 +8,7 @@ import life.qbic.portal.portlet.SearchCriteria
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+
 /**
  * Provides operations on QBiC customer data
  *
@@ -45,15 +46,18 @@ class CustomerDbConnector implements CustomerDbGateway{
       default:
         return null
     }
+
   }
 
   @Override
   void addCustomer(Customer customer) {
     databaseQueries.addCustomer(customer)
+
   }
 
   @Override
   void updateCustomer(String customerId, Customer updatedCustomer) {
     databaseQueries.updateCustomer(customerId,updatedCustomer)
+
   }
 }
