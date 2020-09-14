@@ -1,4 +1,4 @@
-package life.qbic
+package life.qbic.portal.qoffer2.web
 
 import life.qbic.portal.portlet.customers.create.CreateCustomerOutput
 import life.qbic.portal.portlet.customers.update.UpdateCustomerOutput
@@ -18,4 +18,10 @@ import life.qbic.portal.portlet.offers.update.UpdateOfferOutput
  *
  */
 class Presenter implements SearchOffersOutput, CreateOfferOutput, UpdateOfferOutput, CreateCustomerOutput, UpdateCustomerOutput {
+
+    final private ViewModel viewModel
+
+    Presenter(ViewModel viewModel){
+        this.viewModel = viewModel
+    }
 }

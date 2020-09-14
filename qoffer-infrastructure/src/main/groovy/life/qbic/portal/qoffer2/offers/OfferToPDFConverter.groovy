@@ -1,4 +1,4 @@
-package life.qbic.offers
+package life.qbic.portal.qoffer2.offers
 
 import life.qbic.portal.portlet.offers.OfferExporter
 
