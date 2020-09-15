@@ -1,4 +1,4 @@
-package life.qbic.portal.portlet.offers
+package life.qbic.portal.portlet
 
 /**
  * A DTO describing a search criteria
@@ -10,4 +10,12 @@ package life.qbic.portal.portlet.offers
  *
  */
 class SearchCriteria {
+
+    final CriteriaType criteriaType
+    final String criteriaValue
+
+    SearchCriteria(CriteriaType type, String value){
+        this.criteriaType = type
+        this.criteriaValue = value
+    }
 }
