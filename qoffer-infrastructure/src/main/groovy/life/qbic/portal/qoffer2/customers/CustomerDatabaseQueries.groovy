@@ -77,23 +77,35 @@ class CustomerDatabaseQueries {
         return affiliations
     }
 
-    /*
-    We look-up all affiliation ids for a given person ids
-    in the joint table.
+    /**
+     * Searches for an affiliation based on a customer id
+     *
+     * @param customerId Id of the customer
+     * @return list of Affiliation Ids associated with the provided customer id
      */
     private List<Integer> getAffiliationIdsForPerson(int customerId) {
+        List<Integer> result = []
         String query = "SELECT affiliation_id FROM customer_affiliation WHERE " +
             "customer_id = ?"
 
-        Connection connection = databaseSession.login()
+        Connection connection = databaseSession.getConnection()
 
+        connection.withCloseable {
+            def statement = it.prepareStatement(query)
+            statement.setString(2, customerId)
+            ResultSet rs = statement.executeQuery()
+            while (rs.next()) {
+                result.add(rs.getString(1).toInteger())
+            }
+        }
+        return result
 
     }
     /**
      * Searches for an affiliation based on an affiliation Id
      *
      * @param affiliationId Id of the affiliation
-     * @return Affilation containing matching Id
+     * @return Affiliation DTO associated with the provided affiliation Id
      */
     private Affiliation fetchAffiliation(int affiliationId) {
 
