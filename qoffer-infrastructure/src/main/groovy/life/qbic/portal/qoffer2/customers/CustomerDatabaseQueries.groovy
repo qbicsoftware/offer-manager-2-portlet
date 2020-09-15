@@ -1,8 +1,8 @@
 package life.qbic.portal.qoffer2.customers
 
-import life.qbic.datamodel.people.Person
-import life.qbic.datamodel.persons.Affiliation
-import life.qbic.portal.portlet.customers.Customer
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.Customer
+
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import org.apache.logging.log4j.LogManager
@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
-import java.sql.SQLException
 
 /**
  * This class contains all queries on the customer database
@@ -39,8 +38,8 @@ class CustomerDatabaseQueries {
      * @param lastName of the customer
      * @return a list of customers with a matching last name
      */
-    List<Person> findPersonByName(String lastName){
-        List<Person> res = []
+    List<Customer> findPersonByName(String lastName){
+        List<Customer> res = []
         try{
             String sql = "SELECT id, first_name, family_name, email from persons WHERE family_name = ?"
 
@@ -53,7 +52,7 @@ class CustomerDatabaseQueries {
 
                 while (rs.next()) {
                     fetchAffiliationForPerson(rs.getString(1).toInteger())
-                    res <<  new Person(rs.getString(2),rs.getString(3),rs.getString(4))
+                    res <<  new Customer(rs.getString(2),rs.getString(3),rs.getString(4))
                 }
                 return res
             } catch (DatabaseQueryException sqlException) {

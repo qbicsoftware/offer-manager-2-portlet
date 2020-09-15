@@ -1,6 +1,6 @@
 package life.qbic.portal.portlet.customers
 
-
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.SearchCriteria
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
