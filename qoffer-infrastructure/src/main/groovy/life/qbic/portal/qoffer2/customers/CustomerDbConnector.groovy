@@ -1,7 +1,9 @@
 package life.qbic.portal.qoffer2.customers
 
 import life.qbic.datamodel.persons.Person
+import life.qbic.portal.portlet.customers.Customer
 import life.qbic.portal.portlet.customers.CustomerDbGateway
+import life.qbic.portal.portlet.offers.SearchCriteria
 
 /**
  * Provides operations on QBiC customer data
@@ -15,12 +17,17 @@ import life.qbic.portal.portlet.customers.CustomerDbGateway
 class CustomerDbConnector implements CustomerDbGateway{
 
   @Override
-  Person searchCustomer(Map criteria) {
+  List<Customer> findCustomer(SearchCriteria criteria) {
     return null
   }
 
   @Override
-  void saveCustomer(Person customer) {
+  void addCustomer(Customer customer) {
+
+  }
+
+  @Override
+  void updateCustomer(String customerId, Customer updatedCustomer) {
 
   }
 }
