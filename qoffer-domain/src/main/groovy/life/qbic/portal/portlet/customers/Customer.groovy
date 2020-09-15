@@ -1,6 +1,5 @@
 package life.qbic.portal.portlet.customers
 
-import life.qbic.datamodel.people.Person
 import life.qbic.datamodel.persons.Affiliation
 
 /**
@@ -15,15 +14,22 @@ import life.qbic.datamodel.persons.Affiliation
  * @author: Tobias Koch
  */
 class Customer {
+    String firstName
+    String lastName
+    String email
+    Affiliation affiliation
 
-    Person person
-    String title
-    Affiliation offerAffiliation
-
-    Customer(Person person, String title, Affiliation affiliation){
-        this.person = person
-        this.title = title
-        this.offerAffiliation = affiliation
+    Customer(){
+        this.firstName = "firstName"
+        this.lastName = "lastName"
+        this.email = "email"
+        this.affiliation = "affiliation"
     }
 
+    Customer(String firstName, String lastName, String email){
+        this.firstName = firstName
+        this.lastName = lastName
+        this.email = email
+        this.affiliation = affiliation
+    }
 }
