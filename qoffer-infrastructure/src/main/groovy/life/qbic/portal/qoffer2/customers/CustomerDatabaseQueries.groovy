@@ -63,10 +63,27 @@ class CustomerDatabaseQueries {
     }
 
     //todo fetch the information for the affiliation by an working optimal sql statement
-    List<Affiliation> fetchAffiliationsForPerson(int personId){
-        //Affiliation affiliation = new Affiliation("group","acrony","orga","institute","faculty","contact","head","street","zip","city","country","webpage")
-        //todo
-        return null
+    private List<Affiliation> fetchAffiliationsForPerson(int personId){
+        def affiliations = []
+        def affiliationIds = getAffiliationIdsForPerson(personId)
+        affiliationIds.each {affiliationId ->
+            Affiliation affiliation = fetchAffiliation(affiliationId)
+            affiliations.add(affiliation)
+        }
+        return affiliations
+    }
+
+    private List<Integer> getAffiliationIdsForPerson(int personId) {
+        return [1]
+    }
+
+    private Affiliation fetchAffiliation(int affiliationId) {
+        return new Affiliation.Builder(
+            "dummy",
+            "dummy",
+            "dummy",
+            "dummy")
+            .build()
     }
 
     /**
