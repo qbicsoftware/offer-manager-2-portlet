@@ -76,16 +76,33 @@ class CustomerDatabaseQueries {
     private List<Integer> getAffiliationIdsForPerson(int personId) {
         return [1]
     }
-
+    /**
+     * Searches for an affiliation based on an affiliation Id
+     *
+     * @param affiliationId Id of the affiliation
+     * @return Affilation containing matching Id
+     */
     private Affiliation fetchAffiliation(int affiliationId) {
-        return new Affiliation.Builder(
-            "dummy",
-            "dummy",
-            "dummy",
-            "dummy")
-            .build()
-    }
+        String affiliationProperties = "organization, address_addition, street, postal_code, city, country, category"
+        String sql = "SELECT ${affiliationProperties} from affiliation WHERE " + "affiliationId = ?"
 
+        databaseConnection.withCloseable {
+            def statement = it.prepareStatement(sql)
+            statement.setString(2, affiliationId.toString())
+            ResultSet rs = statement.executeQuery()
+            Affiliation affiliation = new Affiliation.Builder(
+                        "${rs.getString(2)}", //organization
+                        "${rs.getString(4)}", //street
+                        "${rs.getString(5)}", //postal_code
+                        "${rs.getString(6)}", //city
+                        "${rs.getString(3)}", //address_addition
+                        "${rs.getString(7)}", //country
+                        "${rs.getString(8)}"  //category
+                                .build()
+                )
+            return affiliation
+        }
+    }
     /**
      * Searches for a customer based on an additional address, which can be either an department or an institute
      *
