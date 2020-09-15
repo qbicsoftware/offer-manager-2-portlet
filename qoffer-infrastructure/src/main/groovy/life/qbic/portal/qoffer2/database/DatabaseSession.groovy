@@ -2,9 +2,11 @@ package life.qbic.portal.qoffer2.database
 
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
+import org.apache.commons.dbcp2.BasicDataSource
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
+import javax.sql.DataSource
 import java.sql.Connection
 import java.sql.DriverManager
 import java.sql.SQLException
@@ -24,48 +26,24 @@ class DatabaseSession {
 
     protected static DatabaseSession INSTANCE
 
-    private final String hostname
-    private final String url
-    private final String port
-    private final String sql_database
-    private final String username
-    private final String password
+    private BasicDataSource dataSource
 
     private static final Logger LOG = LogManager.getLogger(DatabaseSession.class)
 
     //create session with DatabaseSession.init() and then DatabaseSession.INSTANCE to use the created session
     private DatabaseSession(String user, String password, String host, String port, String sql_database) {
-        username = user
-        this.password = password
-        this.hostname = host
-        this.port = port
-        this.sql_database = sql_database
-        this.url = "jdbc:mysql://" + host + ":" + port + "/" + sql_database
-        String mysqlDriverName = "com.mysql.jdbc.Driver"
-        try {
-            Class.forName(mysqlDriverName)
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace()
-        }
-        LOG.info("MySQL Database instance created")
-    }
 
-    /**
-     *
-     * @return
-     * @throws SQLException
-     */
-    static Connection getDatabaseInstanceAlternative(Properties config) throws SQLException {
-        try{
-            Class.forName("com.mysql.jdbc.Driver")
-            return DriverManager.getConnection("jdbc:mysql://" + config.getProperty("mysql.host") + ":" + config.getProperty("mysql.port") + "/" + config.getProperty("mysql.db"),
-                    config.getProperty("mysql.user"), config.getProperty("mysql.pass"))
-        }
-        catch (Exception e){
-            LOG.error "Could not establish JBDC connection"
-            e.printStackTrace()
-        }
-        return null
+        def url = "jdbc:mysql://" + host + ":" + port + "/" + sql_database
+
+        dataSource = new BasicDataSource()
+        dataSource.setUrl(url)
+        dataSource.setUsername(user)
+        dataSource.setPassword(password)
+        dataSource.setMinIdle(5)
+        dataSource.setMaxIdle(10)
+        dataSource.setMaxOpenPreparedStatements(100)
+
+        LOG.info("MySQL Database instance created")
     }
 
 
@@ -73,12 +51,12 @@ class DatabaseSession {
      * Initiates the database connection by retrieving configuration information from the {@link ConfigurationManager}
      * The instance is only created if there is no other existing
      */
-    static void init() {
+    static void create() {
         ConfigurationManager conf = ConfigurationManagerFactory.getInstance()
         if (INSTANCE == null) {
             INSTANCE = new DatabaseSession(conf.getMysqlUser(), conf.getMysqlPass(), conf.getMysqlHost(),
                     conf.getMysqlPort(), conf.getMysqlDB())
-        }else{
+        } else{
             LOG.info("There is already an existing database instance")
         }
     }
@@ -89,22 +67,7 @@ class DatabaseSession {
      * @return Connection, otherwise null if connecting to the database fails
      * @throws SQLException if a database access error occurs or the url is {@code null}
      */
-    Connection login() throws SQLException {
-        return DriverManager.getConnection(url, username, password)
-    }
-
-    /**
-     * Tries to disconnect from the current session and close it
-     *
-     * @param conn
-     */
-    static void logout(Connection conn) {
-        try {
-            conn.close()
-        } catch (SQLException e) {
-            LOG.error "Failed to disconnect from the current database connection"
-            //todo how do we want a failed connection?
-            e.printStackTrace()
-        }
+    Connection getConnection() throws SQLException {
+        return dataSource.getConnection()
     }
 }

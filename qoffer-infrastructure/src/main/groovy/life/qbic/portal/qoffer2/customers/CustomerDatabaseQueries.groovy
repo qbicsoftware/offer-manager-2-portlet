@@ -3,13 +3,11 @@ package life.qbic.portal.qoffer2.customers
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 
-import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 import java.sql.Connection
-import java.sql.PreparedStatement
 import java.sql.ResultSet
 
 /**
@@ -24,12 +22,11 @@ import java.sql.ResultSet
  */
 class CustomerDatabaseQueries {
 
-    private final Connection databaseConnection
-
+    private final DatabaseSession databaseSession
     private static final Logger LOG = LogManager.getLogger(CustomerDatabaseQueries.class)
 
-    CustomerDatabaseQueries(Connection connection){
-        this.databaseConnection = connection
+    CustomerDatabaseQueries(DatabaseSession databaseSession){
+        this.databaseSession = databaseSession
     }
 
     /**
@@ -40,11 +37,13 @@ class CustomerDatabaseQueries {
      */
     List<Customer> findPersonByName(String lastName){
         List<Customer> result = []
-        String sql = "SELECT id, first_name, last_name, title, email from persons WHERE " +
+        String query = "SELECT id, first_name, last_name, title, email from customer WHERE " +
             "last_name = ?"
 
-        databaseConnection.withCloseable {
-            def statement = it.prepareStatement(sql)
+        Connection connection = databaseSession.getConnection()
+
+        connection.withCloseable {
+            def statement = it.prepareStatement(query)
             statement.setString(2, lastName)
             ResultSet rs = statement.executeQuery()
             while (rs.next()) {
@@ -62,7 +61,12 @@ class CustomerDatabaseQueries {
         return result
     }
 
-    //todo fetch the information for the affiliation by an working optimal sql statement
+    /*
+    We want to fetch all affiliations for a given person id.
+    As this is a n to m relationship, we need to look-up
+    the associated affiliations ids first.
+    Then we fetch every affiliation by the associated association ids.
+     */
     private List<Affiliation> fetchAffiliationsForPerson(int personId){
         def affiliations = []
         def affiliationIds = getAffiliationIdsForPerson(personId)
@@ -73,10 +77,22 @@ class CustomerDatabaseQueries {
         return affiliations
     }
 
-    private List<Integer> getAffiliationIdsForPerson(int personId) {
-        return [1]
+    /*
+    We look-up all affiliation ids for a given person ids
+    in the joint table.
+     */
+    private List<Integer> getAffiliationIdsForPerson(int customerId) {
+        String query = "SELECT affiliation_id FROM customer_affiliation WHERE " +
+            "customer_id = ?"
+
+        Connection connection = databaseSession.login()
+
+
     }
 
+    /*
+    We fetch an affiliation for the given affiliation id.
+     */
     private Affiliation fetchAffiliation(int affiliationId) {
         return new Affiliation.Builder(
             "dummy",
