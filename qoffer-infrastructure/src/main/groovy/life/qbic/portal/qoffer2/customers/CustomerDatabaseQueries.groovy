@@ -39,38 +39,31 @@ class CustomerDatabaseQueries {
      * @return a list of customers with a matching last name
      */
     List<Customer> findPersonByName(String lastName){
-        List<Customer> res = []
-        try{
-            String sql = "SELECT id, first_name, family_name, email from persons WHERE family_name = ?"
+        List<Customer> result = []
+        String sql = "SELECT id, first_name, last_name, title, email from persons WHERE " +
+            "last_name = ?"
 
-            PreparedStatement statement = null
-            try{
-                statement = databaseConnection.prepareStatement(sql)
-                statement.setString(1, lastName)
-                ResultSet rs = statement.executeQuery()
-                println rs
-
-                while (rs.next()) {
-                    fetchAffiliationForPerson(rs.getString(1).toInteger())
-                    res <<  new Customer(rs.getString(2),rs.getString(3),rs.getString(4))
-                }
-                return res
-            } catch (DatabaseQueryException sqlException) {
-                LOG.error("SQL operation unsuccessful: " + sqlException.getMessage())
-                sqlException.printStackTrace()
-            } finally {
-                DatabaseSession.logout(databaseConnection)
+        databaseConnection.withCloseable {
+            def statement = it.prepareStatement(sql)
+            statement.setString(2, lastName)
+            ResultSet rs = statement.executeQuery()
+            while (rs.next()) {
+                List<Affiliation> affiliations = fetchAffiliationsForPerson(rs.getString(1).toInteger())
+                def customer = new Customer(
+                    "${rs.getString(2)}",
+                    "${rs.getString(3)}",
+                    "${rs.getString(4)}",
+                    "${rs.getString(5)}",
+                    affiliations
+                )
+                result.add(customer)
             }
-            return null
-        }catch(DatabaseQueryException sqlException) {
-            LOG.error sqlException
-            DatabaseSession.logout(databaseConnection)
         }
-        return null
+        return result
     }
 
     //todo fetch the information for the affiliation by an working optimal sql statement
-    Affiliation fetchAffiliationForPerson(int personId){
+    List<Affiliation> fetchAffiliationsForPerson(int personId){
         //Affiliation affiliation = new Affiliation("group","acrony","orga","institute","faculty","contact","head","street","zip","city","country","webpage")
         //todo
         return null
