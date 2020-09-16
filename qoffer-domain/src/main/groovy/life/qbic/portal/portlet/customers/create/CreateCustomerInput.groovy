@@ -9,4 +9,6 @@ package life.qbic.portal.portlet.customers.create
  */
 interface CreateCustomerInput {
 
+  void createCustomer(Map customer)
+
 }

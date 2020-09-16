@@ -8,5 +8,9 @@ package life.qbic.portal.portlet.customers.create
  * @since: 1.0.0
  * @author: Tobias Koch
  */
-class CreateCustomer {
+class CreateCustomer implements CreateCustomerInput {
+  @Override
+  void createCustomer(Map customer) {
+
+  }
 }
