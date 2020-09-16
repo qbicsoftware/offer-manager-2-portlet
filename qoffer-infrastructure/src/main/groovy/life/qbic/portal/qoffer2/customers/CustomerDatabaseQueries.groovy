@@ -1,6 +1,7 @@
 package life.qbic.portal.qoffer2.customers
 
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 
 import life.qbic.portal.qoffer2.database.DatabaseSession
@@ -118,18 +119,36 @@ class CustomerDatabaseQueries {
             def statement = it.prepareStatement(query)
             statement.setString(2, affiliationId.toString())
             ResultSet rs = statement.executeQuery()
-            Affiliation affiliation = new Affiliation.Builder(
+            def affiliationBuilder = new Affiliation.Builder(
                         "${rs.getString(2)}", //organization
                         "${rs.getString(4)}", //street
                         "${rs.getString(5)}", //postal_code
-                        "${rs.getString(6)}", //city
-                        "${rs.getString(3)}", //address_addition
-                        "${rs.getString(7)}", //country
-                        "${rs.getString(8)}"  //category
-                                .build()
-                )
-            return affiliation
+                        "${rs.getString(6)}")
+            affiliationBuilder
+                .addressAddition("${rs.getString(3)}")
+                .country("${rs.getString(7)}")
+                .category(determineCategory("${rs.getString(8)}"))
+            return affiliationBuilder.build()
         }
+    }
+
+    private AffiliationCategory determineCategory(String value) {
+        def category
+        switch(value.toLowerCase()) {
+            case "internal":
+                category = AffiliationCategory.INTERNAL
+                break
+            case "external academic":
+                category = AffiliationCategory.EXTERNAL_ACADEMIC
+                break
+            case "external":
+                category = AffiliationCategory.EXTERNAL
+                break
+            default:
+                category = AffiliationCategory.UNKNOWN
+                break
+        }
+        return category
     }
 
     /**
