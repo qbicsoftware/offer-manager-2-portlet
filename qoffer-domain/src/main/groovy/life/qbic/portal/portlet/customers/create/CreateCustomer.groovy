@@ -1,5 +1,8 @@
 package life.qbic.portal.portlet.customers.create
 
+import life.qbic.portal.portlet.customers.Customer
+import life.qbic.portal.portlet.customers.CustomerDbGateway
+
 /**
  * This use case creates a customer in the system
  *
@@ -9,8 +12,18 @@ package life.qbic.portal.portlet.customers.create
  * @author: Tobias Koch
  */
 class CreateCustomer implements CreateCustomerInput {
-  @Override
-  void createCustomer(Map customer) {
 
+  private CustomerDbGateway customerDbGateway
+  private CreateCustomerOutput output
+
+
+  CreateCustomer(CreateCustomerOutput output, CustomerDbGateway customerDbGateway){
+    this.output = output
+    this.customerDbGateway = customerDbGateway
+  }
+
+  @Override
+  void createCustomer(Customer customer) {
+    customerDbGateway.addCustomer(customer)
   }
 }

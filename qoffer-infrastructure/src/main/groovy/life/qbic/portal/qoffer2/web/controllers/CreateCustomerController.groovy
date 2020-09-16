@@ -85,6 +85,6 @@ class CreateCustomerController {
 
     private void createNewCustomer() {
         // TODO create customer DTO and pass it to the use case input
-        this.useCaseInput.createCustomer(new HashMap())
+        this.useCaseInput.createCustomer(null)
     }
 }

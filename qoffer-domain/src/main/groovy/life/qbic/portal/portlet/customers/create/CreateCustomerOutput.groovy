@@ -1,4 +1,7 @@
 package life.qbic.portal.portlet.customers.create
+
+import life.qbic.portal.portlet.customers.Customer
+
 /**
  * Input interface for the {@link life.qbic.portal.portlet.customers.create.CreateCustomer} use case
  *
@@ -6,5 +9,6 @@ package life.qbic.portal.portlet.customers.create
  * @author: Tobias Koch
  */
 interface CreateCustomerOutput {
+
 
 }
