@@ -127,12 +127,12 @@ class CustomerDatabaseQueries {
             affiliationBuilder
                 .addressAddition("${rs.getString(3)}")
                 .country("${rs.getString(7)}")
-                .category(determineCategory("${rs.getString(8)}"))
+                .category(determineAffiliationCategory("${rs.getString(8)}"))
             return affiliationBuilder.build()
         }
     }
 
-    private AffiliationCategory determineCategory(String value) {
+    private static AffiliationCategory determineAffiliationCategory(String value) {
         def category
         switch(value.toLowerCase()) {
             case "internal":
