@@ -202,4 +202,29 @@ class CustomerDatabaseQueries {
     void updateCustomer(String customerId, Customer updatedInformation){
 
     }
+
+    List<Affiliation> getAffiliations() {
+        List<Affiliation> result = []
+        String query = "SELECT * from affiliation"
+
+        Connection connection = databaseSession.getConnection()
+
+        connection.withCloseable {
+            def statement = it.prepareStatement(query)
+            ResultSet rs = statement.executeQuery()
+            while (rs.next()) {
+                def affiliationBuilder = new Affiliation.Builder(
+                    "${rs.getString(2)}", //organization
+                    "${rs.getString(4)}", //street
+                    "${rs.getString(5)}", //postal_code
+                    "${rs.getString(6)}")
+                affiliationBuilder
+                    .addressAddition("${rs.getString(3)}")
+                    .country("${rs.getString(7)}")
+                    .category(determineAffiliationCategory("${rs.getString(8)}"))
+                result.add(affiliationBuilder.build())
+            }
+        }
+        return result
+    }
 }
