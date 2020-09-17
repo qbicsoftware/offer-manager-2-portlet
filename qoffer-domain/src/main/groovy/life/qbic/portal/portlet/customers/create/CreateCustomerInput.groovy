@@ -1,6 +1,7 @@
 package life.qbic.portal.portlet.customers.create
 
-import life.qbic.portal.portlet.customers.Customer
+import life.qbic.datamodel.dtos.business.Customer
+
 
 /**
  * Input interface for the {@link life.qbic.portal.portlet.customers.create.CreateCustomer} use case

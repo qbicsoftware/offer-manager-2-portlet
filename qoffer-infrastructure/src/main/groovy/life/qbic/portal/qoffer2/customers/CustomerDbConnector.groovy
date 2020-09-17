@@ -2,7 +2,7 @@ package life.qbic.portal.qoffer2.customers
 
 import life.qbic.datamodel.people.Person
 import life.qbic.portal.portlet.CriteriaType
-import life.qbic.portal.portlet.customers.Customer
+
 import life.qbic.portal.portlet.customers.CustomerDbGateway
 import life.qbic.portal.portlet.SearchCriteria
 import org.apache.logging.log4j.LogManager

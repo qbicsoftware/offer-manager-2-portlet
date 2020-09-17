@@ -1,6 +1,6 @@
 package life.qbic.portal.portlet.customers.create
 
-import life.qbic.portal.portlet.customers.Customer
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.customers.CustomerDbGateway
 
 /**

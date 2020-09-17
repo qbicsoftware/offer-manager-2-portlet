@@ -1,5 +1,7 @@
 package life.qbic.portal.portlet.offers.search
 
+import life.qbic.portal.portlet.SearchCriteria
+
 /**
  * This use case searches for offers matching provided criteria.
  *
@@ -9,5 +11,19 @@ package life.qbic.portal.portlet.offers.search
  * @since: 1.0.0
  * @author: Tobias Koch
  */
-class SearchOffers {
+class SearchOffers implements SearchOffersInput{
+
+    SearchOffers(SearchOffersOutput output){
+
+    }
+
+    @Override
+    void searchOffers(SearchCriteria searchCriteria) {
+
+    }
+
+    @Override
+    void downloadOfferAsPdf(String offerId) {
+
+    }
 }

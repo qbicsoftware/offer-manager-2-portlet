@@ -1,6 +1,6 @@
 package life.qbic.portal.qoffer2.web
 
-import life.qbic.portal.portlet.customers.Customer
+
 import life.qbic.portal.portlet.customers.create.CreateCustomerOutput
 import life.qbic.portal.portlet.customers.update.UpdateCustomerOutput
 import life.qbic.portal.portlet.offers.create.CreateOfferOutput

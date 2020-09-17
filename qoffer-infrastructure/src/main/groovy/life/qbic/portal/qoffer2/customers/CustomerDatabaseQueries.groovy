@@ -2,7 +2,7 @@ package life.qbic.portal.qoffer2.customers
 
 import life.qbic.datamodel.people.Person
 import life.qbic.datamodel.persons.Affiliation
-import life.qbic.portal.portlet.customers.Customer
+
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import org.apache.logging.log4j.LogManager
@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
-import java.sql.SQLException
 
 /**
  * This class contains all queries on the customer database

@@ -11,7 +11,7 @@ import com.vaadin.ui.FormLayout
 import com.vaadin.ui.TextField
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.persons.Affiliation
-import life.qbic.portal.portlet.customers.Customer
+
 import life.qbic.portal.qoffer2.web.ViewModel
 
 /**
