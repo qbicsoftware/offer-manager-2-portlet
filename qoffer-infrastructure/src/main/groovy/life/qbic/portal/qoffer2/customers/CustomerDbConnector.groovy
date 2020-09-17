@@ -1,8 +1,10 @@
 package life.qbic.portal.qoffer2.customers
 
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.people.Person
 import life.qbic.portal.portlet.CriteriaType
-import life.qbic.portal.portlet.customers.Customer
+
 import life.qbic.portal.portlet.customers.CustomerDbGateway
 import life.qbic.portal.portlet.SearchCriteria
 import org.apache.logging.log4j.LogManager
@@ -18,7 +20,7 @@ import org.apache.logging.log4j.Logger
  * @author: Jennifer Bödker
  *
  */
-class CustomerDbConnector implements CustomerDbGateway{
+class CustomerDbConnector implements CustomerDbGateway {
 
   CustomerDatabaseQueries databaseQueries
 
@@ -28,6 +30,11 @@ class CustomerDbConnector implements CustomerDbGateway{
     this.databaseQueries = databaseQueries
   }
 
+  /**
+   * @inheritDoc
+   * @param criteria
+   * @return
+   */
   @Override
   List<Customer> findCustomer(SearchCriteria criteria) {
     String searchCondition = criteria.criteriaValue
@@ -50,15 +57,32 @@ class CustomerDbConnector implements CustomerDbGateway{
 
   }
 
+  /**
+   * @inheritDoc
+   * @param customer
+   */
   @Override
   void addCustomer(Customer customer) {
     databaseQueries.addCustomer(customer)
 
   }
-
+  /**
+   * @inheritDoc
+   * @param customerId
+   * @param updatedCustomer
+   */
   @Override
   void updateCustomer(String customerId, Customer updatedCustomer) {
     databaseQueries.updateCustomer(customerId,updatedCustomer)
 
+  }
+
+  /**
+   * @inheritDoc
+   * @return
+   */
+  @Override
+  List<Affiliation> getAllAffiliations() {
+    databaseQueries.getAffiliations()
   }
 }
