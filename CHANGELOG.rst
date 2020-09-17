@@ -10,6 +10,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 1.0.0
 ------------------
 
+* Implement CreateCustomer use case
+* Create HTML template for offers
 * Create DependencyManager class
 * Maven structure and dependency management of core libraries
 * Create empty infrastructure classes
