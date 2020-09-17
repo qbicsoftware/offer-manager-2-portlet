@@ -1,17 +1,15 @@
 package life.qbic.portal.qoffer2.customers
 
-import life.qbic.datamodel.people.Person
-import life.qbic.datamodel.persons.Affiliation
-import life.qbic.portal.portlet.customers.Customer
-import life.qbic.portal.portlet.exceptions.DatabaseQueryException
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AffiliationCategory
+import life.qbic.datamodel.dtos.business.Customer
+
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 import java.sql.Connection
-import java.sql.PreparedStatement
 import java.sql.ResultSet
-import java.sql.SQLException
 
 /**
  * This class contains all queries on the customer database
@@ -25,12 +23,11 @@ import java.sql.SQLException
  */
 class CustomerDatabaseQueries {
 
-    private final Connection databaseConnection
-
+    private final DatabaseSession databaseSession
     private static final Logger LOG = LogManager.getLogger(CustomerDatabaseQueries.class)
 
-    CustomerDatabaseQueries(Connection connection){
-        this.databaseConnection = connection
+    CustomerDatabaseQueries(DatabaseSession databaseSession){
+        this.databaseSession = databaseSession
     }
 
     /**
@@ -39,42 +36,119 @@ class CustomerDatabaseQueries {
      * @param lastName of the customer
      * @return a list of customers with a matching last name
      */
-    List<Person> findPersonByName(String lastName){
-        List<Person> res = []
-        try{
-            String sql = "SELECT id, first_name, family_name, email from persons WHERE family_name = ?"
+    List<Customer> findPersonByName(String lastName){
+        List<Customer> result = []
+        String query = "SELECT id, first_name, last_name, title, email from customer WHERE " +
+            "last_name = ?"
 
-            PreparedStatement statement = null
-            try{
-                statement = databaseConnection.prepareStatement(sql)
-                statement.setString(1, lastName)
-                ResultSet rs = statement.executeQuery()
-                println rs
+        Connection connection = databaseSession.getConnection()
 
-                while (rs.next()) {
-                    fetchAffiliationForPerson(rs.getString(1).toInteger())
-                    res <<  new Person(rs.getString(2),rs.getString(3),rs.getString(4))
-                }
-                return res
-            } catch (DatabaseQueryException sqlException) {
-                LOG.error("SQL operation unsuccessful: " + sqlException.getMessage())
-                sqlException.printStackTrace()
-            } finally {
-                DatabaseSession.logout(databaseConnection)
+        connection.withCloseable {
+            def statement = it.prepareStatement(query)
+            statement.setString(2, lastName)
+            ResultSet rs = statement.executeQuery()
+            while (rs.next()) {
+                List<Affiliation> affiliations = fetchAffiliationsForPerson(rs.getString(1).toInteger())
+                def customer = new Customer(
+                    "${rs.getString(2)}",
+                    "${rs.getString(3)}",
+                    "${rs.getString(4)}",
+                    "${rs.getString(5)}",
+                    affiliations
+                )
+                result.add(customer)
             }
-            return null
-        }catch(DatabaseQueryException sqlException) {
-            LOG.error sqlException
-            DatabaseSession.logout(databaseConnection)
         }
-        return null
+        return result
     }
 
-    //todo fetch the information for the affiliation by an working optimal sql statement
-    Affiliation fetchAffiliationForPerson(int personId){
-        //Affiliation affiliation = new Affiliation("group","acrony","orga","institute","faculty","contact","head","street","zip","city","country","webpage")
-        //todo
-        return null
+    /*
+    We want to fetch all affiliations for a given person id.
+    As this is a n to m relationship, we need to look-up
+    the associated affiliations ids first.
+    Then we fetch every affiliation by the associated association ids.
+     */
+    private List<Affiliation> fetchAffiliationsForPerson(int personId){
+        def affiliations = []
+        def affiliationIds = getAffiliationIdsForPerson(personId)
+        affiliationIds.each {affiliationId ->
+            Affiliation affiliation = fetchAffiliation(affiliationId)
+            affiliations.add(affiliation)
+        }
+        return affiliations
+    }
+
+    /**
+     * Searches for an affiliation based on a customer id
+     *
+     * @param customerId Id of the customer
+     * @return list of Affiliation Ids associated with the provided customer id
+     */
+    private List<Integer> getAffiliationIdsForPerson(int customerId) {
+        List<Integer> result = []
+        String query = "SELECT affiliation_id FROM customer_affiliation WHERE " +
+            "customer_id = ?"
+
+        Connection connection = databaseSession.getConnection()
+
+        connection.withCloseable {
+            def statement = it.prepareStatement(query)
+            statement.setString(2, customerId)
+            ResultSet rs = statement.executeQuery()
+            while (rs.next()) {
+                result.add(rs.getString(1).toInteger())
+            }
+        }
+        return result
+
+    }
+    /**
+     * Searches for an affiliation based on an affiliation Id
+     *
+     * @param affiliationId Id of the affiliation
+     * @return Affiliation DTO associated with the provided affiliation Id
+     */
+    private Affiliation fetchAffiliation(int affiliationId) {
+
+        String affiliationProperties = "organization, address_addition, street, postal_code, city, country, category"
+        String query = "SELECT ${affiliationProperties} from affiliation WHERE " + "affiliationId = ?"
+
+        Connection connection = databaseSession.getConnection()
+
+        connection.withCloseable {
+            def statement = it.prepareStatement(query)
+            statement.setString(2, affiliationId.toString())
+            ResultSet rs = statement.executeQuery()
+            def affiliationBuilder = new Affiliation.Builder(
+                        "${rs.getString(2)}", //organization
+                        "${rs.getString(4)}", //street
+                        "${rs.getString(5)}", //postal_code
+                        "${rs.getString(6)}")
+            affiliationBuilder
+                .addressAddition("${rs.getString(3)}")
+                .country("${rs.getString(7)}")
+                .category(determineAffiliationCategory("${rs.getString(8)}"))
+            return affiliationBuilder.build()
+        }
+    }
+
+    private static AffiliationCategory determineAffiliationCategory(String value) {
+        def category
+        switch(value.toLowerCase()) {
+            case "internal":
+                category = AffiliationCategory.INTERNAL
+                break
+            case "external academic":
+                category = AffiliationCategory.EXTERNAL_ACADEMIC
+                break
+            case "external":
+                category = AffiliationCategory.EXTERNAL
+                break
+            default:
+                category = AffiliationCategory.UNKNOWN
+                break
+        }
+        return category
     }
 
     /**
@@ -127,5 +201,30 @@ class CustomerDatabaseQueries {
      */
     void updateCustomer(String customerId, Customer updatedInformation){
 
+    }
+
+    List<Affiliation> getAffiliations() {
+        List<Affiliation> result = []
+        String query = "SELECT * from affiliation"
+
+        Connection connection = databaseSession.getConnection()
+
+        connection.withCloseable {
+            def statement = it.prepareStatement(query)
+            ResultSet rs = statement.executeQuery()
+            while (rs.next()) {
+                def affiliationBuilder = new Affiliation.Builder(
+                    "${rs.getString(2)}", //organization
+                    "${rs.getString(4)}", //street
+                    "${rs.getString(5)}", //postal_code
+                    "${rs.getString(6)}")
+                affiliationBuilder
+                    .addressAddition("${rs.getString(3)}")
+                    .country("${rs.getString(7)}")
+                    .category(determineAffiliationCategory("${rs.getString(8)}"))
+                result.add(affiliationBuilder.build())
+            }
+        }
+        return result
     }
 }
