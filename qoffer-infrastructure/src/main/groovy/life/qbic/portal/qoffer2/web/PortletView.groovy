@@ -1,6 +1,7 @@
 package life.qbic.portal.qoffer2.web
+
 import com.vaadin.ui.VerticalLayout
-import life.qbic.portal.portlet.CreateCustomerView
+import life.qbic.portal.qoffer2.web.views.CreateCustomerView
 
 /**
  * Class which connects the view elements with the ViewModel and the Controller
@@ -25,18 +26,16 @@ class PortletView extends VerticalLayout {
         this.portletViewModel = portletViewModel
         this.createCustomer = createCustomer
         initLayout()
-        registerListeners()
     }
 
     /**
-     *
-     * @return
+     * Initializes the layout of the view
      */
-    private def initLayout() {
+    private void initLayout() {
         this.setMargin(false)
         this.setSpacing(false)
         this.addComponentsAndExpand(this.createCustomer)
         this.setSizeFull()
     }
-    private def registerListeners() {}
+
 }

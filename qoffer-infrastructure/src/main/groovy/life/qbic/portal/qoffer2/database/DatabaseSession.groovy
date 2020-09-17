@@ -70,4 +70,12 @@ class DatabaseSession {
     Connection getConnection() throws SQLException {
         return dataSource.getConnection()
     }
+
+    /**
+     * Returns the current DatabaseSession object
+     * @return
+     */
+    static DatabaseSession getINSTANCE() {
+        return INSTANCE
+    }
 }

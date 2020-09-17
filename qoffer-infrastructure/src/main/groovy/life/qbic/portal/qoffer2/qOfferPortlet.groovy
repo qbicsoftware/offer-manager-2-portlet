@@ -25,7 +25,7 @@ import life.qbic.portal.qoffer2.web.StyledNotification
 @CompileStatic
 class qOfferPortlet extends QBiCPortletUI {
 
-    private DependencyManager dependencyManager;
+    private DependencyManager dependencyManager
 
     qOfferPortlet() {
         super()

@@ -1,6 +1,6 @@
 package life.qbic.portal.qoffer2.web
 
-import life.qbic.datamodel.persons.Affiliation
+import life.qbic.datamodel.dtos.business.Affiliation
 
 
 /**
@@ -24,8 +24,16 @@ class ViewModel {
     ViewModel(List<Affiliation> affiliations, List<String> successNotifications,
               List<String> failureNotifications) {
         //this.affiliations = new ObservableList(affiliations)
-        Affiliation affiliation = new Affiliation(5,"groupname","acronym","organihzation","institute","faculty","contact","head","street","zip","city","country","webpage")
-        Affiliation affiliation2 = new Affiliation(4,"groupname2","acronym2","organihzation2","institute2","faculty2","contact2","head2","street2","zip2","city2","country2","webpage2")
+        Affiliation affiliation = new Affiliation.Builder("Universität Tübingen",
+                "Auf der Morgenstelle 10",
+                "72076",
+                "Tübingen").build()
+
+        Affiliation affiliation2 = new Affiliation.Builder("None",
+                "Gartenstrasse 20",
+                "72070",
+                "Tübingen").build()
+
         this.affiliations = new ObservableList([affiliation,affiliation2])
         this.successNotifications = new ObservableList(successNotifications)
         this.failureNotifications = new ObservableList(failureNotifications)

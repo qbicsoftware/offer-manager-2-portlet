@@ -1,11 +1,6 @@
-package life.qbic.portal.portlet
+package life.qbic.portal.qoffer2.web.views
 
 
-import com.vaadin.data.ValidationResult
-import com.vaadin.data.ValueContext
-import com.vaadin.data.validator.EmailValidator
-import com.vaadin.data.validator.StringLengthValidator
-import com.vaadin.server.UserError
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.FormLayout
@@ -21,7 +16,7 @@ import com.vaadin.ui.TextField
  * CreateCustomerView will be integrated into the qOffer 2.0 Portlet and provides an User Interface
  * with the intention of enabling a user the creation of a new Customer in the QBiC Database
  *
- * @since: 1.0.0*
+ * @since: 1.0.0
  */
 
 @Log4j2

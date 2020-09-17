@@ -10,6 +10,7 @@ import com.vaadin.ui.ComboBox
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.TextField
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.persons.Affiliation
 
 import life.qbic.portal.qoffer2.web.ViewModel
@@ -72,9 +73,6 @@ class UpdateCustomerView extends FormLayout {
         createCustomerForm.addComponent(emailField)
         createCustomerForm.addComponent(affiliationComboBox)
         createCustomerForm.addComponent(submitButton)
-        //todo do we want to use this here? see Vaadin
-        //"When using the setBean method, the business object instance will be updated whenever the user changes the value in any bound field.
-        // If some other part of the application is also using the same instance, then that part might show changes before the user has clicked the save button."
 
         // Retrieve user input from fields and add them to the the Binder if entries are valid
         Binder.Binding<Customer, String> bindFirstName = customerBinder.forField(firstNameField).withValidator(new StringLengthValidator(

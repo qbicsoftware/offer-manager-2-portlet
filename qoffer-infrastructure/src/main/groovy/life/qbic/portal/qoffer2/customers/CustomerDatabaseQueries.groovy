@@ -93,7 +93,7 @@ class CustomerDatabaseQueries {
 
         connection.withCloseable {
             def statement = it.prepareStatement(query)
-            statement.setString(2, customerId)
+            statement.setInt(2, customerId)
             ResultSet rs = statement.executeQuery()
             while (rs.next()) {
                 result.add(rs.getString(1).toInteger())

@@ -1,13 +1,16 @@
 package life.qbic.portal.qoffer2
 
 import groovy.util.logging.Log4j2
-import life.qbic.portal.portlet.CreateCustomerView
+import life.qbic.portal.portlet.customers.CustomerDbGateway
 import life.qbic.portal.portlet.customers.create.CreateCustomer
-import life.qbic.portal.portlet.customers.create.CreateCustomerInput
+import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
+import life.qbic.portal.qoffer2.customers.CustomerDbConnector
+import life.qbic.portal.qoffer2.database.DatabaseSession
 import life.qbic.portal.qoffer2.web.PortletView
 import life.qbic.portal.qoffer2.web.Presenter
 import life.qbic.portal.qoffer2.web.ViewModel
 import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
+import life.qbic.portal.qoffer2.web.views.CreateCustomerView
 
 /**
  * Class that manages all the dependency injections and class instance creations
@@ -21,11 +24,13 @@ import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 
 @Log4j2
 class DependencyManager {
+
     private PortletView portletView
-    private CreateCustomerController createCustomerController
     private ViewModel viewModel
     private Presenter presenter
 
+    private CustomerDbGateway customerDbGateway
+    private CreateCustomerController createCustomerController
     private CreateCustomer createCustomer
 
     /**
@@ -68,8 +73,11 @@ class DependencyManager {
         // setup presenter
         presenter = new Presenter(viewModel)
 
+        //setup database
+        setupCustomerDbConnection()
+
         // setup CreateCustomer use case
-        createCustomer = new CreateCustomer(presenter,null)
+        createCustomer = new CreateCustomer(presenter, customerDbGateway)
 
         try {
             this.createCustomerController = new CreateCustomerController(createCustomerView,
@@ -82,6 +90,16 @@ class DependencyManager {
 
     protected PortletView getPortletView() {
         return this.portletView
+    }
+
+    /**
+     * Sets up the database session
+     * @return
+     */
+    private setupCustomerDbConnection(){
+        DatabaseSession.create()
+        CustomerDatabaseQueries queries = new CustomerDatabaseQueries(DatabaseSession.INSTANCE)
+        customerDbGateway = new CustomerDbConnector(queries)
     }
 
 

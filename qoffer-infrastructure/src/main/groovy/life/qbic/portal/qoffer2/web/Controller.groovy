@@ -11,4 +11,9 @@ package life.qbic.portal.qoffer2.web
  * @see <a href="https://github.com/qbicsoftware/qoffer-2-portlet/tree/master/docs/"</a>
  */
 class Controller {
+
+    Controller(){
+
+    }
+
 }

@@ -5,15 +5,16 @@ import com.vaadin.data.ValueContext
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.data.validator.StringLengthValidator
 import com.vaadin.server.UserError
-import life.qbic.portal.portlet.CreateCustomerView
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.customers.create.CreateCustomerInput
+import life.qbic.portal.qoffer2.web.views.CreateCustomerView
 
 
 /**
  * Controller class responsible for the data flow into qoffer-2
  *
  * This class creates instances of qoffer-2 classes and injects them as described in the architectural draft.
- *
  *
  * @since: 1.0.0
  * @author: Jennifer Bödker
@@ -75,7 +76,8 @@ class CreateCustomerController {
 
         view.affiliationComboBox.addSelectionListener({ event ->
             view.affiliation = event.getValue()
-            view.customerInfo.put("Affiliaton", view.affiliation)
+            println view.affiliation
+            view.customerInfo.put("Affiliation", view.affiliation)
         })
 
         view.submitButton.addClickListener({ event ->
@@ -84,7 +86,7 @@ class CreateCustomerController {
     }
 
     private void createNewCustomer() {
-        // TODO create customer DTO and pass it to the use case input
-        this.useCaseInput.createCustomer(null)
+        Customer customer = new Customer("first name","last name","title","mail", [view.affiliation] as List<Affiliation>)
+        this.useCaseInput.createCustomer(customer)
     }
 }
