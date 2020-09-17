@@ -3,9 +3,10 @@ package life.qbic.portal.portlet.customers.affiliation
 import life.qbic.datamodel.dtos.business.Affiliation
 
 /**
- * <class short description - 1 Line!>
+ * This interface serves as output for the List Affiliation use case
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * Implement this interface, when you want to create an object that receives
+ * a list of all available affiliations.
  *
  * @author Sven Fillinger
  * @since 1.0.0
