@@ -1,6 +1,5 @@
 package life.qbic.portal.portlet.customers.create
 
-
 /**
  * Input interface for the {@link life.qbic.portal.portlet.customers.create.CreateCustomer} use case
  *
@@ -9,5 +8,11 @@ package life.qbic.portal.portlet.customers.create
  */
 interface CreateCustomerOutput {
 
+    /**
+     * Notifies the user about the created customer
+     *
+     * @param notification containing a message for the user
+     */
+    void createdCustomer(String notification)
 
 }

@@ -26,4 +26,8 @@ class Presenter implements SearchOffersOutput, CreateOfferOutput, UpdateOfferOut
         this.viewModel = viewModel
     }
 
+    @Override
+    void createdCustomer(String notification) {
+        viewModel.showSuccessNotification(notification)
+    }
 }

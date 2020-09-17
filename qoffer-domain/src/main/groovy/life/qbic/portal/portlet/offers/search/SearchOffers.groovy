@@ -1,6 +1,7 @@
 package life.qbic.portal.portlet.offers.search
 
 import life.qbic.portal.portlet.SearchCriteria
+import life.qbic.portal.portlet.offers.OfferExporter
 
 /**
  * This use case searches for offers matching provided criteria.
@@ -13,8 +14,12 @@ import life.qbic.portal.portlet.SearchCriteria
  */
 class SearchOffers implements SearchOffersInput{
 
-    SearchOffers(SearchOffersOutput output){
+    private final OfferExporter exporter
+    private final SearchOffersOutput output
 
+    SearchOffers(SearchOffersOutput output, OfferExporter exporter){
+        this.output = output
+        this.exporter = exporter
     }
 
     @Override

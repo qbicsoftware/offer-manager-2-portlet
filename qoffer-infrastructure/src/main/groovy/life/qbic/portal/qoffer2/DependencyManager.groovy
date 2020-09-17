@@ -5,6 +5,7 @@ import life.qbic.portal.portlet.CreateCustomerView
 import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.portlet.customers.create.CreateCustomerInput
 import life.qbic.portal.qoffer2.web.PortletView
+import life.qbic.portal.qoffer2.web.Presenter
 import life.qbic.portal.qoffer2.web.ViewModel
 import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 
@@ -23,6 +24,10 @@ class DependencyManager {
     private PortletView portletView
     private CreateCustomerController createCustomerController
     private ViewModel viewModel
+    private Presenter presenter
+
+    private CreateCustomer createCustomer
+
     /**
      * Public constructor.
      *
@@ -70,6 +75,12 @@ class DependencyManager {
             log.error("Could not create ${PortletView.getSimpleName()} view.", e)
             throw e
         }
+
+        // setup presenter
+        presenter = new Presenter(viewModel)
+
+        // setup CreateCustomer use case
+        createCustomer = new CreateCustomer(presenter,null)
     }
 
     protected PortletView getPortletView() {

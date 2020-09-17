@@ -30,4 +30,13 @@ class ViewModel {
         this.successNotifications = new ObservableList(successNotifications)
         this.failureNotifications = new ObservableList(failureNotifications)
     }
+
+    /**
+     * Notifies the user about a successful operation
+     *
+     * @param notification describing what has been successfully finished
+     */
+    void showSuccessNotification(String notification){
+        successNotifications.add(notification)
+    }
 }
