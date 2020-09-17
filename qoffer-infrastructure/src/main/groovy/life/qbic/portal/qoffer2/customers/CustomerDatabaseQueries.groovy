@@ -206,9 +206,7 @@ class CustomerDatabaseQueries {
     private int createNewCustomer(Customer customer) {
         String query = "INSERT INTO customer (first_name, last_name, title, email) " +
             "VALUES(?, ?, ?, ?)"
-
         Connection connection = databaseSession.getConnection()
-
         List<Integer> generatedKeys = []
 
         connection.withCloseable {
@@ -220,8 +218,27 @@ class CustomerDatabaseQueries {
             statement.execute()
             generatedKeys.add(statement.getGeneratedKeys().getInt(1))
         }
-
         return generatedKeys[0]
+    }
+
+    private void storeAffiliation(int customerId, List<Affiliation> affiliations) {
+        String query = "INSERT INTO customer_affiliation (affiliation_id, customer_id) " +
+            "VALUES(?, ?)"
+        Connection connection = databaseSession.getConnection()
+
+        connection.withCloseable {
+            affiliations.each {affiliation ->
+                def affiliationId = getAffiliationId(affiliation)
+                def statement = connection.prepareStatement(query)
+                statement.setInt(1, affiliationId)
+                statement.setInt(2, customerId)
+                statement.execute()
+            }
+        }
+    }
+
+    private int getAffiliationId(Affiliation affiliation) {
+        return -1
     }
 
 
