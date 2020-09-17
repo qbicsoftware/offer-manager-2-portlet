@@ -56,17 +56,6 @@ class DependencyManager {
             throw e
         }
 
-        CreateCustomerInput createCustomerUseCase = new CreateCustomer()
-
-        try {
-            this.createCustomerController = new CreateCustomerController(createCustomerView,
-                createCustomerUseCase)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${createCustomerController.getSimpleName()} setup.", e)
-            throw e
-        }
-
-
         PortletView portletView
         try {
             portletView = new PortletView(this.viewModel, createCustomerView)
@@ -81,6 +70,14 @@ class DependencyManager {
 
         // setup CreateCustomer use case
         createCustomer = new CreateCustomer(presenter,null)
+
+        try {
+            this.createCustomerController = new CreateCustomerController(createCustomerView,
+                    createCustomer)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${createCustomerController.getSimpleName()} setup.", e)
+            throw e
+        }
     }
 
     protected PortletView getPortletView() {
