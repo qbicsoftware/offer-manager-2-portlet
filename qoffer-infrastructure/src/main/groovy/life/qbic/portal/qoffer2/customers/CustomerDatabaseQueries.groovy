@@ -3,7 +3,8 @@ package life.qbic.portal.qoffer2.customers
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
-
+import life.qbic.portal.portlet.customers.CustomerDbGateway
+import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -189,9 +190,31 @@ class CustomerDatabaseQueries {
      *
      * @param customer which needs to be added to the database
      */
-    void addCustomer(Customer customer){
-
+    void addCustomer(Customer customer) throws DatabaseQueryException {
+        if (customerExists(customer)) {
+            throw new DatabaseQueryException("Customer is already in the database.")
+        }
+        int customerId = createNewCustomer(customer)
+        storeAffiliation(customerId, customer.affiliations)
     }
+
+    private boolean customerExists(Customer customer) {
+        return true
+    }
+
+    private int createNewCustomer(Customer customer) {
+        String query = "SELECT ${affiliationProperties} from affiliation WHERE " + "affiliationId = ?"
+
+        Connection connection = databaseSession.getConnection()
+
+        connection.withCloseable {
+            def statement = connection.prepareStatement()
+        }
+
+        return -1
+    }
+
+
 
     /**
      * Searches for a customer by its ID and updates the customer information according to the new information
