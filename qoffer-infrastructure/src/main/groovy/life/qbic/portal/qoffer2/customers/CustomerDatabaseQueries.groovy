@@ -238,7 +238,35 @@ class CustomerDatabaseQueries {
     }
 
     private int getAffiliationId(Affiliation affiliation) {
-        return -1
+        String query = "SELECT FROM affiliation WHERE organisation=? " +
+            "AND address_addition=? " +
+            "AND street=? " +
+            "AND postal_code=? " +
+            "AND city=?"
+        Connection connection = databaseSession.getConnection()
+
+        List<Integer> affiliationIds = []
+
+        connection.withCloseable {
+            def statement = connection.prepareStatement(query)
+            statement.setString(1, affiliation.organisation)
+            statement.setString(2, affiliation.addressAddition)
+            statement.setString(3, affiliation.street)
+            statement.setString(4, affiliation.postalCode)
+            statement.setString(5, affiliation.city)
+            statement.execute()
+            ResultSet rs = statement.getResultSet()
+            while (rs.next()) {
+                affiliationIds.add(rs.getInt(0))
+            }
+        }
+        if(affiliationIds.size() > 1) {
+            throw new DatabaseQueryException("More than one entry found for $affiliation.")
+        }
+        if (affiliationIds.empty) {
+            throw new DatabaseQueryException("No matching affiliation found for $affiliation.")
+        }
+        return affiliationIds[0]
     }
 
 
