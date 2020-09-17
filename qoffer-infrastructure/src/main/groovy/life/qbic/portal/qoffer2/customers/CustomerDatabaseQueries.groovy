@@ -11,6 +11,7 @@ import org.apache.logging.log4j.Logger
 
 import java.sql.Connection
 import java.sql.ResultSet
+import java.sql.Statement
 
 /**
  * This class contains all queries on the customer database
@@ -203,15 +204,24 @@ class CustomerDatabaseQueries {
     }
 
     private int createNewCustomer(Customer customer) {
-        String query = "SELECT ${affiliationProperties} from affiliation WHERE " + "affiliationId = ?"
+        String query = "INSERT INTO customer (first_name, last_name, title, email) " +
+            "VALUES(?, ?, ?, ?)"
 
         Connection connection = databaseSession.getConnection()
 
+        List<Integer> generatedKeys = []
+
         connection.withCloseable {
-            def statement = connection.prepareStatement()
+            def statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement.setString(1, customer.firstName )
+            statement.setString(2, customer.lastName)
+            statement.setString(3, customer.title)
+            statement.setString(4, customer.eMailAddress )
+            statement.execute()
+            generatedKeys.add(statement.getGeneratedKeys().getInt(1))
         }
 
-        return -1
+        return generatedKeys[0]
     }
 
 
