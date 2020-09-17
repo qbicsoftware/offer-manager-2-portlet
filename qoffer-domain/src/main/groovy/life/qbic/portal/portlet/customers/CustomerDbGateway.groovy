@@ -1,5 +1,6 @@
 package life.qbic.portal.portlet.customers
 
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.SearchCriteria
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
@@ -41,5 +42,12 @@ interface CustomerDbGateway {
      * database
      */
     void updateCustomer(String customerId, Customer updatedCustomer) throws DatabaseQueryException
+
+    /**
+     * Fetches all available affiliations from the database
+     *
+     * @return A list of available affiliations
+     */
+    List<Affiliation> getAllAffiliations()
 
 }
