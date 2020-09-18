@@ -24,6 +24,7 @@ class CreateCustomer implements CreateCustomerInput {
 
   @Override
   void createCustomer(Customer customer) {
+    println "i am in the usecase"
     customerDbGateway.addCustomer(customer)
   }
 }

@@ -87,7 +87,9 @@ class CreateCustomerController {
     }
 
     private void createNewCustomer() {
+        println "created new customer"
         Customer customer = new Customer("first name","last name","title","mail", [view.affiliation] as List<Affiliation>)
+        println customer
         this.useCaseInput.createCustomer(customer)
     }
 }

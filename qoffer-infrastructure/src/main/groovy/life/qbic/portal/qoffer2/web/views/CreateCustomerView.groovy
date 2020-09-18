@@ -1,6 +1,8 @@
 package life.qbic.portal.qoffer2.web.views
 
-
+import com.vaadin.data.Binder
+import com.vaadin.data.validator.EmailValidator
+import com.vaadin.data.validator.StringLengthValidator
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.FormLayout
@@ -8,6 +10,8 @@ import com.vaadin.ui.TextField
 
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
 import life.qbic.portal.qoffer2.web.ViewModel
 
 /**
@@ -78,6 +82,9 @@ class CreateCustomerView extends FormLayout {
         createCustomerForm.addComponent(affiliationComboBox)
         createCustomerForm.addComponent(submitButton)
 
+
+        // Retrieve user input from fields and add them to the the Binder if entries are valid
+
         //Add Validators to the components
         this.addComponent(createCustomerForm)
     }
@@ -96,5 +103,6 @@ class CreateCustomerView extends FormLayout {
         affiliationComboBox.setItemCaptionGenerator({ Affiliation af -> af.organisation })
         affiliationComboBox.setEmptySelectionAllowed(false)
     }
+
 
 }

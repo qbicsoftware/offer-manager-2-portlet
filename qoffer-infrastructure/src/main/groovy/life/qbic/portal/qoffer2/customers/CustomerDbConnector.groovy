@@ -62,6 +62,7 @@ class CustomerDbConnector implements CustomerDbGateway {
    */
   @Override
   void addCustomer(Customer customer) {
+    println "adding customer"
     databaseQueries.addCustomer(customer)
 
   }

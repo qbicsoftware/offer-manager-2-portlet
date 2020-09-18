@@ -190,7 +190,7 @@ class CustomerDatabaseQueries {
      * @param customer which needs to be added to the database
      */
     void addCustomer(Customer customer){
-
+        println "i am done"
     }
 
     /**

@@ -39,7 +39,6 @@ class UpdateCustomerView extends FormLayout {
 
     UpdateCustomerView(ViewModel viewModel, Customer editableCustomer) {
         super()
-        this.controller = controller
         this.viewModel = viewModel
         this.editableCustomer = editableCustomer
         initLayout()
