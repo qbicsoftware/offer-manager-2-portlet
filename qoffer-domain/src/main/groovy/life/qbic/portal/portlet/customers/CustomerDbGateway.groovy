@@ -23,7 +23,7 @@ interface CustomerDbGateway {
      * @param criteria a map with search criteria
      * @return a person with affiliation and contact information
      */
-    List<Customer> findCustomer(SearchCriteria criteria)
+    List<Customer> findCustomer(SearchCriteria criteria) throws DatabaseQueryException
 
     /**
      * Adds a customer to the user database

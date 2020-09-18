@@ -13,6 +13,8 @@ interface CreateCustomerOutput {
      *
      * @param notification containing a message for the user
      */
-    void createdCustomer(String notification)
+    void successNotification(String notification)
+
+    void failNotification(String notification)
 
 }

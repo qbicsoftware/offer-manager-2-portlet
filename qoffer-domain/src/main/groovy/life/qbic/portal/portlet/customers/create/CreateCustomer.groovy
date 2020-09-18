@@ -2,6 +2,7 @@ package life.qbic.portal.portlet.customers.create
 
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.customers.CustomerDbGateway
+import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 /**
  * This use case creates a customer in the system
@@ -24,7 +25,11 @@ class CreateCustomer implements CreateCustomerInput {
 
   @Override
   void createCustomer(Customer customer) {
-    println "i am in the usecase"
-    customerDbGateway.addCustomer(customer)
+    try{
+      customerDbGateway.addCustomer(customer)
+      output.successNotification("Successfully created a new customer")
+    }catch(DatabaseQueryException databaseQueryException){
+      output.failNotification(databaseQueryException.message)
+    }
   }
 }

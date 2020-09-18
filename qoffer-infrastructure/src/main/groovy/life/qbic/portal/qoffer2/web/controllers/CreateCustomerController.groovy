@@ -23,8 +23,13 @@ import life.qbic.portal.qoffer2.web.views.CreateCustomerView
 class CreateCustomerController {
 
     CreateCustomerView view
-
     CreateCustomerInput useCaseInput
+
+    private String firstName
+    private String lastName
+    private String title = "title"
+    private String email
+    private Affiliation affiliation
 
     CreateCustomerController(CreateCustomerView view, CreateCustomerInput useCaseInput) {
         this.view = view
@@ -44,6 +49,8 @@ class CreateCustomerController {
             } else {
                 view.firstNameField.setComponentError(null)
                 view.firstName = event.getValue().toString()
+
+                firstName = event.getValue().toString()
             }
         })
 
@@ -58,6 +65,8 @@ class CreateCustomerController {
                 view.lastNameField.setComponentError(null)
                 view.lastName = event.getValue().toString()
                 view.customerInfo.put("Last Name", view.lastName)
+
+                lastName = event.getValue().toString()
             }
         })
 
@@ -72,24 +81,27 @@ class CreateCustomerController {
                 view.emailField.setComponentError(null)
                 view.email = event.getValue().toString()
                 view.customerInfo.put("email", view.email)
+
+                email = event.getValue().toString()
             }
         })
 
         view.affiliationComboBox.addSelectionListener({ event ->
-            view.affiliation = event.getValue()
-            println view.affiliation
+            view.affiliation = event.getValue() as Affiliation
             view.customerInfo.put("Affiliation", view.affiliation)
+
+            affiliation = event.getValue() as Affiliation
         })
 
         view.submitButton.addClickListener({ event ->
             createNewCustomer()
         })
+
     }
 
     private void createNewCustomer() {
-        println "created new customer"
-        Customer customer = new Customer("first name","last name","title","mail", [view.affiliation] as List<Affiliation>)
-        println customer
+        //todo add title to the dto
+        Customer customer = new Customer(firstName,lastName,title,email, affiliation as List<Affiliation>)
         this.useCaseInput.createCustomer(customer)
     }
 }

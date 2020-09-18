@@ -4,12 +4,14 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 
+import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 import java.sql.Connection
 import java.sql.ResultSet
+import java.sql.Statement
 
 /**
  * This class contains all queries on the customer database
@@ -93,7 +95,7 @@ class CustomerDatabaseQueries {
 
         connection.withCloseable {
             def statement = it.prepareStatement(query)
-            statement.setInt(2, customerId)
+            statement.setString(2, customerId)
             ResultSet rs = statement.executeQuery()
             while (rs.next()) {
                 result.add(rs.getString(1).toInteger())
@@ -189,9 +191,85 @@ class CustomerDatabaseQueries {
      *
      * @param customer which needs to be added to the database
      */
-    void addCustomer(Customer customer){
-        println "i am done"
+    void addCustomer(Customer customer) throws DatabaseQueryException {
+        if (customerExists(customer)) {
+            throw new DatabaseQueryException("Customer is already in the database.")
+        }
+        int customerId = createNewCustomer(customer)
+        storeAffiliation(customerId, customer.affiliations)
     }
+
+    private boolean customerExists(Customer customer) {
+        return true
+    }
+
+    private int createNewCustomer(Customer customer) {
+        String query = "INSERT INTO customer (first_name, last_name, title, email) " +
+            "VALUES(?, ?, ?, ?)"
+        Connection connection = databaseSession.getConnection()
+        List<Integer> generatedKeys = []
+
+        connection.withCloseable {
+            def statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+            statement.setString(1, customer.firstName )
+            statement.setString(2, customer.lastName)
+            statement.setString(3, customer.title)
+            statement.setString(4, customer.eMailAddress )
+            statement.execute()
+            generatedKeys.add(statement.getGeneratedKeys().getInt(1))
+        }
+        return generatedKeys[0]
+    }
+
+    private void storeAffiliation(int customerId, List<Affiliation> affiliations) {
+        String query = "INSERT INTO customer_affiliation (affiliation_id, customer_id) " +
+            "VALUES(?, ?)"
+        Connection connection = databaseSession.getConnection()
+
+        connection.withCloseable {
+            affiliations.each {affiliation ->
+                def affiliationId = getAffiliationId(affiliation)
+                def statement = connection.prepareStatement(query)
+                statement.setInt(1, affiliationId)
+                statement.setInt(2, customerId)
+                statement.execute()
+            }
+        }
+    }
+
+    private int getAffiliationId(Affiliation affiliation) {
+        String query = "SELECT FROM affiliation WHERE organisation=? " +
+            "AND address_addition=? " +
+            "AND street=? " +
+            "AND postal_code=? " +
+            "AND city=?"
+        Connection connection = databaseSession.getConnection()
+
+        List<Integer> affiliationIds = []
+
+        connection.withCloseable {
+            def statement = connection.prepareStatement(query)
+            statement.setString(1, affiliation.organisation)
+            statement.setString(2, affiliation.addressAddition)
+            statement.setString(3, affiliation.street)
+            statement.setString(4, affiliation.postalCode)
+            statement.setString(5, affiliation.city)
+            statement.execute()
+            ResultSet rs = statement.getResultSet()
+            while (rs.next()) {
+                affiliationIds.add(rs.getInt(0))
+            }
+        }
+        if(affiliationIds.size() > 1) {
+            throw new DatabaseQueryException("More than one entry found for $affiliation.")
+        }
+        if (affiliationIds.empty) {
+            throw new DatabaseQueryException("No matching affiliation found for $affiliation.")
+        }
+        return affiliationIds[0]
+    }
+
+
 
     /**
      * Searches for a customer by its ID and updates the customer information according to the new information

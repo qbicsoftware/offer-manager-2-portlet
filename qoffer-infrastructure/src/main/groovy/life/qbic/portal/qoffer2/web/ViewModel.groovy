@@ -47,4 +47,13 @@ class ViewModel {
     void showSuccessNotification(String notification){
         successNotifications.add(notification)
     }
+
+    /**
+     * Notifies the user about a failed operation
+     *
+     * @param notification with a detailed failure message
+     */
+    void showFailNotification(String notification){
+        failureNotifications.add(notification)
+    }
 }

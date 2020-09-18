@@ -2,10 +2,12 @@ package life.qbic.portal.qoffer2.customers
 
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.people.Person
 import life.qbic.portal.portlet.CriteriaType
 
 import life.qbic.portal.portlet.customers.CustomerDbGateway
 import life.qbic.portal.portlet.SearchCriteria
+import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -41,7 +43,7 @@ class CustomerDbConnector implements CustomerDbGateway {
     switch(criteria.criteriaType){
       case CriteriaType.LAST_NAME:
         //todo create a Customer
-        databaseQueries.findPersonByName(searchCondition)
+        List<Customer> customer = databaseQueries.findPersonByName(searchCondition)
             return null
       case CriteriaType.GROUP_NAME:
             return databaseQueries.findCustomerByGroup(searchCondition)
@@ -61,8 +63,7 @@ class CustomerDbConnector implements CustomerDbGateway {
    * @param customer
    */
   @Override
-  void addCustomer(Customer customer) {
-    println "adding customer"
+  void addCustomer(Customer customer) throws DatabaseQueryException {
     databaseQueries.addCustomer(customer)
 
   }
