@@ -65,7 +65,6 @@ class CustomerDbConnector implements CustomerDbGateway {
   @Override
   void addCustomer(Customer customer) throws DatabaseQueryException {
     databaseQueries.addCustomer(customer)
-
   }
   /**
    * @inheritDoc

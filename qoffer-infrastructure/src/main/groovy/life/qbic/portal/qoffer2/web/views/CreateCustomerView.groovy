@@ -1,8 +1,7 @@
 package life.qbic.portal.qoffer2.web.views
 
-import com.vaadin.data.Binder
-import com.vaadin.data.validator.EmailValidator
-import com.vaadin.data.validator.StringLengthValidator
+
+import com.vaadin.server.Page
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.FormLayout
@@ -11,8 +10,6 @@ import com.vaadin.ui.TextField
 
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
 import life.qbic.portal.qoffer2.web.StyledNotification
 import life.qbic.portal.qoffer2.web.ViewModel
 
@@ -58,7 +55,8 @@ class CreateCustomerView extends FormLayout {
         this.viewModel = viewModel
         this.customerInfo = new HashMap()
         initLayout()
-        showNotification()
+        showErrorNotification()
+        showSuccessNotification()
     }
 
     /**
@@ -113,14 +111,30 @@ class CreateCustomerView extends FormLayout {
         affiliationComboBox.setEmptySelectionAllowed(false)
     }
 
-    def showNotification(){
+    /**
+     *
+     */
+    void showErrorNotification(){
         viewModel.failureNotifications.addPropertyChangeListener(new PropertyChangeListener() {
             @Override
             void propertyChange(PropertyChangeEvent evt) {
-                print evt.newValue
-                println " this is the message"
                 String message = evt.newValue
                 failureNotification = new StyledNotification("Error", message, Notification.Type.ERROR_MESSAGE)
+                failureNotification.show(Page.getCurrent())
+            }
+        })
+    }
+
+    /**
+     *
+     */
+    void showSuccessNotification(){
+        viewModel.successNotifications.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            void propertyChange(PropertyChangeEvent evt) {
+                String message = evt.newValue
+                successNotification = new StyledNotification("Success", message, Notification.Type.HUMANIZED_MESSAGE)
+                successNotification.show(Page.getCurrent())
             }
         })
     }
