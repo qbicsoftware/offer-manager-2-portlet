@@ -6,13 +6,18 @@ import com.vaadin.data.validator.StringLengthValidator
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.FormLayout
+import com.vaadin.ui.Notification
 import com.vaadin.ui.TextField
 
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
+import life.qbic.portal.qoffer2.web.StyledNotification
 import life.qbic.portal.qoffer2.web.ViewModel
+
+import java.beans.PropertyChangeEvent
+import java.beans.PropertyChangeListener
 
 /**
  * This class generates a Form Layout in which the user
@@ -40,6 +45,9 @@ class CreateCustomerView extends FormLayout {
     ComboBox affiliationComboBox
     Button submitButton
 
+    StyledNotification failureNotification
+    StyledNotification successNotification
+
     private boolean firstNameValidity
     private boolean lastNameValidity
     private boolean emailValidity
@@ -50,6 +58,7 @@ class CreateCustomerView extends FormLayout {
         this.viewModel = viewModel
         this.customerInfo = new HashMap()
         initLayout()
+        showNotification()
     }
 
     /**
@@ -102,6 +111,18 @@ class CreateCustomerView extends FormLayout {
         affiliationComboBox.setItems(affiliationList)
         affiliationComboBox.setItemCaptionGenerator({ Affiliation af -> af.organisation })
         affiliationComboBox.setEmptySelectionAllowed(false)
+    }
+
+    def showNotification(){
+        viewModel.failureNotifications.addPropertyChangeListener(new PropertyChangeListener() {
+            @Override
+            void propertyChange(PropertyChangeEvent evt) {
+                print evt.newValue
+                println " this is the message"
+                String message = evt.newValue
+                failureNotification = new StyledNotification("Error", message, Notification.Type.ERROR_MESSAGE)
+            }
+        })
     }
 
 

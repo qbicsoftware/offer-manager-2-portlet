@@ -2,6 +2,9 @@ package life.qbic.portal.qoffer2.web
 
 import life.qbic.datamodel.dtos.business.Affiliation
 
+import java.beans.PropertyChangeEvent
+import java.beans.PropertyChangeListener
+
 
 /**
  * A simple DTO for data displayed in the PortletView
@@ -13,9 +16,9 @@ import life.qbic.datamodel.dtos.business.Affiliation
  * @author: Tobias Koch
  */
 class ViewModel {
-    final ObservableList affiliations
-    final ObservableList successNotifications
-    final ObservableList failureNotifications
+    ObservableList affiliations
+    ObservableList successNotifications
+    ObservableList failureNotifications
 
     ViewModel() {
         this(new ArrayList<Affiliation>(), new ArrayList<String>(), new ArrayList<String>())
@@ -54,6 +57,7 @@ class ViewModel {
      * @param notification with a detailed failure message
      */
     void showFailNotification(String notification){
+        println notification
         failureNotifications.add(notification)
     }
 }

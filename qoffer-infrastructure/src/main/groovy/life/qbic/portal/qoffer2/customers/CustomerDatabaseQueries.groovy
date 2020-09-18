@@ -113,7 +113,7 @@ class CustomerDatabaseQueries {
     private Affiliation fetchAffiliation(int affiliationId) {
 
         String affiliationProperties = "organization, address_addition, street, postal_code, city, country, category"
-        String query = "SELECT ${affiliationProperties} from affiliation WHERE " + "affiliationId = ?"
+        String query = "SELECT ${affiliationProperties} from affiliation WHERE " + "id = ?"
 
         Connection connection = databaseSession.getConnection()
 
