@@ -7,6 +7,7 @@ import life.qbic.portal.portlet.CriteriaType
 
 import life.qbic.portal.portlet.customers.CustomerDbGateway
 import life.qbic.portal.portlet.SearchCriteria
+import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -62,7 +63,7 @@ class CustomerDbConnector implements CustomerDbGateway {
    * @param customer
    */
   @Override
-  void addCustomer(Customer customer) {
+  void addCustomer(Customer customer) throws DatabaseQueryException {
     databaseQueries.addCustomer(customer)
 
   }
