@@ -119,8 +119,10 @@ class CreateCustomerView extends FormLayout {
             @Override
             void propertyChange(PropertyChangeEvent evt) {
                 String message = evt.newValue
-                failureNotification = new StyledNotification("Error", message, Notification.Type.ERROR_MESSAGE)
-                failureNotification.show(Page.getCurrent())
+                if(!message.isNumber()){
+                    failureNotification = new StyledNotification("Error", message, Notification.Type.ERROR_MESSAGE)
+                    failureNotification.show(Page.getCurrent())
+                }
             }
         })
     }

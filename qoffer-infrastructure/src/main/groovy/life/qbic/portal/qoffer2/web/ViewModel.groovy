@@ -57,7 +57,6 @@ class ViewModel {
      * @param notification with a detailed failure message
      */
     void showFailNotification(String notification){
-        println notification
         failureNotifications.add(notification)
     }
 }
