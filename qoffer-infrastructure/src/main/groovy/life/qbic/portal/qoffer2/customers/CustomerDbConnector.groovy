@@ -2,7 +2,6 @@ package life.qbic.portal.qoffer2.customers
 
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.people.Person
 import life.qbic.portal.portlet.CriteriaType
 
 import life.qbic.portal.portlet.customers.CustomerDbGateway
@@ -42,7 +41,7 @@ class CustomerDbConnector implements CustomerDbGateway {
     switch(criteria.criteriaType){
       case CriteriaType.LAST_NAME:
         //todo create a Customer
-        List<Person> person = databaseQueries.findPersonByName(searchCondition)
+        databaseQueries.findPersonByName(searchCondition)
             return null
       case CriteriaType.GROUP_NAME:
             return databaseQueries.findCustomerByGroup(searchCondition)

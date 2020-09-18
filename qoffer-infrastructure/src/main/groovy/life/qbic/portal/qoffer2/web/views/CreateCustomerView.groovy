@@ -4,10 +4,11 @@ package life.qbic.portal.qoffer2.web.views
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.FormLayout
-import groovy.util.logging.Log4j2
-import life.qbic.portal.qoffer2.web.ViewModel
-import life.qbic.datamodel.persons.Affiliation
 import com.vaadin.ui.TextField
+
+import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.portal.qoffer2.web.ViewModel
 
 /**
  * This class generates a Form Layout in which the user
@@ -92,7 +93,7 @@ class CreateCustomerView extends FormLayout {
                 new ComboBox<>("Select an Affiliation")
         affiliationComboBox.setPlaceholder("Select Affiliation")
         affiliationComboBox.setItems(affiliationList)
-        affiliationComboBox.setItemCaptionGenerator({ Affiliation af -> af.groupName })
+        affiliationComboBox.setItemCaptionGenerator({ Affiliation af -> af.organisation })
         affiliationComboBox.setEmptySelectionAllowed(false)
     }
 

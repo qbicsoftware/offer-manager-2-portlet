@@ -5,6 +5,7 @@ import com.vaadin.data.ValueContext
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.data.validator.StringLengthValidator
 import com.vaadin.server.UserError
+
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.customers.create.CreateCustomerInput

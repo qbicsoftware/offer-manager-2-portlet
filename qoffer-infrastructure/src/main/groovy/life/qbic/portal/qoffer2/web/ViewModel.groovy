@@ -21,7 +21,7 @@ class ViewModel {
         this(new ArrayList<Affiliation>(), new ArrayList<String>(), new ArrayList<String>())
     }
 
-    ViewModel(List<Affiliation> affiliations, List<String> successNotifications,
+    private ViewModel(List<Affiliation> affiliations, List<String> successNotifications,
               List<String> failureNotifications) {
         //this.affiliations = new ObservableList(affiliations)
         Affiliation affiliation = new Affiliation.Builder("Universität Tübingen",
@@ -34,7 +34,7 @@ class ViewModel {
                 "72070",
                 "Tübingen").build()
 
-        this.affiliations = new ObservableList([affiliation,affiliation2])
+        this.affiliations = [affiliation, affiliation2] as ObservableList
         this.successNotifications = new ObservableList(successNotifications)
         this.failureNotifications = new ObservableList(failureNotifications)
     }
