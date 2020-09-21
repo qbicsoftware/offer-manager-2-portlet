@@ -47,6 +47,6 @@ class ViewModel {
     }
 
     void addAffiliationList(List<Affiliation> affiliations){
-        this.affiliations.add(affiliations)
+        this.affiliations.addAll(affiliations)
     }
 }

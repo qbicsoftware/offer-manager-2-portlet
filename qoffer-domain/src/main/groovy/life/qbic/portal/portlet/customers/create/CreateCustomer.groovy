@@ -25,11 +25,13 @@ class CreateCustomer implements CreateCustomerInput {
 
   @Override
   void createCustomer(Customer customer) {
-    try{
+    try {
       customerDbGateway.addCustomer(customer)
       output.successNotification("Successfully added new Customer")
-    }catch(DatabaseQueryException databaseQueryException){
+    } catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)
+    } catch(Exception exception) {
+      output.failNotification()
     }
   }
 }

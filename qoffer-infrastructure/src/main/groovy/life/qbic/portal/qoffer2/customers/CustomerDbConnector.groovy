@@ -1,8 +1,8 @@
 package life.qbic.portal.qoffer2.customers
 
+import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.people.Person
 import life.qbic.portal.portlet.CriteriaType
 
 import life.qbic.portal.portlet.customers.CustomerDbGateway
@@ -21,6 +21,7 @@ import org.apache.logging.log4j.Logger
  * @author: Jennifer Bödker
  *
  */
+@Log4j2
 class CustomerDbConnector implements CustomerDbGateway {
 
   CustomerDatabaseQueries databaseQueries
@@ -64,7 +65,13 @@ class CustomerDbConnector implements CustomerDbGateway {
    */
   @Override
   void addCustomer(Customer customer) throws DatabaseQueryException {
-    databaseQueries.addCustomer(customer)
+    try {
+      databaseQueries.addCustomer(customer)
+    } catch (Exception e) {
+      log.error(e)
+      log.error(e.stackTrace.join("\n"))
+      throw new DatabaseQueryException("The customer could not be created: ${customer.toString()}")
+    }
   }
   /**
    * @inheritDoc
@@ -74,7 +81,6 @@ class CustomerDbConnector implements CustomerDbGateway {
   @Override
   void updateCustomer(String customerId, Customer updatedCustomer) {
     databaseQueries.updateCustomer(customerId,updatedCustomer)
-
   }
 
   /**

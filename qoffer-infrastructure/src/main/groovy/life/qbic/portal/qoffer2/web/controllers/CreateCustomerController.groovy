@@ -100,8 +100,12 @@ class CreateCustomerController {
     }
 
     private void createNewCustomer() {
-        //todo add title to the dto
-        Customer customer = new Customer(firstName,lastName,title,email, affiliation as List<Affiliation>)
+        Customer customer = new Customer(
+            view.firstName,
+            view.lastName,
+            "None",
+            view.email,
+            [view.affiliationComboBox.getValue() as Affiliation])
         this.useCaseInput.createCustomer(customer)
     }
 }
