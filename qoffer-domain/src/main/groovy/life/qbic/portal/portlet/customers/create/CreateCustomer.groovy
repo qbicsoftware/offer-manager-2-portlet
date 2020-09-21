@@ -21,9 +21,6 @@ class CreateCustomer implements CreateCustomerInput {
   CreateCustomer(CreateCustomerOutput output, CustomerDbGateway customerDbGateway){
     this.output = output
     this.customerDbGateway = customerDbGateway
-
-    List affilitations = customerDbGateway.getAllAffiliations()
-    println affilitations
   }
 
   @Override

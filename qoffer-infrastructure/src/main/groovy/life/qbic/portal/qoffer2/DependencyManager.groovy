@@ -78,6 +78,9 @@ class DependencyManager {
 
         // setup CreateCustomer use case
         createCustomer = new CreateCustomer(presenter, customerDbGateway)
+        //add affiliations to the view model
+        viewModel.addAffiliationList(customerDbGateway.allAffiliations)
+        println viewModel.affiliations
 
         try {
             this.createCustomerController = new CreateCustomerController(createCustomerView,
