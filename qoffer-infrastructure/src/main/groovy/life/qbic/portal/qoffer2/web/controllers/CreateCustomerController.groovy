@@ -6,9 +6,9 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.customers.create.CreateCustomerInput
 
 /**
- * Controller class responsible for the data flow into qoffer-2
+ * Controller class adapter from view information into use case input interface
  *
- * This class creates instances of qoffer-2 classes and injects them as described in the architectural draft.
+ * This class translates the information that was received from the view into method calls to the use case
  *
  * @since: 1.0.0
  * @author: Jennifer Bödker
@@ -21,7 +21,18 @@ class CreateCustomerController {
         this.useCaseInput = useCaseInput
     }
 
-    public void createNewCustomer(String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations) {
+    /**
+     * This method starts the create customer use case based on information that is provided from the view
+     *
+     * @param firstName the first name of the customer
+     * @param lastName the last name of the customer
+     * @param title the title if any of the customer
+     * @param email the email address of the customer
+     * @param affiliations the affiliations of the customer
+     *
+     * @since 1.0.0
+     */
+    void createNewCustomer(String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations) {
         //todo add title to the dto
         Customer customer = new Customer(firstName, lastName, title, email, affiliations as List<Affiliation>)
         this.useCaseInput.createCustomer(customer)
