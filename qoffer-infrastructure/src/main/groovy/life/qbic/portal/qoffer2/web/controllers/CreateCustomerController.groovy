@@ -33,7 +33,6 @@ class CreateCustomerController {
      * @since 1.0.0
      */
     void createNewCustomer(String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations) {
-        //todo add title to the dto
         Customer customer = new Customer(firstName, lastName, title, email, affiliations as List<Affiliation>)
         this.useCaseInput.createCustomer(customer)
     }

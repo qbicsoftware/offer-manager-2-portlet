@@ -25,14 +25,14 @@ import life.qbic.portal.qoffer2.web.views.CreateCustomerView
 @Log4j2
 class DependencyManager {
 
-    private PortletView portletView
     private ViewModel viewModel
     private Presenter presenter
 
     private CustomerDbGateway customerDbGateway
-    private CreateCustomerController createCustomerController
     private CreateCustomer createCustomer
+    private CreateCustomerController createCustomerController
 
+    private PortletView portletView
     /**
      * Public constructor.
      *
@@ -44,20 +44,69 @@ class DependencyManager {
     }
 
     private void initializeDependencies() {
+        // The ORDER in which the methods below are called MUST NOT CHANGE
+        setupDbConnections()
+        setupViewModels()
+        setupPresenters()
+        setupUseCaseInteractors()
+        setupControllers()
+        setupViews()
+    }
 
+    protected PortletView getPortletView() {
+        return this.portletView
+    }
+
+    private void setupViewModels() {
         // setup view models
         try {
             this.viewModel = new ViewModel()
+            viewModel.addAffiliationList(customerDbGateway.allAffiliations)
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${ViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
+    }
 
+    private void setupDbConnections() {
+        try {
+            DatabaseSession.create()
+            CustomerDatabaseQueries queries = new CustomerDatabaseQueries(DatabaseSession.INSTANCE)
+            customerDbGateway = new CustomerDbConnector(queries)
+        } catch (Exception e) {
+            log.error("Unexpected exception during customer database connection.", e)
+            throw e
+        }
+    }
+
+    private void setupPresenters() {
+        try {
+            this.presenter = new Presenter(this.viewModel)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${Presenter.getSimpleName()} setup." , e)
+            throw e
+        }
+    }
+
+    private void setupUseCaseInteractors() {
+        this.createCustomer = new CreateCustomer(presenter, customerDbGateway)
+    }
+
+    private void setupControllers() {
+        try {
+            this.createCustomerController = new CreateCustomerController(this.createCustomer)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${CreateCustomerController.getSimpleName()} setup.", e)
+            throw e
+        }
+    }
+
+    private void setupViews() {
         CreateCustomerView createCustomerView
         try {
-            createCustomerView = new CreateCustomerView(this.viewModel)
+            createCustomerView = new CreateCustomerView(this.createCustomerController, this.viewModel)
         } catch (Exception e) {
-            log.error("Could not create ${createCustomerView.toString()} view.", e)
+            log.error("Could not create ${CreateCustomerView.getSimpleName()} view.", e)
             throw e
         }
 
@@ -69,40 +118,6 @@ class DependencyManager {
             log.error("Could not create ${PortletView.getSimpleName()} view.", e)
             throw e
         }
-
-        // setup presenter
-        presenter = new Presenter(viewModel)
-
-        //setup database
-        setupCustomerDbConnection()
-
-        // setup CreateCustomer use case
-        createCustomer = new CreateCustomer(presenter, customerDbGateway)
-        //add affiliations to the view model
-        viewModel.addAffiliationList(customerDbGateway.allAffiliations)
-        println viewModel.affiliations
-
-        try {
-            this.createCustomerController = new CreateCustomerController(createCustomerView,
-                    createCustomer)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${createCustomerController.getSimpleName()} setup.", e)
-            throw e
-        }
-    }
-
-    protected PortletView getPortletView() {
-        return this.portletView
-    }
-
-    /**
-     * Sets up the database session
-     * @return
-     */
-    private setupCustomerDbConnection(){
-        DatabaseSession.create()
-        CustomerDatabaseQueries queries = new CustomerDatabaseQueries(DatabaseSession.INSTANCE)
-        customerDbGateway = new CustomerDbConnector(queries)
     }
 
 
