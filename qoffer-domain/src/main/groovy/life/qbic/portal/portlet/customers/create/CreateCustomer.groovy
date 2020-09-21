@@ -21,13 +21,16 @@ class CreateCustomer implements CreateCustomerInput {
   CreateCustomer(CreateCustomerOutput output, CustomerDbGateway customerDbGateway){
     this.output = output
     this.customerDbGateway = customerDbGateway
+
+    List affilitations = customerDbGateway.getAllAffiliations()
+    println affilitations
   }
 
   @Override
   void createCustomer(Customer customer) {
     try{
       customerDbGateway.addCustomer(customer)
-      output.successNotification("Successfully created a new customer")
+      output.successNotification("Successfully added new Customer")
     }catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)
     }
