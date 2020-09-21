@@ -2,9 +2,6 @@ package life.qbic.portal.qoffer2.web
 
 import life.qbic.datamodel.dtos.business.Affiliation
 
-import java.beans.PropertyChangeEvent
-import java.beans.PropertyChangeListener
-
 
 /**
  * A simple DTO for data displayed in the PortletView
