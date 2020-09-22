@@ -142,8 +142,16 @@ class CreateCustomerView extends FormLayout {
     }
 
 
-    private boolean allValuesValid = {
-        return !firstNameField.getComponentError() && !lastNameField.getComponentError() && !emailField.getComponentError() && affiliationComboBox.getSelectedItem().isPresent()
+    /**
+     * This is used to indicate whether all fields of this view are filled correctly.
+     * It relies on the separate fields for validation.
+     * @return
+     */
+    private boolean allValuesValid() {
+        return !firstNameField.getComponentError()
+                && !lastNameField.getComponentError()
+                && !emailField.getComponentError()
+                && affiliationComboBox.getSelectedItem().isPresent()
     }
 
     void registerListeners() {
