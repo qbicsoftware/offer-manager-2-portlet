@@ -115,10 +115,10 @@ class CreateCustomerView extends FormLayout {
      * @return
      */
     private boolean allValuesValid() {
-        return !firstNameField.getComponentError()
-                && !lastNameField.getComponentError()
-                && !emailField.getComponentError()
-                && affiliationComboBox.getSelectedItem().isPresent()
+        return !firstNameField.getComponentError() \
+            && !lastNameField.getComponentError() \
+            && !emailField.getComponentError() \
+            && affiliationComboBox.getSelectedItem().isPresent()
     }
 
     void registerListeners() {
