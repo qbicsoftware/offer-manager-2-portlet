@@ -159,18 +159,26 @@ class CreateCustomerView extends FormLayout {
         })
 
         this.submitButton.addClickListener({ event ->
-            String firstName = this.firstNameField.getValue().trim()
-            String lastName = this.lastNameField.getValue().trim()
-            String title = this.titleField.getValue()?.trim() ?: "None"
-            String email = this.emailField.getValue().trim()
-            List<Affiliation> affiliations = new ArrayList()
-            if (affiliationComboBox.selectedItem.isPresent() ) {
-                affiliations.add(affiliationComboBox.getSelectedItem().get())
-            }
-            if (allValuesValid()) {
-                controller.createNewCustomer(firstName, lastName, title, email, affiliations)
-            } else {
-                this.viewModel.failureNotifications.add("Please fill out the customer information correctly.")
+            try {
+                String firstName = this.firstNameField.getValue().trim()
+                String lastName = this.lastNameField.getValue().trim()
+                String title = this.titleField.getValue()?.trim() ?: "None"
+                String email = this.emailField.getValue().trim()
+                List<Affiliation> affiliations = new ArrayList()
+                if (affiliationComboBox.selectedItem.isPresent()) {
+                    affiliations.add(affiliationComboBox.getSelectedItem().get())
+                }
+                if (allValuesValid()) {
+                    controller.createNewCustomer(firstName, lastName, title, email, affiliations)
+                } else {
+                    this.viewModel.failureNotifications.add("Please fill out the customer information correctly.")
+                }
+            } catch (IllegalArgumentException illegalArgumentException) {
+                log.error("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}", illegalArgumentException)
+                viewModel.failureNotifications.add("Could not create the customer. Please verify that your input is correct and try again.")
+            } catch (Exception e) {
+                log.error("Unexpected error after customer creation form submission.", e)
+                viewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
             }
         })
     }
