@@ -199,7 +199,7 @@ class CreateCustomerView extends FormLayout {
             if (affiliationComboBox.selectedItem.isPresent() ) {
                 affiliations.add(affiliationComboBox.getSelectedItem().get())
             }
-            if (allValuesValid) {
+            if (allValuesValid()) {
                 controller.createNewCustomer(firstName, lastName, title, email, affiliations)
             } else {
                 this.viewModel.showFailNotification("Please fill out the customer information correctly.")
