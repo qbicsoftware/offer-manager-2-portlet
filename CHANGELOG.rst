@@ -5,10 +5,10 @@ Changelog
 This document records all notable changes to `HTTPie <https://httpie.org>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-
-
-1.0.0
+1.0.0 22-09-2020
 ------------------
+
+**Added**
 
 * Implement CreateCustomer use case
 * Create HTML template for offers
@@ -17,4 +17,10 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Create empty infrastructure classes
 * Create usecase classes and interfaces
 * Created the project using QUBE
+
+**Fixed**
+
+**Dependencies**
+
+**Deprecated**
 
