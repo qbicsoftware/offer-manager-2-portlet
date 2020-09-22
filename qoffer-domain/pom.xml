@@ -13,7 +13,6 @@
       <dependency>
           <groupId>life.qbic</groupId>
           <artifactId>data-model-lib</artifactId>
-          <version>1.11.0-SNAPSHOT</version>
       </dependency>
   </dependencies>
 </project>
