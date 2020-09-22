@@ -67,6 +67,8 @@ class CustomerDbConnector implements CustomerDbGateway {
   void addCustomer(Customer customer) throws DatabaseQueryException {
     try {
       databaseQueries.addCustomer(customer)
+    } catch (DatabaseQueryException e) {
+      throw new DatabaseQueryException(e.message)
     } catch (Exception e) {
       log.error(e)
       log.error(e.stackTrace.join("\n"))

@@ -229,7 +229,7 @@ class CustomerDatabaseQueries {
             statement.setString(3, customer.eMailAddress)
             statement.execute()
             def result = statement.getResultSet()
-            customerAlreadyInDb = result.fetchSize > 0
+            customerAlreadyInDb = result.next()
         }
         return customerAlreadyInDb
     }
