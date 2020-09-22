@@ -61,7 +61,7 @@ class DependencyManager {
         // setup view models
         try {
             this.viewModel = new ViewModel()
-            viewModel.addAffiliationList(customerDbGateway.allAffiliations)
+            viewModel.affiliations.addAll(customerDbGateway.allAffiliations)
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${ViewModel.getSimpleName()} view model setup.", e)
             throw e

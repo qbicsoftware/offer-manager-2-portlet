@@ -112,37 +112,6 @@ class CreateCustomerView extends FormLayout {
     }
 
     /**
-     *
-     */
-    void showErrorNotification(){
-        viewModel.failureNotifications.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            void propertyChange(PropertyChangeEvent evt) {
-                String message = evt.newValue
-                if(!message.isNumber()){
-                    failureNotification = new StyledNotification("Error", message, Notification.Type.ERROR_MESSAGE)
-                    failureNotification.show(Page.getCurrent())
-                }
-            }
-        })
-    }
-
-    /**
-     *
-     */
-    void showSuccessNotification(){
-        viewModel.successNotifications.addPropertyChangeListener(new PropertyChangeListener() {
-            @Override
-            void propertyChange(PropertyChangeEvent evt) {
-                String message = evt.newValue
-                successNotification = new StyledNotification("Success", message, Notification.Type.HUMANIZED_MESSAGE)
-                successNotification.show(Page.getCurrent())
-            }
-        })
-    }
-
-
-    /**
      * This is used to indicate whether all fields of this view are filled correctly.
      * It relies on the separate fields for validation.
      * @return
@@ -202,7 +171,7 @@ class CreateCustomerView extends FormLayout {
             if (allValuesValid()) {
                 controller.createNewCustomer(firstName, lastName, title, email, affiliations)
             } else {
-                this.viewModel.showFailNotification("Please fill out the customer information correctly.")
+                this.viewModel.failureNotifications.add("Please fill out the customer information correctly.")
             }
         })
     }

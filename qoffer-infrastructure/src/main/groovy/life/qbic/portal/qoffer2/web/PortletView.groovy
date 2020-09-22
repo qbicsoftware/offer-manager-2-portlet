@@ -1,5 +1,7 @@
 package life.qbic.portal.qoffer2.web
 
+import com.vaadin.server.Page
+import com.vaadin.ui.Notification
 import com.vaadin.ui.VerticalLayout
 import life.qbic.portal.qoffer2.web.views.CreateCustomerView
 
@@ -18,14 +20,15 @@ class PortletView extends VerticalLayout {
 
     final private ViewModel portletViewModel
 
-    private CreateCustomerView createCustomer
+    private CreateCustomerView createCustomerView
 
     PortletView(ViewModel portletViewModel,
-                CreateCustomerView createCustomer) {
+                CreateCustomerView createCustomerView) {
         super()
         this.portletViewModel = portletViewModel
-        this.createCustomer = createCustomer
+        this.createCustomerView = createCustomerView
         initLayout()
+        registerListeners()
     }
 
     /**
@@ -34,8 +37,33 @@ class PortletView extends VerticalLayout {
     private void initLayout() {
         this.setMargin(false)
         this.setSpacing(false)
-        this.addComponentsAndExpand(this.createCustomer)
+        this.addComponentsAndExpand(this.createCustomerView)
         this.setSizeFull()
     }
 
+    private def registerListeners() {
+
+        this.portletViewModel.successNotifications.addPropertyChangeListener { evt ->
+            if (evt instanceof ObservableList.ElementAddedEvent) {
+                // show notification
+                showNotification(evt.newValue.toString(), Notification.Type.HUMANIZED_MESSAGE)
+                // remove displayed message
+                portletViewModel.successNotifications.remove(evt.newValue)
+            }
+        }
+
+        this.portletViewModel.failureNotifications.addPropertyChangeListener { evt ->
+            if (evt instanceof ObservableList.ElementAddedEvent) {
+                // show notification
+                showNotification(evt.newValue.toString(), Notification.Type.ERROR_MESSAGE)
+                // remove displayed message
+                portletViewModel.failureNotifications.remove(evt.newValue)
+            }
+        }
+    }
+
+    private static def showNotification(String message, Notification.Type type) {
+        StyledNotification notification = new StyledNotification(message, type)
+        notification.show(Page.getCurrent())
+    }
 }

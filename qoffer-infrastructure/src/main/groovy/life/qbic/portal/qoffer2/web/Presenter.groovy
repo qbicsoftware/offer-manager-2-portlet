@@ -28,11 +28,11 @@ class Presenter implements SearchOffersOutput, CreateOfferOutput, UpdateOfferOut
 
     @Override
     void successNotification(String notification) {
-        viewModel.showSuccessNotification(notification)
+        viewModel.successNotifications.add(notification)
     }
 
     @Override
     void failNotification(String notification) {
-        viewModel.showFailNotification(notification)
+        viewModel.failureNotifications.add(notification)
     }
 }

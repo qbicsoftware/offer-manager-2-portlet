@@ -27,26 +27,4 @@ class ViewModel {
         this.successNotifications = new ObservableList(successNotifications)
         this.failureNotifications = new ObservableList(failureNotifications)
     }
-
-    /**
-     * Notifies the user about a successful operation
-     *
-     * @param notification describing what has been successfully finished
-     */
-    void showSuccessNotification(String notification){
-        successNotifications.add(notification)
-    }
-
-    /**
-     * Notifies the user about a failed operation
-     *
-     * @param notification with a detailed failure message
-     */
-    void showFailNotification(String notification){
-        failureNotifications.add(notification)
-    }
-
-    void addAffiliationList(List<Affiliation> affiliations){
-        this.affiliations.addAll(affiliations)
-    }
 }
