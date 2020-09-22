@@ -162,7 +162,7 @@ class CreateCustomerView extends FormLayout {
 
         this.lastNameField.addValueChangeListener({ event ->
             ValidationResult result = new StringLengthValidator("Please input a valid last name",
-                1, null).apply(event.getValue(), new ValueContext(view.lastNameField))
+                1, null).apply(event.getValue(), new ValueContext(this.lastNameField))
             if (result.isError()) {
                 UserError error = new UserError(result.getErrorMessage())
                 lastNameField.setComponentError(error)
