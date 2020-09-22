@@ -50,8 +50,6 @@ class CreateCustomerView extends FormLayout {
         super()
         this.controller = controller
         this.viewModel = viewModel
-        showErrorNotification()
-        showSuccessNotification()
         initLayout()
         registerListeners()
     }
