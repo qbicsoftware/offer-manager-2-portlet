@@ -81,6 +81,7 @@ class CreateCustomerView extends FormLayout {
         this.submitButton = new Button("Create Customer")
 
         //Add the components to the FormLayout
+        createCustomerForm.addComponent(titleField)
         createCustomerForm.addComponent(firstNameField)
         createCustomerForm.addComponent(lastNameField)
         createCustomerForm.addComponent(emailField)
