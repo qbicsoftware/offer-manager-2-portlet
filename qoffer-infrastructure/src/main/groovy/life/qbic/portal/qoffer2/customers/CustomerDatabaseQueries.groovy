@@ -1,15 +1,18 @@
 package life.qbic.portal.qoffer2.customers
 
+import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 
+import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 import java.sql.Connection
 import java.sql.ResultSet
+import java.sql.Statement
 
 /**
  * This class contains all queries on the customer database
@@ -21,6 +24,7 @@ import java.sql.ResultSet
  * @author: Jennifer Bödker
  *
  */
+@Log4j2
 class CustomerDatabaseQueries {
 
     private final DatabaseSession databaseSession
@@ -93,7 +97,7 @@ class CustomerDatabaseQueries {
 
         connection.withCloseable {
             def statement = it.prepareStatement(query)
-            statement.setString(2, customerId)
+            statement.setInt(2, customerId)
             ResultSet rs = statement.executeQuery()
             while (rs.next()) {
                 result.add(rs.getString(1).toInteger())
@@ -111,7 +115,7 @@ class CustomerDatabaseQueries {
     private Affiliation fetchAffiliation(int affiliationId) {
 
         String affiliationProperties = "organization, address_addition, street, postal_code, city, country, category"
-        String query = "SELECT ${affiliationProperties} from affiliation WHERE " + "affiliationId = ?"
+        String query = "SELECT ${affiliationProperties} from affiliation WHERE " + "id = ?"
 
         Connection connection = databaseSession.getConnection()
 
@@ -189,9 +193,113 @@ class CustomerDatabaseQueries {
      *
      * @param customer which needs to be added to the database
      */
-    void addCustomer(Customer customer){
+    void addCustomer(Customer customer) throws DatabaseQueryException {
+        if (customerExists(customer)) {
+            throw new DatabaseQueryException("Customer is already in the database.")
+        }
+        Connection connection = databaseSession.getConnection()
+        connection.setAutoCommit(false)
 
+        connection.withCloseable {it ->
+            try {
+                int customerId = createNewCustomer(it, customer)
+                storeAffiliation(it, customerId, customer.affiliations)
+                connection.commit()
+            } catch (Exception e) {
+                log.error(e.message)
+                log.error(e.stackTrace.join("\n"))
+                connection.rollback()
+                connection.close()
+                throw new DatabaseQueryException("Could not create customer.")
+            }
+
+        }
     }
+
+    private boolean customerExists(Customer customer) {
+        String query = "SELECT * FROM customer WHERE first_name = ? AND last_name = ? AND email = ?"
+        Connection connection = databaseSession.getConnection()
+
+        def customerAlreadyInDb = false
+
+        connection.withCloseable {
+            def statement = connection.prepareStatement(query)
+            statement.setString(1, customer.firstName)
+            statement.setString(2, customer.lastName)
+            statement.setString(3, customer.eMailAddress)
+            statement.execute()
+            def result = statement.getResultSet()
+            customerAlreadyInDb = result.next()
+        }
+        return customerAlreadyInDb
+    }
+
+    private static int createNewCustomer(Connection connection, Customer customer) {
+        String query = "INSERT INTO customer (first_name, last_name, title, email) " +
+            "VALUES(?, ?, ?, ?)"
+
+        List<Integer> generatedKeys = []
+
+        def statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+        statement.setString(1, customer.firstName )
+        statement.setString(2, customer.lastName)
+        statement.setString(3, customer.title)
+        statement.setString(4, customer.eMailAddress )
+        statement.execute()
+        def keys = statement.getGeneratedKeys()
+        while (keys.next()){
+            generatedKeys.add(keys.getInt(1))
+        }
+
+        return generatedKeys[0]
+    }
+
+    private static void storeAffiliation(Connection connection, int customerId, List<Affiliation>
+        affiliations) {
+        String query = "INSERT INTO customer_affiliation (affiliation_id, customer_id) " +
+            "VALUES(?, ?)"
+
+        affiliations.each {affiliation ->
+            def affiliationId = getAffiliationId(connection, affiliation)
+            def statement = connection.prepareStatement(query)
+            statement.setInt(1, affiliationId)
+            statement.setInt(2, customerId)
+            statement.execute()
+
+        }
+    }
+
+    private static int getAffiliationId(Connection connection, Affiliation affiliation) {
+        String query = "SELECT * FROM affiliation WHERE organization=? " +
+            "AND address_addition=? " +
+            "AND street=? " +
+            "AND postal_code=? " +
+            "AND city=?"
+
+        List<Integer> affiliationIds = []
+
+        def statement = connection.prepareStatement(query)
+        statement.setString(1, affiliation.organisation)
+        statement.setString(2, affiliation.addressAddition)
+        statement.setString(3, affiliation.street)
+        statement.setString(4, affiliation.postalCode)
+        statement.setString(5, affiliation.city)
+        statement.execute()
+        ResultSet rs = statement.getResultSet()
+        while (rs.next()) {
+            affiliationIds.add(rs.getInt(1))
+        }
+
+        if(affiliationIds.size() > 1) {
+            throw new DatabaseQueryException("More than one entry found for $affiliation.")
+        }
+        if (affiliationIds.empty) {
+            throw new DatabaseQueryException("No matching affiliation found for $affiliation.")
+        }
+        return affiliationIds[0]
+    }
+
+
 
     /**
      * Searches for a customer by its ID and updates the customer information according to the new information

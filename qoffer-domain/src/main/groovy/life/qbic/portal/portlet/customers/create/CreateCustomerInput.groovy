@@ -1,4 +1,8 @@
 package life.qbic.portal.portlet.customers.create
+
+import life.qbic.datamodel.dtos.business.Customer
+
+
 /**
  * Input interface for the {@link life.qbic.portal.portlet.customers.create.CreateCustomer} use case
  *
@@ -9,6 +13,11 @@ package life.qbic.portal.portlet.customers.create
  */
 interface CreateCustomerInput {
 
-  void createCustomer(Map customer)
+  /**
+   * Creates a new {@link Customer} for the customer database
+   *
+   * @param customer which should be added to the database
+   */
+  void createCustomer(Customer customer)
 
 }

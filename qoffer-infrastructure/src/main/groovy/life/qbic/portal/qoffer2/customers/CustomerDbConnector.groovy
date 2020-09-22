@@ -1,12 +1,13 @@
 package life.qbic.portal.qoffer2.customers
 
+import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.people.Person
 import life.qbic.portal.portlet.CriteriaType
 
 import life.qbic.portal.portlet.customers.CustomerDbGateway
 import life.qbic.portal.portlet.SearchCriteria
+import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -20,6 +21,7 @@ import org.apache.logging.log4j.Logger
  * @author: Jennifer Bödker
  *
  */
+@Log4j2
 class CustomerDbConnector implements CustomerDbGateway {
 
   CustomerDatabaseQueries databaseQueries
@@ -42,7 +44,7 @@ class CustomerDbConnector implements CustomerDbGateway {
     switch(criteria.criteriaType){
       case CriteriaType.LAST_NAME:
         //todo create a Customer
-        List<Person> person = databaseQueries.findPersonByName(searchCondition)
+        List<Customer> customer = databaseQueries.findPersonByName(searchCondition)
             return null
       case CriteriaType.GROUP_NAME:
             return databaseQueries.findCustomerByGroup(searchCondition)
@@ -62,9 +64,16 @@ class CustomerDbConnector implements CustomerDbGateway {
    * @param customer
    */
   @Override
-  void addCustomer(Customer customer) {
-    databaseQueries.addCustomer(customer)
-
+  void addCustomer(Customer customer) throws DatabaseQueryException {
+    try {
+      databaseQueries.addCustomer(customer)
+    } catch (DatabaseQueryException e) {
+      throw new DatabaseQueryException(e.message)
+    } catch (Exception e) {
+      log.error(e)
+      log.error(e.stackTrace.join("\n"))
+      throw new DatabaseQueryException("The customer could not be created: ${customer.toString()}")
+    }
   }
   /**
    * @inheritDoc
@@ -74,7 +83,6 @@ class CustomerDbConnector implements CustomerDbGateway {
   @Override
   void updateCustomer(String customerId, Customer updatedCustomer) {
     databaseQueries.updateCustomer(customerId,updatedCustomer)
-
   }
 
   /**
