@@ -1,5 +1,6 @@
 package life.qbic.portal.qoffer2.web
 
+
 import life.qbic.portal.portlet.customers.create.CreateCustomerOutput
 import life.qbic.portal.portlet.customers.update.UpdateCustomerOutput
 import life.qbic.portal.portlet.offers.create.CreateOfferOutput
@@ -23,5 +24,15 @@ class Presenter implements SearchOffersOutput, CreateOfferOutput, UpdateOfferOut
 
     Presenter(ViewModel viewModel){
         this.viewModel = viewModel
+    }
+
+    @Override
+    void successNotification(String notification) {
+        viewModel.successNotifications.add(notification)
+    }
+
+    @Override
+    void failNotification(String notification) {
+        viewModel.failureNotifications.add(notification)
     }
 }

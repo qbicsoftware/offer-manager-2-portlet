@@ -23,17 +23,17 @@ import life.qbic.portal.qoffer2.web.StyledNotification
 @Widgetset("life.qbic.portal.portlet.AppWidgetSet")
 @Log4j2
 @CompileStatic
-class qOfferPortlet extends QBiCPortletUI {
+class QOfferPortlet extends QBiCPortletUI {
 
-    private DependencyManager dependencyManager;
+    private DependencyManager dependencyManager
 
-    qOfferPortlet() {
+    QOfferPortlet() {
         super()
         // The constructor MUST NOT fail since the user does not get any feedback otherwise.
         try {
             init()
         } catch (Exception e) {
-            log.error("Could not initialize {}", qOfferPortlet.getCanonicalName(), e)
+            log.error("Could not initialize {}", QOfferPortlet.getCanonicalName(), e)
         } catch (Error error) {
             log.error("Unexpected runtime error.", error)
         }
@@ -46,11 +46,11 @@ class qOfferPortlet extends QBiCPortletUI {
     @Override
     protected Layout getPortletContent(final VaadinRequest request) {
         def layout
-        log.info "Generating content for class {}", qOfferPortlet.getCanonicalName()
+        log.info "Generating content for class {}", QOfferPortlet.getCanonicalName()
         try {
             layout = this.dependencyManager.getPortletView()
         } catch (Exception e) {
-            log.error("Failed generating content for class {}", qOfferPortlet.getCanonicalName())
+            log.error("Failed generating content for class {}", QOfferPortlet.getCanonicalName())
             log.error(e)
             String errorCaption = "Application not available"
             String errorMessage = "We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com."

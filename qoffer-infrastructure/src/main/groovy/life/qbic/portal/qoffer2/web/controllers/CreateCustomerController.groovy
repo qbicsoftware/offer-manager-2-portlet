@@ -1,90 +1,39 @@
 package life.qbic.portal.qoffer2.web.controllers
 
-import com.vaadin.data.ValidationResult
-import com.vaadin.data.ValueContext
-import com.vaadin.data.validator.EmailValidator
-import com.vaadin.data.validator.StringLengthValidator
-import com.vaadin.server.UserError
-import life.qbic.portal.portlet.CreateCustomerView
+
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.customers.create.CreateCustomerInput
 
-
 /**
- * Controller class responsible for the data flow into qoffer-2
+ * Controller class adapter from view information into use case input interface
  *
- * This class creates instances of qoffer-2 classes and injects them as described in the architectural draft.
- *
+ * This class translates the information that was received from the view into method calls to the use case
  *
  * @since: 1.0.0
  * @author: Jennifer Bödker
  */
 class CreateCustomerController {
 
-    CreateCustomerView view
-
     CreateCustomerInput useCaseInput
 
-    CreateCustomerController(CreateCustomerView view, CreateCustomerInput useCaseInput) {
-        this.view = view
+    CreateCustomerController(CreateCustomerInput useCaseInput) {
         this.useCaseInput = useCaseInput
-        setupViewElements()
     }
 
-    private void setupViewElements(){
-        //Add Listeners to all Fields in the Formlayout
-        view.firstNameField.addValueChangeListener({ event ->
-            ValidationResult result = new StringLengthValidator("Please input a valid first " +
-                "Name", 1, null).apply(event.getValue(), new ValueContext(view.firstNameField))
-            if (result.isError()) {
-                UserError error = new UserError(result.getErrorMessage())
-                view.firstNameField.setComponentError(error)
-                view.firstName = null
-            } else {
-                view.firstNameField.setComponentError(null)
-                view.firstName = event.getValue().toString()
-            }
-        })
-
-        view.lastNameField.addValueChangeListener({ event ->
-            ValidationResult result = new StringLengthValidator("Please input a valid last Name",
-                1, null).apply(event.getValue(), new ValueContext(view.lastNameField))
-            if (result.isError()) {
-                UserError error = new UserError(result.getErrorMessage())
-                view.lastNameField.setComponentError(error)
-                view.lastName = null
-            } else {
-                view.lastNameField.setComponentError(null)
-                view.lastName = event.getValue().toString()
-                view.customerInfo.put("Last Name", view.lastName)
-            }
-        })
-
-        view.emailField.addValueChangeListener({ event ->
-            ValidationResult result = new EmailValidator("Please input a valid email address")
-                .apply(event.getValue(), new ValueContext(view.emailField))
-            if (result.isError()) {
-                UserError error = new UserError(result.getErrorMessage())
-                view.email = null
-                view.emailField.setComponentError(error)
-            } else {
-                view.emailField.setComponentError(null)
-                view.email = event.getValue().toString()
-                view.customerInfo.put("email", view.email)
-            }
-        })
-
-        view.affiliationComboBox.addSelectionListener({ event ->
-            view.affiliation = event.getValue()
-            view.customerInfo.put("Affiliaton", view.affiliation)
-        })
-
-        view.submitButton.addClickListener({ event ->
-            createNewCustomer()
-        })
-    }
-
-    private void createNewCustomer() {
-        // TODO create customer DTO and pass it to the use case input
-        this.useCaseInput.createCustomer(new HashMap())
+    /**
+     * This method starts the create customer use case based on information that is provided from the view
+     *
+     * @param firstName the first name of the customer
+     * @param lastName the last name of the customer
+     * @param title the title if any of the customer
+     * @param email the email address of the customer
+     * @param affiliations the affiliations of the customer
+     *
+     * @since 1.0.0
+     */
+    void createNewCustomer(String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations) {
+        Customer customer = new Customer(firstName, lastName, title, email, affiliations as List<Affiliation>)
+        this.useCaseInput.createCustomer(customer)
     }
 }

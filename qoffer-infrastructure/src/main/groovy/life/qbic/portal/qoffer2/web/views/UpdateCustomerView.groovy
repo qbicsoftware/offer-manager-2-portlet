@@ -10,8 +10,9 @@ import com.vaadin.ui.ComboBox
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.TextField
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.persons.Affiliation
-import life.qbic.portal.portlet.customers.Customer
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.Customer
+
 import life.qbic.portal.qoffer2.web.ViewModel
 
 /**
@@ -38,7 +39,6 @@ class UpdateCustomerView extends FormLayout {
 
     UpdateCustomerView(ViewModel viewModel, Customer editableCustomer) {
         super()
-        this.controller = controller
         this.viewModel = viewModel
         this.editableCustomer = editableCustomer
         initLayout()
@@ -72,19 +72,16 @@ class UpdateCustomerView extends FormLayout {
         createCustomerForm.addComponent(emailField)
         createCustomerForm.addComponent(affiliationComboBox)
         createCustomerForm.addComponent(submitButton)
-        //todo do we want to use this here? see Vaadin
-        //"When using the setBean method, the business object instance will be updated whenever the user changes the value in any bound field.
-        // If some other part of the application is also using the same instance, then that part might show changes before the user has clicked the save button."
 
         // Retrieve user input from fields and add them to the the Binder if entries are valid
-        Binder.Binding<Customer, String> bindFirstName = customerBinder.forField(firstNameField).withValidator(new StringLengthValidator(
+        Binding<Customer, String> bindFirstName = customerBinder.forField(firstNameField).withValidator(new StringLengthValidator(
                 "Please add the first name", 1, null)).bind(Customer.&setFirstName, Customer.&getFirstName)
         Binding<Customer, String> bindLastName = customerBinder.forField(lastNameField).withValidator(new StringLengthValidator(
                 "Please add the last name", 1, null)).bind(Customer.&setLastName, Customer.&getLastName)
 
         Binding<Customer, String> bindEmail = customerBinder.forField(emailField).withValidator(new EmailValidator("Given email address is not valid")).bind(Customer.&setEmail, Customer.&getEmail)
 
-        Binding<Customer, Affiliation> bindAffiliation = customerBinder.forField(affiliationComboBox).bind(Customer.&setAffiliation, Customer.&getAffiliation)
+        Binding<Customer, Affiliation> bindAffiliation = customerBinder.forField(affiliationComboBox).bind(Customer.&setAffiliations, Customer.&getAffiliations)
         customerBinder.setBean(editableCustomer)
         this.addComponent(createCustomerForm)
     }
@@ -133,7 +130,7 @@ class UpdateCustomerView extends FormLayout {
                 new ComboBox<>("Select an Affiliation")
         affiliationComboBox.setPlaceholder("Select Affiliation")
         affiliationComboBox.setItems(affiliationList)
-        affiliationComboBox.setItemCaptionGenerator({Affiliation af -> af.groupName})
+        affiliationComboBox.setItemCaptionGenerator({Affiliation af -> af.organisation})
         affiliationComboBox.setEmptySelectionAllowed(false)
 
         return affiliationComboBox
