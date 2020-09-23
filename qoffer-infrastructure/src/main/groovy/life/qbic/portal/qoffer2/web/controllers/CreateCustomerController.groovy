@@ -2,6 +2,7 @@ package life.qbic.portal.qoffer2.web.controllers
 
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.customers.create.CreateCustomerInput
@@ -36,11 +37,8 @@ class CreateCustomerController {
      * @since 1.0.0
      */
     void createNewCustomer(String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations) {
-        AcademicTitle academicTitle
-        academicTitle = AcademicTitle.values().find {it.getValue().equals(title)}
-        if (!academicTitle) {
-            throw new IllegalArgumentException("No ${AcademicTitle.getSimpleName()} found for $title")
-        }
+        AcademicTitleFactory academicTitleFactory = new AcademicTitleFactory()
+        AcademicTitle academicTitle = academicTitleFactory.getForString(title)
         Customer customer = new Customer(firstName, lastName, academicTitle, email, affiliations as List<Affiliation>)
         this.useCaseInput.createCustomer(customer)
     }
