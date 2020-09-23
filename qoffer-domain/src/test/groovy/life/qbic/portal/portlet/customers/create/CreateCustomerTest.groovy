@@ -1,5 +1,7 @@
 package life.qbic.portal.portlet.customers.create
 
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.Customer
 import spock.lang.Specification
 
 /**
@@ -11,4 +13,15 @@ import spock.lang.Specification
  * @author: Tobias Koch
  */
 class CreateCustomerTest extends Specification {
+    def "create customer with string"() {
+        Customer customer = new Customer("A", "B", "Prof. Dr.", "a.b@c.de", new ArrayList<Affiliation>())
+        expect:
+        customer != null
+    }
+
+    def "create customer with enum"() {
+        Customer customer = new Customer("A", "B", AcademicTitle.PROFESSOR, "a.b@c.de", new ArrayList<Affiliation>())
+        expect:
+        customer != null
+    }
 }

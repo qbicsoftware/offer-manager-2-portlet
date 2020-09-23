@@ -1,6 +1,8 @@
 package life.qbic.portal.qoffer2.customers
 
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
@@ -52,12 +54,16 @@ class CustomerDatabaseQueries {
             statement.setString(2, lastName)
             ResultSet rs = statement.executeQuery()
             while (rs.next()) {
+                AcademicTitleFactory academicTitleFactory = new AcademicTitleFactory()
                 List<Affiliation> affiliations = fetchAffiliationsForPerson(rs.getString(1).toInteger())
+                String firstName = "${rs.getString(2)}"
+                String emailAddress = "${rs.getString(5)}";
+                AcademicTitle academicTitle = academicTitleFactory.getForString("${rs.getString(4)}")
                 def customer = new Customer(
-                    "${rs.getString(2)}",
-                    "${rs.getString(3)}",
-                    "${rs.getString(4)}",
-                    "${rs.getString(5)}",
+                    firstName,
+                    lastName,
+                    academicTitle,
+                    emailAddress,
                     affiliations
                 )
                 result.add(customer)
@@ -243,7 +249,7 @@ class CustomerDatabaseQueries {
         def statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
         statement.setString(1, customer.firstName )
         statement.setString(2, customer.lastName)
-        statement.setString(3, customer.title)
+        statement.setString(3, customer.title.value)
         statement.setString(4, customer.eMailAddress )
         statement.execute()
         def keys = statement.getGeneratedKeys()
