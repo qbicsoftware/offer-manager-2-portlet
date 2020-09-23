@@ -20,6 +20,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* Some groovy library convergence issues
+* Same data model lib version for all project modules
+
 **Dependencies**
 
 **Deprecated**
