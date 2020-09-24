@@ -1,33 +1,29 @@
 package life.qbic.portal.qoffer2.web.views
 
+import com.vaadin.data.Binder
 import com.vaadin.data.ValidationResult
 import com.vaadin.data.ValueContext
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.data.validator.StringLengthValidator
-import com.vaadin.server.Page
 import com.vaadin.server.UserError
+import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.FormLayout
-import com.vaadin.ui.Notification
+import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.TextField
 
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.portal.qoffer2.web.StyledNotification
-import life.qbic.portal.qoffer2.web.ViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
-
-import java.beans.PropertyChangeEvent
-import java.beans.PropertyChangeListener
-import java.util.stream.Collectors
 
 /**
  * This class generates a Form Layout in which the user
  * can input the necessary information for the creation of a new customer
  *
- * CreateCustomerView will be integrated into the qOffer 2.0 Portlet and provides an User Interface
+ * CreateCustomerViewModel will be integrated into the qOffer 2.0 Portlet and provides an User Interface
  * with the intention of enabling a user the creation of a new Customer in the QBiC Database
  *
  * @since: 1.0.0
@@ -35,23 +31,22 @@ import java.util.stream.Collectors
 
 @Log4j2
 class CreateCustomerView extends FormLayout {
-    final private ViewModel viewModel
+    final private ViewModel sharedViewModel
+    final private CreateCustomerViewModel createCustomerViewModel
     final private CreateCustomerController controller
 
     ComboBox<String> titleField
     TextField firstNameField
     TextField lastNameField
     TextField emailField
-    ComboBox affiliationComboBox
+    ComboBox<Affiliation> affiliationComboBox
     Button submitButton
 
-    StyledNotification failureNotification
-    StyledNotification successNotification
-
-    CreateCustomerView(CreateCustomerController controller, ViewModel viewModel) {
+    CreateCustomerView(CreateCustomerController controller, ViewModel sharedViewModel, CreateCustomerViewModel createCustomerViewModel) {
         super()
         this.controller = controller
-        this.viewModel = viewModel
+        this.sharedViewModel = sharedViewModel
+        this.createCustomerViewModel = createCustomerViewModel
         initLayout()
         registerListeners()
     }
@@ -65,11 +60,7 @@ class CreateCustomerView extends FormLayout {
         //Generate FormLayout and the individual components
         FormLayout createCustomerForm = new FormLayout()
 
-        List<String> academicTitles = AcademicTitle.values().toList().stream().map{ it -> it.getValue() }.collect(Collectors.toList())
-        this.titleField = new ComboBox("Academic Title")
-        titleField.setItems(academicTitles)
-        titleField.setPlaceholder("customer title if any")
-        titleField.setEmptySelectionAllowed(false)
+        this.titleField = generateTitleSelector()
 
         this.firstNameField = new TextField("First Name")
         firstNameField.setPlaceholder("customer first name")
@@ -80,10 +71,12 @@ class CreateCustomerView extends FormLayout {
         this.emailField = new TextField("Email Address")
         emailField.setPlaceholder("customer email address")
 
-        generateAffiliationSelector(viewModel.affiliations)
-        affiliationComboBox.emptySelectionAllowed = false
+        this.affiliationComboBox = generateAffiliationSelector(sharedViewModel.affiliations)
 
         this.submitButton = new Button("Create Customer")
+
+        HorizontalLayout submitButtonLayout = new HorizontalLayout(submitButton)
+        submitButtonLayout.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
 
         //Add the components to the FormLayout
         createCustomerForm.addComponent(titleField)
@@ -91,13 +84,51 @@ class CreateCustomerView extends FormLayout {
         createCustomerForm.addComponent(lastNameField)
         createCustomerForm.addComponent(emailField)
         createCustomerForm.addComponent(affiliationComboBox)
-        createCustomerForm.addComponent(submitButton)
+        createCustomerForm.addComponent(submitButtonLayout)
 
 
-        // Retrieve user input from fields and add them to the the Binder if entries are valid
+        titleField.setSizeFull()
+        firstNameField.setSizeFull()
+        lastNameField.setSizeFull()
+        emailField.setSizeFull()
+        affiliationComboBox.setSizeFull()
+        submitButtonLayout.setSizeFull()
 
-        //Add Validators to the components
+        bindViewModel(this.createCustomerViewModel)
+
+        createCustomerForm.setSpacing(true)
         this.addComponent(createCustomerForm)
+    }
+
+    /**
+     * This method connects the form fields to the corresponding values in the view model
+     * @param viewModel the view model holding the data to be displayed
+     */
+    private void bindViewModel(CreateCustomerViewModel viewModel) {
+        Binder<CreateCustomerViewModel> binder = new Binder<>()
+
+        // by binding the fields to the view model, the model is updated when the user input changed
+        binder.setBean(viewModel)
+
+        binder.forField(this.titleField)
+                .bind({ it.academicTitle }, { it, updatedValue -> it.setAcademicTitle(updatedValue) })
+        binder.forField(this.firstNameField)
+                .bind({ it.firstName }, { it, updatedValue -> it.setFirstName(updatedValue) })
+        binder.forField(this.lastNameField)
+                .bind({ it.lastName }, { it, updatedValue -> it.setLastName(updatedValue) })
+        binder.forField(this.emailField)
+                .bind({ it.email }, { it, updatedValue -> it.setEmail(updatedValue) })
+        binder.forField(this.affiliationComboBox)
+                .bind({ it.affiliation }, { it, updatedValue -> it.setAffiliation(updatedValue) })
+
+        /*
+        Here we setup a listener to the viewModel that hold displayed information.
+        The listener is needed since Vaadin bindings only work one-way
+         */
+        viewModel.addPropertyChangeListener({it ->
+            binder.readBean(binder.getBean())
+        })
+
     }
 
     /**
@@ -105,14 +136,27 @@ class CreateCustomerView extends FormLayout {
      * @param affiliationList :
      * @return Vaadin Combobox component
      */
-    private void generateAffiliationSelector(List<Affiliation> affiliationList) {
-
-        this.affiliationComboBox =
+    private ComboBox<Affiliation> generateAffiliationSelector(List<Affiliation> affiliationList) {
+        ComboBox<Affiliation> affiliationComboBox =
                 new ComboBox<>("Affiliation")
         affiliationComboBox.setPlaceholder("select customer affiliation")
-        affiliationComboBox.setItems(affiliationList)
-        affiliationComboBox.setItemCaptionGenerator({ Affiliation affiliation -> affiliation.organisation })
+        affiliationComboBox.setItems(sharedViewModel.affiliations)
         affiliationComboBox.setEmptySelectionAllowed(false)
+        affiliationComboBox.setItemCaptionGenerator({it.organisation})
+        return affiliationComboBox
+    }
+
+    /**
+     * Generates a Combobox, which can be used for AcademicTitle selection for a customer
+     * @return Vaadin Combobox component
+     */
+    private ComboBox<String> generateTitleSelector() {
+        ComboBox<String> titleCombobox =
+                new ComboBox<>("Academic Title")
+        titleCombobox.setPlaceholder("select academic title")
+        titleCombobox.setItems(sharedViewModel.academicTitles)
+        titleCombobox.setEmptySelectionAllowed(true)
+        return titleCombobox
     }
 
     /**
@@ -181,14 +225,14 @@ class CreateCustomerView extends FormLayout {
                 if (allValuesValid()) {
                     controller.createNewCustomer(firstName, lastName, title, email, affiliations)
                 } else {
-                    this.viewModel.failureNotifications.add("Please fill out the customer information correctly.")
+                    this.sharedViewModel.failureNotifications.add("Please fill out the customer information correctly.")
                 }
             } catch (IllegalArgumentException illegalArgumentException) {
                 log.error("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}", illegalArgumentException)
-                viewModel.failureNotifications.add("Could not create the customer. Please verify that your input is correct and try again.")
+                sharedViewModel.failureNotifications.add("Could not create the customer. Please verify that your input is correct and try again.")
             } catch (Exception e) {
                 log.error("Unexpected error after customer creation form submission.", e)
-                viewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
+                sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
             }
         })
     }

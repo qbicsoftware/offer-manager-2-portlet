@@ -42,6 +42,8 @@ class CreateCustomerController {
             title = "None"
         }
         AcademicTitle academicTitle = academicTitleFactory.getForString(title)
+
+
         Customer customer = new Customer(firstName, lastName, academicTitle, email, affiliations as List<Affiliation>)
         this.useCaseInput.createCustomer(customer)
     }

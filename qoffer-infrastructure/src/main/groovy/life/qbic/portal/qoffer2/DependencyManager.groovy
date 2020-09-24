@@ -1,14 +1,17 @@
 package life.qbic.portal.qoffer2
 
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.portal.portlet.customers.CustomerDbGateway
 import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
-import life.qbic.portal.qoffer2.web.PortletView
-import life.qbic.portal.qoffer2.web.Presenter
-import life.qbic.portal.qoffer2.web.ViewModel
+import life.qbic.portal.qoffer2.web.presenters.CreateCustomerPresenter
+import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
+import life.qbic.portal.qoffer2.web.views.PortletView
+import life.qbic.portal.qoffer2.web.presenters.Presenter
+import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.views.CreateCustomerView
 
@@ -26,7 +29,9 @@ import life.qbic.portal.qoffer2.web.views.CreateCustomerView
 class DependencyManager {
 
     private ViewModel viewModel
+    private CreateCustomerViewModel createCustomerViewModel
     private Presenter presenter
+    private CreateCustomerPresenter createCustomerPresenter
 
     private CustomerDbGateway customerDbGateway
     private CreateCustomer createCustomer
@@ -62,8 +67,16 @@ class DependencyManager {
         try {
             this.viewModel = new ViewModel()
             viewModel.affiliations.addAll(customerDbGateway.allAffiliations)
+            viewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${ViewModel.getSimpleName()} view model setup.", e)
+            throw e
+        }
+
+        try {
+            this.createCustomerViewModel = new CreateCustomerViewModel()
+        } catch (Exception e) {
+            log.error("Unexpected excpetion during ${CreateCustomerViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
     }
@@ -86,10 +99,17 @@ class DependencyManager {
             log.error("Unexpected exception during ${Presenter.getSimpleName()} setup." , e)
             throw e
         }
+
+        try {
+            this.createCustomerPresenter = new CreateCustomerPresenter(this.viewModel, this.createCustomerViewModel)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${CreateCustomerPresenter.getSimpleName()} setup." , e)
+            throw e
+        }
     }
 
     private void setupUseCaseInteractors() {
-        this.createCustomer = new CreateCustomer(presenter, customerDbGateway)
+        this.createCustomer = new CreateCustomer(createCustomerPresenter, customerDbGateway)
     }
 
     private void setupControllers() {
@@ -104,7 +124,7 @@ class DependencyManager {
     private void setupViews() {
         CreateCustomerView createCustomerView
         try {
-            createCustomerView = new CreateCustomerView(this.createCustomerController, this.viewModel)
+            createCustomerView = new CreateCustomerView(this.createCustomerController, this.viewModel, this.createCustomerViewModel)
         } catch (Exception e) {
             log.error("Could not create ${CreateCustomerView.getSimpleName()} view.", e)
             throw e
