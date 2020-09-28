@@ -22,6 +22,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Some groovy library convergence issues
 * Same data model lib version for all project modules
+* View model and view are now bound for the CreateCustomer use case
 
 **Dependencies**
 
