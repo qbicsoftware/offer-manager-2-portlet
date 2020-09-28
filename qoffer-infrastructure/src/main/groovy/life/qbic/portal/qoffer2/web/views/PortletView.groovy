@@ -1,15 +1,15 @@
-package life.qbic.portal.qoffer2.web
+package life.qbic.portal.qoffer2.web.views
 
 import com.vaadin.server.Page
 import com.vaadin.ui.Notification
 import com.vaadin.ui.VerticalLayout
-import life.qbic.portal.qoffer2.web.views.CreateCustomerView
+import life.qbic.portal.qoffer2.web.StyledNotification
+import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 /**
  * Class which connects the view elements with the ViewModel and the Controller
  *
- * This class acts as connector between the individual view elements, the ViewModel {@link ViewModel}
- * and the PortletController {@link Controller} and provides the initial listeners
+ * This class provides the initial listeners
  * and layout upon which the views are presented
  *
  * @since: 1.0.0
@@ -37,7 +37,7 @@ class PortletView extends VerticalLayout {
     private void initLayout() {
         this.setMargin(false)
         this.setSpacing(false)
-        this.addComponentsAndExpand(this.createCustomerView)
+        this.addComponent(this.createCustomerView)
         this.setSizeFull()
     }
 

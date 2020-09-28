@@ -1,11 +1,11 @@
-package life.qbic.portal.qoffer2.web
+package life.qbic.portal.qoffer2.web.presenters
 
 
-import life.qbic.portal.portlet.customers.create.CreateCustomerOutput
 import life.qbic.portal.portlet.customers.update.UpdateCustomerOutput
 import life.qbic.portal.portlet.offers.create.CreateOfferOutput
 import life.qbic.portal.portlet.offers.search.SearchOffersOutput
 import life.qbic.portal.portlet.offers.update.UpdateOfferOutput
+import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 /**
  *  Handles the presentation of the qoffer-2.0 use cases and its internal data model to the ViewModel.
@@ -18,7 +18,7 @@ import life.qbic.portal.portlet.offers.update.UpdateOfferOutput
  * @author: Jennifer Bödker
  *
  */
-class Presenter implements SearchOffersOutput, CreateOfferOutput, UpdateOfferOutput, CreateCustomerOutput, UpdateCustomerOutput {
+class Presenter implements SearchOffersOutput, CreateOfferOutput, UpdateOfferOutput, UpdateCustomerOutput {
 
     final private ViewModel viewModel
 
