@@ -27,11 +27,11 @@ class CreateCustomer implements CreateCustomerInput {
   void createCustomer(Customer customer) {
     try {
       customerDbGateway.addCustomer(customer)
-      output.successNotification("Successfully added new Customer")
+      output.successNotification("Successfully added new customer")
     } catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)
-    } catch(Exception exception) {
-      output.failNotification()
+    } catch(Exception ignored) {
+      output.failNotification("Could not create new customer")
     }
   }
 }

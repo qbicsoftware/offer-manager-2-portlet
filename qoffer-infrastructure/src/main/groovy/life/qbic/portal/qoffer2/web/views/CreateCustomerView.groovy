@@ -271,7 +271,8 @@ class CreateCustomerView extends FormLayout {
                     this.sharedViewModel.failureNotifications.add("Please fill out the customer information correctly.")
                 }
             } catch (IllegalArgumentException illegalArgumentException) {
-                log.error("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}", illegalArgumentException)
+                log.error("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}")
+                log.debug("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}", illegalArgumentException)
                 sharedViewModel.failureNotifications.add("Could not create the customer. Please verify that your input is correct and try again.")
             } catch (Exception e) {
                 log.error("Unexpected error after customer creation form submission.", e)

@@ -39,6 +39,5 @@ class CreateCustomerPresenter implements CreateCustomerOutput{
     @Override
     void failNotification(String notification) {
         viewModel.failureNotifications.add(notification)
-        clearCustomerData()
     }
 }
