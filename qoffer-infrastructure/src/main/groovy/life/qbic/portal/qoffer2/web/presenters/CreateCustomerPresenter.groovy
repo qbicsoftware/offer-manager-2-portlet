@@ -5,11 +5,12 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 
 /**
- * <short description>
+ * Presenter for the CreateCustomerView
  *
- * <detailed description>
+ * This presenter handles the output of the CreateCustomer use case and prepares it for the
+ * CreateCustomerView.
  *
- * @since: <versiontag>
+ * @since: 1.0.0
  */
 class CreateCustomerPresenter implements CreateCustomerOutput{
     private final ViewModel viewModel
