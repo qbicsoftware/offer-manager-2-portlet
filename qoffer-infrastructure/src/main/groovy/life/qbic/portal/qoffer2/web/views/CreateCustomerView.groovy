@@ -2,22 +2,17 @@ package life.qbic.portal.qoffer2.web.views
 
 import com.vaadin.data.Binder
 import com.vaadin.data.ValidationResult
+import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
 import com.vaadin.data.validator.EmailValidator
-import com.vaadin.data.validator.StringLengthValidator
 import com.vaadin.server.UserError
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Button
-import com.vaadin.ui.ComboBox
-import com.vaadin.ui.FormLayout
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.TextField
-
+import com.vaadin.shared.ui.MarginInfo
+import com.vaadin.ui.*
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
-import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 
 /**
  * This class generates a Form Layout in which the user
@@ -48,6 +43,8 @@ class CreateCustomerView extends FormLayout {
         this.sharedViewModel = sharedViewModel
         this.createCustomerViewModel = createCustomerViewModel
         initLayout()
+        bindViewModel(this.createCustomerViewModel)
+        setupFieldValidators(this.createCustomerViewModel)
         registerListeners()
     }
 
@@ -64,14 +61,18 @@ class CreateCustomerView extends FormLayout {
 
         this.firstNameField = new TextField("First Name")
         firstNameField.setPlaceholder("customer first name")
+        firstNameField.setRequiredIndicatorVisible(true)
 
         this.lastNameField = new TextField("Last Name")
         lastNameField.setPlaceholder("customer last name")
+        lastNameField.setRequiredIndicatorVisible(true)
 
         this.emailField = new TextField("Email Address")
         emailField.setPlaceholder("customer email address")
+        emailField.setRequiredIndicatorVisible(true)
 
         this.affiliationComboBox = generateAffiliationSelector(sharedViewModel.affiliations)
+        affiliationComboBox.setRequiredIndicatorVisible(true)
 
         this.submitButton = new Button("Create Customer")
 
@@ -79,13 +80,11 @@ class CreateCustomerView extends FormLayout {
         submitButtonLayout.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
 
         //Add the components to the FormLayout
-        createCustomerForm.addComponent(titleField)
-        createCustomerForm.addComponent(firstNameField)
-        createCustomerForm.addComponent(lastNameField)
+        createCustomerForm.addComponents(titleField)
+        createCustomerForm.addComponents(firstNameField, lastNameField)
         createCustomerForm.addComponent(emailField)
         createCustomerForm.addComponent(affiliationComboBox)
         createCustomerForm.addComponent(submitButtonLayout)
-
 
         titleField.setSizeFull()
         firstNameField.setSizeFull()
@@ -94,9 +93,8 @@ class CreateCustomerView extends FormLayout {
         affiliationComboBox.setSizeFull()
         submitButtonLayout.setSizeFull()
 
-        bindViewModel(this.createCustomerViewModel)
-
         createCustomerForm.setSpacing(true)
+        createCustomerForm.setMargin(new MarginInfo(false, true, false, false))
         this.addComponent(createCustomerForm)
     }
 
@@ -106,6 +104,11 @@ class CreateCustomerView extends FormLayout {
      */
     private void bindViewModel(CreateCustomerViewModel viewModel) {
         Binder<CreateCustomerViewModel> binder = new Binder<>()
+
+        Validator<String> nameValidator =  Validator.from({String value -> (value && !value.trim().empty)}, "Please provide a valid name.")
+        Validator<String> emailValidator = new EmailValidator("Please provide a valid email address.")
+        Validator<? extends Object> selectionValidator = Validator.from({o -> o != null}, "Please make a selection.")
+
 
         // by binding the fields to the view model, the model is updated when the user input changed
         binder.setBean(viewModel)
@@ -124,16 +127,95 @@ class CreateCustomerView extends FormLayout {
         /*
         Here we setup a listener to the viewModel that hold displayed information.
         The listener is needed since Vaadin bindings only work one-way
+
+        Please NOTE: we cannot use the binder.readBean(binder.getBean) refresh here since it would
+        overwrite all validators attached to the fields. We furthermore cannot use the
+        BinderBuilder#withValidator method since this would prevent the form from showing invalid
+        information that is stored within the viewModel. We want the view to reflect the view model
+        at all times!
          */
         viewModel.addPropertyChangeListener({it ->
-            binder.readBean(binder.getBean())
+            switch (it.propertyName) {
+                case "academicTitle":
+                    String newValue = it.newValue as String
+                    titleField.selectedItem = newValue ?: titleField.emptyValue
+                    break
+                case "firstName":
+                    String newValue = it.newValue as String
+                    firstNameField.value = newValue ?: firstNameField.emptyValue
+                    break
+                case "lastName":
+                    String newValue = it.newValue as String
+                    lastNameField.value = newValue ?: lastNameField.emptyValue
+                    break
+                case "email":
+                    String newValue = it.newValue as String
+                    emailField.value = newValue ?: emailField.emptyValue
+                    break
+                case "affiliation":
+                    Affiliation newValue = it.newValue as Affiliation
+                    affiliationComboBox.selectedItem = newValue ?: affiliationComboBox.emptyValue
+                    break
+                default:
+                    break
+            }
+        })
+    }
+
+    /**
+     * This method adds validation to the fields of this view
+     */
+    private void setupFieldValidators(CreateCustomerViewModel viewModel) {
+
+        Validator<String> nameValidator =  Validator.from({String value -> (value && !value.trim().empty)}, "Please provide a valid name.")
+        Validator<String> emailValidator = new EmailValidator("Please provide a valid email address.")
+        Validator<? extends Object> selectionValidator = Validator.from({o -> o != null}, "Please make a selection.")
+
+        //Add Listeners to all Fields in the Formlayout
+        this.firstNameField.addValueChangeListener({ event ->
+            ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.firstNameField))
+            if (result.isError()) {
+                UserError error = new UserError(result.getErrorMessage())
+                firstNameField.setComponentError(error)
+            } else {
+                firstNameField.setComponentError(null)
+            }
         })
 
+        this.lastNameField.addValueChangeListener({ event ->
+            ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.lastNameField))
+            if (result.isError()) {
+                UserError error = new UserError(result.getErrorMessage())
+                lastNameField.setComponentError(error)
+            } else {
+                lastNameField.setComponentError(null)
+            }
+        })
+
+        this.emailField.addValueChangeListener({ event ->
+            ValidationResult result = emailValidator.apply(event.getValue(), new ValueContext(this.emailField))
+            if (result.isError()) {
+                UserError error = new UserError(result.getErrorMessage())
+                emailField.setComponentError(error)
+            } else {
+                emailField.setComponentError(null)
+            }
+        })
+
+        this.affiliationComboBox.addSelectionListener({selection ->
+            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.affiliationComboBox))
+            if (result.isError()) {
+                UserError error = new UserError(result.getErrorMessage())
+                affiliationComboBox.setComponentError(error)
+            } else {
+                affiliationComboBox.setComponentError(null)
+            }
+        })
     }
 
     /**
      * Generates a Combobox, which can be used for Affiliation selection by the user
-     * @param affiliationList :
+     * @param affiliationList list of all selectable affiliations
      * @return Vaadin Combobox component
      */
     private ComboBox<Affiliation> generateAffiliationSelector(List<Affiliation> affiliationList) {
@@ -168,61 +250,22 @@ class CreateCustomerView extends FormLayout {
         return !firstNameField.getComponentError() \
             && !lastNameField.getComponentError() \
             && !emailField.getComponentError() \
-            && affiliationComboBox.getSelectedItem().isPresent()
+            && !affiliationComboBox.getComponentError()
     }
 
     void registerListeners() {
-        //Add Listeners to all Fields in the Formlayout
-        this.firstNameField.addValueChangeListener({ event ->
-            ValidationResult result = new StringLengthValidator(
-                    "Please input a valid first name", 1, null)
-                    .apply(event.getValue(), new ValueContext(firstNameField))
-            if (result.isError()) {
-                UserError error = new UserError(result.getErrorMessage())
-                firstNameField.setComponentError(error)
-            } else {
-                firstNameField.setComponentError(null)
-            }
-        })
-
-        this.lastNameField.addValueChangeListener({ event ->
-            ValidationResult result = new StringLengthValidator("Please input a valid last name",
-                1, null).apply(event.getValue(), new ValueContext(this.lastNameField))
-            if (result.isError()) {
-                UserError error = new UserError(result.getErrorMessage())
-                lastNameField.setComponentError(error)
-            } else {
-                lastNameField.setComponentError(null)
-            }
-        })
-
-        this.emailField.addValueChangeListener({ event ->
-            ValidationResult result = new EmailValidator("Please input a valid email address")
-                .apply(event.getValue(), new ValueContext(emailField))
-            if (result.isError()) {
-                UserError error = new UserError(result.getErrorMessage())
-                emailField.setComponentError(error)
-            } else {
-                emailField.setComponentError(null)
-            }
-        })
-
         this.submitButton.addClickListener({ event ->
             try {
-                String title
-                String firstName = this.firstNameField.getValue().trim()
-                String lastName = this.lastNameField.getValue().trim()
-                String email = this.emailField.getValue().trim()
-                List<Affiliation> affiliations = new ArrayList()
-                if (affiliationComboBox.selectedItem.isPresent()) {
-                    affiliations.add(affiliationComboBox.getSelectedItem().get())
-                }
-                if (titleField.selectedItem.isPresent()) {
-                    title = titleField.selectedItem.get()
-                } else {
-                    title = ""
-                }
                 if (allValuesValid()) {
+                    // we assume that the view model and the view always contain the same information
+                    String title = createCustomerViewModel.academicTitle
+                    String firstName = createCustomerViewModel.firstName
+                    String lastName = createCustomerViewModel.lastName
+                    String email = createCustomerViewModel.email
+                    List<Affiliation> affiliations = new ArrayList()
+
+                    affiliations.add(createCustomerViewModel.affiliation)
+
                     controller.createNewCustomer(firstName, lastName, title, email, affiliations)
                 } else {
                     this.sharedViewModel.failureNotifications.add("Please fill out the customer information correctly.")

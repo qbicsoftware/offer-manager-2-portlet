@@ -4,11 +4,16 @@ import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 
 /**
- * <short description>
+ * A ViewModel holding data that is presented in a
+ * life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
  *
- * <detailed description>
+ * This class holds all specific fields that are mutable in the view
+ * Whenever values change it should be reflected in the corresponding view. This class can be used
+ * for UI unit testing purposes.
  *
- * @since: <versiontag>
+ * This class can contain JavaBean objects to enable views to listen to changes in the values.
+ *
+ * @since: 1.0.0
  */
 class CreateCustomerViewModel {
     @Bindable String academicTitle
@@ -16,5 +21,4 @@ class CreateCustomerViewModel {
     @Bindable String lastName
     @Bindable String email
     @Bindable Affiliation affiliation
-
 }
