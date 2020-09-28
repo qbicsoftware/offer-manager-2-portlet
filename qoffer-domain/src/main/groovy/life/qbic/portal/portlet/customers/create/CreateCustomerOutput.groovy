@@ -1,6 +1,6 @@
 package life.qbic.portal.portlet.customers.create
 
-import life.qbic.portal.portlet.UseCaseOutput
+import life.qbic.portal.portlet.VerboseUseCaseOutput
 
 /**
  * Output interface for the {@link life.qbic.portal.portlet.customers.create.CreateCustomer} use
@@ -9,6 +9,6 @@ import life.qbic.portal.portlet.UseCaseOutput
  * @since: 1.0.0
  * @author: Tobias Koch
  */
-interface CreateCustomerOutput extends UseCaseOutput{
+interface CreateCustomerOutput extends VerboseUseCaseOutput{
 
 }

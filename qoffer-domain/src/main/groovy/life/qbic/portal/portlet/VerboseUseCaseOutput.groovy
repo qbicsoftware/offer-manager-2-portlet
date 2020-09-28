@@ -1,13 +1,13 @@
 package life.qbic.portal.portlet
 
 /**
- * <short description>
+ * Output of a use case with success and failure message processing
  *
- * <detailed description>
+ * A VerboseUseCaseOutput provides functionality to receive success and failure notification messages.
  *
- * @since: <versiontag>
+ * @since: 1.0.0
  */
-interface UseCaseOutput {
+interface VerboseUseCaseOutput {
 
     /**
      * Sends success notifications that have been

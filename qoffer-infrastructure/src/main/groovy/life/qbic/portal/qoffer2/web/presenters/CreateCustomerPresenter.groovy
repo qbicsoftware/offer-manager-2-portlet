@@ -1,5 +1,6 @@
 package life.qbic.portal.qoffer2.web.presenters
 
+
 import life.qbic.portal.portlet.customers.create.CreateCustomerOutput
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
