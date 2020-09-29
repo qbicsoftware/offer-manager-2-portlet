@@ -45,8 +45,11 @@ class CreateCustomerController {
             academicTitle = academicTitleFactory.getForString(title)
         }
 
-
-        Customer customer = new Customer(firstName, lastName, academicTitle, email, affiliations as List<Affiliation>)
-        this.useCaseInput.createCustomer(customer)
+        try {
+            Customer customer = new Customer(firstName, lastName, academicTitle, email, affiliations as List<Affiliation>)
+            this.useCaseInput.createCustomer(customer)
+        } catch(Exception ignored) {
+            throw new IllegalArgumentException("Could not create customer from provided arguments.")
+        }
     }
 }
