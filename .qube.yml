@@ -1,0 +1,20 @@
+full_name: Sven Fillinger
+email: sven.fillinger@qbic.uni-tuebingen.de
+project_name: Offer Manager 2
+project_short_description: Offer Manager 2. A offer manager application for QBiC and
+  affiliated plattforms.
+version: 1.0.0-SNAPSHOT
+domain: portlet
+language: groovy
+project_slug: Offer_Manager_2
+project_slug_no_hyphen: Offer_Manager_2
+template_version: '1.0.0 # <<QUBE_NO_BUMP>>'
+template_handle: portlet-groovy
+github_username: sven1103
+creator_github_username: sven1103
+is_github_repo: false
+is_repo_private: false
+is_github_orga: false
+copyright_holder: QBiC
+license: MIT
+main_class_prefix: Qbic
