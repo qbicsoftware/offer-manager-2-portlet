@@ -2,6 +2,6 @@
 Usage
 =====
 
-To use qOffer_2.0 in a project::
+To use Offer_Manager_2 in a project::
 
-    import qOffer_2.0
+    import Offer_Manager_2

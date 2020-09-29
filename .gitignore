@@ -3,9 +3,6 @@
 .project
 .settings/
 
-# Maven
-.flattened-pom.xml
-
 # VS Code
 .vscode
 
@@ -25,10 +22,9 @@ logs/
 
 # Other
 **/.factorypath
-**/developer.properties
 
 # compiled Vaadin widgetsets
-**/src/main/webapp/VAADIN/widgetsets
+src/main/webapp/VAADIN/widgetsets
 
 # From docs
 **/__pycache__

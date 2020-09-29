@@ -4,7 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = python -msphinx
-SPHINXPROJ    = qOffer_2.0
+SPHINXPROJ    = Offer_Manager_2
 SOURCEDIR     = .
 BUILDDIR      = _build
 
