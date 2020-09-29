@@ -18,7 +18,7 @@ import life.qbic.portal.portlet.customers.create.CreateCustomerInput
 @Log4j2
 class CreateCustomerController {
 
-    CreateCustomerInput useCaseInput
+    private final CreateCustomerInput useCaseInput
 
     CreateCustomerController(CreateCustomerInput useCaseInput) {
         this.useCaseInput = useCaseInput
