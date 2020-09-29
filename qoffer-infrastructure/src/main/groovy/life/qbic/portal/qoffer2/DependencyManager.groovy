@@ -14,6 +14,8 @@ import life.qbic.portal.qoffer2.web.presenters.Presenter
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.views.CreateCustomerView
+import life.qbic.portal.utils.ConfigurationManager
+import life.qbic.portal.utils.ConfigurationManagerFactory
 
 /**
  * Class that manages all the dependency injections and class instance creations
@@ -38,6 +40,8 @@ class DependencyManager {
     private CreateCustomerController createCustomerController
 
     private PortletView portletView
+    private ConfigurationManager configurationManager
+
     /**
      * Public constructor.
      *
@@ -45,6 +49,7 @@ class DependencyManager {
      * It ensures that the {@link #portletView} field is set.
      */
     DependencyManager() {
+        configurationManager = ConfigurationManagerFactory.getInstance()
         initializeDependencies()
     }
 
@@ -83,7 +88,14 @@ class DependencyManager {
 
     private void setupDbConnections() {
         try {
-            DatabaseSession.create()
+
+            String user = configurationManager.getMysqlUser()
+            String password = configurationManager.getMysqlPass()
+            String host = configurationManager.getMysqlHost()
+            String port = configurationManager.getMysqlPort()
+            String sqlDatabase = configurationManager.getMysqlDB()
+
+            DatabaseSession.create(user, password, host, port, sqlDatabase)
             CustomerDatabaseQueries queries = new CustomerDatabaseQueries(DatabaseSession.INSTANCE)
             customerDbGateway = new CustomerDbConnector(queries)
         } catch (Exception e) {

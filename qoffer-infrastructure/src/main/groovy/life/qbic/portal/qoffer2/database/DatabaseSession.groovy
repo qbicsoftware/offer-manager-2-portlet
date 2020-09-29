@@ -29,9 +29,9 @@ class DatabaseSession {
     private static final Logger LOG = LogManager.getLogger(DatabaseSession.class)
 
     //create session with DatabaseSession.init() and then DatabaseSession.INSTANCE to use the created session
-    private DatabaseSession(String user, String password, String host, String port, String sql_database) {
+    private DatabaseSession(String user, String password, String host, String port, String sqlDatabase) {
 
-        def url = "jdbc:mysql://" + host + ":" + port + "/" + sql_database
+        def url = "jdbc:mysql://" + host + ":" + port + "/" + sqlDatabase
 
         dataSource = new BasicDataSource()
         dataSource.setUrl(url)
@@ -48,12 +48,15 @@ class DatabaseSession {
     /**
      * Initiates the database connection by retrieving configuration information from the {@link ConfigurationManager}
      * The instance is only created if there is no other existing
+     * @param user
+     * @param password
+     * @param host
+     * @param port
+     * @param sqlDatabase database name hosting Customer information
      */
-    static void create() {
-        ConfigurationManager conf = ConfigurationManagerFactory.getInstance()
+    static void create(String user, String password, String host, String port, String sqlDatabase) {
         if (INSTANCE == null) {
-            INSTANCE = new DatabaseSession(conf.getMysqlUser(), conf.getMysqlPass(), conf.getMysqlHost(),
-                    conf.getMysqlPort(), conf.getMysqlDB())
+            INSTANCE = new DatabaseSession(user, password, host, port, sqlDatabase)
         } else{
             LOG.info("There is already an existing database instance")
         }
