@@ -1,4 +1,7 @@
 package life.qbic.portal.portlet.customers.update
+
+import life.qbic.portal.portlet.VerboseUseCaseOutput
+
 /**
  * Output interface for the {@link life.qbic.portal.portlet.customers.create.CreateCustomer} use case
  *
@@ -6,6 +9,6 @@ package life.qbic.portal.portlet.customers.update
  * @author: Tobias Koch
  *
  */
-interface UpdateCustomerOutput {
+interface UpdateCustomerOutput extends VerboseUseCaseOutput {
 
 }

@@ -13,13 +13,13 @@ import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 
-import life.qbic.portal.qoffer2.web.ViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 /**
  * This class generates a Form Layout in which the user
  * can input the necessary information for the creation of a new customer
  *
- * CreateCustomerView will be integrated into the qOffer 2.0 Portlet and provides an User Interface
+ * CreateCustomerViewModel will be integrated into the qOffer 2.0 Portlet and provides an User Interface
  * with the intention of enabling a user the creation of a new Customer in the QBiC Database
  *
  * @since: 1.0.0*

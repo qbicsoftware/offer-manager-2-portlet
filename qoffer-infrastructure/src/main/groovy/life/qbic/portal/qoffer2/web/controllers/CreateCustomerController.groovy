@@ -1,6 +1,8 @@
 package life.qbic.portal.qoffer2.web.controllers
 
-
+import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.customers.create.CreateCustomerInput
@@ -13,9 +15,10 @@ import life.qbic.portal.portlet.customers.create.CreateCustomerInput
  * @since: 1.0.0
  * @author: Jennifer Bödker
  */
+@Log4j2
 class CreateCustomerController {
 
-    CreateCustomerInput useCaseInput
+    private final CreateCustomerInput useCaseInput
 
     CreateCustomerController(CreateCustomerInput useCaseInput) {
         this.useCaseInput = useCaseInput
@@ -26,14 +29,27 @@ class CreateCustomerController {
      *
      * @param firstName the first name of the customer
      * @param lastName the last name of the customer
-     * @param title the title if any of the customer
+     * @param title the title if any of the customer. The title has to match the value of a known AcademicTitle.
      * @param email the email address of the customer
      * @param affiliations the affiliations of the customer
      *
+     * @see AcademicTitle
      * @since 1.0.0
      */
     void createNewCustomer(String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations) {
-        Customer customer = new Customer(firstName, lastName, title, email, affiliations as List<Affiliation>)
-        this.useCaseInput.createCustomer(customer)
+        AcademicTitleFactory academicTitleFactory = new AcademicTitleFactory()
+        AcademicTitle academicTitle
+        if (!title || title?.isEmpty()) {
+            academicTitle = AcademicTitle.NONE
+        } else {
+            academicTitle = academicTitleFactory.getForString(title)
+        }
+
+        try {
+            Customer customer = new Customer(firstName, lastName, academicTitle, email, affiliations as List<Affiliation>)
+            this.useCaseInput.createCustomer(customer)
+        } catch(Exception ignored) {
+            throw new IllegalArgumentException("Could not create customer from provided arguments.")
+        }
     }
 }

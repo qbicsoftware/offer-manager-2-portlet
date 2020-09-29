@@ -1,4 +1,4 @@
-package life.qbic.portal.qoffer2.web
+package life.qbic.portal.qoffer2.web.viewmodel
 
 import life.qbic.datamodel.dtos.business.Affiliation
 
@@ -13,17 +13,19 @@ import life.qbic.datamodel.dtos.business.Affiliation
  * @author: Tobias Koch
  */
 class ViewModel {
-    ObservableList affiliations
-    ObservableList successNotifications
-    ObservableList failureNotifications
+    final ObservableList affiliations
+    final ObservableList academicTitles
+    final ObservableList successNotifications
+    final ObservableList failureNotifications
 
     ViewModel() {
-        this(new ArrayList<Affiliation>(), new ArrayList<String>(), new ArrayList<String>())
+        this(new ArrayList<Affiliation>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>())
     }
 
-    private ViewModel(List<Affiliation> affiliations, List<String> successNotifications,
+    private ViewModel(List<Affiliation> affiliations, List<String> academicTitles, List<String> successNotifications,
               List<String> failureNotifications) {
         this.affiliations = new ObservableList(affiliations)
+        this.academicTitles = new ObservableList(academicTitles)
         this.successNotifications = new ObservableList(successNotifications)
         this.failureNotifications = new ObservableList(failureNotifications)
     }
