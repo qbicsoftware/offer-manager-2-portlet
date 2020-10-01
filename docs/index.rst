@@ -1,5 +1,5 @@
-Welcome to qOffer_2.0's documentation!
-=======================================
+Welcome to Offer_Manager_2's documentation!
+============================================
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

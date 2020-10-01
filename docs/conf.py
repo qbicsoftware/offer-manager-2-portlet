@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 #
-# qOffer_2.0 documentation build configuration file, created by
 # sphinx-quickstart on Fri Jun  9 13:47:02 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -49,6 +48,7 @@ master_doc = 'index'
 project = 'qOffer_2.0'
 copyright = "2020, Jennifer Bödker"
 author = "Jennifer Bödker"
+
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -100,7 +100,8 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'qOffer_2.0doc'
+
+htmlhelp_basename = 'Offer_Manager_2doc'
 
 
 # -- Options for LaTeX output ------------------------------------------
