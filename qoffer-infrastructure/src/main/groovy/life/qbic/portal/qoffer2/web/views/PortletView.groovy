@@ -18,15 +18,17 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  */
 class PortletView extends VerticalLayout {
 
-    final private ViewModel portletViewModel
+    private final ViewModel portletViewModel
 
-    private CreateCustomerView createCustomerView
+    private final CreateCustomerView createCustomerView
+    private final CreateAffiliationView createAffiliationView
 
     PortletView(ViewModel portletViewModel,
-                CreateCustomerView createCustomerView) {
+                CreateCustomerView createCustomerView, CreateAffiliationView createAffiliationView) {
         super()
         this.portletViewModel = portletViewModel
         this.createCustomerView = createCustomerView
+        this.createAffiliationView = createAffiliationView
         initLayout()
         registerListeners()
     }
@@ -37,7 +39,12 @@ class PortletView extends VerticalLayout {
     private void initLayout() {
         this.setMargin(false)
         this.setSpacing(false)
+
+        this.createAffiliationView.setVisible(portletViewModel.createAffiliationVisible)
+
         this.addComponent(this.createCustomerView)
+        this.addComponent(this.createAffiliationView)
+
         this.setSizeFull()
     }
 
@@ -60,6 +67,16 @@ class PortletView extends VerticalLayout {
                 portletViewModel.failureNotifications.remove(evt.newValue)
             }
         }
+
+        this.portletViewModel.addPropertyChangeListener({
+            switch (it.propertyName) {
+                case "createAffiliationVisible":
+                    this.createAffiliationView.setVisible(portletViewModel.createAffiliationVisible)
+                    break
+                default:
+                    break
+            }
+        })
     }
 
     private static def showNotification(String message, Notification.Type type) {

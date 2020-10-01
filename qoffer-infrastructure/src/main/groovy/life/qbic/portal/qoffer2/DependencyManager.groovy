@@ -3,12 +3,17 @@ package life.qbic.portal.qoffer2
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.portal.portlet.customers.CustomerDbGateway
+import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
 import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
+import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
+import life.qbic.portal.qoffer2.web.presenters.CreateAffiliationPresenter
 import life.qbic.portal.qoffer2.web.presenters.CreateCustomerPresenter
+import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
+import life.qbic.portal.qoffer2.web.views.CreateAffiliationView
 import life.qbic.portal.qoffer2.web.views.PortletView
 import life.qbic.portal.qoffer2.web.presenters.Presenter
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
@@ -30,12 +35,16 @@ class DependencyManager {
 
     private ViewModel viewModel
     private CreateCustomerViewModel createCustomerViewModel
+    private CreateAffiliationViewModel createAffiliationViewModel
     private Presenter presenter
     private CreateCustomerPresenter createCustomerPresenter
+    private CreateAffiliationPresenter createAffiliationPresenter
 
     private CustomerDbGateway customerDbGateway
     private CreateCustomer createCustomer
+    private CreateAffiliation createAffiliation
     private CreateCustomerController createCustomerController
+    private CreateAffiliationController createAffiliationController
 
     private PortletView portletView
     /**
@@ -79,6 +88,13 @@ class DependencyManager {
             log.error("Unexpected excpetion during ${CreateCustomerViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
+
+        try {
+            this.createAffiliationViewModel = new CreateAffiliationViewModel()
+        } catch (Exception e) {
+            log.error("Unexpected excpetion during ${CreateAffiliationViewModel.getSimpleName()} view model setup.", e)
+            throw e
+        }
     }
 
     private void setupDbConnections() {
@@ -106,15 +122,29 @@ class DependencyManager {
             log.error("Unexpected exception during ${CreateCustomerPresenter.getSimpleName()} setup." , e)
             throw e
         }
+
+        try {
+            this.createAffiliationPresenter = new CreateAffiliationPresenter(this.viewModel, this.createAffiliationViewModel)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${CreateAffiliationPresenter.getSimpleName()} setup." , e)
+            throw e
+        }
     }
 
     private void setupUseCaseInteractors() {
         this.createCustomer = new CreateCustomer(createCustomerPresenter, customerDbGateway)
+        this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbGateway)
     }
 
     private void setupControllers() {
         try {
             this.createCustomerController = new CreateCustomerController(this.createCustomer)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${CreateCustomerController.getSimpleName()} setup.", e)
+            throw e
+        }
+        try {
+            this.createAffiliationController = new CreateAffiliationController(this.createAffiliation)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateCustomerController.getSimpleName()} setup.", e)
             throw e
@@ -130,9 +160,17 @@ class DependencyManager {
             throw e
         }
 
+        CreateAffiliationView createAffiliationView
+        try {
+            createAffiliationView = new CreateAffiliationView(this.viewModel, this.createAffiliationViewModel, this.createAffiliationController)
+        } catch (Exception e) {
+            log.error("Could not create ${CreateAffiliationView.getSimpleName()} view.", e)
+            throw e
+        }
+
         PortletView portletView
         try {
-            portletView = new PortletView(this.viewModel, createCustomerView)
+            portletView = new PortletView(this.viewModel, createCustomerView, createAffiliationView)
             this.portletView = portletView
         } catch (Exception e) {
             log.error("Could not create ${PortletView.getSimpleName()} view.", e)

@@ -1,4 +1,4 @@
-package life.qbic.portal.portlet.customers.affiliation
+package life.qbic.portal.portlet.customers.affiliation.list
 
 /**
  * The input interface for the List Affiliations use case.

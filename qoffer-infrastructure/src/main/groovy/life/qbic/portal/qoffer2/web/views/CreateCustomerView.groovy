@@ -295,6 +295,7 @@ class CreateCustomerView extends VerticalLayout {
         this.affiliationButton.addClickListener({
             //TODO implement
             log.info("clicked on " + it.source)
+            sharedViewModel.createAffiliationVisible = !sharedViewModel.createAffiliationVisible
         })
     }
 }
