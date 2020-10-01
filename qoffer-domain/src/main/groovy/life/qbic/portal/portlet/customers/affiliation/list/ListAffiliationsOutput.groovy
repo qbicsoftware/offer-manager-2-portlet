@@ -1,4 +1,4 @@
-package life.qbic.portal.portlet.customers.affiliation
+package life.qbic.portal.portlet.customers.affiliation.list
 
 import life.qbic.datamodel.dtos.business.Affiliation
 

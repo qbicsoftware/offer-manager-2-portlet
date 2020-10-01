@@ -18,15 +18,17 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  */
 class PortletView extends VerticalLayout {
 
-    final private ViewModel portletViewModel
+    private final ViewModel portletViewModel
 
-    private CreateCustomerView createCustomerView
+    private final CreateCustomerView createCustomerView
+    private final CreateAffiliationView createAffiliationView
 
     PortletView(ViewModel portletViewModel,
-                CreateCustomerView createCustomerView) {
+                CreateCustomerView createCustomerView, CreateAffiliationView createAffiliationView) {
         super()
         this.portletViewModel = portletViewModel
         this.createCustomerView = createCustomerView
+        this.createAffiliationView = createAffiliationView
         initLayout()
         registerListeners()
     }
@@ -38,6 +40,7 @@ class PortletView extends VerticalLayout {
         this.setMargin(false)
         this.setSpacing(false)
         this.addComponent(this.createCustomerView)
+        this.addComponent(this.createAffiliationView)
         this.setSizeFull()
     }
 
