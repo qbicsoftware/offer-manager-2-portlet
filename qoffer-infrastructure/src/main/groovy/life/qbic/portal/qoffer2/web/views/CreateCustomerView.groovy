@@ -291,5 +291,10 @@ class CreateCustomerView extends VerticalLayout {
                 sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
             }
         })
+
+        this.affiliationButton.addClickListener({
+            //TODO implement
+            log.info("clicked on " + it.source)
+        })
     }
 }
