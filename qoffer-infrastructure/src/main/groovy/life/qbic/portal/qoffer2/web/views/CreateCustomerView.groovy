@@ -5,6 +5,8 @@ import com.vaadin.data.ValidationResult
 import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
 import com.vaadin.data.validator.EmailValidator
+import com.vaadin.icons.VaadinIcons
+import com.vaadin.server.Resource
 import com.vaadin.server.UserError
 import com.vaadin.shared.ui.MarginInfo
 import com.vaadin.ui.*
@@ -25,7 +27,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  */
 
 @Log4j2
-class CreateCustomerView extends FormLayout {
+class CreateCustomerView extends VerticalLayout {
     final private ViewModel sharedViewModel
     final private CreateCustomerViewModel createCustomerViewModel
     final private CreateCustomerController controller
@@ -36,6 +38,7 @@ class CreateCustomerView extends FormLayout {
     TextField emailField
     ComboBox<Affiliation> affiliationComboBox
     Button submitButton
+    Button affiliationButton
 
     CreateCustomerView(CreateCustomerController controller, ViewModel sharedViewModel, CreateCustomerViewModel createCustomerViewModel) {
         super()
@@ -54,9 +57,6 @@ class CreateCustomerView extends FormLayout {
      */
     private def initLayout() {
 
-        //Generate FormLayout and the individual components
-        FormLayout createCustomerForm = new FormLayout()
-
         this.titleField = generateTitleSelector()
 
         this.firstNameField = new TextField("First Name")
@@ -73,29 +73,41 @@ class CreateCustomerView extends FormLayout {
 
         this.affiliationComboBox = generateAffiliationSelector(sharedViewModel.affiliations)
         affiliationComboBox.setRequiredIndicatorVisible(true)
+        this.affiliationButton = new Button(VaadinIcons.PLUS)
 
         this.submitButton = new Button("Create Customer")
 
+        HorizontalLayout titleRow = new HorizontalLayout(titleField)
+        titleRow.setSizeFull()
+        titleRow.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
+
+        HorizontalLayout customerRow = new HorizontalLayout(firstNameField, lastNameField, emailField)
+        customerRow.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
+        customerRow.setSizeFull()
+
+        HorizontalLayout affiliationRow = new HorizontalLayout(affiliationComboBox, affiliationButton)
+        affiliationRow.setComponentAlignment(affiliationComboBox, Alignment.BOTTOM_LEFT)
+        affiliationRow.setComponentAlignment(affiliationButton, Alignment.BOTTOM_LEFT)
+        affiliationRow.setSizeFull()
+
         HorizontalLayout submitButtonLayout = new HorizontalLayout(submitButton)
         submitButtonLayout.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
+        submitButtonLayout.setSizeFull()
 
         //Add the components to the FormLayout
-        createCustomerForm.addComponents(titleField)
-        createCustomerForm.addComponents(firstNameField, lastNameField)
-        createCustomerForm.addComponent(emailField)
-        createCustomerForm.addComponent(affiliationComboBox)
-        createCustomerForm.addComponent(submitButtonLayout)
+        this.addComponents(titleRow)
+        this.addComponents(customerRow)
+        this.addComponents(affiliationRow)
+        this.addComponents(submitButtonLayout)
+
 
         titleField.setSizeFull()
         firstNameField.setSizeFull()
         lastNameField.setSizeFull()
         emailField.setSizeFull()
         affiliationComboBox.setSizeFull()
-        submitButtonLayout.setSizeFull()
 
-        createCustomerForm.setSpacing(true)
-        createCustomerForm.setMargin(new MarginInfo(false, true, false, false))
-        this.addComponent(createCustomerForm)
+        this.setSpacing(true)
     }
 
     /**
