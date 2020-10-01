@@ -39,8 +39,12 @@ class PortletView extends VerticalLayout {
     private void initLayout() {
         this.setMargin(false)
         this.setSpacing(false)
+
+        this.createAffiliationView.setVisible(portletViewModel.createAffiliationVisible)
+
         this.addComponent(this.createCustomerView)
         this.addComponent(this.createAffiliationView)
+
         this.setSizeFull()
     }
 
@@ -63,6 +67,16 @@ class PortletView extends VerticalLayout {
                 portletViewModel.failureNotifications.remove(evt.newValue)
             }
         }
+
+        this.portletViewModel.addPropertyChangeListener({
+            switch (it.propertyName) {
+                case "createAffiliationVisible":
+                    this.createAffiliationView.setVisible(portletViewModel.createAffiliationVisible)
+                    break
+                default:
+                    break
+            }
+        })
     }
 
     private static def showNotification(String message, Notification.Type type) {

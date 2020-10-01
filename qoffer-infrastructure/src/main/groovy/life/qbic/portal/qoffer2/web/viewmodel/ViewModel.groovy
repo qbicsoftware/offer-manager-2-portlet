@@ -1,5 +1,6 @@
 package life.qbic.portal.qoffer2.web.viewmodel
 
+import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 
 
@@ -17,6 +18,7 @@ class ViewModel {
     final ObservableList academicTitles
     final ObservableList successNotifications
     final ObservableList failureNotifications
+    @Bindable Boolean createAffiliationVisible
 
     ViewModel() {
         this(new ArrayList<Affiliation>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>())
@@ -28,5 +30,6 @@ class ViewModel {
         this.academicTitles = new ObservableList(academicTitles)
         this.successNotifications = new ObservableList(successNotifications)
         this.failureNotifications = new ObservableList(failureNotifications)
+        this.createAffiliationVisible = false
     }
 }
