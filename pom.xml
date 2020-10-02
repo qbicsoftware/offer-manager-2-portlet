@@ -7,13 +7,13 @@
 	<parent>
 		<groupId>life.qbic</groupId>
 		<artifactId>portlet-parent-pom</artifactId>
-		<version>3.1.0</version>
+		<version>3.1.1</version>
 	</parent>
-	<artifactId>Offer_Manager_2</artifactId>
+	<artifactId>qoffer-2-portlet</artifactId>
 	<version>1.0.0-SNAPSHOT</version> <!-- <<QUBE_FORCE_BUMP>> -->
-	<name>Offer Manager 2</name>
-	<url>http://github.com/qbicsoftware/Offer_Manager_2</url>
-	<description>Offer Manager 2. A offer manager application for QBiC and affiliated plattforms.</description>
+	<name>qoffer-2-portlet</name>
+	<url>http://github.com/qbicsoftware/qoffer-2-portlet</url>
+	<description>qOffer assists in managing and creating offers</description>
 	<packaging>war</packaging>
 	<!-- we only need to tell maven where to find our parent pom and other QBiC dependencies -->
 	<repositories>
@@ -61,8 +61,36 @@
             <scope>test</scope>
         </dependency>
 		
+		<!-- openBIS client -->
+		<dependency>
+			<groupId>life.qbic</groupId>
+			<artifactId>openbis-client-lib</artifactId>
+			<version>1.4.0</version>
+		</dependency>
 		
 		
+		<!-- openBIS API -->
+		<dependency>
+        	<groupId>life.qbic</groupId>
+            <artifactId>openbis-api</artifactId>
+			<version>18.06.2</version>
+        </dependency>
+		
+		
+		<!-- Access to our custom databases (portlets use direct JDBC to access data for now),
+			 but we will create a client library that portlets will use
+			 (version  is defined in the parent POM hierarchy (/portal/pom.xml)) -->
+		<dependency>
+			<groupId>org.mariadb.jdbc</groupId>
+			<artifactId>mariadb-java-client</artifactId>
+		</dependency>
+		
+		
+		<!-- Vaadin charts (version defined in parent pom) -->
+		<dependency>
+  			<groupId>com.vaadin.addon</groupId>
+  			<artifactId>vaadin-charts</artifactId>
+		</dependency>
 		
 	</dependencies>
 </project>

@@ -5,7 +5,7 @@ Credits
 Development Lead
 ----------------
 
-* Sven Fillinger <sven.fillinger@qbic.uni-tuebingen.de>
+* Jennifer Bödker <jennifer.boedker@qbic.uni-tuebingen.de>
 
 Contributors
 ------------

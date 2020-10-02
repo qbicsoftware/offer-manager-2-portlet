@@ -15,7 +15,7 @@
 
 		<init-param>
 			<name>UI</name>
-			<value>life.qbic.portal.portlet.QbicPortlet</value>
+			<value>life.qbic.portal.portlet.qOfferPortlet</value>
 		</init-param>
 
 		<init-param>
