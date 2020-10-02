@@ -17,3 +17,4 @@ is_github_orga: True
 github_orga: qbicsoftware
 main_class_prefix: qOffer
 version: 1.0.0-SNAPSHOT
+license: MIT
