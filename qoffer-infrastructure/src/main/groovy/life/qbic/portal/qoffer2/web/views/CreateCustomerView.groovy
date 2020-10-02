@@ -110,11 +110,6 @@ class CreateCustomerView extends VerticalLayout {
     private void bindViewModel() {
         Binder<CreateCustomerViewModel> binder = new Binder<>()
 
-        Validator<String> nameValidator =  Validator.from({String value -> (value && !value.trim().empty)}, "Please provide a valid name.")
-        Validator<String> emailValidator = new EmailValidator("Please provide a valid email address.")
-        Validator<? extends Object> selectionValidator = Validator.from({o -> o != null}, "Please make a selection.")
-
-
         // by binding the fields to the view model, the model is updated when the user input changed
         binder.setBean(createCustomerViewModel)
 
