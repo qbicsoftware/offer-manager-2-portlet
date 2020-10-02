@@ -26,7 +26,7 @@ class CreateAffiliationPresenter implements CreateAffiliationOutput {
      */
     private void clearAffiliationData() {
         this.createAffiliationViewModel.organisation = null
-        this.createAffiliationViewModel.address = null
+        this.createAffiliationViewModel.addressAddition = null
         this.createAffiliationViewModel.street = null
         this.createAffiliationViewModel.postalCode = null
         this.createAffiliationViewModel.city = null

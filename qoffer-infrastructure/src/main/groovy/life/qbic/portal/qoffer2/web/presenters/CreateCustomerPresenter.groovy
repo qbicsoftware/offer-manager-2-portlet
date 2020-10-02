@@ -28,6 +28,12 @@ class CreateCustomerPresenter implements CreateCustomerOutput{
         createCustomerViewModel.lastName = null
         createCustomerViewModel.email = null
         createCustomerViewModel.affiliation = null
+
+        createCustomerViewModel.academicTitleValid = null
+        createCustomerViewModel.firstNameValid = null
+        createCustomerViewModel.lastNameValid = null
+        createCustomerViewModel.emailValid = null
+        createCustomerViewModel.affiliationValid = null
     }
 
     @Override

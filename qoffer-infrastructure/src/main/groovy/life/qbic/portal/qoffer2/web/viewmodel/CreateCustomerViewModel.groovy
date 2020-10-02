@@ -21,4 +21,10 @@ class CreateCustomerViewModel {
     @Bindable String lastName
     @Bindable String email
     @Bindable Affiliation affiliation
+
+    @Bindable Boolean academicTitleValid
+    @Bindable Boolean firstNameValid
+    @Bindable Boolean lastNameValid
+    @Bindable Boolean emailValid
+    @Bindable Boolean affiliationValid
 }
