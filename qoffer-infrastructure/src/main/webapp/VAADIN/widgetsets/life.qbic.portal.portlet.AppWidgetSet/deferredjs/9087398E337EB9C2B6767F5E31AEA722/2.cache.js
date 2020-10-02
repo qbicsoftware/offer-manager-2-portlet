@@ -1,0 +1,1 @@
+$wnd.life_qbic_portal_portlet_AppWidgetSet.runAsyncCallback2('gjb(1888,1,Sle);_.$b=function Uyc(){Mcc((!Ecc&&(Ecc=new Ucc),Ecc),this.a.d)};Dfe(Dh)(2);\n//# sourceURL=life.qbic.portal.portlet.AppWidgetSet-2.js\n')
