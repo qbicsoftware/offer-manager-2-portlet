@@ -57,7 +57,7 @@ class CreateCustomerView extends VerticalLayout {
      */
     private def initLayout() {
 
-        this.titleField = generateTitleSelector(sharedViewModel.academicTitles)
+        this.titleField = generateTitleSelector(createCustomerViewModel.academicTitles)
 
         this.firstNameField = new TextField("First Name")
         firstNameField.setPlaceholder("customer first name")

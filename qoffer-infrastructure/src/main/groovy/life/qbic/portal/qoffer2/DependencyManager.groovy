@@ -2,6 +2,7 @@ package life.qbic.portal.qoffer2
 
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.portal.portlet.customers.CustomerDbGateway
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
 import life.qbic.portal.portlet.customers.create.CreateCustomer
@@ -76,7 +77,6 @@ class DependencyManager {
         try {
             this.viewModel = new ViewModel()
             viewModel.affiliations.addAll(customerDbGateway.allAffiliations)
-            viewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${ViewModel.getSimpleName()} view model setup.", e)
             throw e
@@ -84,6 +84,8 @@ class DependencyManager {
 
         try {
             this.createCustomerViewModel = new CreateCustomerViewModel()
+            createCustomerViewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
+
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${CreateCustomerViewModel.getSimpleName()} view model setup.", e)
             throw e
@@ -91,6 +93,7 @@ class DependencyManager {
 
         try {
             this.createAffiliationViewModel = new CreateAffiliationViewModel()
+            createAffiliationViewModel.affiliationCategories.addAll(AffiliationCategory.values().collect{it.value})
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${CreateAffiliationViewModel.getSimpleName()} view model setup.", e)
             throw e

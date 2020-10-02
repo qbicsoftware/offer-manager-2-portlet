@@ -64,15 +64,7 @@ class CreateAffiliationView extends VerticalLayout {
         cityField.setPlaceholder("name of the city")
         this.countryField = new TextField("Country")
         countryField.setPlaceholder("name of the country")
-        this.affiliationCategoryField = new ComboBox<>("Affiliation Category")
-        affiliationCategoryField.setPlaceholder("the affiliation category")
-        affiliationCategoryField.setDescription("""We define three major business affiliation categories here
-        - internal: 
-            An affiliation we consider as within the University of Tübingen or University Hospital of Tübingen
-        - external academic: 
-            An outside affiliation but an academic institution (public research institutions)
-        - external:
-            An outside affiliation but not academic (i.e. private sector, companies, etc)""".stripIndent(), ContentMode.PREFORMATTED)
+        this.affiliationCategoryField = generateAffiliationCategorySelect(createAffiliationViewModel.affiliationCategories)
         this.submitButton = new Button("Create Affiliation")
         submitButton.enabled = allValuesValid()
 
@@ -311,5 +303,20 @@ class CreateAffiliationView extends VerticalLayout {
 
             this.controller.createAffiliation(organisation, addressAddition, street, postalCode, city, country, category)
         })
+    }
+
+    private static ComboBox generateAffiliationCategorySelect(List<String> possibleCategories) {
+        ComboBox comboBox = new ComboBox<>("Affiliation Category")
+        comboBox.setItems(possibleCategories)
+        comboBox.setEmptySelectionAllowed(false)
+        comboBox.setPlaceholder("the affiliation category")
+        comboBox.setDescription("""We define three major business affiliation categories here
+        - internal: 
+            An affiliation we consider as within the University of Tübingen or University Hospital of Tübingen
+        - external academic: 
+            An outside affiliation but an academic institution (public research institutions)
+        - external:
+            An outside affiliation but not academic (i.e. private sector, companies, etc)""".stripIndent(), ContentMode.PREFORMATTED)
+        return comboBox
     }
 }

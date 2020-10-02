@@ -15,7 +15,6 @@ import life.qbic.datamodel.dtos.business.Affiliation
  */
 class ViewModel {
     final ObservableList affiliations
-    final ObservableList academicTitles
     final ObservableList successNotifications
     final ObservableList failureNotifications
     @Bindable Boolean createAffiliationVisible
@@ -27,7 +26,6 @@ class ViewModel {
     private ViewModel(List<Affiliation> affiliations, List<String> academicTitles, List<String> successNotifications,
               List<String> failureNotifications) {
         this.affiliations = new ObservableList(affiliations)
-        this.academicTitles = new ObservableList(academicTitles)
         this.successNotifications = new ObservableList(successNotifications)
         this.failureNotifications = new ObservableList(failureNotifications)
         this.createAffiliationVisible = false
