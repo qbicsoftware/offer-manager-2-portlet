@@ -77,6 +77,7 @@ class CreateCustomerView extends VerticalLayout {
 
         this.submitButton = new Button("Create Customer")
         submitButton.setIcon(VaadinIcons.USER)
+        submitButton.enabled = allValuesValid()
 
         HorizontalLayout row1 = new HorizontalLayout(titleField)
         row1.setSizeFull()
@@ -194,6 +195,7 @@ class CreateCustomerView extends VerticalLayout {
                 default:
                     break
             }
+            submitButton.enabled = allValuesValid()
         })
         sharedViewModel.addPropertyChangeListener({it ->
             switch (it.propertyName) {
@@ -301,20 +303,15 @@ class CreateCustomerView extends VerticalLayout {
     private void registerListeners() {
         this.submitButton.addClickListener({ event ->
             try {
-                if (allValuesValid()) {
-                    // we assume that the view model and the view always contain the same information
-                    String title = createCustomerViewModel.academicTitle
-                    String firstName = createCustomerViewModel.firstName
-                    String lastName = createCustomerViewModel.lastName
-                    String email = createCustomerViewModel.email
-                    List<Affiliation> affiliations = new ArrayList()
+                // we assume that the view model and the view always contain the same information
+                String title = createCustomerViewModel.academicTitle
+                String firstName = createCustomerViewModel.firstName
+                String lastName = createCustomerViewModel.lastName
+                String email = createCustomerViewModel.email
+                List<Affiliation> affiliations = new ArrayList()
+                affiliations.add(createCustomerViewModel.affiliation)
 
-                    affiliations.add(createCustomerViewModel.affiliation)
-
-                    controller.createNewCustomer(firstName, lastName, title, email, affiliations)
-                } else {
-                    this.sharedViewModel.failureNotifications.add("Please fill out the customer information correctly.")
-                }
+                controller.createNewCustomer(firstName, lastName, title, email, affiliations)
             } catch (IllegalArgumentException illegalArgumentException) {
                 log.error("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}")
                 log.debug("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}", illegalArgumentException)

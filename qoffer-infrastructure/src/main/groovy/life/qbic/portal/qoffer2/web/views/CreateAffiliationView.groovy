@@ -1,17 +1,13 @@
 package life.qbic.portal.qoffer2.web.views
 
+import com.vaadin.data.Binder
 import com.vaadin.data.ValidationResult
 import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
 import com.vaadin.shared.ui.ContentMode
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Button
-import com.vaadin.ui.ComboBox
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.TextField
-import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.*
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
@@ -78,6 +74,7 @@ class CreateAffiliationView extends VerticalLayout {
         - external:
             An outside affiliation but not academic (i.e. private sector, companies, etc)""".stripIndent(), ContentMode.PREFORMATTED)
         this.submitButton = new Button("Create Affiliation")
+        submitButton.enabled = allValuesValid()
 
         organisationField.setRequiredIndicatorVisible(true)
         addressAdditionField.setRequiredIndicatorVisible(false)
@@ -117,7 +114,110 @@ class CreateAffiliationView extends VerticalLayout {
     }
 
     private void bindViewModel() {
-        //TODO implement
+        Binder<CreateAffiliationViewModel> binder = new Binder<>()
+
+        // by binding the fields to the view model, the model is updated when the user input changed
+        binder.setBean(this.createAffiliationViewModel)
+
+        binder.forField(this.addressAdditionField).bind({ it.addressAddition }, { it, updatedValue -> it.setAddressAddition(updatedValue) })
+        binder.forField(this.affiliationCategoryField).bind({ it.affiliationCategory }, { it, updatedValue -> it.setAffiliationCategory(updatedValue) })
+        binder.forField(this.cityField).bind({ it.city }, { it, updatedValue -> it.setCity(updatedValue) })
+        binder.forField(this.countryField).bind({ it.country }, { it, updatedValue -> it.setCountry(updatedValue) })
+        binder.forField(this.organisationField).bind({ it.organisation }, { it, updatedValue -> it.setOrganisation(updatedValue) })
+        binder.forField(this.postalCodeField).bind({ it.postalCode }, { it, updatedValue -> it.setPostalCode(updatedValue) })
+        binder.forField(this.streetField).bind({ it.street }, { it, updatedValue -> it.setStreet(updatedValue) })
+
+        /*
+        Here we setup a listener to the viewModel that hold displayed information.
+        The listener is needed since Vaadin bindings only work one-way
+
+        Please NOTE: we cannot use the binder.readBean(binder.getBean) refresh here since it would
+        overwrite all validators attached to the fields. We furthermore cannot use the
+        BinderBuilder#withValidator method since this would prevent the form from showing invalid
+        information that is stored within the viewModel. We want the view to reflect the view model
+        at all times!
+         */
+        createAffiliationViewModel.addPropertyChangeListener({
+            switch (it.propertyName) {
+                case "addressAddition":
+                    String newValue = it.newValue as String
+                    addressAdditionField.value = newValue ?: addressAdditionField.emptyValue
+                    break
+                case "affiliationCategory":
+                    String newValue = it.newValue as String
+                    affiliationCategoryField.selectedItem = newValue ?: affiliationCategoryField.emptyValue
+                    break
+                case "city":
+                    String newValue = it.newValue as String
+                    cityField.value = newValue ?: cityField.emptyValue
+                    break
+                case "country":
+                    String newValue = it.newValue as String
+                    countryField.value = newValue ?: countryField.emptyValue
+                    break
+                case "organisation":
+                    String newValue = it.newValue as String
+                    organisationField.value = newValue ?: organisationField.emptyValue
+                    break
+                case "postalCode":
+                    String newValue = it.newValue as String
+                    postalCodeField.value = newValue ?: postalCodeField.emptyValue
+                    break
+                case "street":
+                    String newValue = it.newValue as String
+                    streetField.value = newValue ?: streetField.emptyValue
+                    break
+                default:
+                    break
+            }
+        })
+
+        /*
+        we listen to the valid properties. whenever the presenter resets values in the viewmodel
+        and resets the valid properties the component error on the respective component is removed
+        */
+        createAffiliationViewModel.addPropertyChangeListener({
+            switch (it.propertyName) {
+                case "addressAdditionValid":
+                    if (it.newValue || it.newValue == null) {
+                        addressAdditionField.componentError = null
+                    }
+                    break
+                case "affiliationCategoryValid":
+                    if (it.newValue || it.newValue == null) {
+                        affiliationCategoryField.componentError = null
+                    }
+                    break
+                case "cityValid":
+                    if (it.newValue || it.newValue == null) {
+                        cityField.componentError = null
+                    }
+                    break
+                case "countryValid":
+                    if (it.newValue || it.newValue == null) {
+                        countryField.componentError = null
+                    }
+                    break
+                case "organisationValid":
+                    if (it.newValue || it.newValue == null) {
+                        organisationField.componentError = null
+                    }
+                    break
+                case "postalCodeValid":
+                    if (it.newValue || it.newValue == null) {
+                        postalCodeField.componentError = null
+                    }
+                    break
+                case "streetValid":
+                    if (it.newValue || it.newValue == null) {
+                        streetField.componentError = null
+                    }
+                    break
+                default:
+                    break
+            }
+            submitButton.enabled = allValuesValid()
+        })
     }
 
     private void setupFieldValidators() {
@@ -125,14 +225,8 @@ class CreateAffiliationView extends VerticalLayout {
         Validator<? extends Object> selectionValidator = Validator.from({o -> o != null}, "Please make a selection.")
 
         this.addressAdditionField.addValueChangeListener({event ->
-            ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.addressAdditionField))
-            if (result.isError()) {
-                createAffiliationViewModel.addressAdditionValid = false
-                UserError error = new UserError(result.getErrorMessage())
-                addressAdditionField.setComponentError(error)
-            } else {
-                createAffiliationViewModel.addressAdditionValid = true
-            }
+            // we do not require this field
+            createAffiliationViewModel.addressAdditionValid = true
         })
         this.affiliationCategoryField.addValueChangeListener({event ->
             ValidationResult result = selectionValidator.apply(event.getValue(), new ValueContext(this.affiliationCategoryField))
@@ -196,8 +290,16 @@ class CreateAffiliationView extends VerticalLayout {
         })
     }
 
+    private boolean allValuesValid() {
+        return createAffiliationViewModel.affiliationCategoryValid \
+            && createAffiliationViewModel.cityValid \
+            && createAffiliationViewModel.countryValid \
+            && createAffiliationViewModel.organisationValid \
+            && createAffiliationViewModel.postalCodeValid \
+            && createAffiliationViewModel.streetValid
+    }
+
     private void registerListeners() {
-        //TODO implement
         submitButton.addClickListener({
             String category = createAffiliationViewModel.affiliationCategory
             String city = createAffiliationViewModel.city
