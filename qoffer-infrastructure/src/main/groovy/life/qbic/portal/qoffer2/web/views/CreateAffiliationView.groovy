@@ -301,12 +301,15 @@ class CreateAffiliationView extends VerticalLayout {
 
     private void registerListeners() {
         submitButton.addClickListener({
+            String addressAddition = createAffiliationViewModel.addressAddition
             String category = createAffiliationViewModel.affiliationCategory
             String city = createAffiliationViewModel.city
+            String country = createAffiliationViewModel.country
             String organisation = createAffiliationViewModel.organisation
             String postalCode = createAffiliationViewModel.postalCode
             String street = createAffiliationViewModel.street
 
-            this.controller.createAffiliation(organisation, street, postalCode, city, category) })
+            this.controller.createAffiliation(organisation, addressAddition, street, postalCode, city, country, category)
+        })
     }
 }
