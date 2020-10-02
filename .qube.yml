@@ -1,13 +1,19 @@
 domain: portlet
 language: groovy
-project_name: qOffer 2.0
-project_slug: qOffer_2.0
+project_name: qoffer-2-portlet
+project_slug: qoffer-2-portlet
+project_slug_no_hyphen: qoffer_2_portlet
 project_short_description: qOffer assists in managing and creating offers
 template_version: '1.0.0 # <<QUBE_NO_BUMP>>'
 template_handle: portlet-groovy
 full_name: Jennifer Bödker
 email: jennifer.boedker@qbic.uni-tuebingen.de
 copyright_holder: QBiC
-github_username: jenniferboedker
+github_username: qbicsoftware
+creator_github_username: jenniferboedker
+is_github_repo: True
+is_repo_private: False
+is_github_orga: True
+github_orga: qbicsoftware
 main_class_prefix: qOffer
 version: 1.0.0-SNAPSHOT
