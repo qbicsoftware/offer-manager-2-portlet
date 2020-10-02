@@ -46,8 +46,8 @@ class CreateCustomerView extends VerticalLayout {
         this.sharedViewModel = sharedViewModel
         this.createCustomerViewModel = createCustomerViewModel
         initLayout()
-        bindViewModel(this.createCustomerViewModel)
-        setupFieldValidators(this.createCustomerViewModel)
+        bindViewModel()
+        setupFieldValidators()
         registerListeners()
     }
 
@@ -76,30 +76,25 @@ class CreateCustomerView extends VerticalLayout {
         this.affiliationButton = new Button(VaadinIcons.PLUS)
 
         this.submitButton = new Button("Create Customer")
+        submitButton.setIcon(VaadinIcons.USER)
 
-        HorizontalLayout titleRow = new HorizontalLayout(titleField)
-        titleRow.setSizeFull()
-        titleRow.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
+        HorizontalLayout row1 = new HorizontalLayout(titleField)
+        row1.setSizeFull()
+        row1.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
 
-        HorizontalLayout customerRow = new HorizontalLayout(firstNameField, lastNameField, emailField)
-        customerRow.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
-        customerRow.setSizeFull()
+        HorizontalLayout row2 = new HorizontalLayout(firstNameField, lastNameField, emailField)
+        row2.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
+        row2.setSizeFull()
 
-        HorizontalLayout affiliationRow = new HorizontalLayout(affiliationComboBox, affiliationButton)
-        affiliationRow.setComponentAlignment(affiliationComboBox, Alignment.BOTTOM_LEFT)
-        affiliationRow.setComponentAlignment(affiliationButton, Alignment.BOTTOM_LEFT)
-        affiliationRow.setSizeFull()
-
-        HorizontalLayout submitButtonLayout = new HorizontalLayout(submitButton)
-        submitButtonLayout.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
-        submitButtonLayout.setSizeFull()
+        HorizontalLayout row3 = new HorizontalLayout(affiliationComboBox, affiliationButton)
+        row3.setComponentAlignment(affiliationComboBox, Alignment.BOTTOM_LEFT)
+        row3.setComponentAlignment(affiliationButton, Alignment.BOTTOM_LEFT)
+        row3.addComponent(submitButton)
+        row3.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
+        row3.setSizeFull()
 
         //Add the components to the FormLayout
-        this.addComponents(titleRow)
-        this.addComponents(customerRow)
-        this.addComponents(affiliationRow)
-        this.addComponents(submitButtonLayout)
-
+        this.addComponents(row1, row2, row3)
 
         titleField.setSizeFull()
         firstNameField.setSizeFull()
@@ -112,9 +107,8 @@ class CreateCustomerView extends VerticalLayout {
 
     /**
      * This method connects the form fields to the corresponding values in the view model
-     * @param viewModel the view model holding the data to be displayed
      */
-    private void bindViewModel(CreateCustomerViewModel viewModel) {
+    private void bindViewModel() {
         Binder<CreateCustomerViewModel> binder = new Binder<>()
 
         Validator<String> nameValidator =  Validator.from({String value -> (value && !value.trim().empty)}, "Please provide a valid name.")
@@ -123,7 +117,7 @@ class CreateCustomerView extends VerticalLayout {
 
 
         // by binding the fields to the view model, the model is updated when the user input changed
-        binder.setBean(viewModel)
+        binder.setBean(createCustomerViewModel)
 
         binder.forField(this.titleField)
                 .bind({ it.academicTitle }, { it, updatedValue -> it.setAcademicTitle(updatedValue) })
@@ -146,7 +140,7 @@ class CreateCustomerView extends VerticalLayout {
         information that is stored within the viewModel. We want the view to reflect the view model
         at all times!
          */
-        viewModel.addPropertyChangeListener({it ->
+        createCustomerViewModel.addPropertyChangeListener({it ->
             switch (it.propertyName) {
                 case "academicTitle":
                     String newValue = it.newValue as String
@@ -172,12 +166,21 @@ class CreateCustomerView extends VerticalLayout {
                     break
             }
         })
+        sharedViewModel.addPropertyChangeListener({it ->
+            switch (it.propertyName) {
+                case "createAffiliationVisible":
+                    affiliationButton.icon = it.newValue ? VaadinIcons.CLOSE : VaadinIcons.PLUS
+                    break
+                default:
+                    break
+            }
+        })
     }
 
     /**
      * This method adds validation to the fields of this view
      */
-    private void setupFieldValidators(CreateCustomerViewModel viewModel) {
+    private void setupFieldValidators() {
 
         Validator<String> nameValidator =  Validator.from({String value -> (value && !value.trim().empty)}, "Please provide a valid name.")
         Validator<String> emailValidator = new EmailValidator("Please provide a valid email address.")
@@ -293,8 +296,6 @@ class CreateCustomerView extends VerticalLayout {
         })
 
         this.affiliationButton.addClickListener({
-            //TODO implement
-            log.info("clicked on " + it.source)
             sharedViewModel.createAffiliationVisible = !sharedViewModel.createAffiliationVisible
         })
     }
