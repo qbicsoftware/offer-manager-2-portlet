@@ -16,6 +16,8 @@ import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
+import java.beans.PropertyChangeEvent
+
 /**
  * This class generates a Form Layout in which the user
  * can input the necessary information for the creation of a new customer
@@ -73,7 +75,9 @@ class CreateCustomerView extends VerticalLayout {
 
         this.affiliationComboBox = generateAffiliationSelector(sharedViewModel.affiliations)
         affiliationComboBox.setRequiredIndicatorVisible(true)
-        this.affiliationButton = new Button(VaadinIcons.PLUS)
+        this.affiliationButton = new Button()
+        affiliationButton.icon = sharedViewModel.createAffiliationVisible ? VaadinIcons.CLOSE : VaadinIcons.PLUS
+        affiliationButton.caption = sharedViewModel.createAffiliationVisible ? "Cancel Affiliation Creation" : "Create New Affiliation"
 
         this.submitButton = new Button("Create Customer")
         submitButton.setIcon(VaadinIcons.USER)
@@ -201,9 +205,18 @@ class CreateCustomerView extends VerticalLayout {
             switch (it.propertyName) {
                 case "createAffiliationVisible":
                     affiliationButton.icon = it.newValue ? VaadinIcons.CLOSE : VaadinIcons.PLUS
+                    affiliationButton.caption = it.newValue ? "Cancel Affiliation Creation" : "Create New Affiliation"
                     break
                 default:
                     break
+            }
+        })
+        /* refresh affiliation list and set added item as selected item. This is needed to keep this
+        field up to date and select an affiliation after it was created */
+        sharedViewModel.affiliations.addPropertyChangeListener({
+            affiliationComboBox.getDataProvider().refreshAll()
+            if (it instanceof ObservableList.ElementAddedEvent) {
+                affiliationComboBox.setSelectedItem(it.newValue as Affiliation)
             }
         })
     }
