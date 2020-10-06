@@ -23,7 +23,7 @@ logs/
 # Other
 **/.factorypath
 **/developer.properties
-**/flattened-pom.xml
+**/.flattened-pom.xml
 
 # compiled Vaadin widgetsets
 src/main/webapp/VAADIN/widgetsets
