@@ -3,7 +3,7 @@ package life.qbic.portal.qoffer2
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.portal.portlet.customers.CustomerDbGateway
+
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
 import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
@@ -43,7 +43,7 @@ class DependencyManager {
     private CreateCustomerPresenter createCustomerPresenter
     private CreateAffiliationPresenter createAffiliationPresenter
 
-    private CustomerDbGateway customerDbGateway
+    private CustomerDbConnector customerDbConnector
     private CreateCustomer createCustomer
     private CreateAffiliation createAffiliation
     private CreateCustomerController createCustomerController
@@ -81,7 +81,7 @@ class DependencyManager {
         // setup view models
         try {
             this.viewModel = new ViewModel()
-            viewModel.affiliations.addAll(customerDbGateway.allAffiliations)
+            viewModel.affiliations.addAll(customerDbConnector.listAllAffiliations())
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${ViewModel.getSimpleName()} view model setup.", e)
             throw e
@@ -116,7 +116,7 @@ class DependencyManager {
 
             DatabaseSession.create(user, password, host, port, sqlDatabase)
             CustomerDatabaseQueries queries = new CustomerDatabaseQueries(DatabaseSession.INSTANCE)
-            customerDbGateway = new CustomerDbConnector(queries)
+            customerDbConnector = new CustomerDbConnector(queries)
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
             throw e
@@ -147,8 +147,8 @@ class DependencyManager {
     }
 
     private void setupUseCaseInteractors() {
-        this.createCustomer = new CreateCustomer(createCustomerPresenter, customerDbGateway)
-        this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbGateway)
+        this.createCustomer = new CreateCustomer(createCustomerPresenter, customerDbConnector)
+        this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbConnector)
     }
 
     private void setupControllers() {

@@ -1,7 +1,6 @@
 package life.qbic.portal.portlet.customers.affiliation.create
 
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.portal.portlet.customers.CustomerDbGateway
 
 /**
  * This class implements the Create Affiliations use case.
@@ -13,16 +12,16 @@ import life.qbic.portal.portlet.customers.CustomerDbGateway
  */
 class CreateAffiliation implements CreateAffiliationInput{
 
-    private final CustomerDbGateway customerDbGateway
+    private final CreateAffiliationDataSource dataSource
     private final CreateAffiliationOutput output
 
     /**
      * Creates a use case interactor for creating an affiliation in the provided customer database
-     * @param customerDbGateway the gateway to the database
+     * @param dataSource the gateway to the database
      * @param output an output to publish the results to
      */
-    CreateAffiliation(CreateAffiliationOutput output, CustomerDbGateway customerDbGateway) {
-        this.customerDbGateway = customerDbGateway
+    CreateAffiliation(CreateAffiliationOutput output, CreateAffiliationDataSource dataSource) {
+        this.dataSource = dataSource
         this.output = output
     }
 
