@@ -9,7 +9,7 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=.
 set BUILDDIR=_build
-set SPHINXPROJ=Offer_Manager_2
+set SPHINXPROJ=qoffer-2-portlet
 
 if "%1" == "" goto help
 

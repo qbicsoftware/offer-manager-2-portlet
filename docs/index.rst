@@ -1,5 +1,5 @@
-Welcome to Offer_Manager_2's documentation!
-============================================
+Welcome to qoffer-2-portlet's documentation!
+=============================================
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

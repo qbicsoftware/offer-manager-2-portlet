@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 #
+# qoffer-2-portlet documentation build configuration file, created by
 # sphinx-quickstart on Fri Jun  9 13:47:02 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -45,10 +46,9 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = 'qOffer_2.0'
-copyright = "2020, Jennifer Bödker"
-author = "Jennifer Bödker"
-
+project = 'qoffer-2-portlet'
+copyright = "2020, Sven Fillinger"
+author = "Sven Fillinger"
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout
@@ -100,8 +100,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------
 
 # Output file base name for HTML help builder.
-
-htmlhelp_basename = 'Offer_Manager_2doc'
+htmlhelp_basename = 'qoffer-2-portletdoc'
 
 
 # -- Options for LaTeX output ------------------------------------------
@@ -128,9 +127,9 @@ latex_elements = {
 # (source start file, target name, title, author, documentclass
 # [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'qOffer_2.0.tex',
-     'qOffer_2.0 Documentation',
-     'Jennifer Bödker', 'manual'),
+    (master_doc, 'qoffer-2-portlet.tex',
+     'qoffer-2-portlet Documentation',
+     'Sven Fillinger', 'manual'),
 ]
 
 
@@ -139,8 +138,8 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'qOffer_2.0',
-     'qOffer_2.0 Documentation',
+    (master_doc, 'qoffer-2-portlet',
+     'qoffer-2-portlet Documentation',
      [author], 1)
 ]
 
@@ -151,10 +150,10 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'qOffer_2.0',
-     'qOffer_2.0 Documentation',
+    (master_doc, 'qoffer-2-portlet',
+     'qoffer-2-portlet Documentation',
      author,
-     'qOffer_2.0',
+     'qoffer-2-portlet',
      'One line description of project.',
      'Miscellaneous'),
 ]
