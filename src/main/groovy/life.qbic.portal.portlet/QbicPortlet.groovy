@@ -12,7 +12,7 @@ import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 
 /**
- * Entry point for portlet Offer_Manager_2. This class derives from {@link QBiCPortletUI}, which is found in the {@code portal-utils-lib} library.
+ * Entry point for portlet qoffer-2-portlet. This class derives from {@link QBiCPortletUI}, which is found in the {@code portal-utils-lib} library.
  *
  * @see <a href=https://github.com/qbicsoftware/portal-utils-lib>portal-utils-lib</a>
  */
