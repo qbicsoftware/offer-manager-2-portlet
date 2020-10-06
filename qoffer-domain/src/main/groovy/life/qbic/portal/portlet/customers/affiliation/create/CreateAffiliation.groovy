@@ -1,6 +1,7 @@
 package life.qbic.portal.portlet.customers.affiliation.create
 
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 /**
  * This class implements the Create Affiliations use case.
@@ -28,7 +29,13 @@ class CreateAffiliation implements CreateAffiliationInput{
     /** {@InheritDoc} */
     @Override
     void createAffiliation(Affiliation affiliation) {
-        //TODO implement
-        output.failNotification("Adding affiliations is not implemented yet.")
+        try {
+            dataSource.addAffiliation(affiliation)
+            output.successNotification("Successfully added new affiliation " + affiliation.organisation)
+        } catch (DatabaseQueryException queryException) {
+            throw new DatabaseQueryException(queryException.message)
+        } catch (Exception ignored) {
+            output.failNotification("Could not create new affiliation.")
+        }
     }
 }
