@@ -98,6 +98,9 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     databaseQueries.getAffiliations()
   }
 
+  /**
+   *@inheritDoc
+   */
   @Override
   void addAffiliation(Affiliation affiliation) {
     try {
