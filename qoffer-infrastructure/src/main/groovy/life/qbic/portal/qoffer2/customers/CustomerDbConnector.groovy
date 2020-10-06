@@ -6,6 +6,7 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.CriteriaType
 
 import life.qbic.portal.portlet.SearchCriteria
+import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliationDataSource
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliationsDataSource
 import life.qbic.portal.portlet.customers.create.CreateCustomerDataSource
@@ -95,5 +96,18 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   @Override
   List<Affiliation> listAllAffiliations() {
     databaseQueries.getAffiliations()
+  }
+
+  @Override
+  void addAffiliation(Affiliation affiliation) {
+    try {
+      databaseQueries.addAffiliation(affiliation)
+    } catch (DatabaseQueryException e) {
+      throw new DatabaseQueryException(e.message)
+    } catch (Exception e) {
+      log.error(e)
+      log.error(e.stackTrace.join("\n"))
+      throw new DatabaseQueryException("The affiliation could not be created: ${affiliation.toString()}")
+    }
   }
 }
