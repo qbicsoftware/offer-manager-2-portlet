@@ -1,6 +1,8 @@
 package life.qbic.portal.qoffer2.web.views
 
 import com.vaadin.server.Page
+import com.vaadin.ui.GridLayout
+import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Notification
 import com.vaadin.ui.VerticalLayout
 import life.qbic.portal.qoffer2.web.StyledNotification
@@ -42,10 +44,15 @@ class PortletView extends VerticalLayout {
 
         this.createAffiliationView.setVisible(portletViewModel.createAffiliationVisible)
 
-        this.addComponent(this.createCustomerView)
-        this.addComponent(this.createAffiliationView)
+        GridLayout gridLayout = new GridLayout()
+        gridLayout.setRows(2)
+        gridLayout.setSizeFull()
+
+        gridLayout.addComponent(this.createCustomerView)
+        gridLayout.addComponent(this.createAffiliationView)
 
         this.setSizeFull()
+        this.addComponent(gridLayout)
     }
 
     private def registerListeners() {

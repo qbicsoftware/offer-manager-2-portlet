@@ -16,9 +16,17 @@ import life.qbic.datamodel.dtos.business.Affiliation
  * @since: 1.0.0
  */
 class CreateCustomerViewModel {
+    List<String> academicTitles = new ArrayList<>()
+
     @Bindable String academicTitle
     @Bindable String firstName
     @Bindable String lastName
     @Bindable String email
     @Bindable Affiliation affiliation
+
+    @Bindable Boolean academicTitleValid
+    @Bindable Boolean firstNameValid
+    @Bindable Boolean lastNameValid
+    @Bindable Boolean emailValid
+    @Bindable Boolean affiliationValid
 }

@@ -16,11 +16,21 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
  * @since: 1.0.0
  */
 class CreateAffiliationViewModel {
+    List<String> affiliationCategories = new ArrayList<>()
+
     @Bindable String organisation
-    @Bindable String address
+    @Bindable String addressAddition
     @Bindable String street
     @Bindable String postalCode
     @Bindable String city
     @Bindable String country
     @Bindable String affiliationCategory
+
+    @Bindable Boolean organisationValid
+    @Bindable Boolean addressAdditionValid
+    @Bindable Boolean streetValid
+    @Bindable Boolean postalCodeValid
+    @Bindable Boolean cityValid
+    @Bindable Boolean countryValid
+    @Bindable Boolean affiliationCategoryValid
 }

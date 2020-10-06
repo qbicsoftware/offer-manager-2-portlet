@@ -16,6 +16,8 @@ import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
+import java.beans.PropertyChangeEvent
+
 /**
  * This class generates a Form Layout in which the user
  * can input the necessary information for the creation of a new customer
@@ -46,8 +48,8 @@ class CreateCustomerView extends VerticalLayout {
         this.sharedViewModel = sharedViewModel
         this.createCustomerViewModel = createCustomerViewModel
         initLayout()
-        bindViewModel(this.createCustomerViewModel)
-        setupFieldValidators(this.createCustomerViewModel)
+        bindViewModel()
+        setupFieldValidators()
         registerListeners()
     }
 
@@ -57,7 +59,7 @@ class CreateCustomerView extends VerticalLayout {
      */
     private def initLayout() {
 
-        this.titleField = generateTitleSelector()
+        this.titleField = generateTitleSelector(createCustomerViewModel.academicTitles)
 
         this.firstNameField = new TextField("First Name")
         firstNameField.setPlaceholder("customer first name")
@@ -73,33 +75,30 @@ class CreateCustomerView extends VerticalLayout {
 
         this.affiliationComboBox = generateAffiliationSelector(sharedViewModel.affiliations)
         affiliationComboBox.setRequiredIndicatorVisible(true)
-        this.affiliationButton = new Button(VaadinIcons.PLUS)
+        this.affiliationButton = new Button()
+        affiliationButton.icon = sharedViewModel.createAffiliationVisible ? VaadinIcons.CLOSE : VaadinIcons.PLUS
+        affiliationButton.caption = sharedViewModel.createAffiliationVisible ? "Cancel Affiliation Creation" : "Create New Affiliation"
 
         this.submitButton = new Button("Create Customer")
+        submitButton.setIcon(VaadinIcons.USER)
+        submitButton.enabled = allValuesValid()
 
-        HorizontalLayout titleRow = new HorizontalLayout(titleField)
-        titleRow.setSizeFull()
-        titleRow.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
+        HorizontalLayout row1 = new HorizontalLayout(titleField)
+        row1.setSizeFull()
+        row1.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
 
-        HorizontalLayout customerRow = new HorizontalLayout(firstNameField, lastNameField, emailField)
-        customerRow.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
-        customerRow.setSizeFull()
+        HorizontalLayout row2 = new HorizontalLayout(firstNameField, lastNameField, emailField)
+        row2.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
+        row2.setSizeFull()
 
-        HorizontalLayout affiliationRow = new HorizontalLayout(affiliationComboBox, affiliationButton)
-        affiliationRow.setComponentAlignment(affiliationComboBox, Alignment.BOTTOM_LEFT)
-        affiliationRow.setComponentAlignment(affiliationButton, Alignment.BOTTOM_LEFT)
-        affiliationRow.setSizeFull()
-
-        HorizontalLayout submitButtonLayout = new HorizontalLayout(submitButton)
-        submitButtonLayout.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
-        submitButtonLayout.setSizeFull()
+        HorizontalLayout row3 = new HorizontalLayout(affiliationComboBox, affiliationButton, submitButton)
+        row3.setComponentAlignment(affiliationComboBox, Alignment.BOTTOM_LEFT)
+        row3.setComponentAlignment(affiliationButton, Alignment.BOTTOM_LEFT)
+        row3.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
+        row3.setSizeFull()
 
         //Add the components to the FormLayout
-        this.addComponents(titleRow)
-        this.addComponents(customerRow)
-        this.addComponents(affiliationRow)
-        this.addComponents(submitButtonLayout)
-
+        this.addComponents(row1, row2, row3)
 
         titleField.setSizeFull()
         firstNameField.setSizeFull()
@@ -112,18 +111,12 @@ class CreateCustomerView extends VerticalLayout {
 
     /**
      * This method connects the form fields to the corresponding values in the view model
-     * @param viewModel the view model holding the data to be displayed
      */
-    private void bindViewModel(CreateCustomerViewModel viewModel) {
+    private void bindViewModel() {
         Binder<CreateCustomerViewModel> binder = new Binder<>()
 
-        Validator<String> nameValidator =  Validator.from({String value -> (value && !value.trim().empty)}, "Please provide a valid name.")
-        Validator<String> emailValidator = new EmailValidator("Please provide a valid email address.")
-        Validator<? extends Object> selectionValidator = Validator.from({o -> o != null}, "Please make a selection.")
-
-
         // by binding the fields to the view model, the model is updated when the user input changed
-        binder.setBean(viewModel)
+        binder.setBean(createCustomerViewModel)
 
         binder.forField(this.titleField)
                 .bind({ it.academicTitle }, { it, updatedValue -> it.setAcademicTitle(updatedValue) })
@@ -146,7 +139,7 @@ class CreateCustomerView extends VerticalLayout {
         information that is stored within the viewModel. We want the view to reflect the view model
         at all times!
          */
-        viewModel.addPropertyChangeListener({it ->
+        createCustomerViewModel.addPropertyChangeListener({it ->
             switch (it.propertyName) {
                 case "academicTitle":
                     String newValue = it.newValue as String
@@ -172,12 +165,66 @@ class CreateCustomerView extends VerticalLayout {
                     break
             }
         })
+        /*
+        we listen to the valid properties. whenever the presenter resets values in the viewmodel
+        and resets the valid properties the component error on the respective component is removed
+        */
+        createCustomerViewModel.addPropertyChangeListener({it ->
+            switch (it.propertyName) {
+                case "academicTitleValid":
+                    if (it.newValue || it.newValue == null) {
+                        titleField.componentError = null
+                    }
+                    break
+                case "firstNameValid":
+                    if (it.newValue || it.newValue == null) {
+                        firstNameField.componentError = null
+                    }
+                    break
+                case "lastNameValid":
+                    if (it.newValue || it.newValue == null) {
+                        lastNameField.componentError = null
+                    }
+                    break
+                case "emailValid":
+                    if (it.newValue || it.newValue == null) {
+                        emailField.componentError = null
+                    }
+                    break
+                case "affiliationValid":
+                    if (it.newValue || it.newValue == null) {
+                        affiliationComboBox.componentError = null
+                    }
+                    break
+                default:
+                    break
+            }
+            submitButton.enabled = allValuesValid()
+        })
+        sharedViewModel.addPropertyChangeListener({it ->
+            switch (it.propertyName) {
+                case "createAffiliationVisible":
+                    affiliationButton.icon = it.newValue ? VaadinIcons.CLOSE : VaadinIcons.PLUS
+                    affiliationButton.caption = it.newValue ? "Cancel Affiliation Creation" : "Create New Affiliation"
+                    break
+                default:
+                    break
+            }
+        })
+        /* refresh affiliation list and set added item as selected item. This is needed to keep this
+        field up to date and select an affiliation after it was created */
+        sharedViewModel.affiliations.addPropertyChangeListener({
+            affiliationComboBox.getDataProvider().refreshAll()
+            if (it instanceof ObservableList.ElementAddedEvent) {
+                affiliationComboBox.setSelectedItem(it.newValue as Affiliation)
+            }
+        })
     }
 
     /**
      * This method adds validation to the fields of this view
      */
-    private void setupFieldValidators(CreateCustomerViewModel viewModel) {
+    private void setupFieldValidators() {
 
         Validator<String> nameValidator =  Validator.from({String value -> (value && !value.trim().empty)}, "Please provide a valid name.")
         Validator<String> emailValidator = new EmailValidator("Please provide a valid email address.")
@@ -187,40 +234,41 @@ class CreateCustomerView extends VerticalLayout {
         this.firstNameField.addValueChangeListener({ event ->
             ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.firstNameField))
             if (result.isError()) {
+                createCustomerViewModel.firstNameValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 firstNameField.setComponentError(error)
             } else {
-                firstNameField.setComponentError(null)
+                createCustomerViewModel.firstNameValid = true
             }
         })
-
         this.lastNameField.addValueChangeListener({ event ->
             ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.lastNameField))
             if (result.isError()) {
+                createCustomerViewModel.lastNameValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 lastNameField.setComponentError(error)
             } else {
-                lastNameField.setComponentError(null)
+                createCustomerViewModel.lastNameValid = true
             }
         })
-
         this.emailField.addValueChangeListener({ event ->
             ValidationResult result = emailValidator.apply(event.getValue(), new ValueContext(this.emailField))
             if (result.isError()) {
+                createCustomerViewModel.emailValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 emailField.setComponentError(error)
             } else {
-                emailField.setComponentError(null)
+                createCustomerViewModel.emailValid = true
             }
         })
-
         this.affiliationComboBox.addSelectionListener({selection ->
             ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.affiliationComboBox))
             if (result.isError()) {
+                createCustomerViewModel.affiliationValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 affiliationComboBox.setComponentError(error)
             } else {
-                affiliationComboBox.setComponentError(null)
+                createCustomerViewModel.affiliationValid = true
             }
         })
     }
@@ -230,11 +278,11 @@ class CreateCustomerView extends VerticalLayout {
      * @param affiliationList list of all selectable affiliations
      * @return Vaadin Combobox component
      */
-    private ComboBox<Affiliation> generateAffiliationSelector(List<Affiliation> affiliationList) {
+    private static ComboBox<Affiliation> generateAffiliationSelector(List<Affiliation> affiliationList) {
         ComboBox<Affiliation> affiliationComboBox =
                 new ComboBox<>("Affiliation")
         affiliationComboBox.setPlaceholder("select customer affiliation")
-        affiliationComboBox.setItems(sharedViewModel.affiliations)
+        affiliationComboBox.setItems(affiliationList)
         affiliationComboBox.setEmptySelectionAllowed(false)
         affiliationComboBox.setItemCaptionGenerator({it.organisation})
         return affiliationComboBox
@@ -244,11 +292,11 @@ class CreateCustomerView extends VerticalLayout {
      * Generates a Combobox, which can be used for AcademicTitle selection for a customer
      * @return Vaadin Combobox component
      */
-    private ComboBox<String> generateTitleSelector() {
+    private static ComboBox<String> generateTitleSelector(List<String> academicTitles) {
         ComboBox<String> titleCombobox =
                 new ComboBox<>("Academic Title")
         titleCombobox.setPlaceholder("select academic title")
-        titleCombobox.setItems(sharedViewModel.academicTitles)
+        titleCombobox.setItems(academicTitles)
         titleCombobox.setEmptySelectionAllowed(true)
         return titleCombobox
     }
@@ -259,29 +307,24 @@ class CreateCustomerView extends VerticalLayout {
      * @return
      */
     private boolean allValuesValid() {
-        return !firstNameField.getComponentError() \
-            && !lastNameField.getComponentError() \
-            && !emailField.getComponentError() \
-            && !affiliationComboBox.getComponentError()
+        return createCustomerViewModel.firstNameValid \
+            && createCustomerViewModel.lastNameValid \
+            && createCustomerViewModel.emailValid \
+            && createCustomerViewModel.affiliationValid
     }
 
-    void registerListeners() {
+    private void registerListeners() {
         this.submitButton.addClickListener({ event ->
             try {
-                if (allValuesValid()) {
-                    // we assume that the view model and the view always contain the same information
-                    String title = createCustomerViewModel.academicTitle
-                    String firstName = createCustomerViewModel.firstName
-                    String lastName = createCustomerViewModel.lastName
-                    String email = createCustomerViewModel.email
-                    List<Affiliation> affiliations = new ArrayList()
+                // we assume that the view model and the view always contain the same information
+                String title = createCustomerViewModel.academicTitle
+                String firstName = createCustomerViewModel.firstName
+                String lastName = createCustomerViewModel.lastName
+                String email = createCustomerViewModel.email
+                List<Affiliation> affiliations = new ArrayList()
+                affiliations.add(createCustomerViewModel.affiliation)
 
-                    affiliations.add(createCustomerViewModel.affiliation)
-
-                    controller.createNewCustomer(firstName, lastName, title, email, affiliations)
-                } else {
-                    this.sharedViewModel.failureNotifications.add("Please fill out the customer information correctly.")
-                }
+                controller.createNewCustomer(firstName, lastName, title, email, affiliations)
             } catch (IllegalArgumentException illegalArgumentException) {
                 log.error("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}")
                 log.debug("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}", illegalArgumentException)
@@ -293,8 +336,6 @@ class CreateCustomerView extends VerticalLayout {
         })
 
         this.affiliationButton.addClickListener({
-            //TODO implement
-            log.info("clicked on " + it.source)
             sharedViewModel.createAffiliationVisible = !sharedViewModel.createAffiliationVisible
         })
     }

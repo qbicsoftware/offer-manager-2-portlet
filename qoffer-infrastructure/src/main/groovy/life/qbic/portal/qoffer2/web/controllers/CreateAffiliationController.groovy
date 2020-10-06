@@ -30,7 +30,7 @@ class CreateAffiliationController {
      *
      * @see AffiliationCategory
      */
-    void createAffiliation(String organisation, String street, String postalCode, String city, String category) {
+    void createAffiliation(String organisation, String addressAddition, String street, String postalCode, String city, String country, String category) {
         Affiliation
         //TODO connect to use case
         // 1. create affiliation form information
