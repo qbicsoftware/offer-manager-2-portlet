@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 #
+
 # qoffer-2-portlet documentation build configuration file, created by
+
 # sphinx-quickstart on Fri Jun  9 13:47:02 2017.
 #
 # This file is execfile()d with the current directory set to its
@@ -49,6 +51,7 @@ master_doc = 'index'
 project = 'qoffer-2-portlet'
 copyright = "2020, Jennifer Bödker"
 author = "Jennifer Bödker"
+
 
 # The version info for the project you're documenting, acts as replacement
 # for |version| and |release|, also used in various other places throughout

@@ -29,6 +29,7 @@ qoffer-2-portlet
 qOffer assists in managing and creating offers
 
 * Free software: MIT license
+
 * Documentation: https://qoffer-2-portlet.readthedocs.io.
 
 Features
