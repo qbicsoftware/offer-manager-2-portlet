@@ -1,6 +1,5 @@
 package life.qbic.portal.portlet.customers.affiliation.list
 
-import life.qbic.portal.portlet.customers.CustomerDbGateway
 
 /**
  * This class implements the List Affiliations use case.
@@ -17,23 +16,23 @@ class ListAffiliations implements ListAffiliationsInput {
 
   private final ListAffiliationsOutput output
 
-  private final CustomerDbGateway gateway
+  private final ListAffiliationsDataSource dataSource
 
   /**
    * List Affiliations Use Case
    *
    * Lists the available affiliations for customers.
    * @param output Where the use case submits the result to
-   * @param gateway The database gateway to make the query
+   * @param dataSource The database dataSource to make the query
    */
-  ListAffiliations(ListAffiliationsOutput output, CustomerDbGateway gateway) {
+  ListAffiliations(ListAffiliationsOutput output, ListAffiliationsDataSource dataSource) {
     this.output = output
-    this.gateway = gateway
+    this.dataSource = dataSource
   }
 
   @Override
   void listAffiliations() {
-    def affiliations = gateway.getAllAffiliations()
+    def affiliations = dataSource.listAllAffiliations()
     this.output.reportAvailableAffiliations(affiliations)
   }
 }

@@ -5,8 +5,12 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.CriteriaType
 
-import life.qbic.portal.portlet.customers.CustomerDbGateway
 import life.qbic.portal.portlet.SearchCriteria
+import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
+import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliationDataSource
+import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliationsDataSource
+import life.qbic.portal.portlet.customers.create.CreateCustomerDataSource
+import life.qbic.portal.portlet.customers.update.UpdateCustomerDataSource
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -22,7 +26,7 @@ import org.apache.logging.log4j.Logger
  *
  */
 @Log4j2
-class CustomerDbConnector implements CustomerDbGateway {
+class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
   CustomerDatabaseQueries databaseQueries
 
@@ -90,7 +94,23 @@ class CustomerDbConnector implements CustomerDbGateway {
    * @return
    */
   @Override
-  List<Affiliation> getAllAffiliations() {
+  List<Affiliation> listAllAffiliations() {
     databaseQueries.getAffiliations()
+  }
+
+  /**
+   *@inheritDoc
+   */
+  @Override
+  void addAffiliation(Affiliation affiliation) {
+    try {
+      databaseQueries.addAffiliation(affiliation)
+    } catch (DatabaseQueryException e) {
+      throw new DatabaseQueryException(e.message)
+    } catch (Exception e) {
+      log.error(e)
+      log.error(e.stackTrace.join("\n"))
+      throw new DatabaseQueryException("The affiliation could not be created: ${affiliation.toString()}")
+    }
   }
 }

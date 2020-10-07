@@ -341,4 +341,30 @@ class CustomerDatabaseQueries {
         }
         return result
     }
+
+    void addAffiliation(Affiliation affiliation) throws DatabaseQueryException {
+        /*
+        if (affiliationExists) {
+            throw new DatabaseQueryException("Affiliation is already in the database.")
+        }
+        Connection connection = databaseSession.getConnection()
+        connection.setAutoCommit(false)
+
+        connection.withCloseable {it ->
+            try {
+                int customerId = createNewCustomer(it, customer)
+                storeAffiliation(it, customerId, customer.affiliations)
+                connection.commit()
+            } catch (Exception e) {
+                log.error(e.message)
+                log.error(e.stackTrace.join("\n"))
+                connection.rollback()
+                connection.close()
+                throw new DatabaseQueryException("Could not create customer.")
+            }
+
+        }
+        */
+
+    }
 }
