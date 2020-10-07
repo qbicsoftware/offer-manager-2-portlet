@@ -356,8 +356,7 @@ class CustomerDatabaseQueries {
 
         connection.withCloseable {it ->
             try {
-                int affiliationId = createNewAffiliation(it, affiliation)
-                storeAffiliation(it, affiliationId, affiliation as List<Affiliation>)
+                createNewAffiliation(it, affiliation)
                 connection.commit()
             } catch (Exception e) {
                 log.error(e.message)
