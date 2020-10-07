@@ -9,6 +9,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Connect CreateAffiliation and CreateCustomer use case
 * Implement GUI for CreateAffiliation use case
 * Implement CreateCustomer use case
 * Create HTML template for offers
