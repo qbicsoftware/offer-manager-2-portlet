@@ -343,6 +343,8 @@ class CustomerDatabaseQueries {
     }
 
     void addAffiliation(Affiliation affiliation) throws DatabaseQueryException {
+        log.debug("Adding affiliation " + affiliation.organisation + " " + affiliation.addressAddition + "to database")
+
         /*
         if (affiliationExists) {
             throw new DatabaseQueryException("Affiliation is already in the database.")

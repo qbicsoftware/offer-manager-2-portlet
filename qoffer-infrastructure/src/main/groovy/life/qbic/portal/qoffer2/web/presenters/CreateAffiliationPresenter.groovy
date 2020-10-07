@@ -1,5 +1,7 @@
 package life.qbic.portal.qoffer2.web.presenters
 
+import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliationOutput
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
@@ -12,6 +14,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  *
  * @since: 1.0.0
  */
+@Log4j2
 class CreateAffiliationPresenter implements CreateAffiliationOutput {
     private final ViewModel sharedViewModel
     private final CreateAffiliationViewModel createAffiliationViewModel
@@ -32,20 +35,38 @@ class CreateAffiliationPresenter implements CreateAffiliationOutput {
         this.createAffiliationViewModel.city = null
         this.createAffiliationViewModel.country = null
         this.createAffiliationViewModel.affiliationCategory = null
+
+        this.createAffiliationViewModel.organisationValid = null
+        this.createAffiliationViewModel.addressAdditionValid = null
+        this.createAffiliationViewModel.streetValid = null
+        this.createAffiliationViewModel.postalCodeValid = null
+        this.createAffiliationViewModel.cityValid = null
+        this.createAffiliationViewModel.countryValid = null
+        this.createAffiliationViewModel.affiliationCategoryValid = null
     }
 
     @Override
     void successNotification(String notification) {
         sharedViewModel.successNotifications.add(notification)
-//        TODO implement
-//        List<Affiliation> reloadedAffiliation = //implement this
-//        // it is important that the element is added and the list is not replaced. This triggers a status change event on the observable list
-//        reloadedAffiliation.forEach{if (!sharedViewModel.affiliations.contains(it)) sharedViewModel.affiliations.add(it)}
         clearAffiliationData()
     }
 
     @Override
     void failNotification(String notification) {
         sharedViewModel.failureNotifications.add(notification)
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    void affiliationCreated(Affiliation affiliation) {
+        if (affiliation in sharedViewModel.affiliations) {
+            // This behaviour should not appear and should be handled by the use case
+            log.warn("Tried to add already listed affiliation to the view model. This should never happen.")
+        } else {
+            sharedViewModel.affiliations.add(affiliation)
+            sharedViewModel.createAffiliationVisible = false
+        }
     }
 }
