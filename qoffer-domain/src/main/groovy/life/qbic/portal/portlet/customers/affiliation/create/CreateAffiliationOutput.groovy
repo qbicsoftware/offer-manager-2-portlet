@@ -11,7 +11,7 @@ import life.qbic.portal.portlet.VerboseUseCaseOutput
  */
 interface CreateAffiliationOutput extends VerboseUseCaseOutput{
     /**
-     * This methods informs the output that the provided affiliation was created
+     * This method informs the output that the provided affiliation was created
      * @param affiliation the affiliation that was created.
      * @since 1.0.0
      */
