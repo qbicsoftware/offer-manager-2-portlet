@@ -38,10 +38,6 @@ class CreateAffiliationPresenter implements CreateAffiliationOutput {
     @Override
     void successNotification(String notification) {
         sharedViewModel.successNotifications.add(notification)
-//        TODO implement
-//        List<Affiliation> reloadedAffiliation = //implement this
-//        // it is important that the element is added and the list is not replaced. This triggers a status change event on the observable list
-//        reloadedAffiliation.forEach{if (!sharedViewModel.affiliations.contains(it)) sharedViewModel.affiliations.add(it)}
         clearAffiliationData()
     }
 
