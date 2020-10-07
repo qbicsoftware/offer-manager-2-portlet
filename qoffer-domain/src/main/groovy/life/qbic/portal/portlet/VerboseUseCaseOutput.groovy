@@ -13,6 +13,7 @@ interface VerboseUseCaseOutput {
      * Sends success notifications that have been
      * recorded during the use case.
      * @param notification containing a success message
+     * @since 1.0.0
      */
     void successNotification(String notification)
 
@@ -20,6 +21,7 @@ interface VerboseUseCaseOutput {
      * Sends failure notifications that have been
      * recorded during the use case.
      * @param notification containing a failure message
+     * @since 1.0.0
      */
     void failNotification(String notification)
 

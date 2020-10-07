@@ -1,8 +1,10 @@
 package life.qbic.portal.qoffer2.web.controllers
 
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
+import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliationInput
 
 /**
@@ -31,11 +33,22 @@ class CreateAffiliationController {
      * @see AffiliationCategory
      */
     void createAffiliation(String organisation, String addressAddition, String street, String postalCode, String city, String country, String category) {
-        Affiliation
-        //TODO connect to use case
-        // 1. create affiliation form information
-        // 2. call the useCaseInput with the created affiliation
-        log.info("Called the controller for " + useCaseInput)
-        useCaseInput.createAffiliation(null)
+        Affiliation.Builder affiliationBuilder
+        affiliationBuilder = new Affiliation.Builder(organisation, street, postalCode, city)
+        if (addressAddition && addressAddition?.length() > 0) {
+            affiliationBuilder.setAddressAddition(addressAddition)
+        }
+        affiliationBuilder.setCountry(country)
+        AffiliationCategoryFactory categoryFactory = new AffiliationCategoryFactory()
+
+        AffiliationCategory affiliationCategory
+        if (!category || category?.isEmpty()) {
+            affiliationCategory = AffiliationCategory.UNKNOWN
+        } else {
+            affiliationCategory = categoryFactory.getForString(category)
+        }
+        affiliationBuilder.setCategory(affiliationCategory)
+        Affiliation affiliation = affiliationBuilder.build()
+        useCaseInput.createAffiliation(affiliation)
     }
 }
