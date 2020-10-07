@@ -32,6 +32,7 @@ class CreateAffiliation implements CreateAffiliationInput{
         try {
             dataSource.addAffiliation(affiliation)
             output.successNotification("Successfully added new affiliation " + affiliation.organisation)
+            output.affiliationCreated(affiliation)
         } catch (DatabaseQueryException queryException) {
             throw new DatabaseQueryException(queryException.message)
         } catch (Exception ignored) {
