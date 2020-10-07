@@ -1,5 +1,6 @@
 package life.qbic.portal.qoffer2.web.presenters
 
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliationOutput
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
@@ -47,5 +48,13 @@ class CreateAffiliationPresenter implements CreateAffiliationOutput {
     @Override
     void failNotification(String notification) {
         sharedViewModel.failureNotifications.add(notification)
+    }
+
+    /**
+     * @inheritDoc
+     */
+    @Override
+    void affiliationCreated(Affiliation affiliation) {
+        sharedViewModel.affiliations.add(affiliation)
     }
 }
