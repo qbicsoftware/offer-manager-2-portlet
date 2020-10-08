@@ -380,7 +380,7 @@ class CustomerDatabaseQueries {
 
         Connection connection = databaseSession.getConnection()
 
-        def affiliationAlreadyInDb = false
+        boolean affiliationAlreadyInDb = false
 
         connection.withCloseable {
             def statement = connection.prepareStatement(query)
