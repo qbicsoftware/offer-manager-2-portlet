@@ -379,7 +379,7 @@ class CustomerDatabaseQueries {
     }
 
     private boolean affiliationExists(Affiliation affiliation) {
-        String query = "SELECT * FROM affililation WHERE organization = ? " +
+        String query = "SELECT * FROM affiliation WHERE organization = ? " +
                 "AND address_addition=? " +
                 "AND street=? " +
                 "AND country=? " +
