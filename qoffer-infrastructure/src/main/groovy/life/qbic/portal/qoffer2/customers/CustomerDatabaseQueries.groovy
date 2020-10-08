@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 import java.sql.Connection
+import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Statement
 
@@ -342,11 +343,13 @@ class CustomerDatabaseQueries {
         return result
     }
 
+    /**
+     * Add an affiliation to the database
+     *
+     * @param affiliation which needs to be added to the database
+     */
     void addAffiliation(Affiliation affiliation) throws DatabaseQueryException {
-        log.debug("Adding affiliation " + affiliation.organisation + " " + affiliation.addressAddition + "to database")
-
-        /*
-        if (affiliationExists) {
+        if (affiliationExists(affiliation)) {
             throw new DatabaseQueryException("Affiliation is already in the database.")
         }
         Connection connection = databaseSession.getConnection()
@@ -354,19 +357,77 @@ class CustomerDatabaseQueries {
 
         connection.withCloseable {it ->
             try {
-                int customerId = createNewCustomer(it, customer)
-                storeAffiliation(it, customerId, customer.affiliations)
+                createNewAffiliation(it, affiliation)
                 connection.commit()
-            } catch (Exception e) {
+            }
+            catch(DatabaseQueryException e) {
                 log.error(e.message)
                 log.error(e.stackTrace.join("\n"))
                 connection.rollback()
                 connection.close()
-                throw new DatabaseQueryException("Could not create customer.")
+                throw new DatabaseQueryException("Could not create affiliation in database")
+            }
+            catch (Exception e) {
+                log.error(e.message)
+                log.error(e.stackTrace.join("\n"))
+                connection.rollback()
+                connection.close()
+                throw new DatabaseQueryException("Unexpected exception occurred")
             }
 
         }
-        */
-
     }
+
+    private boolean affiliationExists(Affiliation affiliation) {
+        String query = "SELECT * FROM affililation WHERE organization = ? " +
+                "AND address_addition=? " +
+                "AND street=? " +
+                "AND country=? " +
+                "AND postal_code=? " +
+                "AND city=? " +
+                "AND category=?"
+
+        Connection connection = databaseSession.getConnection()
+
+        boolean affiliationAlreadyInDb = false
+
+        connection.withCloseable {
+            PreparedStatement statement = connection.prepareStatement(query)
+            statement.setString(1, affiliation.organisation)
+            statement.setString(2, affiliation.addressAddition)
+            statement.setString(3, affiliation.street)
+            statement.setString(4, affiliation.country)
+            statement.setString(5, affiliation.postalCode)
+            statement.setString(6, affiliation.city)
+            statement.setString(7, affiliation.category.toString())
+            statement.execute()
+            ResultSet affiliationResultSet = statement.getResultSet()
+            affiliationAlreadyInDb = affiliationResultSet.next()
+        }
+        return affiliationAlreadyInDb
+    }
+
+    private static int createNewAffiliation(Connection connection, Affiliation affiliation) {
+        String query = "INSERT INTO affiliation (organization, address_addition, street, country, postal_code, city, category) " +
+                "VALUES(?, ?, ?, ?, ?, ?, ?)"
+
+        List<Integer> generatedKeys = []
+
+        PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+        statement.setString(1, affiliation.organisation)
+        statement.setString(2, affiliation.addressAddition)
+        statement.setString(3, affiliation.street)
+        statement.setString(4, affiliation.country)
+        statement.setString(5, affiliation.postalCode)
+        statement.setString(6, affiliation.city)
+        statement.setString(7, affiliation.category.toString())
+        statement.execute()
+        ResultSet affiliationResultSetKeys = statement.getGeneratedKeys()
+        while (affiliationResultSetKeys.next()){
+            generatedKeys.add(affiliationResultSetKeys.getInt(1))
+        }
+
+        return generatedKeys[0]
+    }
+
 }

@@ -18,6 +18,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Create empty infrastructure classes
 * Create usecase classes and interfaces
 * Created the project using QUBE
+* Implement queries for affiliation creation in database
 
 **Fixed**
 
