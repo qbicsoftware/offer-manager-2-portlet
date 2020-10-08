@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 import java.sql.Connection
+import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Statement
 
@@ -358,12 +359,20 @@ class CustomerDatabaseQueries {
             try {
                 createNewAffiliation(it, affiliation)
                 connection.commit()
-            } catch (Exception e) {
+            }
+            catch(DatabaseQueryException e) {
                 log.error(e.message)
                 log.error(e.stackTrace.join("\n"))
                 connection.rollback()
                 connection.close()
-                throw new DatabaseQueryException("Could not create affiliation.")
+                throw new DatabaseQueryException("Could not create affiliation in database")
+            }
+            catch (Exception e) {
+                log.error(e.message)
+                log.error(e.stackTrace.join("\n"))
+                connection.rollback()
+                connection.close()
+                throw new DatabaseQueryException("Unexpected exception occurred")
             }
 
         }
@@ -383,7 +392,7 @@ class CustomerDatabaseQueries {
         boolean affiliationAlreadyInDb = false
 
         connection.withCloseable {
-            def statement = connection.prepareStatement(query)
+            PreparedStatement statement = connection.prepareStatement(query)
             statement.setString(1, affiliation.organisation)
             statement.setString(2, affiliation.addressAddition)
             statement.setString(3, affiliation.street)
@@ -392,8 +401,8 @@ class CustomerDatabaseQueries {
             statement.setString(6, affiliation.city)
             statement.setString(7, affiliation.category.toString())
             statement.execute()
-            def result = statement.getResultSet()
-            affiliationAlreadyInDb = result.next()
+            ResultSet affiliationResultSet = statement.getResultSet()
+            affiliationAlreadyInDb = affiliationResultSet.next()
         }
         return affiliationAlreadyInDb
     }
@@ -404,7 +413,7 @@ class CustomerDatabaseQueries {
 
         List<Integer> generatedKeys = []
 
-        def statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+        PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
         statement.setString(1, affiliation.organisation)
         statement.setString(2, affiliation.addressAddition)
         statement.setString(3, affiliation.street)
@@ -413,9 +422,9 @@ class CustomerDatabaseQueries {
         statement.setString(6, affiliation.city)
         statement.setString(7, affiliation.category.toString())
         statement.execute()
-        def keys = statement.getGeneratedKeys()
-        while (keys.next()){
-            generatedKeys.add(keys.getInt(1))
+        ResultSet affiliationResultSetKeys = statement.getGeneratedKeys()
+        while (affiliationResultSetKeys.next()){
+            generatedKeys.add(affiliationResultSetKeys.getInt(1))
         }
 
         return generatedKeys[0]
