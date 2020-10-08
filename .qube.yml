@@ -10,11 +10,12 @@ project_slug: qoffer-2-portlet
 project_slug_no_hyphen: qoffer_2_portlet
 template_version: '1.0.3 # <<QUBE_NO_BUMP>>'
 template_handle: portlet-groovy
-github_username: sven1103
+github_username: qbicsoftware
 creator_github_username: sven1103
-is_github_repo: false
+is_github_repo: true
 is_repo_private: false
-is_github_orga: false
+is_github_orga: true
+github_orga: qbicsoftware
 copyright_holder: QBiC
 license: MIT
 main_class_prefix: Qbic
