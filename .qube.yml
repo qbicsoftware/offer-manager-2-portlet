@@ -1,3 +1,4 @@
+qube_version: '2.5.0 # <<QUBE_NO_BUMP>>'
 full_name: Sven Fillinger
 email: sven.fillinger@qbic.uni-tuebingen.de
 project_name: qoffer-2-portlet
@@ -7,7 +8,7 @@ domain: portlet
 language: groovy
 project_slug: qoffer-2-portlet
 project_slug_no_hyphen: qoffer_2_portlet
-template_version: '1.0.2 # <<QUBE_NO_BUMP>>'
+template_version: '1.0.3 # <<QUBE_NO_BUMP>>'
 template_handle: portlet-groovy
 github_username: sven1103
 creator_github_username: sven1103
@@ -17,7 +18,7 @@ is_github_orga: false
 copyright_holder: QBiC
 license: MIT
 main_class_prefix: Qbic
-use_openbis_client: no
-use_openbis_raw_api: no
-use_qbic_databases: no
-use_vaadin_charts: no
+use_openbis_client: yes
+use_openbis_raw_api: yes
+use_qbic_databases: yes
+use_vaadin_charts: yes
