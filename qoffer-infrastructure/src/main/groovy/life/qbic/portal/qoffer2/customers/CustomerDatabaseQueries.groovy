@@ -384,13 +384,13 @@ class CustomerDatabaseQueries {
 
         connection.withCloseable {
             def statement = connection.prepareStatement(query)
-            statement.setString(1, affiliation.getOrganisation())
-            statement.setString(2, affiliation.getAddressAddition())
-            statement.setString(3, affiliation.getStreet())
-            statement.setString(4, affiliation.getCountry())
-            statement.setString(5, affiliation.getPostalCode())
-            statement.setString(6, affiliation.getCity())
-            statement.setString(7, affiliation.getCategory().toString())
+            statement.setString(1, affiliation.organisation)
+            statement.setString(2, affiliation.addressAddition)
+            statement.setString(3, affiliation.street)
+            statement.setString(4, affiliation.country)
+            statement.setString(5, affiliation.postalCode)
+            statement.setString(6, affiliation.city)
+            statement.setString(7, affiliation.category.toString())
             statement.execute()
             def result = statement.getResultSet()
             affiliationAlreadyInDb = result.next()
@@ -399,7 +399,7 @@ class CustomerDatabaseQueries {
     }
 
     private static int createNewAffiliation(Connection connection, Affiliation affiliation) {
-        String query = "INSERT INTO affiliation (organization, address_addition, street, country, postal_code, country, category) " +
+        String query = "INSERT INTO affiliation (organization, address_addition, street, country, postal_code, city, category) " +
                 "VALUES(?, ?, ?, ?, ?, ?, ?)"
 
         List<Integer> generatedKeys = []
