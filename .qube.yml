@@ -14,6 +14,7 @@ creator_github_username: sven1103
 is_github_repo: true
 is_repo_private: false
 is_github_orga: true
+github_orga: qbicsoftware
 copyright_holder: QBiC
 license: MIT
 main_class_prefix: Qbic
