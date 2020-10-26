@@ -103,12 +103,12 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
     void affiliationSelected(AffiliationSelectionEvent event) {
         Affiliation affiliation = event.getValue()
         CreateAffiliationViewModel viewModel = createAffiliationView.createAffiliationViewModel
-        viewModel.affiliationCategory = affiliation.getCategory()
-        viewModel.country = affiliation.getCountry()
-        viewModel.city = affiliation.getCity()
-        viewModel.postalCode = affiliation.getPostalCode()
-        viewModel.street = affiliation.getStreet()
-        viewModel.addressAddition = affiliation.addressAddition
-        viewModel.organisation = affiliation.organisation
+        viewModel.affiliationCategory = affiliation?.getCategory()
+        viewModel.country = affiliation?.getCountry()
+        viewModel.city = affiliation?.getCity()
+        viewModel.postalCode = affiliation?.getPostalCode()
+        viewModel.street = affiliation?.getStreet()
+        viewModel.addressAddition = affiliation?.addressAddition
+        viewModel.organisation = affiliation?.organisation
     }
 }
