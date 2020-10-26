@@ -5,11 +5,9 @@ import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliationsOutpu
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 /**
- * <short description>
+ * This class acts as a presenter for the ListAffiliation use case. It takes care of reflecting the updated information in the view model
  *
- * <detailed description>
- *
- * @since: <versiontag>
+ * @since: 1.0.0
  */
 class ListAffiliationsPresenter implements ListAffiliationsOutput{
 
