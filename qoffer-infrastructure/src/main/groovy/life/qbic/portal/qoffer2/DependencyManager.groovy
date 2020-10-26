@@ -86,11 +86,11 @@ class DependencyManager {
     private void setupDbConnections() {
         try {
 
-            String user = Objects.requireNonNull(configurationManager.getMysqlUser())
-            String password = Objects.requireNonNull(configurationManager.getMysqlPass())
-            String host = Objects.requireNonNull(configurationManager.getMysqlHost())
-            String port = Objects.requireNonNull(configurationManager.getMysqlPort())
-            String sqlDatabase = Objects.requireNonNull(configurationManager.getMysqlDB())
+            String user = Objects.requireNonNull(configurationManager.getMysqlUser(), "Mysql user missing.")
+            String password = Objects.requireNonNull(configurationManager.getMysqlPass(), "Mysql password missing.")
+            String host = Objects.requireNonNull(configurationManager.getMysqlHost(), "Mysql host missing.")
+            String port = Objects.requireNonNull(configurationManager.getMysqlPort(), "Mysql port missing.")
+            String sqlDatabase = Objects.requireNonNull(configurationManager.getMysqlDB(), "Mysql database name missing.")
 
             DatabaseSession.create(user, password, host, port, sqlDatabase)
             CustomerDatabaseQueries queries = new CustomerDatabaseQueries(DatabaseSession.INSTANCE)
