@@ -6,17 +6,13 @@ import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.icons.VaadinIcons
-import com.vaadin.server.Resource
 import com.vaadin.server.UserError
-import com.vaadin.shared.ui.MarginInfo
 import com.vaadin.ui.*
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
-
-import java.beans.PropertyChangeEvent
 
 /**
  * This class generates a Form Layout in which the user
@@ -34,6 +30,8 @@ class CreateCustomerView extends VerticalLayout {
     final private CreateCustomerViewModel createCustomerViewModel
     final private CreateCustomerController controller
 
+    final private List<AffiliationSelectionListener> affiliationSelectionListeners
+
     ComboBox<String> titleField
     TextField firstNameField
     TextField lastNameField
@@ -47,6 +45,7 @@ class CreateCustomerView extends VerticalLayout {
         this.controller = controller
         this.sharedViewModel = sharedViewModel
         this.createCustomerViewModel = createCustomerViewModel
+        this.affiliationSelectionListeners = new ArrayList<>()
         initLayout()
         bindViewModel()
         setupFieldValidators()
@@ -338,5 +337,36 @@ class CreateCustomerView extends VerticalLayout {
         this.affiliationButton.addClickListener({
             sharedViewModel.createAffiliationVisible = !sharedViewModel.createAffiliationVisible
         })
+
+        this.affiliationComboBox.addSelectionListener({
+            fireAffiliationSelectionEvent(it.value)
+        })
+    }
+
+    /**
+     * Adds an AffiliationSelectionListener to be notified when the selected affiliation changes
+     * @param listener
+     * @see AffiliationSelectionListener
+     */
+    void addAffiliationSelectionListener(AffiliationSelectionListener listener) {
+        this.affiliationSelectionListeners.add(listener)
+    }
+
+    /**
+     * Removes an AffiliationSelectionListener to be notified when the selected affiliation changes
+     * @param listener
+     * @see AffiliationSelectionListener
+     */
+    void removeAffiliationSelectionListener(AffiliationSelectionListener listener) {
+        this.affiliationSelectionListeners.remove(listener)
+    }
+
+    /**
+     * Fires an AffiliationSelectionEvent
+     * @param event
+     */
+    private void fireAffiliationSelectionEvent(Affiliation affiliation) {
+        AffiliationSelectionEvent event = new AffiliationSelectionEvent(this, affiliation)
+        this.affiliationSelectionListeners.each {it.affiliationSelected(event)}
     }
 }

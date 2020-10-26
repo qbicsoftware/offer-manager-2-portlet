@@ -5,7 +5,10 @@ import com.vaadin.ui.GridLayout
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Notification
 import com.vaadin.ui.VerticalLayout
+import groovy.beans.Bindable
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.qoffer2.web.StyledNotification
+import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 /**
@@ -18,7 +21,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  * @author: Jennifer Bödker
  *
  */
-class PortletView extends VerticalLayout {
+class PortletView extends VerticalLayout implements AffiliationSelectionListener{
 
     private final ViewModel portletViewModel
 
@@ -89,5 +92,23 @@ class PortletView extends VerticalLayout {
     private static def showNotification(String message, Notification.Type type) {
         StyledNotification notification = new StyledNotification(message, type)
         notification.show(Page.getCurrent())
+    }
+
+    /**
+     * {@inheritdoc}
+     * This method informs the CreateAffiliationView of a new selection and
+     * updates the view accordingly.
+     */
+    @Override
+    void affiliationSelected(AffiliationSelectionEvent event) {
+        Affiliation affiliation = event.getValue()
+        CreateAffiliationViewModel viewModel = createAffiliationView.createAffiliationViewModel
+        viewModel.affiliationCategory = affiliation.getCategory()
+        viewModel.country = affiliation.getCountry()
+        viewModel.city = affiliation.getCity()
+        viewModel.postalCode = affiliation.getPostalCode()
+        viewModel.street = affiliation.getStreet()
+        viewModel.addressAddition = affiliation.addressAddition
+        viewModel.organisation = affiliation.organisation
     }
 }
