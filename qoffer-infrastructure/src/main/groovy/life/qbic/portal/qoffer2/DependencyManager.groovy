@@ -209,6 +209,8 @@ class DependencyManager {
             log.error("Could not create ${PortletView.getSimpleName()} view.", e)
             throw e
         }
+
+        createCustomerView?.addAffiliationSelectionListener(portletView)
     }
 
 
