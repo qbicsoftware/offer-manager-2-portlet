@@ -1,5 +1,10 @@
 package life.qbic.portal.portlet.customers.search
 
+import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.portal.portlet.CriteriaType
+import life.qbic.portal.portlet.SearchCriteria
+import life.qbic.portal.portlet.exceptions.DatabaseQueryException
+
 /**
  * A use case which describes how a customer is searched in the database
  *
@@ -8,5 +13,32 @@ package life.qbic.portal.portlet.customers.search
  * @since: 1.0.0
  *
  */
-class SearchCustomer {
+class SearchCustomer implements SearchCustomerInput{
+    SearchCustomerDataSource dataSource
+    SearchCustomerOutput output
+
+    SearchCustomer(SearchCustomerOutput output, SearchCustomerDataSource dataSource){
+        this.output = output
+        this.dataSource = dataSource
+    }
+
+    @Override
+    void searchCustomer(String firstName, String lastName) {
+        HashMap criteria = new HashMap()
+        criteria.put(CriteriaType.FIRST_NAME,firstName)
+        criteria.put(CriteriaType.LAST_NAME,lastName)
+
+        SearchCriteria searchCriteria = new SearchCriteria(criteria)
+
+        try {
+            List<Customer> foundCustomer = dataSource.findCustomer(searchCriteria)
+            int numberOfFoundCustomers = foundCustomer.size()
+            output.successNotification("Found $numberOfFoundCustomers customers matching $firstName $lastName")
+        } catch(DatabaseQueryException databaseQueryException){
+            output.failNotification(databaseQueryException.message)
+        } catch(Exception ignored) {
+            output.failNotification("Could not find a customer matching $firstName $lastName")
+        }
+
+    }
 }

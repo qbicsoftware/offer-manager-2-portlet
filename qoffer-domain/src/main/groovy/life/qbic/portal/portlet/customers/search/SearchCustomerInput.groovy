@@ -8,5 +8,7 @@ package life.qbic.portal.portlet.customers.search
  * @since: 1.0.0
  *
  */
-class SearchCustomerInput {
+interface SearchCustomerInput {
+
+    void searchCustomer(String firstName, String lastName)
 }
