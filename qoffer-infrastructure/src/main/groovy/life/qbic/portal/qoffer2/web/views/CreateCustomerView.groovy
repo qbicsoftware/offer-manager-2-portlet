@@ -6,17 +6,13 @@ import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.icons.VaadinIcons
-import com.vaadin.server.Resource
 import com.vaadin.server.UserError
-import com.vaadin.shared.ui.MarginInfo
 import com.vaadin.ui.*
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
-
-import java.beans.PropertyChangeEvent
 
 /**
  * This class generates a Form Layout in which the user
@@ -34,11 +30,14 @@ class CreateCustomerView extends VerticalLayout {
     final private CreateCustomerViewModel createCustomerViewModel
     final private CreateCustomerController controller
 
+    final private List<AffiliationSelectionListener> affiliationSelectionListeners
+
     ComboBox<String> titleField
     TextField firstNameField
     TextField lastNameField
     TextField emailField
     ComboBox<Affiliation> affiliationComboBox
+    ComboBox<Affiliation> addressAdditionComboBox
     Button submitButton
     Button affiliationButton
 
@@ -47,6 +46,7 @@ class CreateCustomerView extends VerticalLayout {
         this.controller = controller
         this.sharedViewModel = sharedViewModel
         this.createCustomerViewModel = createCustomerViewModel
+        this.affiliationSelectionListeners = new ArrayList<>()
         initLayout()
         bindViewModel()
         setupFieldValidators()
@@ -75,9 +75,15 @@ class CreateCustomerView extends VerticalLayout {
 
         this.affiliationComboBox = generateAffiliationSelector(sharedViewModel.affiliations)
         affiliationComboBox.setRequiredIndicatorVisible(true)
+
+        this.addressAdditionComboBox = generateAffiliationSelector(sharedViewModel.affiliations.findAll{(it as Affiliation).organisation == createCustomerViewModel.affiliation?.organisation})
+        addressAdditionComboBox.setRequiredIndicatorVisible(false)
+        addressAdditionComboBox.setItemCaptionGenerator({it.addressAddition})
+        addressAdditionComboBox.setCaption("Address Addition")
+        addressAdditionComboBox.enabled = false
+
         this.affiliationButton = new Button()
-        affiliationButton.icon = sharedViewModel.createAffiliationVisible ? VaadinIcons.CLOSE : VaadinIcons.PLUS
-        affiliationButton.caption = sharedViewModel.createAffiliationVisible ? "Cancel Affiliation Creation" : "Create New Affiliation"
+        styleDetailsToggle()
 
         this.submitButton = new Button("Create Customer")
         submitButton.setIcon(VaadinIcons.USER)
@@ -91,20 +97,29 @@ class CreateCustomerView extends VerticalLayout {
         row2.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
         row2.setSizeFull()
 
-        HorizontalLayout row3 = new HorizontalLayout(affiliationComboBox, affiliationButton, submitButton)
+        HorizontalLayout row3 = new HorizontalLayout(affiliationComboBox, addressAdditionComboBox)
         row3.setComponentAlignment(affiliationComboBox, Alignment.BOTTOM_LEFT)
-        row3.setComponentAlignment(affiliationButton, Alignment.BOTTOM_LEFT)
-        row3.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
+        row3.setComponentAlignment(addressAdditionComboBox, Alignment.BOTTOM_LEFT)
         row3.setSizeFull()
 
-        //Add the components to the FormLayout
-        this.addComponents(row1, row2, row3)
+        HorizontalLayout row4 = new HorizontalLayout(affiliationButton)
+        row4.setComponentAlignment(affiliationButton, Alignment.BOTTOM_LEFT)
+        row4.setSizeFull()
 
-        titleField.setSizeFull()
+        HorizontalLayout row5 = new HorizontalLayout(submitButton)
+        row5.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
+        row5.setSizeFull()
+
+
+        //Add the components to the FormLayout
+        this.addComponents(row1, row2, row3, row4, row5)
+
+
         firstNameField.setSizeFull()
         lastNameField.setSizeFull()
         emailField.setSizeFull()
         affiliationComboBox.setSizeFull()
+        addressAdditionComboBox.setSizeFull()
 
         this.setSpacing(true)
     }
@@ -128,7 +143,8 @@ class CreateCustomerView extends VerticalLayout {
                 .bind({ it.email }, { it, updatedValue -> it.setEmail(updatedValue) })
         binder.forField(this.affiliationComboBox)
                 .bind({ it.affiliation }, { it, updatedValue -> it.setAffiliation(updatedValue) })
-
+        binder.forField(this.addressAdditionComboBox)
+                .bind({ it.affiliation }, { it, updatedValue -> it.setAffiliation(updatedValue) })
         /*
         Here we setup a listener to the viewModel that hold displayed information.
         The listener is needed since Vaadin bindings only work one-way
@@ -159,7 +175,14 @@ class CreateCustomerView extends VerticalLayout {
                     break
                 case "affiliation":
                     Affiliation newValue = it.newValue as Affiliation
-                    affiliationComboBox.selectedItem = newValue ?: affiliationComboBox.emptyValue
+                    if (newValue) {
+                        affiliationComboBox.selectedItem = newValue
+                        addressAdditionComboBox.setItems(sharedViewModel.affiliations?.findAll{ ((it as Affiliation)?.organisation == newValue?.organisation) })
+                        addressAdditionComboBox.selectedItem = newValue
+                    } else {
+                        affiliationComboBox.selectedItem = affiliationComboBox.emptyValue
+                        addressAdditionComboBox.selectedItem = addressAdditionComboBox.emptyValue
+                    }
                     break
                 default:
                     break
@@ -194,18 +217,19 @@ class CreateCustomerView extends VerticalLayout {
                 case "affiliationValid":
                     if (it.newValue || it.newValue == null) {
                         affiliationComboBox.componentError = null
+                        addressAdditionComboBox.componentError = null
                     }
                     break
                 default:
                     break
             }
             submitButton.enabled = allValuesValid()
+            addressAdditionComboBox.enabled = createCustomerViewModel.affiliation
         })
         sharedViewModel.addPropertyChangeListener({it ->
             switch (it.propertyName) {
                 case "createAffiliationVisible":
-                    affiliationButton.icon = it.newValue ? VaadinIcons.CLOSE : VaadinIcons.PLUS
-                    affiliationButton.caption = it.newValue ? "Cancel Affiliation Creation" : "Create New Affiliation"
+                    styleDetailsToggle()
                     break
                 default:
                     break
@@ -338,5 +362,41 @@ class CreateCustomerView extends VerticalLayout {
         this.affiliationButton.addClickListener({
             sharedViewModel.createAffiliationVisible = !sharedViewModel.createAffiliationVisible
         })
+
+        this.affiliationComboBox.addSelectionListener({
+            fireAffiliationSelectionEvent(it.value)
+        })
+    }
+
+    private void styleDetailsToggle() {
+        affiliationButton.icon = sharedViewModel.createAffiliationVisible ? VaadinIcons.MINUS : VaadinIcons.PLUS
+        affiliationButton.caption = sharedViewModel.createAffiliationVisible ? "Hide Affiliation Details" : "Show Affiliation Details"
+    }
+
+    /**
+     * Adds an AffiliationSelectionListener to be notified when the selected affiliation changes
+     * @param listener
+     * @see AffiliationSelectionListener
+     */
+    void addAffiliationSelectionListener(AffiliationSelectionListener listener) {
+        this.affiliationSelectionListeners.add(listener)
+    }
+
+    /**
+     * Removes an AffiliationSelectionListener to be notified when the selected affiliation changes
+     * @param listener
+     * @see AffiliationSelectionListener
+     */
+    void removeAffiliationSelectionListener(AffiliationSelectionListener listener) {
+        this.affiliationSelectionListeners.remove(listener)
+    }
+
+    /**
+     * Fires an AffiliationSelectionEvent
+     * @param event
+     */
+    private void fireAffiliationSelectionEvent(Affiliation affiliation) {
+        AffiliationSelectionEvent event = new AffiliationSelectionEvent(this, affiliation)
+        this.affiliationSelectionListeners.each {it.affiliationSelected(event)}
     }
 }

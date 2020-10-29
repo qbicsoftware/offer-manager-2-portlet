@@ -26,7 +26,7 @@ class CreateAffiliation implements CreateAffiliationInput{
         this.output = output
     }
 
-    /** {@InheritDoc} */
+    /** {@inheritdoc} */
     @Override
     void createAffiliation(Affiliation affiliation) {
         try {
@@ -34,9 +34,9 @@ class CreateAffiliation implements CreateAffiliationInput{
             output.successNotification("Successfully added new affiliation " + affiliation.organisation)
             output.affiliationCreated(affiliation)
         } catch (DatabaseQueryException queryException) {
-            throw new DatabaseQueryException(queryException.message)
+            output.failNotification("Could not create affiliation [$affiliation].\n" + queryException.message)
         } catch (Exception ignored) {
-            output.failNotification("Could not create new affiliation.")
+            output.failNotification("Could not create new affiliation $affiliation")
         }
     }
 }
