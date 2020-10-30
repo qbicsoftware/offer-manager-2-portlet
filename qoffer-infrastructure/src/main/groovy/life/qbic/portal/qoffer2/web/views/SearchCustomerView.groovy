@@ -41,11 +41,11 @@ class SearchCustomerView extends FormLayout {
     private Boolean firstNameValid
     private Boolean lastNameValid
 
-    SearchCustomerView(ViewModel viewModel, SearchCustomerViewModel searchCustomerViewModel, List<Customer> foundCustomerList) {
+    SearchCustomerView(ViewModel viewModel, SearchCustomerViewModel searchCustomerViewModel) {
         super()
         this.viewModel = viewModel
         this.searchCustomerViewModel = searchCustomerViewModel
-        this.foundCustomerList = foundCustomerList
+        this.foundCustomerList = searchCustomerViewModel.customers
         initLayout()
         setupDataProvider()
         setupFieldValidators()
