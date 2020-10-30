@@ -1,5 +1,9 @@
 package life.qbic.portal.portlet.offers
 
+import life.qbic.datamodel.accounting.ProductItem
+import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.QuotationId
+
 
 /**
  * A gateway to access information from an offer database
@@ -11,5 +15,8 @@ package life.qbic.portal.portlet.offers
  * @author: Tobias Koch
  */
 interface OfferDbGateway {
+
+    def getOfferByID(QuotationId id)
+    def createOffer(QuotationId id, String projectTitle, String projectDescription, Customer customer, Customer projectManager, List<ProductItem> productItems)
 
 }
