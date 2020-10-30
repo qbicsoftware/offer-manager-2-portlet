@@ -1,12 +1,23 @@
 package life.qbic.portal.qoffer2.web.viewmodel
 
+import life.qbic.datamodel.dtos.business.Customer
+
 /**
- * <class short description - One Line!>
- * 
- * <More detailed description - When to use, what it solves, etc.>
+ * A ViewModel holding data that is presented in a
+ * life.qbic.portal.qoffer2.web.views.SearchCustomerView
  *
- * @since: <version tag>
+ * This class holds all specific fields that are mutable in the view
+ * Whenever values change it should be reflected in the corresponding view. This class can be used
+ * for UI unit testing purposes.
  *
+ *
+ * @since: 1.0.0
  */
 class SearchCustomerViewModel {
+
+    List<Customer> customers = new ArrayList<>()
+
+    String firstName
+    String lastName
+
 }
