@@ -3,7 +3,7 @@ package life.qbic.portal.qoffer2
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliations
 import life.qbic.portal.portlet.customers.create.CreateCustomer
@@ -15,14 +15,17 @@ import life.qbic.portal.qoffer2.web.controllers.ListAffiliationsController
 import life.qbic.portal.qoffer2.web.presenters.CreateAffiliationPresenter
 import life.qbic.portal.qoffer2.web.presenters.CreateCustomerPresenter
 import life.qbic.portal.qoffer2.web.presenters.ListAffiliationsPresenter
+import life.qbic.portal.qoffer2.web.presenters.SearchCustomerPresenter
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.SearchCustomerViewModel
 import life.qbic.portal.qoffer2.web.views.CreateAffiliationView
 import life.qbic.portal.qoffer2.web.views.PortletView
 import life.qbic.portal.qoffer2.web.presenters.Presenter
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.views.CreateCustomerView
+import life.qbic.portal.qoffer2.web.views.SearchCustomerView
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
 
@@ -42,10 +45,12 @@ class DependencyManager {
     private ViewModel viewModel
     private CreateCustomerViewModel createCustomerViewModel
     private CreateAffiliationViewModel createAffiliationViewModel
+    private SearchCustomerViewModel searchCustomerViewModel
     private Presenter presenter
     private CreateCustomerPresenter createCustomerPresenter
     private CreateAffiliationPresenter createAffiliationPresenter
     private ListAffiliationsPresenter listAffiliationsPresenter
+    private SearchCustomerPresenter searchCustomerPresenter
 
     private CustomerDbConnector customerDbConnector
     private CreateCustomer createCustomer
@@ -126,6 +131,13 @@ class DependencyManager {
             log.error("Unexpected excpetion during ${CreateAffiliationViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
+        try {
+            this.searchCustomerViewModel = new SearchCustomerViewModel()
+
+        } catch (Exception e) {
+            log.error("Unexpected excpetion during ${SearchCustomerViewModel.getSimpleName()} view model setup.", e)
+            throw e
+        }
     }
 
     private void setupPresenters() {
@@ -154,6 +166,11 @@ class DependencyManager {
             this.listAffiliationsPresenter = new ListAffiliationsPresenter(this.viewModel)
         } catch (Exception e) {
             log.error("Unexpected exception during ${ListAffiliationsPresenter.getSimpleName()} setup", e)
+        }
+        try {
+            this.searchCustomerPresenter = new SearchCustomerPresenter(this.viewModel, this.searchCustomerViewModel)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${SearchCustomerPresenter.getSimpleName()} setup", e)
         }
     }
 
@@ -184,6 +201,7 @@ class DependencyManager {
     }
 
     private void setupViews() {
+
         CreateCustomerView createCustomerView
         try {
             createCustomerView = new CreateCustomerView(this.createCustomerController, this.viewModel, this.createCustomerViewModel)
@@ -201,9 +219,17 @@ class DependencyManager {
             throw e
         }
 
+        SearchCustomerView searchCustomerView
+
+        try {
+            searchCustomerView = new SearchCustomerView(this.viewModel, this.searchCustomerViewModel)
+        } catch (Exception e) {
+            log.error("Could not create ${CreateAffiliationView.getSimpleName()} view.", e)
+            throw e
+        }
         PortletView portletView
         try {
-            portletView = new PortletView(this.viewModel, createCustomerView, createAffiliationView)
+            portletView = new PortletView(this.viewModel, createCustomerView, createAffiliationView, searchCustomerView)
             this.portletView = portletView
         } catch (Exception e) {
             log.error("Could not create ${PortletView.getSimpleName()} view.", e)
