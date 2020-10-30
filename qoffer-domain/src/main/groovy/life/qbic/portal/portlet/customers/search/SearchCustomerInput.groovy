@@ -9,6 +9,12 @@ package life.qbic.portal.portlet.customers.search
  *
  */
 interface SearchCustomerInput {
-
+    /**
+    * This method triggers the search for a customer with matching firstname and matching lastname
+    *
+    * @param firstName: The first name of the customer.
+    * @param lastName: The last name of the customer
+    * @since: 1.0.0
+    */
     void searchCustomer(String firstName, String lastName)
 }
