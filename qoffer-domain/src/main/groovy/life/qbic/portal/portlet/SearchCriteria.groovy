@@ -11,9 +11,9 @@ package life.qbic.portal.portlet
  */
 class SearchCriteria {
 
-    final HashMap<CriteriaType,String> criteria
+    final Map<CriteriaType,String> criteria
 
-    SearchCriteria(HashMap<CriteriaType,String> criteria){
+    SearchCriteria(Map<CriteriaType,String> criteria){
         this.criteria = criteria
     }
 }
