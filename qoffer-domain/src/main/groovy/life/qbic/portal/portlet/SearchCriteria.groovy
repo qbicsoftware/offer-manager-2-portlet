@@ -13,7 +13,7 @@ class SearchCriteria {
 
     final Map<CriteriaType,String> criteria
 
-    SearchCriteria(HashMap<CriteriaType,String> criteria){
+    SearchCriteria(Map<CriteriaType,String> criteria){
         this.criteria = criteria
     }
 }
