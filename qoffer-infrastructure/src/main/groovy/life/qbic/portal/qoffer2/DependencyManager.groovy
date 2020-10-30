@@ -56,10 +56,7 @@ class DependencyManager {
     private CreateCustomerController createCustomerController
     private CreateAffiliationController createAffiliationController
     private SearchCustomerController searchCustomerController
-
     private ListAffiliations listAffiliations
-    private CreateCustomerController createCustomerController
-    private CreateAffiliationController createAffiliationController
     private ListAffiliationsController listAffiliationsController
 
     private PortletView portletView
