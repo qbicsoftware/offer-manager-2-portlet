@@ -5,6 +5,7 @@ import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
+import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliations
 import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.portlet.customers.search.SearchCustomer
 import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
@@ -12,8 +13,10 @@ import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.SearchCustomerController
+import life.qbic.portal.qoffer2.web.controllers.ListAffiliationsController
 import life.qbic.portal.qoffer2.web.presenters.CreateAffiliationPresenter
 import life.qbic.portal.qoffer2.web.presenters.CreateCustomerPresenter
+import life.qbic.portal.qoffer2.web.presenters.ListAffiliationsPresenter
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.views.CreateAffiliationView
@@ -44,6 +47,7 @@ class DependencyManager {
     private Presenter presenter
     private CreateCustomerPresenter createCustomerPresenter
     private CreateAffiliationPresenter createAffiliationPresenter
+    private ListAffiliationsPresenter listAffiliationsPresenter
 
     private CustomerDbConnector customerDbConnector
     private CreateCustomer createCustomer
@@ -52,6 +56,11 @@ class DependencyManager {
     private CreateCustomerController createCustomerController
     private CreateAffiliationController createAffiliationController
     private SearchCustomerController searchCustomerController
+
+    private ListAffiliations listAffiliations
+    private CreateCustomerController createCustomerController
+    private CreateAffiliationController createAffiliationController
+    private ListAffiliationsController listAffiliationsController
 
     private PortletView portletView
     private ConfigurationManager configurationManager
@@ -81,11 +90,28 @@ class DependencyManager {
         return this.portletView
     }
 
+    private void setupDbConnections() {
+        try {
+
+            String user = Objects.requireNonNull(configurationManager.getMysqlUser(), "Mysql user missing.")
+            String password = Objects.requireNonNull(configurationManager.getMysqlPass(), "Mysql password missing.")
+            String host = Objects.requireNonNull(configurationManager.getMysqlHost(), "Mysql host missing.")
+            String port = Objects.requireNonNull(configurationManager.getMysqlPort(), "Mysql port missing.")
+            String sqlDatabase = Objects.requireNonNull(configurationManager.getMysqlDB(), "Mysql database name missing.")
+
+            DatabaseSession.create(user, password, host, port, sqlDatabase)
+            CustomerDatabaseQueries queries = new CustomerDatabaseQueries(DatabaseSession.INSTANCE)
+            customerDbConnector = new CustomerDbConnector(queries)
+        } catch (Exception e) {
+            log.error("Unexpected exception during customer database connection.", e)
+            throw e
+        }
+    }
+
     private void setupViewModels() {
         // setup view models
         try {
             this.viewModel = new ViewModel()
-            viewModel.affiliations.addAll(customerDbConnector.listAllAffiliations())
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${ViewModel.getSimpleName()} view model setup.", e)
             throw e
@@ -105,24 +131,6 @@ class DependencyManager {
             createAffiliationViewModel.affiliationCategories.addAll(AffiliationCategory.values().collect{it.value})
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${CreateAffiliationViewModel.getSimpleName()} view model setup.", e)
-            throw e
-        }
-    }
-
-    private void setupDbConnections() {
-        try {
-
-            String user = configurationManager.getMysqlUser()
-            String password = configurationManager.getMysqlPass()
-            String host = configurationManager.getMysqlHost()
-            String port = configurationManager.getMysqlPort()
-            String sqlDatabase = configurationManager.getMysqlDB()
-
-            DatabaseSession.create(user, password, host, port, sqlDatabase)
-            CustomerDatabaseQueries queries = new CustomerDatabaseQueries(DatabaseSession.INSTANCE)
-            customerDbConnector = new CustomerDbConnector(queries)
-        } catch (Exception e) {
-            log.error("Unexpected exception during customer database connection.", e)
             throw e
         }
     }
@@ -148,11 +156,18 @@ class DependencyManager {
             log.error("Unexpected exception during ${CreateAffiliationPresenter.getSimpleName()} setup." , e)
             throw e
         }
+
+        try {
+            this.listAffiliationsPresenter = new ListAffiliationsPresenter(this.viewModel)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${ListAffiliationsPresenter.getSimpleName()} setup", e)
+        }
     }
 
     private void setupUseCaseInteractors() {
         this.createCustomer = new CreateCustomer(createCustomerPresenter, customerDbConnector)
         this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbConnector)
+        this.listAffiliations = new ListAffiliations(listAffiliationsPresenter, customerDbConnector)
     }
 
     private void setupControllers() {
@@ -174,12 +189,18 @@ class DependencyManager {
             log.error("Unexpected exception during ${SearchCustomerController.getSimpleName()} setup.", e)
             throw e
         }
+        try {
+            this.listAffiliationsController = new ListAffiliationsController(this.listAffiliations)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${ListAffiliationsController.getSimpleName()} setup", e)
+        }
     }
 
     private void setupViews() {
         CreateCustomerView createCustomerView
         try {
             createCustomerView = new CreateCustomerView(this.createCustomerController, this.viewModel, this.createCustomerViewModel)
+            listAffiliationsController.listAffiliations()
         } catch (Exception e) {
             log.error("Could not create ${CreateCustomerView.getSimpleName()} view.", e)
             throw e
@@ -201,6 +222,8 @@ class DependencyManager {
             log.error("Could not create ${PortletView.getSimpleName()} view.", e)
             throw e
         }
+
+        createCustomerView?.addAffiliationSelectionListener(portletView)
     }
 
 
