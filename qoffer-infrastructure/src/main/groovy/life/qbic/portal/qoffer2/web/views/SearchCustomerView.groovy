@@ -45,7 +45,7 @@ class SearchCustomerView extends FormLayout {
         super()
         this.viewModel = viewModel
         this.searchCustomerViewModel = searchCustomerViewModel
-        this.foundCustomerList = searchCustomerViewModel.customers
+        this.foundCustomerList = searchCustomerViewModel.foundCustomers
         initLayout()
         setupDataProvider()
         setupFieldValidators()
@@ -144,22 +144,22 @@ class SearchCustomerView extends FormLayout {
         this.firstNameField.addValueChangeListener({ event ->
             ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.firstNameField))
             if (result.isError()) {
-                firstNameValid = false
+                firstNameSet = false
                 UserError error = new UserError(result.getErrorMessage())
                 firstNameField.setComponentError(error)
             } else {
-                firstNameValid = true
+                firstNameSet = true
                 firstNameField.setComponentError(null)
             }
         })
         this.lastNameField.addValueChangeListener({ event ->
             ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.lastNameField))
             if (result.isError()) {
-                lastNameValid = false
+                lastNameSet = false
                 UserError error = new UserError(result.getErrorMessage())
                 lastNameField.setComponentError(error)
             } else {
-                lastNameValid = true
+                lastNameSet = true
                 lastNameField.setComponentError(null)
             }
         })
@@ -175,23 +175,23 @@ class SearchCustomerView extends FormLayout {
     private def submitCustomer() {
         try {
             //If an input is provided to the first name and last name field
-            if (firstNameValid && lastNameValid) {
+            if (firstNameSet && lastNameSet) {
                 //Add values to ViewModel
-                searchCustomerViewModel.firstName = firstNameField.value
-                searchCustomerViewModel.lastName = lastNameField.value
+                searchCustomerViewModel.searchedFirstName= firstNameField.value
+                searchCustomerViewModel.searchedLastName = lastNameField.value
                 //generate grid with new data
                 generateGrid()
                 viewModel.successNotifications.add("Customer ${firstNameField.value} ${lastNameField.value} could be found in database")
             }
             //If an input is only provided to the first name field
-            else if (firstNameValid && !lastNameValid) {
+            else if (firstNameSet && !lastNameSet) {
                 viewModel.failureNotifications.add("Please specify a last name")
-                lastNameValid = false
+                lastNameSet = false
             }
             //If an input is only provided to the last name field
-            else if (!firstNameValid && lastNameValid){
+            else if (!firstNameSet && lastNameSet){
                 viewModel.failureNotifications.add("Please specify a first name")
-                firstNameValid = false
+                firstNameSet = false
             }
             //If no input was provided
             else{
