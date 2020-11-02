@@ -38,8 +38,8 @@ class SearchCustomerView extends FormLayout {
     public HorizontalLayout gridLayout
     private List<Customer> foundCustomerList
 
-    private Boolean firstNameValid
-    private Boolean lastNameValid
+    private Boolean firstNameSet
+    private Boolean lastNameSet
 
     SearchCustomerView(ViewModel viewModel, SearchCustomerViewModel searchCustomerViewModel) {
         super()
