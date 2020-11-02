@@ -32,8 +32,8 @@ class SearchCustomerPresenter {
     }
 
     void reportFoundCustomers(List<Customer> customers) {
-        searchCustomerViewModel.customers.clear()
-        searchCustomerViewModel.customers.addAll(customers)
+        searchCustomerViewModel.foundCustomers.clear()
+        searchCustomerViewModel.foundCustomers.addAll(customers)
     }
 
 }
