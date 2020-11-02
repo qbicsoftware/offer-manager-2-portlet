@@ -21,7 +21,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  * This class generates a Form Layout with which the user can search if a customer is already contained in the database
  *
  * SearchCustomerView will be integrated into the qOffer 2.0 Portlet and provides an User Interface
- * with the intention of enabling a user the search of a Customer by looking for the customer's first and lastname to the QBiC Database
+ * with the intention of enabling a user the search of a customer by looking for the customer's first and last name to the QBiC Database
  *
  * @since: 1.0.0*
  */
