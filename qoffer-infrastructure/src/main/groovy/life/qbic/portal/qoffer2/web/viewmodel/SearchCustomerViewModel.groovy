@@ -18,6 +18,6 @@ class SearchCustomerViewModel {
     List<Customer> foundCustomers = new ArrayList<>()
 
     String firstName
-    String lastName
+    String searchedLastName
 
 }
