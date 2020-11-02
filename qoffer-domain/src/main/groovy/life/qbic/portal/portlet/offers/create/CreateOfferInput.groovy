@@ -1,6 +1,7 @@
 package life.qbic.portal.portlet.offers.create
 
 import life.qbic.datamodel.accounting.ProductItem
+import life.qbic.datamodel.accounting.Quotation
 import life.qbic.datamodel.dtos.business.Customer
 
 
@@ -16,7 +17,7 @@ interface CreateOfferInput {
     /**
      * Creates a new quotation based on the given TOMATOID
      * @param tomatoId makes it possible to identify the quotation
-     * @return
+     * @since 1.0.0
      */
     void createOffer(String tomatoId)
 
@@ -27,7 +28,7 @@ interface CreateOfferInput {
      * @param customer
      * @param projectManager
      * @param productItems
-     * @return
+     * @since 1.0.0
      */
-    void createNewOffer(String projectTitle, String projectDescription, Customer customer, Customer projectManager, List <ProductItem> productItems)
+    void createNewOffer(Quotation quotation)
 }

@@ -1,8 +1,10 @@
 package life.qbic.portal.portlet.offers.create
 
 import life.qbic.datamodel.accounting.ProductItem
+import life.qbic.datamodel.accounting.Quotation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.QuotationId
+import life.qbic.datamodel.persons.Person
 import life.qbic.portal.portlet.offers.OfferDbGateway
 
 /**
@@ -29,10 +31,16 @@ class CreateOffer implements CreateOfferInput{
     }
 
     @Override
-    void createNewOffer(String projectTitle, String projectDescription, Customer customer, Customer projectManager, List<ProductItem> productItems) {
-        //create id
+    void createNewOffer(Quotation quotation) {
+        gateway.createOffer(quotation.identifier,quotation.projectTitle,quotation.projectDescription,quotation.customer,quotation.projectManager,quotation.items)
+    }
 
-        //create offer in database
-        gateway.createOffer(new QuotationId("conserved","random",1),projectTitle,projectDescription,customer,projectManager,productItems)
+    //todo move this method to the place where the quotation is generated
+    private static QuotationId generateQuotationID(Person customer){//do we want to have a person here? todo update the datamodellib
+        String projectConservedPart = customer.lastName.toLowerCase()
+        String randomPart = "abcd"
+        int version = 1
+
+        return new QuotationId(projectConservedPart,randomPart,version)
     }
 }

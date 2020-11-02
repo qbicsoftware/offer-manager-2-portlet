@@ -1,5 +1,10 @@
 package life.qbic.portal.qoffer2.offers
 
+import life.qbic.datamodel.accounting.ProductItem
+import life.qbic.datamodel.accounting.Quotation
+import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.QuotationId
+import life.qbic.datamodel.persons.Person
 import life.qbic.portal.portlet.offers.OfferDbGateway
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import org.apache.logging.log4j.LogManager
@@ -22,5 +27,15 @@ class OfferDbConnector implements OfferDbGateway{
 
     OfferDbConnector(DatabaseSession session){
         this.session = session
+    }
+
+    @Override
+    Quotation getOfferByID(QuotationId id) {
+        return null
+    }
+
+    @Override
+    void createOffer(QuotationId id, String projectTitle, String projectDescription, Person customer, Person projectManager, List<ProductItem> productItems) {
+
     }
 }
