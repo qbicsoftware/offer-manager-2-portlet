@@ -181,7 +181,7 @@ class SearchCustomerView extends FormLayout {
                 searchCustomerViewModel.searchedLastName = lastNameField.value
                 //generate grid with new data
                 generateGrid()
-                viewModel.successNotifications.add("Customer ${firstNameField.value} ${lastNameField.value} could be found in database")
+                viewModel.successNotifications.add("Customer ${firstNameField.value} ${lastNameField.value} was found in database")
             }
             //If an input is only provided to the first name field
             else if (firstNameSet && !lastNameSet) {
