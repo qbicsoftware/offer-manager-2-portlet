@@ -15,7 +15,7 @@ import life.qbic.datamodel.dtos.business.Customer
  */
 class SearchCustomerViewModel {
 
-    List<Customer> customers = new ArrayList<>()
+    List<Customer> foundCustomers = new ArrayList<>()
 
     String firstName
     String lastName
