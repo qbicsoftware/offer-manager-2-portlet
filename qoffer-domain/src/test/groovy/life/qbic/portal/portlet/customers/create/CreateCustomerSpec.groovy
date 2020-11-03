@@ -1,13 +1,7 @@
 package life.qbic.portal.portlet.customers.create
 
 import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.portlet.SearchCriteria
-import life.qbic.portal.portlet.customers.search.SearchCustomer
-import life.qbic.portal.portlet.customers.search.SearchCustomerDataSource
-import life.qbic.portal.portlet.customers.search.SearchCustomerOutput
-import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import spock.lang.Specification
 
 /**
