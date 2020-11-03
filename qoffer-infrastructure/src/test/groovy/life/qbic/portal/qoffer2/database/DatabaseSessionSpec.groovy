@@ -16,20 +16,5 @@ import java.sql.Connection
  */
 class DatabaseSessionSpec extends Specification{
 
-    def "test"(){
-        given:
-        InputStream stream = DatabaseSessionSpec.class.classLoader.getResourceAsStream("developer.properties")
-        Properties properties = new Properties()
-        properties.load(stream)
-
-        Connection con = DatabaseSession.getDatabaseInstanceAlternative(properties)
-        CustomerDatabaseQueries queries = new CustomerDatabaseQueries(con)
-
-        when:
-        List res = queries.findPersonByName("Zender")
-        DatabaseSession.logout(con)
-
-        then:
-        res.get(0).firstName == "Lars"
-    }
+    //TODO
 }
