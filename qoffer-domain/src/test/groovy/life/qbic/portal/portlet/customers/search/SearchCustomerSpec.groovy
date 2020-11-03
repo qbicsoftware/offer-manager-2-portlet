@@ -34,10 +34,10 @@ class SearchCustomerSpec extends Specification{
         searchCustomer.searchCustomer("Luke","Skywalker")
 
         then:
-        1* output.successNotification("Found 1 customers matching Luke Skywalker")
+        1* output.successNotification(_)
     }
 
-    def "throw an exception if a customer is not found"(){
+    def "notify of failure whenever the datasource throws an exception"(){
         given:
         SearchCustomerOutput output = Mock(SearchCustomerOutput.class)
         SearchCustomerDataSource ds = Stub(SearchCustomerDataSource.class)
@@ -49,7 +49,7 @@ class SearchCustomerSpec extends Specification{
         searchCustomer.searchCustomer("Luke","Skywalker")
 
         then:
-        1* output.failNotification("Customer not found")
+        1* output.failNotification(_)
     }
 
 }

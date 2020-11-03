@@ -52,11 +52,11 @@ class DependencyManager {
     private CustomerDbConnector customerDbConnector
     private CreateCustomer createCustomer
     private CreateAffiliation createAffiliation
+    private ListAffiliations listAffiliations
     private SearchCustomer searchCustomer
     private CreateCustomerController createCustomerController
     private CreateAffiliationController createAffiliationController
     private SearchCustomerController searchCustomerController
-    private ListAffiliations listAffiliations
     private ListAffiliationsController listAffiliationsController
 
     private PortletView portletView
