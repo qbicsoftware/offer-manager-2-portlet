@@ -17,7 +17,7 @@ import spock.lang.Specification
  * @since: 1.0.0
  *
  */
-class SearchCustomerTest extends Specification{
+class SearchCustomerSpec extends Specification{
 
 
     def "find a searched customer"(){
