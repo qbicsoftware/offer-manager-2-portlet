@@ -22,7 +22,7 @@ class CreateCustomerSpec extends Specification {
         dataSource = Mock()
     }
 
-    def "given full information add the customer using the datasource"(){
+    def "given full information add the customer using a mocked data source"(){
         given: "A new create customer use case instance"
         CreateCustomer useCase = new CreateCustomer(output, dataSource)
 
