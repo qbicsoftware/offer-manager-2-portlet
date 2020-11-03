@@ -6,10 +6,10 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.CriteriaType
 
 import life.qbic.portal.portlet.SearchCriteria
-import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliationDataSource
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliationsDataSource
 import life.qbic.portal.portlet.customers.create.CreateCustomerDataSource
+import life.qbic.portal.portlet.customers.search.SearchCustomerDataSource
 import life.qbic.portal.portlet.customers.update.UpdateCustomerDataSource
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import org.apache.logging.log4j.LogManager
@@ -19,14 +19,14 @@ import org.apache.logging.log4j.Logger
 /**
  * Provides operations on QBiC customer data
  *
- * This class implements {@link CustomerDbGateway} and is responsible for transferring data from the database into qOffer
+ * This class implements the data sources of the different use cases and is responsible for transferring data from the database towards them
  *
  * @since: 1.0.0
  * @author: Jennifer Bödker
  *
  */
 @Log4j2
-class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
+class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
   CustomerDatabaseQueries databaseQueries
 
@@ -43,24 +43,34 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    */
   @Override
   List<Customer> findCustomer(SearchCriteria criteria) {
-    String searchCondition = criteria.criteriaValue
 
-    switch(criteria.criteriaType){
-      case CriteriaType.LAST_NAME:
-        //todo create a Customer
-        List<Customer> customer = databaseQueries.findPersonByName(searchCondition)
-            return null
-      case CriteriaType.GROUP_NAME:
-            return databaseQueries.findCustomerByGroup(searchCondition)
-      case CriteriaType.ADD_ADDRESS:
-            return databaseQueries.findCustomerByAdditionalAddress(searchCondition)
-      case CriteriaType.CITY:
-            return databaseQueries.findCustomerByCity(searchCondition)
-      default:
-        //todo throw an exception
-        return null
+    List<Customer> foundCustomers = null
+
+    criteria.criteria.each { criteriaKey, criteriaValue ->
+
+      switch(criteriaKey){
+        case CriteriaType.FIRST_NAME:
+          foundCustomers.addAll(databaseQueries.findPersonByName(criteriaValue))
+          break
+        case CriteriaType.LAST_NAME:
+          foundCustomers.addAll(databaseQueries.findPersonByName(criteriaValue))
+          break
+        case CriteriaType.GROUP_NAME:
+          foundCustomers.addAll(databaseQueries.findCustomerByGroup(criteriaValue))
+          break
+        case CriteriaType.ADD_ADDRESS:
+          foundCustomers.addAll(databaseQueries.findCustomerByAdditionalAddress(criteriaValue))
+          break
+        case CriteriaType.CITY:
+          foundCustomers.addAll(databaseQueries.findCustomerByCity(criteriaValue))
+          break
+        default:
+          break
+      }
     }
 
+    //todo filter the found customers for customers that fulfill all searchcriteria!
+    return foundCustomers
   }
 
   /**

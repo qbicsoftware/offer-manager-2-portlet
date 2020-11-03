@@ -1,4 +1,4 @@
-package life.qbic.portal.portlet.offers.update
+package life.qbic.portal.portlet.offers.search
 
 import spock.lang.Specification
 
@@ -10,5 +10,5 @@ import spock.lang.Specification
  * @since: 1.0.0
  * @author: Tobias Koch
  */
-class UpdateOfferTest extends Specification {
+class SearchOffersSpec extends Specification {
 }

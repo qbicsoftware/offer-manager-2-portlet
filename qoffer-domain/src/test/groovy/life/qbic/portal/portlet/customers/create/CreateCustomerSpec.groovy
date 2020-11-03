@@ -12,7 +12,7 @@ import spock.lang.Specification
  * @since: 1.0.0
  * @author: Tobias Koch
  */
-class CreateCustomerTest extends Specification {
+class CreateCustomerSpec extends Specification {
     def "create customer with string"() {
         Customer customer = new Customer("A", "B", "Prof. Dr.", "a.b@c.de", new ArrayList<Affiliation>())
         expect:

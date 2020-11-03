@@ -2,10 +2,8 @@ package life.qbic.portal.qoffer2.web.views
 
 import com.vaadin.server.Page
 import com.vaadin.ui.GridLayout
-import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Notification
 import com.vaadin.ui.VerticalLayout
-import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.qoffer2.web.StyledNotification
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
@@ -27,13 +25,15 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
 
     private final CreateCustomerView createCustomerView
     private final CreateAffiliationView createAffiliationView
+    private final SearchCustomerView searchCustomerView
 
     PortletView(ViewModel portletViewModel,
-                CreateCustomerView createCustomerView, CreateAffiliationView createAffiliationView) {
+                CreateCustomerView createCustomerView, CreateAffiliationView createAffiliationView, SearchCustomerView searchCustomerView) {
         super()
         this.portletViewModel = portletViewModel
         this.createCustomerView = createCustomerView
         this.createAffiliationView = createAffiliationView
+        this.searchCustomerView = searchCustomerView
         initLayout()
         registerListeners()
     }
@@ -48,9 +48,11 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
         this.createAffiliationView.setVisible(portletViewModel.createAffiliationVisible)
 
         GridLayout gridLayout = new GridLayout()
+
         gridLayout.setRows(2)
         gridLayout.setSizeFull()
-
+        //ToDo Find solution on how to best host different views in the portlet
+        gridLayout.addComponent(this.searchCustomerView)
         gridLayout.addComponent(this.createCustomerView)
         gridLayout.addComponent(this.createAffiliationView)
 
