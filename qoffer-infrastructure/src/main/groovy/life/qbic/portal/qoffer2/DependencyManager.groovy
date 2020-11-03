@@ -7,10 +7,12 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliations
 import life.qbic.portal.portlet.customers.create.CreateCustomer
+import life.qbic.portal.portlet.customers.search.SearchCustomer
 import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
+import life.qbic.portal.qoffer2.web.controllers.SearchCustomerController
 import life.qbic.portal.qoffer2.web.controllers.ListAffiliationsController
 import life.qbic.portal.qoffer2.web.presenters.CreateAffiliationPresenter
 import life.qbic.portal.qoffer2.web.presenters.CreateCustomerPresenter
@@ -56,8 +58,10 @@ class DependencyManager {
     private CreateCustomer createCustomer
     private CreateAffiliation createAffiliation
     private ListAffiliations listAffiliations
+    private SearchCustomer searchCustomer
     private CreateCustomerController createCustomerController
     private CreateAffiliationController createAffiliationController
+    private SearchCustomerController searchCustomerController
     private ListAffiliationsController listAffiliationsController
 
     private PortletView portletView
@@ -191,6 +195,12 @@ class DependencyManager {
             this.createAffiliationController = new CreateAffiliationController(this.createAffiliation)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateCustomerController.getSimpleName()} setup.", e)
+            throw e
+        }
+        try {
+            this.searchCustomerController = new SearchCustomerController(this.searchCustomer)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${SearchCustomerController.getSimpleName()} setup.", e)
             throw e
         }
         try {

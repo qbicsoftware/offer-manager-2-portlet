@@ -14,11 +14,11 @@ import java.sql.Connection
  * @author: Jennifer Bödker
  *
  */
-class DatabaseSessionSpecification extends Specification{
+class DatabaseSessionSpec extends Specification{
 
     def "test"(){
         given:
-        InputStream stream = DatabaseSessionSpecification.class.classLoader.getResourceAsStream("developer.properties")
+        InputStream stream = DatabaseSessionSpec.class.classLoader.getResourceAsStream("developer.properties")
         Properties properties = new Properties()
         properties.load(stream)
 
