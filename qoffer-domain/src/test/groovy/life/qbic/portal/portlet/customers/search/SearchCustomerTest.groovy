@@ -37,7 +37,7 @@ class SearchCustomerTest extends Specification{
         1* output.successNotification("Found 1 customers matching Luke Skywalker")
     }
 
-    def "throw an exception if a customer is not found"(){
+    def "notify of failure whenever the datasource throws an exception"(){
         given:
         SearchCustomerOutput output = Mock(SearchCustomerOutput.class)
         SearchCustomerDataSource ds = Stub(SearchCustomerDataSource.class)
