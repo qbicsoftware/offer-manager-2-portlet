@@ -47,6 +47,10 @@
 			<name>QBiC Releases</name>
 			<url>http://qbic-repo.qbic.uni-tuebingen.de:8081/repository/maven-releases</url>
 		</repository>
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
 	</repositories>
 	<dependencyManagement>
 		<dependencies>
@@ -64,4 +68,11 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<distributionManagement>
+		<site>
+			<id>dummytest</id>
+			<url>localhost:8080</url>
+		</site>
+	</distributionManagement>
+
 </project>
