@@ -34,7 +34,7 @@ class SearchCustomerTest extends Specification{
         searchCustomer.searchCustomer("Luke","Skywalker")
 
         then:
-        1* output.successNotification("Found 1 customers matching Luke Skywalker")
+        1* output.successNotification(_)
     }
 
     def "notify of failure whenever the datasource throws an exception"(){
