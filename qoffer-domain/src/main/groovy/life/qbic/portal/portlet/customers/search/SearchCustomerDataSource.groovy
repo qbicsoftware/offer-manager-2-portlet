@@ -18,7 +18,7 @@ interface SearchCustomerDataSource {
     /**
      * This method returns a customer matching the given search criteria
      *
-     * @param criteria a map with search criteria
+     * @param criteria containing the search criteria of the users request
      * @return a person with affiliation and contact information
      * @since 1.0.0
      */
