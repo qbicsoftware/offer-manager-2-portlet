@@ -49,7 +49,7 @@ class SearchCustomerTest extends Specification{
         searchCustomer.searchCustomer("Luke","Skywalker")
 
         then:
-        1* output.failNotification("Customer not found")
+        1* output.failNotification(_)
     }
 
 }
