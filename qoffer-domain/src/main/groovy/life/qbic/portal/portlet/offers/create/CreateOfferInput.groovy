@@ -3,6 +3,8 @@ package life.qbic.portal.portlet.offers.create
 import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.datamodel.accounting.Quotation
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.QuotationId
+import life.qbic.datamodel.dtos.general.Person
 
 
 /**
@@ -22,13 +24,12 @@ interface CreateOfferInput {
     void createOffer(String tomatoId)
 
     /**
-     *
-     * @param projectTitle
-     * @param projectDescription
-     * @param customer
-     * @param projectManager
-     * @param productItems
-     * @since 1.0.0
+     * Method to create a new offer for the provided offer information
+     * @param projectTitle describing the title of the project
+     * @param projectDescription a description of the project
+     * @param customer as the customer of the project
+     * @param projectManager as the manager of the project
+     * @param productItems which are requested by the customer
      */
-    void createNewOffer(Quotation quotation)
+    void createNewOffer(String projectTitle, String projectDescription, Person customer, Person projectManager, List<ProductItem> productItems)
 }

@@ -6,6 +6,9 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.QuotationId
 import life.qbic.datamodel.dtos.general.Person
 
+import java.text.DateFormat
+import java.text.SimpleDateFormat
+
 /**
  * This class implements logic to create new offers.
  *
@@ -30,10 +33,10 @@ class CreateOffer implements CreateOfferInput{
     }
 
     @Override
-    void createNewOffer(Quotation quotation) {
+    void createNewOffer(String projectTitle, String projectDescription, Person customer, Person projectManager, List<ProductItem> productItems) {
+        QuotationId identifier = generateQuotationID(customer)
 
-        //todo can't access the identifier, how do we want to add the identifier? Add a method to add the identifier/remove it from the constructor?
-        quotation.identifier = generateQuotationID(quotation.customer)
+        Quotation quotation = new Quotation(new Date(),null,customer,projectManager,projectTitle,projectDescription,productItems,calculateOfferPrice(productItems),identifier)
         dataSource.saveOffer(quotation)
     }
 
