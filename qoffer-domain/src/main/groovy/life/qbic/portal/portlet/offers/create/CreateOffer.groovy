@@ -67,9 +67,9 @@ class CreateOffer implements CreateOfferInput{
         items.each {item ->
             offerPrice += item.computeTotalCosts()
         }
-        //2. add discount if available
-        double discount = getDiscount(affiliationCategory)
-        offerPrice *= discount
+        //2. add overheads if applicable
+        double overhead = getOverhead(affiliationCategory)
+        offerPrice = offerPrice + offerPrice * overhead
         //2. VAT?
         //todo
 
