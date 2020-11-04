@@ -42,9 +42,12 @@ class CreateOffer implements CreateOfferInput{
      * @param customer which is required for the project conserved part
      * @return
      */
-    private static QuotationId generateQuotationID(Person customer){//do we want to have a person here? todo update the datamodellib
+    private static QuotationId generateQuotationID(Person customer){
+    //todo: do we want to have a person here? 
+    //todo: update the datamodellib
         String projectConservedPart = customer.lastName.toLowerCase()
         String randomPart = "abcd"
+        //TODO make random ID part random
         int version = 1
 
         return new QuotationId(projectConservedPart,randomPart,version)
@@ -61,9 +64,9 @@ class CreateOffer implements CreateOfferInput{
         items.each {item ->
             offerPrice += item.computeTotalCosts()
         }
-        //2. add discount if available
-        double discount = getDiscount(affiliationCategory)
-        offerPrice *= discount
+        //2. add overheads if applicable
+        double overhead = getOverhead(affiliationCategory)
+        offerPrice = offerPrice + offerPrice * overhead
         //2. VAT?
         //todo
 
@@ -71,8 +74,8 @@ class CreateOffer implements CreateOfferInput{
     }
 
     /**
-     * This method returns the discount for a given {@link AffiliationCategory}
-     * @param category determines the discount type of a customer
+     * This method returns the overhead for a given {@link AffiliationCategory}
+     * @param category determines the overhead type of a customer
      * @return
      */
     private static double getDiscount(AffiliationCategory category){
