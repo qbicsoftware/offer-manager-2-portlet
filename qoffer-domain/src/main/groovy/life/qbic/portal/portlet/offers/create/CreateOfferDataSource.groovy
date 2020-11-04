@@ -1,10 +1,10 @@
-package life.qbic.portal.portlet.offers
+package life.qbic.portal.portlet.offers.create
 
 import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.datamodel.accounting.Quotation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.QuotationId
-import life.qbic.datamodel.persons.Person
+import life.qbic.datamodel.dtos.general.Person
 
 
 /**
@@ -16,12 +16,12 @@ import life.qbic.datamodel.persons.Person
  * @since: 1.0.0
  * @author: Tobias Koch
  */
-interface OfferDbGateway {
+interface CreateOfferDataSource {
 
     /**
      * This method retrieves a Quotation by an ID
      * @param id of the quotation
-     * @return
+     * @return Quotation for the given ID
      * @since 1.0.0
      */
     Quotation getOfferByID(QuotationId id)

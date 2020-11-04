@@ -1,11 +1,9 @@
 package life.qbic.portal.portlet.offers.create
 
-import life.qbic.datamodel.accounting.ProductItem
+
 import life.qbic.datamodel.accounting.Quotation
-import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.QuotationId
 import life.qbic.datamodel.persons.Person
-import life.qbic.portal.portlet.offers.OfferDbGateway
 
 /**
  * This class implements logic to create new offers.
@@ -17,10 +15,10 @@ import life.qbic.portal.portlet.offers.OfferDbGateway
  */
 class CreateOffer implements CreateOfferInput{
 
-    private OfferDbGateway gateway
+    private CreateOfferDataSource gateway
     private CreateOfferOutput output
 
-    CreateOffer(OfferDbGateway gateway, CreateOfferOutput output){
+    CreateOffer(CreateOfferDataSource gateway, CreateOfferOutput output){
         this.gateway = gateway
         this.output = output
     }
@@ -32,7 +30,7 @@ class CreateOffer implements CreateOfferInput{
 
     @Override
     void createNewOffer(Quotation quotation) {
-        gateway.createOffer(quotation.identifier,quotation.projectTitle,quotation.projectDescription,quotation.customer,quotation.projectManager,quotation.items)
+        gateway.createOffer(quotation.identifier,quotation.projectTitle,quotation.projectDescription, quotation.customer,quotation.projectManager,quotation.items)
     }
 
     //todo move this method to the place where the quotation is generated
