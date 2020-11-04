@@ -50,6 +50,7 @@ class CreateOffer implements CreateOfferInput{
     //todo: update the datamodellib
         String projectConservedPart = customer.lastName.toLowerCase()
         String randomPart = "abcd"
+        //TODO make random ID part random
         int version = 1
 
         return new QuotationId(projectConservedPart,randomPart,version)
