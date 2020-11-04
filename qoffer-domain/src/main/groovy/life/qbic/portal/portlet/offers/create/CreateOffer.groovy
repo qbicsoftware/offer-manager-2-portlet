@@ -45,7 +45,9 @@ class CreateOffer implements CreateOfferInput{
      * @param customer which is required for the project conserved part
      * @return
      */
-    private static QuotationId generateQuotationID(Person customer){//do we want to have a person here? todo update the datamodellib
+    private static QuotationId generateQuotationID(Person customer){
+    //todo: do we want to have a person here? 
+    //todo: update the datamodellib
         String projectConservedPart = customer.lastName.toLowerCase()
         String randomPart = "abcd"
         int version = 1
