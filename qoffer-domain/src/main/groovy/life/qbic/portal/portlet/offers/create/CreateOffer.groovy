@@ -77,8 +77,8 @@ class CreateOffer implements CreateOfferInput{
     }
 
     /**
-     * This method returns the discount for a given {@link AffiliationCategory}
-     * @param category determines the discount type of a customer
+     * This method returns the overhead for a given {@link AffiliationCategory}
+     * @param category determines the overhead type of a customer
      * @return
      */
     private static double getDiscount(AffiliationCategory category){
