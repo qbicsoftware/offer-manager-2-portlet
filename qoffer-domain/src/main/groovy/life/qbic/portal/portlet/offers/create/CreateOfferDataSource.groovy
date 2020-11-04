@@ -28,14 +28,9 @@ interface CreateOfferDataSource {
 
     /**
      * This method creates a quotation for the given quotation information
-     * @param id of the quotation
-     * @param projectTitle of the quotation
-     * @param projectDescription of the quotation
-     * @param customer of the quotation
-     * @param projectManager of the quotation
-     * @param productItems of the quotation
+     * @param quotation dto
      * @since 1.0.0
      */
-    void createOffer(QuotationId id, String projectTitle, String projectDescription, Person customer, Person projectManager, List<ProductItem> productItems)
+    void saveOffer(Quotation quotation)
 
 }

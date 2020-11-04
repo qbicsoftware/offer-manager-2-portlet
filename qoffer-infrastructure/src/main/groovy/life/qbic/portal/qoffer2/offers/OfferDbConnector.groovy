@@ -34,7 +34,7 @@ class OfferDbConnector implements CreateOfferDataSource{
     }
 
     @Override
-    void createOffer(QuotationId id, String projectTitle, String projectDescription, Person customer, Person projectManager, List<ProductItem> productItems) {
+    void saveOffer(QuotationId id, String projectTitle, String projectDescription, Person customer, Person projectManager, List<ProductItem> productItems) {
         //todo attach the database implementation here
     }
 
