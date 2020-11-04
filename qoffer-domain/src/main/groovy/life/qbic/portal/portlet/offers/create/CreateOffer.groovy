@@ -6,9 +6,6 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.QuotationId
 import life.qbic.datamodel.dtos.general.Person
 
-import java.text.DateFormat
-import java.text.SimpleDateFormat
-
 /**
  * This class implements logic to create new offers.
  *
