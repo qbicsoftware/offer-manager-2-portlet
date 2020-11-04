@@ -2,6 +2,7 @@ package life.qbic.portal.portlet.offers.create
 
 import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.datamodel.accounting.Quotation
+import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.QuotationId
 import life.qbic.datamodel.dtos.general.Person
 
@@ -31,11 +32,16 @@ class CreateOffer implements CreateOfferInput{
     @Override
     void createNewOffer(Quotation quotation) {
 
+        //todo can't access the identifier, how do we want to add the identifier? Add a method to add the identifier/remove it from the constructor?
         quotation.identifier = generateQuotationID(quotation.customer)
         dataSource.saveOffer(quotation)
     }
 
-    //todo move this method to the place where the quotation is generated
+    /**
+     * Method to generate the identifier of an offer with the project conserved part, the random part and the version
+     * @param customer which is required for the project conserved part
+     * @return
+     */
     private static QuotationId generateQuotationID(Person customer){//do we want to have a person here? todo update the datamodellib
         String projectConservedPart = customer.lastName.toLowerCase()
         String randomPart = "abcd"
@@ -44,7 +50,42 @@ class CreateOffer implements CreateOfferInput{
         return new QuotationId(projectConservedPart,randomPart,version)
     }
 
-    private static double calculateOfferPrice(List<ProductItem> items){
+    /**
+     * Method to calculate the price form the offer items
+     * @param items
+     * @return
+     */
+    private static double calculateOfferPrice(List<ProductItem> items, AffiliationCategory affiliationCategory){
+        //1. sum up item price
+        double offerPrice = 0
+        items.each {item ->
+            offerPrice += item.computeTotalCosts()
+        }
+        //2. add discount if available
+        double discount = getDiscount(affiliationCategory)
+        offerPrice *= discount
+        //2. VAT?
         //todo
+
+        return offerPrice
+    }
+
+    /**
+     * This method returns the discount for a given {@link AffiliationCategory}
+     * @param category determines the discount type of a customer
+     * @return
+     */
+    private static double getDiscount(AffiliationCategory category){
+        switch (category){
+            case AffiliationCategory.INTERNAL:
+                return 1.0
+            case AffiliationCategory.EXTERNAL_ACADEMIC:
+                return 1.0
+            case AffiliationCategory.EXTERNAL:
+                return 1.0
+            case AffiliationCategory.UNKNOWN:
+                return 1.0
+        }
+
     }
 }
