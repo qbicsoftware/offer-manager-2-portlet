@@ -78,7 +78,7 @@ class CreateOffer implements CreateOfferInput{
      * @param category determines the overhead type of a customer
      * @return
      */
-    private static double getDiscount(AffiliationCategory category){
+    private static double getOverhead(AffiliationCategory category){
         switch (category){
             case AffiliationCategory.INTERNAL:
                 return 1.0
