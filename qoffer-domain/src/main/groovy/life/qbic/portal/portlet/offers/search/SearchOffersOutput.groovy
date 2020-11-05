@@ -15,7 +15,7 @@ interface SearchOffersOutput {
    * Passes the found offers, after the search has been successfully
    * finished.
    *
-   * If not offers matching the search criteria have been found, the list
+   * If no offers matching the search criteria have been found, the list
    * will be empty.
    *
    * Developers shall call this method, if the search was technically successful

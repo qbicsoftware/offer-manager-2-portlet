@@ -9,7 +9,7 @@ import life.qbic.portal.portlet.exceptions.DatabaseQueryException
  * <More detailed description - When to use, what it solves, etc.>
  *
  * @author Sven Fillinger
- * @since <versiontag>
+ * @since 1.0.0
  */
 interface CreateOfferDataSource {
 
