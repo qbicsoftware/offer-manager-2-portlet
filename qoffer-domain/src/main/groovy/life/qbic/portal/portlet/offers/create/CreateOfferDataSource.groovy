@@ -4,9 +4,7 @@ import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 /**
- * <interface short description - 1 Line!>
- *
- * <More detailed description - When to use, what it solves, etc.>
+ * Provides methods to store offers in a data-source
  *
  * @author Sven Fillinger
  * @since 1.0.0
