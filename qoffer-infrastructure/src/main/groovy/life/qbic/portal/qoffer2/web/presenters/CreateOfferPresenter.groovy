@@ -4,15 +4,15 @@ import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.portlet.offers.create.CreateOfferOutput
 
 /**
- * <short description>
+ * Presenter for the CreateOffer
  *
- * <detailed description>
+ * This presenter handles the output of the CreateOffer use case and prepares it for a view.
  *
- * @since: <versiontag>
+ * @since: 1.0.0
  */
 class CreateOfferPresenter implements CreateOfferOutput{
     @Override
     void createdNewOffer(Offer createdOffer) {
-
+        //TODO implement
     }
 }
