@@ -25,9 +25,8 @@ interface CreateOfferDataSource {
    * will also throw a DatabaseQueryException.
    *
    * @param offer
-   * @return
    * @throws DatabaseQueryException
    */
-  store(Offer offer) throws DatabaseQueryException
+  void store(Offer offer) throws DatabaseQueryException
 
 }
