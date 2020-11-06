@@ -17,3 +17,6 @@ use_openbis_client: yes
 use_openbis_raw_api: yes
 use_qbic_databases: yes
 use_vaadin_charts: yes
+is_github_repo: true
+is_repo_private: false
+is_github_orga: true
