@@ -9,7 +9,7 @@ import life.qbic.portal.portlet.exceptions.DatabaseQueryException
  *
  * <detailed description>
  *
- * @since: <versiontag>
+ * @since: 1.0.0
  */
 interface CreateAffiliationDataSource {
     /**

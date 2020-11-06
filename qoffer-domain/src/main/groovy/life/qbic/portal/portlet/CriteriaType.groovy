@@ -11,6 +11,7 @@ package life.qbic.portal.portlet
  */
 enum CriteriaType {
 
+    FIRST_NAME("first name"),
     LAST_NAME("last name"),
     ADD_ADDRESS("additional address"),
     GROUP_NAME("group name"),
