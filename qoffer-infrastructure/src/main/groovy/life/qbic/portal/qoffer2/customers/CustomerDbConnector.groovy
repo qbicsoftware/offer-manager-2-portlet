@@ -36,6 +36,11 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     this.databaseQueries = databaseQueries
   }
 
+  @Override
+  List<Customer> findCustomer(String firstName, String lastName) throws DatabaseQueryException {
+    throw new Exception("Method not implemented.")
+  }
+
   /**
    * @inheritDoc
    * @param criteria
