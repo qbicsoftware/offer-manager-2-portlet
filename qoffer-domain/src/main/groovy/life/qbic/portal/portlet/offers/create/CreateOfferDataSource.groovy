@@ -28,6 +28,6 @@ interface CreateOfferDataSource {
    * @return
    * @throws DatabaseQueryException
    */
-  save(Offer offer) throws DatabaseQueryException
+  store(Offer offer) throws DatabaseQueryException
 
 }

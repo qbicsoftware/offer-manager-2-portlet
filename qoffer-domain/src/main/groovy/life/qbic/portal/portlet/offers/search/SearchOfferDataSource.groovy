@@ -26,10 +26,10 @@ interface SearchOfferDataSource {
    * Finds offers that have the provided offerId.
    *
    * This search is faster as than the full-text search, as only
-   * one pre-defined property will be used as search criteria.
+   * the offer identifier will be used as search criteria.
    *
-   * @param offerId
-   * @return
+   * @param offerId The offer identifier to search for.
+   * @return A search result containing zero or more matching offers.
    */
   List<Offer> findOffer(OfferId offerId)
 

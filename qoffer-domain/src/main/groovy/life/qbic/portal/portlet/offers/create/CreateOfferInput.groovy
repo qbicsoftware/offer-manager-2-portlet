@@ -20,8 +20,13 @@ interface CreateOfferInput {
    * which will apply business policies for offer creation and storage
    * in a pre-configured, optimally persistent data-source.
    *
+   * There is no need to set the offer identifier in the passed content,
+   * this will be determined and set by the implementation of the use case.
+   *
+   * If the identifier is passed with the content, it will be ignored.
+   *
    * @param offer {@link life.qbic.datamodel.dtos.business.Offer}
    */
-  void saveOffer(Offer offer)
+  void createOffer(Offer offerContent)
 
 }
