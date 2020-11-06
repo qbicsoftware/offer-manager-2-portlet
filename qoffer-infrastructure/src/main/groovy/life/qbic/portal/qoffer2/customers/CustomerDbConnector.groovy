@@ -12,8 +12,6 @@ import life.qbic.portal.portlet.customers.create.CreateCustomerDataSource
 import life.qbic.portal.portlet.customers.search.SearchCustomerDataSource
 import life.qbic.portal.portlet.customers.update.UpdateCustomerDataSource
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 
 
 /**
@@ -29,8 +27,6 @@ import org.apache.logging.log4j.Logger
 class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
   CustomerDatabaseQueries databaseQueries
-
-  private static final Logger LOG = LogManager.getLogger(CustomerDbConnector.class)
 
   CustomerDbConnector(CustomerDatabaseQueries databaseQueries){
     this.databaseQueries = databaseQueries

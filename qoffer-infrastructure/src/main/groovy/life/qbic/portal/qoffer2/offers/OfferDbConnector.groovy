@@ -1,9 +1,8 @@
 package life.qbic.portal.qoffer2.offers
 
-import life.qbic.datamodel.accounting.ProductItem
-import life.qbic.datamodel.accounting.Quotation
-import life.qbic.datamodel.dtos.business.QuotationId
-import life.qbic.datamodel.dtos.general.Person
+
+import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.offers.create.CreateOfferDataSource
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import org.apache.logging.log4j.LogManager
@@ -29,14 +28,8 @@ class OfferDbConnector implements CreateOfferDataSource{
     }
 
     @Override
-    Quotation getOfferByID(QuotationId id) {
+    void store(Offer offer) throws DatabaseQueryException {
         //TODO implement
-        return null
+        throw new Exception("Method not implemented.")
     }
-
-    @Override
-    void saveOffer(Quotation quotation) {
-        //todo attach the database implementation here
-    }
-
 }

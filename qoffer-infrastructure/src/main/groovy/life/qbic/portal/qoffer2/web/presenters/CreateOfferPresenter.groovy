@@ -14,5 +14,18 @@ class CreateOfferPresenter implements CreateOfferOutput{
     @Override
     void createdNewOffer(Offer createdOffer) {
         //TODO implement
+        throw new Exception("Method not implemented.")
+    }
+
+    @Override
+    void successNotification(String notification) {
+        //TODO implement
+        throw new Exception("Method not implemented.")
+    }
+
+    @Override
+    void failNotification(String notification) {
+        //TODO implement
+        throw new Exception("Method not implemented.")
     }
 }
