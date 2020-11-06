@@ -18,7 +18,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  * @author: Jennifer Bödker
  *
  */
-class Presenter implements SearchOffersOutput, CreateOfferOutput, UpdateOfferOutput, UpdateCustomerOutput {
+class Presenter implements UpdateOfferOutput, UpdateCustomerOutput {
 
     final private ViewModel viewModel
 

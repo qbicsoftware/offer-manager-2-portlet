@@ -2,7 +2,6 @@ package life.qbic.portal.portlet.offers.create
 
 import life.qbic.datamodel.dtos.business.Offer
 
-
 /**
  * Output interface for the {@link life.qbic.portal.portlet.offers.create.CreateOffer} use case
  *

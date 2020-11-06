@@ -1,7 +1,7 @@
 package life.qbic.portal.portlet.offers.create
 
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
-import life.qbic.portal.portlet.offers.Offer
 
 /**
  * Provides methods to store offers in a data-source

@@ -3,6 +3,7 @@ package life.qbic.portal.portlet.offers.search
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
 
+
 /**
  * Provides methods to search for offers in an existing data-source.
  *
