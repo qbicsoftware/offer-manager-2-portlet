@@ -18,9 +18,13 @@ interface SearchCustomerDataSource {
     /**
      * This method returns a customer matching the given search criteria
      *
-     * @param criteria containing the search criteria of the users request
-     * @return a person with affiliation and contact information
+     * @param firstName The customer's first name
+     * @param lastName The customer's last name
+     * @return A list of matching customer entries with the given first and last name.
+     * @throws DatabaseQueryException If the data source query fails for technical reasons, this
+     * exception is thrown.
+     *
      * @since 1.0.0
      */
-    List<Customer> findCustomer(SearchCriteria criteria) throws DatabaseQueryException
+    List<Customer> findCustomer(String firstName, String lastName) throws DatabaseQueryException
 }

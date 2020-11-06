@@ -1,7 +1,5 @@
 package life.qbic.portal.portlet.exceptions
 
-import java.sql.SQLException
-
 /**
  * An exception for errors in database querying
  *
@@ -11,24 +9,16 @@ import java.sql.SQLException
  * @author: Jennifer Bödker
  *
  */
-class DatabaseQueryException extends SQLException{
+class DatabaseQueryException extends RuntimeException {
 
-    DatabaseQueryException(String message, String errorSqlStatement) {
-        super(message, errorSqlStatement)
+    DatabaseQueryException() {
     }
 
     DatabaseQueryException(String message) {
         super(message)
     }
 
-    DatabaseQueryException() {
-    }
-
     DatabaseQueryException(String message, Throwable cause) {
         super(message, cause)
-    }
-
-    DatabaseQueryException(String message, String errorSqlStatement, Throwable cause) {
-        super(message, errorSqlStatement, cause)
     }
 }

@@ -1,5 +1,6 @@
 package life.qbic.portal.portlet.offers.create
 
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.portlet.VerboseUseCaseOutput
 
 
@@ -10,5 +11,13 @@ import life.qbic.portal.portlet.VerboseUseCaseOutput
  * @author: Tobias Koch
  */
 interface CreateOfferOutput extends VerboseUseCaseOutput{
+
+  /**
+   * Confirms the creation and saving of a new offer by providing
+   * the original offer information including the assigned identifier.
+   *
+   * @param createdOffer {@link life.qbic.datamodel.dtos.business.Offer}
+   */
+  void createdNewOffer(Offer createdOffer)
 
 }

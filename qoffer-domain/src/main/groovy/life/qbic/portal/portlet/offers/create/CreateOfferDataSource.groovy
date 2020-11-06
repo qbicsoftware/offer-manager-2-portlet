@@ -5,13 +5,9 @@ import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 
 /**
- * A gateway to access information from an offer database
- *
- * This class specifies how the application can access external resources.
- * It is meant to be implemented outside the domain layer.
+ * Provides methods to store offers in a data-source
  *
  * @since: 1.0.0
- * @author: Tobias Koch
  */
 interface CreateOfferDataSource {
 
@@ -33,5 +29,4 @@ interface CreateOfferDataSource {
      * @throws DatabaseQueryException
      */
     void store(Offer offer) throws DatabaseQueryException
-
 }

@@ -26,15 +26,19 @@ class SearchCustomerSpec extends Specification{
         SearchCustomerDataSource ds = Stub(SearchCustomerDataSource.class)
         SearchCustomer searchCustomer = new SearchCustomer(output,ds)
 
-        Customer luke = new Customer("Luke","Skywalker", AcademicTitle.DOCTOR, "a.b@c.de", new ArrayList<Affiliation>())
+        Customer luke = new Customer(firstName, lastName, AcademicTitle.DOCTOR, "a.b@c.de", new ArrayList<Affiliation>())
 
-        ds.findCustomer(_ as SearchCriteria) >> [luke]
+        ds.findCustomer(firstName, lastName) >> [luke]
 
         when:
-        searchCustomer.searchCustomer("Luke","Skywalker")
+        searchCustomer.searchCustomer(firstName, lastName)
 
         then:
         1* output.successNotification(_)
+
+        where:
+        firstName | lastName
+        "Luke" | "Skywalker"
     }
 
     def "notify of failure whenever the datasource throws an exception"(){
@@ -43,13 +47,17 @@ class SearchCustomerSpec extends Specification{
         SearchCustomerDataSource ds = Stub(SearchCustomerDataSource.class)
         SearchCustomer searchCustomer = new SearchCustomer(output,ds)
 
-        ds.findCustomer(_ as SearchCriteria) >> {throw new DatabaseQueryException("Customer not found")}
+        ds.findCustomer(firstName, lastName) >> {throw new DatabaseQueryException("Customer not found")}
 
         when:
-        searchCustomer.searchCustomer("Luke","Skywalker")
+        searchCustomer.searchCustomer(firstName, lastName)
 
         then:
         1* output.failNotification(_)
+
+        where:
+        firstName | lastName
+        "Luke" | "Skywalker"
     }
 
 }
