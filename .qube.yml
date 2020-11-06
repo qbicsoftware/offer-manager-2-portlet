@@ -19,4 +19,4 @@ use_qbic_databases: yes
 use_vaadin_charts: yes
 is_github_repo: false
 is_repo_private: false
-is_github_orga: true
+is_github_orga: false
