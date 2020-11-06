@@ -23,12 +23,7 @@ class SearchOffers implements SearchOffersInput{
     }
 
     @Override
-    void searchOffers(SearchCriteria searchCriteria) {
-
-    }
-
-    @Override
-    void downloadOfferAsPdf(String offerId) {
+    void searchOffer(String offerContent) {
 
     }
 }
