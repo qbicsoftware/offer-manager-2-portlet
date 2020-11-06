@@ -1,10 +1,8 @@
 package life.qbic.portal.portlet.offers.create
 
-import life.qbic.datamodel.accounting.ProductItem
-import life.qbic.datamodel.accounting.Quotation
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.QuotationId
-import life.qbic.datamodel.dtos.general.Person
+
+import life.qbic.datamodel.dtos.business.Offer
+
 
 
 /**
@@ -17,19 +15,20 @@ interface CreateOfferInput {
 
 
     /**
-     * Creates a new quotation based on the given TOMATOID
-     * @param tomatoId makes it possible to identify the quotation
-     * @since 1.0.0
+     * Saves an offer in a (persistent) datasource.
+     *
+     * Developers shall call this method to pass offer content
+     * provided from the user in order to trigger the completion
+     * of the business use case `Create Offer`,
+     * which will apply business policies for offer creation and storage
+     * in a pre-configured, optimally persistent data-source.
+     *
+     * There is no need to set the offer identifier in the passed content,
+     * this will be determined and set by the implementation of the use case.
+     *
+     * If the identifier is passed with the content, it will be ignored.
+     *
+     * @param offer {@link life.qbic.datamodel.dtos.business.Offer}
      */
-    void createOffer(String tomatoId)
-
-    /**
-     * Method to create a new offer for the provided offer information
-     * @param projectTitle describing the title of the project
-     * @param projectDescription a description of the project
-     * @param customer as the customer of the project
-     * @param projectManager as the manager of the project
-     * @param productItems which are requested by the customer
-     */
-    void createNewOffer(String projectTitle, String projectDescription, Person customer, Person projectManager, List<ProductItem> productItems)
+    void createOffer(Offer offerContent)
 }

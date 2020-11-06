@@ -1,10 +1,7 @@
 package life.qbic.portal.portlet.offers.create
 
-import life.qbic.datamodel.accounting.ProductItem
-import life.qbic.datamodel.accounting.Quotation
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.QuotationId
-import life.qbic.datamodel.dtos.general.Person
+import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 
 /**
@@ -18,19 +15,23 @@ import life.qbic.datamodel.dtos.general.Person
  */
 interface CreateOfferDataSource {
 
-    /**
-     * This method retrieves a Quotation by an ID
-     * @param id of the quotation
-     * @return Quotation for the given ID
-     * @since 1.0.0
-     */
-    Quotation getOfferByID(QuotationId id)
 
     /**
-     * This method creates a quotation for the given quotation information
-     * @param quotation dto
-     * @since 1.0.0
+     * Saves an offer in a persistent data-source.
+     *
+     * Developers should execute this method, when they
+     * want to store an offer in f.e. a database.
+     *
+     * If the passed offer is already in the database (offer
+     * content with the same offer identifier already exists),
+     * then this method will throw a DatabaseQueryException.
+     *
+     * If the passed offer cannot be saved successfully, this method
+     * will also throw a DatabaseQueryException.
+     *
+     * @param offer
+     * @throws DatabaseQueryException
      */
-    void saveOffer(Quotation quotation)
+    void store(Offer offer) throws DatabaseQueryException
 
 }

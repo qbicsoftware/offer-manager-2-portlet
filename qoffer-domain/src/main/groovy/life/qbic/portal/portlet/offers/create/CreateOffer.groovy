@@ -1,9 +1,9 @@
 package life.qbic.portal.portlet.offers.create
 
 import life.qbic.datamodel.accounting.ProductItem
-import life.qbic.datamodel.accounting.Quotation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.QuotationId
+import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.general.Person
 
 /**
@@ -25,16 +25,22 @@ class CreateOffer implements CreateOfferInput{
     }
 
     @Override
-    void createOffer(String tomatoId) {
+    void createOffer(Offer offerContent) {
+        OfferId identifier = generateQuotationID(offerContent.customer)
 
-    }
+        Offer finalizedOffer = new Offer.Builder(new Date(),
+                offerContent.expirationDate,
+                offerContent.customer,
+                offerContent.projectManager,
+                offerContent.projectDescription,
+                offerContent.projectTitle,
+                offerContent.items,
+                calculateOfferPrice(offerContent.items,offerContent.selectedCustomerAffiliation.category),
+                identifier,
+                offerContent.selectedCustomerAffiliation)
+                .build()
 
-    @Override
-    void createNewOffer(String projectTitle, String projectDescription, Person customer, Person projectManager, List<ProductItem> productItems) {
-        QuotationId identifier = generateQuotationID(customer)
-
-        Quotation quotation = new Quotation(new Date(),null,customer,projectManager,projectTitle,projectDescription,productItems,calculateOfferPrice(productItems),identifier)
-        dataSource.saveOffer(quotation)
+        dataSource.store(finalizedOffer)
     }
 
     /**
@@ -42,7 +48,7 @@ class CreateOffer implements CreateOfferInput{
      * @param customer which is required for the project conserved part
      * @return
      */
-    private static QuotationId generateQuotationID(Person customer){
+    private static OfferId generateQuotationID(Person customer){
     //todo: do we want to have a person here? 
     //todo: update the datamodellib
         String projectConservedPart = customer.lastName.toLowerCase()
@@ -50,7 +56,7 @@ class CreateOffer implements CreateOfferInput{
         //TODO make random ID part random
         int version = 1
 
-        return new QuotationId(projectConservedPart,randomPart,version)
+        return new OfferId(projectConservedPart,randomPart,version)
     }
 
     /**
