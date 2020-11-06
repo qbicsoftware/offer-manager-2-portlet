@@ -24,21 +24,17 @@ class SearchCustomer implements SearchCustomerInput{
 
     @Override
     void searchCustomer(String firstName, String lastName) {
-        HashMap criteria = new HashMap()
-        criteria.put(CriteriaType.FIRST_NAME,firstName)
-        criteria.put(CriteriaType.LAST_NAME,lastName)
-
-        SearchCriteria searchCriteria = new SearchCriteria(criteria)
 
         try {
-            List<Customer> foundCustomer = dataSource.findCustomer(searchCriteria)
+            List<Customer> foundCustomer = dataSource.findCustomer(firstName, lastName)
             int numberOfFoundCustomers = foundCustomer.size()
             output.successNotification("Found $numberOfFoundCustomers customers matching $firstName $lastName")
-        } catch(DatabaseQueryException databaseQueryException){
-            output.failNotification(databaseQueryException.message)
-        } catch(Exception ignored) {
+        } catch (DatabaseQueryException ignored) {
             output.failNotification("Could not find a customer matching $firstName $lastName")
+        } catch (Exception ignored) {
+            output.failNotification("Unexpected error when searching for the customer $firstName $lastName")
         }
+
 
     }
 }
