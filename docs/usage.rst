@@ -2,6 +2,7 @@
 Usage
 =====
 
-To use qoffer-2-portlet in a project::
+To use qOffer_2.0::
 
-    import qoffer-2-portlet
+     create the qOffer_2.0.war/.jar according to the installation description and deploy the the project to the current Liferay instance
+
