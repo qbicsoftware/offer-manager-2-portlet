@@ -1,24 +1,23 @@
-qube_version: '2.5.0 # <<QUBE_NO_BUMP>>'
-full_name: Sven Fillinger
-email: sven.fillinger@qbic.uni-tuebingen.de
-project_name: qoffer-2-portlet
-project_short_description: qoffer-2-portlet. A qube based .
+qube_version: '2.6.1 # <<QUBE_NO_BUMP>>'
+full_name: Jennifer Bödker
+email: jennifer.boedker@qbic.uni-tuebingen.de
+project_name: qOffer 2.0
+project_short_description: qOffer assists in managing and creating offers
 version: 1.0.0-SNAPSHOT
 domain: portlet
 language: groovy
-project_slug: qoffer-2-portlet
-project_slug_no_hyphen: qoffer_2_portlet
-template_version: '1.0.3 # <<QUBE_NO_BUMP>>'
+project_slug: qOffer_2.0
+project_slug_no_hyphen: qOffer_2.0
+template_version: '1.0.4 # <<QUBE_NO_BUMP>>'
 template_handle: portlet-groovy
-github_username: qbicsoftware
-creator_github_username: sven1103
-is_github_repo: true
+github_username: jenniferboedker
+creator_github_username: jenniferboedker
+is_github_repo: false
 is_repo_private: false
-is_github_orga: true
-github_orga: qbicsoftware
+is_github_orga: false
 copyright_holder: QBiC
 license: MIT
-main_class_prefix: Qbic
+main_class_prefix: qOffer
 use_openbis_client: yes
 use_openbis_raw_api: yes
 use_qbic_databases: yes

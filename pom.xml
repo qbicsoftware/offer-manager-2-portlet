@@ -9,11 +9,11 @@
 		<artifactId>portlet-parent-pom</artifactId>
 		<version>3.1.3</version>
 	</parent>
-	<artifactId>qoffer-2-portlet</artifactId>
+	<artifactId>qOffer_2.0</artifactId>
 	<version>1.0.0-SNAPSHOT</version> <!-- <<QUBE_FORCE_BUMP>> -->
-	<name>qoffer-2-portlet</name>
-	<url>http://github.com/qbicsoftware/qoffer-2-portlet</url>
-	<description>qoffer-2-portlet. A qube based .</description>
+	<name>qOffer 2.0</name>
+	<url>http://github.com/qbicsoftware/qOffer_2.0</url>
+	<description>qOffer assists in managing and creating offers</description>
 	<packaging>war</packaging>
 	<!-- we only need to tell maven where to find our parent pom and other QBiC dependencies -->
 	<repositories>
