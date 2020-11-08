@@ -32,11 +32,11 @@ class DatabaseSession {
     /**
      * Initiates the database connection
      * The instance is only created if there is no other existing
-     * @param user
-     * @param password
-     * @param host
-     * @param port
-     * @param sqlDatabase database name hosting Customer information
+     * @param user the user to use for the database
+     * @param password the password to use for the database connection
+     * @param host the database host
+     * @param port the port on which the database is hosted
+     * @param sqlDatabase the name of the database
      */
     static void init(String user, String password, String host, String port, String sqlDatabase) {
         if (INSTANCE == null) {
