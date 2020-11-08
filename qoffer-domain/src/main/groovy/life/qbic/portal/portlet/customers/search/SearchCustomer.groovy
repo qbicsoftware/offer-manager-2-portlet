@@ -1,8 +1,6 @@
 package life.qbic.portal.portlet.customers.search
 
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.portlet.CriteriaType
-import life.qbic.portal.portlet.SearchCriteria
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 /**

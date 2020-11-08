@@ -1,7 +1,6 @@
 package life.qbic.portal.portlet.customers.update
 
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.portlet.SearchCriteria
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 /**
@@ -19,7 +18,7 @@ interface UpdateCustomerDataSource {
      * @return a person with affiliation and contact information
      * @since 1.0.0
      */
-    List<Customer> findCustomer(SearchCriteria criteria) throws DatabaseQueryException
+    List<Customer> findCustomer(String firstName, String lastName)
 
     /**
      * Updates the information of a given customer specified by a customer ID

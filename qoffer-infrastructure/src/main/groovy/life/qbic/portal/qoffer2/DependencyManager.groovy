@@ -101,8 +101,8 @@ class DependencyManager {
             String port = Objects.requireNonNull(configurationManager.getMysqlPort(), "Mysql port missing.")
             String sqlDatabase = Objects.requireNonNull(configurationManager.getMysqlDB(), "Mysql database name missing.")
 
-            DatabaseSession.create(user, password, host, port, sqlDatabase)
-            CustomerDatabaseQueries queries = new CustomerDatabaseQueries(DatabaseSession.INSTANCE)
+            DatabaseSession.init(user, password, host, port, sqlDatabase)
+            CustomerDatabaseQueries queries = new CustomerDatabaseQueries(DatabaseSession.getInstance())
             customerDbConnector = new CustomerDbConnector(queries)
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
