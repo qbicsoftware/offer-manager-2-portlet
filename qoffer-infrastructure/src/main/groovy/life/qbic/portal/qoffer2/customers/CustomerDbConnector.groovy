@@ -1,7 +1,11 @@
 package life.qbic.portal.qoffer2.customers
 
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AffiliationCategory
+import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliationDataSource
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliationsDataSource
@@ -11,6 +15,7 @@ import life.qbic.portal.portlet.customers.update.UpdateCustomerDataSource
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 import java.sql.Connection
+import java.sql.ResultSet
 
 /**
  * Provides operations on QBiC customer data
@@ -29,10 +34,13 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   CustomerDatabaseQueries databaseQueries
   private final Connection connection
 
+  private static final String CUSTOMER_SELECT_QUERY = "SELECT id, first_name AS firstName, last_name AS lastName, title as academicTitle, email as eMailAddress FROM customer"
+  private static final String AFFILIATION_SELECT_QUERY = "SELECT id, organization AS organisation, address_addition AS addressAddition, street, postal_code AS postalCode, city, country, category FROM affiliation"
+
   @Deprecated
-  CustomerDbConnector(CustomerDatabaseQueries databaseQueries){
+  CustomerDbConnector(CustomerDatabaseQueries databaseQueries, Connection connection){
     this.databaseQueries = databaseQueries
-    connection = null
+    this.connection = connection
   }
 
   CustomerDbConnector(Connection connection) {
@@ -52,8 +60,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   void addCustomer(Customer customer) throws DatabaseQueryException {
     try {
       databaseQueries.addCustomer(customer)
-    } catch (DatabaseQueryException e) {
-      throw new DatabaseQueryException(e.message)
+    } catch (DatabaseQueryException ignored) {
+      throw new DatabaseQueryException("The customer could not be created: ${customer.toString()}")
     } catch (Exception e) {
       log.error(e)
       log.error(e.stackTrace.join("\n"))
@@ -77,7 +85,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    */
   @Override
   List<Affiliation> listAllAffiliations() {
-    databaseQueries.getAffiliations()
+    getAffiliations()
   }
 
   /**
@@ -195,10 +203,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
   }
 
-  private static AffiliationCategory determineAffiliationCategory(String value) {
-    return new AffiliationCategoryFactory().getForString(value)
-  }
-
   private boolean customerExists(Customer customer) {
     String query = "SELECT * FROM customer WHERE first_name = ? AND last_name = ? AND email = ?"
     Connection connection = databaseSession.getConnection()
@@ -282,30 +286,43 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return affiliationIds[0]
   }
-
-  List<Affiliation> getAffiliations() {
+*/
+  private List<Affiliation> getAffiliations() {
     List<Affiliation> result = []
-    String query = "SELECT * from affiliation"
+    String query = AFFILIATION_SELECT_QUERY
 
     connection.withCloseable {
       def statement = it.prepareStatement(query)
       ResultSet rs = statement.executeQuery()
       while (rs.next()) {
+        Map row = rs.toRowResult()
+        log.debug(row)
         def affiliationBuilder = new Affiliation.Builder(
-                "${rs.getString(2)}", //organization
-                "${rs.getString(4)}", //street
-                "${rs.getString(5)}", //postal_code
-                "${rs.getString(6)}")
+                row.organisation as String,
+                row.street as String,
+                row.postalCode as String,
+                row.city as String)
+        AffiliationCategory category
+
+        try {
+           category = new AffiliationCategoryFactory().getForString(row.category as String)
+        } catch (IllegalArgumentException illegalArgumentException) {
+          //fixme this should not happen but there is an incomplete entry in the DB
+          log.warn("Affiliation ${row.id} has category '${row.category}'. Could not match.")
+          category = AffiliationCategory.UNKNOWN
+        }
+
         affiliationBuilder
-                .addressAddition("${rs.getString(3)}")
-                .country("${rs.getString(7)}")
-                .category(determineAffiliationCategory("${rs.getString(8)}"))
+                .addressAddition(row.addressAddition as String)
+                .country(row.country as String)
+                .category(category)
         result.add(affiliationBuilder.build())
       }
     }
     return result
   }
 
+/*
   *//**
    * Add an affiliation to the database
    *

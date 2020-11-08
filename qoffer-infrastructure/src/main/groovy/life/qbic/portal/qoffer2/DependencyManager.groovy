@@ -103,7 +103,7 @@ class DependencyManager {
 
             DatabaseSession.init(user, password, host, port, sqlDatabase)
             CustomerDatabaseQueries queries = new CustomerDatabaseQueries(DatabaseSession.getInstance())
-            customerDbConnector = new CustomerDbConnector(queries)
+            customerDbConnector = new CustomerDbConnector(queries, DatabaseSession.getInstance().getConnection())
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
             throw e
