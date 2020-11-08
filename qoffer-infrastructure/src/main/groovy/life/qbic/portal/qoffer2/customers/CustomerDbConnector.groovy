@@ -10,6 +10,8 @@ import life.qbic.portal.portlet.customers.search.SearchCustomerDataSource
 import life.qbic.portal.portlet.customers.update.UpdateCustomerDataSource
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
+import java.sql.Connection
+
 /**
  * Provides operations on QBiC customer data
  *
@@ -23,10 +25,18 @@ import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
 
+  @Deprecated
   CustomerDatabaseQueries databaseQueries
+  private final Connection connection
 
+  @Deprecated
   CustomerDbConnector(CustomerDatabaseQueries databaseQueries){
     this.databaseQueries = databaseQueries
+    connection = null
+  }
+
+  CustomerDbConnector(Connection connection) {
+    this.connection = connection
   }
 
   @Override
@@ -276,8 +286,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   List<Affiliation> getAffiliations() {
     List<Affiliation> result = []
     String query = "SELECT * from affiliation"
-
-    Connection connection = databaseSession.getConnection()
 
     connection.withCloseable {
       def statement = it.prepareStatement(query)
