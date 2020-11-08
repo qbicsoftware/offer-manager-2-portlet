@@ -38,7 +38,7 @@ class DatabaseSession {
      * @param port
      * @param sqlDatabase database name hosting Customer information
      */
-    private static void init(String user, String password, String host, String port, String sqlDatabase) {
+    static void init(String user, String password, String host, String port, String sqlDatabase) {
         if (INSTANCE == null) {
             INSTANCE = new DatabaseSession()
 
