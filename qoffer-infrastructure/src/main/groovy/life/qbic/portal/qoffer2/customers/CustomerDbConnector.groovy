@@ -85,7 +85,37 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    */
   @Override
   List<Affiliation> listAllAffiliations() {
-    getAffiliations()
+    List<Affiliation> result = []
+
+    connection.withCloseable {
+      def statement = it.prepareStatement(AFFILIATION_SELECT_QUERY)
+      ResultSet resultSet = statement.executeQuery()
+      while (resultSet.next()) {
+        Map row = resultSet.toRowResult()
+        log.debug("Listing affiliations found: $row")
+        def affiliationBuilder = new Affiliation.Builder(
+                row.organisation as String,
+                row.street as String,
+                row.postalCode as String,
+                row.city as String)
+        AffiliationCategory category
+
+        try {
+          category = new AffiliationCategoryFactory().getForString(row.category as String)
+        } catch (IllegalArgumentException illegalArgumentException) {
+          //fixme this should not happen but there is an incomplete entry in the DB
+          log.warn("Affiliation ${row.id} has category '${row.category}'. Could not match.")
+          category = AffiliationCategory.UNKNOWN
+        }
+
+        affiliationBuilder
+                .addressAddition(row.addressAddition as String)
+                .country(row.country as String)
+                .category(category)
+        result.add(affiliationBuilder.build())
+      }
+    }
+    return result
   }
 
   /**
@@ -287,40 +317,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     return affiliationIds[0]
   }
 */
-  private List<Affiliation> getAffiliations() {
-    List<Affiliation> result = []
-    String query = AFFILIATION_SELECT_QUERY
-
-    connection.withCloseable {
-      def statement = it.prepareStatement(query)
-      ResultSet rs = statement.executeQuery()
-      while (rs.next()) {
-        Map row = rs.toRowResult()
-        log.debug(row)
-        def affiliationBuilder = new Affiliation.Builder(
-                row.organisation as String,
-                row.street as String,
-                row.postalCode as String,
-                row.city as String)
-        AffiliationCategory category
-
-        try {
-           category = new AffiliationCategoryFactory().getForString(row.category as String)
-        } catch (IllegalArgumentException illegalArgumentException) {
-          //fixme this should not happen but there is an incomplete entry in the DB
-          log.warn("Affiliation ${row.id} has category '${row.category}'. Could not match.")
-          category = AffiliationCategory.UNKNOWN
-        }
-
-        affiliationBuilder
-                .addressAddition(row.addressAddition as String)
-                .country(row.country as String)
-                .category(category)
-        result.add(affiliationBuilder.build())
-      }
-    }
-    return result
-  }
 
 /*
   *//**
