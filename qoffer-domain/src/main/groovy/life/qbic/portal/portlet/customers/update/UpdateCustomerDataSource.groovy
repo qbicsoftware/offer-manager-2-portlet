@@ -11,14 +11,6 @@ import life.qbic.portal.portlet.exceptions.DatabaseQueryException
  * @since: 1.0.0
  */
 interface UpdateCustomerDataSource {
-    /**
-     * This method returns a customer matching the given search criteria
-     *
-     * @param criteria a map with search criteria
-     * @return a person with affiliation and contact information
-     * @since 1.0.0
-     */
-    List<Customer> findCustomer(String firstName, String lastName)
 
     /**
      * Updates the information of a given customer specified by a customer ID
