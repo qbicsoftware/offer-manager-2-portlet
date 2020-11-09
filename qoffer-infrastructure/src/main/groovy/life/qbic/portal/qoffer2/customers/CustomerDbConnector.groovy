@@ -37,12 +37,23 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   private static final String CUSTOMER_SELECT_QUERY = "SELECT id, first_name AS firstName, last_name AS lastName, title as academicTitle, email as eMailAddress FROM customer"
   private static final String AFFILIATION_SELECT_QUERY = "SELECT id, organization AS organisation, address_addition AS addressAddition, street, postal_code AS postalCode, city, country, category FROM affiliation"
 
+  /**
+   * This method should be replaced by C
+   * @param databaseQueries
+   * @param connection
+   * @see CustomerDbConnector#CustomerDbConnector(Connection)
+   */
   @Deprecated
   CustomerDbConnector(CustomerDatabaseQueries databaseQueries, Connection connection){
     this.databaseQueries = databaseQueries
     this.connection = connection
   }
 
+  /**
+   * Constructor for a CustomerDbConnector
+   * @param connection a connection to the customer db
+   * @see Connection
+   */
   CustomerDbConnector(Connection connection) {
     this.connection = connection
   }
@@ -97,6 +108,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
         log.debug("Listing affiliations found: $row")
       }
     }
+    //TODO separate the part below in static parser
     resultRows.forEach{ Map row ->
       def affiliationBuilder = new Affiliation.Builder(
               row.organisation as String,
@@ -130,7 +142,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     try {
       databaseQueries.addAffiliation(affiliation)
     } catch (DatabaseQueryException e) {
-      throw new DatabaseQueryException(e.message)
+      throw new DatabaseQueryException("The affiliation could not be created: ${affiliation.toString()}")
     } catch (Exception e) {
       log.error(e)
       log.error(e.stackTrace.join("\n"))
