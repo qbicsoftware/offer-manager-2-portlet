@@ -26,7 +26,6 @@ class Presenter implements UpdateOfferOutput, UpdateCustomerOutput {
         this.viewModel = viewModel
     }
 
-    @Override
     void successNotification(String notification) {
         viewModel.successNotifications.add(notification)
     }
