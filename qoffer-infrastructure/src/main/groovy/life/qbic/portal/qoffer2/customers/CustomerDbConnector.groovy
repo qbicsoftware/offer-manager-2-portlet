@@ -30,8 +30,14 @@ import java.sql.ResultSet
 class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
 
+  /**
+   * This field should no longer be used but instead {@link #connection} should be provided
+   */
   @Deprecated
   CustomerDatabaseQueries databaseQueries
+  /**
+   * A connection to the customer database used to create queries.
+   */
   private final Connection connection
 
   private static final String CUSTOMER_SELECT_QUERY = "SELECT id, first_name AS firstName, last_name AS lastName, title as academicTitle, email as eMailAddress FROM customer"
@@ -40,7 +46,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   /**
    * This method should be replaced by C
    * @param databaseQueries
-   * @param connection
+   * @param connection {@link #connection}
    * @see CustomerDbConnector#CustomerDbConnector(Connection)
    */
   @Deprecated
