@@ -24,20 +24,15 @@ class SearchCustomer implements SearchCustomerInput{
 
     @Override
     void searchCustomer(String firstName, String lastName) {
-
         try {
             List<Customer> foundCustomer = dataSource.findCustomer(firstName, lastName)
-            int numberOfFoundCustomers = foundCustomer.size()
-            // Todo implement interface method
-            //output.successNotification("Found $numberOfFoundCustomers customers matching
-            // $firstName $lastName")
             if (foundCustomer.isEmpty()) {
                 output.failNotification("Could not find a customer for $firstName $lastName")
+            } else {
+                output.successNotification(foundCustomer)
             }
         } catch (Exception ignored) {
             output.failNotification("Unexpected error when searching for the customer $firstName $lastName")
         }
-
-
     }
 }
