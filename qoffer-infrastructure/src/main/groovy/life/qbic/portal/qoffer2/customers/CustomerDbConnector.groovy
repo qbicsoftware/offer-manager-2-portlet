@@ -15,6 +15,7 @@ import life.qbic.portal.portlet.customers.update.UpdateCustomerDataSource
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 import java.sql.Connection
+import java.sql.PreparedStatement
 import java.sql.ResultSet
 
 /**
@@ -66,7 +67,21 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
   @Override
   List<Customer> findCustomer(String firstName, String lastName) throws DatabaseQueryException {
-    throw new RuntimeException("Method not implemented.")
+    String sqlCondition = "WHERE firstName = ? AND lastName = ?"
+    String queryTemplate = CUSTOMER_SELECT_QUERY + " " + sqlCondition
+    List resultRows = new ArrayList()
+    connection.withCloseable {
+      PreparedStatement preparedStatement = it.prepareStatement(queryTemplate)
+      preparedStatement.setString(1, firstName)
+      preparedStatement.setString(2, lastName)
+      ResultSet resultSet = preparedStatement.executeQuery()
+      while (resultSet.next()) {
+        resultRows.add(resultSet.toRowResult())
+      }
+    }
+    //TODO parse customer form result Rows
+    return null
+    //throw new RuntimeException("Method not implemented.")
   }
 
   /**
