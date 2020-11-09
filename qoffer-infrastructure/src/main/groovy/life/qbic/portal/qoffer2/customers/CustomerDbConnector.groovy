@@ -76,7 +76,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   @Override
   void updateCustomer(String customerId, Customer updatedCustomer) {
     //TODO implement
-    throw new Exception("Method not implemented.")
+    throw new RuntimeException("Method not implemented.")
   }
 
   /**
