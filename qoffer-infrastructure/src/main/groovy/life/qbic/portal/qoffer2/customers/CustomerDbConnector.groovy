@@ -49,7 +49,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
   @Override
   List<Customer> findCustomer(String firstName, String lastName) throws DatabaseQueryException {
-    throw new Exception("Method not implemented.")
+    throw new RuntimeException("Method not implemented.")
   }
 
   /**
