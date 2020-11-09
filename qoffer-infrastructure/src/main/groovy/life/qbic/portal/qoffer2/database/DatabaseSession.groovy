@@ -17,7 +17,7 @@ import java.sql.SQLException
  *
  */
 @Log4j2
-class DatabaseSession {
+class DatabaseSession implements ConnectionProvider {
 
     protected static DatabaseSession INSTANCE
 
@@ -63,7 +63,7 @@ class DatabaseSession {
      * @return Connection, otherwise null if connecting to the database fails
      * @throws SQLException if a database access error occurs or the url is {@code null}
      */
-    Connection getConnection() throws SQLException {
+    Connection connect() throws SQLException {
         return dataSource.getConnection()
     }
 

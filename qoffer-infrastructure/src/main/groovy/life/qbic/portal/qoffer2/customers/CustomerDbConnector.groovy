@@ -1,8 +1,6 @@
 package life.qbic.portal.qoffer2.customers
 
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
@@ -13,6 +11,7 @@ import life.qbic.portal.portlet.customers.create.CreateCustomerDataSource
 import life.qbic.portal.portlet.customers.search.SearchCustomerDataSource
 import life.qbic.portal.portlet.customers.update.UpdateCustomerDataSource
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
+import life.qbic.portal.qoffer2.database.ConnectionProvider
 
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -32,14 +31,14 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
 
   /**
-   * This field should no longer be used but instead {@link #connection} should be provided
+   * This field should no longer be used but instead {@link #connectionProvider} should be provided
    */
   @Deprecated
   CustomerDatabaseQueries databaseQueries
   /**
    * A connection to the customer database used to create queries.
    */
-  private final Connection connection
+  private final ConnectionProvider connectionProvider
 
   private static final String CUSTOMER_SELECT_QUERY = "SELECT id, first_name AS firstName, last_name AS lastName, title as academicTitle, email as eMailAddress FROM customer"
   private static final String AFFILIATION_SELECT_QUERY = "SELECT id, organization AS organisation, address_addition AS addressAddition, street, postal_code AS postalCode, city, country, category FROM affiliation"
@@ -47,13 +46,13 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   /**
    * This method should be replaced by C
    * @param databaseQueries
-   * @param connection {@link #connection}
-   * @see CustomerDbConnector#CustomerDbConnector(Connection)
+   * @param connectionProvider {@link #connectionProvider}
+   * @see CustomerDbConnector#CustomerDbConnector(ConnectionProvider)
    */
   @Deprecated
-  CustomerDbConnector(CustomerDatabaseQueries databaseQueries, Connection connection){
+  CustomerDbConnector(CustomerDatabaseQueries databaseQueries, ConnectionProvider connectionProvider){
     this.databaseQueries = databaseQueries
-    this.connection = connection
+    this.connectionProvider = connectionProvider
   }
 
   /**
@@ -61,8 +60,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    * @param connection a connection to the customer db
    * @see Connection
    */
-  CustomerDbConnector(Connection connection) {
-    this.connection = connection
+  CustomerDbConnector(ConnectionProvider connectionProvider) {
+    this.connectionProvider = connectionProvider
   }
 
   @Override
@@ -120,6 +119,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     List<Affiliation> result = []
 
     List<Map<?,?>> resultRows = new ArrayList()
+    Connection connection = this.connectionProvider.connect()
+
     connection.withCloseable {
       def statement = it.prepareStatement(AFFILIATION_SELECT_QUERY)
       ResultSet resultSet = statement.executeQuery()
