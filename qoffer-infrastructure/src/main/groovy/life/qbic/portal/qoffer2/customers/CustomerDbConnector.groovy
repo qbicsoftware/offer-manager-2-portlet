@@ -69,6 +69,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     String sqlCondition = "WHERE firstName = ? AND lastName = ?"
     String queryTemplate = CUSTOMER_SELECT_QUERY + " " + sqlCondition
     List resultRows = new ArrayList()
+
+    Connection connection = connectionProvider.connect()
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(queryTemplate)
       preparedStatement.setString(1, firstName)
