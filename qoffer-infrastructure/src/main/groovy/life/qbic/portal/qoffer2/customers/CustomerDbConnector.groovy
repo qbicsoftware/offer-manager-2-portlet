@@ -14,6 +14,7 @@ import life.qbic.portal.portlet.customers.search.SearchCustomerDataSource
 import life.qbic.portal.portlet.customers.update.UpdateCustomerDataSource
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.ConnectionProvider
+import org.apache.groovy.sql.extensions.SqlExtensions
 
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -82,7 +83,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       preparedStatement.setString(2, lastName)
       ResultSet resultSet = preparedStatement.executeQuery()
       while (resultSet.next()) {
-        resultRows.add(resultSet.toRowResult())
+        resultRows.add(SqlExtensions.toRowResult(resultSet))
       }
     }
     List<Customer> customerList = new ArrayList<>()
@@ -310,7 +311,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       def statement = it.prepareStatement(AFFILIATION_SELECT_QUERY)
       ResultSet resultSet = statement.executeQuery()
       while (resultSet.next()) {
-        Map row = resultSet.toRowResult()
+        Map row = SqlExtensions.toRowResult(resultSet)
         resultRows.add(row)
         log.debug("Listing affiliations found: $row")
       }
