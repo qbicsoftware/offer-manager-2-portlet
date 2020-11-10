@@ -53,10 +53,10 @@ class SearchCustomerDataSourceSpec extends Specification{
         when:
 
         List<Customer> foundCustomers = dataSource.findCustomer(firstName, lastName)
-        Customer customer = foundCustomers.first()
 
         then:
         foundCustomers.size() == 1
+        Customer customer = foundCustomers.first()
         customer.firstName == firstName
         customer.lastName == lastName
         customer.title == factory.getForString(academicTitle)

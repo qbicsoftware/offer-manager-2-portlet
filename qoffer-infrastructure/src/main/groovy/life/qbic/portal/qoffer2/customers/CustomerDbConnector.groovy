@@ -1,6 +1,8 @@
 package life.qbic.portal.qoffer2.customers
 
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
@@ -41,6 +43,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    */
   private final ConnectionProvider connectionProvider
 
+  private static final AffiliationCategoryFactory CATEGORY_FACTORY = new AffiliationCategoryFactory()
+  private static final AcademicTitleFactory TITLE_FACTORY = new AcademicTitleFactory()
   private static final String CUSTOMER_SELECT_QUERY = "SELECT id, first_name AS firstName, last_name AS lastName, title as academicTitle, email as eMailAddress FROM customer"
   private static final String AFFILIATION_SELECT_QUERY = "SELECT id, organization AS organisation, address_addition AS addressAddition, street, postal_code AS postalCode, city, country, category FROM affiliation"
 
@@ -69,7 +73,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   List<Customer> findCustomer(String firstName, String lastName) throws DatabaseQueryException {
     String sqlCondition = "WHERE firstName = ? AND lastName = ?"
     String queryTemplate = CUSTOMER_SELECT_QUERY + " " + sqlCondition
-    List resultRows = new ArrayList()
+    List<Map> resultRows = new ArrayList()
 
     Connection connection = connectionProvider.connect()
     connection.withCloseable {
@@ -81,9 +85,14 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
         resultRows.add(resultSet.toRowResult())
       }
     }
-    //TODO parse customer form result Rows
-    return null
-    //throw new RuntimeException("Method not implemented.")
+    List<Customer> customerList = new ArrayList<>()
+    resultRows.forEach {Map row ->
+      AcademicTitle title = TITLE_FACTORY.getForString(row.academicTitle as String)
+      List<Affiliation> affiliations = fetchAffiliationsForPerson(row.id as int)
+      Customer customer = new Customer(row.firstName as String, row.lastName as String, title, row.eMailAddress as String, affiliations)
+      customerList.add(customer)
+    }
+    return customerList
   }
   /*
     We want to fetch all affiliations for a given person id.
@@ -147,7 +156,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
               "${rs.getString(6)}")
       AffiliationCategory category
       try {
-        category = new AffiliationCategoryFactory().getForString("${rs.getString(8)}")
+        category = CATEGORY_FACTORY.getForString("${rs.getString(8)}")
       } catch (IllegalArgumentException ignored) {
         //fixme this should not happen but there is an incomplete entry in the DB
         log.warn("Affiliation ${rs.getString(1)} has category '${rs.getString(8)}'. Could not match.")
@@ -316,7 +325,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
       AffiliationCategory category
       try {
-        category = new AffiliationCategoryFactory().getForString(row.category as String)
+        category = CATEGORY_FACTORY.getForString(row.category as String)
       } catch (IllegalArgumentException ignored) {
         //fixme this should not happen but there is an incomplete entry in the DB
         log.warn("Affiliation ${row.id} has category '${row.category}'. Could not match.")
