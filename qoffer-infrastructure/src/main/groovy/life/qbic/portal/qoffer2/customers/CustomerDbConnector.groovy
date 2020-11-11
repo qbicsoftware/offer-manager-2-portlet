@@ -196,6 +196,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return customerAlreadyInDb
   }
+  
   private static int createNewCustomer(Connection connection, Customer customer) {
     String query = "INSERT INTO customer (first_name, last_name, title, email) " +
             "VALUES(?, ?, ?, ?)"
