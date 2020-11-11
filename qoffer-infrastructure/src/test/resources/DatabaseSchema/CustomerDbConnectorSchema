@@ -1,0 +1,27 @@
+CREATE TABLE person (
+    id int(11) UNIQUE PRIMARY KEY,
+    first_name varchar(45),
+    last_name varchar(45),
+    title enum('None','Dr.','Prof. Dr.'),
+    email varchar(60)
+);
+
+CREATE TABLE person_affiliation(
+     id int(11) UNIQUE PRIMARY KEY,
+     affiliation_id int(11),
+     person_id int(11),
+
+     FOREIGN KEY (affiliation_id) REFERENCES affiliation(id)
+     FOREIGN KEY (person_id) REFERENCES person(id)
+);
+
+CREATE TABLE affiliation (
+    id int(11) UNIQUE PRIMARY KEY,
+    organization varchar(128),
+    address_addition varchar(128),
+    street varchar(45),
+    postal_code varchar(45),
+    city varchar(45),
+    country varchar(45)
+    category enum('internal','external','external academic')
+);

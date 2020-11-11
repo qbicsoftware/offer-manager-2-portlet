@@ -1,0 +1,56 @@
+CREATE TABLE product (
+    id int(11) UNIQUE PRIMARY KEY,
+    category ENUM('Sequencing','Project Management','Primary Bioinformatics','Secondary Bioinformatics','Data Storage'),
+    description varchar(2500),
+    productName varchar(500),
+    unitPrice double(11,2),
+    unit varchar(10)
+);
+
+CREATE TABLE offer_items(
+     id int(11) UNIQUE PRIMARY KEY,
+     productId int(11),
+     quantity int(11),
+
+     FOREIGN KEY (productId) REFERENCES product(id)
+);
+
+CREATE TABLE costestimate_items(
+     id int(11) UNIQUE PRIMARY KEY,
+     productId int(11),
+     quantity int(11),
+
+     FOREIGN KEY (productId) REFERENCES product(id)
+);
+
+CREATE TABLE costestimate(
+	`id` int(11) PRIMARY KEY,
+	`modificationDate` date,
+	`expirationDate` date,
+	`customerId` int(11) unsigned,
+	`projectManagerId` int(11) unsigned,
+	`projectTitle` varchar(500),
+	`projectDescription` varchar(2500),
+	`totalPrice` double(11,2),
+	`customerAffiliationId` int(11) unsigned,
+
+	FOREIGN KEY (`customerId`) REFERENCES `person`(`id`),
+	FOREIGN KEY (`projectManagerId`) REFERENCES `person`(`id`),
+	FOREIGN KEY (`customerAffiliationId`) REFERENCES `affiliation`(`id`)
+);
+
+CREATE TABLE offer(
+	`id` int(11) PRIMARY KEY,
+	`modificationDate` date,
+	`expirationDate` date,
+	`customerId` int(11) unsigned,
+	`projectManagerId` int(11) unsigned,
+	`projectTitle` varchar(500),
+	`projectDescription` varchar(2500),
+	`totalPrice` double(11,2),
+	`customerAffiliationId` int(11) unsigned,
+
+	FOREIGN KEY (`customerId`) REFERENCES `person`(`id`),
+	FOREIGN KEY (`projectManagerId`) REFERENCES `person`(`id`),
+	FOREIGN KEY (`customerAffiliationId`) REFERENCES `affiliation`(`id`)
+);
