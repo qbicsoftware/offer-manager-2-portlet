@@ -224,7 +224,7 @@ class CreateCustomerView extends VerticalLayout {
                     break
             }
             submitButton.enabled = allValuesValid()
-            addressAdditionComboBox.enabled = createCustomerViewModel.affiliation? true: false
+            addressAdditionComboBox.enabled = Objects.isNull(createCustomerViewModel.affiliation)
         })
         sharedViewModel.addPropertyChangeListener({it ->
             switch (it.propertyName) {

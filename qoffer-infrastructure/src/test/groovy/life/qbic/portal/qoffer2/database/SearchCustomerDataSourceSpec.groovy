@@ -32,22 +32,20 @@ class SearchCustomerDataSourceSpec extends Specification{
         GroovyMock(SqlExtensions, global: true)
         SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(["id":id, "firstName":firstName, "lastName":lastName, "academicTitle":academicTitle, "eMailAddress":emailAddress])
         // our statement should only be able to fill the template with the correct values
-        PreparedStatement preparedStatement = Mock {
-            setString(1 , firstName) >> void
-            setString(2, lastName) >> void
-            executeQuery() >> Stub(ResultSet,{it.next() >>> [true, false]})
-        }
+        PreparedStatement preparedStatement = Mock (PreparedStatement, {
+            it.setString(1 , firstName) >> _
+            it.setString(2, lastName) >> _
+            it.executeQuery() >> Stub(ResultSet,{it.next() >>> [true, false]})
+        })
         // the connection must only provide precompiled statements for the expected query template
-        Connection connection = Stub{
-            prepareStatement(expectedQuery) >> preparedStatement
-        }
+        Connection connection = Stub( Connection, {
+            it.prepareStatement(expectedQuery) >> preparedStatement
+        })
 
-        and: "a ConnectionProvider providing the stubbed connection"
-        ConnectionProvider connectionProvider = Stub {
-            connect() >> connection
-        }
+        //and: "a ConnectionProvider providing the stubbed connection"
+        ConnectionProvider connectionProvider = Stub (ConnectionProvider, {it.connect() >> connection})
 
-        and: "an implementation of the SearchCustomerDataSource with this connection provider"
+        //and: "an implementation of the SearchCustomerDataSource with this connection provider"
         SearchCustomerDataSource dataSource = new CustomerDbConnector(connectionProvider)
 
         when: "the datasource is tasked with finding a customer with provided first and last name"

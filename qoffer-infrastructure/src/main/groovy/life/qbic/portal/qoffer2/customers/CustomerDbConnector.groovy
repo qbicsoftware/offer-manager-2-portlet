@@ -95,6 +95,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return customerList
   }
+
   /*
     We want to fetch all affiliations for a given person id.
     As this is a n to m relationship, we need to look-up
@@ -205,6 +206,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       throw new DatabaseQueryException("The customer could not be created: ${customer.toString()}")
     }
   }
+
   private boolean customerExists(Customer customer) {
     String query = "SELECT * FROM customer WHERE first_name = ? AND last_name = ? AND email = ?"
     Connection connection = connectionProvider.connect()
@@ -222,6 +224,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return customerAlreadyInDb
   }
+
   private static int createNewCustomer(Connection connection, Customer customer) {
     String query = "INSERT INTO customer (first_name, last_name, title, email) " +
             "VALUES(?, ?, ?, ?)"
@@ -241,6 +244,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
     return generatedKeys[0]
   }
+
   private static void storeAffiliation(Connection connection, int customerId, List<Affiliation>
           affiliations) {
     String query = "INSERT INTO customer_affiliation (affiliation_id, customer_id) " +
@@ -255,6 +259,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
     }
   }
+
   //Fixme no use of closeable
   private static int getAffiliationId(Connection connection, Affiliation affiliation) {
     String query = "SELECT * FROM affiliation WHERE organization=? " +
@@ -285,6 +290,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return affiliationIds[0]
   }
+
   /**
    * @inheritDoc
    * @param customerId
