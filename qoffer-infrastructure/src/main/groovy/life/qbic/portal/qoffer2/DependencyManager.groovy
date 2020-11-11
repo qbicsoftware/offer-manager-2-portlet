@@ -3,7 +3,6 @@ package life.qbic.portal.qoffer2
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliations
 import life.qbic.portal.portlet.customers.create.CreateCustomer
@@ -101,9 +100,8 @@ class DependencyManager {
             String port = Objects.requireNonNull(configurationManager.getMysqlPort(), "Mysql port missing.")
             String sqlDatabase = Objects.requireNonNull(configurationManager.getMysqlDB(), "Mysql database name missing.")
 
-            DatabaseSession.create(user, password, host, port, sqlDatabase)
-            CustomerDatabaseQueries queries = new CustomerDatabaseQueries(DatabaseSession.INSTANCE)
-            customerDbConnector = new CustomerDbConnector(queries)
+            DatabaseSession.init(user, password, host, port, sqlDatabase)
+            customerDbConnector = new CustomerDbConnector(DatabaseSession.getInstance())
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
             throw e
