@@ -27,16 +27,15 @@ class CreateCustomerControllerSpec extends Specification {
 
         CreateCustomerInput createCustomerInput = Mock()
         CreateCustomerController controller = new CreateCustomerController(createCustomerInput)
-
         when:
         controller.createNewCustomer(firstName, lastName, title, email, affiliations)
         then:
         1 * createCustomerInput.createCustomer({Customer customer ->
-            customer.firstName == firstName && \
-            customer.lastName == lastName && \
-            customer.title == academicTitle && \
-            customer.eMailAddress == email && \
-            customer.affiliations == affiliations
+            customer.getFirstName() == firstName && \
+            customer.getLastName() == lastName && \
+            customer.getTitle() == academicTitle && \
+            customer.geteMailAddress() == email && \
+            customer.getAffiliations() == affiliations
         })
         where:
         firstName |lastName |title |email

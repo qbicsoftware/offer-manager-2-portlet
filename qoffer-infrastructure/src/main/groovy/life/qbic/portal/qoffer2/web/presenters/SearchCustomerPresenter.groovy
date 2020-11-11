@@ -22,9 +22,9 @@ class SearchCustomerPresenter {
         this.searchCustomerViewModel = searchCustomerViewModel
         //ToDo Remove this list as soon as the backend is implemented
         List<Customer> customerList = new ArrayList<Customer>()
-        def customer1 = new Customer("Ash", "Ketchum", AcademicTitle.NONE, "gottacatchem@all.de", [])
-        def customer2 = new Customer("Samuel", "Oak", AcademicTitle.PROFESSOR, "giveMeMyPokemon@geezer.de", [])
-        def customer3 = new Customer("Pikachu", "Pichu", AcademicTitle.DOCTOR, "Pokdex@25.de", [])
+        def customer1 = new Customer.Builder("Ash", "Ketchum", AcademicTitle.NONE, "gottacatchem@all.de").build()
+        def customer2 = new Customer.Builder("Samuel", "Oak", AcademicTitle.PROFESSOR, "giveMeMyPokemon@geezer.de").build()
+        def customer3 = new Customer.Builder("Pikachu", "Pichu", AcademicTitle.DOCTOR, "Pokdex@25.de").build()
         customerList.add(customer1)
         customerList.add(customer2)
         customerList.add(customer3)

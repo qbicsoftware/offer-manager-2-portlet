@@ -26,8 +26,7 @@ class SearchCustomerSpec extends Specification{
         SearchCustomerDataSource ds = Stub(SearchCustomerDataSource.class)
         SearchCustomer searchCustomer = new SearchCustomer(output,ds)
 
-        Customer luke = new Customer(firstName, lastName, AcademicTitle.DOCTOR, "a.b@c.de", new ArrayList<Affiliation>())
-
+        Customer luke = new Customer.Builder(firstName, lastName, email).build()
         ds.findCustomer(firstName, lastName) >> [luke]
 
         when:
@@ -37,8 +36,8 @@ class SearchCustomerSpec extends Specification{
         1* output.successNotification(_)
 
         where:
-        firstName | lastName
-        "Luke" | "Skywalker"
+        firstName | lastName | email
+        "Luke" | "Skywalker" | "Luke.Skywalker@TheForce.Jedi"
     }
 
     def "notify of failure whenever the datasource throws an exception"(){

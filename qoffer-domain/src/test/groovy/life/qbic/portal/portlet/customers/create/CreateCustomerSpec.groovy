@@ -1,6 +1,7 @@
 package life.qbic.portal.portlet.customers.create
 
 import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import spock.lang.Specification
 
@@ -33,7 +34,7 @@ class CreateCustomerSpec extends Specification {
         1 * dataSource.addCustomer(customer)
 
         where:
-        customer = new Customer("Test", "user", AcademicTitle.NONE, "test", [])
+        customer = new Customer.Builder("Test", "user", "test.user@usertest.de").build()
     }
 
     def "datasource throwing an exception leads to fail notification on output"() {
@@ -49,7 +50,7 @@ class CreateCustomerSpec extends Specification {
         0 * output.successNotification(_ as String)
 
         where:
-        customer = new Customer("Test", "user", AcademicTitle.NONE, "test", [])
+        customer = new Customer.Builder("Test", "user", "test.user@usertest.de").build()
     }
 
 }
