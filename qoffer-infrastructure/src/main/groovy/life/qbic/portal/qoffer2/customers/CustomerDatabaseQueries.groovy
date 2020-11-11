@@ -45,7 +45,7 @@ class CustomerDatabaseQueries {
      */
     List<Customer> findPersonByName(String lastName){
         List<Customer> result = []
-        String query = "SELECT id, first_name, last_name, title, email from customer WHERE " +
+        String query = "SELECT id, first_name, last_name, title, email from person WHERE " +
             "last_name = ?"
 
         Connection connection = databaseSession.connect()
@@ -97,8 +97,8 @@ class CustomerDatabaseQueries {
      */
     private List<Integer> getAffiliationIdsForPerson(int customerId) {
         List<Integer> result = []
-        String query = "SELECT affiliation_id FROM customer_affiliation WHERE " +
-            "customer_id = ?"
+        String query = "SELECT affiliation_id FROM person_affiliation WHERE " +
+            "person_id = ?"
 
         Connection connection = databaseSession.connect()
 
@@ -224,7 +224,7 @@ class CustomerDatabaseQueries {
     }
 
     private boolean customerExists(Customer customer) {
-        String query = "SELECT * FROM customer WHERE first_name = ? AND last_name = ? AND email = ?"
+        String query = "SELECT * FROM person WHERE first_name = ? AND last_name = ? AND email = ?"
         Connection connection = databaseSession.connect()
 
         def customerAlreadyInDb = false
@@ -242,7 +242,7 @@ class CustomerDatabaseQueries {
     }
 
     private static int createNewCustomer(Connection connection, Customer customer) {
-        String query = "INSERT INTO customer (first_name, last_name, title, email) " +
+        String query = "INSERT INTO person (first_name, last_name, title, email) " +
             "VALUES(?, ?, ?, ?)"
 
         List<Integer> generatedKeys = []
@@ -263,7 +263,7 @@ class CustomerDatabaseQueries {
 
     private static void storeAffiliation(Connection connection, int customerId, List<Affiliation>
         affiliations) {
-        String query = "INSERT INTO customer_affiliation (affiliation_id, customer_id) " +
+        String query = "INSERT INTO person_affiliation (affiliation_id, customer_id) " +
             "VALUES(?, ?)"
 
         affiliations.each {affiliation ->

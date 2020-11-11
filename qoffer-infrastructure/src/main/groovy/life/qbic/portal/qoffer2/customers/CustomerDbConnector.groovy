@@ -46,7 +46,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
   private static final AffiliationCategoryFactory CATEGORY_FACTORY = new AffiliationCategoryFactory()
   private static final AcademicTitleFactory TITLE_FACTORY = new AcademicTitleFactory()
-  private static final String CUSTOMER_SELECT_QUERY = "SELECT id, first_name AS firstName, last_name AS lastName, title as academicTitle, email as eMailAddress FROM customer"
+  private static final String CUSTOMER_SELECT_QUERY = "SELECT id, first_name AS firstName, last_name AS lastName, title as academicTitle, email as eMailAddress FROM person"
   private static final String AFFILIATION_SELECT_QUERY = "SELECT id, organization AS organisation, address_addition AS addressAddition, street, postal_code AS postalCode, city, country, category FROM affiliation"
 
   /**
@@ -119,8 +119,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    */
   private List<Integer> getAffiliationIdsForPerson(int customerId) {
     List<Integer> result = []
-    String query = "SELECT affiliation_id FROM customer_affiliation WHERE " +
-            "customer_id = ?"
+    String query = "SELECT affiliation_id FROM person_affiliation WHERE " +
+            "person_id = ?"
 
     Connection connection = connectionProvider.connect()
 
@@ -208,7 +208,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   }
 
   private boolean customerExists(Customer customer) {
-    String query = "SELECT * FROM customer WHERE first_name = ? AND last_name = ? AND email = ?"
+    String query = "SELECT * FROM person WHERE first_name = ? AND last_name = ? AND email = ?"
     Connection connection = connectionProvider.connect()
 
     def customerAlreadyInDb = false
@@ -226,7 +226,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   }
 
   private static int createNewCustomer(Connection connection, Customer customer) {
-    String query = "INSERT INTO customer (first_name, last_name, title, email) " +
+    String query = "INSERT INTO person (first_name, last_name, title, email) " +
             "VALUES(?, ?, ?, ?)"
 
     List<Integer> generatedKeys = []
@@ -247,7 +247,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
   private static void storeAffiliation(Connection connection, int customerId, List<Affiliation>
           affiliations) {
-    String query = "INSERT INTO customer_affiliation (affiliation_id, customer_id) " +
+    String query = "INSERT INTO person_affiliation (person_id, affiliation_id) " +
             "VALUES(?, ?)"
 
     affiliations.each {affiliation ->
