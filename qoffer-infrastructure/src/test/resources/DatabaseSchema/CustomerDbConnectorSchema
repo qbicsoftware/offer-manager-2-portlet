@@ -8,8 +8,8 @@ CREATE TABLE person (
 
 CREATE TABLE person_affiliation(
      id int(11) UNIQUE PRIMARY KEY,
-     affiliation_id int(11),
      person_id int(11),
+     affiliation_id int(11)
 
      FOREIGN KEY (affiliation_id) REFERENCES affiliation(id)
      FOREIGN KEY (person_id) REFERENCES person(id)
