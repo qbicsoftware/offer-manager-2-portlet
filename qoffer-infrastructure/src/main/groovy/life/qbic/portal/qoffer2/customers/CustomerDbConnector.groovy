@@ -1,6 +1,8 @@
 package life.qbic.portal.qoffer2.customers
 
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
@@ -12,6 +14,7 @@ import life.qbic.portal.portlet.customers.search.SearchCustomerDataSource
 import life.qbic.portal.portlet.customers.update.UpdateCustomerDataSource
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.ConnectionProvider
+import org.apache.groovy.sql.extensions.SqlExtensions
 
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -41,6 +44,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    */
   private final ConnectionProvider connectionProvider
 
+  private static final AffiliationCategoryFactory CATEGORY_FACTORY = new AffiliationCategoryFactory()
+  private static final AcademicTitleFactory TITLE_FACTORY = new AcademicTitleFactory()
   private static final String CUSTOMER_SELECT_QUERY = "SELECT id, first_name AS firstName, last_name AS lastName, title as academicTitle, email as eMailAddress FROM customer"
   private static final String AFFILIATION_SELECT_QUERY = "SELECT id, organization AS organisation, address_addition AS addressAddition, street, postal_code AS postalCode, city, country, category FROM affiliation"
 
@@ -67,8 +72,30 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
   @Override
   List<Customer> findCustomer(String firstName, String lastName) throws DatabaseQueryException {
-    throw new RuntimeException("Method not implemented.")
+    String sqlCondition = "WHERE firstName = ? AND lastName = ?"
+    String queryTemplate = CUSTOMER_SELECT_QUERY + " " + sqlCondition
+    List<Map> resultRows = new ArrayList()
+
+    Connection connection = connectionProvider.connect()
+    connection.withCloseable {
+      PreparedStatement preparedStatement = it.prepareStatement(queryTemplate)
+      preparedStatement.setString(1, firstName)
+      preparedStatement.setString(2, lastName)
+      ResultSet resultSet = preparedStatement.executeQuery()
+      while (resultSet.next()) {
+        resultRows.add(SqlExtensions.toRowResult(resultSet))
+      }
+    }
+    List<Customer> customerList = new ArrayList<>()
+    resultRows.forEach {Map row ->
+      AcademicTitle title = TITLE_FACTORY.getForString(row.academicTitle as String)
+      List<Affiliation> affiliations = fetchAffiliationsForPerson(row.id as int)
+      Customer customer = new Customer(row.firstName as String, row.lastName as String, title, row.eMailAddress as String, affiliations)
+      customerList.add(customer)
+    }
+    return customerList
   }
+
   /*
     We want to fetch all affiliations for a given person id.
     As this is a n to m relationship, we need to look-up
@@ -131,7 +158,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
               "${rs.getString(6)}")
       AffiliationCategory category
       try {
-        category = new AffiliationCategoryFactory().getForString("${rs.getString(8)}")
+        category = CATEGORY_FACTORY.getForString("${rs.getString(8)}")
       } catch (IllegalArgumentException ignored) {
         //fixme this should not happen but there is an incomplete entry in the DB
         log.warn("Affiliation ${rs.getString(1)} has category '${rs.getString(8)}'. Could not match.")
@@ -179,7 +206,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       throw new DatabaseQueryException("The customer could not be created: ${customer.toString()}")
     }
   }
-  
+
   private boolean customerExists(Customer customer) {
     String query = "SELECT * FROM customer WHERE first_name = ? AND last_name = ? AND email = ?"
     Connection connection = connectionProvider.connect()
@@ -197,7 +224,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return customerAlreadyInDb
   }
-  
+
   private static int createNewCustomer(Connection connection, Customer customer) {
     String query = "INSERT INTO customer (first_name, last_name, title, email) " +
             "VALUES(?, ?, ?, ?)"
@@ -217,6 +244,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
     return generatedKeys[0]
   }
+
   private static void storeAffiliation(Connection connection, int customerId, List<Affiliation>
           affiliations) {
     String query = "INSERT INTO customer_affiliation (affiliation_id, customer_id) " +
@@ -231,6 +259,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
     }
   }
+
   //Fixme no use of closeable
   private static int getAffiliationId(Connection connection, Affiliation affiliation) {
     String query = "SELECT * FROM affiliation WHERE organization=? " +
@@ -261,6 +290,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return affiliationIds[0]
   }
+
   /**
    * @inheritDoc
    * @param customerId
@@ -287,7 +317,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       def statement = it.prepareStatement(AFFILIATION_SELECT_QUERY)
       ResultSet resultSet = statement.executeQuery()
       while (resultSet.next()) {
-        Map row = resultSet.toRowResult()
+        Map row = SqlExtensions.toRowResult(resultSet)
         resultRows.add(row)
         log.debug("Listing affiliations found: $row")
       }
@@ -302,7 +332,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
       AffiliationCategory category
       try {
-        category = new AffiliationCategoryFactory().getForString(row.category as String)
+        category = CATEGORY_FACTORY.getForString(row.category as String)
       } catch (IllegalArgumentException ignored) {
         //fixme this should not happen but there is an incomplete entry in the DB
         log.warn("Affiliation ${row.id} has category '${row.category}'. Could not match.")
