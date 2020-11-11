@@ -263,7 +263,7 @@ class CustomerDatabaseQueries {
 
     private static void storeAffiliation(Connection connection, int customerId, List<Affiliation>
         affiliations) {
-        String query = "INSERT INTO person_affiliation (affiliation_id, customer_id) " +
+        String query = "INSERT INTO person_affiliation (affiliation_id, person_id) " +
             "VALUES(?, ?)"
 
         affiliations.each {affiliation ->
