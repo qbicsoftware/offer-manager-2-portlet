@@ -179,6 +179,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       throw new DatabaseQueryException("The customer could not be created: ${customer.toString()}")
     }
   }
+  
   private boolean customerExists(Customer customer) {
     String query = "SELECT * FROM customer WHERE first_name = ? AND last_name = ? AND email = ?"
     Connection connection = connectionProvider.connect()
