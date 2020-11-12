@@ -1,5 +1,6 @@
-package life.qbic.portal.portlet.packages
+package life.qbic.portal.portlet.products
 
+import life.qbic.datamodel.accounting.Product
 import life.qbic.portal.portlet.UseCaseFailure
 
 /**
@@ -10,7 +11,7 @@ import life.qbic.portal.portlet.UseCaseFailure
  *
  * @since 1.0.0
  */
-interface ListPackagesOutput extends UseCaseFailure {
+interface ListProductsOutput extends UseCaseFailure {
 
   /**
    * Will pass all available service packages found.
@@ -20,6 +21,6 @@ interface ListPackagesOutput extends UseCaseFailure {
    *
    * @param availablePackages
    */
-  void showAvailablePackages(List<Package> availablePackages)
+  void showAvailablePackages(List<Product> availablePackages)
 
 }

@@ -1,5 +1,6 @@
-package life.qbic.portal.portlet.packages
+package life.qbic.portal.portlet.products
 
+import life.qbic.datamodel.accounting.Product
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 /**
@@ -10,7 +11,7 @@ import life.qbic.portal.portlet.exceptions.DatabaseQueryException
  *
  * @since 1.0.0
  */
-interface ListPackagesDataSource {
+interface ListProductsDataSource {
 
   /**
    * Queries a data source for all available service
@@ -21,9 +22,9 @@ interface ListPackagesDataSource {
    * if no packages can be found. The returned list needs to
    * be empty then.
    *
-   * @return A list of service {@link Package}.
+   * @return A list of service {@link Product}.
    * @throws  DatabaseQueryException
    */
-  List<Package> findAllAvailablePackages() throws DatabaseQueryException
+  List<Product> findAllAvailablePackages() throws DatabaseQueryException
 
 }

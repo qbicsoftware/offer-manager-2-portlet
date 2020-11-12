@@ -1,4 +1,4 @@
-package life.qbic.portal.portlet.packages
+package life.qbic.portal.portlet.products
 
 /**
  * Interface to ask for available service packages.
@@ -9,7 +9,7 @@ package life.qbic.portal.portlet.packages
  *
  * @since 1.0.0
  */
-interface ListPackagesInput {
+interface ListProductsInput {
 
   /**
    * This method triggers the use case <emph>List Packages</emph>.
