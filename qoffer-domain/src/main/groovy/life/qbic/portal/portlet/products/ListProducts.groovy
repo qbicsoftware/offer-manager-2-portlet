@@ -5,9 +5,9 @@ import life.qbic.datamodel.accounting.Product
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 /**
- * Implementation of the use case <emph>List Packages</emph>.
+ * Implementation of the use case <emph>List Products</emph>.
  *
- * This use case returns all available service packages of QBiC.
+ * This use case returns all available service products of QBiC.
  *
  * @since 1.0.0
  */
@@ -24,13 +24,13 @@ class ListProducts implements ListProductsInput {
   }
 
   @Override
-  void listAvailablePackages() {
+  void listAvailableProducts() {
     try {
-      List<Product> availablePackages = source.findAllAvailablePackages()
-      output.showAvailablePackages(availablePackages)
+      List<Product> availableProducts = source.findAllAvailableProducts()
+      output.showAvailableProducts(availableProducts)
     } catch (DatabaseQueryException e) {
       log.error(e)
-      output.failNotification("Something went wrong during the request of available packages.")
+      output.failNotification("Something went wrong during the request of available products.")
     }
   }
 }

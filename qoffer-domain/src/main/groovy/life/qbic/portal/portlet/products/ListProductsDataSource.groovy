@@ -25,6 +25,6 @@ interface ListProductsDataSource {
    * @return A list of service {@link Product}.
    * @throws  DatabaseQueryException
    */
-  List<Product> findAllAvailablePackages() throws DatabaseQueryException
+  List<Product> findAllAvailableProducts() throws DatabaseQueryException
 
 }
