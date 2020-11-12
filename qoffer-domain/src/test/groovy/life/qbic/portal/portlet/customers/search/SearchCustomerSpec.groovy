@@ -20,12 +20,12 @@ class SearchCustomerSpec extends Specification{
 
     def "find a searched customer"(){
         given:
+        String email = "NotRelevant@ThisTest.com"
         SearchCustomerOutput output = Mock(SearchCustomerOutput.class)
         SearchCustomerDataSource ds = Stub(SearchCustomerDataSource.class)
         SearchCustomer searchCustomer = new SearchCustomer(output,ds)
 
-        Customer luke = new Customer(firstName, lastName, AcademicTitle.DOCTOR, "a.b@c.de", new ArrayList<Affiliation>())
-
+        Customer luke = new Customer.Builder(firstName, lastName, email).build()
         ds.findCustomer(firstName, lastName) >> [luke]
 
         when:

@@ -27,7 +27,6 @@ class CreateCustomerControllerSpec extends Specification {
 
         CreateCustomerInput createCustomerInput = Mock()
         CreateCustomerController controller = new CreateCustomerController(createCustomerInput)
-
         when:
         controller.createNewCustomer(firstName, lastName, title, email, affiliations)
         then:
