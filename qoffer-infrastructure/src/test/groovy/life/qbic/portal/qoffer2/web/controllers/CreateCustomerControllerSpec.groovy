@@ -31,11 +31,11 @@ class CreateCustomerControllerSpec extends Specification {
         controller.createNewCustomer(firstName, lastName, title, email, affiliations)
         then:
         1 * createCustomerInput.createCustomer({Customer customer ->
-            customer.getFirstName() == firstName && \
-            customer.getLastName() == lastName && \
-            customer.getTitle() == academicTitle && \
-            customer.geteMailAddress() == email && \
-            customer.getAffiliations() == affiliations
+            customer.firstName == firstName && \
+            customer.lastName == lastName && \
+            customer.title == academicTitle && \
+            customer.eMailAddress == email && \
+            customer.affiliations == affiliations
         })
         where:
         firstName |lastName |title |email
