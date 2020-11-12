@@ -90,7 +90,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     resultRows.forEach {Map row ->
       AcademicTitle title = TITLE_FACTORY.getForString(row.academicTitle as String)
       List<Affiliation> affiliations = fetchAffiliationsForPerson(row.id as int)
-      Customer customer = new Customer(row.firstName as String, row.lastName as String, title, row.eMailAddress as String, affiliations)
+      Customer customer = new Customer.Builder(row.firstName as String, row.lastName as String, row.eMailAddress as String).title(title).affiliations(affiliations).build()
       customerList.add(customer)
     }
     return customerList
