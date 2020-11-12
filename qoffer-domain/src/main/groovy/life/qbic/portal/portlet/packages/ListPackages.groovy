@@ -4,11 +4,11 @@ import groovy.util.logging.Log4j2
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 /**
- * <class short description - 1 Line!>
+ * Implementation of the use case <emph>List Packages</emph>.
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * This use case returns all available service packages of QBiC.
  *
- * @since <versiontag>
+ * @since 1.0.0
  */
 @Log4j2
 class ListPackages implements ListPackagesInput {

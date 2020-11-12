@@ -7,7 +7,6 @@ package life.qbic.portal.portlet.packages
  * that want to display that they will list
  * all available service packages.
  *
- * @author Sven Fillinger
  * @since 1.0.0
  */
 interface ListPackagesInput {
