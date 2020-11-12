@@ -22,6 +22,7 @@ class SearchCustomerSpec extends Specification{
 
     def "find a searched customer"(){
         given:
+        String email = "NotRelevant@ThisTest.com"
         SearchCustomerOutput output = Mock(SearchCustomerOutput.class)
         SearchCustomerDataSource ds = Stub(SearchCustomerDataSource.class)
         SearchCustomer searchCustomer = new SearchCustomer(output,ds)
@@ -36,8 +37,8 @@ class SearchCustomerSpec extends Specification{
         1* output.successNotification(_)
 
         where:
-        firstName | lastName | email
-        "Luke" | "Skywalker" | "Luke.Skywalker@TheForce.Jedi"
+        firstName | lastName
+        "Luke" | "Skywalker"
     }
 
     def "notify of failure whenever the datasource throws an exception"(){
