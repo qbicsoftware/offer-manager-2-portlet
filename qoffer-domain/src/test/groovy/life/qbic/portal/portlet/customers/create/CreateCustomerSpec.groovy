@@ -47,7 +47,6 @@ class CreateCustomerSpec extends Specification {
 
         then: "the output receives a failure notification"
         1 * output.failNotification(_ as String)
-        0 * output.successNotification(_ as String)
 
         where:
         customer = new Customer.Builder("Test", "user", "test.user@usertest.de").build()
