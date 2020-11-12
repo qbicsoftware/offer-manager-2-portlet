@@ -10,6 +10,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Implement customer search in db connector
 * Connect CreateAffiliation and CreateCustomer use case
 * Implement GUI for CreateAffiliation use case
 * Implement CreateCustomer use case

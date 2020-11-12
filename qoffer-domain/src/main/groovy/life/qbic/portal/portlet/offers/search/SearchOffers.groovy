@@ -1,6 +1,6 @@
 package life.qbic.portal.portlet.offers.search
 
-import life.qbic.portal.portlet.SearchCriteria
+
 import life.qbic.portal.portlet.offers.OfferExporter
 
 /**
