@@ -52,5 +52,4 @@ class CreateCustomerController {
             throw new IllegalArgumentException("Could not create customer from provided arguments.")
         }
     }
-
 }
