@@ -11,13 +11,13 @@ import life.qbic.portal.portlet.exceptions.DatabaseQueryException
  * @since 1.0.0
  */
 @Log4j2
-class ListPackages implements ListPackagesInput {
+class ListProducts implements ListProductsInput {
 
-  private final ListPackagesOutput output
+  private final ListProductsOutput output
 
-  private final ListPackagesDataSource source
+  private final ListProductsDataSource source
 
-  ListPackages(ListPackagesDataSource source, ListPackagesOutput output) {
+  ListProducts(ListProductsDataSource source, ListProductsOutput output) {
     this.output = output
     this.source = source
   }

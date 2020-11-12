@@ -1,15 +1,15 @@
 package life.qbic.portal.qoffer2.products
 
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
-import life.qbic.portal.portlet.packages.ListPackagesDataSource
+import life.qbic.portal.portlet.packages.ListProductsDataSource
 import life.qbic.portal.qoffer2.database.ConnectionProvider
 
 /**
- * Provides a MariaDB connector implementation for {@link ListPackagesDataSource}.
+ * Provides a MariaDB connector implementation for {@link ListProductsDataSource}.
  *
  * @since 1.0.0
  */
-class ProductsDbConnector implements ListPackagesDataSource {
+class ProductsDbConnector implements ListProductsDataSource {
 
   private final ConnectionProvider provider
 

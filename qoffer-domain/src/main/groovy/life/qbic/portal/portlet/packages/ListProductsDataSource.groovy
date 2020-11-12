@@ -10,7 +10,7 @@ import life.qbic.portal.portlet.exceptions.DatabaseQueryException
  *
  * @since 1.0.0
  */
-interface ListPackagesDataSource {
+interface ListProductsDataSource {
 
   /**
    * Queries a data source for all available service

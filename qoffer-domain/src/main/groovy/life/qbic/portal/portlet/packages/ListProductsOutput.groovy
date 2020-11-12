@@ -10,7 +10,7 @@ import life.qbic.portal.portlet.UseCaseFailure
  *
  * @since 1.0.0
  */
-interface ListPackagesOutput extends UseCaseFailure {
+interface ListProductsOutput extends UseCaseFailure {
 
   /**
    * Will pass all available service packages found.
