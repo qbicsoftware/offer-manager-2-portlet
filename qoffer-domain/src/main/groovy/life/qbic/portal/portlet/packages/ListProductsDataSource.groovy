@@ -19,7 +19,7 @@ interface ListProductsDataSource {
    *
    * Throws a {@link DatabaseQueryException} if the query
    * fails for some reason. An exception must NOT be thrown,
-   * if no packages can be found. The returned list needs to
+   * if no products can be found. The returned list needs to
    * be empty then.
    *
    * @return A list of service {@link Product}.

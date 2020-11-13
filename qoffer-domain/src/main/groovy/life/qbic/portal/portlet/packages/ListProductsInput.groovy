@@ -1,11 +1,11 @@
 package life.qbic.portal.portlet.packages
 
 /**
- * Interface to ask for available service packages.
+ * Interface to ask for available service products.
  *
  * This input interface should be implemented by use cases
  * that want to display that they will list
- * all available service packages.
+ * all available service products.
  *
  * @since 1.0.0
  */

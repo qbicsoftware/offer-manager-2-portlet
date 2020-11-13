@@ -51,7 +51,7 @@ class ProductsDbConnector implements ListProductsDataSource {
   }
 
   private List<Product> tryToFindAllProducts() {
-    def packages = []
+    def products = []
     provider.connect().withCloseable {
       final def query = it.prepareStatement(Queries.SELECT_ALL_PRODUCTS)
       final ResultSet result = query.executeQuery()
@@ -61,11 +61,11 @@ class ProductsDbConnector implements ListProductsDataSource {
   }
 
   private static List<Product> convertResultSet(ResultSet resultSet) {
-    final def packages = []
+    final def products = []
     while (resultSet.next()) {
-      packages.add(rowResultToProduct(SqlExtensions.toRowResult(resultSet)))
+      products.add(rowResultToProduct(SqlExtensions.toRowResult(resultSet)))
     }
-    return packages
+    return products
   }
 
   private static Product rowResultToProduct(GroovyRowResult row) {
