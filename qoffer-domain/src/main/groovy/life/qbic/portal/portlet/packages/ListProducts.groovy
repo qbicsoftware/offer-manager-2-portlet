@@ -30,7 +30,7 @@ class ListProducts implements ListProductsInput {
       output.showAvailableProducts(availableProducts)
     } catch (DatabaseQueryException e) {
       log.error(e)
-      output.failNotification("Something went wrong during the request of available packages.")
+      output.failNotification("Something went wrong during the request of available products.")
     }
   }
 }
