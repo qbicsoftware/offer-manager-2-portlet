@@ -2,10 +2,14 @@ package life.qbic.portal.qoffer2.products
 
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProductUnitFactory
+import life.qbic.datamodel.dtos.business.services.ProjectManagement
+import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
+import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.packages.ListProductsDataSource
 import life.qbic.portal.qoffer2.database.ConnectionProvider
@@ -68,12 +72,35 @@ class ProductsDbConnector implements ListProductsDataSource {
     def productCategory = row.category
     Product product
     switch(productCategory) {
+      case "Data Storage":
+        product = new DataStorage(row.productName as String,
+            row.description as String,
+            row.unitPrice as Double,
+            new ProductUnitFactory().getForString(row.unit as String))
+        break
       case "Primary Bioinformatics":
         product = new PrimaryAnalysis(row.productName as String,
             row.description as String,
             row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String)
-        )
+            new ProductUnitFactory().getForString(row.unit as String))
+        break
+      case "Project Management":
+        product = new ProjectManagement(row.productName as String,
+            row.description as String,
+            row.unitPrice as Double,
+            new ProductUnitFactory().getForString(row.unit as String))
+        break
+      case "Secondary Bioinformatics":
+        product = new SecondaryAnalysis(row.productName as String,
+            row.description as String,
+            row.unitPrice as Double,
+            new ProductUnitFactory().getForString(row.unit as String))
+        break
+      case "Sequencing":
+        product = new Sequencing(row.productName as String,
+            row.description as String,
+            row.unitPrice as Double,
+            new ProductUnitFactory().getForString(row.unit as String))
         break
     }
     if(product == null) {

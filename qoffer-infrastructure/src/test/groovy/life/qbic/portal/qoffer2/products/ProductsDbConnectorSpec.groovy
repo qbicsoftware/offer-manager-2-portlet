@@ -72,8 +72,6 @@ class ProductsDbConnectorSpec extends Specification {
     result.get(0) instanceof AtomicProduct
     result.get(0).description == "Sample QC with report"
 
-
-
     where: "available products information is as follows"
     id | category | description | productName | unitPrice | unit
     0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample"
