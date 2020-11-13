@@ -55,9 +55,9 @@ class ProductsDbConnector implements ListProductsDataSource {
     provider.connect().withCloseable {
       final def query = it.prepareStatement(Queries.SELECT_ALL_PRODUCTS)
       final ResultSet result = query.executeQuery()
-      packages.addAll(convertResultSet(result))
+      products.addAll(convertResultSet(result))
     }
-    return packages
+    return products
   }
 
   private static List<Product> convertResultSet(ResultSet resultSet) {
