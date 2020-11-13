@@ -23,10 +23,10 @@ class ListProducts implements ListProductsInput {
   }
 
   @Override
-  void listAvailablePackages() {
+  void listAvailableProducts() {
     try {
-      List<Package> availablePackages = source.findAllAvailablePackages()
-      output.showAvailablePackages(availablePackages)
+      List<Package> availablePackages = source.findAllAvailableProducts()
+      output.showAvailableProducts(availablePackages)
     } catch (DatabaseQueryException e) {
       log.error(e)
       output.failNotification("Something went wrong during the request of available packages.")

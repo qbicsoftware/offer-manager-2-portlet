@@ -12,8 +12,8 @@ package life.qbic.portal.portlet.packages
 interface ListProductsInput {
 
   /**
-   * This method triggers the use case <emph>List Packages</emph>.
+   * This method triggers the use case <emph>List Products</emph>.
    */
-  void listAvailablePackages()
+  void listAvailableProducts()
 
 }

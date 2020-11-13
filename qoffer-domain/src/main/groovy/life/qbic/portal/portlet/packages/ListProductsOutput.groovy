@@ -1,5 +1,6 @@
 package life.qbic.portal.portlet.packages
 
+import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.portlet.UseCaseFailure
 
 /**
@@ -20,6 +21,6 @@ interface ListProductsOutput extends UseCaseFailure {
    *
    * @param availablePackages
    */
-  void showAvailablePackages(List<Package> availablePackages)
+  void showAvailableProducts(List<Product> availableProducts)
 
 }
