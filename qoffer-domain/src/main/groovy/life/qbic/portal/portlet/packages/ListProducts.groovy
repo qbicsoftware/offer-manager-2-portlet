@@ -5,7 +5,7 @@ import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 /**
- * Implementation of the use case <emph>List Packages</emph>.
+ * Implementation of the use case <emph>List Products</emph>.
  *
  * This use case returns all available service packages of QBiC.
  *
