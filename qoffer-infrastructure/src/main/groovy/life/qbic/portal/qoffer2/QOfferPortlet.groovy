@@ -1,7 +1,6 @@
 package life.qbic.portal.qoffer2
 
 import com.vaadin.annotations.Theme
-import com.vaadin.annotations.Widgetset
 import com.vaadin.server.Page
 import com.vaadin.server.VaadinRequest
 import com.vaadin.ui.Layout
@@ -20,7 +19,6 @@ import life.qbic.portal.qoffer2.web.StyledNotification
  */
 @Theme("mytheme")
 @SuppressWarnings("serial")
-@Widgetset("life.qbic.portal.portlet.AppWidgetSet")
 @Log4j2
 @CompileStatic
 class QOfferPortlet extends QBiCPortletUI {
