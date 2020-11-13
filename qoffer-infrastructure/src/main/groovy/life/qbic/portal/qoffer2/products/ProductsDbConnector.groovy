@@ -35,7 +35,7 @@ class ProductsDbConnector implements ListProductsDataSource {
   }
 
   @Override
-  List<Product> findAllAvailablePackages() throws DatabaseQueryException {
+  List<Product> findAllAvailableProducts() throws DatabaseQueryException {
     try {
       tryToFindAllProducts()
     } catch (SQLException e) {
