@@ -1,11 +1,16 @@
 package life.qbic.portal.qoffer2.products
 
-import groovy.transform.CompileStatic
+import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
+import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.packages.ListProductsDataSource
 import life.qbic.portal.qoffer2.database.ConnectionProvider
+import org.apache.groovy.sql.extensions.SqlExtensions
 
+import java.sql.ResultSet
 import java.sql.SQLException
 
 /**
@@ -14,7 +19,6 @@ import java.sql.SQLException
  * @since 1.0.0
  */
 @Log4j2
-@CompileStatic
 class ProductsDbConnector implements ListProductsDataSource {
 
   private final ConnectionProvider provider
@@ -31,7 +35,7 @@ class ProductsDbConnector implements ListProductsDataSource {
   }
 
   @Override
-  List<Package> findAllAvailablePackages() throws DatabaseQueryException {
+  List<Product> findAllAvailablePackages() throws DatabaseQueryException {
     try {
       tryToFindAllProducts()
     } catch (SQLException e) {
@@ -41,12 +45,43 @@ class ProductsDbConnector implements ListProductsDataSource {
     }
   }
 
-  private List<Package> tryToFindAllProducts() {
+  private List<Product> tryToFindAllProducts() {
+    def packages = []
     provider.connect().withCloseable {
       final def query = it.prepareStatement(Queries.SELECT_ALL_PRODUCTS)
-      query.executeQuery()
+      final ResultSet result = query.executeQuery()
+      packages.addAll(convertResultSet(result))
     }
-    return []
+    return packages
+  }
+
+  private static List<Product> convertResultSet(ResultSet resultSet) {
+    final def packages = []
+    while (resultSet.next()) {
+      packages.add(rowResultToProduct(SqlExtensions.toRowResult(resultSet)))
+    }
+    return packages
+  }
+
+  private static Product rowResultToProduct(GroovyRowResult row) {
+    def productCategory = row.category
+    Product product
+    switch(productCategory) {
+      case "Primary Bioinformatics":
+        product = new PrimaryAnalysis(row.productName as String,
+            row.description as String,
+            row.unitPrice as Double,
+            ProductUnit.PER_SAMPLE
+        )
+        break
+    }
+    if(product == null) {
+      log.error("Product could not be parsed from database query.")
+      log.error(row)
+      throw new DatabaseQueryException("Cannot parse product")
+    } else {
+      return product
+    }
   }
 
   /**
