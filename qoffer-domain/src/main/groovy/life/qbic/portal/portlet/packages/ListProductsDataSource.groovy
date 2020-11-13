@@ -7,7 +7,7 @@ import life.qbic.portal.portlet.exceptions.DatabaseQueryException
  * Interface can be implemented to create access
  * to an underlying data-source.
  *
- * It provides access to available service packages.
+ * It provides access to available service products.
  *
  * @since 1.0.0
  */
