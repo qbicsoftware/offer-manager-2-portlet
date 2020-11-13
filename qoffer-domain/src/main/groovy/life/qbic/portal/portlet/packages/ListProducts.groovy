@@ -1,6 +1,7 @@
 package life.qbic.portal.portlet.packages
 
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 /**
@@ -25,8 +26,8 @@ class ListProducts implements ListProductsInput {
   @Override
   void listAvailableProducts() {
     try {
-      List<Package> availablePackages = source.findAllAvailableProducts()
-      output.showAvailableProducts(availablePackages)
+      List<Product> availableProducts = source.findAllAvailableProducts()
+      output.showAvailableProducts(availableProducts)
     } catch (DatabaseQueryException e) {
       log.error(e)
       output.failNotification("Something went wrong during the request of available packages.")
