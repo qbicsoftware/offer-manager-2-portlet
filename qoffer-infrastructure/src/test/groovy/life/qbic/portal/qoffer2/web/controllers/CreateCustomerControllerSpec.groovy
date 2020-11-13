@@ -34,7 +34,7 @@ class CreateCustomerControllerSpec extends Specification {
             customer.firstName == firstName && \
             customer.lastName == lastName && \
             customer.title == academicTitle && \
-            customer.eMailAddress == email && \
+            customer.emailAddress == email && \
             customer.affiliations == affiliations
         })
         where:
