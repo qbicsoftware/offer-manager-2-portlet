@@ -7,7 +7,7 @@ import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 /**
  * Implementation of the use case <emph>List Products</emph>.
  *
- * This use case returns all available service packages of QBiC.
+ * This use case returns all available service product of QBiC.
  *
  * @since 1.0.0
  */
