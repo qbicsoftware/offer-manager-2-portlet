@@ -26,14 +26,17 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
     private final CreateCustomerView createCustomerView
     private final CreateAffiliationView createAffiliationView
     private final SearchCustomerView searchCustomerView
+    private final CreateOfferView createOfferView
 
     PortletView(ViewModel portletViewModel,
-                CreateCustomerView createCustomerView, CreateAffiliationView createAffiliationView, SearchCustomerView searchCustomerView) {
+                CreateCustomerView createCustomerView, CreateAffiliationView createAffiliationView, SearchCustomerView searchCustomerView,
+                CreateOfferView createOfferView) {
         super()
         this.portletViewModel = portletViewModel
         this.createCustomerView = createCustomerView
         this.createAffiliationView = createAffiliationView
         this.searchCustomerView = searchCustomerView
+        this.createOfferView = createOfferView
         initLayout()
         registerListeners()
     }
@@ -55,6 +58,7 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
         gridLayout.addComponent(this.searchCustomerView)
         gridLayout.addComponent(this.createCustomerView)
         gridLayout.addComponent(this.createAffiliationView)
+        gridLayout.addComponent(this.createOfferView)
 
         this.setSizeFull()
         this.addComponent(gridLayout)
