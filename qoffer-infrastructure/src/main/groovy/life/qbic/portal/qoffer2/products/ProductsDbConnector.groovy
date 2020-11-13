@@ -5,6 +5,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
+import life.qbic.datamodel.dtos.business.services.ProductUnitFactory
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.packages.ListProductsDataSource
 import life.qbic.portal.qoffer2.database.ConnectionProvider
@@ -71,7 +72,7 @@ class ProductsDbConnector implements ListProductsDataSource {
         product = new PrimaryAnalysis(row.productName as String,
             row.description as String,
             row.unitPrice as Double,
-            ProductUnit.PER_SAMPLE
+            new ProductUnitFactory().getForString(row.unit as String)
         )
         break
     }

@@ -40,7 +40,7 @@ class ProductsDbConnectorSpec extends Specification {
 
     when:
     def connector = new ProductsDbConnector(provider)
-    connector.findAllAvailablePackages()
+    connector.findAllAvailableProducts()
 
     then:
     thrown(DatabaseQueryException)
@@ -65,7 +65,7 @@ class ProductsDbConnectorSpec extends Specification {
     def connector = new ProductsDbConnector(provider)
 
     when: "the query is executed"
-    List<Product> result = connector.findAllAvailablePackages()
+    List<Product> result = connector.findAllAvailableProducts()
 
     then:
     result.size() == 1
