@@ -31,7 +31,7 @@ class ProductsDbConnectorSpec extends Specification {
     given:
     PreparedStatement statement = Mock(PreparedStatement)
     statement.executeQuery() >> { throw new SQLException() }
-    Connection connection = Stub(Connection, {it.prepareStatement() >> statement})
+    Connection connection = Stub(Connection, {it.prepareStatement(_ as String) >> statement})
     ConnectionProvider provider = Stub(ConnectionProvider, {it.connect() >> connection})
 
     when:
