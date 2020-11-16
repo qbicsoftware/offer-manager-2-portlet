@@ -11,6 +11,7 @@ package life.qbic.portal.qoffer2.web.views
  */
 
 class UpdateCustomerView {
+    //TODO implement
     UpdateCustomerView() { throw new RuntimeException("Class not implemented.") }
 
 }
