@@ -7,7 +7,6 @@ import com.vaadin.ui.Layout
 import com.vaadin.ui.VerticalLayout
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
-import life.qbic.portal.portlet.QBiCPortletUI
 import life.qbic.portal.qoffer2.web.StyledNotification
 
 /**
@@ -29,7 +28,7 @@ class QOfferPortlet extends QBiCPortletUI {
         super()
         // The constructor MUST NOT fail since the user does not get any feedback otherwise.
         try {
-            init()
+            create()
         } catch (Exception e) {
             log.error("Could not initialize {}", QOfferPortlet.getCanonicalName(), e)
         } catch (Error error) {
@@ -37,7 +36,7 @@ class QOfferPortlet extends QBiCPortletUI {
         }
     }
 
-    private def init() {
+    private void create() {
         this.dependencyManager = new DependencyManager()
     }
 

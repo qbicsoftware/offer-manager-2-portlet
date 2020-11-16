@@ -122,20 +122,6 @@
 			<artifactId>spock-core</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-		<!-- javax dependencies -->
-		<!--<dependency>
-			<groupId>javax.portlet</groupId>
-			<artifactId>portlet-api</artifactId>
-			<version>2.0</version>
-			<scope>provided</scope>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<version>3.0.1</version>
-			<scope>provided</scope>
-		</dependency>-->
 	</dependencies>
 	<distributionManagement>
 		<site>
@@ -145,12 +131,6 @@
 	</distributionManagement>
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
-			</plugin>
-
 			<plugin>
 				<groupId>org.codehaus.gmavenplus</groupId>
 				<artifactId>gmavenplus-plugin</artifactId>
@@ -171,21 +151,12 @@
 					</execution>
 				</executions>
 			</plugin>
-
-				<plugin>
-					<artifactId>maven-assembly-plugin</artifactId>
-					<version>3.3.0</version>
-				</plugin>
 		</plugins>
 	</build>
 
 	<profiles>
 		<profile>
 			<id>no-liferay</id>
-			<properties>
-				<packaging.type>war</packaging.type>
-				<osgi.scope>compile</osgi.scope>
-			</properties>
 			<activation>
 				<activeByDefault>true</activeByDefault>
 			</activation>
