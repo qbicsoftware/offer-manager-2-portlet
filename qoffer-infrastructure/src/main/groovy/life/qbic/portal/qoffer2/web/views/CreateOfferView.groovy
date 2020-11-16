@@ -45,13 +45,18 @@ class CreateOfferView extends VerticalLayout{
 
     }
 
+    /**
+     * Initializes the view with the ProjectInformationView, which is the first component to be shown
+     */
     private void initLayout(){
         //todo set up tab layout
         //this.addComponent(projectInformationView)
-        this.addComponent(customerSelectionView)
+        this.addComponent(projectManagerSelectionView)
     }
 
-
+    /**
+     * Registers all listeners for the buttons that enable switching between the different subviews of CreateOfferView
+     */
     private void registerListeners() {
         this.projectInformationView.next.addClickListener({ event ->
             this.removeComponent(projectInformationView)
@@ -62,6 +67,5 @@ class CreateOfferView extends VerticalLayout{
             this.addComponent()
         })
     }
-
 
 }

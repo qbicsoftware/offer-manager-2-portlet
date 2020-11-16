@@ -1,5 +1,6 @@
 package life.qbic.portal.qoffer2.web.views.create.offer
 
+import com.vaadin.data.Binder
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
@@ -144,6 +145,8 @@ class CustomerSelectionView extends VerticalLayout{
             List<Affiliation> affiliations = customerGrid.getSelectedItems().getAt(0).affiliations
             Customer customer = customerGrid.getSelectedItems().getAt(0)
 
+            viewModel.customer = customer
+
             //todo do we need to clear the grid for another selection?
             affiliationGrid.setItems(affiliations)
 
@@ -151,8 +154,8 @@ class CustomerSelectionView extends VerticalLayout{
         })
 
         affiliationGrid.addSelectionListener({
-            //todo what to do with the customer and affiliation now?
             Affiliation affiliation = affiliationGrid.getSelectedItems().getAt(0)
+            viewModel.customerAffiliation = affiliation
 
             next.setEnabled(true)
         })
