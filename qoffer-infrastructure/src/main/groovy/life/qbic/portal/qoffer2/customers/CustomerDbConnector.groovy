@@ -334,9 +334,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       try {
         category = CATEGORY_FACTORY.getForString(row.category as String)
       } catch (IllegalArgumentException ignored) {
-        //fixme this should not happen but there is an incomplete entry in the DB
         log.warn("Affiliation ${row.id} has category '${row.category}'. Could not match.")
-        category = AffiliationCategory.UNKNOWN
       }
 
       affiliationBuilder
