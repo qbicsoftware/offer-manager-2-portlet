@@ -7,6 +7,7 @@ import com.vaadin.data.ValueContext
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
+import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
@@ -40,6 +41,7 @@ class CreateCustomerView extends VerticalLayout {
     ComboBox<Affiliation> addressAdditionComboBox
     Button submitButton
     Button affiliationButton
+    Panel affiliationDetails
 
     CreateCustomerView(CreateCustomerController controller, ViewModel sharedViewModel, CreateCustomerViewModel createCustomerViewModel) {
         super()
@@ -89,6 +91,9 @@ class CreateCustomerView extends VerticalLayout {
         submitButton.setIcon(VaadinIcons.USER)
         submitButton.enabled = allValuesValid()
 
+        this.affiliationDetails = new Panel("Affiliation Details")
+
+
         HorizontalLayout row1 = new HorizontalLayout(titleField)
         row1.setSizeFull()
         row1.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
@@ -98,21 +103,17 @@ class CreateCustomerView extends VerticalLayout {
         row2.setSizeFull()
 
         HorizontalLayout row3 = new HorizontalLayout(affiliationComboBox, addressAdditionComboBox)
-        row3.setComponentAlignment(affiliationComboBox, Alignment.BOTTOM_LEFT)
-        row3.setComponentAlignment(addressAdditionComboBox, Alignment.BOTTOM_LEFT)
+        row3.setComponentAlignment(affiliationComboBox, Alignment.TOP_LEFT)
+        row3.setComponentAlignment(addressAdditionComboBox, Alignment.TOP_LEFT)
         row3.setSizeFull()
 
-        HorizontalLayout row4 = new HorizontalLayout(affiliationButton)
-        row4.setComponentAlignment(affiliationButton, Alignment.BOTTOM_LEFT)
-        row4.setSizeFull()
-
-        HorizontalLayout row5 = new HorizontalLayout(submitButton)
+        HorizontalLayout row5 = new HorizontalLayout(affiliationDetails, submitButton)
+        row5.setComponentAlignment(affiliationDetails, Alignment.BOTTOM_LEFT)
         row5.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
         row5.setSizeFull()
 
-
         //Add the components to the FormLayout
-        this.addComponents(row1, row2, row3, row4, row5)
+        this.addComponents(row1, row2, row3, row5)
 
 
         firstNameField.setSizeFull()
@@ -120,6 +121,7 @@ class CreateCustomerView extends VerticalLayout {
         emailField.setSizeFull()
         affiliationComboBox.setSizeFull()
         addressAdditionComboBox.setSizeFull()
+        affiliationDetails.setSizeFull()
 
         this.setSpacing(true)
     }
@@ -365,7 +367,22 @@ class CreateCustomerView extends VerticalLayout {
 
         this.affiliationComboBox.addSelectionListener({
             fireAffiliationSelectionEvent(it.value)
+            updateAffiliationDetails(it.value)
         })
+    }
+
+    private void updateAffiliationDetails(Affiliation affiliation) {
+        VerticalLayout content = new VerticalLayout()
+        content.addComponent(new Label("<strong>${affiliation.category.value}</strong>", ContentMode.HTML))
+        content.addComponent(new Label("${affiliation.organisation}", ContentMode.HTML))
+        if (affiliation.addressAddition) {
+            content.addComponent(new Label("${affiliation.addressAddition}", ContentMode.HTML))
+        }
+        content.addComponent(new Label("${affiliation.street}", ContentMode.HTML))
+        content.addComponent(new Label("${affiliation.postalCode} ${affiliation.city} - ${affiliation.country}", ContentMode.HTML))
+        content.setMargin(true)
+        content.setSpacing(false)
+        this.affiliationDetails.setContent(content)
     }
 
     private void styleDetailsToggle() {
