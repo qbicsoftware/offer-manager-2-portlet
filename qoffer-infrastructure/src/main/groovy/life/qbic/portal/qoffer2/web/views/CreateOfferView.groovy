@@ -7,6 +7,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 import life.qbic.portal.qoffer2.web.views.create.offer.CustomerSelectionView
 import life.qbic.portal.qoffer2.web.views.create.offer.ProjectInformationView
+import life.qbic.portal.qoffer2.web.views.create.offer.ProjectManagerSelectionView
 
 /**
  * This class generates a Layout in which the user
@@ -26,6 +27,7 @@ class CreateOfferView extends VerticalLayout{
 
     final private ProjectInformationView projectInformationView
     final private CustomerSelectionView customerSelectionView
+    final private ProjectManagerSelectionView projectManagerSelectionView
 
 
     CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller) {
@@ -36,6 +38,7 @@ class CreateOfferView extends VerticalLayout{
 
         projectInformationView = new ProjectInformationView(view)
         customerSelectionView = new CustomerSelectionView(view)
+        projectManagerSelectionView = new ProjectManagerSelectionView()
 
         initLayout()
         registerListeners()
@@ -44,8 +47,8 @@ class CreateOfferView extends VerticalLayout{
 
     private void initLayout(){
         //todo set up tab layout
-        this.addComponent(projectInformationView)
-
+        //this.addComponent(projectInformationView)
+        this.addComponent(customerSelectionView)
     }
 
 
@@ -53,6 +56,10 @@ class CreateOfferView extends VerticalLayout{
         this.projectInformationView.next.addClickListener({ event ->
             this.removeComponent(projectInformationView)
             this.addComponent(customerSelectionView)
+        })
+        this.customerSelectionView.next.addClickListener({
+            this.removeComponent(customerSelectionView)
+            this.addComponent()
         })
     }
 

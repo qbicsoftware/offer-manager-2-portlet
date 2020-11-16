@@ -14,7 +14,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 
 /**
  * This class generates a Layout in which the user
- * can input the necessary information about a project
+ * can select the customer for a whom the offer will be created
  *
  * CustomerSelectionView will be integrated into the CreateOfferView and provides an User Interface
  * with the intention of enabling a user the selecting a customer for whom an offer will be created in the
@@ -31,19 +31,29 @@ class CustomerSelectionView extends VerticalLayout{
 
     Button next
     Grid<Customer> customerGrid
-    HorizontalLayout gridLayout
+    HorizontalLayout customerLayout
+    Grid<Affiliation> affiliationGrid
+    HorizontalLayout affiliationLayout
 
     CustomerSelectionView(CreateOfferViewModel viewModel){
         this.viewModel = viewModel
         //this.searchCustomerView = searchCustomerView
+        Affiliation testAffiliation = new Affiliation.Builder("organization","Street","postal code","city").build()
+        Affiliation testAffiliation2 = new Affiliation.Builder("QBiC","Street","postal code","city").build()
 
-        Customer customer = new Customer.Builder("Max", null, "a.b@c.de").title(AcademicTitle.DOCTOR).affiliation([new Affiliation.Builder("organization","Street","postal code","city").build()]).build()
+        Customer customer = new Customer.Builder("Max", "Mustermann", "a.b@c.de").title(AcademicTitle.DOCTOR).affiliation(testAffiliation).build()
 
-        this.foundCustomerList = [customer] //searchCustomerViewModel.foundCustomers
+        Customer customer2 = new Customer.Builder("Max2", "Mustermann", "a.b@c.de").title(AcademicTitle.DOCTOR).affiliation(testAffiliation).build()
+        Customer customer3 = new Customer.Builder("Max3", "Mustermann", "a.b@c.de").title(AcademicTitle.DOCTOR).affiliation(testAffiliation).build()
+
+
+
+        this.foundCustomerList = [customer,customer,customer] //searchCustomerViewModel.foundCustomers
 
         initLayout()
         setupDataProvider()
-        generateGrid()
+        generateCustomerGrid()
+        generateAffiliationGrid()
         bindViewModel()
     }
 
@@ -61,9 +71,12 @@ class CustomerSelectionView extends VerticalLayout{
         buttonLayout.setSizeFull()
 
         this.customerGrid = new Grid<Customer>()
-        gridLayout = new HorizontalLayout(customerGrid)
+        customerLayout = new HorizontalLayout(customerGrid)
 
-        this.addComponents(layout, gridLayout, buttonLayout)
+        this.affiliationGrid = new Grid<Affiliation>()
+        affiliationLayout = new HorizontalLayout(affiliationGrid)
+
+        this.addComponents(layout, customerLayout, buttonLayout)
     }
 
     /**
@@ -79,18 +92,44 @@ class CustomerSelectionView extends VerticalLayout{
      * This Method is responsible for setting up the grid and setting the customer information to the individual grid columns.
      * If the grid is generated correctly it will be added to the preset grid layout and also enables the clear customer grid button.
      */
-    private def generateGrid() {
+    private def generateCustomerGrid() {
         //Clear Grid before the new grid is populated
         try {
+            this.customerGrid.addColumn({ customer -> customer.getTitle() }).setCaption("Title")
             this.customerGrid.addColumn({ customer -> customer.getFirstName() }).setCaption("First Name")
             this.customerGrid.addColumn({ customer -> customer.getLastName() }).setCaption("Last Name")
-            this.customerGrid.addColumn({ customer -> customer.geteMailAddress() }).setCaption("Email Address")
-            this.customerGrid.addColumn({ customer -> customer.getTitle() }).setCaption("Title")
-            this.customerGrid.addColumn({ customer -> customer.getAffiliations().toString() }).setCaption("Affiliation")
+            this.customerGrid.addColumn({ customer -> customer.getEmailAddress() }).setCaption("Email Address")
+            //this.customerGrid.addColumn({ customer -> customer.getAffiliations().toString() }).setCaption("Affiliation")
 
             //specify size of grid and layout
-            gridLayout.setSizeFull()
+            customerLayout.setSizeFull()
             customerGrid.setSizeFull()
+
+        } catch (Exception e) {
+            new Exception("Unexpected exception in building the customer grid", e)
+        }
+    }
+
+    /**
+     * Method which generates the grid and populates the columns with the set Customer information from the setupDataProvider Method
+     *
+     * This Method is responsible for setting up the grid and setting the customer information to the individual grid columns.
+     * If the grid is generated correctly it will be added to the preset grid layout and also enables the clear customer grid button.
+     */
+    private def generateAffiliationGrid() {
+        //Clear Grid before the new grid is populated
+        try {
+            this.affiliationGrid.addColumn({ affiliation -> affiliation.organisation }).setCaption("Organization")
+            this.affiliationGrid.addColumn({ affiliation -> affiliation.addressAddition }).setCaption("Address Addition")
+            this.affiliationGrid.addColumn({ affiliation -> affiliation.street }).setCaption("Street")
+            this.affiliationGrid.addColumn({ affiliation -> affiliation.postalCode }).setCaption("Postal Code")
+            this.affiliationGrid.addColumn({ affiliation -> affiliation.city }).setCaption("City")
+            this.affiliationGrid.addColumn({ affiliation -> affiliation.country }).setCaption("Country")
+            this.affiliationGrid.addColumn({ affiliation -> affiliation.category.value }).setCaption("Category")
+
+            //specify size of grid and layout
+            affiliationLayout.setSizeFull()
+            affiliationGrid.setSizeFull()
 
         } catch (Exception e) {
             new Exception("Unexpected exception in building the customer grid", e)
@@ -101,8 +140,21 @@ class CustomerSelectionView extends VerticalLayout{
     private void bindViewModel() {
 
         customerGrid.addSelectionListener({ selection ->
-            println selection.firstSelectedItem
+            //vaadin is in single selection mode, selecting the first item will be fine
+            List<Affiliation> affiliations = customerGrid.getSelectedItems().getAt(0).affiliations
+            Customer customer = customerGrid.getSelectedItems().getAt(0)
+
+            //todo do we need to clear the grid for another selection?
+            affiliationGrid.setItems(affiliations)
+
+            this.addComponent(affiliationGrid,2)
         })
 
+        affiliationGrid.addSelectionListener({
+            //todo what to do with the customer and affiliation now?
+            Affiliation affiliation = affiliationGrid.getSelectedItems().getAt(0)
+
+            next.setEnabled(true)
+        })
     }
 }
