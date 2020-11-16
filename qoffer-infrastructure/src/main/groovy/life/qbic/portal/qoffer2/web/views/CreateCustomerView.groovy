@@ -107,13 +107,13 @@ class CreateCustomerView extends VerticalLayout {
         row3.setComponentAlignment(addressAdditionComboBox, Alignment.TOP_LEFT)
         row3.setSizeFull()
 
-        HorizontalLayout row5 = new HorizontalLayout(affiliationDetails, submitButton)
-        row5.setComponentAlignment(affiliationDetails, Alignment.BOTTOM_LEFT)
-        row5.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
-        row5.setSizeFull()
+        HorizontalLayout row4 = new HorizontalLayout(affiliationDetails, submitButton)
+        row4.setComponentAlignment(affiliationDetails, Alignment.BOTTOM_LEFT)
+        row4.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
+        row4.setSizeFull()
 
         //Add the components to the FormLayout
-        this.addComponents(row1, row2, row3, row5)
+        this.addComponents(row1, row2, row3, row4)
 
 
         firstNameField.setSizeFull()
