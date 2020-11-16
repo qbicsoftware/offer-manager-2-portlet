@@ -374,12 +374,12 @@ class CreateCustomerView extends VerticalLayout {
     private void updateAffiliationDetails(Affiliation affiliation) {
         VerticalLayout content = new VerticalLayout()
         content.addComponent(new Label("<strong>${affiliation.category.value}</strong>", ContentMode.HTML))
-        content.addComponent(new Label("${affiliation.organisation}", ContentMode.HTML))
+        content.addComponent(new Label("${affiliation.organisation}"))
         if (affiliation.addressAddition) {
-            content.addComponent(new Label("${affiliation.addressAddition}", ContentMode.HTML))
+            content.addComponent(new Label("${affiliation.addressAddition}"))
         }
-        content.addComponent(new Label("${affiliation.street}", ContentMode.HTML))
-        content.addComponent(new Label("${affiliation.postalCode} ${affiliation.city} - ${affiliation.country}", ContentMode.HTML))
+        content.addComponent(new Label("${affiliation.street}"))
+        content.addComponent(new Label("${affiliation.postalCode} ${affiliation.city} - ${affiliation.country}"))
         content.setMargin(true)
         content.setSpacing(false)
         this.affiliationDetails.setContent(content)
