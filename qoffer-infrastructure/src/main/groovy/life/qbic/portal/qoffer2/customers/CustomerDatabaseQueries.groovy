@@ -60,13 +60,7 @@ class CustomerDatabaseQueries {
                 String firstName = "${rs.getString(2)}"
                 String emailAddress = "${rs.getString(5)}";
                 AcademicTitle academicTitle = academicTitleFactory.getForString("${rs.getString(4)}")
-                def customer = new Customer(
-                    firstName,
-                    lastName,
-                    academicTitle,
-                    emailAddress,
-                    affiliations
-                )
+                Customer customer = new Customer.Builder(firstName, lastName, emailAddress).title(academicTitle).affiliations(affiliations).build()
                 result.add(customer)
             }
         }
@@ -251,7 +245,7 @@ class CustomerDatabaseQueries {
         statement.setString(1, customer.firstName )
         statement.setString(2, customer.lastName)
         statement.setString(3, customer.title.value)
-        statement.setString(4, customer.eMailAddress )
+        statement.setString(4, customer.emailAddress)
         statement.execute()
         def keys = statement.getGeneratedKeys()
         while (keys.next()){
