@@ -217,7 +217,7 @@ class SearchCustomerView extends FormLayout {
         try {
             this.customerGrid.addColumn({ customer -> customer.getFirstName() }).setCaption("First Name")
             this.customerGrid.addColumn({ customer -> customer.getLastName() }).setCaption("Last Name")
-            this.customerGrid.addColumn({ customer -> customer.geteMailAddress() }).setCaption("Email Address")
+            this.customerGrid.addColumn({ customer -> customer.getEmailAddress() }).setCaption("Email Address")
             this.customerGrid.addColumn({ customer -> customer.getTitle() }).setCaption("Title")
             this.customerGrid.addColumn({ customer -> customer.getAffiliations().toString() }).setCaption("Affiliation")
 
