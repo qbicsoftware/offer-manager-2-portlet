@@ -142,16 +142,16 @@ class SelectItemsView extends VerticalLayout{
         secondaryAnalyseProduct = [secondaryAnalysis]
     }
     /**
-     * Method which generates the grid and populates the columns with the set Customer information from the setupDataProvider Method
+     * Method which generates the grid and populates the columns with the set product information from the setupDataProvider Method
      *
-     * This Method is responsible for setting up the grid and setting the customer information to the individual grid columns.
+     * This Method is responsible for setting up the grid and setting the product information to the individual grid columns.
      */
     private static void generateProductGrid(Grid<Product> grid) {
         try {
-            grid.addColumn({ atomicProduct -> atomicProduct.productName }).setCaption("Product Name")
-            grid.addColumn({ atomicProduct -> atomicProduct.description }).setCaption("Product Description")
-            grid.addColumn({ atomicProduct -> atomicProduct.unitPrice }).setCaption("Product Unit Price")
-            grid.addColumn({ atomicProduct -> atomicProduct.unit.value }).setCaption("Product Unit")
+            grid.addColumn({ product -> product.productName }).setCaption("Product Name")
+            grid.addColumn({ product -> product.description }).setCaption("Product Description")
+            grid.addColumn({ product -> product.unitPrice }).setCaption("Product Unit Price")
+            grid.addColumn({ product -> product.unit.value }).setCaption("Product Unit")
 
             //specify size of grid and layout
             grid.setSizeFull()
