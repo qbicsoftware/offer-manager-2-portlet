@@ -43,13 +43,10 @@ class CustomerSelectionView extends VerticalLayout{
         Affiliation testAffiliation2 = new Affiliation.Builder("QBiC","Street","postal code","city").build()
 
         Customer customer = new Customer.Builder("Max", "Mustermann", "a.b@c.de").title(AcademicTitle.DOCTOR).affiliation(testAffiliation).build()
+        Customer customer2 = new Customer.Builder("Max2", "Mustermann", "a.b@c.de").title(AcademicTitle.DOCTOR).affiliations([testAffiliation,testAffiliation2]).build()
+        Customer customer3 = new Customer.Builder("Max3", "Mustermann", "a.b@c.de").title(AcademicTitle.DOCTOR).affiliation(testAffiliation2).build()
 
-        Customer customer2 = new Customer.Builder("Max2", "Mustermann", "a.b@c.de").title(AcademicTitle.DOCTOR).affiliation(testAffiliation).build()
-        Customer customer3 = new Customer.Builder("Max3", "Mustermann", "a.b@c.de").title(AcademicTitle.DOCTOR).affiliation(testAffiliation).build()
-
-
-
-        this.foundCustomerList = [customer,customer,customer] //searchCustomerViewModel.foundCustomers
+        this.foundCustomerList = [customer,customer2,customer3] //searchCustomerViewModel.foundCustomers
 
         initLayout()
         setupDataProvider()
@@ -58,6 +55,9 @@ class CustomerSelectionView extends VerticalLayout{
         bindViewModel()
     }
 
+    /**
+     * Initializes the start layout of this view class
+     */
     private void initLayout(){
         VerticalLayout layout = new VerticalLayout()
         Label titleLabel = new Label("Select Customer")
@@ -91,10 +91,8 @@ class CustomerSelectionView extends VerticalLayout{
      * Method which generates the grid and populates the columns with the set Customer information from the setupDataProvider Method
      *
      * This Method is responsible for setting up the grid and setting the customer information to the individual grid columns.
-     * If the grid is generated correctly it will be added to the preset grid layout and also enables the clear customer grid button.
      */
     private def generateCustomerGrid() {
-        //Clear Grid before the new grid is populated
         try {
             this.customerGrid.addColumn({ customer -> customer.getTitle() }).setCaption("Title")
             this.customerGrid.addColumn({ customer -> customer.getFirstName() }).setCaption("First Name")
@@ -114,11 +112,9 @@ class CustomerSelectionView extends VerticalLayout{
     /**
      * Method which generates the grid and populates the columns with the set Customer information from the setupDataProvider Method
      *
-     * This Method is responsible for setting up the grid and setting the customer information to the individual grid columns.
-     * If the grid is generated correctly it will be added to the preset grid layout and also enables the clear customer grid button.
+     * This Method is responsible for setting up the grid and setting the affiliation information to the individual grid columns.
      */
     private def generateAffiliationGrid() {
-        //Clear Grid before the new grid is populated
         try {
             this.affiliationGrid.addColumn({ affiliation -> affiliation.organisation }).setCaption("Organization")
             this.affiliationGrid.addColumn({ affiliation -> affiliation.addressAddition }).setCaption("Address Addition")
@@ -133,7 +129,7 @@ class CustomerSelectionView extends VerticalLayout{
             affiliationGrid.setSizeFull()
 
         } catch (Exception e) {
-            new Exception("Unexpected exception in building the customer grid", e)
+            new Exception("Unexpected exception in building the affiliation grid", e)
         }
 
     }

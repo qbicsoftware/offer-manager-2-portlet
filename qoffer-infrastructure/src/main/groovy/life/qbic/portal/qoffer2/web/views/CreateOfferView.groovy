@@ -8,6 +8,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 import life.qbic.portal.qoffer2.web.views.create.offer.CustomerSelectionView
 import life.qbic.portal.qoffer2.web.views.create.offer.ProjectInformationView
 import life.qbic.portal.qoffer2.web.views.create.offer.ProjectManagerSelectionView
+import life.qbic.portal.qoffer2.web.views.create.offer.SelectItemsView
 
 /**
  * This class generates a Layout in which the user
@@ -28,6 +29,7 @@ class CreateOfferView extends VerticalLayout{
     final private ProjectInformationView projectInformationView
     final private CustomerSelectionView customerSelectionView
     final private ProjectManagerSelectionView projectManagerSelectionView
+    final private SelectItemsView selectItemsView
 
 
     CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller) {
@@ -38,11 +40,11 @@ class CreateOfferView extends VerticalLayout{
 
         projectInformationView = new ProjectInformationView(view)
         customerSelectionView = new CustomerSelectionView(view)
-        projectManagerSelectionView = new ProjectManagerSelectionView()
+        projectManagerSelectionView = new ProjectManagerSelectionView(view)
+        selectItemsView = new SelectItemsView(view)
 
         initLayout()
         registerListeners()
-
     }
 
     /**
@@ -51,7 +53,7 @@ class CreateOfferView extends VerticalLayout{
     private void initLayout(){
         //todo set up tab layout
         //this.addComponent(projectInformationView)
-        this.addComponent(projectManagerSelectionView)
+        this.addComponent(selectItemsView)
     }
 
     /**
@@ -64,7 +66,11 @@ class CreateOfferView extends VerticalLayout{
         })
         this.customerSelectionView.next.addClickListener({
             this.removeComponent(customerSelectionView)
-            this.addComponent()
+            this.addComponent(projectManagerSelectionView)
+        })
+        this.projectManagerSelectionView.next.addClickListener({
+            this.removeComponent(projectManagerSelectionView)
+            this.addComponent(selectItemsView)
         })
     }
 
