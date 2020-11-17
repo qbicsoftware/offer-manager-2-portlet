@@ -41,7 +41,7 @@ class CreateOfferView extends VerticalLayout{
         projectInformationView = new ProjectInformationView(view)
         customerSelectionView = new CustomerSelectionView(view)
         projectManagerSelectionView = new ProjectManagerSelectionView(view)
-        selectItemsView = new SelectItemsView(view)
+        selectItemsView = new SelectItemsView(view,sharedViewModel)
 
         initLayout()
         registerListeners()

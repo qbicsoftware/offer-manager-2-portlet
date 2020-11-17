@@ -28,9 +28,5 @@ class CreateOfferViewModel {
     @Bindable Affiliation customerAffiliation
     @Bindable ProjectManager projectManager
     @Bindable List<ProductItem> productItems
-    @Bindable double totalPrice
-    @Bindable Button next
-    @Bindable Button back
-
 
 }
