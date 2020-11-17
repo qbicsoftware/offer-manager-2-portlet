@@ -10,20 +10,6 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
     <artifactId>qoffer-infrastructure</artifactId>
-    <distributionManagement>
-        <repository>
-            <uniqueVersion>true</uniqueVersion>
-            <id>nexus-releases</id>
-            <name>QBiC Releases</name>
-            <url>https://qbic-repo.qbic.uni-tuebingen.de/repository/maven-releases</url>
-        </repository>
-        <snapshotRepository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>nexus-snapshots</id>
-            <name>QBiC Snapshots</name>
-            <url>https://qbic-repo.qbic.uni-tuebingen.de/repository/maven-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
     <pluginRepositories>
         <pluginRepository>
             <id>maven-central-plugins</id>
