@@ -10,6 +10,38 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
     <artifactId>qoffer-infrastructure</artifactId>
+    <distributionManagement>
+        <repository>
+            <uniqueVersion>true</uniqueVersion>
+            <id>nexus-releases</id>
+            <name>QBiC Releases</name>
+            <url>https://qbic-repo.qbic.uni-tuebingen.de/repository/maven-releases</url>
+        </repository>
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>nexus-snapshots</id>
+            <name>QBiC Snapshots</name>
+            <url>https://qbic-repo.qbic.uni-tuebingen.de/repository/maven-snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven-central-plugins</id>
+            <url>
+                https://repo.maven.apache.org/maven2
+            </url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>liferay-releases-plugins</id>
+            <url>
+                https://repository.liferay.com/nexus/content/repositories/liferay-public-releases/com/liferay/portal/
+            </url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>qbic-plugins-2</id>
+            <url>https://qbic-repo.qbic.uni-tuebingen.de/repository/maven-releases</url>
+        </pluginRepository>
+    </pluginRepositories>
     <dependencies>
         <dependency>
             <groupId>life.qbic</groupId>
@@ -103,19 +135,6 @@
                                 <include>**/styles.css</include>
                                 <include>**/styles.scss.cache</include>
                             </includes>
-                        </fileset>
-                    </filesets>
-                </configuration>
-            </plugin>
-
-
-            <plugin>
-                <artifactId>maven-clean-plugin</artifactId>
-                <version>2.4.1</version>
-                <configuration>
-                    <filesets>
-                        <fileset>
-                            <directory>src/main/webapp/VAADIN/widgetsets</directory>
                         </fileset>
                     </filesets>
                 </configuration>
