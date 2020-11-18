@@ -30,6 +30,8 @@ class ProjectManagerSelectionView extends VerticalLayout{
     private final List<ProjectManager> foundProjectManagers
 
     Button next
+    Button previous
+
     Grid<ProjectManager> projectManagerGrid
     HorizontalLayout projectManagerLayout
 
@@ -58,9 +60,12 @@ class ProjectManagerSelectionView extends VerticalLayout{
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.setEnabled(false)
+        this.previous = new Button(VaadinIcons.CHEVRON_CIRCLE_LEFT)
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(next)
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(previous,next)
         buttonLayout.setComponentAlignment(next, Alignment.BOTTOM_RIGHT)
+        buttonLayout.setComponentAlignment(previous, Alignment.BOTTOM_LEFT)
         buttonLayout.setSizeFull()
 
         this.projectManagerGrid = new Grid<ProjectManager>()

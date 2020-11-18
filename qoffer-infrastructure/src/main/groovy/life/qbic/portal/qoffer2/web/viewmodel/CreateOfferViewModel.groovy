@@ -1,8 +1,6 @@
 package life.qbic.portal.qoffer2.web.viewmodel
 
-import com.vaadin.ui.Button
 import groovy.beans.Bindable
-import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
@@ -27,6 +25,6 @@ class CreateOfferViewModel {
     @Bindable Customer customer
     @Bindable Affiliation customerAffiliation
     @Bindable ProjectManager projectManager
-    @Bindable List<ProductItem> productItems
-
+    @Bindable List<ProductItemViewModel> productItems
+    @Bindable double offerPrice
 }

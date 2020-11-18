@@ -31,6 +31,8 @@ class CustomerSelectionView extends VerticalLayout{
     private final List<Customer> foundCustomerList
 
     Button next
+    Button previous
+
     Grid<Customer> customerGrid
     HorizontalLayout customerLayout
     Grid<Affiliation> affiliationGrid
@@ -66,9 +68,11 @@ class CustomerSelectionView extends VerticalLayout{
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.setEnabled(false)
+        this.previous = new Button(VaadinIcons.CHEVRON_CIRCLE_LEFT)
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(next)
+        HorizontalLayout buttonLayout = new HorizontalLayout(previous,next)
         buttonLayout.setComponentAlignment(next, Alignment.BOTTOM_RIGHT)
+        buttonLayout.setComponentAlignment(previous, Alignment.BOTTOM_LEFT)
         buttonLayout.setSizeFull()
 
         this.customerGrid = new Grid<Customer>()

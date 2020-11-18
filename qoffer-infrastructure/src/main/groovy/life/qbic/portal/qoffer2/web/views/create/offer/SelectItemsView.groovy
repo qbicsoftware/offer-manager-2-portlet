@@ -26,7 +26,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  * can select the the different packages requested by the customer.
  *
  * SelectItemsView will be integrated into the CreateOfferView and provides an User Interface
- * with the intention of enabling a user the selecting packages which the customer ordered. This will be the bases for
+ * with the intention of enabling a user the selecting of packages which the customer ordered. This will be the bases for
  * the calculated offer price.
  *
  * @since: 0.1.0
@@ -34,7 +34,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  */
 class SelectItemsView extends VerticalLayout{
 
-    final private CreateOfferViewModel creatOfferViewModel
+    final private CreateOfferViewModel createOfferViewModel
     final private ViewModel viewModel
 
     private List<ProductItemViewModel> sequencingProduct
@@ -57,6 +57,7 @@ class SelectItemsView extends VerticalLayout{
     Button applySecondaryAnalysis
     Button applyDataStorage
     Button next
+    Button previous
 
     TextField amountSequencing
     TextField amountProjectManagement
@@ -65,8 +66,8 @@ class SelectItemsView extends VerticalLayout{
     TextField amountDataStorage
 
 
-    SelectItemsView(CreateOfferViewModel creatOfferViewModel, ViewModel viewModel){
-        this.creatOfferViewModel = creatOfferViewModel
+    SelectItemsView(CreateOfferViewModel createOfferViewModel, ViewModel viewModel){
+        this.createOfferViewModel = createOfferViewModel
         this.viewModel = viewModel
 
         this.sequencingProduct = []
@@ -75,6 +76,8 @@ class SelectItemsView extends VerticalLayout{
         this.primaryAnalyseProduct = []
         this.secondaryAnalyseProduct = []
         this.selectedItems = []
+
+        this.createOfferViewModel.productItems = selectedItems
 
         addDummyValues()
         initLayout()
@@ -111,6 +114,7 @@ class SelectItemsView extends VerticalLayout{
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.setEnabled(false)
+        this.previous = new Button(VaadinIcons.CHEVRON_CIRCLE_LEFT)
 
         this.applySequencing = new Button("Apply", VaadinIcons.PLUS)
         applySequencing.setEnabled(false)
@@ -127,8 +131,9 @@ class SelectItemsView extends VerticalLayout{
         this.applyProjectManagement = new Button("Apply", VaadinIcons.PLUS)
         applyProjectManagement.setEnabled(false)
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(next)
+        HorizontalLayout buttonLayout = new HorizontalLayout(previous,next)
         buttonLayout.setComponentAlignment(next, Alignment.BOTTOM_RIGHT)
+        buttonLayout.setComponentAlignment(previous, Alignment.BOTTOM_LEFT)
         buttonLayout.setSizeFull()
 
         HorizontalLayout quantitySeq = new HorizontalLayout(amountSequencing,applySequencing)
@@ -179,7 +184,6 @@ class SelectItemsView extends VerticalLayout{
 
         this.addComponents(layout, packageAccordion, overviewGrid, buttonLayout)
         this.setSizeFull()
-
     }
 
     /**
@@ -231,7 +235,7 @@ class SelectItemsView extends VerticalLayout{
             grid.setSizeFull()
 
         } catch (Exception e) {
-            new Exception("Unexpected exception in building the project manager grid", e)
+            new Exception("Unexpected exception in building the product item grid", e)
         }
     }
 

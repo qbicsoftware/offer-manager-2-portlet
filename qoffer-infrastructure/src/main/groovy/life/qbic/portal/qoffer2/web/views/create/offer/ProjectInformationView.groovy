@@ -34,6 +34,7 @@ class ProjectInformationView extends VerticalLayout {
 
     ProjectInformationView(CreateOfferViewModel createOfferViewModel) {
         this.createOfferViewModel = createOfferViewModel
+
         initLayout()
         bindViewModel()
     }

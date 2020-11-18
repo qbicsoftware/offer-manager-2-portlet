@@ -2,9 +2,9 @@ package life.qbic.portal.portlet.offers.create
 
 import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.datamodel.dtos.business.AffiliationCategory
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
-import life.qbic.datamodel.dtos.general.Person
 
 /**
  * This class implements logic to create new offers.
@@ -14,7 +14,7 @@ import life.qbic.datamodel.dtos.general.Person
  * @since: 1.0.0
  * @author: Tobias Koch
  */
-class CreateOffer implements CreateOfferInput{
+class CreateOffer implements CreateOfferInput, CalculatePrice{
 
     private CreateOfferDataSource dataSource
     private CreateOfferOutput output
@@ -27,17 +27,19 @@ class CreateOffer implements CreateOfferInput{
     @Override
     void createOffer(Offer offerContent) {
         OfferId identifier = generateQuotationID(offerContent.customer)
+        double offerPrice = PriceCalculator.calculateOfferPrice(offerContent.items,offerContent.selectedCustomerAffiliation.category)
 
-        Offer finalizedOffer = new Offer.Builder(new Date(),
-                offerContent.expirationDate,
+        Offer finalizedOffer = new Offer.Builder(
                 offerContent.customer,
                 offerContent.projectManager,
-                offerContent.projectDescription,
                 offerContent.projectTitle,
+                offerContent.projectDescription,
                 offerContent.items,
-                calculateOfferPrice(offerContent.items,offerContent.selectedCustomerAffiliation.category),
-                identifier,
                 offerContent.selectedCustomerAffiliation)
+                .identifier(identifier)
+                .expirationDate(new Date(2030,12,24)) //todo how to determine this?
+                .modificationDate(new Date())
+                .totalPrice(offerPrice)
                 .build()
 
         dataSource.store(finalizedOffer)
@@ -48,7 +50,7 @@ class CreateOffer implements CreateOfferInput{
      * @param customer which is required for the project conserved part
      * @return
      */
-    private static OfferId generateQuotationID(Person customer){
+    private static OfferId generateQuotationID(Customer customer){
     //todo: do we want to have a person here? 
     //todo: update the datamodellib
         String projectConservedPart = customer.lastName.toLowerCase()
@@ -59,42 +61,9 @@ class CreateOffer implements CreateOfferInput{
         return new OfferId(projectConservedPart,randomPart,version)
     }
 
-    /**
-     * Method to calculate the price form the offer items
-     * @param items
-     * @return
-     */
-    private static double calculateOfferPrice(List<ProductItem> items, AffiliationCategory affiliationCategory){
-        //1. sum up item price
-        double offerPrice = 0
-        items.each {item ->
-            offerPrice += item.computeTotalCosts()
-        }
-        //2. add overheads if applicable
-        double overhead = getOverhead(affiliationCategory)
-        offerPrice = offerPrice + offerPrice * overhead
-        //2. VAT?
-        //todo
-
-        return offerPrice
-    }
-
-    /**
-     * This method returns the overhead for a given {@link AffiliationCategory}
-     * @param category determines the overhead type of a customer
-     * @return
-     */
-    private static double getOverhead(AffiliationCategory category){
-        switch (category){
-            case AffiliationCategory.INTERNAL:
-                return 1.0
-            case AffiliationCategory.EXTERNAL_ACADEMIC:
-                return 1.0
-            case AffiliationCategory.EXTERNAL:
-                return 1.0
-            case AffiliationCategory.UNKNOWN:
-                return 1.0
-        }
-
+    @Override
+    void calculatePrice(List<ProductItem> items, AffiliationCategory category) {
+        double offerPrice = PriceCalculator.calculateOfferPrice(items,category)
+        output.calculatedPrice(offerPrice)
     }
 }

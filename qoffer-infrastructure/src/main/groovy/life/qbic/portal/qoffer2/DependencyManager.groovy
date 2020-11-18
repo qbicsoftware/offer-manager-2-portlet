@@ -238,6 +238,11 @@ class DependencyManager {
         } catch (Exception e) {
             log.error("Unexpected exception during ${ListAffiliationsController.getSimpleName()} setup", e)
         }
+        try {
+            this.createOfferController = new CreateOfferController(this.createOffer,this.createOffer)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${ListAffiliationsController.getSimpleName()} setup", e)
+        }
     }
 
     private void setupViews() {

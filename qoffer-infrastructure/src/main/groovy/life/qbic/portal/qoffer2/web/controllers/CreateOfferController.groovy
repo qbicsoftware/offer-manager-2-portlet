@@ -2,9 +2,11 @@ package life.qbic.portal.qoffer2.web.controllers
 
 import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.portal.portlet.offers.create.CalculatePrice
 import life.qbic.portal.portlet.offers.create.CreateOfferInput
 
 /**
@@ -18,9 +20,11 @@ import life.qbic.portal.portlet.offers.create.CreateOfferInput
 class CreateOfferController {
 
     private final CreateOfferInput input
+    private final CalculatePrice calculatePrice
 
-    CreateOfferController(CreateOfferInput input){
+    CreateOfferController(CreateOfferInput input,CalculatePrice calculatePrice){
         this.input = input
+        this.calculatePrice = calculatePrice
     }
 
     /**
@@ -36,10 +40,23 @@ class CreateOfferController {
      */
     void createOffer(String projectTitle, String projectDescription, Customer customer, ProjectManager manager, List<ProductItem> items, double totalPrice, Affiliation customerAffiliation){
         try {
-            Offer offer = new Offer.Builder(null,null,customer,manager,projectDescription,projectTitle,items,totalPrice,null,customerAffiliation).build()
+            Offer offer = new Offer.Builder(customer,manager,projectDescription,projectTitle,items,customerAffiliation).totalPrice(totalPrice).build()
             this.input.createOffer(offer)
         } catch(Exception ignored) {
             throw new IllegalArgumentException("Could not create offer from provided arguments.")
+        }
+    }
+
+    /**
+     * Method to trigger the calculation of the price based on a list of items and a category
+     * @param items A list of product items with a quantity and product
+     * @param category defining the category of the affiliation
+     */
+    void calculatePriceForItems(List<ProductItem> items, AffiliationCategory category){
+        try {
+            this.calculatePrice.calculatePrice(items,category)
+        } catch(Exception ignored) {
+            throw new IllegalArgumentException("Could not calculate price from provided arguments.")
         }
     }
 }
