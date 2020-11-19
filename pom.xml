@@ -57,7 +57,7 @@
 			<dependency>
 				<groupId>life.qbic</groupId>
 				<artifactId>data-model-lib</artifactId>
-				<version>1.12.0-SNAPSHOT</version>
+				<version>1.12.0-20201118.153251-40</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>

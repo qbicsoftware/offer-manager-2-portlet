@@ -10,6 +10,7 @@ import com.vaadin.ui.VerticalLayout
 
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
@@ -42,8 +43,8 @@ class CustomerSelectionView extends VerticalLayout{
     CustomerSelectionView(CreateOfferViewModel viewModel){
         this.viewModel = viewModel
         //this.searchCustomerView = searchCustomerView
-        Affiliation testAffiliation = new Affiliation.Builder("organization","Street","postal code","city").build()
-        Affiliation testAffiliation2 = new Affiliation.Builder("QBiC","Street","postal code","city").build()
+        Affiliation testAffiliation = new Affiliation.Builder("organization","Street","postal code","city").category(AffiliationCategory.INTERNAL).build()
+        Affiliation testAffiliation2 = new Affiliation.Builder("QBiC","Street","postal code","city").category(AffiliationCategory.EXTERNAL_ACADEMIC).build()
 
         Customer customer = new Customer.Builder("Max", "Mustermann", "a.b@c.de").title(AcademicTitle.DOCTOR).affiliation(testAffiliation).build()
         Customer customer2 = new Customer.Builder("Max2", "Mustermann", "a.b@c.de").title(AcademicTitle.DOCTOR).affiliations([testAffiliation,testAffiliation2]).build()
@@ -76,10 +77,10 @@ class CustomerSelectionView extends VerticalLayout{
         buttonLayout.setComponentAlignment(previous, Alignment.BOTTOM_LEFT)
         buttonLayout.setSizeFull()
 
-        this.customerGrid = new Grid<Customer>()
+        this.customerGrid = new Grid<>()
         customerLayout = new HorizontalLayout(customerGrid)
 
-        this.affiliationGrid = new Grid<Affiliation>()
+        this.affiliationGrid = new Grid<>()
         affiliationLayout = new HorizontalLayout(affiliationGrid)
 
         this.addComponents(layout, customerLayout, buttonLayout)
@@ -99,10 +100,10 @@ class CustomerSelectionView extends VerticalLayout{
      */
     private def generateCustomerGrid() {
         try {
-            this.customerGrid.addColumn({ customer -> customer.getTitle() }).setCaption("Title")
-            this.customerGrid.addColumn({ customer -> customer.getFirstName() }).setCaption("First Name")
-            this.customerGrid.addColumn({ customer -> customer.getLastName() }).setCaption("Last Name")
-            this.customerGrid.addColumn({ customer -> customer.getEmailAddress() }).setCaption("Email Address")
+            this.customerGrid.addColumn({ customer -> customer.title }).setCaption("Title")
+            this.customerGrid.addColumn({ customer -> customer.firstName }).setCaption("First Name")
+            this.customerGrid.addColumn({ customer -> customer.lastName }).setCaption("Last Name")
+            this.customerGrid.addColumn({ customer -> customer.emailAddress }).setCaption("Email Address")
             //this.customerGrid.addColumn({ customer -> customer.getAffiliations().toString() }).setCaption("Affiliation")
 
             //specify size of grid and layout
