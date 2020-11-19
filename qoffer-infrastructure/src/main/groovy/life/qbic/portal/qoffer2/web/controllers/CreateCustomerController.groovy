@@ -46,7 +46,7 @@ class CreateCustomerController {
         }
 
         try {
-            Customer customer = new Customer(firstName, lastName, academicTitle, email, affiliations as List<Affiliation>)
+            Customer customer = new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build()
             this.useCaseInput.createCustomer(customer)
         } catch(Exception ignored) {
             throw new IllegalArgumentException("Could not create customer from provided arguments.")

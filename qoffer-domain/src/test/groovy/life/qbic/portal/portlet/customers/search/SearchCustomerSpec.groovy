@@ -24,7 +24,7 @@ class SearchCustomerSpec extends Specification{
         SearchCustomerDataSource ds = Stub(SearchCustomerDataSource.class)
         SearchCustomer searchCustomer = new SearchCustomer(output,ds)
 
-        Customer luke = new Customer(firstName, lastName, AcademicTitle.DOCTOR, "a.b@c.de", new ArrayList<Affiliation>())
+        Customer luke = new Customer.Builder(firstName, lastName, "example@example.com").build()
 
         ds.findCustomer(firstName, lastName) >> [luke]
 

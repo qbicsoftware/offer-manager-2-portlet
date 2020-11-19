@@ -30,7 +30,7 @@ class SearchCustomerDataSourceSpec extends Specification{
         and: "a connection returning correct results only for matching firstname and lastname"
         // we need to stub the static SqlExtensions.toRowResult method because we do not provide an implemented RowResult
         GroovyMock(SqlExtensions, global: true)
-        SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(["id":id, "firstName":firstName, "lastName":lastName, "academicTitle":academicTitle, "eMailAddress":emailAddress])
+        SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(["id":id, "firstName":firstName, "lastName":lastName, "academicTitle":academicTitle, "emailAddress":emailAddress])
         // our statement should only be able to fill the template with the correct values
         PreparedStatement preparedStatement = Mock (PreparedStatement, {
             it.setString(1 , firstName) >> _
@@ -57,7 +57,7 @@ class SearchCustomerDataSourceSpec extends Specification{
         customer.firstName == firstName
         customer.lastName == lastName
         customer.title == factory.getForString(academicTitle)
-        customer.eMailAddress == emailAddress
+        customer.emailAddress == emailAddress
         //TODO also test for affiliations
 
 

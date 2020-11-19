@@ -90,7 +90,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     resultRows.forEach {Map row ->
       AcademicTitle title = TITLE_FACTORY.getForString(row.academicTitle as String)
       List<Affiliation> affiliations = fetchAffiliationsForPerson(row.id as int)
-      Customer customer = new Customer(row.firstName as String, row.lastName as String, title, row.eMailAddress as String, affiliations)
+      Customer customer = new Customer.Builder(row.firstName as String, row.lastName as String, row.eMailAddress as String).title(title).affiliations(affiliations).build()
       customerList.add(customer)
     }
     return customerList
@@ -334,9 +334,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       try {
         category = CATEGORY_FACTORY.getForString(row.category as String)
       } catch (IllegalArgumentException ignored) {
-        //fixme this should not happen but there is an incomplete entry in the DB
         log.warn("Affiliation ${row.id} has category '${row.category}'. Could not match.")
-        category = AffiliationCategory.UNKNOWN
+        throw new DatabaseQueryException("Could not list Affiliation details for ${row.organization}")
       }
 
       affiliationBuilder
