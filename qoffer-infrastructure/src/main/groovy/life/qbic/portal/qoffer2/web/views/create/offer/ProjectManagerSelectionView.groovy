@@ -7,10 +7,9 @@ import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.VerticalLayout
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
+
 import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.general.Person
+
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 
 /**
