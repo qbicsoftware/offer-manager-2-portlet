@@ -1,7 +1,7 @@
 package life.qbic.portal.qoffer2.web.presenters
 
-import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.portal.portlet.customers.search.SearchCustomerOutput
 import life.qbic.portal.qoffer2.web.viewmodel.SearchCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
@@ -13,27 +13,29 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  *
  * @since: 1.0.0
  */
-class SearchCustomerPresenter {
+class SearchCustomerPresenter implements SearchCustomerOutput {
     private ViewModel viewModel
     private SearchCustomerViewModel searchCustomerViewModel
 
     SearchCustomerPresenter(ViewModel viewModel, SearchCustomerViewModel searchCustomerViewModel) {
         this.viewModel = viewModel
         this.searchCustomerViewModel = searchCustomerViewModel
-        //ToDo Remove this list as soon as the backend is implemented
-        List<Customer> customerList = new ArrayList<Customer>()
-        def customer1 = new Customer.Builder("Ash", "Ketchum", "gottacatchem@all.de").title(AcademicTitle.NONE).build()
-        def customer2 = new Customer.Builder("Samuel", "Oak", "giveMeMyPokemon@geezer.de").title(AcademicTitle.PROFESSOR).build()
-        def customer3 = new Customer.Builder("Pikachu", "Pichu", "Pokdex@25.de").title(AcademicTitle.DOCTOR).build()
-        customerList.add(customer1)
-        customerList.add(customer2)
-        customerList.add(customer3)
-        reportFoundCustomers(customerList)
     }
 
+    @Override
     void reportFoundCustomers(List<Customer> customers) {
         searchCustomerViewModel.foundCustomers.clear()
         searchCustomerViewModel.foundCustomers.addAll(customers)
     }
 
+    /**
+     * Sends failure notifications that have been
+     * recorded during the use case.
+     * @param notification containing a failure message
+     * @since 1.0.0
+     */
+    @Override
+    void failNotification(String notification) {
+        viewModel.failureNotifications.add(notification)
+    }
 }

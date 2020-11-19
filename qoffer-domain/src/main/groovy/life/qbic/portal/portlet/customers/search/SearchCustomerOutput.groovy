@@ -19,5 +19,6 @@ interface SearchCustomerOutput extends UseCaseFailure {
    *
    * @param foundCustomers A list of {@link Customer}.
    */
-  void successNotification(List<Customer> foundCustomers)
+
+  void reportFoundCustomers(List<Customer> customers)
 }
