@@ -97,10 +97,7 @@ class SelectItemsView extends VerticalLayout{
      * Listens for changes of the foundProducts list and creates ProductItemViewModel objects from them
      */
     def listener = {
-        println foundProducts
-        println "listener activated"
         if (it instanceof ObservableList.ElementEvent)  {
-            println foundProducts
             foundProducts.each {
                 if(it instanceof Sequencing){
                     sequencingProduct.add(new ProductItemViewModel(0, it))
