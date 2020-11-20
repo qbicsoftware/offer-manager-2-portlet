@@ -3,6 +3,8 @@ package life.qbic.portal.qoffer2.web.views
 import com.vaadin.ui.VerticalLayout
 import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
+import life.qbic.portal.qoffer2.web.controllers.ListAffiliationsController
+import life.qbic.portal.qoffer2.web.controllers.ListProductsController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
@@ -27,6 +29,7 @@ class CreateOfferView extends VerticalLayout{
     final private ViewModel sharedViewModel
     final private CreateOfferViewModel view
     final private CreateOfferController controller
+    final private ListProductsController listProductsController
 
     final private ProjectInformationView projectInformationView
     final private CustomerSelectionView customerSelectionView
@@ -35,11 +38,12 @@ class CreateOfferView extends VerticalLayout{
     final private OfferOverviewView overviewView
 
 
-    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller) {
+    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController) {
         super()
         this.sharedViewModel = sharedViewModel
         this.view = createOfferViewModel
         this.controller = controller
+        this.listProductsController = listProductsController
 
         projectInformationView = new ProjectInformationView(view)
         customerSelectionView = new CustomerSelectionView(view)
@@ -86,6 +90,8 @@ class CreateOfferView extends VerticalLayout{
             this.removeComponent(selectItemsView)
             overviewView.fillPanel()
             controller.calculatePriceForItems(getProductItems(view.productItems),view.customerAffiliation.category)
+            listProductsController.listProducts()
+            println view.foundProductItems
             this.addComponent(overviewView)
         })
         this.selectItemsView.previous.addClickListener({

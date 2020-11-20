@@ -8,12 +8,15 @@ import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliations
 import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.portlet.customers.search.SearchCustomer
 import life.qbic.portal.portlet.offers.create.CreateOffer
+import life.qbic.portal.portlet.products.ListProducts
 import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import life.qbic.portal.qoffer2.offers.OfferDbConnector
+import life.qbic.portal.qoffer2.products.ProductsDbConnector
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
+import life.qbic.portal.qoffer2.web.controllers.ListProductsController
 import life.qbic.portal.qoffer2.web.controllers.SearchCustomerController
 import life.qbic.portal.qoffer2.web.controllers.ListAffiliationsController
 import life.qbic.portal.qoffer2.web.presenters.CreateAffiliationPresenter
@@ -64,18 +67,22 @@ class DependencyManager {
 
     private CustomerDbConnector customerDbConnector
     private OfferDbConnector offerDbConnector
+    private ProductsDbConnector productsDbConnector
 
     private CreateCustomer createCustomer
     private CreateAffiliation createAffiliation
     private ListAffiliations listAffiliations
     private SearchCustomer searchCustomer
     private CreateOffer createOffer
+    private ListProducts listProducts
 
     private CreateCustomerController createCustomerController
     private CreateAffiliationController createAffiliationController
     private SearchCustomerController searchCustomerController
     private ListAffiliationsController listAffiliationsController
     private CreateOfferController createOfferController
+    private ListProductsController listProductsController
+
 
     private PortletView portletView
     private ConfigurationManager configurationManager
@@ -118,6 +125,7 @@ class DependencyManager {
             customerDbConnector = new CustomerDbConnector(DatabaseSession.getInstance())
             //todo is there another DB to which we want to connect here?
             offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance())
+            productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
             throw e
@@ -212,6 +220,7 @@ class DependencyManager {
         this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbConnector)
         this.listAffiliations = new ListAffiliations(listAffiliationsPresenter, customerDbConnector)
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
+        this.listProducts = new ListProducts(productsDbConnector,createOfferPresenter)
     }
 
     private void setupControllers() {
@@ -240,6 +249,11 @@ class DependencyManager {
         }
         try {
             this.createOfferController = new CreateOfferController(this.createOffer,this.createOffer)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${ListAffiliationsController.getSimpleName()} setup", e)
+        }
+        try {
+            this.listProductsController = new ListProductsController(this.listProducts)
         } catch (Exception e) {
             log.error("Unexpected exception during ${ListAffiliationsController.getSimpleName()} setup", e)
         }
@@ -275,7 +289,7 @@ class DependencyManager {
 
         CreateOfferView createOfferView
         try {
-            createOfferView = new CreateOfferView(this.viewModel, this.createOfferViewModel,this.createOfferController)
+            createOfferView = new CreateOfferView(this.viewModel, this.createOfferViewModel,this.createOfferController,this.listProductsController)
         } catch (Exception e) {
             log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
             throw e

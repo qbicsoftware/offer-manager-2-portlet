@@ -9,9 +9,10 @@ import com.vaadin.ui.Label
 import com.vaadin.ui.TabSheet
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
-
+import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
+import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
@@ -36,6 +37,8 @@ class SelectItemsView extends VerticalLayout{
 
     final private CreateOfferViewModel createOfferViewModel
     final private ViewModel viewModel
+
+    private List<Product> foundProducts
 
     private List<ProductItemViewModel> sequencingProduct
     private List<ProductItemViewModel> projectManagementProduct
@@ -69,6 +72,9 @@ class SelectItemsView extends VerticalLayout{
     SelectItemsView(CreateOfferViewModel createOfferViewModel, ViewModel viewModel){
         this.createOfferViewModel = createOfferViewModel
         this.viewModel = viewModel
+
+        //todo translate the fetched products into the ProductItemViewModel objects to handle them in the gui
+        foundProduct = createOfferViewModel.foundProducts
 
         this.sequencingProduct = []
         this.projectManagementProduct = []
