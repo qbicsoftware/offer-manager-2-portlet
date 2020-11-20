@@ -217,7 +217,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       def statement = connection.prepareStatement(query)
       statement.setString(1, customer.firstName)
       statement.setString(2, customer.lastName)
-      statement.setString(3, customer.eMailAddress)
+      statement.setString(3, customer.emailAddress)
       statement.execute()
       def result = statement.getResultSet()
       customerAlreadyInDb = result.next()
@@ -235,7 +235,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     statement.setString(1, customer.firstName )
     statement.setString(2, customer.lastName)
     statement.setString(3, customer.title.value)
-    statement.setString(4, customer.eMailAddress )
+    statement.setString(4, customer.emailAddress )
     statement.execute()
     def keys = statement.getGeneratedKeys()
     while (keys.next()){
@@ -253,8 +253,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     affiliations.each {affiliation ->
       def affiliationId = getAffiliationId(connection, affiliation)
       def statement = connection.prepareStatement(query)
-      statement.setInt(1, affiliationId)
-      statement.setInt(2, customerId)
+      statement.setInt(1, customerId)
+      statement.setInt(2, affiliationId)
       statement.execute()
 
     }
