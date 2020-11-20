@@ -9,7 +9,7 @@ import com.vaadin.ui.Label
 import com.vaadin.ui.TabSheet
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
-import life.qbic.datamodel.accounting.ProductItem
+
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
@@ -21,6 +21,8 @@ import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
+
+import java.beans.PropertyChangeListener
 
 /**
  * This class generates a Layout in which the user
@@ -74,7 +76,8 @@ class SelectItemsView extends VerticalLayout{
         this.viewModel = viewModel
 
         //todo translate the fetched products into the ProductItemViewModel objects to handle them in the gui
-        foundProduct = createOfferViewModel.foundProducts
+        foundProducts = createOfferViewModel.foundProducts as ObservableList
+        foundProducts.addPropertyChangeListener(listener)
 
         this.sequencingProduct = []
         this.projectManagementProduct = []
@@ -85,11 +88,45 @@ class SelectItemsView extends VerticalLayout{
 
         this.createOfferViewModel.productItems = selectedItems
 
-        addDummyValues()
+        //addDummyValues()
         initLayout()
         setupDataProvider()
         addListener()
     }
+
+    /**
+     * Listens for changes of the foundProducts list and creates ProductItemViewModel objects from them
+     */
+    def listener = {
+        println foundProducts
+        println "listener activated"
+        if (it instanceof ObservableList.ElementEvent)  {
+            println foundProducts
+            foundProducts.each {
+                if(it instanceof Sequencing){
+                    sequencingProduct.add(new ProductItemViewModel(0, it))
+                    sequencingGrid.dataProvider.refreshAll()
+                }
+                else if(it instanceof ProjectManagement){
+                    projectManagementProduct.add(new ProductItemViewModel(0, it))
+                    projectManagementGrid.dataProvider.refreshAll()
+                }
+                else if(it instanceof PrimaryAnalysis){
+                    primaryAnalyseProduct.add(new ProductItemViewModel(0, it))
+                    primaryAnalyseGrid.dataProvider.refreshAll()
+                }
+                else if(it instanceof SecondaryAnalysis){
+                    secondaryAnalyseProduct.add(new ProductItemViewModel(0, it))
+                    secondaryAnalyseGrid.dataProvider.refreshAll()
+                }
+                else if(it instanceof DataStorage){
+                    storageProduct.add(new ProductItemViewModel(0, it))
+                    storageGrid.dataProvider.refreshAll()
+                }
+            }
+        }
+    } as PropertyChangeListener
+
 
     /**
      * Initializes the start layout for this view

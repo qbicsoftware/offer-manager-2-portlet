@@ -1,7 +1,7 @@
 package life.qbic.portal.portlet.offers.create
 
-import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.datamodel.dtos.business.AffiliationCategory
+import life.qbic.datamodel.dtos.business.ProductItem
 
 /**
  * An interface handling the calculation of a price for an offer

@@ -1,7 +1,7 @@
 package life.qbic.portal.portlet.offers.create
 
-import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.datamodel.dtos.business.AffiliationCategory
+import life.qbic.datamodel.dtos.business.ProductItem
 
 /**
  * Calculates the price of a list of ProductItems

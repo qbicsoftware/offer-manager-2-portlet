@@ -1,10 +1,10 @@
 package life.qbic.portal.portlet.offers.create
 
-import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
+import life.qbic.datamodel.dtos.business.ProductItem
 
 /**
  * This class implements logic to create new offers.

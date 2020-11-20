@@ -1,11 +1,12 @@
 package life.qbic.portal.qoffer2.web.controllers
 
-import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
+
 import life.qbic.portal.portlet.offers.create.CalculatePrice
 import life.qbic.portal.portlet.offers.create.CreateOfferInput
 

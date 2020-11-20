@@ -1,13 +1,14 @@
 package life.qbic.portal.qoffer2.web.views
 
 import com.vaadin.ui.VerticalLayout
-import life.qbic.datamodel.accounting.ProductItem
+import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
-import life.qbic.portal.qoffer2.web.controllers.ListAffiliationsController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
+
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
+
 import life.qbic.portal.qoffer2.web.views.create.offer.CustomerSelectionView
 import life.qbic.portal.qoffer2.web.views.create.offer.OfferOverviewView
 import life.qbic.portal.qoffer2.web.views.create.offer.ProjectInformationView
@@ -80,6 +81,7 @@ class CreateOfferView extends VerticalLayout{
         })
         this.projectManagerSelectionView.next.addClickListener({
             this.removeComponent(projectManagerSelectionView)
+            listProductsController.listProducts()
             this.addComponent(selectItemsView)
         })
         this.projectManagerSelectionView.previous.addClickListener({
@@ -90,8 +92,6 @@ class CreateOfferView extends VerticalLayout{
             this.removeComponent(selectItemsView)
             overviewView.fillPanel()
             controller.calculatePriceForItems(getProductItems(view.productItems),view.customerAffiliation.category)
-            listProductsController.listProducts()
-            println view.foundProductItems
             this.addComponent(overviewView)
         })
         this.selectItemsView.previous.addClickListener({

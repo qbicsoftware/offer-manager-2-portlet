@@ -1,12 +1,10 @@
 package life.qbic.portal.qoffer2.web.viewmodel
 
 import groovy.beans.Bindable
-import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
 
 /**
  * A ViewModel holding data that is presented in a
@@ -23,7 +21,7 @@ import life.qbic.datamodel.dtos.business.services.ProjectManagement
  */
 class CreateOfferViewModel {
 
-    List<Product> foundProducts = []
+    List<Product> foundProducts = [] as ObservableList
     List<Customer> foundCustomers = []
     List<ProjectManager> projectManagers = []
 

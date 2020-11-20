@@ -1,7 +1,7 @@
 package life.qbic.portal.portlet.offers.create
 
-import life.qbic.datamodel.accounting.ProductItem
 import life.qbic.datamodel.dtos.business.AffiliationCategory
+import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.Sequencing
 import spock.lang.Specification
@@ -24,7 +24,7 @@ class CreateOfferSpec extends Specification {
 
         and:
         List<ProductItem> items = [new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE)),
-        new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE))]
+                                   new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE))]
         when:
         createOffer.calculatePrice(items, AffiliationCategory.INTERNAL)
 
