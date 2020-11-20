@@ -88,7 +88,6 @@ class SelectItemsView extends VerticalLayout{
 
         this.createOfferViewModel.productItems = selectedItems
 
-        //addDummyValues()
         initLayout()
         setupDataProvider()
         addListener()

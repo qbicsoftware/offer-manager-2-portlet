@@ -1,5 +1,6 @@
 package life.qbic.portal.qoffer2.web.views
 
+import com.vaadin.ui.FormLayout
 import com.vaadin.ui.VerticalLayout
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
@@ -25,7 +26,7 @@ import life.qbic.portal.qoffer2.web.views.create.offer.SelectItemsView
  * @since: 0.1.0
  *
  */
-class CreateOfferView extends VerticalLayout{
+class CreateOfferView extends FormLayout{
 
     final private ViewModel sharedViewModel
     final private CreateOfferViewModel view

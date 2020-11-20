@@ -50,6 +50,7 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
 
     @Override
     void showAvailableProducts(List<Product> availableProducts) {
+        this.createOfferViewModel.foundProducts.clear()
         this.createOfferViewModel.foundProducts.addAll(availableProducts)
     }
 }
