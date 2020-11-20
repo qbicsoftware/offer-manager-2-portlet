@@ -26,7 +26,7 @@ import life.qbic.portal.qoffer2.web.views.SearchCustomerView
  */
 class ProjectInformationView extends VerticalLayout {
 
-    final private CreateOfferViewModel createOfferViewModel
+    private final CreateOfferViewModel createOfferViewModel
 
     TextField projectTitle
     TextArea projectDescription

@@ -24,7 +24,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
  */
 class ProjectManagerSelectionView extends VerticalLayout{
 
-    final private CreateOfferViewModel viewModel
+    private final CreateOfferViewModel viewModel
 
     private final List<ProjectManager> foundProjectManagers
 

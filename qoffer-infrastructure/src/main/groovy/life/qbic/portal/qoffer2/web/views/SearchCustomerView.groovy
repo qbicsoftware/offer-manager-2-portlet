@@ -28,8 +28,9 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 @Log4j2
 class SearchCustomerView extends FormLayout {
 
-    final private ViewModel viewModel
-    final private SearchCustomerViewModel searchCustomerViewModel
+    private final ViewModel viewModel
+    private final SearchCustomerViewModel searchCustomerViewModel
+
     private TextField firstNameField
     private TextField lastNameField
     private Button submitButton

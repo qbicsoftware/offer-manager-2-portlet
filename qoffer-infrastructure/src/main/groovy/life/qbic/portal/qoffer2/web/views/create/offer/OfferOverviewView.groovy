@@ -26,7 +26,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
  */
 class OfferOverviewView extends VerticalLayout{
 
-    final private CreateOfferViewModel createOfferViewModel
+    private final CreateOfferViewModel createOfferViewModel
 
     Panel offerOverview
     Grid<ProductItemViewModel> itemGrid
