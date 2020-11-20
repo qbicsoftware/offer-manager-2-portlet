@@ -289,17 +289,18 @@ class SelectItemsView extends VerticalLayout{
             if(sequencingGrid.getSelectedItems() != null){
                 String amount = amountSequencing.getValue()
 
-                if(amount != null && amount.isNumber()){
-                    sequencingGrid.getSelectedItems().each {
-
-                        if(Integer.parseInt(amount) >= 0){
-                            it.setQuantity(Integer.parseInt(amount))
-                            updateOverviewGrid(it)
+                try{
+                    if(amount != null && amount.isNumber()){
+                        sequencingGrid.getSelectedItems().each {
+                            if(Integer.parseInt(amount) >= 0){
+                                it.setQuantity(Integer.parseInt(amount))
+                                updateOverviewGrid(it)
+                            }
                         }
+                        sequencingGrid.getDataProvider().refreshAll()
                     }
-                    sequencingGrid.getDataProvider().refreshAll()
                 }
-                else{
+                catch(Exception e){
                     viewModel.failureNotifications.add("The quantity must be an integer value bigger than 0")
                 }
             }
@@ -315,17 +316,19 @@ class SelectItemsView extends VerticalLayout{
             if(primaryAnalyseGrid.getSelectedItems() != null){
                 String amount = amountPrimaryAnalysis.getValue()
 
-                if(amount != null && amount.isNumber()){
-                    primaryAnalyseGrid.getSelectedItems().each {
+                try{
+                    if(amount != null && amount.isNumber()){
+                        primaryAnalyseGrid.getSelectedItems().each {
 
-                        if(Integer.parseInt(amount) >= 0){
-                            it.setQuantity(Integer.parseInt(amount))
-                            updateOverviewGrid(it)
+                            if(Integer.parseInt(amount) >= 0){
+                                it.setQuantity(Integer.parseInt(amount))
+                                updateOverviewGrid(it)
+                            }
                         }
+                        primaryAnalyseGrid.getDataProvider().refreshAll()
                     }
-                    primaryAnalyseGrid.getDataProvider().refreshAll()
                 }
-                else{
+                catch(Exception e){
                     viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
                 }
             }
@@ -341,17 +344,19 @@ class SelectItemsView extends VerticalLayout{
             if(secondaryAnalyseGrid.getSelectedItems() != null){
                 String amount = amountSecondaryAnalysis.getValue()
 
-                if(amount != null && amount.isNumber()){
-                    secondaryAnalyseGrid.getSelectedItems().each {
+                try{
+                    if(amount != null && amount.isNumber()){
+                        secondaryAnalyseGrid.getSelectedItems().each {
 
-                        if(Integer.parseInt(amount) >= 0){
-                            it.setQuantity(Integer.parseInt(amount))
-                            updateOverviewGrid(it)
+                            if(Integer.parseInt(amount) >= 0){
+                                it.setQuantity(Integer.parseInt(amount))
+                                updateOverviewGrid(it)
+                            }
                         }
+                        secondaryAnalyseGrid.getDataProvider().refreshAll()
                     }
-                    secondaryAnalyseGrid.getDataProvider().refreshAll()
                 }
-                else{
+                catch(Exception e){
                     viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
                 }
             }
@@ -367,17 +372,19 @@ class SelectItemsView extends VerticalLayout{
             if(projectManagementGrid.getSelectedItems() != null){
                 String amount = amountProjectManagement.getValue()
 
-                if(amount != null && amount.isNumber()){
-                    projectManagementGrid.getSelectedItems().each {
+                try{
+                    if(amount != null && amount.isNumber()){
+                        projectManagementGrid.getSelectedItems().each {
 
-                        if(Double.parseDouble(amount) >= 0.0){
-                            it.setQuantity(Double.parseDouble(amount))
-                            updateOverviewGrid(it)
+                            if(Double.parseDouble(amount) >= 0.0){
+                                it.setQuantity(Double.parseDouble(amount))
+                                updateOverviewGrid(it)
+                            }
                         }
+                        projectManagementGrid.getDataProvider().refreshAll()
                     }
-                    projectManagementGrid.getDataProvider().refreshAll()
                 }
-                else{
+                catch(Exception e){
                     viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
                 }
             }
@@ -393,17 +400,19 @@ class SelectItemsView extends VerticalLayout{
             if(storageGrid.getSelectedItems() != null){
                 String amount = amountDataStorage.getValue()
 
-                if(amount != null && amount.isNumber()){
-                    storageGrid.getSelectedItems().each {
+                try{
+                    if(amount != null && amount.isNumber()){
+                        storageGrid.getSelectedItems().each {
 
-                        if(Double.parseDouble(amount) >= 0.0){
-                            it.setQuantity(Double.parseDouble(amount))
-                            updateOverviewGrid(it)
+                            if(Double.parseDouble(amount) >= 0.0){
+                                it.setQuantity(Double.parseDouble(amount))
+                                updateOverviewGrid(it)
+                            }
                         }
+                        storageGrid.getDataProvider().refreshAll()
                     }
-                    storageGrid.getDataProvider().refreshAll()
                 }
-                else{
+                catch(Exception e){
                     viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
                 }
             }
