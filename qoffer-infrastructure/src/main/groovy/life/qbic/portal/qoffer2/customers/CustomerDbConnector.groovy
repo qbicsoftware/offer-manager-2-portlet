@@ -156,7 +156,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
         row = SqlExtensions.toRowResult(rs)
       }
     }
-    AffiliationCategory category = AffiliationCategory.INTERNAL
+    AffiliationCategory category = CATEGORY_FACTORY.getForString(row.category as String)
     Affiliation affiliation = new Affiliation.Builder(
             row.organization as String,
             row.street as String,
