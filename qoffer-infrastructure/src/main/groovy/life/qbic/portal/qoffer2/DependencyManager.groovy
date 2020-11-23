@@ -2,33 +2,47 @@ package life.qbic.portal.qoffer2
 
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
+import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.business.services.Sequencing
+
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliations
 import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.portlet.customers.search.SearchCustomer
-import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
+
 import life.qbic.portal.qoffer2.database.DatabaseSession
+
 import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import life.qbic.portal.qoffer2.offers.OfferToCustomerGateway
+
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.SearchCustomerController
 import life.qbic.portal.qoffer2.web.controllers.ListAffiliationsController
+import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
+
 import life.qbic.portal.qoffer2.web.presenters.CreateAffiliationPresenter
 import life.qbic.portal.qoffer2.web.presenters.CreateCustomerPresenter
 import life.qbic.portal.qoffer2.web.presenters.ListAffiliationsPresenter
 import life.qbic.portal.qoffer2.web.presenters.SearchCustomerPresenter
+import life.qbic.portal.qoffer2.web.presenters.Presenter
+
+
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.SearchCustomerViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
+
 import life.qbic.portal.qoffer2.web.views.CreateAffiliationView
 import life.qbic.portal.qoffer2.web.views.PortletView
-import life.qbic.portal.qoffer2.web.presenters.Presenter
-import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
-import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.views.CreateCustomerView
 import life.qbic.portal.qoffer2.web.views.SearchCustomerView
+
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
 
@@ -107,6 +121,14 @@ class DependencyManager {
             DatabaseSession.init(user, password, host, port, sqlDatabase)
             customerDbConnector = new CustomerDbConnector(DatabaseSession.getInstance())
             offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(), offerDbConnector as OfferToCustomerGateway)
+
+            //
+            offerDbConnector.store(new Offer.Builder(new Customer.Builder("first","last","@").build(),new ProjectManager.Builder("first","last","@").build(),
+                    "Title","This is some basic descriptoin",[new ProductItem(2,new Sequencing("name","descr",999, ProductUnit.PER_SAMPLE))],
+                    new Affiliation.Builder("organization","street","postal_code","city").build())
+                    .expirationDate(new Date())
+                    .modificationDate(new Date())
+                    .build())
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
             throw e

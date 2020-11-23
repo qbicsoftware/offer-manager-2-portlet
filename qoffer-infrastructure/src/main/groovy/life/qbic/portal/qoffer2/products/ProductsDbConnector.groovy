@@ -2,6 +2,7 @@ package life.qbic.portal.qoffer2.products
 
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
@@ -13,8 +14,10 @@ import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.packages.ListProductsDataSource
 import life.qbic.portal.qoffer2.database.ConnectionProvider
+import life.qbic.portal.qoffer2.offers.OfferToProductGateway
 import org.apache.groovy.sql.extensions.SqlExtensions
 
+import java.sql.Connection
 import java.sql.ResultSet
 import java.sql.SQLException
 
@@ -24,7 +27,7 @@ import java.sql.SQLException
  * @since 1.0.0
  */
 @Log4j2
-class ProductsDbConnector implements ListProductsDataSource {
+class ProductsDbConnector implements ListProductsDataSource, OfferToProductGateway {
 
   private final ConnectionProvider provider
 
@@ -112,7 +115,13 @@ class ProductsDbConnector implements ListProductsDataSource {
     }
   }
 
-  /**
+  @Override
+  List<Integer> getItemIds(Connection connection, List < ProductItem > items) {
+
+    return null
+  }
+
+/**
    * Class that encapsulates the available SQL queries.
    */
   private static class Queries {

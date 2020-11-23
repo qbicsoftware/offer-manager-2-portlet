@@ -30,16 +30,19 @@ class OfferDbConnector implements CreateOfferDataSource{
 
     DatabaseSession session
     ConnectionProvider connectionProvider
+
     OfferToCustomerGateway offerToCustomerGateway
+    OfferToProductGateway offerToProductGateway
 
     private static final Logger LOG = LogManager.getLogger(OfferDbConnector.class)
 
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (modificationDate, expirationDate, customerId, projectManagerId, projectTitle, projectDescription, totalPrice, customerAffiliationId)"
 
 
-    OfferDbConnector(DatabaseSession session, OfferToCustomerGateway offerToCustomerGateway){
+    OfferDbConnector(DatabaseSession session, OfferToCustomerGateway offerToCustomerGateway, OfferToProductGateway offerToProductGateway){
         this.session = session
         this.offerToCustomerGateway = offerToCustomerGateway
+        this.offerToProductGateway = offerToProductGateway
     }
 
     /**
@@ -62,8 +65,9 @@ class OfferDbConnector implements CreateOfferDataSource{
                     int projectManagerId = offerToCustomerGateway.getPersonId(connection, offer.projectManager)
                     int customerId = offerToCustomerGateway.getPersonId(connection, offer.customer)
                     int affiliationId = offerToCustomerGateway.getAffiliationId(connection,offer.selectedCustomerAffiliation)
+                    List<Integer> items = offerToProductGateway.getItemIds(offer.items)
 
-                    createOffer(it, offer, projectManagerId, customerId, affiliationId)
+                    createOffer(it, offer, projectManagerId, customerId, affiliationId, items)
 
                     connection.commit()
                 } catch (Exception e) {

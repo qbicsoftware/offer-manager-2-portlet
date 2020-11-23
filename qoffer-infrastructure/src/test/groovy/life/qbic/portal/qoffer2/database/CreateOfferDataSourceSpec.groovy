@@ -9,6 +9,7 @@ import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.portal.portlet.offers.create.CreateOfferDataSource
+import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import org.apache.groovy.sql.extensions.SqlExtensions
 import spock.lang.Specification
@@ -105,10 +106,10 @@ class CreateOfferDataSourceSpec extends Specification{
         ConnectionProvider connectionProvider = Stub (ConnectionProvider, {it.connect() >> connection})
 
         //and: "an implementation of the SearchCustomerDataSource with this connection provider"
-        OfferDbConnector dataSource = new OfferDbConnector(connectionProvider)
+        CustomerDbConnector dataSource = new CustomerDbConnector(connectionProvider)
 
         when:
-        int resultId = dataSource.getPersonId(new Customer.Builder(firstName,lastName,emailAddress).build())
+        int resultId = dataSource.getPersonId(connection, new Customer.Builder(firstName,lastName,emailAddress).build())
 
         then:
         resultId == id
@@ -149,10 +150,10 @@ class CreateOfferDataSourceSpec extends Specification{
         ConnectionProvider connectionProvider = Stub (ConnectionProvider, {it.connect() >> connection})
 
         //and: "an implementation of the SearchCustomerDataSource with this connection provider"
-        OfferDbConnector dataSource = new OfferDbConnector(connectionProvider)
+        CustomerDbConnector dataSource = new CustomerDbConnector(connectionProvider)
 
         when:
-        int resultId = dataSource.getAffiliationId(new Affiliation.Builder(organization,street,postal_code,city).build())
+        int resultId = dataSource.getAffiliationId(connection, new Affiliation.Builder(organization,street,postal_code,city).build())
 
         then:
         resultId == id
