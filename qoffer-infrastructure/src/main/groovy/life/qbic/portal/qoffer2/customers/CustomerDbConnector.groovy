@@ -7,6 +7,7 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliationDataSource
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliationsDataSource
 import life.qbic.portal.portlet.customers.create.CreateCustomerDataSource
@@ -14,6 +15,7 @@ import life.qbic.portal.portlet.customers.search.SearchCustomerDataSource
 import life.qbic.portal.portlet.customers.update.UpdateCustomerDataSource
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.ConnectionProvider
+import life.qbic.portal.qoffer2.offers.OfferToCustomerGateway
 import org.apache.groovy.sql.extensions.SqlExtensions
 
 import java.sql.Connection
@@ -31,7 +33,7 @@ import java.sql.Statement
  *
  */
 @Log4j2
-class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
+class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource, OfferToCustomerGateway {
 
 
   /**
@@ -261,7 +263,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   }
 
   //Fixme no use of closeable
-  private static int getAffiliationId(Connection connection, Affiliation affiliation) {
+  @Override
+  int getAffiliationId(Connection connection, Affiliation affiliation) {
     String query = "SELECT * FROM affiliation WHERE organization=? " +
             "AND address_addition=? " +
             "AND street=? " +
@@ -438,4 +441,31 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
     return generatedKeys[0]
   }
+
+  /**
+   * Searches for a person and returns the matching ID from the person table
+   *
+   * @param person The database entry is searched for a person
+   * @return the ID of the database entry matching the person
+   */
+  @Override
+  int getPersonId(Connection connection, Person person) {
+    String query = "SELECT id FROM person WHERE first_name = ? AND last_name = ? AND email = ?"
+
+    int personId = -1
+
+    connection.withCloseable {
+      def statement = connection.prepareStatement(query)
+      statement.setString(1, person.firstName)
+      statement.setString(2, person.lastName)
+      statement.setString(3, person.emailAddress)
+
+      ResultSet result = statement.executeQuery()
+      while (result.next()){
+        personId = result.getInt(1)
+      }
+    }
+    return personId
+  }
+
 }

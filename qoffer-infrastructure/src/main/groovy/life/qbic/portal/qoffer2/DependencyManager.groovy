@@ -10,6 +10,8 @@ import life.qbic.portal.portlet.customers.search.SearchCustomer
 import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
+import life.qbic.portal.qoffer2.offers.OfferDbConnector
+import life.qbic.portal.qoffer2.offers.OfferToCustomerGateway
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.SearchCustomerController
 import life.qbic.portal.qoffer2.web.controllers.ListAffiliationsController
@@ -54,6 +56,8 @@ class DependencyManager {
     private SearchCustomerPresenter searchCustomerPresenter
 
     private CustomerDbConnector customerDbConnector
+    private OfferDbConnector offerDbConnector
+
     private CreateCustomer createCustomer
     private CreateAffiliation createAffiliation
     private ListAffiliations listAffiliations
@@ -102,6 +106,7 @@ class DependencyManager {
 
             DatabaseSession.init(user, password, host, port, sqlDatabase)
             customerDbConnector = new CustomerDbConnector(DatabaseSession.getInstance())
+            offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(), offerDbConnector as OfferToCustomerGateway)
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
             throw e
