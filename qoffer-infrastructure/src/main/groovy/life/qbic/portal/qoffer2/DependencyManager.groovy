@@ -250,12 +250,12 @@ class DependencyManager {
         try {
             this.createOfferController = new CreateOfferController(this.createOffer,this.createOffer)
         } catch (Exception e) {
-            log.error("Unexpected exception during ${ListAffiliationsController.getSimpleName()} setup", e)
+            log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
         }
         try {
             this.listProductsController = new ListProductsController(this.listProducts)
         } catch (Exception e) {
-            log.error("Unexpected exception during ${ListAffiliationsController.getSimpleName()} setup", e)
+            log.error("Unexpected exception during ${ListProductsController.getSimpleName()} setup", e)
         }
     }
 
