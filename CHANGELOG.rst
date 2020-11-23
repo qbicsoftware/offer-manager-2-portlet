@@ -22,7 +22,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Created the project using QUBE
 * Implement queries for affiliation creation in database
 * Implement use case _List Packages_
-
+* Connect customer search view with db connector
 **Fixed**
 
 **Dependencies**
