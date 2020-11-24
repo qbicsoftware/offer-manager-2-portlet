@@ -233,7 +233,7 @@ class DependencyManager {
         try {
             searchCustomerView = new SearchCustomerView(this.searchCustomerController, this.viewModel, this.searchCustomerViewModel)
         } catch (Exception e) {
-            log.error("Could not create ${CreateAffiliationView.getSimpleName()} view.", e)
+            log.error("Could not create ${SearchCustomerView.getSimpleName()} view.", e)
             throw e
         }
         PortletView portletView
