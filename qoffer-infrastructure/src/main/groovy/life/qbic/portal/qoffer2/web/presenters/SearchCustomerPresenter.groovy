@@ -23,7 +23,7 @@ class SearchCustomerPresenter implements SearchCustomerOutput {
     }
 
     @Override
-    void reportFoundCustomers(List<Customer> customers) {
+    void successNotification(List<Customer> customers) {
         searchCustomerViewModel.foundCustomers.clear()
         searchCustomerViewModel.foundCustomers.addAll(customers)
     }

@@ -27,7 +27,7 @@ class SearchCustomer implements SearchCustomerInput{
             if (foundCustomer.isEmpty()) {
                 output.failNotification("Could not find a customer for $firstName $lastName")
             } else {
-                output.reportFoundCustomers(foundCustomer)
+                output.successNotification(foundCustomer)
             }
         } catch (Exception ignored) {
             output.failNotification("Unexpected error when searching for the customer $firstName $lastName")
