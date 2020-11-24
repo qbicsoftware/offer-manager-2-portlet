@@ -126,7 +126,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
     connection.withCloseable {
       def statement = it.prepareStatement(query)
-      statement.setString(1, customerId.toString())
+      statement.setInt(1, customerId)
       ResultSet rs = statement.executeQuery()
       while (rs.next()) {
         result.add(rs.getString(1).toInteger())
