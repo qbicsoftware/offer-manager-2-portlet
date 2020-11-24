@@ -180,6 +180,7 @@ class DependencyManager {
         this.createCustomer = new CreateCustomer(createCustomerPresenter, customerDbConnector)
         this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbConnector)
         this.listAffiliations = new ListAffiliations(listAffiliationsPresenter, customerDbConnector)
+        this.searchCustomer = new SearchCustomer(searchCustomerPresenter, customerDbConnector)
     }
 
     private void setupControllers() {
@@ -230,9 +231,9 @@ class DependencyManager {
         SearchCustomerView searchCustomerView
 
         try {
-            searchCustomerView = new SearchCustomerView(this.viewModel, this.searchCustomerViewModel)
+            searchCustomerView = new SearchCustomerView(this.searchCustomerController, this.viewModel, this.searchCustomerViewModel)
         } catch (Exception e) {
-            log.error("Could not create ${CreateAffiliationView.getSimpleName()} view.", e)
+            log.error("Could not create ${SearchCustomerView.getSimpleName()} view.", e)
             throw e
         }
         PortletView portletView
