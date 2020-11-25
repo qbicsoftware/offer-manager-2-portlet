@@ -16,10 +16,11 @@ interface OfferToProductGateway {
 
     /**
      * Returns the ids of the items in a list
+     *
      * @param connection A connection on which the database statement is executed
      * @param items A list of items for which the id needs to be retrieved
-     * @return a list of ids matching the list of {@link ProductItem}
+     * @param offerId the Id of the respective offer
      */
-    List<Integer> getItemIds(Connection connection, List<ProductItem> items)
+    createOfferItems(List<ProductItem> items, int offerId)
 
 }

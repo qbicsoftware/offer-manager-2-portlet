@@ -6,7 +6,6 @@ import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProductUnitFactory
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
@@ -18,6 +17,7 @@ import life.qbic.portal.qoffer2.offers.OfferToProductGateway
 import org.apache.groovy.sql.extensions.SqlExtensions
 
 import java.sql.Connection
+import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
 
@@ -116,12 +116,70 @@ class ProductsDbConnector implements ListProductsDataSource, OfferToProductGatew
   }
 
   @Override
-  List<Integer> getItemIds(Connection connection, List < ProductItem > items) {
+  def createOfferItems(List<ProductItem> items, int offerId) {
+    items.each {productItem ->
+      String query = "INSERT INTO offer_item (offer_id, productId, quantity)"+
+              "VALUE(?,?,?)"
+
+      int productId = findProductId(productItem.product)
+
+      provider.connect().withCloseable {
+        PreparedStatement preparedStatement = it.prepareStatement(query)
+        preparedStatement.setInt(1,offerId)
+        preparedStatement.setInt(2,productId)
+        preparedStatement.setDouble(3,productItem.quantity)
+
+        preparedStatement.execute()
+      }
+    }
+  }
+
+  /**
+   * Searches for the product ID in the database
+   *
+   * @param connection through which the query is executed
+   * @param product for which the ID needs to be found
+   * @return the found ID
+   */
+  int findProductId(Product product) {
+    String query = "SELECT id FROM product "+
+            "WHERE category = ?, description = ?, productName = ?, unitPrice = ?, unit = ?"
+
+    List<Integer> foundId = []
+
+    provider.connect().withCloseable {
+      PreparedStatement preparedStatement = it.prepareStatement(query)
+      preparedStatement.setString(1, getProductType(product))
+      preparedStatement.setString(2,product.description)
+      preparedStatement.setString(3,product.productName)
+      preparedStatement.setDouble(4,product.unitPrice)
+      preparedStatement.setString(5,product.unit.value)
+      ResultSet result = preparedStatement.executeQuery()
+
+      while (result.next()){
+        foundId << result.getInt(1)
+      }
+    }
+    return foundId[0]
+  }
+
+  /**
+   * Returns the product type of a product based on its implemented class
+   *
+   * @param product A product for which the type needs to be determined
+   * @return the type of the product or null
+   */
+  static String getProductType(Product product){
+    if (product instanceof Sequencing) return 'Sequencing'
+    if (product instanceof ProjectManagement) return 'Project Management'
+    if (product instanceof PrimaryAnalysis) return 'Primary Bioinformatics'
+    if (product instanceof SecondaryAnalysis) return 'Secondary Bioinformatics'
+    if (product instanceof DataStorage) return 'Data Storage'
 
     return null
   }
 
-/**
+  /**
    * Class that encapsulates the available SQL queries.
    */
   private static class Queries {

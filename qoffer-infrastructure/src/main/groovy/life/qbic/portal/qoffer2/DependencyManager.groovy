@@ -6,8 +6,10 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.Sequencing
 
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
@@ -20,7 +22,8 @@ import life.qbic.portal.qoffer2.database.DatabaseSession
 
 import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import life.qbic.portal.qoffer2.offers.OfferToCustomerGateway
-
+import life.qbic.portal.qoffer2.offers.OfferToProductGateway
+import life.qbic.portal.qoffer2.products.ProductsDbConnector
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.SearchCustomerController
 import life.qbic.portal.qoffer2.web.controllers.ListAffiliationsController
@@ -71,6 +74,7 @@ class DependencyManager {
 
     private CustomerDbConnector customerDbConnector
     private OfferDbConnector offerDbConnector
+    private ProductsDbConnector productsDbConnector
 
     private CreateCustomer createCustomer
     private CreateAffiliation createAffiliation
@@ -120,12 +124,13 @@ class DependencyManager {
 
             DatabaseSession.init(user, password, host, port, sqlDatabase)
             customerDbConnector = new CustomerDbConnector(DatabaseSession.getInstance())
-            offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(), offerDbConnector as OfferToCustomerGateway)
+            productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
+            offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(), customerDbConnector, productsDbConnector)
 
-            //
-            offerDbConnector.store(new Offer.Builder(new Customer.Builder("first","last","@").build(),new ProjectManager.Builder("first","last","@").build(),
-                    "Title","This is some basic descriptoin",[new ProductItem(2,new Sequencing("name","descr",999, ProductUnit.PER_SAMPLE))],
-                    new Affiliation.Builder("organization","street","postal_code","city").build())
+            //todo delete
+            offerDbConnector.store(new Offer.Builder(new Customer.Builder("Sven","Fillinger","sven.fillinger@web.de").build(),new ProjectManager.Builder("Sven","Fillinger","sven.fillinger@web.de").build(),
+                    "Title","This is some basic description",[new ProductItem(2,new Sequencing("DNA Sequencing","This is a sequencing package",1.50, ProductUnit.PER_SAMPLE))],
+                    new Affiliation.Builder("QBIC","Auf der Morgenstelle 10","72076","Tübingen").addressAddition("University of Tübingen").country("D").category(AffiliationCategory.INTERNAL).build())
                     .expirationDate(new Date())
                     .modificationDate(new Date())
                     .build())

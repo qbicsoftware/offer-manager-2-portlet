@@ -16,6 +16,7 @@ import life.qbic.portal.portlet.customers.update.UpdateCustomerDataSource
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.ConnectionProvider
 import life.qbic.portal.qoffer2.offers.OfferToCustomerGateway
+import life.qbic.portal.qoffer2.offers.OfferToProductGateway
 import org.apache.groovy.sql.extensions.SqlExtensions
 
 import java.sql.Connection
@@ -253,7 +254,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
             "VALUES(?, ?)"
 
     affiliations.each {affiliation ->
-      def affiliationId = getAffiliationId(connection, affiliation)
+      def affiliationId = getAffiliationId(affiliation)
       def statement = connection.prepareStatement(query)
       statement.setInt(1, customerId)
       statement.setInt(2, affiliationId)
@@ -262,9 +263,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
   }
 
-  //Fixme no use of closeable
   @Override
-  int getAffiliationId(Connection connection, Affiliation affiliation) {
+  int getAffiliationId(Affiliation affiliation) {
     String query = "SELECT * FROM affiliation WHERE organization=? " +
             "AND address_addition=? " +
             "AND street=? " +
@@ -272,18 +272,22 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
             "AND city=?"
 
     List<Integer> affiliationIds = []
+    Connection connection = connectionProvider.connect()
 
-    def statement = connection.prepareStatement(query)
-    statement.setString(1, affiliation.organisation)
-    statement.setString(2, affiliation.addressAddition)
-    statement.setString(3, affiliation.street)
-    statement.setString(4, affiliation.postalCode)
-    statement.setString(5, affiliation.city)
-    statement.execute()
-    ResultSet rs = statement.getResultSet()
-    while (rs.next()) {
-      affiliationIds.add(rs.getInt(1))
+    connection.withCloseable {
+      def statement = connection.prepareStatement(query)
+      statement.setString(1, affiliation.organisation)
+      statement.setString(2, affiliation.addressAddition)
+      statement.setString(3, affiliation.street)
+      statement.setString(4, affiliation.postalCode)
+      statement.setString(5, affiliation.city)
+      statement.execute()
+      ResultSet rs = statement.getResultSet()
+      while (rs.next()) {
+        affiliationIds.add(rs.getInt(1))
+      }
     }
+
 
     if(affiliationIds.size() > 1) {
       throw new DatabaseQueryException("More than one entry found for $affiliation.")
@@ -449,8 +453,9 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    * @return the ID of the database entry matching the person
    */
   @Override
-  int getPersonId(Connection connection, Person person) {
+  int getPersonId(Person person) {
     String query = "SELECT id FROM person WHERE first_name = ? AND last_name = ? AND email = ?"
+    Connection connection = connectionProvider.connect()
 
     int personId = -1
 
@@ -467,5 +472,4 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return personId
   }
-
 }
