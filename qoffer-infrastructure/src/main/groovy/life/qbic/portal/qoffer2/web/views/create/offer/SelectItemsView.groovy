@@ -128,10 +128,7 @@ class SelectItemsView extends VerticalLayout{
      * Initializes the start layout for this view
      */
     private void initLayout(){
-        VerticalLayout layout = new VerticalLayout()
         Label titleLabel = new Label("Add Product Items")
-        layout.addComponent(titleLabel)
-        layout.setComponentAlignment(titleLabel, Alignment.BOTTOM_LEFT)
 
         this.sequencingGrid = new Grid<>()
         this.primaryAnalyseGrid = new Grid<>()
@@ -225,7 +222,7 @@ class SelectItemsView extends VerticalLayout{
         packageAccordion.addTab(projectManagementLayout,"Project Management Products")
         packageAccordion.addTab(dataStorageLayout,"Data Storage Products")
 
-        this.addComponents(layout, packageAccordion, overviewGrid, buttonLayout)
+        this.addComponents(titleLabel, packageAccordion, overviewGrid, buttonLayout)
         this.setSizeFull()
     }
 

@@ -43,11 +43,7 @@ class ProjectInformationView extends VerticalLayout {
      * Initializes the ProjectInformationView with the view elements that should be placed in it
      */
     private void initLayout() {
-
-        VerticalLayout layout = new VerticalLayout()
         Label titleLabel = new Label("Project Information")
-        layout.addComponent(titleLabel)
-        layout.setComponentAlignment(titleLabel, Alignment.BOTTOM_LEFT)
 
         this.projectTitle = new TextField("Project Title")
         projectTitle.setPlaceholder("Enter the project title here")
@@ -72,7 +68,7 @@ class ProjectInformationView extends VerticalLayout {
         buttonLayout.setComponentAlignment(next, Alignment.BOTTOM_RIGHT)
         buttonLayout.setSizeFull()
 
-        this.addComponents(layout, textLayout, buttonLayout)
+        this.addComponents(titleLabel, textLayout, buttonLayout)
     }
 
 

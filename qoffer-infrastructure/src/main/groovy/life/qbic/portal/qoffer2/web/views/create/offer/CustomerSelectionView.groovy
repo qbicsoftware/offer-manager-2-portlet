@@ -64,10 +64,7 @@ class CustomerSelectionView extends VerticalLayout{
      * Initializes the start layout of this view class
      */
     private void initLayout(){
-        VerticalLayout layout = new VerticalLayout()
         Label titleLabel = new Label("Select Customer")
-        layout.addComponent(titleLabel)
-        layout.setComponentAlignment(titleLabel, Alignment.BOTTOM_LEFT)
 
         affiliationLabelLayout = new VerticalLayout()
         Label affiliationLabel = new Label("Select the Customers Affiliation")
@@ -92,7 +89,7 @@ class CustomerSelectionView extends VerticalLayout{
         this.affiliationGrid = new Grid<>()
         affiliationLayout = new HorizontalLayout(affiliationGrid)
 
-        this.addComponents(layout, customerLayout, buttonLayout)
+        this.addComponents(titleLabel, customerLayout, buttonLayout)
     }
 
     /**

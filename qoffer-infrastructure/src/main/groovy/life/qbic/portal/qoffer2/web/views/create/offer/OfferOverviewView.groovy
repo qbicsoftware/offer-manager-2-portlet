@@ -44,10 +44,7 @@ class OfferOverviewView extends VerticalLayout{
      * Initializes the start layout for this view
      */
     private void initLayout(){
-        VerticalLayout layout = new VerticalLayout()
         Label titleLabel = new Label("Offer Overview")
-        layout.addComponent(titleLabel)
-        layout.setComponentAlignment(titleLabel, Alignment.BOTTOM_LEFT)
 
         this.previous = new Button(VaadinIcons.CHEVRON_CIRCLE_LEFT)
         previous.addStyleName(ValoTheme.LABEL_LARGE)
@@ -67,7 +64,7 @@ class OfferOverviewView extends VerticalLayout{
         this.itemGrid.setItems(createOfferViewModel.productItems)
         generateProductGrid(itemGrid)
 
-        this.addComponents(layout,offerOverview,buttonLayout)
+        this.addComponents(titleLabel,offerOverview,buttonLayout)
     }
 
     /**
