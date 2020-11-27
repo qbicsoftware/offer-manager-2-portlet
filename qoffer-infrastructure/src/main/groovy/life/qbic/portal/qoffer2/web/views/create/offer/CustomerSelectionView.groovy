@@ -39,6 +39,7 @@ class CustomerSelectionView extends VerticalLayout{
     HorizontalLayout customerLayout
     Grid<Affiliation> affiliationGrid
     HorizontalLayout affiliationLayout
+    VerticalLayout affiliationLabelLayout
 
     CustomerSelectionView(CreateOfferViewModel viewModel){
         this.viewModel = viewModel
@@ -67,6 +68,11 @@ class CustomerSelectionView extends VerticalLayout{
         Label titleLabel = new Label("Select Customer")
         layout.addComponent(titleLabel)
         layout.setComponentAlignment(titleLabel, Alignment.BOTTOM_LEFT)
+
+        affiliationLabelLayout = new VerticalLayout()
+        Label affiliationLabel = new Label("Select the Customers Affiliation")
+        affiliationLabelLayout.addComponent(affiliationLabel)
+        affiliationLabelLayout.setComponentAlignment(affiliationLabel, Alignment.MIDDLE_LEFT)
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.setEnabled(false)
@@ -155,7 +161,8 @@ class CustomerSelectionView extends VerticalLayout{
             //todo do we need to clear the grid for another selection?
             affiliationGrid.setItems(affiliations)
 
-            this.addComponent(affiliationGrid,2)
+            this.addComponent(affiliationLabelLayout,2)
+            this.addComponent(affiliationGrid,3)
         })
 
         affiliationGrid.addSelectionListener({

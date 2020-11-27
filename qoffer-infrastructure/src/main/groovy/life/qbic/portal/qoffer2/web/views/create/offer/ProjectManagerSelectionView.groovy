@@ -53,7 +53,7 @@ class ProjectManagerSelectionView extends VerticalLayout{
      */
     private void initLayout(){
         VerticalLayout layout = new VerticalLayout()
-        Label titleLabel = new Label("Select Project Manager")
+        Label titleLabel = new Label("Add Project Manager")
         layout.addComponent(titleLabel)
         layout.setComponentAlignment(titleLabel, Alignment.BOTTOM_LEFT)
 

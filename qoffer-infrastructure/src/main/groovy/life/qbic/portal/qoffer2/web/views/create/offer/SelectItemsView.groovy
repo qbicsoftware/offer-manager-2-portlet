@@ -129,7 +129,7 @@ class SelectItemsView extends VerticalLayout{
      */
     private void initLayout(){
         VerticalLayout layout = new VerticalLayout()
-        Label titleLabel = new Label("Select Items")
+        Label titleLabel = new Label("Add Product Items")
         layout.addComponent(titleLabel)
         layout.setComponentAlignment(titleLabel, Alignment.BOTTOM_LEFT)
 
