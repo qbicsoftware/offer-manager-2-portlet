@@ -10,6 +10,7 @@ import com.vaadin.ui.Panel
 import com.vaadin.ui.TextArea
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.themes.ValoTheme
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 
@@ -49,7 +50,11 @@ class OfferOverviewView extends VerticalLayout{
         layout.setComponentAlignment(titleLabel, Alignment.BOTTOM_LEFT)
 
         this.previous = new Button(VaadinIcons.CHEVRON_CIRCLE_LEFT)
+        previous.addStyleName(ValoTheme.LABEL_LARGE)
+
         this.save = new Button(VaadinIcons.SAFE)
+        save.addStyleName(ValoTheme.LABEL_LARGE)
+
 
         HorizontalLayout buttonLayout = new HorizontalLayout(previous,save)
         buttonLayout.setSizeFull()

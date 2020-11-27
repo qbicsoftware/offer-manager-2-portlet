@@ -9,7 +9,7 @@ import com.vaadin.ui.Label
 import com.vaadin.ui.TextArea
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
-
+import com.vaadin.ui.themes.ValoTheme
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.views.SearchCustomerView
 
@@ -60,6 +60,7 @@ class ProjectInformationView extends VerticalLayout {
         projectDescription.setSizeFull()
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
+        next.addStyleName(ValoTheme.LABEL_LARGE)
         next.setEnabled(false)
 
         VerticalLayout textLayout = new VerticalLayout(projectTitle, projectDescription)

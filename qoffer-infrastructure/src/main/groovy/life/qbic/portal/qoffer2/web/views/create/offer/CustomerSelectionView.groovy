@@ -7,7 +7,7 @@ import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.VerticalLayout
-
+import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
@@ -70,7 +70,10 @@ class CustomerSelectionView extends VerticalLayout{
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.setEnabled(false)
+        next.addStyleName(ValoTheme.LABEL_LARGE)
+
         this.previous = new Button(VaadinIcons.CHEVRON_CIRCLE_LEFT)
+        previous.addStyleName(ValoTheme.LABEL_LARGE)
 
         HorizontalLayout buttonLayout = new HorizontalLayout(previous,next)
         buttonLayout.setComponentAlignment(next, Alignment.BOTTOM_RIGHT)

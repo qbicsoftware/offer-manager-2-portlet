@@ -7,7 +7,7 @@ import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.VerticalLayout
-
+import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProjectManager
 
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
@@ -58,9 +58,11 @@ class ProjectManagerSelectionView extends VerticalLayout{
         layout.setComponentAlignment(titleLabel, Alignment.BOTTOM_LEFT)
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
+        next.addStyleName(ValoTheme.LABEL_LARGE)
         next.setEnabled(false)
-        this.previous = new Button(VaadinIcons.CHEVRON_CIRCLE_LEFT)
 
+        this.previous = new Button(VaadinIcons.CHEVRON_CIRCLE_LEFT)
+        previous.addStyleName(ValoTheme.LABEL_LARGE)
 
         HorizontalLayout buttonLayout = new HorizontalLayout(previous,next)
         buttonLayout.setComponentAlignment(next, Alignment.BOTTOM_RIGHT)

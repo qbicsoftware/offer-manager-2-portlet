@@ -9,7 +9,7 @@ import com.vaadin.ui.Label
 import com.vaadin.ui.TabSheet
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
-
+import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
@@ -153,7 +153,11 @@ class SelectItemsView extends VerticalLayout{
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.setEnabled(false)
+        next.addStyleName(ValoTheme.LABEL_LARGE)
+
         this.previous = new Button(VaadinIcons.CHEVRON_CIRCLE_LEFT)
+        previous.addStyleName(ValoTheme.LABEL_LARGE)
+
 
         this.applySequencing = new Button("Apply", VaadinIcons.PLUS)
         applySequencing.setEnabled(false)
