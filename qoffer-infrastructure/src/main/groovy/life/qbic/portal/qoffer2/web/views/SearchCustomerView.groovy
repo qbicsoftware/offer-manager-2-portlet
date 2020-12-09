@@ -1,7 +1,10 @@
 package life.qbic.portal.qoffer2.web.views
 
-import com.vaadin.data.*
-import com.vaadin.data.provider.DataProvider
+
+import com.vaadin.data.Binder
+import com.vaadin.data.ValidationResult
+import com.vaadin.data.Validator
+import com.vaadin.data.ValueContext
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
