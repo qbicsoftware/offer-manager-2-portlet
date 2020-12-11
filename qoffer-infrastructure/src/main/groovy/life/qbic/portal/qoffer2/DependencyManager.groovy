@@ -1,36 +1,32 @@
 package life.qbic.portal.qoffer2
 
 import groovy.util.logging.Log4j2
+
 import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.ProductCategory
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.datamodel.dtos.business.services.Sequencing
 
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliations
 import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.portlet.customers.search.SearchCustomer
-import life.qbic.portal.qoffer2.customers.CustomerDbConnector
-
-import life.qbic.portal.qoffer2.database.DatabaseSession
+import life.qbic.portal.portlet.offers.create.CreateOffer
+import life.qbic.portal.portlet.products.ListProducts
 
 import life.qbic.portal.qoffer2.offers.OfferDbConnector
-import life.qbic.portal.qoffer2.offers.OfferToCustomerGateway
-import life.qbic.portal.qoffer2.offers.OfferToProductGateway
+import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.products.ProductsDbConnector
+import life.qbic.portal.qoffer2.database.DatabaseSession
+
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
+import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
+import life.qbic.portal.qoffer2.web.controllers.ListProductsController
 import life.qbic.portal.qoffer2.web.controllers.SearchCustomerController
 import life.qbic.portal.qoffer2.web.controllers.ListAffiliationsController
 import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 
 import life.qbic.portal.qoffer2.web.presenters.CreateAffiliationPresenter
 import life.qbic.portal.qoffer2.web.presenters.CreateCustomerPresenter
+import life.qbic.portal.qoffer2.web.presenters.CreateOfferPresenter
 import life.qbic.portal.qoffer2.web.presenters.ListAffiliationsPresenter
 import life.qbic.portal.qoffer2.web.presenters.SearchCustomerPresenter
 import life.qbic.portal.qoffer2.web.presenters.Presenter
@@ -38,10 +34,12 @@ import life.qbic.portal.qoffer2.web.presenters.Presenter
 
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.SearchCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 import life.qbic.portal.qoffer2.web.views.CreateAffiliationView
+import life.qbic.portal.qoffer2.web.views.CreateOfferView
 import life.qbic.portal.qoffer2.web.views.PortletView
 import life.qbic.portal.qoffer2.web.views.CreateCustomerView
 import life.qbic.portal.qoffer2.web.views.SearchCustomerView
@@ -66,11 +64,14 @@ class DependencyManager {
     private CreateCustomerViewModel createCustomerViewModel
     private CreateAffiliationViewModel createAffiliationViewModel
     private SearchCustomerViewModel searchCustomerViewModel
+    private CreateOfferViewModel createOfferViewModel
+
     private Presenter presenter
     private CreateCustomerPresenter createCustomerPresenter
     private CreateAffiliationPresenter createAffiliationPresenter
     private ListAffiliationsPresenter listAffiliationsPresenter
     private SearchCustomerPresenter searchCustomerPresenter
+    private CreateOfferPresenter createOfferPresenter
 
     private CustomerDbConnector customerDbConnector
     private OfferDbConnector offerDbConnector
@@ -80,10 +81,16 @@ class DependencyManager {
     private CreateAffiliation createAffiliation
     private ListAffiliations listAffiliations
     private SearchCustomer searchCustomer
+    private CreateOffer createOffer
+    private ListProducts listProducts
+
     private CreateCustomerController createCustomerController
     private CreateAffiliationController createAffiliationController
     private SearchCustomerController searchCustomerController
     private ListAffiliationsController listAffiliationsController
+    private CreateOfferController createOfferController
+    private ListProductsController listProductsController
+
 
     private PortletView portletView
     private ConfigurationManager configurationManager
@@ -164,6 +171,14 @@ class DependencyManager {
             log.error("Unexpected excpetion during ${SearchCustomerViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
+
+        try {
+            this.createOfferViewModel = new CreateOfferViewModel()
+            //todo add affiliations, customers and project managers to the model
+        } catch (Exception e) {
+            log.error("Unexpected excpetion during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
+            throw e
+        }
     }
 
     private void setupPresenters() {
@@ -193,10 +208,17 @@ class DependencyManager {
         } catch (Exception e) {
             log.error("Unexpected exception during ${ListAffiliationsPresenter.getSimpleName()} setup", e)
         }
+
         try {
             this.searchCustomerPresenter = new SearchCustomerPresenter(this.viewModel, this.searchCustomerViewModel)
         } catch (Exception e) {
             log.error("Unexpected exception during ${SearchCustomerPresenter.getSimpleName()} setup", e)
+        }
+
+        try {
+            this.createOfferPresenter = new CreateOfferPresenter(this.viewModel, this.createOfferViewModel)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} setup", e)
         }
     }
 
@@ -204,6 +226,9 @@ class DependencyManager {
         this.createCustomer = new CreateCustomer(createCustomerPresenter, customerDbConnector)
         this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbConnector)
         this.listAffiliations = new ListAffiliations(listAffiliationsPresenter, customerDbConnector)
+        this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
+        this.listProducts = new ListProducts(productsDbConnector,createOfferPresenter)
+        this.searchCustomer = new SearchCustomer(searchCustomerPresenter, customerDbConnector)
     }
 
     private void setupControllers() {
@@ -230,6 +255,16 @@ class DependencyManager {
         } catch (Exception e) {
             log.error("Unexpected exception during ${ListAffiliationsController.getSimpleName()} setup", e)
         }
+        try {
+            this.createOfferController = new CreateOfferController(this.createOffer,this.createOffer)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
+        }
+        try {
+            this.listProductsController = new ListProductsController(this.listProducts)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${ListProductsController.getSimpleName()} setup", e)
+        }
     }
 
     private void setupViews() {
@@ -254,14 +289,23 @@ class DependencyManager {
         SearchCustomerView searchCustomerView
 
         try {
-            searchCustomerView = new SearchCustomerView(this.viewModel, this.searchCustomerViewModel)
+            searchCustomerView = new SearchCustomerView(this.searchCustomerController, this.viewModel, this.searchCustomerViewModel)
         } catch (Exception e) {
-            log.error("Could not create ${CreateAffiliationView.getSimpleName()} view.", e)
+            log.error("Could not create ${SearchCustomerView.getSimpleName()} view.", e)
             throw e
         }
+
+        CreateOfferView createOfferView
+        try {
+            createOfferView = new CreateOfferView(this.viewModel, this.createOfferViewModel,this.createOfferController,this.listProductsController)
+        } catch (Exception e) {
+            log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
+            throw e
+        }
+
         PortletView portletView
         try {
-            portletView = new PortletView(this.viewModel, createCustomerView, createAffiliationView, searchCustomerView)
+            portletView = new PortletView(this.viewModel, createCustomerView, createAffiliationView, searchCustomerView, createOfferView)
             this.portletView = portletView
         } catch (Exception e) {
             log.error("Could not create ${PortletView.getSimpleName()} view.", e)

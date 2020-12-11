@@ -20,4 +20,10 @@ interface CreateOfferOutput extends UseCaseFailure {
    */
   void createdNewOffer(Offer createdOffer)
 
+  /**
+   * Transfers the calculated price to an implementing class
+   * @param price
+   */
+  void calculatedPrice(double price)
+
 }

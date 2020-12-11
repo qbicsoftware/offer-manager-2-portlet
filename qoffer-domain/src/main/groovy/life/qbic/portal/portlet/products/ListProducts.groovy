@@ -1,7 +1,7 @@
 package life.qbic.portal.portlet.products
 
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.accounting.Product
+import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 /**
