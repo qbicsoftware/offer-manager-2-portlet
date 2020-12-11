@@ -140,7 +140,7 @@ class Offer {
                 overhead = 0.2
                 break
             case AffiliationCategory.EXTERNAL:
-                overhead = 0.2
+                overhead = 0.4
                 break
             default:
                 overhead = 0.4
