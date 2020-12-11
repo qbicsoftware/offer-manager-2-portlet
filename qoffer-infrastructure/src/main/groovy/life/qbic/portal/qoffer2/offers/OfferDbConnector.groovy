@@ -5,15 +5,13 @@ import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.offers.create.CreateOfferDataSource
 import life.qbic.portal.qoffer2.database.ConnectionProvider
-import life.qbic.portal.qoffer2.database.DatabaseSession
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 import java.sql.Connection
 import java.sql.Date
 import java.sql.PreparedStatement
-import java.sql.SQLException
-import java.time.Instant
+import java.sql.Statement
 
 /**
  * Handles the connection to the offer database
@@ -55,7 +53,7 @@ class OfferDbConnector implements CreateOfferDataSource{
                     int customerId = offerToCustomerGateway.getPersonId(offer.customer)
                     int affiliationId = offerToCustomerGateway.getAffiliationId(offer.selectedCustomerAffiliation)
 
-                    int offerId = createOffer(offer, projectManagerId, customerId, affiliationId)
+                    int offerId = storeOffer(offer, projectManagerId, customerId, affiliationId)
 
                     offerToProductGateway.createOfferItems(offer.items, offerId)
                     connection.commit()
@@ -77,12 +75,12 @@ class OfferDbConnector implements CreateOfferDataSource{
     }
 
     /**
-     * The todo describe
+     * The method stores the offer in the QBiC database
      *
-     * @param offer
-     * @return
+     * @param offer with the information of the offer to be stored
+     * @return the id of the stored offer in the database
      */
-    private int createOffer(Offer offer, int projectManagerId, int customerId, int affiliationId){
+    private int storeOffer(Offer offer, int projectManagerId, int customerId, int affiliationId){
         String sqlValues = "VALUE(?,?,?,?,?,?,?,?)"
         String queryTemplate = OFFER_INSERT_QUERY + " " + sqlValues
 
@@ -91,7 +89,7 @@ class OfferDbConnector implements CreateOfferDataSource{
             Connection connection = connectionProvider.connect()
 
             connection.withCloseable {
-                PreparedStatement preparedStatement = it.prepareStatement(queryTemplate)
+                PreparedStatement preparedStatement = it.prepareStatement(queryTemplate, Statement.RETURN_GENERATED_KEYS)
                 preparedStatement.setDate(1, new Date(offer.modificationDate.time))
                 preparedStatement.setDate(2, new Date(offer.expirationDate.time))
                 preparedStatement.setInt(3,customerId)

@@ -6,6 +6,7 @@ import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProductUnitFactory
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
@@ -117,17 +118,21 @@ class ProductsDbConnector implements ListProductsDataSource, OfferToProductGatew
 
   @Override
   def createOfferItems(List<ProductItem> items, int offerId) {
+
+    items = [new ProductItem(2,new Sequencing("DNA Sequencing","This is a sequencing package",1.50, ProductUnit.PER_SAMPLE))]
+    println items.size()
+    println items
     items.each {productItem ->
-      String query = "INSERT INTO offer_item (offer_id, productId, quantity)"+
+      String query = "INSERT INTO productitem (productId, quantity, offerid) "+
               "VALUE(?,?,?)"
 
       int productId = findProductId(productItem.product)
 
       provider.connect().withCloseable {
         PreparedStatement preparedStatement = it.prepareStatement(query)
-        preparedStatement.setInt(1,offerId)
-        preparedStatement.setInt(2,productId)
-        preparedStatement.setDouble(3,productItem.quantity)
+        preparedStatement.setInt(1,productId)
+        preparedStatement.setDouble(2,productItem.quantity)
+        preparedStatement.setInt(3,offerId)
 
         preparedStatement.execute()
       }
@@ -143,7 +148,7 @@ class ProductsDbConnector implements ListProductsDataSource, OfferToProductGatew
    */
   int findProductId(Product product) {
     String query = "SELECT id FROM product "+
-            "WHERE category = ?, description = ?, productName = ?, unitPrice = ?, unit = ?"
+            "WHERE category = ? AND description = ? AND productName = ? AND unitPrice = ? AND unit = ?"
 
     List<Integer> foundId = []
 
