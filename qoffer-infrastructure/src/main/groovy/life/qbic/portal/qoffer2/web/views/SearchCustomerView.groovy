@@ -14,6 +14,7 @@ import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.TextField
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.portal.qoffer2.web.controllers.SearchCustomerController
 import life.qbic.portal.qoffer2.web.viewmodel.SearchCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
@@ -28,9 +29,9 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 @Log4j2
 class SearchCustomerView extends FormLayout {
 
-    private final ViewModel viewModel
-    private final SearchCustomerViewModel searchCustomerViewModel
-
+    final private ViewModel viewModel
+    final private SearchCustomerViewModel searchCustomerViewModel
+    final private SearchCustomerController controller
     private TextField firstNameField
     private TextField lastNameField
     private Button submitButton
@@ -42,8 +43,9 @@ class SearchCustomerView extends FormLayout {
     private Boolean firstNameSet
     private Boolean lastNameSet
 
-    SearchCustomerView(ViewModel viewModel, SearchCustomerViewModel searchCustomerViewModel) {
+    SearchCustomerView(SearchCustomerController controller, ViewModel viewModel, SearchCustomerViewModel searchCustomerViewModel) {
         super()
+        this.controller = controller
         this.viewModel = viewModel
         this.searchCustomerViewModel = searchCustomerViewModel
         this.foundCustomerList = searchCustomerViewModel.foundCustomers
@@ -149,8 +151,10 @@ class SearchCustomerView extends FormLayout {
                 UserError error = new UserError(result.getErrorMessage())
                 firstNameField.setComponentError(error)
             } else {
+                searchCustomerViewModel.searchedFirstName = firstNameField.value
                 firstNameSet = true
                 firstNameField.setComponentError(null)
+
             }
         })
         this.lastNameField.addValueChangeListener({ event ->
@@ -160,6 +164,7 @@ class SearchCustomerView extends FormLayout {
                 UserError error = new UserError(result.getErrorMessage())
                 lastNameField.setComponentError(error)
             } else {
+                searchCustomerViewModel.searchedLastName = lastNameField.value
                 lastNameSet = true
                 lastNameField.setComponentError(null)
             }
@@ -178,11 +183,11 @@ class SearchCustomerView extends FormLayout {
             //If an input is provided to the first name and last name field
             if (firstNameSet && lastNameSet) {
                 //Add values to ViewModel
-                searchCustomerViewModel.searchedFirstName= firstNameField.value
-                searchCustomerViewModel.searchedLastName = lastNameField.value
+                String firstName = searchCustomerViewModel.searchedFirstName
+                String lastName = searchCustomerViewModel.searchedLastName
+                controller.searchCustomerByName(firstName, lastName)
                 //generate grid with new data
                 generateGrid()
-                viewModel.successNotifications.add("Customer ${firstNameField.value} ${lastNameField.value} was found in database")
             }
             //If an input is only provided to the first name field
             else if (firstNameSet && !lastNameSet) {
