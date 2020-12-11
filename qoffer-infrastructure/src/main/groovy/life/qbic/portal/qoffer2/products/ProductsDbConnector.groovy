@@ -5,13 +5,12 @@ import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProductUnitFactory
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
-import life.qbic.portal.portlet.packages.ListProductsDataSource
+import life.qbic.portal.portlet.products.ListProductsDataSource
 import life.qbic.portal.qoffer2.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
 
@@ -120,7 +119,7 @@ class ProductsDbConnector implements ListProductsDataSource {
     /**
      * Query for all available products.
      */
-    final static String SELECT_ALL_PRODUCTS = "SELECT * FROM products"
+    final static String SELECT_ALL_PRODUCTS = "SELECT * FROM product"
 
   }
 }
