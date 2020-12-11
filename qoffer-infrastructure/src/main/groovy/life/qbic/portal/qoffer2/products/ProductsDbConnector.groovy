@@ -119,9 +119,6 @@ class ProductsDbConnector implements ListProductsDataSource, OfferToProductGatew
   @Override
   def createOfferItems(List<ProductItem> items, int offerId) {
 
-    items = [new ProductItem(2,new Sequencing("DNA Sequencing","This is a sequencing package",1.50, ProductUnit.PER_SAMPLE))]
-    println items.size()
-    println items
     items.each {productItem ->
       String query = "INSERT INTO productitem (productId, quantity, offerid) "+
               "VALUE(?,?,?)"
