@@ -109,7 +109,7 @@ class CreateOfferDataSourceSpec extends Specification{
         CustomerDbConnector dataSource = new CustomerDbConnector(connectionProvider)
 
         when:
-        int resultId = dataSource.getPersonId(connection, new Customer.Builder(firstName,lastName,emailAddress).build())
+        int resultId = dataSource.getPersonId(new Customer.Builder(firstName,lastName,emailAddress).build())
 
         then:
         resultId == id
@@ -121,16 +121,17 @@ class CreateOfferDataSourceSpec extends Specification{
 
     def "CreateOfferDbConnector shall return the id for a given affiliation"(){
         given:
-        String query = "SELECT id FROM affiliation WHERE organization=? " +
-                "AND address_addition=? " +
-                "AND street=? " +
-                "AND postal_code=? " +
-                "AND city=?"
+        String query = "SELECT * FROM affiliation WHERE organization= ? " +
+                "AND address_addition = ? " +
+                "AND street = ? " +
+                "AND postal_code = ? " +
+                "AND city = ?"
 
         and: "a connection returning the if of the affiliation if it was found"
         // we need to stub the static SqlExtensions.toRowResult method because we do not provide an implemented RowResult
         GroovyMock(SqlExtensions, global: true)
-        SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(["id":id])
+        SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(["id":id, "organization":organization, "address_addition":address_addition,"street":street,
+                                                                            "postal_code":postal_code, "city":city])
         // our statement should only be able to fill the template with the correct values
         PreparedStatement preparedStatement = Mock (PreparedStatement, {
             it.setString(1, organization) >> _
@@ -153,7 +154,7 @@ class CreateOfferDataSourceSpec extends Specification{
         CustomerDbConnector dataSource = new CustomerDbConnector(connectionProvider)
 
         when:
-        int resultId = dataSource.getAffiliationId(connection, new Affiliation.Builder(organization,street,postal_code,city).build())
+        int resultId = dataSource.getAffiliationId(new Affiliation.Builder(organization,street,postal_code,city).build())
 
         then:
         resultId == id

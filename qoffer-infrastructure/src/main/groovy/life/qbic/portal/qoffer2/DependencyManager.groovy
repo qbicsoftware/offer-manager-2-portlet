@@ -126,16 +126,6 @@ class DependencyManager {
             customerDbConnector = new CustomerDbConnector(DatabaseSession.getInstance())
             productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
             offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(), customerDbConnector, productsDbConnector)
-
-            //todo delete
-            Offer offer = new Offer.Builder(new Customer.Builder("Sven","Fillinger","sven.fillinger@web.de").build(),new ProjectManager.Builder("Sven","Fillinger","sven.fillinger@web.de").build(),
-                    "Title","This is some basic description",
-                    new Affiliation.Builder("QBIC","Auf der Morgenstelle 10","72076","Tübingen").addressAddition("University of Tübingen").country("D").category(AffiliationCategory.INTERNAL).build())
-                    .expirationDate(new Date())
-                    .modificationDate(new Date())
-                    .items([new ProductItem(2,new Sequencing("DNA Sequencing","This is a sequencing package",1.50, ProductUnit.PER_SAMPLE))])
-                    .build()
-            offerDbConnector.store(offer)
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
             throw e
