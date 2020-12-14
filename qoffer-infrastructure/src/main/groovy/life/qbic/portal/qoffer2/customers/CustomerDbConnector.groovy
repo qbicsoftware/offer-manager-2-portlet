@@ -72,13 +72,13 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
   @Override
   List<Customer> findCustomer(String firstName, String lastName) throws DatabaseQueryException {
-    String sqlCondition = "WHERE firstName = ? AND lastName = ?"
+    String sqlCondition = "WHERE first_name = ? AND last_name = ?"
     String queryTemplate = CUSTOMER_SELECT_QUERY + " " + sqlCondition
     List<Map> resultRows = new ArrayList()
-
     Connection connection = connectionProvider.connect()
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(queryTemplate)
+
       preparedStatement.setString(1, firstName)
       preparedStatement.setString(2, lastName)
       ResultSet resultSet = preparedStatement.executeQuery()
@@ -119,14 +119,14 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    */
   private List<Integer> getAffiliationIdsForPerson(int customerId) {
     List<Integer> result = []
-    String query = "SELECT affiliation_id FROM person_affiliation WHERE " +
-            "person_id = ?"
+    String query = "SELECT affiliation_id FROM person_affiliation " +
+            "WHERE person_id = ?"
 
     Connection connection = connectionProvider.connect()
 
     connection.withCloseable {
       def statement = it.prepareStatement(query)
-      statement.setInt(2, customerId)
+      statement.setInt(1, customerId)
       ResultSet rs = statement.executeQuery()
       while (rs.next()) {
         result.add(rs.getString(1).toInteger())
@@ -141,35 +141,33 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    * @return Affiliation DTO associated with the provided affiliation Id
    */
   private Affiliation fetchAffiliation(int affiliationId) {
-
     String affiliationProperties = "organization, address_addition, street, postal_code, city, country, category"
-    String query = "SELECT ${affiliationProperties} from affiliation WHERE " + "id = ?"
+    String query = "SELECT ${affiliationProperties} FROM affiliation " +
+    "WHERE id = ?"
 
+    Map row
     Connection connection = connectionProvider.connect()
-
     connection.withCloseable {
       def statement = it.prepareStatement(query)
-      statement.setString(2, affiliationId.toString())
-      ResultSet rs = statement.executeQuery()
-      def affiliationBuilder = new Affiliation.Builder(
-              "${rs.getString(2)}", //organization
-              "${rs.getString(4)}", //street
-              "${rs.getString(5)}", //postal_code
-              "${rs.getString(6)}")
-      AffiliationCategory category
-      try {
-        category = CATEGORY_FACTORY.getForString("${rs.getString(8)}")
-      } catch (IllegalArgumentException ignored) {
-        //fixme this should not happen but there is an incomplete entry in the DB
-        log.warn("Affiliation ${rs.getString(1)} has category '${rs.getString(8)}'. Could not match.")
-        category = AffiliationCategory.UNKNOWN
+      statement.setString(1, affiliationId.toString())
+      statement.execute()
+      ResultSet rs = statement.getResultSet()
+      while (rs.next()) {
+        row = SqlExtensions.toRowResult(rs)
       }
-      affiliationBuilder
-              .addressAddition("${rs.getString(3)}")
-              .country("${rs.getString(7)}")
-              .category(category)
-      return affiliationBuilder.build()
     }
+    AffiliationCategory category = CATEGORY_FACTORY.getForString(row.category as String)
+    Affiliation affiliation = new Affiliation.Builder(
+            row.organization as String,
+            row.street as String,
+            row.postal_code as String,
+            row.city as String)
+            .country(row.country as String)
+            .addressAddition(row.address_addition as String)
+            .category(category)
+            .build()
+
+    return affiliation
   }
 
   /**
@@ -217,7 +215,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       def statement = connection.prepareStatement(query)
       statement.setString(1, customer.firstName)
       statement.setString(2, customer.lastName)
-      statement.setString(3, customer.eMailAddress)
+      statement.setString(3, customer.emailAddress)
       statement.execute()
       def result = statement.getResultSet()
       customerAlreadyInDb = result.next()
@@ -235,7 +233,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     statement.setString(1, customer.firstName )
     statement.setString(2, customer.lastName)
     statement.setString(3, customer.title.value)
-    statement.setString(4, customer.eMailAddress )
+    statement.setString(4, customer.emailAddress )
     statement.execute()
     def keys = statement.getGeneratedKeys()
     while (keys.next()){
@@ -253,8 +251,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     affiliations.each {affiliation ->
       def affiliationId = getAffiliationId(connection, affiliation)
       def statement = connection.prepareStatement(query)
-      statement.setInt(1, affiliationId)
-      statement.setInt(2, customerId)
+      statement.setInt(1, customerId)
+      statement.setInt(2, affiliationId)
       statement.execute()
 
     }

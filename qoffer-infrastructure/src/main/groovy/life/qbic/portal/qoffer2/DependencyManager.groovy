@@ -221,6 +221,7 @@ class DependencyManager {
         this.listAffiliations = new ListAffiliations(listAffiliationsPresenter, customerDbConnector)
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
         this.listProducts = new ListProducts(productsDbConnector,createOfferPresenter)
+        this.searchCustomer = new SearchCustomer(searchCustomerPresenter, customerDbConnector)
     }
 
     private void setupControllers() {
@@ -281,9 +282,9 @@ class DependencyManager {
         SearchCustomerView searchCustomerView
 
         try {
-            searchCustomerView = new SearchCustomerView(this.viewModel, this.searchCustomerViewModel)
+            searchCustomerView = new SearchCustomerView(this.searchCustomerController, this.viewModel, this.searchCustomerViewModel)
         } catch (Exception e) {
-            log.error("Could not create ${CreateAffiliationView.getSimpleName()} view.", e)
+            log.error("Could not create ${SearchCustomerView.getSimpleName()} view.", e)
             throw e
         }
 
