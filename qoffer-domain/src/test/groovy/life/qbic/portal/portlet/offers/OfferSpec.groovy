@@ -151,7 +151,4 @@ class OfferSpec extends Specification {
         then:
         overhead == 0
     }
-
-
-
 }
