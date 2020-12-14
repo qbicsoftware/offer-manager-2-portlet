@@ -21,11 +21,11 @@ import life.qbic.datamodel.dtos.business.services.Product
  */
 class CreateOfferViewModel {
 
-    List<ProductItemViewModel> sequencingProducts = [] as ObservableList
-    List<ProductItemViewModel> primaryAnalysisProducts = [] as ObservableList
-    List<ProductItemViewModel> secondaryAnalysisProducts = [] as ObservableList
-    List<ProductItemViewModel> managementProducts = [] as ObservableList
-    List<ProductItemViewModel> storageProducts = [] as ObservableList
+    List<ProductItemViewModel> sequencingProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<ProductItemViewModel> primaryAnalysisProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<ProductItemViewModel> secondaryAnalysisProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<ProductItemViewModel> managementProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<ProductItemViewModel> storageProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
 
     List<Customer> foundCustomers = []
     List<ProjectManager> projectManagers = []

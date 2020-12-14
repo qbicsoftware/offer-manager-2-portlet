@@ -14,8 +14,6 @@ import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
-import java.beans.PropertyChangeListener
-
 /**
  * Presenter for the CreateOffer
  *
@@ -57,29 +55,40 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
 
     @Override
     void showAvailableProducts(List<Product> availableProducts) {
-        this.createOfferViewModel.sequencingProducts.clear()
-        this.createOfferViewModel.managementProducts.clear()
-        this.createOfferViewModel.primaryAnalysisProducts.clear()
-        this.createOfferViewModel.secondaryAnalysisProducts.clear()
-        this.createOfferViewModel.storageProducts.clear()
 
         availableProducts.each {
-             ProductItemViewModel product = new ProductItemViewModel(0, it)
-             if(it instanceof Sequencing){
-                 this.createOfferViewModel.sequencingProducts.add(product)
-             }
-             else if(it instanceof ProjectManagement){
-                 this.createOfferViewModel.managementProducts.add(product)
-             }
-             else if(it instanceof PrimaryAnalysis){
-                 this.createOfferViewModel.primaryAnalysisProducts.add(product)
-             }
-             else if(it instanceof SecondaryAnalysis){
-                 this.createOfferViewModel.secondaryAnalysisProducts.add(product)
-             }
-             else if(it instanceof DataStorage){
-                 this.createOfferViewModel.storageProducts.add(product)
-             }
-         }
+            ProductItemViewModel product = new ProductItemViewModel(0, it)
+
+            if (it instanceof Sequencing && !contains(this.createOfferViewModel.sequencingProducts,it)) {
+                this.createOfferViewModel.sequencingProducts.add(product)
+            }
+            else if (it instanceof ProjectManagement && !contains(this.createOfferViewModel.managementProducts,it)) {
+                this.createOfferViewModel.managementProducts.add(product)
+            }
+            else if (it instanceof PrimaryAnalysis && !contains(this.createOfferViewModel.primaryAnalysisProducts,it)) {
+                this.createOfferViewModel.primaryAnalysisProducts.add(product)
+            }
+            else if (it instanceof SecondaryAnalysis && !contains(this.createOfferViewModel.secondaryAnalysisProducts,it)) {
+                this.createOfferViewModel.secondaryAnalysisProducts.add(product)
+            }
+            else if (it instanceof DataStorage && !contains(this.createOfferViewModel.storageProducts,it)) {
+                this.createOfferViewModel.storageProducts.add(product)
+            }
+        }
+    }
+
+    /**
+     * Tests if the product is already contained in a list
+     *
+     * @param list containing a list of {@link ProductItemViewModel}
+     * @param product which should tested if already contained in list
+     * @return boolean value to determine if product is in list
+     */
+    private static boolean contains(List<ProductItemViewModel> list, Product product){
+        boolean contains = false
+        list.each { it ->
+             if(it.product == product) contains = true
+        }
+        return contains
     }
 }
