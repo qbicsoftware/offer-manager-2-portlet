@@ -42,8 +42,6 @@ class SelectItemsView extends VerticalLayout{
     final private CreateOfferViewModel createOfferViewModel
     final private ViewModel viewModel
 
-    private List<Product> foundProducts
-
     private List<ProductItemViewModel> sequencingProduct
     private List<ProductItemViewModel> projectManagementProduct
     private List<ProductItemViewModel> storageProduct
