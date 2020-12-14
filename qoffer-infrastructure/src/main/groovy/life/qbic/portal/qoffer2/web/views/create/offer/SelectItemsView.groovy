@@ -11,10 +11,8 @@ import com.vaadin.ui.TabSheet
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
-import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
