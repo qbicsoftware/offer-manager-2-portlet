@@ -301,8 +301,11 @@ class SelectItemsView extends VerticalLayout{
                         sequencingGrid.getDataProvider().refreshAll()
                     }
                 }
-                catch(NumberFormatException e){
+                catch (NumberFormatException e) {
                     viewModel.failureNotifications.add("The quantity must be an integer value bigger than 0")
+                }
+                catch (Exception e) {
+                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
                 }
             }
             amountSequencing.clear()
@@ -335,7 +338,6 @@ class SelectItemsView extends VerticalLayout{
                     viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
                 }
                 }
-            }
             amountPrimaryAnalysis.clear()
             primaryAnalyseGrid.deselectAll()
             applyPrimaryAnalysis.setEnabled(false)
@@ -366,7 +368,6 @@ class SelectItemsView extends VerticalLayout{
                     viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
                 }
                 }
-            }
             amountSecondaryAnalysis.clear()
             secondaryAnalyseGrid.deselectAll()
             applySecondaryAnalysis.setEnabled(false)
