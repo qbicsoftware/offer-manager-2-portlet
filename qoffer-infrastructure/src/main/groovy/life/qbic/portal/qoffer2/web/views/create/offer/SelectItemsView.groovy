@@ -301,7 +301,7 @@ class SelectItemsView extends VerticalLayout{
                         sequencingGrid.getDataProvider().refreshAll()
                     }
                 }
-                catch(Exception e){
+                catch(NumberFormatException e){
                     viewModel.failureNotifications.add("The quantity must be an integer value bigger than 0")
                 }
             }
@@ -329,8 +329,8 @@ class SelectItemsView extends VerticalLayout{
                         primaryAnalyseGrid.getDataProvider().refreshAll()
                     }
                 }
-                catch(Exception e){
-                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
+                catch(NumberFormatException e){
+                    viewModel.failureNotifications.add("The quantity must be an integer value bigger than 0")
                 }
             }
             amountPrimaryAnalysis.clear()
@@ -357,8 +357,8 @@ class SelectItemsView extends VerticalLayout{
                         secondaryAnalyseGrid.getDataProvider().refreshAll()
                     }
                 }
-                catch(Exception e){
-                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
+                catch(NumberFormatException e){
+                    viewModel.failureNotifications.add("The quantity must be an integer value bigger than 0")
                 }
             }
             amountSecondaryAnalysis.clear()
