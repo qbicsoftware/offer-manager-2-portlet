@@ -138,6 +138,13 @@ class Offer {
         return netPrice + overhead + ((netPrice + overhead) * vat)
     }
 
+    /**
+     * The total net price for the current offer.
+     *
+     * Note: Does <strong>not include</strong> overheads and taxes.
+     *
+     * @return The net offer price
+     */
     double getTotalNetPrice() {
         return calculateNetPrice()
     }
