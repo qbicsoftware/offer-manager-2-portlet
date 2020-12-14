@@ -330,7 +330,10 @@ class SelectItemsView extends VerticalLayout{
                     }
                 }
                 catch(NumberFormatException e){
-                    viewModel.failureNotifications.add("The quantity must be an integer value bigger than 0")
+                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
+                } catch (Exception e) {
+                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
+                }
                 }
             }
             amountPrimaryAnalysis.clear()
@@ -443,5 +446,4 @@ class SelectItemsView extends VerticalLayout{
     }
 
 }
-
 
