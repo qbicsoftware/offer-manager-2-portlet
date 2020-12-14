@@ -9,7 +9,6 @@ import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.portal.portlet.offers.Offer
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -87,7 +86,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double taxes = offer.getTaxesCosts()
+        double taxes = offer.getTaxCosts()
         double totalCosts = offer.getTotalCosts()
         double netSum = offer.getTotalNetPrice()
 
@@ -117,7 +116,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double taxes = offer.getTaxesCosts()
+        double taxes = offer.getTaxCosts()
         double totalCosts = offer.getTotalCosts()
         double netSum = offer.getTotalNetPrice()
 
