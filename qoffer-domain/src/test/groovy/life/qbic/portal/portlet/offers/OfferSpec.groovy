@@ -87,7 +87,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double taxes = offer.getVatSum()
+        double taxes = offer.getTaxesCosts()
         double totalCosts = offer.getTotalCosts()
         double netSum = offer.getTotalNetPrice()
 
@@ -117,7 +117,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double taxes = offer.getVatSum()
+        double taxes = offer.getTaxesCosts()
         double totalCosts = offer.getTotalCosts()
         double netSum = offer.getTotalNetPrice()
 
