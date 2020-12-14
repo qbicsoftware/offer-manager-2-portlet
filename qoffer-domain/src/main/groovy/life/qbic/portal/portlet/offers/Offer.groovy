@@ -207,7 +207,7 @@ class Offer {
         return overhead
     }
 
-    double calculateTotalCosts(){
+    private double calculateTotalCosts(){
         final double netPrice = calculateNetPrice()
         final double overhead = getOverheadSum()
         return netPrice + overhead + getVatSum()
