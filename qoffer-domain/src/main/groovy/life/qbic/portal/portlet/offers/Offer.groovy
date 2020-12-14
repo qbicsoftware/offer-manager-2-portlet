@@ -87,7 +87,8 @@ class Offer {
             this.projectTitle = Objects.requireNonNull(projectTitle, "Project Title must not be null")
             this.projectDescription = Objects.requireNonNull(projectDescription, "Project Description must not be null")
             this.items = []
-            // We copy all immutable items to out internal list
+            // Since the incoming item list is mutable we need to
+            // copy all immutable items to out internal list
             items.each {this.items.add(it)}
             this.selectedCustomerAffiliation = Objects.requireNonNull(selectedCustomerAffiliation, "Customer Affiliation must not be null")
         }
