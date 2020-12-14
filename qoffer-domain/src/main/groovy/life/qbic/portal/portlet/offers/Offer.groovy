@@ -87,6 +87,8 @@ class Offer {
             this.projectTitle = Objects.requireNonNull(projectTitle, "Project Title must not be null")
             this.projectDescription = Objects.requireNonNull(projectDescription, "Project Description must not be null")
             this.items = []
+            // We copy all immutable items to out internal list
+            items.each {this.items.add(it)}
             this.selectedCustomerAffiliation = Objects.requireNonNull(selectedCustomerAffiliation, "Customer Affiliation must not be null")
         }
 
@@ -113,7 +115,8 @@ class Offer {
     private Offer(Builder builder) {
         this.customer = builder.customer
         this.identifier = builder.identifier
-        this.items = builder.items
+        this.items = []
+        builder.items.each {this.items.add(it)}
         this.expirationDate = builder.expirationDate
         this.modificationDate = builder.modificationDate
         this.projectManager = builder.projectManager
@@ -131,8 +134,8 @@ class Offer {
     double getTotalCosts() {
         final double netPrice = calculateNetPrice()
         final double vat = determineVat()
-        // TODO check back with BioPM if this is correct
-        return netPrice*overhead + vat*netPrice
+        final double overhead = getOverheadSum()
+        return netPrice + overhead + ((netPrice + overhead) * vat)
     }
 
     double getTotalNetPrice() {
@@ -152,7 +155,6 @@ class Offer {
         for (ProductItem item : items) {
             if (item.product instanceof DataStorage || item.product instanceof ProjectManagement) {
                 // No overheads are assigned for data storage and project management
-                return
             } else {
                 overheadSum += item.quantity * item.product.unitPrice * this.overhead
             }
