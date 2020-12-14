@@ -5,6 +5,7 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
@@ -49,11 +50,12 @@ class OfferSpec extends Specification {
 
     def "A customer with an internal affiliation shall pay no overheads"() {
         given:
-        List<ProductItem> items = [new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                " " +
-                "example", 1.0, ProductUnit.PER_SAMPLE)),
-                                  new ProductItem(1, new ProjectManagement("Basic Management",
-                                          "Just an example", 10.0, ProductUnit.PER_DATASET))]
+        List<ProductItem> items = [
+                new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                        " example", 1.0, ProductUnit.PER_SAMPLE)),
+                new ProductItem(1, new ProjectManagement("Basic Management",
+                        "Just an example", 10.0, ProductUnit.PER_DATASET))
+        ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, internalAffiliation).build()
@@ -72,11 +74,12 @@ class OfferSpec extends Specification {
 
     def "A customer with an external academic affiliation shall pay 20% overheads and 19% VAT"() {
         given:
-        List<ProductItem> items = [new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                " " +
-                "example", 1.0, ProductUnit.PER_SAMPLE)),
-                                   new ProductItem(1, new ProjectManagement("Basic Management",
-                                           "Just an example", 10.0, ProductUnit.PER_DATASET))]
+        List<ProductItem> items = [
+                new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                " example", 1.0, ProductUnit.PER_SAMPLE)),
+                new ProductItem(1, new ProjectManagement("Basic Management",
+               "Just an example", 10.0, ProductUnit.PER_DATASET))
+        ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, externalAcademicAffiliation).build()
@@ -101,15 +104,15 @@ class OfferSpec extends Specification {
 
     def "A customer with an external affiliation shall pay 40% overheads and 19% VAT"() {
         given:
-        List<ProductItem> items = [new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                " " +
-                "example", 1.0, ProductUnit.PER_SAMPLE)),
-                                   new ProductItem(1, new ProjectManagement("Basic Management",
-                                           "Just an example", 10.0, ProductUnit.PER_DATASET))]
+        List<ProductItem> items = [
+                new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                        " example", 1.0, ProductUnit.PER_SAMPLE)),
+                new ProductItem(1, new ProjectManagement("Basic Management",
+                        "Just an example", 10.0, ProductUnit.PER_DATASET))
+        ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
-                "awesome" +
-                " project", items, externalAffiliation).build()
+                "awesome project", items, externalAffiliation).build()
 
         when:
         double overhead = offer.getOverheadSum()
@@ -127,6 +130,26 @@ class OfferSpec extends Specification {
         taxes == expectedTaxes
 
         totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes
+    }
+
+    def "On data storage and project management service, no overheads shall be calculated"() {
+        given:
+        List<ProductItem> items = [
+                new ProductItem(1, new ProjectManagement("Basic Management",
+                        "Just an example", 10.0, ProductUnit.PER_DATASET)),
+                new ProductItem(1, new DataStorage("Basic Management",
+                        "Just an example", 10.0, ProductUnit.PER_GIGABYTE))
+
+        ]
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, externalAffiliation).build()
+
+        when:
+        double overhead = offer.getOverheadSum()
+
+        then:
+        overhead == 0
     }
 
 
