@@ -43,34 +43,26 @@ class OfferDbConnector implements CreateOfferDataSource{
 
     @Override
     void store(Offer offer) throws DatabaseQueryException {
-        try {
-            Connection connection = connectionProvider.connect()
-            connection.setAutoCommit(false)
+        Connection connection = connectionProvider.connect()
+        connection.setAutoCommit(false)
 
-            connection.withCloseable {it ->
-                try {
-                    int projectManagerId = offerToCustomerGateway.getPersonId(offer.projectManager)
-                    int customerId = offerToCustomerGateway.getPersonId(offer.customer)
-                    int affiliationId = offerToCustomerGateway.getAffiliationId(offer.selectedCustomerAffiliation)
+        connection.withCloseable { it ->
+            try {
+                int projectManagerId = offerToCustomerGateway.getPersonId(offer.projectManager)
+                int customerId = offerToCustomerGateway.getPersonId(offer.customer)
+                int affiliationId = offerToCustomerGateway.getAffiliationId(offer.selectedCustomerAffiliation)
 
-                    int offerId = storeOffer(offer, projectManagerId, customerId, affiliationId)
+                int offerId = storeOffer(offer, projectManagerId, customerId, affiliationId)
 
-                    offerToProductGateway.createOfferItems(offer.items, offerId)
-                    connection.commit()
-                } catch (Exception e) {
-                    log.error(e.message)
-                    log.error(e.stackTrace.join("\n"))
-                    connection.rollback()
-                    connection.close()
-                    throw new DatabaseQueryException("Could not store offer.")
-                }
+                offerToProductGateway.createOfferItems(offer.items, offerId)
+                connection.commit()
+            } catch (Exception e) {
+                log.error(e.message)
+                log.error(e.stackTrace.join("\n"))
+                connection.rollback()
+                connection.close()
+                throw new DatabaseQueryException("Could not store offer {$offer.identifier}.")
             }
-        } catch (DatabaseQueryException ignored) {
-            throw new DatabaseQueryException("The offer could not be stored: ${offer.toString()}")
-        } catch (Exception e) {
-            log.error(e)
-            log.error(e.stackTrace.join("\n"))
-            throw new DatabaseQueryException("The offer could not be stored: ${offer.toString()}")
         }
     }
 
@@ -84,33 +76,28 @@ class OfferDbConnector implements CreateOfferDataSource{
         String sqlValues = "VALUE(?,?,?,?,?,?,?,?)"
         String queryTemplate = OFFER_INSERT_QUERY + " " + sqlValues
 
-        try{
-            List<Integer> generatedKeys = []
-            Connection connection = connectionProvider.connect()
+        List<Integer> generatedKeys = []
+        Connection connection = connectionProvider.connect()
 
-            connection.withCloseable {
-                PreparedStatement preparedStatement = it.prepareStatement(queryTemplate, Statement.RETURN_GENERATED_KEYS)
-                preparedStatement.setDate(1, new Date(offer.modificationDate.time))
-                preparedStatement.setDate(2, new Date(offer.expirationDate.time))
-                preparedStatement.setInt(3,customerId)
-                preparedStatement.setInt(4,projectManagerId)
-                preparedStatement.setString(5,offer.projectTitle)
-                preparedStatement.setString(6,offer.projectDescription)
-                preparedStatement.setDouble(7,offer.totalPrice)
-                preparedStatement.setInt(8,affiliationId)
+        connection.withCloseable {
+            PreparedStatement preparedStatement = it.prepareStatement(queryTemplate, Statement.RETURN_GENERATED_KEYS)
+            preparedStatement.setDate(1, new Date(offer.modificationDate.time))
+            preparedStatement.setDate(2, new Date(offer.expirationDate.time))
+            preparedStatement.setInt(3, customerId)
+            preparedStatement.setInt(4, projectManagerId)
+            preparedStatement.setString(5, offer.projectTitle)
+            preparedStatement.setString(6, offer.projectDescription)
+            preparedStatement.setDouble(7, offer.totalPrice)
+            preparedStatement.setInt(8, affiliationId)
 
-                preparedStatement.execute()
+            preparedStatement.execute()
 
-                def keys = preparedStatement.getGeneratedKeys()
-                while (keys.next()){
-                    generatedKeys.add(keys.getInt(1))
-                }
-
-                return generatedKeys[0]
+            def keys = preparedStatement.getGeneratedKeys()
+            while (keys.next()) {
+                generatedKeys.add(keys.getInt(1))
             }
-        }catch(Exception exception){
-            log.error(exception)
-            throw new DatabaseQueryException("The offer could not be created: ${offer.toString()}")
+
+            return generatedKeys[0]
         }
     }
 }
