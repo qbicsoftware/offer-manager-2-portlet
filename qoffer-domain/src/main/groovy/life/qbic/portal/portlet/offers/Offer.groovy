@@ -132,10 +132,7 @@ class Offer {
      * @return The total costs in the currency of the selected items.
      */
     double getTotalCosts() {
-        final double netPrice = calculateNetPrice()
-        final double vat = determineVat()
-        final double overhead = getOverheadSum()
-        return netPrice + overhead + ((netPrice + overhead) * vat)
+        calculateTotalCosts()
     }
 
     /**
@@ -209,15 +206,9 @@ class Offer {
         return overhead
     }
 
-    private double determineVat() {
-        double vat = 0.0
-        switch(selectedCustomerAffiliation.category) {
-            case AffiliationCategory.INTERNAL:
-                vat = 0.0
-                break
-            default:
-                vat = 0.19
-        }
-        return vat
+    double calculateTotalCosts(){
+        final double netPrice = calculateNetPrice()
+        final double overhead = getOverheadSum()
+        return netPrice + overhead + getVatSum()
     }
 }
