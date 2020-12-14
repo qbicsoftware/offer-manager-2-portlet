@@ -62,12 +62,12 @@ class Offer {
      * Holds the determined overhead derived from the
      * customer's affiliation.
      */
-    final private double overhead
+    private final double overhead
 
     /*
      * Holds the current VAT rate
      */
-    static final private double VAT = 0.19
+    private static final double VAT = 0.19
 
     static class Builder {
 

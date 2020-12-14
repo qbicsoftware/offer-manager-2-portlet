@@ -49,7 +49,7 @@ class OfferSpec extends Specification {
     }
 
     def "A customer with an internal affiliation shall pay no overheads"() {
-        given:
+        given: "A list of product items"
         List<ProductItem> items = [
                 new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
                         " example", 1.0, ProductUnit.PER_SAMPLE)),
@@ -57,10 +57,11 @@ class OfferSpec extends Specification {
                         "Just an example", 10.0, ProductUnit.PER_DATASET))
         ]
 
+        and: "an internal offer containing these product items"
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, internalAffiliation).build()
 
-        when:
+        when: "the Offer object is tasked with calculating the total costs and the total net price"
         double totalCosts = offer.getTotalCosts()
         double netPrice = offer.getTotalNetPrice()
 
