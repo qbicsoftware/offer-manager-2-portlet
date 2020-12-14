@@ -174,7 +174,7 @@ class Offer {
      *
      * @return The amount of VAT price based on all items in the offer.
      */
-    double getVatSum() {
+    double getTaxesCosts() {
         if (selectedCustomerAffiliation.category.equals(AffiliationCategory.INTERNAL)) {
             return 0
         }
@@ -210,6 +210,6 @@ class Offer {
     double calculateTotalCosts(){
         final double netPrice = calculateNetPrice()
         final double overhead = getOverheadSum()
-        return netPrice + overhead + getVatSum()
+        return netPrice + overhead + getTaxesCosts()
     }
 }
