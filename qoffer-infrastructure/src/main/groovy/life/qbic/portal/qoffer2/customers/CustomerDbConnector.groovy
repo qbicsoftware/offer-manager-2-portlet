@@ -447,7 +447,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    * @param person The database entry is searched for a person
    * @return the ID of the database entry matching the person
    */
-  @Override
   int getPersonId(Person person) {
     String query = "SELECT id FROM person WHERE first_name = ? AND last_name = ? AND email = ?"
     Connection connection = connectionProvider.connect()
