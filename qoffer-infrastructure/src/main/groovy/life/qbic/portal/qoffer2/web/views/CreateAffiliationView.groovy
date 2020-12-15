@@ -8,6 +8,7 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
+import com.vaadin.ui.themes.ValoTheme
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
@@ -34,7 +35,8 @@ class CreateAffiliationView extends VerticalLayout {
     private TextField countryField
     private ComboBox<String> affiliationCategoryField
 
-    private Button submitButton
+    Button abortButton
+    Button submitButton
 
     CreateAffiliationView(ViewModel sharedViewModel, CreateAffiliationViewModel createAffiliationViewModel, CreateAffiliationController controller) {
         super()
@@ -65,8 +67,15 @@ class CreateAffiliationView extends VerticalLayout {
         this.countryField = new TextField("Country")
         countryField.setPlaceholder("name of the country")
         this.affiliationCategoryField = generateAffiliationCategorySelect(createAffiliationViewModel.affiliationCategories)
+
+        this.abortButton = new Button("Abort Affiliation Creation")
+        abortButton.setIcon(VaadinIcons.EXIT_O)
+        abortButton.addStyleName(ValoTheme.BUTTON_DANGER)
+
         this.submitButton = new Button("Create Affiliation")
         submitButton.enabled = allValuesValid()
+        submitButton.setIcon(VaadinIcons.OFFICE)
+        submitButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
 
         organisationField.setRequiredIndicatorVisible(true)
         addressAdditionField.setRequiredIndicatorVisible(false)
@@ -75,8 +84,6 @@ class CreateAffiliationView extends VerticalLayout {
         cityField.setRequiredIndicatorVisible(true)
         countryField.setRequiredIndicatorVisible(true)
         affiliationCategoryField.setRequiredIndicatorVisible(true)
-
-        submitButton.setIcon(VaadinIcons.OFFICE)
 
         HorizontalLayout row1 = new HorizontalLayout(organisationField, addressAdditionField)
         row1.setSizeFull()
@@ -88,9 +95,11 @@ class CreateAffiliationView extends VerticalLayout {
         row3.setExpandRatio(cityField,3) // leads to it being 3/4 of the width
         HorizontalLayout row4 = new HorizontalLayout(countryField)
         row4.setSizeFull()
-        HorizontalLayout row5 = new HorizontalLayout(affiliationCategoryField, submitButton)
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(abortButton, submitButton)
+        HorizontalLayout row5 = new HorizontalLayout(affiliationCategoryField, buttonLayout)
         row5.setComponentAlignment(affiliationCategoryField, Alignment.BOTTOM_LEFT)
-        row5.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
+        row5.setComponentAlignment(buttonLayout, Alignment.BOTTOM_RIGHT)
         row5.setSizeFull()
 
         organisationField.setSizeFull()
