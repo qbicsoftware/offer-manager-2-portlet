@@ -302,11 +302,9 @@ class SelectItemsView extends VerticalLayout{
                         }
                         sequencingGrid.getDataProvider().refreshAll()
                     }
-                }
-                catch(Exception e){
+                } catch (NumberFormatException e) {
                     viewModel.failureNotifications.add("The quantity must be an integer value bigger than 0")
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
                 }
             }
@@ -333,9 +331,10 @@ class SelectItemsView extends VerticalLayout{
                         }
                         primaryAnalyseGrid.getDataProvider().refreshAll()
                     }
-                }
-                catch(Exception e){
-                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
+                } catch(NumberFormatException e){
+                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
+                } catch (Exception e) {
+                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
                 }
             }
             amountPrimaryAnalysis.clear()
@@ -362,8 +361,10 @@ class SelectItemsView extends VerticalLayout{
                         secondaryAnalyseGrid.getDataProvider().refreshAll()
                     }
                 }
-                catch(Exception e){
-                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
+                catch(NumberFormatException e){
+                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
+                } catch (Exception e) {
+                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
                 }
             }
             amountSecondaryAnalysis.clear()
