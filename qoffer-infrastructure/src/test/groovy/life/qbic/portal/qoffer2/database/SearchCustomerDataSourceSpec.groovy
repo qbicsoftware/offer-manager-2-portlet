@@ -24,8 +24,8 @@ class SearchCustomerDataSourceSpec extends Specification{
 
     def "CustomerDbConnector shall return matching customers given a first name and a last name"() {
         given: "a predefined query template"
-        String expectedQuery = "SELECT id, first_name AS firstName, last_name AS lastName, title as academicTitle, email as eMailAddress FROM person" +
-                " WHERE firstName = ? AND lastName = ?"
+        String expectedQuery = "SELECT id, first_name AS firstName, last_name AS lastName, title as academicTitle, email as eMailAddress FROM person" + " " +
+                "WHERE first_name = ? AND last_name = ?"
 
         and: "a connection returning correct results only for matching firstname and lastname"
         // we need to stub the static SqlExtensions.toRowResult method because we do not provide an implemented RowResult
