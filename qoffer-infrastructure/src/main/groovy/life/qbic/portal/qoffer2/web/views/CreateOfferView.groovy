@@ -3,9 +3,12 @@ package life.qbic.portal.qoffer2.web.views
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.VerticalLayout
 import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.portal.portlet.customers.create.CreateCustomer
+import life.qbic.portal.qoffer2.DependencyManager
+import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
-
+import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
@@ -30,7 +33,10 @@ class CreateOfferView extends FormLayout{
 
     final private ViewModel sharedViewModel
     final private CreateOfferViewModel view
+    final private CreateCustomerViewModel createCustomerViewModel
+
     final private CreateOfferController controller
+    final private CreateCustomerController createCustomerController
     final private ListProductsController listProductsController
 
     final private ProjectInformationView projectInformationView
@@ -39,16 +45,21 @@ class CreateOfferView extends FormLayout{
     final private SelectItemsView selectItemsView
     final private OfferOverviewView overviewView
 
+    final private CreateCustomerView createCustomerView
 
-    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController) {
+
+    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController, CreateCustomerViewModel createCustomerViewModel, CreateCustomerController createCustomerController) {
         super()
         this.sharedViewModel = sharedViewModel
         this.view = createOfferViewModel
         this.controller = controller
         this.listProductsController = listProductsController
+        this.createCustomerViewModel = createCustomerViewModel
+        this.createCustomerController = createCustomerController
 
         projectInformationView = new ProjectInformationView(view)
         customerSelectionView = new CustomerSelectionView(view)
+        createCustomerView = new CreateCustomerView(sharedViewModel, createCustomerViewModel, createCustomerController)
         projectManagerSelectionView = new ProjectManagerSelectionView(view)
         selectItemsView = new SelectItemsView(view,sharedViewModel)
         overviewView = new OfferOverviewView(view)
@@ -79,6 +90,14 @@ class CreateOfferView extends FormLayout{
         this.customerSelectionView.previous.addClickListener({
             this.removeComponent(customerSelectionView)
             this.addComponent(projectInformationView)
+        })
+        this.customerSelectionView.createCustomerButton.addClickListener({
+            this.removeComponent(customerSelectionView)
+            this.addComponent(createCustomerView)
+        })
+        this.createCustomerView.abortButton.addClickListener({
+            this.removeComponent(createCustomerView)
+            this.addComponent(customerSelectionView)
         })
         this.projectManagerSelectionView.next.addClickListener({
             this.removeComponent(projectManagerSelectionView)
