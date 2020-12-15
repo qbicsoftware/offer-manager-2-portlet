@@ -76,45 +76,35 @@ class SelectItemsView extends VerticalLayout{
         sequencingProduct = createOfferViewModel.sequencingProducts as ObservableList
         sequencingProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
-                sequencingProduct.each {
-                    sequencingGrid.dataProvider.refreshAll()
-                }
+              sequencingGrid.dataProvider.refreshAll()
             }
         })
 
         projectManagementProduct = createOfferViewModel.managementProducts as ObservableList
         projectManagementProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
-                projectManagementProduct.each {
-                    projectManagementGrid.dataProvider.refreshAll()
-                }
+              projectManagementGrid.dataProvider.refreshAll()
             }
         })
 
         storageProduct = createOfferViewModel.storageProducts as ObservableList
         storageProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
-                storageProduct.each {
-                    storageGrid.dataProvider.refreshAll()
-                }
+                storageGrid.dataProvider.refreshAll()
             }
         })
 
         primaryAnalyseProduct = createOfferViewModel.primaryAnalysisProducts as ObservableList
         primaryAnalyseProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
-                primaryAnalyseProduct.each {
-                    primaryAnalyseGrid.dataProvider.refreshAll()
-                }
+              primaryAnalyseGrid.dataProvider.refreshAll()
             }
         })
 
         secondaryAnalyseProduct = createOfferViewModel.secondaryAnalysisProducts as ObservableList
         secondaryAnalyseProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
-                secondaryAnalyseProduct.each {
-                    secondaryAnalyseGrid.dataProvider.refreshAll()
-                }
+                secondaryAnalyseGrid.dataProvider.refreshAll()
             }
         })
 
