@@ -79,7 +79,7 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
     }
 
 
-    private class Converter {
+    private static class Converter {
         static life.qbic.datamodel.dtos.business.Offer convertOfferToDTO(Offer offer) {
             new life.qbic.datamodel.dtos.business.Offer.Builder(
                     offer.customer,
