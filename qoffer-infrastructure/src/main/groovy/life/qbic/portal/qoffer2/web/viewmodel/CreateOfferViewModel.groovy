@@ -3,8 +3,12 @@ package life.qbic.portal.qoffer2.web.viewmodel
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.portal.qoffer2.web.viewmodel.create.offer.CustomerSelectionViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.create.offer.OfferOverviewViewModel
+import life.qbic.portal.qoffer2.web.views.create.offer.CustomerSelectionView
 
 /**
  * A ViewModel holding data that is presented in a
@@ -20,22 +24,37 @@ import life.qbic.datamodel.dtos.business.services.Product
  *
  */
 class CreateOfferViewModel {
+    private OfferOverviewViewModel offerOverviewViewModel
+    
+    CreateOfferViewModel( OfferOverviewViewModel offerOverviewViewModel) {
+      this.offerOverviewViewModel = offerOverviewViewModel
+    }
 
-    List<ProductItemViewModel> sequencingProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> primaryAnalysisProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> secondaryAnalysisProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> managementProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> storageProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
+    String getProjectTitle() {
+        return this.offerOverviewViewModel.projectTitle
+    }
 
-    List<Customer> foundCustomers = []
-    List<ProjectManager> projectManagers = []
+    String getProjectDescription() {
+        return this.offerOverviewViewModel.projectDescription
+    }
 
+    Customer getSelectedCustomer() {
+        return this.offerOverviewViewModel.selectedCustomer
+    }
 
-    @Bindable String projectTitle
-    @Bindable String projectDescription
-    @Bindable Customer customer
-    @Bindable Affiliation customerAffiliation
-    @Bindable ProjectManager projectManager
-    @Bindable List<ProductItemViewModel> productItems
-    @Bindable double offerPrice
+    Affiliation getCustomerAffiliation() {
+        return this.offerOverviewViewModel.customerAffiliation
+    }
+
+    ProjectManager getSelectedProjectManager() {
+        return this.offerOverviewViewModel.selectedProjectManager
+    }
+
+    List getSelectedProductItems() {
+        return this.offerOverviewViewModel.selectedProductItems
+    }
+
+    double getOfferPrice() {
+        return this.offerOverviewViewModel.offerPrice
+    }
 }

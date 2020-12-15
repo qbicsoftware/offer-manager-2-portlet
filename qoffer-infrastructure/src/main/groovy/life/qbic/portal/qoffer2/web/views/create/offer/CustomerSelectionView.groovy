@@ -14,6 +14,7 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.create.offer.CustomerSelectionViewModel
 
 /**
  * This class generates a Layout in which the user
@@ -28,7 +29,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
  */
 class CustomerSelectionView extends VerticalLayout{
 
-    private final CreateOfferViewModel viewModel
+    private final CustomerSelectionViewModel viewModel
     //private final SearchCustomerView searchCustomerView
     private final List<Customer> foundCustomerList
 
@@ -41,7 +42,7 @@ class CustomerSelectionView extends VerticalLayout{
     HorizontalLayout affiliationLayout
     VerticalLayout affiliationLabelLayout
 
-    CustomerSelectionView(CreateOfferViewModel viewModel){
+    CustomerSelectionView(CustomerSelectionViewModel viewModel){
         this.viewModel = viewModel
         //this.searchCustomerView = searchCustomerView
         Affiliation testAffiliation = new Affiliation.Builder("organization","Street","postal code","city").category(AffiliationCategory.INTERNAL).build()

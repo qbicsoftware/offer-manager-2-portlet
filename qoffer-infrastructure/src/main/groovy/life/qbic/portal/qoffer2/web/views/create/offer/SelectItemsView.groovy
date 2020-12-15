@@ -17,10 +17,9 @@ import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Sequencing
-
-import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.create.offer.SelectItemsViewModel
 
 /**
  * This class generates a Layout in which the user
@@ -35,7 +34,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  */
 class SelectItemsView extends VerticalLayout{
 
-    final private CreateOfferViewModel createOfferViewModel
+    final private SelectItemsViewModel selectItemsViewModel
     final private ViewModel viewModel
 
     private List<ProductItemViewModel> sequencingProduct
@@ -67,39 +66,39 @@ class SelectItemsView extends VerticalLayout{
     TextField amountDataStorage
 
 
-    SelectItemsView(CreateOfferViewModel createOfferViewModel, ViewModel viewModel){
-        this.createOfferViewModel = createOfferViewModel
+    SelectItemsView(SelectItemsViewModel selectItemsViewModel, ViewModel viewModel){
+        this.selectItemsViewModel = selectItemsViewModel
         this.viewModel = viewModel
 
-        sequencingProduct = createOfferViewModel.sequencingProducts as ObservableList
+        sequencingProduct = selectItemsViewModel.sequencingProducts as ObservableList
         sequencingProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
               sequencingGrid.dataProvider.refreshAll()
             }
         })
 
-        projectManagementProduct = createOfferViewModel.managementProducts as ObservableList
+        projectManagementProduct = selectItemsViewModel.managementProducts as ObservableList
         projectManagementProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
               projectManagementGrid.dataProvider.refreshAll()
             }
         })
 
-        storageProduct = createOfferViewModel.storageProducts as ObservableList
+        storageProduct = selectItemsViewModel.storageProducts as ObservableList
         storageProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
                 storageGrid.dataProvider.refreshAll()
             }
         })
 
-        primaryAnalyseProduct = createOfferViewModel.primaryAnalysisProducts as ObservableList
+        primaryAnalyseProduct = selectItemsViewModel.primaryAnalysisProducts as ObservableList
         primaryAnalyseProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
               primaryAnalyseGrid.dataProvider.refreshAll()
             }
         })
 
-        secondaryAnalyseProduct = createOfferViewModel.secondaryAnalysisProducts as ObservableList
+        secondaryAnalyseProduct = selectItemsViewModel.secondaryAnalysisProducts as ObservableList
         secondaryAnalyseProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
                 secondaryAnalyseGrid.dataProvider.refreshAll()
@@ -108,7 +107,7 @@ class SelectItemsView extends VerticalLayout{
 
         this.selectedItems = []
 
-        this.createOfferViewModel.productItems = selectedItems
+        this.selectItemsViewModel.selectedProductItems = selectedItems
 
         initLayout()
         setupDataProvider()
@@ -222,19 +221,19 @@ class SelectItemsView extends VerticalLayout{
      * This method adds the retrieved Customer Information to the Customer grid
      */
     private void setupDataProvider() {
-        ListDataProvider<ProductItemViewModel> sequencingProductDataProvider = new ListDataProvider(createOfferViewModel.sequencingProducts)
+        ListDataProvider<ProductItemViewModel> sequencingProductDataProvider = new ListDataProvider(selectItemsViewModel.sequencingProducts)
         this.sequencingGrid.setDataProvider(sequencingProductDataProvider)
 
-        ListDataProvider<ProductItemViewModel> managementProductDataProvider = new ListDataProvider(createOfferViewModel.managementProducts)
+        ListDataProvider<ProductItemViewModel> managementProductDataProvider = new ListDataProvider(selectItemsViewModel.managementProducts)
         this.projectManagementGrid.setDataProvider(managementProductDataProvider)
 
-        ListDataProvider<ProductItemViewModel> primaryAnalysisProductDataProvider = new ListDataProvider(createOfferViewModel.primaryAnalysisProducts)
+        ListDataProvider<ProductItemViewModel> primaryAnalysisProductDataProvider = new ListDataProvider(selectItemsViewModel.primaryAnalysisProducts)
         this.primaryAnalyseGrid.setDataProvider(primaryAnalysisProductDataProvider)
 
-        ListDataProvider<ProductItemViewModel> secondaryAnalysisProductDataProvider = new ListDataProvider(createOfferViewModel.secondaryAnalysisProducts)
+        ListDataProvider<ProductItemViewModel> secondaryAnalysisProductDataProvider = new ListDataProvider(selectItemsViewModel.secondaryAnalysisProducts)
         this.secondaryAnalyseGrid.setDataProvider(secondaryAnalysisProductDataProvider)
 
-        ListDataProvider<ProductItemViewModel> storageProductDataProvider = new ListDataProvider(createOfferViewModel.storageProducts)
+        ListDataProvider<ProductItemViewModel> storageProductDataProvider = new ListDataProvider(selectItemsViewModel.storageProducts)
         this.storageGrid.setDataProvider(storageProductDataProvider)
 
         this.overviewGrid.setItems(selectedItems)

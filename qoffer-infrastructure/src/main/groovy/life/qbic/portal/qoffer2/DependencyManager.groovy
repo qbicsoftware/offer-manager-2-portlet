@@ -9,33 +9,16 @@ import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.portlet.customers.search.SearchCustomer
 import life.qbic.portal.portlet.offers.create.CreateOffer
 import life.qbic.portal.portlet.products.ListProducts
-import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import life.qbic.portal.qoffer2.products.ProductsDbConnector
-import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
-import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
-import life.qbic.portal.qoffer2.web.controllers.ListProductsController
-import life.qbic.portal.qoffer2.web.controllers.SearchCustomerController
-import life.qbic.portal.qoffer2.web.controllers.ListAffiliationsController
-import life.qbic.portal.qoffer2.web.presenters.CreateAffiliationPresenter
-import life.qbic.portal.qoffer2.web.presenters.CreateCustomerPresenter
-import life.qbic.portal.qoffer2.web.presenters.CreateOfferPresenter
-import life.qbic.portal.qoffer2.web.presenters.ListAffiliationsPresenter
-import life.qbic.portal.qoffer2.web.presenters.SearchCustomerPresenter
-import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
-import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
-import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
-import life.qbic.portal.qoffer2.web.viewmodel.SearchCustomerViewModel
-import life.qbic.portal.qoffer2.web.views.CreateAffiliationView
-import life.qbic.portal.qoffer2.web.views.CreateOfferView
-import life.qbic.portal.qoffer2.web.views.PortletView
-import life.qbic.portal.qoffer2.web.presenters.Presenter
-import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
-import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
-import life.qbic.portal.qoffer2.web.views.CreateCustomerView
-import life.qbic.portal.qoffer2.web.views.SearchCustomerView
+import life.qbic.portal.qoffer2.web.controllers.*
+import life.qbic.portal.qoffer2.web.presenters.*
+import life.qbic.portal.qoffer2.web.viewmodel.*
+import life.qbic.portal.qoffer2.web.viewmodel.create.offer.*
+import life.qbic.portal.qoffer2.web.views.*
+import life.qbic.portal.qoffer2.web.views.create.offer.*
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
 
@@ -57,6 +40,11 @@ class DependencyManager {
     private CreateAffiliationViewModel createAffiliationViewModel
     private SearchCustomerViewModel searchCustomerViewModel
     private CreateOfferViewModel createOfferViewModel
+    private CustomerSelectionViewModel customerSelectionViewModel
+    private OfferOverviewViewModel offerOverviewViewModel
+    private ProjectInformationViewModel projectInformationViewModel
+    private ProjectManagerSelectionViewModel projectManagerSelectionViewModel
+    private SelectItemsViewModel selectItemsViewModel
 
     private Presenter presenter
     private CreateCustomerPresenter createCustomerPresenter
@@ -166,12 +154,24 @@ class DependencyManager {
         }
 
         try {
-            this.createOfferViewModel = new CreateOfferViewModel()
-            //todo add affiliations, customers and project managers to the model
+            this.customerSelectionViewModel = new CustomerSelectionViewModel()
+            this.projectInformationViewModel = new ProjectInformationViewModel()
+            this.projectManagerSelectionViewModel = new ProjectManagerSelectionViewModel()
+            this.selectItemsViewModel = new SelectItemsViewModel()
+            this.offerOverviewViewModel = new OfferOverviewViewModel(this.projectInformationViewModel, this.customerSelectionViewModel, this.projectManagerSelectionViewModel, this.selectItemsViewModel)
+        } catch (Exception e) {
+            log.error("Unexpected excpetion during ${OfferOverviewViewModel.getSimpleName()} view model setup.", e)
+          throw e
+        }
+        try {
+            this.createOfferViewModel = new CreateOfferViewModel(this.offerOverviewViewModel) //todo maybe transfer individual viewmodels as in offeroverviewviewmodel
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
+
+
+
     }
 
     private void setupPresenters() {
@@ -209,7 +209,7 @@ class DependencyManager {
         }
 
         try {
-            this.createOfferPresenter = new CreateOfferPresenter(this.viewModel, this.createOfferViewModel)
+            this.createOfferPresenter = new CreateOfferPresenter(this.viewModel, this.createOfferViewModel, this.selectItemsViewModel, this.offerOverviewViewModel)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} setup", e)
         }
@@ -290,7 +290,14 @@ class DependencyManager {
 
         CreateOfferView createOfferView
         try {
-            createOfferView = new CreateOfferView(this.viewModel, this.createOfferViewModel,this.createOfferController,this.listProductsController)
+            ProjectInformationView projectInformationView = new ProjectInformationView(projectInformationViewModel)
+            CustomerSelectionView customerSelectionView = new CustomerSelectionView(customerSelectionViewModel)
+            ProjectManagerSelectionView projectManagerSelectionView = new ProjectManagerSelectionView(projectManagerSelectionViewModel)
+            SelectItemsView selectItemsView = new SelectItemsView(selectItemsViewModel, viewModel)
+            OfferOverviewView offerOverviewView = new OfferOverviewView(offerOverviewViewModel)
+
+            createOfferView = new CreateOfferView(this.viewModel, this.createOfferViewModel,this.createOfferController,this.listProductsController,
+                    projectInformationView, customerSelectionView, projectManagerSelectionView, selectItemsView, offerOverviewView, offerOverviewViewModel)
         } catch (Exception e) {
             log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
             throw e

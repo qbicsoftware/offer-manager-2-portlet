@@ -13,6 +13,8 @@ import life.qbic.portal.portlet.products.ListProductsOutput
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.create.offer.OfferOverviewViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.create.offer.SelectItemsViewModel
 
 /**
  * Presenter for the CreateOffer
@@ -25,10 +27,14 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
 
     private final ViewModel viewModel
     private final CreateOfferViewModel createOfferViewModel
+    private final SelectItemsViewModel selectItemsViewModel
+    private final OfferOverviewViewModel overviewViewModel
 
-    CreateOfferPresenter(ViewModel viewModel, CreateOfferViewModel createOfferViewModel){
+    CreateOfferPresenter(ViewModel viewModel, CreateOfferViewModel createOfferViewModel, SelectItemsViewModel selectItemsViewModel, OfferOverviewViewModel offerOverviewViewModel) {
         this.viewModel = viewModel
         this.createOfferViewModel = createOfferViewModel
+        this.selectItemsViewModel = selectItemsViewModel
+        this.overviewViewModel = offerOverviewViewModel
     }
 
     @Override
@@ -39,12 +45,7 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
 
     @Override
     void calculatedPrice(double price) {
-        this.createOfferViewModel.offerPrice = price
-    }
-
-    void successNotification(String notification) {
-        //TODO implement
-        throw new Exception("Method not implemented.")
+        this.overviewViewModel.offerPrice = price
     }
 
     @Override
@@ -59,20 +60,20 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
         availableProducts.each {
             ProductItemViewModel product = new ProductItemViewModel(0, it)
 
-            if (it instanceof Sequencing && !contains(this.createOfferViewModel.sequencingProducts,it)) {
-                this.createOfferViewModel.sequencingProducts.add(product)
+            if (it instanceof Sequencing && !contains(this.selectItemsViewModel.sequencingProducts,it)) {
+                this.selectItemsViewModel.sequencingProducts.add(product)
             }
-            else if (it instanceof ProjectManagement && !contains(this.createOfferViewModel.managementProducts,it)) {
-                this.createOfferViewModel.managementProducts.add(product)
+            else if (it instanceof ProjectManagement && !contains(this.selectItemsViewModel.managementProducts,it)) {
+                this.selectItemsViewModel.managementProducts.add(product)
             }
-            else if (it instanceof PrimaryAnalysis && !contains(this.createOfferViewModel.primaryAnalysisProducts,it)) {
-                this.createOfferViewModel.primaryAnalysisProducts.add(product)
+            else if (it instanceof PrimaryAnalysis && !contains(this.selectItemsViewModel.primaryAnalysisProducts,it)) {
+                this.selectItemsViewModel.primaryAnalysisProducts.add(product)
             }
-            else if (it instanceof SecondaryAnalysis && !contains(this.createOfferViewModel.secondaryAnalysisProducts,it)) {
-                this.createOfferViewModel.secondaryAnalysisProducts.add(product)
+            else if (it instanceof SecondaryAnalysis && !contains(this.selectItemsViewModel.secondaryAnalysisProducts,it)) {
+                this.selectItemsViewModel.secondaryAnalysisProducts.add(product)
             }
-            else if (it instanceof DataStorage && !contains(this.createOfferViewModel.storageProducts,it)) {
-                this.createOfferViewModel.storageProducts.add(product)
+            else if (it instanceof DataStorage && !contains(this.selectItemsViewModel.storageProducts,it)) {
+                this.selectItemsViewModel.storageProducts.add(product)
             }
         }
     }

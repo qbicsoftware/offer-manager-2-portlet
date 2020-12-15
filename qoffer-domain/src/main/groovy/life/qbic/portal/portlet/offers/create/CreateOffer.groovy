@@ -34,8 +34,8 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
                 offerContent.projectManager,
                 offerContent.projectTitle,
                 offerContent.projectDescription,
-                offerContent.items,
                 offerContent.selectedCustomerAffiliation)
+                .items(offerContent.items)
                 .identifier(identifier)
                 .expirationDate(new Date(2030,12,24)) //todo how to determine this?
                 .modificationDate(new Date())

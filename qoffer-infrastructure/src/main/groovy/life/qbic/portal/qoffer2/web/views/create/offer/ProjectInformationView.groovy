@@ -11,7 +11,7 @@ import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
-import life.qbic.portal.qoffer2.web.views.SearchCustomerView
+import life.qbic.portal.qoffer2.web.viewmodel.create.offer.ProjectInformationViewModel
 
 /**
  * This class generates a Layout in which the user
@@ -26,14 +26,14 @@ import life.qbic.portal.qoffer2.web.views.SearchCustomerView
  */
 class ProjectInformationView extends VerticalLayout {
 
-    private final CreateOfferViewModel createOfferViewModel
+    private final ProjectInformationViewModel projectInformationViewModel
 
     TextField projectTitle
     TextArea projectDescription
     Button next
 
-    ProjectInformationView(CreateOfferViewModel createOfferViewModel) {
-        this.createOfferViewModel = createOfferViewModel
+    ProjectInformationView(ProjectInformationViewModel projectInformationViewModel) {
+        this.projectInformationViewModel = projectInformationViewModel
 
         initLayout()
         bindViewModel()
@@ -79,7 +79,7 @@ class ProjectInformationView extends VerticalLayout {
         Binder<CreateOfferViewModel> binder = new Binder<>()
 
         // by binding the fields to the view model, the model is updated when the user input changed
-        binder.setBean(createOfferViewModel)
+        binder.setBean(projectInformationViewModel)
 
         binder.forField(projectTitle)
                 .bind({ it.projectTitle }, { it, updatedValue -> it.setProjectTitle(updatedValue) })
@@ -97,7 +97,7 @@ class ProjectInformationView extends VerticalLayout {
         information that is stored within the viewModel. We want the view to reflect the view model
         at all times!
          */
-        createOfferViewModel.addPropertyChangeListener({it ->
+        projectInformationViewModel.addPropertyChangeListener({ it ->
             switch (it.propertyName) {
                 case "projectTitle":
                     String newValue = it.newValue as String
@@ -116,7 +116,7 @@ class ProjectInformationView extends VerticalLayout {
         we listen to the valid properties. whenever the presenter resets values in the viewmodel
         and resets the valid properties the component error on the respective component is removed
         */
-        createOfferViewModel.addPropertyChangeListener({it ->
+        projectInformationViewModel.addPropertyChangeListener({ it ->
             switch (it.propertyName) {
                 case "projectTitle":
                     if (it.newValue || it.newValue == null) {

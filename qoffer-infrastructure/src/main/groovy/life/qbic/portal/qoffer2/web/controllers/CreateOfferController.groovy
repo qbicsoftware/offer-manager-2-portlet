@@ -41,7 +41,7 @@ class CreateOfferController {
      */
     void createOffer(String projectTitle, String projectDescription, Customer customer, ProjectManager manager, List<ProductItem> items, double totalPrice, Affiliation customerAffiliation){
         try {
-            Offer offer = new Offer.Builder(customer,manager,projectDescription,projectTitle,items,customerAffiliation).totalPrice(totalPrice).build()
+            Offer offer = new Offer.Builder(customer, manager, projectTitle, projectDescription, customerAffiliation).totalPrice(totalPrice).items(items).build()
             this.input.createOffer(offer)
         } catch(Exception ignored) {
             throw new IllegalArgumentException("Could not create offer from provided arguments.")
@@ -55,8 +55,9 @@ class CreateOfferController {
      */
     void calculatePriceForItems(List<ProductItem> items, AffiliationCategory category){
         try {
-            this.calculatePrice.calculatePrice(items,category)
+            this.calculatePrice.calculatePrice(items, category)
         } catch(Exception ignored) {
+            println ignored
             throw new IllegalArgumentException("Could not calculate price from provided arguments.")
         }
     }

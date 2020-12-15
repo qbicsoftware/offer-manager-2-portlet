@@ -1,7 +1,6 @@
 package life.qbic.portal.qoffer2.web.views
 
 import com.vaadin.ui.FormLayout
-import com.vaadin.ui.VerticalLayout
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
@@ -9,7 +8,7 @@ import life.qbic.portal.qoffer2.web.controllers.ListProductsController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
-
+import life.qbic.portal.qoffer2.web.viewmodel.create.offer.OfferOverviewViewModel
 import life.qbic.portal.qoffer2.web.views.create.offer.CustomerSelectionView
 import life.qbic.portal.qoffer2.web.views.create.offer.OfferOverviewView
 import life.qbic.portal.qoffer2.web.views.create.offer.ProjectInformationView
@@ -29,7 +28,8 @@ import life.qbic.portal.qoffer2.web.views.create.offer.SelectItemsView
 class CreateOfferView extends FormLayout{
 
     final private ViewModel sharedViewModel
-    final private CreateOfferViewModel view
+    final private CreateOfferViewModel viewModel
+    final private OfferOverviewViewModel offerOverviewViewModel
     final private CreateOfferController controller
     final private ListProductsController listProductsController
 
@@ -40,18 +40,21 @@ class CreateOfferView extends FormLayout{
     final private OfferOverviewView overviewView
 
 
-    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController) {
+    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController,
+    ProjectInformationView projectInformationView, CustomerSelectionView customerSelectionView, ProjectManagerSelectionView projectManagerSelectionView,
+    SelectItemsView selectItemsView, OfferOverviewView offerOverviewView, OfferOverviewViewModel offerOverviewViewModel) {
         super()
         this.sharedViewModel = sharedViewModel
-        this.view = createOfferViewModel
+        this.viewModel = createOfferViewModel
+        this.offerOverviewViewModel = offerOverviewViewModel
         this.controller = controller
         this.listProductsController = listProductsController
 
-        projectInformationView = new ProjectInformationView(view)
-        customerSelectionView = new CustomerSelectionView(view)
-        projectManagerSelectionView = new ProjectManagerSelectionView(view)
-        selectItemsView = new SelectItemsView(view,sharedViewModel)
-        overviewView = new OfferOverviewView(view)
+        this.projectInformationView = projectInformationView
+        this.customerSelectionView = customerSelectionView
+        this.projectManagerSelectionView = projectManagerSelectionView
+        this.selectItemsView = selectItemsView
+        this.overviewView = offerOverviewView
 
         initLayout()
         registerListeners()
@@ -91,7 +94,7 @@ class CreateOfferView extends FormLayout{
         })
         this.selectItemsView.next.addClickListener({
             this.removeComponent(selectItemsView)
-            controller.calculatePriceForItems(getProductItems(view.productItems),view.customerAffiliation.category)
+            controller.calculatePriceForItems(getProductItems(viewModel.selectedProductItems),viewModel.customerAffiliation.category)
             overviewView.fillPanel()
             this.addComponent(overviewView)
         })
@@ -104,8 +107,13 @@ class CreateOfferView extends FormLayout{
             this.addComponent(selectItemsView)
         })
         this.overviewView.save.addClickListener({
-            controller.createOffer(view.projectTitle, view.projectDescription,view.customer,view.projectManager,
-                    getProductItems(view.productItems),view.offerPrice,view.customerAffiliation)
+            controller.createOffer(viewModel.projectTitle,
+                    viewModel.projectDescription,
+                    viewModel.selectedCustomer,
+                    viewModel.selectedProjectManager,
+                    getProductItems(viewModel.selectedProductItems),
+                    viewModel.offerPrice,
+                    viewModel.customerAffiliation)
         })
     }
 

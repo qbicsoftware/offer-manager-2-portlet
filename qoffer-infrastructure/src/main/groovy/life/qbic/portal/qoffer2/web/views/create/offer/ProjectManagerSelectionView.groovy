@@ -11,6 +11,8 @@ import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProjectManager
 
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.create.offer.ProjectInformationViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.create.offer.ProjectManagerSelectionViewModel
 
 /**
  * This class generates a Layout in which the user
@@ -24,7 +26,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
  */
 class ProjectManagerSelectionView extends VerticalLayout{
 
-    private final CreateOfferViewModel viewModel
+    private final ProjectManagerSelectionViewModel viewModel
 
     private final List<ProjectManager> foundProjectManagers
 
@@ -34,7 +36,7 @@ class ProjectManagerSelectionView extends VerticalLayout{
     Grid<ProjectManager> projectManagerGrid
     HorizontalLayout projectManagerLayout
 
-    ProjectManagerSelectionView(CreateOfferViewModel viewModel){
+    ProjectManagerSelectionView(ProjectManagerSelectionViewModel viewModel){
         this.viewModel = viewModel
 
         ProjectManager manager = new ProjectManager.Builder("John","Doe","john.do@web.de").build()

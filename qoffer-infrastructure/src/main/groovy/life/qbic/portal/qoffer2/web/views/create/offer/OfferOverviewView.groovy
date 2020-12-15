@@ -7,12 +7,10 @@ import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.Panel
-import com.vaadin.ui.TextArea
-import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
-import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.create.offer.OfferOverviewViewModel
 
 /**
  * This class generates a Layout in which the user
@@ -27,15 +25,15 @@ import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
  */
 class OfferOverviewView extends VerticalLayout{
 
-    private final CreateOfferViewModel createOfferViewModel
+    private final OfferOverviewViewModel offerOverviewViewModel
 
     Panel offerOverview
     Grid<ProductItemViewModel> itemGrid
     Button previous
     Button save
 
-    OfferOverviewView(CreateOfferViewModel viewModel){
-        this.createOfferViewModel = viewModel
+    OfferOverviewView(OfferOverviewViewModel viewModel){
+        this.offerOverviewViewModel = viewModel
 
         initLayout()
     }
@@ -61,7 +59,7 @@ class OfferOverviewView extends VerticalLayout{
         this.offerOverview = new Panel("Offer Details:")
 
         this.itemGrid = new Grid<>("Selected items:")
-        this.itemGrid.setItems(createOfferViewModel.productItems)
+        this.itemGrid.setItems(offerOverviewViewModel.selectedProductItems)
         generateProductGrid(itemGrid)
 
         this.addComponents(titleLabel,offerOverview,buttonLayout)
@@ -93,14 +91,14 @@ class OfferOverviewView extends VerticalLayout{
      */
     void fillPanel(){
         VerticalLayout content = new VerticalLayout()
-        content.addComponent(new Label("${createOfferViewModel.projectTitle}"))
-        content.addComponent(new Label("${createOfferViewModel.projectDescription}"))
-        content.addComponent(new Label("${createOfferViewModel.customer}"))
-        content.addComponent(new Label("${createOfferViewModel.customerAffiliation}"))
-        content.addComponent(new Label("${createOfferViewModel.projectManager}"))
+        content.addComponent(new Label("${offerOverviewViewModel.projectTitle}"))
+        content.addComponent(new Label("${offerOverviewViewModel.projectDescription}"))
+        content.addComponent(new Label("${offerOverviewViewModel.selectedCustomer}"))
+        content.addComponent(new Label("${offerOverviewViewModel.customerAffiliation}"))
+        content.addComponent(new Label("${offerOverviewViewModel.selectedProjectManager}"))
         content.addComponent(itemGrid)
 
-        Label price = new Label("total price: ${createOfferViewModel.offerPrice}")
+        Label price = new Label("total price: ${offerOverviewViewModel.offerPrice}")
         content.addComponent(price)
 
         content.setComponentAlignment(price,Alignment.MIDDLE_RIGHT)
