@@ -9,6 +9,7 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
+import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
@@ -41,9 +42,10 @@ class CreateCustomerView extends VerticalLayout {
     ComboBox<Affiliation> addressAdditionComboBox
     Button submitButton
     Button affiliationButton
+    Button abortButton
     Panel affiliationDetails
 
-    CreateCustomerView(CreateCustomerController controller, ViewModel sharedViewModel, CreateCustomerViewModel createCustomerViewModel) {
+    CreateCustomerView(ViewModel sharedViewModel, CreateCustomerViewModel createCustomerViewModel, CreateCustomerController controller) {
         super()
         this.controller = controller
         this.sharedViewModel = sharedViewModel
@@ -88,8 +90,13 @@ class CreateCustomerView extends VerticalLayout {
         styleDetailsToggle()
 
         this.submitButton = new Button("Create Customer")
-        submitButton.setIcon(VaadinIcons.USER)
+        submitButton.setIcon(VaadinIcons.USER_CHECK)
+        submitButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
         submitButton.enabled = allValuesValid()
+
+        this.abortButton = new Button("Abort Customer Creation")
+        abortButton.setIcon(VaadinIcons.EXIT)
+        abortButton.addStyleName(ValoTheme.BUTTON_DANGER)
 
         this.affiliationDetails = new Panel("Affiliation Details")
 
@@ -107,10 +114,15 @@ class CreateCustomerView extends VerticalLayout {
         row3.setComponentAlignment(addressAdditionComboBox, Alignment.TOP_LEFT)
         row3.setSizeFull()
 
-        HorizontalLayout row4 = new HorizontalLayout(affiliationDetails, submitButton)
-        row4.setComponentAlignment(affiliationDetails, Alignment.BOTTOM_LEFT)
-        row4.setComponentAlignment(submitButton, Alignment.BOTTOM_RIGHT)
+        VerticalLayout affiliationPanel = new VerticalLayout(affiliationDetails)
+        affiliationPanel.setMargin(false)
+        affiliationPanel.setComponentAlignment(affiliationDetails, Alignment.TOP_LEFT)
+        HorizontalLayout buttonLayout = new HorizontalLayout(abortButton, submitButton)
+        buttonLayout.setMargin(false)
+        HorizontalLayout row4 = new HorizontalLayout(affiliationPanel, buttonLayout)
+        row4.setComponentAlignment(buttonLayout, Alignment.BOTTOM_RIGHT)
         row4.setSizeFull()
+
 
         //Add the components to the FormLayout
         this.addComponents(row1, row2, row3, row4)
