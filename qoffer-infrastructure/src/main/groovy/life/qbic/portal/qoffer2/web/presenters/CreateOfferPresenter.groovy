@@ -85,9 +85,8 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
      * @return boolean value to determine if product is in list
      */
     private static boolean contains(List<ProductItemViewModel> list, Product product){
-        boolean contains = false
-        list.each { it ->
-             if(it.product == product) contains = true
+        boolean contains = list.any {
+            it.product == product
         }
         return contains
     }

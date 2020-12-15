@@ -317,13 +317,12 @@ class SelectItemsView extends VerticalLayout{
             applyPrimaryAnalysis.setEnabled(true)
         })
         applyPrimaryAnalysis.addClickListener({
-            if(primaryAnalyseGrid.getSelectedItems() != null){
+            if(primaryAnalyseGrid.getSelectedItems() != null) {
                 String amount = amountPrimaryAnalysis.getValue()
-
+                
                 try{
-                    if(amount != null && amount.isNumber()){
+                    if(amount != null && amount.isNumber()) {
                         primaryAnalyseGrid.getSelectedItems().each {
-
                             if(Integer.parseInt(amount) >= 0){
                                 it.setQuantity(Integer.parseInt(amount))
                                 updateOverviewGrid(it)
@@ -331,7 +330,7 @@ class SelectItemsView extends VerticalLayout{
                         }
                         primaryAnalyseGrid.getDataProvider().refreshAll()
                     }
-                } catch(NumberFormatException e){
+                } catch(NumberFormatException e) {
                     viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
                 } catch (Exception e) {
                     viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
