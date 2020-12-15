@@ -1,10 +1,12 @@
 package life.qbic.portal.portlet.offers.create
 
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.portal.portlet.offers.Offer
 
 /**
  * This class implements logic to create new offers.
@@ -25,7 +27,7 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
     }
 
     @Override
-    void createOffer(Offer offerContent) {
+    void createOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
         OfferId identifier = generateQuotationID(offerContent.customer)
         double offerPrice = PriceCalculator.calculateOfferPrice(offerContent.items,offerContent.selectedCustomerAffiliation.category)
 
@@ -39,10 +41,9 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
                 .identifier(identifier)
                 .expirationDate(new Date(2030,12,24)) //todo how to determine this?
                 .modificationDate(new Date())
-                .totalPrice(offerPrice)
                 .build()
 
-        dataSource.store(finalizedOffer)
+        dataSource.store(Converter.convertOfferToDTO(finalizedOffer))
     }
 
     /**
@@ -65,5 +66,48 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
     void calculatePrice(List<ProductItem> items, AffiliationCategory category) {
         double offerPrice = PriceCalculator.calculateOfferPrice(items,category)
         output.calculatedPrice(offerPrice)
+    }
+
+    @Override
+    void calculatePrice(List<ProductItem> items, Affiliation affiliation) {
+        Offer offer = Converter.buildOfferForCostCalculation(items, affiliation)
+        output.calculatedPrice(
+                offer.getTotalNetPrice(),
+                offer.getTaxCosts(),
+                offer.getOverheadSum(),
+                offer.getTotalCosts())
+    }
+
+
+    private class Converter {
+        static life.qbic.datamodel.dtos.business.Offer convertOfferToDTO(Offer offer) {
+            new life.qbic.datamodel.dtos.business.Offer.Builder(
+                    offer.customer,
+                    offer.projectManager,
+                    offer.projectTitle,
+                    offer.projectDescription,
+                    offer.selectedCustomerAffiliation)
+                    .items(offer.getItems())
+                    .netPrice(offer.getTotalNetPrice())
+                    .taxes(offer.getTaxCosts())
+                    .overheads(offer.getOverheadSum())
+                    .totalPrice(offer.getTotalCosts()).build()
+        }
+
+        static Offer buildOfferForCostCalculation(List<ProductItem> items,
+                                                  Affiliation affiliation) {
+            final def dummyCustomer = new Customer.Builder("Nobody", "Nobody",
+                    "nobody@qbic.com").build()
+            final def dummyProjectManager = new ProjectManager.Builder("Nobody", "Nobody",
+                    "nobody@qbic.com").build()
+            new Offer.Builder(
+                    dummyCustomer,
+                    dummyProjectManager,
+                    "",
+                    "",
+                    items,
+                    affiliation).build()
+        }
+
     }
 }
