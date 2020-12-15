@@ -22,7 +22,6 @@ import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
-
 /**
  * This class generates a Layout in which the user
  * can select the the different packages requested by the customer.
