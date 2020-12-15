@@ -22,7 +22,6 @@ import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
-import java.beans.PropertyChangeListener
 
 /**
  * This class generates a Layout in which the user
@@ -308,6 +307,9 @@ class SelectItemsView extends VerticalLayout{
                 catch(Exception e){
                     viewModel.failureNotifications.add("The quantity must be an integer value bigger than 0")
                 }
+                catch (Exception e) {
+                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
+                }
             }
             amountSequencing.clear()
             sequencingGrid.deselectAll()
@@ -447,4 +449,5 @@ class SelectItemsView extends VerticalLayout{
     }
 
 }
+
 
