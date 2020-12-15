@@ -157,19 +157,6 @@ class CustomerSelectionView extends VerticalLayout{
 
     }
 
-    /**
-     * Method which generates the grid and populates the columns with the set Customer information from the setupDataProvider Method
-     *
-     * This Method is responsible for setting up the grid and setting the customer information to the individual grid columns.
-     */
-    private def callCreateCustomerView() {
-        try {
-
-        } catch (Exception e) {
-            new Exception("Unexpected exception in calling the CreateCustomerView", e)
-        }
-    }
-
     private void bindViewModel() {
 
         customerGrid.addSelectionListener({ selection ->
