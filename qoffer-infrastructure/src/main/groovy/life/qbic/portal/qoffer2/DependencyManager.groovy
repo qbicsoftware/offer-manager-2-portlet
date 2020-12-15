@@ -290,7 +290,7 @@ class DependencyManager {
 
         CreateOfferView createOfferView
         try {
-            createOfferView = new CreateOfferView(this.viewModel, this.createOfferViewModel,this.createOfferController,this.listProductsController)
+            createOfferView = new CreateOfferView(this.viewModel, this.createOfferViewModel,this.createOfferController,this.listProductsController, this.createAffiliationViewModel, this.createAffiliationController)
         } catch (Exception e) {
             log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
             throw e
