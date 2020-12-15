@@ -1,5 +1,6 @@
 package life.qbic.portal.qoffer2.web.views.create.offer
 
+import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
@@ -12,7 +13,6 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
@@ -21,8 +21,6 @@ import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
-
-import java.beans.PropertyChangeListener
 
 /**
  * This class generates a Layout in which the user
@@ -39,8 +37,6 @@ class SelectItemsView extends VerticalLayout{
 
     final private CreateOfferViewModel createOfferViewModel
     final private ViewModel viewModel
-
-    private List<Product> foundProducts
 
     private List<ProductItemViewModel> sequencingProduct
     private List<ProductItemViewModel> projectManagementProduct
@@ -75,15 +71,41 @@ class SelectItemsView extends VerticalLayout{
         this.createOfferViewModel = createOfferViewModel
         this.viewModel = viewModel
 
-        //todo translate the fetched products into the ProductItemViewModel objects to handle them in the gui
-        foundProducts = createOfferViewModel.foundProducts as ObservableList
-        foundProducts.addPropertyChangeListener(listener)
+        sequencingProduct = createOfferViewModel.sequencingProducts as ObservableList
+        sequencingProduct.addPropertyChangeListener({
+            if (it instanceof ObservableList.ElementEvent) {
+              sequencingGrid.dataProvider.refreshAll()
+            }
+        })
 
-        this.sequencingProduct = []
-        this.projectManagementProduct = []
-        this.storageProduct = []
-        this.primaryAnalyseProduct = []
-        this.secondaryAnalyseProduct = []
+        projectManagementProduct = createOfferViewModel.managementProducts as ObservableList
+        projectManagementProduct.addPropertyChangeListener({
+            if (it instanceof ObservableList.ElementEvent) {
+              projectManagementGrid.dataProvider.refreshAll()
+            }
+        })
+
+        storageProduct = createOfferViewModel.storageProducts as ObservableList
+        storageProduct.addPropertyChangeListener({
+            if (it instanceof ObservableList.ElementEvent) {
+                storageGrid.dataProvider.refreshAll()
+            }
+        })
+
+        primaryAnalyseProduct = createOfferViewModel.primaryAnalysisProducts as ObservableList
+        primaryAnalyseProduct.addPropertyChangeListener({
+            if (it instanceof ObservableList.ElementEvent) {
+              primaryAnalyseGrid.dataProvider.refreshAll()
+            }
+        })
+
+        secondaryAnalyseProduct = createOfferViewModel.secondaryAnalysisProducts as ObservableList
+        secondaryAnalyseProduct.addPropertyChangeListener({
+            if (it instanceof ObservableList.ElementEvent) {
+                secondaryAnalyseGrid.dataProvider.refreshAll()
+            }
+        })
+
         this.selectedItems = []
 
         this.createOfferViewModel.productItems = selectedItems
@@ -92,36 +114,6 @@ class SelectItemsView extends VerticalLayout{
         setupDataProvider()
         addListener()
     }
-
-    /**
-     * Listens for changes of the foundProducts list and creates ProductItemViewModel objects from them
-     */
-    def listener = {
-        if (it instanceof ObservableList.ElementEvent)  {
-            foundProducts.each {
-                if(it instanceof Sequencing){
-                    sequencingProduct.add(new ProductItemViewModel(0, it))
-                    sequencingGrid.dataProvider.refreshAll()
-                }
-                else if(it instanceof ProjectManagement){
-                    projectManagementProduct.add(new ProductItemViewModel(0, it))
-                    projectManagementGrid.dataProvider.refreshAll()
-                }
-                else if(it instanceof PrimaryAnalysis){
-                    primaryAnalyseProduct.add(new ProductItemViewModel(0, it))
-                    primaryAnalyseGrid.dataProvider.refreshAll()
-                }
-                else if(it instanceof SecondaryAnalysis){
-                    secondaryAnalyseProduct.add(new ProductItemViewModel(0, it))
-                    secondaryAnalyseGrid.dataProvider.refreshAll()
-                }
-                else if(it instanceof DataStorage){
-                    storageProduct.add(new ProductItemViewModel(0, it))
-                    storageGrid.dataProvider.refreshAll()
-                }
-            }
-        }
-    } as PropertyChangeListener
 
 
     /**
@@ -230,11 +222,21 @@ class SelectItemsView extends VerticalLayout{
      * This method adds the retrieved Customer Information to the Customer grid
      */
     private void setupDataProvider() {
-        this.sequencingGrid.setItems(sequencingProduct)
-        this.projectManagementGrid.setItems(projectManagementProduct)
-        this.primaryAnalyseGrid.setItems(primaryAnalyseProduct)
-        this.secondaryAnalyseGrid.setItems(secondaryAnalyseProduct)
-        this.storageGrid.setItems(storageProduct)
+        ListDataProvider<ProductItemViewModel> sequencingProductDataProvider = new ListDataProvider(createOfferViewModel.sequencingProducts)
+        this.sequencingGrid.setDataProvider(sequencingProductDataProvider)
+
+        ListDataProvider<ProductItemViewModel> managementProductDataProvider = new ListDataProvider(createOfferViewModel.managementProducts)
+        this.projectManagementGrid.setDataProvider(managementProductDataProvider)
+
+        ListDataProvider<ProductItemViewModel> primaryAnalysisProductDataProvider = new ListDataProvider(createOfferViewModel.primaryAnalysisProducts)
+        this.primaryAnalyseGrid.setDataProvider(primaryAnalysisProductDataProvider)
+
+        ListDataProvider<ProductItemViewModel> secondaryAnalysisProductDataProvider = new ListDataProvider(createOfferViewModel.secondaryAnalysisProducts)
+        this.secondaryAnalyseGrid.setDataProvider(secondaryAnalysisProductDataProvider)
+
+        ListDataProvider<ProductItemViewModel> storageProductDataProvider = new ListDataProvider(createOfferViewModel.storageProducts)
+        this.storageGrid.setDataProvider(storageProductDataProvider)
+
         this.overviewGrid.setItems(selectedItems)
     }
 
@@ -300,9 +302,10 @@ class SelectItemsView extends VerticalLayout{
                         }
                         sequencingGrid.getDataProvider().refreshAll()
                     }
-                }
-                catch(Exception e){
+                } catch (NumberFormatException e) {
                     viewModel.failureNotifications.add("The quantity must be an integer value bigger than 0")
+                } catch (Exception e) {
+                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
                 }
             }
             amountSequencing.clear()
@@ -314,13 +317,12 @@ class SelectItemsView extends VerticalLayout{
             applyPrimaryAnalysis.setEnabled(true)
         })
         applyPrimaryAnalysis.addClickListener({
-            if(primaryAnalyseGrid.getSelectedItems() != null){
+            if(primaryAnalyseGrid.getSelectedItems() != null) {
                 String amount = amountPrimaryAnalysis.getValue()
-
+                
                 try{
-                    if(amount != null && amount.isNumber()){
+                    if(amount != null && amount.isNumber()) {
                         primaryAnalyseGrid.getSelectedItems().each {
-
                             if(Integer.parseInt(amount) >= 0){
                                 it.setQuantity(Integer.parseInt(amount))
                                 updateOverviewGrid(it)
@@ -328,9 +330,10 @@ class SelectItemsView extends VerticalLayout{
                         }
                         primaryAnalyseGrid.getDataProvider().refreshAll()
                     }
-                }
-                catch(Exception e){
-                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
+                } catch(NumberFormatException e) {
+                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
+                } catch (Exception e) {
+                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
                 }
             }
             amountPrimaryAnalysis.clear()
@@ -357,8 +360,10 @@ class SelectItemsView extends VerticalLayout{
                         secondaryAnalyseGrid.getDataProvider().refreshAll()
                     }
                 }
-                catch(Exception e){
-                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
+                catch(NumberFormatException e){
+                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
+                } catch (Exception e) {
+                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
                 }
             }
             amountSecondaryAnalysis.clear()
@@ -430,7 +435,7 @@ class SelectItemsView extends VerticalLayout{
         if(!selectedItems.contains(item)){
             selectedItems.add(item)
         }
-        if(item.quantity == 0.0){
+        if(item.quantity == 0.0 as Double){
             selectedItems.remove(item)
         }
         overviewGrid.getDataProvider().refreshAll()

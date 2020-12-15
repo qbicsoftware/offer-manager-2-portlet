@@ -20,7 +20,7 @@
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 
-		<groovy.version>3.0.6</groovy.version>
+		<groovy.version>3.0.7</groovy.version>
 
 		<vaadin.version>8.12.0</vaadin.version>
 		<vaadin.plugin.version>8.12.0</vaadin.plugin.version>
