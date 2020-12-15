@@ -435,7 +435,7 @@ class SelectItemsView extends VerticalLayout{
         if(!selectedItems.contains(item)){
             selectedItems.add(item)
         }
-        if(item.quantity == 0.0){
+        if(item.quantity == 0.0 as Double){
             selectedItems.remove(item)
         }
         overviewGrid.getDataProvider().refreshAll()
