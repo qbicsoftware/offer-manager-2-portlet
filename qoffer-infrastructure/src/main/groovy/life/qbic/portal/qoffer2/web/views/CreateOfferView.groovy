@@ -3,9 +3,12 @@ package life.qbic.portal.qoffer2.web.views
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.VerticalLayout
 import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
+import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
+import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
-
+import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
@@ -30,8 +33,11 @@ class CreateOfferView extends FormLayout{
 
     final private ViewModel sharedViewModel
     final private CreateOfferViewModel view
+    final private CreateAffiliationViewModel createAffiliationViewModel
+
     final private CreateOfferController controller
     final private ListProductsController listProductsController
+    final private CreateAffiliationController createAffiliationController
 
     final private ProjectInformationView projectInformationView
     final private CustomerSelectionView customerSelectionView
@@ -39,16 +45,21 @@ class CreateOfferView extends FormLayout{
     final private SelectItemsView selectItemsView
     final private OfferOverviewView overviewView
 
+    final private CreateAffiliationView createAffiliationView
 
-    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController) {
+
+    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController, CreateAffiliationViewModel createAffiliationViewModel, CreateAffiliationController createAffiliationController) {
         super()
         this.sharedViewModel = sharedViewModel
         this.view = createOfferViewModel
         this.controller = controller
         this.listProductsController = listProductsController
+        this.createAffiliationViewModel = createAffiliationViewModel
+        this.createAffiliationController = createAffiliationController
 
         projectInformationView = new ProjectInformationView(view)
         customerSelectionView = new CustomerSelectionView(view)
+        createAffiliationView = new CreateAffiliationView(sharedViewModel, createAffiliationViewModel, createAffiliationController)
         projectManagerSelectionView = new ProjectManagerSelectionView(view)
         selectItemsView = new SelectItemsView(view,sharedViewModel)
         overviewView = new OfferOverviewView(view)
@@ -79,6 +90,14 @@ class CreateOfferView extends FormLayout{
         this.customerSelectionView.previous.addClickListener({
             this.removeComponent(customerSelectionView)
             this.addComponent(projectInformationView)
+        })
+        this.customerSelectionView.createAffiliationButton.addClickListener({
+            this.removeComponent(customerSelectionView)
+            this.addComponent(createAffiliationView)
+        })
+        this.createAffiliationView.abortButton.addClickListener({
+            this.removeComponent(createAffiliationView)
+            this.addComponent(customerSelectionView)
         })
         this.projectManagerSelectionView.next.addClickListener({
             this.removeComponent(projectManagerSelectionView)
