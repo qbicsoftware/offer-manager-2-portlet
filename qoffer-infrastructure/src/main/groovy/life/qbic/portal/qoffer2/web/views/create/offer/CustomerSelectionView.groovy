@@ -169,8 +169,8 @@ class CustomerSelectionView extends VerticalLayout{
             //todo do we need to clear the grid for another selection?
             affiliationGrid.setItems(affiliations)
 
-            this.addComponent(affiliationLabelLayout,2)
-            this.addComponent(affiliationGrid,3)
+            this.addComponent(affiliationLabelLayout,3)
+            this.addComponent(affiliationGrid,4)
         })
 
         affiliationGrid.addSelectionListener({
