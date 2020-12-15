@@ -15,8 +15,6 @@ import life.qbic.portal.portlet.customers.search.SearchCustomerDataSource
 import life.qbic.portal.portlet.customers.update.UpdateCustomerDataSource
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.ConnectionProvider
-import life.qbic.portal.qoffer2.offers.OfferToCustomerGateway
-import life.qbic.portal.qoffer2.offers.OfferToProductGateway
 import org.apache.groovy.sql.extensions.SqlExtensions
 
 import java.sql.Connection
@@ -34,7 +32,7 @@ import java.sql.Statement
  *
  */
 @Log4j2
-class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource, OfferToCustomerGateway {
+class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
 
   /**
@@ -260,8 +258,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
     }
   }
-
-  @Override
+  
   int getAffiliationId(Affiliation affiliation) {
     String query = "SELECT * FROM affiliation WHERE organization=? " +
             "AND address_addition=? " +

@@ -13,10 +13,9 @@ import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.products.ListProductsDataSource
 import life.qbic.portal.qoffer2.database.ConnectionProvider
-import life.qbic.portal.qoffer2.offers.OfferToProductGateway
+
 import org.apache.groovy.sql.extensions.SqlExtensions
 
-import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
@@ -27,7 +26,7 @@ import java.sql.SQLException
  * @since 1.0.0
  */
 @Log4j2
-class ProductsDbConnector implements ListProductsDataSource, OfferToProductGateway {
+class ProductsDbConnector implements ListProductsDataSource {
 
   private final ConnectionProvider provider
 
@@ -115,7 +114,6 @@ class ProductsDbConnector implements ListProductsDataSource, OfferToProductGatew
     }
   }
 
-  @Override
   def createOfferItems(List<ProductItem> items, int offerId) {
 
     items.each {productItem ->

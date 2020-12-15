@@ -4,7 +4,9 @@ import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.offers.create.CreateOfferDataSource
+import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.database.ConnectionProvider
+import life.qbic.portal.qoffer2.products.ProductsDbConnector
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
@@ -27,18 +29,18 @@ class OfferDbConnector implements CreateOfferDataSource{
 
     ConnectionProvider connectionProvider
 
-    OfferToCustomerGateway offerToCustomerGateway
-    OfferToProductGateway offerToProductGateway
+    CustomerDbConnector customerGateway
+    ProductsDbConnector productGateway
 
     private static final Logger LOG = LogManager.getLogger(OfferDbConnector.class)
 
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (modificationDate, expirationDate, customerId, projectManagerId, projectTitle, projectDescription, totalPrice, customerAffiliationId)"
 
 
-    OfferDbConnector(ConnectionProvider connectionProvider, OfferToCustomerGateway offerToCustomerGateway, OfferToProductGateway offerToProductGateway){
+    OfferDbConnector(ConnectionProvider connectionProvider, CustomerDbConnector customerDbConnector, ProductsDbConnector productsDbConnector){
         this.connectionProvider = connectionProvider
-        this.offerToCustomerGateway = offerToCustomerGateway
-        this.offerToProductGateway = offerToProductGateway
+        this.customerGateway = customerDbConnector
+        this.productGateway = productsDbConnector
     }
 
     @Override
@@ -48,19 +50,18 @@ class OfferDbConnector implements CreateOfferDataSource{
 
         connection.withCloseable { it ->
             try {
-                int projectManagerId = offerToCustomerGateway.getPersonId(offer.projectManager)
-                int customerId = offerToCustomerGateway.getPersonId(offer.customer)
-                int affiliationId = offerToCustomerGateway.getAffiliationId(offer.selectedCustomerAffiliation)
+                int projectManagerId = customerGateway.getPersonId(offer.projectManager)
+                int customerId = customerGateway.getPersonId(offer.customer)
+                int affiliationId = customerGateway.getAffiliationId(offer.selectedCustomerAffiliation)
 
                 int offerId = storeOffer(offer, projectManagerId, customerId, affiliationId)
 
-                offerToProductGateway.createOfferItems(offer.items, offerId)
+                productGateway.createOfferItems(offer.items, offerId)
                 connection.commit()
             } catch (Exception e) {
                 log.error(e.message)
                 log.error(e.stackTrace.join("\n"))
                 connection.rollback()
-                connection.close()
                 throw new DatabaseQueryException("Could not store offer {$offer.identifier}.")
             }
         }
