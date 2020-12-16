@@ -64,8 +64,6 @@ class CustomerSelectionView extends VerticalLayout{
      * Initializes the start layout of this view class
      */
     private void initLayout(){
-        Label titleLabel = new Label("Select Customer")
-
         affiliationLabelLayout = new VerticalLayout()
         Label affiliationLabel = new Label("Select the Customers Affiliation")
         affiliationLabelLayout.addComponent(affiliationLabel)
@@ -89,7 +87,7 @@ class CustomerSelectionView extends VerticalLayout{
         this.affiliationGrid = new Grid<>()
         affiliationLayout = new HorizontalLayout(affiliationGrid)
 
-        this.addComponents(titleLabel, customerLayout, buttonLayout)
+        this.addComponents(customerLayout, buttonLayout)
     }
 
     /**
@@ -158,8 +156,8 @@ class CustomerSelectionView extends VerticalLayout{
             //todo do we need to clear the grid for another selection?
             affiliationGrid.setItems(affiliations)
 
-            this.addComponent(affiliationLabelLayout,2)
-            this.addComponent(affiliationGrid,3)
+            this.addComponent(affiliationLabelLayout,1)
+            this.addComponent(affiliationGrid,2)
         })
 
         affiliationGrid.addSelectionListener({

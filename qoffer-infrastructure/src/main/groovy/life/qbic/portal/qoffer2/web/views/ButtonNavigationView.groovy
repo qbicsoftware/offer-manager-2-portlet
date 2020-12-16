@@ -39,7 +39,6 @@ class ButtonNavigationView extends HorizontalLayout{
 
     void indicateCurrentStep(){
         buttonList.get(currentStep).addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
-        buttonList.get(currentStep).setEnabled(true)
 
         if (currentStep < buttonList.size()) currentStep++
     }
