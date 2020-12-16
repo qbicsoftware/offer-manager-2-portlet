@@ -69,7 +69,7 @@ class CreateAffiliationView extends VerticalLayout {
         this.affiliationCategoryField = generateAffiliationCategorySelect(createAffiliationViewModel.affiliationCategories)
 
         this.abortButton = new Button("Abort Affiliation Creation")
-        abortButton.setIcon(VaadinIcons.EXIT_O)
+        abortButton.setIcon(VaadinIcons.CLOSE_CIRCLE)
         abortButton.addStyleName(ValoTheme.BUTTON_DANGER)
 
         this.submitButton = new Button("Create Affiliation")
