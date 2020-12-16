@@ -9,7 +9,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 ----------------------------------------------
 
 **Added**
-* Connect CreateCustomer and Select Customer Views
+* Add the option to create a customer while creating an offer
 * Implement SearchCustomer use case
 * Connect CreateAffiliation and CreateCustomer use case
 * Implement GUI for CreateAffiliation use case
