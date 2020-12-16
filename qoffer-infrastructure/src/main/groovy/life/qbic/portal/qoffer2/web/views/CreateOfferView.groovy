@@ -58,6 +58,7 @@ class CreateOfferView extends FormLayout{
 
         initLayout()
         registerListeners()
+        fetchData()
     }
 
     /**
@@ -72,7 +73,16 @@ class CreateOfferView extends FormLayout{
                 .addNavigationItem("4. Add Product Items", selectItemsView)
                 .addNavigationItem("5. Offer Overview", overviewView)
 
+        navigationView.defaultSelectFirstButton()
+
         this.addComponent(navigationView)
+    }
+
+    /**
+     * Fetch data from database for observable lists
+     */
+    private void fetchData(){
+        listProductsController.listProducts()
     }
 
     /**
@@ -93,7 +103,6 @@ class CreateOfferView extends FormLayout{
         })
         this.projectManagerSelectionView.next.addClickListener({
             this.removeComponent(projectManagerSelectionView)
-            listProductsController.listProducts()
             this.addComponent(selectItemsView)
         })
         this.projectManagerSelectionView.previous.addClickListener({

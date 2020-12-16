@@ -16,6 +16,7 @@ import com.vaadin.ui.themes.ValoTheme
 class ButtonNavigationView extends VerticalLayout{
 
     private final HorizontalLayout navigationLayout = new HorizontalLayout()
+    List<Button> buttonList = []
 
     /**
      * This method allows to add an item to the navigation bar and returns the resulting layout.
@@ -29,6 +30,8 @@ class ButtonNavigationView extends VerticalLayout{
         Button button = new Button(itemName)
         button.addStyleName(ValoTheme.BUTTON_BORDERLESS)
 
+        buttonList.add(button)
+
         button.addClickListener({
             this.removeAllComponents()
             this.addComponents(navigationLayout,layout)
@@ -39,7 +42,7 @@ class ButtonNavigationView extends VerticalLayout{
     }
 
     def defaultSelectFirstButton(){
-        Button first = navigationLayout.getComponent(1) as Button
-        //first.
+        Button first = navigationLayout.getComponent(0) as Button
+        first.click()
     }
 }
