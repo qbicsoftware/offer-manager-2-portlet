@@ -74,9 +74,8 @@ class CustomerSelectionView extends VerticalLayout{
         affiliationLabelLayout.setComponentAlignment(affiliationLabel, Alignment.MIDDLE_LEFT)
 
         addButtonsLayout = new HorizontalLayout()
-        this.createCustomerButton = new Button("Create Customer", VaadinIcons.HANDS_UP)
+        this.createCustomerButton = new Button("Create Customer", VaadinIcons.USER)
         createCustomerButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
-
         addButtonsLayout.addComponent(createCustomerButton)
         addButtonsLayout.setComponentAlignment(createCustomerButton, Alignment.MIDDLE_RIGHT)
 
