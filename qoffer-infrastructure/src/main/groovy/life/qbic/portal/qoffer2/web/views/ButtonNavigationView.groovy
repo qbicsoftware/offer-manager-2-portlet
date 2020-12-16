@@ -13,10 +13,10 @@ import com.vaadin.ui.themes.ValoTheme
  * @since: 0.1.0
  *
  */
-class ButtonNavigationView extends VerticalLayout{
+class ButtonNavigationView extends HorizontalLayout{
 
-    private final HorizontalLayout navigationLayout = new HorizontalLayout()
     List<Button> buttonList = []
+    private int currentStep = 0
 
     /**
      * This method allows to add an item to the navigation bar and returns the resulting layout.
@@ -26,23 +26,21 @@ class ButtonNavigationView extends VerticalLayout{
      * @param layout The layout that is displayed after clicking the navigation item button
      * @return the layout with the added button
      */
-    ButtonNavigationView addNavigationItem(String itemName, VerticalLayout layout){
+    ButtonNavigationView addNavigationItem(String itemName){
         Button button = new Button(itemName)
         button.addStyleName(ValoTheme.BUTTON_BORDERLESS)
+        button.setEnabled(false)
 
         buttonList.add(button)
 
-        button.addClickListener({
-            this.removeAllComponents()
-            this.addComponents(navigationLayout,layout)
-        })
-
-        navigationLayout.addComponent(button)
+        this.addComponent(button)
         return this
     }
 
-    def defaultSelectFirstButton(){
-        Button first = navigationLayout.getComponent(0) as Button
-        first.click()
+    void indicateCurrentStep(){
+        buttonList.get(currentStep).addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+        buttonList.get(currentStep).setEnabled(true)
+
+        if (currentStep < buttonList.size()) currentStep++
     }
 }

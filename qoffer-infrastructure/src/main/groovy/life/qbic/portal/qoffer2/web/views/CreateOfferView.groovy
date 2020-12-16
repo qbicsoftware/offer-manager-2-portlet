@@ -42,6 +42,8 @@ class CreateOfferView extends FormLayout{
     final private SelectItemsView selectItemsView
     final private OfferOverviewView overviewView
 
+    private ButtonNavigationView navigationView
+
 
     CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController) {
         super()
@@ -65,17 +67,17 @@ class CreateOfferView extends FormLayout{
      * Initializes the view with the ProjectInformationView, which is the first component to be shown
      */
     private void initLayout(){
-        //this.addComponent(projectInformationView)
-        ButtonNavigationView navigationView = new ButtonNavigationView()
-                .addNavigationItem("1. Project Information",projectInformationView)
-                .addNavigationItem("2. Select Customer", customerSelectionView)
-                .addNavigationItem("3. Assign Project Manager", projectManagerSelectionView)
-                .addNavigationItem("4. Add Product Items", selectItemsView)
-                .addNavigationItem("5. Offer Overview", overviewView)
+        navigationView = new ButtonNavigationView()
+                .addNavigationItem("1. Project Information")
+                .addNavigationItem("2. Select Customer")
+                .addNavigationItem("3. Assign Project Manager")
+                .addNavigationItem("4. Add Product Items")
+                .addNavigationItem("5. Offer Overview")
 
-        navigationView.defaultSelectFirstButton()
+        navigationView.indicateCurrentStep()
 
         this.addComponent(navigationView)
+        this.addComponent(projectInformationView)
     }
 
     /**
@@ -92,10 +94,12 @@ class CreateOfferView extends FormLayout{
         this.projectInformationView.next.addClickListener({ event ->
             this.removeComponent(projectInformationView)
             this.addComponent(customerSelectionView)
+            navigationView.indicateCurrentStep()
         })
         this.customerSelectionView.next.addClickListener({
             this.removeComponent(customerSelectionView)
             this.addComponent(projectManagerSelectionView)
+            navigationView.indicateCurrentStep()
         })
         this.customerSelectionView.previous.addClickListener({
             this.removeComponent(customerSelectionView)
@@ -104,6 +108,7 @@ class CreateOfferView extends FormLayout{
         this.projectManagerSelectionView.next.addClickListener({
             this.removeComponent(projectManagerSelectionView)
             this.addComponent(selectItemsView)
+            navigationView.indicateCurrentStep()
         })
         this.projectManagerSelectionView.previous.addClickListener({
             this.removeComponent(projectManagerSelectionView)
@@ -114,6 +119,7 @@ class CreateOfferView extends FormLayout{
             controller.calculatePriceForItems(getProductItems(view.productItems),view.customerAffiliation.category)
             overviewView.fillPanel()
             this.addComponent(overviewView)
+            navigationView.indicateCurrentStep()
         })
         this.selectItemsView.previous.addClickListener({
             this.removeComponent(selectItemsView)
