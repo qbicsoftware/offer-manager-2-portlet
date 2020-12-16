@@ -18,7 +18,9 @@ interface CalculatePrice {
      * This method calculates the price of a list of items based on an affiliation category
      * @param items The items describe which product and what quantity is desired
      * @param category The category defines which overhead should be applied
+     * @deprecated Please use {@link #calculatePrice(List<ProductItem>, Affiliation)}
      */
+    @Deprecated
     void calculatePrice(List<ProductItem> items, AffiliationCategory category)
 
     /**
