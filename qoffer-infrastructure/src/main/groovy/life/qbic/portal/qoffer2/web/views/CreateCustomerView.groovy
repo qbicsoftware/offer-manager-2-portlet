@@ -95,7 +95,7 @@ class CreateCustomerView extends VerticalLayout {
         submitButton.enabled = allValuesValid()
 
         this.abortButton = new Button("Abort Customer Creation")
-        abortButton.setIcon(VaadinIcons.EXIT)
+        abortButton.setIcon(VaadinIcons.CLOSE_CIRCLE)
         abortButton.addStyleName(ValoTheme.BUTTON_DANGER)
 
         this.affiliationDetails = new Panel("Affiliation Details")
