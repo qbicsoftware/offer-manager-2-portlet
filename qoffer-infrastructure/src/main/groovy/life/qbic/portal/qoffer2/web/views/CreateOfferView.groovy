@@ -33,10 +33,8 @@ class CreateOfferView extends FormLayout{
 
     final private ViewModel sharedViewModel
     final private CreateOfferViewModel view
-    final private CreateCustomerViewModel createCustomerViewModel
 
     final private CreateOfferController controller
-    final private CreateCustomerController createCustomerController
     final private ListProductsController listProductsController
 
     final private ProjectInformationView projectInformationView
@@ -48,18 +46,15 @@ class CreateOfferView extends FormLayout{
     final private CreateCustomerView createCustomerView
 
 
-    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController, CreateCustomerViewModel createCustomerViewModel, CreateCustomerController createCustomerController) {
+    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController, CreateCustomerView createCustomerView) {
         super()
         this.sharedViewModel = sharedViewModel
         this.view = createOfferViewModel
         this.controller = controller
         this.listProductsController = listProductsController
-        this.createCustomerViewModel = createCustomerViewModel
-        this.createCustomerController = createCustomerController
-
+        this.createCustomerView = createCustomerView
         projectInformationView = new ProjectInformationView(view)
         customerSelectionView = new CustomerSelectionView(view)
-        createCustomerView = new CreateCustomerView(sharedViewModel, createCustomerViewModel, createCustomerController)
         projectManagerSelectionView = new ProjectManagerSelectionView(view)
         selectItemsView = new SelectItemsView(view,sharedViewModel)
         overviewView = new OfferOverviewView(view)
@@ -96,6 +91,10 @@ class CreateOfferView extends FormLayout{
             this.addComponent(createCustomerView)
         })
         this.createCustomerView.abortButton.addClickListener({
+            this.removeComponent(createCustomerView)
+            this.addComponent(customerSelectionView)
+        })
+        this.createCustomerView.submitButton.addClickListener({
             this.removeComponent(createCustomerView)
             this.addComponent(customerSelectionView)
         })
