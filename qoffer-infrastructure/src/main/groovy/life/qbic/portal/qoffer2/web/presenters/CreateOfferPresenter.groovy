@@ -42,6 +42,11 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
         this.createOfferViewModel.offerPrice = price
     }
 
+    @Override
+    void calculatedPrice(double netPrice, double taxes, double overheads, double totalPrice) {
+        //TODO implement
+    }
+
     void successNotification(String notification) {
         //TODO implement
         throw new Exception("Method not implemented.")
