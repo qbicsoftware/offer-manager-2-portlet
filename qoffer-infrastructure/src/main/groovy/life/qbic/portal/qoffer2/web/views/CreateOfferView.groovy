@@ -1,10 +1,7 @@
 package life.qbic.portal.qoffer2.web.views
 
-import com.vaadin.navigator.Navigator
+
 import com.vaadin.ui.FormLayout
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.UI
-import com.vaadin.ui.VerticalLayout
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
@@ -74,7 +71,7 @@ class CreateOfferView extends FormLayout{
                 .addNavigationItem("4. Add Product Items")
                 .addNavigationItem("5. Offer Overview")
 
-        navigationView.indicateCurrentStep()
+        navigationView.showNextStep()
 
         this.addComponent(navigationView)
         this.addComponent(projectInformationView)
@@ -94,40 +91,44 @@ class CreateOfferView extends FormLayout{
         this.projectInformationView.next.addClickListener({ event ->
             this.removeComponent(projectInformationView)
             this.addComponent(customerSelectionView)
-            navigationView.indicateCurrentStep()
+            navigationView.showNextStep()
         })
         this.customerSelectionView.next.addClickListener({
             this.removeComponent(customerSelectionView)
             this.addComponent(projectManagerSelectionView)
-            navigationView.indicateCurrentStep()
+            navigationView.showNextStep()
         })
         this.customerSelectionView.previous.addClickListener({
             this.removeComponent(customerSelectionView)
             this.addComponent(projectInformationView)
+            navigationView.showPreviousStep()
         })
         this.projectManagerSelectionView.next.addClickListener({
             this.removeComponent(projectManagerSelectionView)
             this.addComponent(selectItemsView)
-            navigationView.indicateCurrentStep()
+            navigationView.showNextStep()
         })
         this.projectManagerSelectionView.previous.addClickListener({
             this.removeComponent(projectManagerSelectionView)
             this.addComponent(customerSelectionView)
+            navigationView.showPreviousStep()
         })
         this.selectItemsView.next.addClickListener({
             this.removeComponent(selectItemsView)
             controller.calculatePriceForItems(getProductItems(view.productItems),view.customerAffiliation.category)
             overviewView.fillPanel()
             this.addComponent(overviewView)
-            navigationView.indicateCurrentStep()
+            navigationView.showNextStep()
         })
         this.selectItemsView.previous.addClickListener({
             this.removeComponent(selectItemsView)
             this.addComponent(projectManagerSelectionView)
+            navigationView.showPreviousStep()
         })
         this.overviewView.previous.addClickListener({
             this.removeComponent(overviewView)
             this.addComponent(selectItemsView)
+            navigationView.showPreviousStep()
         })
         this.overviewView.save.addClickListener({
             controller.createOffer(view.projectTitle, view.projectDescription,view.customer,view.projectManager,

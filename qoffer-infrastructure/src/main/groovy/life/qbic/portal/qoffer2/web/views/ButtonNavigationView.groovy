@@ -37,9 +37,20 @@ class ButtonNavigationView extends HorizontalLayout{
         return this
     }
 
-    void indicateCurrentStep(){
-        buttonList.get(currentStep).addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+    /**
+     * Colors the next step to show the current status of the process
+     */
+    void showNextStep(){
+        buttonList.get(currentStep).setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
 
         if (currentStep < buttonList.size()) currentStep++
+    }
+
+    /**
+     * Removes the previous colored step to show the current status of the process
+     */
+    void showPreviousStep() {
+        if (currentStep >= 0) currentStep--
+        buttonList.get(currentStep).setStyleName(ValoTheme.BUTTON_BORDERLESS)
     }
 }
