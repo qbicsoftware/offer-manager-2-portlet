@@ -1,6 +1,9 @@
 package life.qbic.portal.qoffer2.web.views
 
+import com.vaadin.navigator.Navigator
 import com.vaadin.ui.FormLayout
+import com.vaadin.ui.HorizontalLayout
+import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
@@ -61,7 +64,15 @@ class CreateOfferView extends FormLayout{
      * Initializes the view with the ProjectInformationView, which is the first component to be shown
      */
     private void initLayout(){
-        this.addComponent(projectInformationView)
+        //this.addComponent(projectInformationView)
+        ButtonNavigationView navigationView = new ButtonNavigationView()
+                .addNavigationItem("1. Project Information",projectInformationView)
+                .addNavigationItem("2. Select Customer", customerSelectionView)
+                .addNavigationItem("3. Assign Project Manager", projectManagerSelectionView)
+                .addNavigationItem("4. Add Product Items", selectItemsView)
+                .addNavigationItem("5. Offer Overview", overviewView)
+
+        this.addComponent(navigationView)
     }
 
     /**
