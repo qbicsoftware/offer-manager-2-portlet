@@ -45,7 +45,7 @@ class CreateCustomerView extends VerticalLayout {
     Button abortButton
     Panel affiliationDetails
 
-    CreateCustomerView(ViewModel sharedViewModel, CreateCustomerViewModel createCustomerViewModel, CreateCustomerController controller) {
+    CreateCustomerView(CreateCustomerController controller, ViewModel sharedViewModel, CreateCustomerViewModel createCustomerViewModel) {
         super()
         this.controller = controller
         this.sharedViewModel = sharedViewModel

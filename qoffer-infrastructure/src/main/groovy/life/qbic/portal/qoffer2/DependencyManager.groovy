@@ -264,7 +264,7 @@ class DependencyManager {
 
         CreateCustomerView createCustomerView
         try {
-            createCustomerView = new CreateCustomerView(this.viewModel, this.createCustomerViewModel, this.createCustomerController)
+            createCustomerView = new CreateCustomerView(this.createCustomerController, this.viewModel, this.createCustomerViewModel)
             this.createCustomerView = createCustomerView
             listAffiliationsController.listAffiliations()
         } catch (Exception e) {
