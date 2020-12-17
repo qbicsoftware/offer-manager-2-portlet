@@ -276,8 +276,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       statement.setString(3, affiliation.street)
       statement.setString(4, affiliation.postalCode)
       statement.setString(5, affiliation.city)
-      statement.execute()
-      ResultSet rs = statement.getResultSet()
+      ResultSet rs = statement.executeQuery()
       while (rs.next()) {
         affiliationIds.add(rs.getInt(1))
       }
