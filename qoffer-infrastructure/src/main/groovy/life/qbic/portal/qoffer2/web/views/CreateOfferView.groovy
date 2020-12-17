@@ -48,18 +48,17 @@ class CreateOfferView extends FormLayout{
     final private CreateAffiliationView createAffiliationView
 
 
-    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController, CreateAffiliationViewModel createAffiliationViewModel, CreateAffiliationController createAffiliationController) {
+    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController, CreateAffiliationView createAffiliationView) {
         super()
         this.sharedViewModel = sharedViewModel
         this.view = createOfferViewModel
         this.controller = controller
         this.listProductsController = listProductsController
-        this.createAffiliationViewModel = createAffiliationViewModel
-        this.createAffiliationController = createAffiliationController
+        this.createAffiliationView = createAffiliationView
 
         projectInformationView = new ProjectInformationView(view)
         customerSelectionView = new CustomerSelectionView(view)
-        createAffiliationView = new CreateAffiliationView(sharedViewModel, createAffiliationViewModel, createAffiliationController)
+
         projectManagerSelectionView = new ProjectManagerSelectionView(view)
         selectItemsView = new SelectItemsView(view,sharedViewModel)
         overviewView = new OfferOverviewView(view)
@@ -96,6 +95,10 @@ class CreateOfferView extends FormLayout{
             this.addComponent(createAffiliationView)
         })
         this.createAffiliationView.abortButton.addClickListener({
+            this.removeComponent(createAffiliationView)
+            this.addComponent(customerSelectionView)
+        })
+        this.createAffiliationView.submitButton.addClickListener({
             this.removeComponent(createAffiliationView)
             this.addComponent(customerSelectionView)
         })
