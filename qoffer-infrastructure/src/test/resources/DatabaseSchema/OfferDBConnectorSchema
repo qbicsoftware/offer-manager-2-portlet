@@ -9,18 +9,28 @@ CREATE TABLE product (
 
 CREATE TABLE offer_items(
      id int(11) UNIQUE PRIMARY KEY,
-     productId int(11),
-     quantity int(11),
+     productItemId int(11),
+     offerId int(11),
 
-     FOREIGN KEY (productId) REFERENCES product(id)
+     FOREIGN KEY (productItemId) REFERENCES productitem(id),
+     FOREIGN KEY (offerId) REFERENCES offer(id)
 );
 
 CREATE TABLE costestimate_items(
      id int(11) UNIQUE PRIMARY KEY,
-     productId int(11),
-     quantity int(11),
+     productItemId int(11),
+     costestimateId int(11),
 
-     FOREIGN KEY (productId) REFERENCES product(id)
+     FOREIGN KEY (productItemId) REFERENCES productitem(id),
+     FOREIGN KEY (costestimateId) REFERENCES costestimate(id)
+);
+
+CREATE TABLE productitem(
+    id int(11) UNIQUE PRIMARY KEY,
+    productId int(11),
+    quantity double(11,2),
+
+    FOREIGN KEY (productId) REFERENCES product(id)
 );
 
 CREATE TABLE costestimate(
