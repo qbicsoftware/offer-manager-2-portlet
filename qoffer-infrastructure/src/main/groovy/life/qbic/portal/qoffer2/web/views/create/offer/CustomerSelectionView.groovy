@@ -35,6 +35,8 @@ class CustomerSelectionView extends VerticalLayout{
     Button next
     Button previous
 
+    HorizontalLayout addButtonsLayout
+    Button createCustomerButton
     Grid<Customer> customerGrid
     HorizontalLayout customerLayout
     Grid<Affiliation> affiliationGrid
@@ -71,6 +73,14 @@ class CustomerSelectionView extends VerticalLayout{
         affiliationLabelLayout.addComponent(affiliationLabel)
         affiliationLabelLayout.setComponentAlignment(affiliationLabel, Alignment.MIDDLE_LEFT)
 
+        addButtonsLayout = new HorizontalLayout()
+        this.createCustomerButton = new Button("Create Customer", VaadinIcons.USER)
+        createCustomerButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
+        addButtonsLayout.addComponent(createCustomerButton)
+        addButtonsLayout.setComponentAlignment(createCustomerButton, Alignment.MIDDLE_RIGHT)
+
+        addButtonsLayout.setSizeFull()
+
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.setEnabled(false)
         next.addStyleName(ValoTheme.LABEL_LARGE)
@@ -89,7 +99,7 @@ class CustomerSelectionView extends VerticalLayout{
         this.affiliationGrid = new Grid<>()
         affiliationLayout = new HorizontalLayout(affiliationGrid)
 
-        this.addComponents(titleLabel, customerLayout, buttonLayout)
+        this.addComponents(titleLabel, customerLayout, addButtonsLayout ,buttonLayout)
     }
 
     /**
@@ -158,8 +168,8 @@ class CustomerSelectionView extends VerticalLayout{
             //todo do we need to clear the grid for another selection?
             affiliationGrid.setItems(affiliations)
 
-            this.addComponent(affiliationLabelLayout,2)
-            this.addComponent(affiliationGrid,3)
+            this.addComponent(affiliationLabelLayout,3)
+            this.addComponent(affiliationGrid,4)
         })
 
         affiliationGrid.addSelectionListener({
