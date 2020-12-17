@@ -265,7 +265,6 @@ class DependencyManager {
         CreateCustomerView createCustomerView
         try {
             this.createCustomerView = new CreateCustomerView(this.createCustomerController, this.viewModel, this.createCustomerViewModel)
-            this.createCustomerView = createCustomerView
             listAffiliationsController.listAffiliations()
         } catch (Exception e) {
             log.error("Could not create ${CreateCustomerView.getSimpleName()} view.", e)
