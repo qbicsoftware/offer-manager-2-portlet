@@ -53,7 +53,10 @@ class CreateOfferView extends FormLayout{
         customerSelectionView = new CustomerSelectionView(view)
         projectManagerSelectionView = new ProjectManagerSelectionView(view)
         selectItemsView = new SelectItemsView(view,sharedViewModel)
+        //selectItemsView.setSizeFull()
         overviewView = new OfferOverviewView(view)
+
+        this.setSizeFull()
 
         initLayout()
         registerListeners()
