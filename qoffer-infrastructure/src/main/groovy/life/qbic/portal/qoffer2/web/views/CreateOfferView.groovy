@@ -91,7 +91,7 @@ class CreateOfferView extends FormLayout{
         })
         this.selectItemsView.next.addClickListener({
             this.removeComponent(selectItemsView)
-            controller.calculatePriceForItems(getProductItems(view.productItems),view.customerAffiliation.category)
+            controller.calculatePriceForItems(getProductItems(view.productItems),view.customerAffiliation)
             overviewView.fillPanel()
             this.addComponent(overviewView)
         })
