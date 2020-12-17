@@ -2,6 +2,7 @@ package life.qbic.portal.qoffer2.database
 
 import groovy.sql.GroovyRowResult
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import org.apache.groovy.sql.extensions.SqlExtensions
@@ -59,11 +60,11 @@ class CustomerDbConnectorSpec extends Specification{
 
     def "CustomerDbConnector shall return the id for a given affiliation"(){
         given:
-        String query = "SELECT * FROM affiliation WHERE organization= ? " +
-                "AND address_addition = ? " +
-                "AND street = ? " +
-                "AND postal_code = ? " +
-                "AND city = ?"
+        String query = "SELECT * FROM affiliation WHERE organization=? " +
+                "AND address_addition=? " +
+                "AND street=? " +
+                "AND postal_code=? " +
+                "AND city=?"
 
         and: "a connection returning the id of the affiliation if it was found"
         // we need to stub the static SqlExtensions.toRowResult method because we do not provide an implemented RowResult
@@ -92,13 +93,17 @@ class CustomerDbConnectorSpec extends Specification{
         CustomerDbConnector dataSource = new CustomerDbConnector(connectionProvider)
 
         when:
-        int resultId = dataSource.getAffiliationId(new Affiliation.Builder(organization,street,postal_code,city).build())
+        int resultId = dataSource.getAffiliationId(new Affiliation.Builder(organization,street,postal_code,city)
+                .addressAddition(address_addition)
+                .category(category)
+                .country(country)
+                .build())
 
         then:
         resultId == id
 
         where: "affiliation information is as follows"
         id | organization | address_addition | street | postal_code | city | country | category
-        0 | "QBiC" | "Quantitative Biology Center" | "Auf der Morgenstelle 10" | "72076" | "Tübingen" | "Germany" | "internal"
+        0 | "QBiC" | "Quantitative Biology Center" | "Auf der Morgenstelle 10" | "72076" | "Tübingen" | "Germany" | AffiliationCategory.INTERNAL
     }
 }

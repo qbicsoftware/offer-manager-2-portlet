@@ -52,8 +52,6 @@ class ProjectManagerSelectionView extends VerticalLayout{
      * Initializes the start layout for this view
      */
     private void initLayout(){
-        Label titleLabel = new Label("Add Project Manager")
-
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.addStyleName(ValoTheme.LABEL_LARGE)
         next.setEnabled(false)
@@ -69,7 +67,7 @@ class ProjectManagerSelectionView extends VerticalLayout{
         this.projectManagerGrid = new Grid<ProjectManager>()
         projectManagerLayout = new HorizontalLayout(projectManagerGrid)
 
-        this.addComponents(titleLabel, projectManagerLayout, buttonLayout)
+        this.addComponents(projectManagerLayout, buttonLayout)
     }
 
     /**
