@@ -53,9 +53,9 @@ class CreateOfferController {
      * @param items A list of product items with a quantity and product
      * @param category defining the category of the affiliation
      */
-    void calculatePriceForItems(List<ProductItem> items, AffiliationCategory category){
+    void calculatePriceForItems(List<ProductItem> items, Affiliation affiliation){
         try {
-            this.calculatePrice.calculatePrice(items,category)
+            this.calculatePrice.calculatePrice(items, affiliation)
         } catch(Exception ignored) {
             throw new IllegalArgumentException("Could not calculate price from provided arguments.")
         }
