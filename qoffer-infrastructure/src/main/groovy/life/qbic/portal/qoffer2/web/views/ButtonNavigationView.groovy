@@ -4,7 +4,7 @@ import com.vaadin.ui.Button
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.themes.ValoTheme
 
-* 
+/*
  * This class generates and tracks the state of the individual View components of the navigation bar
  *
  * @since: 1.0.0
