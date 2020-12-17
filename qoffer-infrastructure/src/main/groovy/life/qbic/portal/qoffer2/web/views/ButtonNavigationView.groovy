@@ -4,12 +4,10 @@ import com.vaadin.ui.Button
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.themes.ValoTheme
 
-/**
- * <class short description - One Line!>
+* 
+ * This class generates and tracks the state of the individual View components of the navigation bar
  *
- * <More detailed description - When to use, what it solves, etc.>
- *
- * @since: 0.1.0
+ * @since: 1.0.0
  *
  */
 class ButtonNavigationView extends HorizontalLayout{
