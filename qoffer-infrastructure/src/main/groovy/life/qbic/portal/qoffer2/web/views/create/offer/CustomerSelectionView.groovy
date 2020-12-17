@@ -99,7 +99,7 @@ class CustomerSelectionView extends VerticalLayout{
         this.affiliationGrid = new Grid<>()
         affiliationLayout = new HorizontalLayout(affiliationGrid)
 
-        this.addComponents(customerLayout, addButtonsLayout ,buttonLayout)
+        this.addComponents(customerLayout, addButtonsLayout , buttonLayout)
     }
 
     /**
@@ -175,9 +175,10 @@ class CustomerSelectionView extends VerticalLayout{
             //todo do we need to clear the grid for another selection?
             affiliationGrid.setItems(affiliations)
 
-            this.addComponent(affiliationLabelLayout,3)
-            this.addComponent(affiliationGrid,4)
-            this.addComponent(createAffiliationLayout,5)
+            this.addComponent(affiliationLabelLayout,2)
+            this.addComponent(affiliationGrid,3)
+            this.addComponent(createAffiliationLayout,4)
+
         })
 
         affiliationGrid.addSelectionListener({
