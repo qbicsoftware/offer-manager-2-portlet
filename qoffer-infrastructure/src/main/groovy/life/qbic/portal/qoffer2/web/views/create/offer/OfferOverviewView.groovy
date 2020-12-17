@@ -123,13 +123,7 @@ class OfferOverviewView extends VerticalLayout{
         We add the header as top component in the final view
          */
         content.addComponent(header)
-
         content.addComponent(itemGrid)
-
-        //Label price = new Label("total price: ${createOfferViewModel.offerPrice}")
-        //content.addComponent(price)
-
-        //.setComponentAlignment(price,Alignment.MIDDLE_RIGHT)
 
         offerOverview.setContent(content)
     }
