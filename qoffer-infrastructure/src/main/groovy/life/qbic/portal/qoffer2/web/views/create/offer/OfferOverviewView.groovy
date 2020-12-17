@@ -10,9 +10,13 @@ import com.vaadin.ui.Panel
 import com.vaadin.ui.TextArea
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
+import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
+
+import java.text.DecimalFormat
 
 /**
  * This class generates a Layout in which the user
@@ -74,11 +78,14 @@ class OfferOverviewView extends VerticalLayout{
      */
     private static void generateProductGrid(Grid<ProductItemViewModel> grid) {
         try {
+            DecimalFormat euroFormat = new DecimalFormat("€#,##0.00")
+
             grid.addColumn({ productItem -> productItem.quantity }).setCaption("Quantity")
             grid.addColumn({ productItem -> productItem.product.productName }).setCaption("Product Name")
             grid.addColumn({ productItem -> productItem.product.description }).setCaption("Product Description")
-            grid.addColumn({ productItem -> productItem.product.unitPrice }).setCaption("Product Unit Price")
-            grid.addColumn({ productItem -> productItem.product.unit.value }).setCaption("Product Unit")
+            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(euroFormat)).setCaption("Product Unit Price")
+            grid.addColumn({ productItem -> productItem.product.unit }).setCaption("Product Unit")
+
 
             //specify size of grid and layout
             grid.setSizeFull()
