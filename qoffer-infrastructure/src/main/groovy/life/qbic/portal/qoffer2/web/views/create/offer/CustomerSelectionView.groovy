@@ -179,9 +179,7 @@ class CustomerSelectionView extends VerticalLayout{
 
             this.addComponent(affiliationLabelLayout,3)
             this.addComponent(affiliationGrid,4)
-            this.addComponent(affiliationLabelLayout,2)
-            this.addComponent(affiliationGrid,3)
-            this.addComponent(createAffiliationLayout,4)
+            this.addComponent(createAffiliationLayout,5)
         })
 
         affiliationGrid.addSelectionListener({
