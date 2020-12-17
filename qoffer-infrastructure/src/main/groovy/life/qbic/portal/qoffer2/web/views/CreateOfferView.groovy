@@ -2,8 +2,12 @@ package life.qbic.portal.qoffer2.web.views
 
 import com.vaadin.ui.FormLayout
 import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.portal.portlet.customers.create.CreateCustomer
+import life.qbic.portal.qoffer2.DependencyManager
+import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
+import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
@@ -39,6 +43,7 @@ class CreateOfferView extends FormLayout{
     final private OfferOverviewView overviewView
 
     final private CreateCustomerView createCustomerView
+    private ButtonNavigationView navigationView
     final private CreateAffiliationView createAffiliationView
 
 
@@ -58,15 +63,35 @@ class CreateOfferView extends FormLayout{
         selectItemsView = new SelectItemsView(view,sharedViewModel)
         overviewView = new OfferOverviewView(view)
 
+        this.setSizeFull()
+
         initLayout()
         registerListeners()
+        fetchData()
     }
 
     /**
      * Initializes the view with the ProjectInformationView, which is the first component to be shown
      */
     private void initLayout(){
+        navigationView = new ButtonNavigationView()
+                .addNavigationItem("1. Project Information")
+                .addNavigationItem("2. Select Customer")
+                .addNavigationItem("3. Assign Project Manager")
+                .addNavigationItem("4. Add Product Items")
+                .addNavigationItem("5. Offer Overview")
+
+        navigationView.showNextStep()
+        this.addComponent(navigationView)
         this.addComponent(projectInformationView)
+    }
+
+    /**
+     * Fetch data from database for observable lists
+     */
+    private void fetchData(){
+        listProductsController.listProducts()
+        //todo add the initalization of data e.g. customer and PM here
     }
 
     /**
@@ -76,14 +101,17 @@ class CreateOfferView extends FormLayout{
         this.projectInformationView.next.addClickListener({ event ->
             this.removeComponent(projectInformationView)
             this.addComponent(customerSelectionView)
+            navigationView.showNextStep()
         })
         this.customerSelectionView.next.addClickListener({
             this.removeComponent(customerSelectionView)
             this.addComponent(projectManagerSelectionView)
+            navigationView.showNextStep()
         })
         this.customerSelectionView.previous.addClickListener({
             this.removeComponent(customerSelectionView)
             this.addComponent(projectInformationView)
+            navigationView.showPreviousStep()
         })
         this.customerSelectionView.createCustomerButton.addClickListener({
             this.removeComponent(customerSelectionView)
@@ -111,26 +139,30 @@ class CreateOfferView extends FormLayout{
         })
         this.projectManagerSelectionView.next.addClickListener({
             this.removeComponent(projectManagerSelectionView)
-            listProductsController.listProducts()
             this.addComponent(selectItemsView)
+            navigationView.showNextStep()
         })
         this.projectManagerSelectionView.previous.addClickListener({
             this.removeComponent(projectManagerSelectionView)
             this.addComponent(customerSelectionView)
+            navigationView.showPreviousStep()
         })
         this.selectItemsView.next.addClickListener({
             this.removeComponent(selectItemsView)
             controller.calculatePriceForItems(getProductItems(view.productItems),view.customerAffiliation.category)
             overviewView.fillPanel()
             this.addComponent(overviewView)
+            navigationView.showNextStep()
         })
         this.selectItemsView.previous.addClickListener({
             this.removeComponent(selectItemsView)
             this.addComponent(projectManagerSelectionView)
+            navigationView.showPreviousStep()
         })
         this.overviewView.previous.addClickListener({
             this.removeComponent(overviewView)
             this.addComponent(selectItemsView)
+            navigationView.showPreviousStep()
         })
         this.overviewView.save.addClickListener({
             controller.createOffer(view.projectTitle, view.projectDescription,view.customer,view.projectManager,

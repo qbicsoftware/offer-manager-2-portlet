@@ -6,7 +6,6 @@ import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Label
 import com.vaadin.ui.TabSheet
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
@@ -120,8 +119,6 @@ class SelectItemsView extends VerticalLayout{
      * Initializes the start layout for this view
      */
     private void initLayout(){
-        Label titleLabel = new Label("Add Product Items")
-
         this.sequencingGrid = new Grid<>()
         this.primaryAnalyseGrid = new Grid<>()
         this.secondaryAnalyseGrid = new Grid<>()
@@ -198,6 +195,9 @@ class SelectItemsView extends VerticalLayout{
         VerticalLayout projectManagementLayout = new VerticalLayout(projectManagementGrid, quantityManagement)
         projectManagementLayout.setSizeFull()
 
+        HorizontalLayout overview = new HorizontalLayout(overviewGrid)
+        overview.setSizeFull()
+
 
         generateProductGrid(sequencingGrid)
         generateProductGrid(primaryAnalyseGrid)
@@ -214,7 +214,7 @@ class SelectItemsView extends VerticalLayout{
         packageAccordion.addTab(projectManagementLayout,"Project Management Products")
         packageAccordion.addTab(dataStorageLayout,"Data Storage Products")
 
-        this.addComponents(titleLabel, packageAccordion, overviewGrid, buttonLayout)
+        this.addComponents(packageAccordion, overview, buttonLayout)
         this.setSizeFull()
     }
 

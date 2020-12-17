@@ -1,41 +1,55 @@
 package life.qbic.portal.qoffer2
 
 import groovy.util.logging.Log4j2
+
 import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
+import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.business.services.ProductUnit
+import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliations
 import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.portlet.customers.search.SearchCustomer
 import life.qbic.portal.portlet.offers.create.CreateOffer
 import life.qbic.portal.portlet.products.ListProducts
-import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
-import life.qbic.portal.qoffer2.customers.CustomerDbConnector
-import life.qbic.portal.qoffer2.database.DatabaseSession
+
 import life.qbic.portal.qoffer2.offers.OfferDbConnector
+import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.products.ProductsDbConnector
+import life.qbic.portal.qoffer2.database.DatabaseSession
+
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
 import life.qbic.portal.qoffer2.web.controllers.SearchCustomerController
 import life.qbic.portal.qoffer2.web.controllers.ListAffiliationsController
+import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
+
 import life.qbic.portal.qoffer2.web.presenters.CreateAffiliationPresenter
 import life.qbic.portal.qoffer2.web.presenters.CreateCustomerPresenter
 import life.qbic.portal.qoffer2.web.presenters.CreateOfferPresenter
 import life.qbic.portal.qoffer2.web.presenters.ListAffiliationsPresenter
 import life.qbic.portal.qoffer2.web.presenters.SearchCustomerPresenter
+import life.qbic.portal.qoffer2.web.presenters.Presenter
+
+
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.SearchCustomerViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
+
 import life.qbic.portal.qoffer2.web.views.CreateAffiliationView
 import life.qbic.portal.qoffer2.web.views.CreateOfferView
 import life.qbic.portal.qoffer2.web.views.PortletView
-import life.qbic.portal.qoffer2.web.presenters.Presenter
-import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
-import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.views.CreateCustomerView
 import life.qbic.portal.qoffer2.web.views.SearchCustomerView
+
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
 
@@ -124,9 +138,19 @@ class DependencyManager {
 
             DatabaseSession.init(user, password, host, port, sqlDatabase)
             customerDbConnector = new CustomerDbConnector(DatabaseSession.getInstance())
-            //todo is there another DB to which we want to connect here?
-            offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance())
             productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
+            offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(), customerDbConnector, productsDbConnector)
+
+            Offer offer = new Offer.Builder(new Customer.Builder("Sven","Fillinger","sven.fillinger@web.de").build(),new ProjectManager.Builder("Sven","Fillinger","sven.fillinger@web.de").build(),
+                    "Offer Title", "description",new Affiliation.Builder("QBiC","Auf der Morgenstelle 10","72076", "Tübingen").addressAddition("University of Tübingen").country("D").category(AffiliationCategory.INTERNAL).build()).items()
+                    .items()
+                    .modificationDate(new Date())
+                    .expirationDate(new Date())
+                    .totalPrice(0.0)
+                    .items([new ProductItem(2, new Sequencing("DNA Sequencing","This is a sequencing package",1.50, ProductUnit.PER_SAMPLE))])
+                    .build()
+
+            offerDbConnector.store(offer)
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
             throw e
