@@ -262,7 +262,6 @@ class DependencyManager {
 
     private void setupViews() {
 
-        CreateCustomerView createCustomerView
         try {
             this.createCustomerView = new CreateCustomerView(this.createCustomerController, this.viewModel, this.createCustomerViewModel)
             listAffiliationsController.listAffiliations()
