@@ -1,6 +1,5 @@
 package life.qbic.portal.qoffer2.web.views
 
-
 import com.vaadin.ui.FormLayout
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
@@ -53,7 +52,6 @@ class CreateOfferView extends FormLayout{
         customerSelectionView = new CustomerSelectionView(view)
         projectManagerSelectionView = new ProjectManagerSelectionView(view)
         selectItemsView = new SelectItemsView(view,sharedViewModel)
-        //selectItemsView.setSizeFull()
         overviewView = new OfferOverviewView(view)
 
         this.setSizeFull()
@@ -75,7 +73,6 @@ class CreateOfferView extends FormLayout{
                 .addNavigationItem("5. Offer Overview")
 
         navigationView.showNextStep()
-
         this.addComponent(navigationView)
         this.addComponent(projectInformationView)
     }
@@ -85,6 +82,7 @@ class CreateOfferView extends FormLayout{
      */
     private void fetchData(){
         listProductsController.listProducts()
+        //todo add the initalization of data e.g. customer and PM here
     }
 
     /**
