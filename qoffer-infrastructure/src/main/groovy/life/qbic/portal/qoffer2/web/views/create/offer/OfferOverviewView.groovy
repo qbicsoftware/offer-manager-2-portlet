@@ -134,7 +134,6 @@ class OfferOverviewView extends VerticalLayout{
         panel.setSizeUndefined()
         Grid<PriceField> gridLayout = new Grid<>()
         gridLayout.setHeightByRows(4)
-        DecimalFormat euroFormat = new DecimalFormat("€#,##0.00");
         gridLayout.setItems([
                 new PriceField("Net price", createOfferViewModel.netPrice),
                 new PriceField("Overheads", createOfferViewModel.overheads),
@@ -144,7 +143,7 @@ class OfferOverviewView extends VerticalLayout{
         gridLayout.addColumn(PriceField::getName)
         gridLayout.addColumn(  {
             costs -> costs.value},
-                new NumberRenderer(euroFormat))
+                new NumberRenderer(Currency.currencyFormat))
 
         gridLayout.headerVisible = false
         panel.setContent(gridLayout)
