@@ -9,6 +9,7 @@ import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.TabSheet
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
@@ -16,10 +17,12 @@ import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Sequencing
-
+import life.qbic.portal.portlet.offers.Currency
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
+
+import java.text.DecimalFormat
 
 /**
  * This class generates a Layout in which the user
@@ -270,7 +273,7 @@ class SelectItemsView extends VerticalLayout{
             grid.addColumn({ productItem -> productItem.quantity }).setCaption("Quantity")
             grid.addColumn({ productItem -> productItem.product.productName }).setCaption("Product Name")
             grid.addColumn({ productItem -> productItem.product.description }).setCaption("Product Description")
-            grid.addColumn({ productItem -> productItem.product.unitPrice }).setCaption("Product Unit Price")
+            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.currencyFormat)).setCaption("Product Unit Price")
             grid.addColumn({ productItem -> productItem.product.unit.value }).setCaption("Product Unit")
 
             //specify size of grid and layout

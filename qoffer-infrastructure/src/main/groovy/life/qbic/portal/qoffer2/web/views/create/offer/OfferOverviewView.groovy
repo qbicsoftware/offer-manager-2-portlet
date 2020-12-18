@@ -10,11 +10,12 @@ import com.vaadin.ui.Panel
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
+import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.portal.portlet.offers.Currency
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 
 import java.text.DecimalFormat
-
 
 /**
  * This class generates a Layout in which the user
@@ -74,11 +75,13 @@ class OfferOverviewView extends VerticalLayout{
      */
     private static void generateProductGrid(Grid<ProductItemViewModel> grid) {
         try {
+
             grid.addColumn({ productItem -> productItem.quantity }).setCaption("Quantity")
             grid.addColumn({ productItem -> productItem.product.productName }).setCaption("Product Name")
             grid.addColumn({ productItem -> productItem.product.description }).setCaption("Product Description")
-            grid.addColumn({ productItem -> productItem.product.unitPrice }).setCaption("Product Unit Price")
-            grid.addColumn({ productItem -> productItem.product.unit.value }).setCaption("Product Unit")
+            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.currencyFormat)).setCaption("Product Unit Price")
+            grid.addColumn({ productItem -> productItem.product.unit }).setCaption("Product Unit")
+
 
             //specify size of grid and layout
             grid.setSizeFull()
@@ -131,7 +134,6 @@ class OfferOverviewView extends VerticalLayout{
         panel.setSizeUndefined()
         Grid<PriceField> gridLayout = new Grid<>()
         gridLayout.setHeightByRows(4)
-        DecimalFormat euroFormat = new DecimalFormat("€#,##0.00");
         gridLayout.setItems([
                 new PriceField("Net price", createOfferViewModel.netPrice),
                 new PriceField("Overheads", createOfferViewModel.overheads),
@@ -141,7 +143,7 @@ class OfferOverviewView extends VerticalLayout{
         gridLayout.addColumn(PriceField::getName)
         gridLayout.addColumn(  {
             costs -> costs.value},
-                new NumberRenderer(euroFormat))
+                new NumberRenderer(Currency.currencyFormat))
 
         gridLayout.headerVisible = false
         panel.setContent(gridLayout)
