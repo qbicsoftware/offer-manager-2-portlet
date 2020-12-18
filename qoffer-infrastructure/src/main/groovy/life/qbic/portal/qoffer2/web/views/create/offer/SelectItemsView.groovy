@@ -17,7 +17,7 @@ import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Sequencing
-
+import life.qbic.portal.portlet.offers.Currency
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
@@ -270,12 +270,10 @@ class SelectItemsView extends VerticalLayout{
      */
     private static void generateProductGrid(Grid<ProductItemViewModel> grid) {
         try {
-            DecimalFormat euroFormat = new DecimalFormat("€#,##0.00")
-
             grid.addColumn({ productItem -> productItem.quantity }).setCaption("Quantity")
             grid.addColumn({ productItem -> productItem.product.productName }).setCaption("Product Name")
             grid.addColumn({ productItem -> productItem.product.description }).setCaption("Product Description")
-            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(euroFormat)).setCaption("Product Unit Price")
+            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.currencyFormat)).setCaption("Product Unit Price")
             grid.addColumn({ productItem -> productItem.product.unit.value }).setCaption("Product Unit")
 
             //specify size of grid and layout

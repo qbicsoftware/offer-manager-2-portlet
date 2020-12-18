@@ -13,6 +13,7 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.portal.portlet.offers.Currency
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 
@@ -76,12 +77,11 @@ class OfferOverviewView extends VerticalLayout{
      */
     private static void generateProductGrid(Grid<ProductItemViewModel> grid) {
         try {
-            DecimalFormat euroFormat = new DecimalFormat("€#,##0.00")
 
             grid.addColumn({ productItem -> productItem.quantity }).setCaption("Quantity")
             grid.addColumn({ productItem -> productItem.product.productName }).setCaption("Product Name")
             grid.addColumn({ productItem -> productItem.product.description }).setCaption("Product Description")
-            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(euroFormat)).setCaption("Product Unit Price")
+            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.currencyFormat)).setCaption("Product Unit Price")
             grid.addColumn({ productItem -> productItem.product.unit }).setCaption("Product Unit")
 
 
