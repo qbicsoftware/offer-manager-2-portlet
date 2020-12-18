@@ -9,6 +9,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 ----------------------------------------------
 
 **Added**
+* Add the option to create an affiliation while creating an offer
 * Add the option to create a customer while creating an offer
 * Implement SearchCustomer use case
 * Connect CreateAffiliation and CreateCustomer use case

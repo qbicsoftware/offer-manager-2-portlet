@@ -98,6 +98,7 @@ class DependencyManager {
     private ListProductsController listProductsController
 
     private CreateCustomerView createCustomerView
+    private CreateAffiliationView createAffiliationView
     private PortletView portletView
     private ConfigurationManager configurationManager
 
@@ -294,9 +295,8 @@ class DependencyManager {
             throw e
         }
 
-        CreateAffiliationView createAffiliationView
         try {
-            createAffiliationView = new CreateAffiliationView(this.viewModel, this.createAffiliationViewModel, this.createAffiliationController)
+            this.createAffiliationView = new CreateAffiliationView(this.viewModel, this.createAffiliationViewModel, this.createAffiliationController)
         } catch (Exception e) {
             log.error("Could not create ${CreateAffiliationView.getSimpleName()} view.", e)
             throw e
@@ -313,7 +313,7 @@ class DependencyManager {
 
         CreateOfferView createOfferView
         try {
-            createOfferView = new CreateOfferView(this.viewModel, this.createOfferViewModel,this.createOfferController,this.listProductsController, createCustomerView)
+            createOfferView = new CreateOfferView(this.viewModel, this.createOfferViewModel,this.createOfferController,this.listProductsController, createCustomerView, createAffiliationView)
         } catch (Exception e) {
             log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
             throw e

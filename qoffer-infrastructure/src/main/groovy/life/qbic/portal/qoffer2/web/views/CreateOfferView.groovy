@@ -44,16 +44,21 @@ class CreateOfferView extends FormLayout{
 
     final private CreateCustomerView createCustomerView
     private ButtonNavigationView navigationView
+    final private CreateAffiliationView createAffiliationView
 
-    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController, CreateCustomerView createCustomerView) {
+
+    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController, CreateCustomerView createCustomerView, CreateAffiliationView createAffiliationView) {
         super()
         this.sharedViewModel = sharedViewModel
         this.view = createOfferViewModel
         this.controller = controller
         this.listProductsController = listProductsController
         this.createCustomerView = createCustomerView
+        this.createAffiliationView = createAffiliationView
+
         projectInformationView = new ProjectInformationView(view)
         customerSelectionView = new CustomerSelectionView(view)
+
         projectManagerSelectionView = new ProjectManagerSelectionView(view)
         selectItemsView = new SelectItemsView(view,sharedViewModel)
         overviewView = new OfferOverviewView(view)
@@ -118,6 +123,18 @@ class CreateOfferView extends FormLayout{
         })
         this.createCustomerView.submitButton.addClickListener({
             this.removeComponent(createCustomerView)
+            this.addComponent(customerSelectionView)
+        })
+        this.customerSelectionView.createAffiliationButton.addClickListener({
+            this.removeComponent(customerSelectionView)
+            this.addComponent(createAffiliationView)
+        })
+        this.createAffiliationView.abortButton.addClickListener({
+            this.removeComponent(createAffiliationView)
+            this.addComponent(customerSelectionView)
+        })
+        this.createAffiliationView.submitButton.addClickListener({
+            this.removeComponent(createAffiliationView)
             this.addComponent(customerSelectionView)
         })
         this.projectManagerSelectionView.next.addClickListener({

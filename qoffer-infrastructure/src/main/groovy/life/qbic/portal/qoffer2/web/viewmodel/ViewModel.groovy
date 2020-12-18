@@ -28,6 +28,6 @@ class ViewModel {
         this.affiliations = new ObservableList(affiliations)
         this.successNotifications = new ObservableList(successNotifications)
         this.failureNotifications = new ObservableList(failureNotifications)
-        this.createAffiliationVisible = false
+        this.createAffiliationVisible = true
     }
 }
