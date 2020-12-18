@@ -29,7 +29,6 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
     @Override
     void createOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
         OfferId identifier = generateQuotationID(offerContent.customer)
-        double offerPrice = PriceCalculator.calculateOfferPrice(offerContent.items,offerContent.selectedCustomerAffiliation.category)
 
         Offer finalizedOffer = new Offer.Builder(
                 offerContent.customer,
@@ -64,8 +63,7 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
 
     @Override
     void calculatePrice(List<ProductItem> items, AffiliationCategory category) {
-        double offerPrice = PriceCalculator.calculateOfferPrice(items,category)
-        output.calculatedPrice(offerPrice)
+        throw new RuntimeException("Method not implemented.")
     }
 
     @Override
@@ -77,7 +75,6 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
                 offer.getOverheadSum(),
                 offer.getTotalCosts())
     }
-
 
     private static class Converter {
         static life.qbic.datamodel.dtos.business.Offer convertOfferToDTO(Offer offer) {

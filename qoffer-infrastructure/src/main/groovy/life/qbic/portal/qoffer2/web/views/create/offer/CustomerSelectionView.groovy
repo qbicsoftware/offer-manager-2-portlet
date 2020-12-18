@@ -35,6 +35,8 @@ class CustomerSelectionView extends VerticalLayout{
     Button next
     Button previous
 
+    HorizontalLayout addButtonsLayout
+    Button createCustomerButton
     Grid<Customer> customerGrid
     HorizontalLayout customerLayout
     Grid<Affiliation> affiliationGrid
@@ -64,12 +66,18 @@ class CustomerSelectionView extends VerticalLayout{
      * Initializes the start layout of this view class
      */
     private void initLayout(){
-        Label titleLabel = new Label("Select Customer")
-
         affiliationLabelLayout = new VerticalLayout()
         Label affiliationLabel = new Label("Select the Customers Affiliation")
         affiliationLabelLayout.addComponent(affiliationLabel)
         affiliationLabelLayout.setComponentAlignment(affiliationLabel, Alignment.MIDDLE_LEFT)
+
+        addButtonsLayout = new HorizontalLayout()
+        this.createCustomerButton = new Button("Create Customer", VaadinIcons.USER)
+        createCustomerButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
+        addButtonsLayout.addComponent(createCustomerButton)
+        addButtonsLayout.setComponentAlignment(createCustomerButton, Alignment.MIDDLE_RIGHT)
+
+        addButtonsLayout.setSizeFull()
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.setEnabled(false)
@@ -89,7 +97,7 @@ class CustomerSelectionView extends VerticalLayout{
         this.affiliationGrid = new Grid<>()
         affiliationLayout = new HorizontalLayout(affiliationGrid)
 
-        this.addComponents(titleLabel, customerLayout, buttonLayout)
+        this.addComponents(customerLayout, addButtonsLayout ,buttonLayout)
     }
 
     /**
