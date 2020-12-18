@@ -38,4 +38,9 @@ class CreateOfferViewModel {
     @Bindable ProjectManager projectManager
     @Bindable List<ProductItemViewModel> productItems
     @Bindable double offerPrice
+
+    @Bindable double netPrice = 0
+    @Bindable double taxes = 0
+    @Bindable double overheads = 0
+    @Bindable double totalPrice = 0
 }

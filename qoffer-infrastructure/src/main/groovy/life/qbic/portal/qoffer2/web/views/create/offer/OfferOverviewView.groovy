@@ -7,8 +7,6 @@ import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.Panel
-import com.vaadin.ui.TextArea
-import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
@@ -97,20 +95,77 @@ class OfferOverviewView extends VerticalLayout{
      * Fills the information of the offer into the panel
      */
     void fillPanel(){
+        /*
+        Container for the complete overview
+         */
         VerticalLayout content = new VerticalLayout()
-        content.addComponent(new Label("${createOfferViewModel.projectTitle}"))
-        content.addComponent(new Label("${createOfferViewModel.projectDescription}"))
-        content.addComponent(new Label("${createOfferViewModel.customer}"))
-        content.addComponent(new Label("${createOfferViewModel.customerAffiliation}"))
-        content.addComponent(new Label("${createOfferViewModel.projectManager}"))
+        /*
+        A header that contains basic project info and the price overview
+         */
+        HorizontalLayout header = new HorizontalLayout()
+        /*
+        The detailed project information container
+         */
+        VerticalLayout projectInfo = new VerticalLayout()
+        projectInfo.addComponent(new Label("${createOfferViewModel.projectTitle}"))
+        projectInfo.addComponent(new Label("${createOfferViewModel.projectDescription}"))
+        projectInfo.addComponent(new Label("${createOfferViewModel.customer}"))
+        projectInfo.addComponent(new Label("${createOfferViewModel.customerAffiliation}"))
+        projectInfo.addComponent(new Label("${createOfferViewModel.projectManager}"))
+        /*
+        Here we set the header components, which is the project info
+        on the left and a basic cost overview on the right
+         */
+        header.addComponent(projectInfo)
+        header.addComponent(createCostOverview())
+        header.setWidthFull()
+        header.setDefaultComponentAlignment(Alignment.TOP_LEFT)
+        /*
+        We add the header as top component in the final view
+         */
+        content.addComponent(header)
         content.addComponent(itemGrid)
 
-        Label price = new Label("total price: ${createOfferViewModel.offerPrice}")
-        content.addComponent(price)
-
-        content.setComponentAlignment(price,Alignment.MIDDLE_RIGHT)
-
         offerOverview.setContent(content)
+    }
+
+    private Panel createCostOverview() {
+        final Panel panel = new Panel("Cost overview")
+        panel.setSizeUndefined()
+        Grid<PriceField> gridLayout = new Grid<>()
+        gridLayout.setHeightByRows(4)
+        DecimalFormat euroFormat = new DecimalFormat("€#,##0.00");
+        gridLayout.setItems([
+                new PriceField("Net price", createOfferViewModel.netPrice),
+                new PriceField("Overheads", createOfferViewModel.overheads),
+                new PriceField("Taxes", createOfferViewModel.taxes),
+                new PriceField("Total price", createOfferViewModel.totalPrice)
+        ])
+        gridLayout.addColumn(PriceField::getName)
+        gridLayout.addColumn(  {
+            costs -> costs.value},
+                new NumberRenderer(euroFormat))
+
+        gridLayout.headerVisible = false
+        panel.setContent(gridLayout)
+
+        return panel
+    }
+
+    /*
+    Small helper object, that will display information
+    about individual price positions for offer overviews.
+     */
+    private class PriceField {
+
+        String name
+
+        Double value
+
+        PriceField(String name, Double value) {
+            this.name = name
+            this.value = value
+        }
     }
 
 }

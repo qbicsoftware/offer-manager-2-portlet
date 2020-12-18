@@ -44,7 +44,10 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
 
     @Override
     void calculatedPrice(double netPrice, double taxes, double overheads, double totalPrice) {
-        //TODO implement
+        this.createOfferViewModel.netPrice = netPrice
+        this.createOfferViewModel.taxes = taxes
+        this.createOfferViewModel.overheads = overheads
+        this.createOfferViewModel.totalPrice = totalPrice
     }
 
     void successNotification(String notification) {

@@ -1,5 +1,6 @@
 package life.qbic.portal.portlet.offers.create
 
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.ProductUnit
@@ -26,9 +27,10 @@ class CreateOfferSpec extends Specification {
         List<ProductItem> items = [new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE)),
                                    new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE))]
         when:
-        createOffer.calculatePrice(items, AffiliationCategory.INTERNAL)
+        createOffer.calculatePrice(items, new Affiliation.Builder("Test", "", "", "").category
+        (AffiliationCategory.INTERNAL).build())
 
         then:
-        1 * output.calculatedPrice(5.6)
+        1 * output.calculatedPrice(2.8, 0, 0, 2.8)
     }
 }
