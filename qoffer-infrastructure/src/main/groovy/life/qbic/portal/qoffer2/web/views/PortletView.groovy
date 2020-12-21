@@ -48,8 +48,6 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
         this.setMargin(false)
         this.setSpacing(false)
 
-        this.createAffiliationView.setVisible(portletViewModel.createAffiliationVisible)
-
         GridLayout gridLayout = new GridLayout()
 
         gridLayout.setRows(2)
@@ -83,16 +81,6 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
                 portletViewModel.failureNotifications.remove(evt.newValue)
             }
         }
-
-        this.portletViewModel.addPropertyChangeListener({
-            switch (it.propertyName) {
-                case "createAffiliationVisible":
-                    this.createAffiliationView.setVisible(portletViewModel.createAffiliationVisible)
-                    break
-                default:
-                    break
-            }
-        })
     }
 
     private static def showNotification(String message, Notification.Type type) {

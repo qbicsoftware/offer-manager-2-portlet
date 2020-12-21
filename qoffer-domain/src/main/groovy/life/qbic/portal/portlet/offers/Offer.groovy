@@ -6,6 +6,8 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.ProjectManagement
 
 /**
  * Represents the Offer business model.
@@ -56,6 +58,17 @@ class Offer {
      */
     final Affiliation selectedCustomerAffiliation
 
+    /*
+     * Holds the determined overhead derived from the
+     * customer's affiliation.
+     */
+    private final double overhead
+
+    /*
+     * Holds the current VAT rate
+     */
+    private static final double VAT = 0.19
+
     static class Builder {
 
         Date modificationDate
@@ -74,6 +87,9 @@ class Offer {
             this.projectTitle = Objects.requireNonNull(projectTitle, "Project Title must not be null")
             this.projectDescription = Objects.requireNonNull(projectDescription, "Project Description must not be null")
             this.items = []
+            // Since the incoming item list is mutable we need to
+            // copy all immutable items to out internal list
+            items.each {this.items.add(it)}
             this.selectedCustomerAffiliation = Objects.requireNonNull(selectedCustomerAffiliation, "Customer Affiliation must not be null")
         }
 
@@ -100,13 +116,15 @@ class Offer {
     private Offer(Builder builder) {
         this.customer = builder.customer
         this.identifier = builder.identifier
-        this.items = builder.items
+        this.items = []
+        builder.items.each {this.items.add(it)}
         this.expirationDate = builder.expirationDate
         this.modificationDate = builder.modificationDate
         this.projectManager = builder.projectManager
         this.projectDescription = builder.projectDescription
         this.projectTitle = builder.projectTitle
         this.selectedCustomerAffiliation = builder.selectedCustomerAffiliation
+        this.overhead = determineOverhead()
     }
 
     /**
@@ -115,11 +133,52 @@ class Offer {
      * @return The total costs in the currency of the selected items.
      */
     double getTotalCosts() {
-        final double netPrice = calculateNetPrice()
-        final double overhead = determineOverhead()
-        final double vat = determineVat()
-        // TODO check back with BioPM if this is correct
-        return netPrice*overhead + vat*netPrice
+        calculateTotalCosts()
+    }
+
+    /**
+     * The total net price for the current offer.
+     *
+     * Note: Does <strong>not include</strong> overheads and taxes.
+     *
+     * @return The net offer price
+     */
+    double getTotalNetPrice() {
+        return calculateNetPrice()
+    }
+
+    /**
+     * The overhead price amount of all service items without VAT.
+     *
+     * Service items of type data storage and project management
+     * are <strong>excluded</strong> from he calculation.
+     *
+     * @return The calculated overhead amount of the selected items.
+     */
+    double getOverheadSum() {
+        double overheadSum = 0
+        for (ProductItem item : items) {
+            if (item.product instanceof DataStorage || item.product instanceof ProjectManagement) {
+                // No overheads are assigned for data storage and project management
+            } else {
+                overheadSum += item.quantity * item.product.unitPrice * this.overhead
+            }
+        }
+        return overheadSum
+    }
+
+    /**
+     * The tax price on all items net price including overheads.
+     *
+     * For internal customers, this will be 0.
+     *
+     * @return The amount of VAT price based on all items in the offer.
+     */
+    double getTaxCosts() {
+        if (selectedCustomerAffiliation.category.equals(AffiliationCategory.INTERNAL)) {
+            return 0
+        }
+        return (calculateNetPrice() + getOverheadSum()) * VAT
     }
 
     private double calculateNetPrice() {
@@ -148,15 +207,9 @@ class Offer {
         return overhead
     }
 
-    private double determineVat() {
-        double vat = 0.0
-        switch(selectedCustomerAffiliation.category) {
-            case AffiliationCategory.INTERNAL:
-                vat = 0.0
-                break
-            default:
-                vat = 0.19
-        }
-        return vat
+    private double calculateTotalCosts(){
+        final double netPrice = calculateNetPrice()
+        final double overhead = getOverheadSum()
+        return netPrice + overhead + getTaxCosts()
     }
 }

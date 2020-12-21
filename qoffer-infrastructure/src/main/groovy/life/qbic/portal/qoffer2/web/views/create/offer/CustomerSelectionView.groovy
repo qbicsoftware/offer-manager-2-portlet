@@ -35,11 +35,15 @@ class CustomerSelectionView extends VerticalLayout{
     Button next
     Button previous
 
+    HorizontalLayout addButtonsLayout
+    Button createCustomerButton
     Grid<Customer> customerGrid
     HorizontalLayout customerLayout
     Grid<Affiliation> affiliationGrid
     HorizontalLayout affiliationLayout
     VerticalLayout affiliationLabelLayout
+    HorizontalLayout createAffiliationLayout
+    Button createAffiliationButton
 
     CustomerSelectionView(CreateOfferViewModel viewModel){
         this.viewModel = viewModel
@@ -64,12 +68,18 @@ class CustomerSelectionView extends VerticalLayout{
      * Initializes the start layout of this view class
      */
     private void initLayout(){
-        Label titleLabel = new Label("Select Customer")
-
         affiliationLabelLayout = new VerticalLayout()
         Label affiliationLabel = new Label("Select the Customers Affiliation")
         affiliationLabelLayout.addComponent(affiliationLabel)
         affiliationLabelLayout.setComponentAlignment(affiliationLabel, Alignment.MIDDLE_LEFT)
+
+        addButtonsLayout = new HorizontalLayout()
+        this.createCustomerButton = new Button("Create Customer", VaadinIcons.USER)
+        createCustomerButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
+        addButtonsLayout.addComponent(createCustomerButton)
+        addButtonsLayout.setComponentAlignment(createCustomerButton, Alignment.MIDDLE_RIGHT)
+
+        addButtonsLayout.setSizeFull()
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.setEnabled(false)
@@ -89,7 +99,7 @@ class CustomerSelectionView extends VerticalLayout{
         this.affiliationGrid = new Grid<>()
         affiliationLayout = new HorizontalLayout(affiliationGrid)
 
-        this.addComponents(titleLabel, customerLayout, buttonLayout)
+        this.addComponents(customerLayout, addButtonsLayout , buttonLayout)
     }
 
     /**
@@ -139,6 +149,13 @@ class CustomerSelectionView extends VerticalLayout{
             //specify size of grid and layout
             affiliationLayout.setSizeFull()
             affiliationGrid.setSizeFull()
+            createAffiliationLayout = new HorizontalLayout()
+            createAffiliationButton = new Button("Create Affiliation", VaadinIcons.OFFICE)
+            createAffiliationButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
+
+            createAffiliationLayout.addComponent(createAffiliationButton)
+            createAffiliationLayout.setComponentAlignment(createAffiliationButton, Alignment.MIDDLE_RIGHT)
+            createAffiliationLayout.setSizeFull()
 
         } catch (Exception e) {
             new Exception("Unexpected exception in building the affiliation grid", e)
@@ -160,6 +177,8 @@ class CustomerSelectionView extends VerticalLayout{
 
             this.addComponent(affiliationLabelLayout,2)
             this.addComponent(affiliationGrid,3)
+            this.addComponent(createAffiliationLayout,4)
+
         })
 
         affiliationGrid.addSelectionListener({
