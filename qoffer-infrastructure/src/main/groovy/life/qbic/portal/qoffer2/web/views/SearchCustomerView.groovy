@@ -1,21 +1,22 @@
 package life.qbic.portal.qoffer2.web.views
 
-import com.vaadin.data.ValidationException
+
+import com.vaadin.data.Binder
 import com.vaadin.data.ValidationResult
 import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
+import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Button
-import com.vaadin.ui.FormLayout
-import com.vaadin.ui.Grid
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.TextField
+import com.vaadin.shared.ui.ValueChangeMode
+import com.vaadin.ui.*
+import com.vaadin.ui.components.grid.HeaderRow
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.portal.qoffer2.web.controllers.SearchCustomerController
 import life.qbic.portal.qoffer2.web.viewmodel.SearchCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
+import org.apache.commons.lang3.StringUtils
 
 /**
  * This class generates a Form Layout with which the user can search if a customer is already contained in the database
@@ -30,24 +31,20 @@ class SearchCustomerView extends FormLayout {
 
     final private ViewModel viewModel
     final private SearchCustomerViewModel searchCustomerViewModel
+    final private SearchCustomerController controller
     private TextField firstNameField
     private TextField lastNameField
     private Button submitButton
     private Button clearButton
-    public Grid<Customer> customerGrid
-    public HorizontalLayout gridLayout
-    private List<Customer> foundCustomerList
+    private Grid<Customer> customerGrid
 
-    private Boolean firstNameSet
-    private Boolean lastNameSet
-
-    SearchCustomerView(ViewModel viewModel, SearchCustomerViewModel searchCustomerViewModel) {
+    SearchCustomerView(SearchCustomerController controller, ViewModel viewModel, SearchCustomerViewModel searchCustomerViewModel) {
         super()
+        this.controller = controller
         this.viewModel = viewModel
         this.searchCustomerViewModel = searchCustomerViewModel
-        this.foundCustomerList = searchCustomerViewModel.foundCustomers
         initLayout()
-        setupDataProvider()
+        bindViewModel()
         setupFieldValidators()
         registerListeners()
     }
@@ -57,7 +54,6 @@ class SearchCustomerView extends FormLayout {
      * to enable user input for Customer creation
      */
     private def initLayout() {
-
 
         //Generate FormLayout and the individual components
         FormLayout searchCustomerForm = new FormLayout()
@@ -77,8 +73,8 @@ class SearchCustomerView extends FormLayout {
         clearButton.setIcon(VaadinIcons.CLOSE_CIRCLE)
         clearButton.setEnabled(false)
 
-        this.customerGrid = new Grid<Customer>()
-        this.gridLayout = new HorizontalLayout()
+        this.customerGrid = generateCustomerGrid()
+        customerGrid.visible = false
 
         HorizontalLayout row1 = new HorizontalLayout(firstNameField, lastNameField)
         row1.setSizeFull()
@@ -88,7 +84,7 @@ class SearchCustomerView extends FormLayout {
         row2.setSizeFull()
         row2.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
 
-        HorizontalLayout row3 = new HorizontalLayout(gridLayout)
+        HorizontalLayout row3 = new HorizontalLayout(customerGrid)
         row3.setSizeFull()
         row3.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
 
@@ -99,38 +95,35 @@ class SearchCustomerView extends FormLayout {
 
         firstNameField.setSizeFull()
         lastNameField.setSizeFull()
+        customerGrid.setSizeFull()
 
         this.setSpacing(true)
         this.addComponent(searchCustomerForm)
 
     }
 
-    /**
-     * This method calls the individual Listener generation methods
-     */
 
-    private def registerListeners() {
+    /**
+     * registers listeners for user events to components
+     */
+    private void registerListeners() {
 
         submitButton.addClickListener({ event ->
-            submitCustomer()
-
+            if (searchCustomerViewModel.firstNameValid && searchCustomerViewModel.lastNameValid) {
+                submitCustomer()
+            } else {
+                viewModel.failureNotifications.add("Please make sure all entered values are valid and try again.")
+            }
         })
+
         clearButton.addClickListener({ event ->
-            clearSearch()
+            clearSearchResults()
             //clear the search fields
-            firstNameField.clear()
-            lastNameField.clear()
-            firstNameField.setComponentError(null)
-            lastNameField.setComponentError(null)
+            searchCustomerViewModel.firstName = null
+            searchCustomerViewModel.lastName = null
+            searchCustomerViewModel.firstNameValid = null
+            searchCustomerViewModel.lastNameValid = null
         })
-    }
-
-    /**
-     * This method adds the retrieved Customer Information to the Customer grid
-     */
-    private void setupDataProvider() {
-
-        this.customerGrid.setItems(foundCustomerList)
     }
 
     /**
@@ -144,22 +137,23 @@ class SearchCustomerView extends FormLayout {
         this.firstNameField.addValueChangeListener({ event ->
             ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.firstNameField))
             if (result.isError()) {
-                firstNameSet = false
+                searchCustomerViewModel.firstNameValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 firstNameField.setComponentError(error)
             } else {
-                firstNameSet = true
+                searchCustomerViewModel.firstNameValid = true
                 firstNameField.setComponentError(null)
+
             }
         })
         this.lastNameField.addValueChangeListener({ event ->
             ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.lastNameField))
             if (result.isError()) {
-                lastNameSet = false
+                searchCustomerViewModel.lastNameValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 lastNameField.setComponentError(error)
             } else {
-                lastNameSet = true
+                searchCustomerViewModel.lastNameValid = true
                 lastNameField.setComponentError(null)
             }
         })
@@ -173,67 +167,34 @@ class SearchCustomerView extends FormLayout {
      */
 
     private def submitCustomer() {
-        try {
-            //If an input is provided to the first name and last name field
-            if (firstNameSet && lastNameSet) {
-                //Add values to ViewModel
-                searchCustomerViewModel.searchedFirstName= firstNameField.value
-                searchCustomerViewModel.searchedLastName = lastNameField.value
-                //generate grid with new data
-                generateGrid()
-                viewModel.successNotifications.add("Customer ${firstNameField.value} ${lastNameField.value} was found in database")
-            }
-            //If an input is only provided to the first name field
-            else if (firstNameSet && !lastNameSet) {
-                viewModel.failureNotifications.add("Please specify a last name")
-                lastNameSet = false
-            }
-            //If an input is only provided to the last name field
-            else if (!firstNameSet && lastNameSet){
-                viewModel.failureNotifications.add("Please specify a first name")
-                firstNameSet = false
-            }
-            //If no input was provided
-            else{
-                viewModel.failureNotifications.add("Please specify a first and last name")
-            }
-
-        } catch (NullPointerException nullException) {
-            viewModel.failureNotifications.add("Values missing for Customer ${firstNameField.value} ${lastNameField.value}")
-        }
-        catch (ValidationException validationException) {
-            viewModel.failureNotifications.add("Invalid Values set for Customer ${firstNameField.value} ${lastNameField.value}")
-        }
+        controller.searchCustomerByName(searchCustomerViewModel.firstName, searchCustomerViewModel.lastName)
     }
+
     /**
-     * Method which generates the grid and populates the columns with the set Customer information from the setupDataProvider Method
-     *
-     * This Method is responsible for setting up the grid and setting the customer information to the individual grid columns.
-     * If the grid is generated correctly it will be added to the preset grid layout and also enables the clear customer grid button.
+     * This method generates a vaadin grid to be used with the current view model
+     * @return a customer grid linked to the customer list in the view model
      */
-    private def generateGrid() {
-        //Clear Grid before the new grid is populated
-        clearSearch()
-        try {
-            this.customerGrid.addColumn({ customer -> customer.getFirstName() }).setCaption("First Name")
-            this.customerGrid.addColumn({ customer -> customer.getLastName() }).setCaption("Last Name")
-            this.customerGrid.addColumn({ customer -> customer.getEmailAddress() }).setCaption("Email Address")
-            this.customerGrid.addColumn({ customer -> customer.getTitle() }).setCaption("Title")
-            this.customerGrid.addColumn({ customer -> customer.getAffiliations().toString() }).setCaption("Affiliation")
+    private Grid<Customer> generateCustomerGrid() {
+        Grid<Customer> grid = new Grid<>()
 
-            //add grid to layout
-            gridLayout.addComponent(customerGrid)
+        Grid.Column<Customer, String> firstNameColumn = grid.addColumn({ customer -> customer.getFirstName() }).setCaption("First Name")
+        Grid.Column<Customer, String> lastNameColumn = grid.addColumn({ customer -> customer.getLastName() }).setCaption("Last Name")
+        Grid.Column<Customer, String> emailColumn = grid.addColumn({ customer -> customer.getEmailAddress() }).setCaption("Email Address")
+        Grid.Column<Customer, String> titleColumn = grid.addColumn({ customer -> customer.title.value }).setCaption("Title")
+        Grid.Column<Customer, String> affiliationColumn = grid.addColumn({ customer -> customer.getAffiliations().toString() }).setCaption("Affiliation")
 
-            //specify size of grid and layout
-            gridLayout.setSizeFull()
-            customerGrid.setSizeFull()
+        ListDataProvider<Customer> customerDataProvider = new ListDataProvider(searchCustomerViewModel.foundCustomers)
+        grid.setDataProvider(customerDataProvider)
+        grid.setSelectionMode(Grid.SelectionMode.NONE)
 
-            this.clearButton.setEnabled(true)
+        HeaderRow customerFilterRow = grid.appendHeaderRow()
 
-        } catch (Exception e) {
-            log.error("Unexpected exception in building the customer grid", e)
-        }
-
+        setupColumnFilter(customerDataProvider, firstNameColumn, customerFilterRow)
+        setupColumnFilter(customerDataProvider, lastNameColumn, customerFilterRow)
+        setupColumnFilter(customerDataProvider, emailColumn, customerFilterRow)
+        setupColumnFilter(customerDataProvider, titleColumn, customerFilterRow)
+        setupColumnFilter(customerDataProvider, affiliationColumn, customerFilterRow)
+        return grid
     }
 
     /**
@@ -242,15 +203,76 @@ class SearchCustomerView extends FormLayout {
      * This Method is responsible for clearing the Customer information from the Customer grid and removes the empty grid from the preset Layout.
      * If the grid and layout are removed correctly, the clear button is disabled
      */
-    private def clearSearch() {
-        //Clear Grid before the new grid is populated
-        try {
-            customerGrid.removeAllColumns()
-            gridLayout.removeAllComponents()
-            this.clearButton.setEnabled(false)
-        } catch (Exception e) {
-            log.error("Unexpected exception occurred during the removal of the customer grid", e)
-        }
+    private def clearSearchResults() {
+        searchCustomerViewModel.foundCustomers.clear()
     }
 
+    /**
+     * This method creates a TextField to filter a given column
+     * @param dataProvider a {@link ListDataProvider} on which the filtering is applied on
+     * @param column the column to be filtered
+     * @param headerRow a {@link com.vaadin.ui.components.grid.HeaderRow} to the corresponding {@link Grid}
+     */
+    private static <T> void setupColumnFilter(ListDataProvider<T> dataProvider,
+                                              Grid.Column<T, String> column, HeaderRow headerRow) {
+        TextField filterTextField = new TextField()
+        filterTextField.addValueChangeListener(event -> {
+            dataProvider.addFilter(element ->
+                    StringUtils.containsIgnoreCase(column.getValueProvider().apply(element), filterTextField.getValue())
+            )
+        })
+        filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
+
+        headerRow.getCell(column).setComponent(filterTextField)
+        filterTextField.setSizeFull()
+    }
+
+    /**
+     * This method binds field and view model values. Values are only written to the model when valid.
+     */
+    private void bindViewModel() {
+        Binder<SearchCustomerViewModel> binder = new Binder<>()
+        binder.setBean(searchCustomerViewModel)
+        bindFirstNameField(binder)
+        bindLastNameField(binder)
+
+        searchCustomerViewModel.foundCustomers.addPropertyChangeListener({
+            customerGrid.getDataProvider().refreshAll()
+            if (searchCustomerViewModel.foundCustomers.empty) {
+                clearButton.enabled = false
+                customerGrid.visible = false
+            } else {
+                clearButton.enabled = true
+                customerGrid.visible = true
+            }
+        })
+    }
+
+    private void bindFirstNameField(Binder<SearchCustomerViewModel> binder) {
+        binder.forField(this.firstNameField)
+                .bind({ it.firstName }, { it, updatedValue -> it.setFirstName(updatedValue) })
+        searchCustomerViewModel.addPropertyChangeListener("firstName", {
+            String newValue = it.getNewValue() as String
+            firstNameField.value = newValue ?: firstNameField.emptyValue
+        })
+        searchCustomerViewModel.addPropertyChangeListener("firstNameValid", {
+            if (it.newValue || it.newValue == null) {
+                firstNameField.componentError = null
+            }
+        })
+    }
+
+    private void bindLastNameField(Binder<SearchCustomerViewModel> binder) {
+        binder.forField(this.lastNameField)
+                .bind({ it.lastName }, { it, updatedValue -> it.setLastName(updatedValue) })
+        searchCustomerViewModel.addPropertyChangeListener("lastName", {
+            String newValue = it.getNewValue() as String
+            lastNameField.value = newValue ?: lastNameField.emptyValue
+        })
+        searchCustomerViewModel.addPropertyChangeListener("lastNameValid", {
+            if (it.newValue || it.newValue == null) {
+                lastNameField.componentError = null
+            }
+        })
+    }
 }

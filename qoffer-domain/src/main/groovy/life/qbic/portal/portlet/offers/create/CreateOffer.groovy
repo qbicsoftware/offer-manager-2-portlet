@@ -1,10 +1,12 @@
 package life.qbic.portal.portlet.offers.create
 
-import life.qbic.datamodel.accounting.ProductItem
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.OfferId
-import life.qbic.datamodel.dtos.general.Person
+import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.portal.portlet.offers.Offer
 
 /**
  * This class implements logic to create new offers.
@@ -14,7 +16,7 @@ import life.qbic.datamodel.dtos.general.Person
  * @since: 1.0.0
  * @author: Tobias Koch
  */
-class CreateOffer implements CreateOfferInput{
+class CreateOffer implements CreateOfferInput, CalculatePrice{
 
     private CreateOfferDataSource dataSource
     private CreateOfferOutput output
@@ -25,22 +27,22 @@ class CreateOffer implements CreateOfferInput{
     }
 
     @Override
-    void createOffer(Offer offerContent) {
+    void createOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
         OfferId identifier = generateQuotationID(offerContent.customer)
 
-        Offer finalizedOffer = new Offer.Builder(new Date(),
-                offerContent.expirationDate,
+        Offer finalizedOffer = new Offer.Builder(
                 offerContent.customer,
                 offerContent.projectManager,
-                offerContent.projectDescription,
                 offerContent.projectTitle,
+                offerContent.projectDescription,
                 offerContent.items,
-                calculateOfferPrice(offerContent.items,offerContent.selectedCustomerAffiliation.category),
-                identifier,
                 offerContent.selectedCustomerAffiliation)
+                .identifier(identifier)
+                .expirationDate(new Date(2030,12,24)) //todo how to determine this?
+                .modificationDate(new Date())
                 .build()
 
-        dataSource.store(finalizedOffer)
+        dataSource.store(Converter.convertOfferToDTO(finalizedOffer))
     }
 
     /**
@@ -48,7 +50,7 @@ class CreateOffer implements CreateOfferInput{
      * @param customer which is required for the project conserved part
      * @return
      */
-    private static OfferId generateQuotationID(Person customer){
+    private static OfferId generateQuotationID(Customer customer){
     //todo: do we want to have a person here? 
     //todo: update the datamodellib
         String projectConservedPart = customer.lastName.toLowerCase()
@@ -59,41 +61,49 @@ class CreateOffer implements CreateOfferInput{
         return new OfferId(projectConservedPart,randomPart,version)
     }
 
-    /**
-     * Method to calculate the price form the offer items
-     * @param items
-     * @return
-     */
-    private static double calculateOfferPrice(List<ProductItem> items, AffiliationCategory affiliationCategory){
-        //1. sum up item price
-        double offerPrice = 0
-        items.each {item ->
-            offerPrice += item.computeTotalCosts()
-        }
-        //2. add overheads if applicable
-        double overhead = getOverhead(affiliationCategory)
-        offerPrice = offerPrice + offerPrice * overhead
-        //2. VAT?
-        //todo
-
-        return offerPrice
+    @Override
+    void calculatePrice(List<ProductItem> items, AffiliationCategory category) {
+        throw new RuntimeException("Method not implemented.")
     }
 
-    /**
-     * This method returns the overhead for a given {@link AffiliationCategory}
-     * @param category determines the overhead type of a customer
-     * @return
-     */
-    private static double getOverhead(AffiliationCategory category){
-        switch (category){
-            case AffiliationCategory.INTERNAL:
-                return 1.0
-            case AffiliationCategory.EXTERNAL_ACADEMIC:
-                return 1.0
-            case AffiliationCategory.EXTERNAL:
-                return 1.0
-            case AffiliationCategory.UNKNOWN:
-                return 1.0
+    @Override
+    void calculatePrice(List<ProductItem> items, Affiliation affiliation) {
+        Offer offer = Converter.buildOfferForCostCalculation(items, affiliation)
+        output.calculatedPrice(
+                offer.getTotalNetPrice(),
+                offer.getTaxCosts(),
+                offer.getOverheadSum(),
+                offer.getTotalCosts())
+    }
+
+    private static class Converter {
+        static life.qbic.datamodel.dtos.business.Offer convertOfferToDTO(Offer offer) {
+            new life.qbic.datamodel.dtos.business.Offer.Builder(
+                    offer.customer,
+                    offer.projectManager,
+                    offer.projectTitle,
+                    offer.projectDescription,
+                    offer.selectedCustomerAffiliation)
+                    .items(offer.getItems())
+                    .netPrice(offer.getTotalNetPrice())
+                    .taxes(offer.getTaxCosts())
+                    .overheads(offer.getOverheadSum())
+                    .totalPrice(offer.getTotalCosts()).build()
+        }
+
+        static Offer buildOfferForCostCalculation(List<ProductItem> items,
+                                                  Affiliation affiliation) {
+            final def dummyCustomer = new Customer.Builder("Nobody", "Nobody",
+                    "nobody@qbic.com").build()
+            final def dummyProjectManager = new ProjectManager.Builder("Nobody", "Nobody",
+                    "nobody@qbic.com").build()
+            new Offer.Builder(
+                    dummyCustomer,
+                    dummyProjectManager,
+                    "",
+                    "",
+                    items,
+                    affiliation).build()
         }
 
     }
