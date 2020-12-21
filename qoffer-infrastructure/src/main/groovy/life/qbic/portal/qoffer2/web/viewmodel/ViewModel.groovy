@@ -17,7 +17,6 @@ class ViewModel {
     final ObservableList affiliations
     final ObservableList successNotifications
     final ObservableList failureNotifications
-    @Bindable Boolean createAffiliationVisible
 
     ViewModel() {
         this(new ArrayList<Affiliation>(), new ArrayList<String>(), new ArrayList<String>(), new ArrayList<String>())
@@ -28,6 +27,5 @@ class ViewModel {
         this.affiliations = new ObservableList(affiliations)
         this.successNotifications = new ObservableList(successNotifications)
         this.failureNotifications = new ObservableList(failureNotifications)
-        this.createAffiliationVisible = true
     }
 }

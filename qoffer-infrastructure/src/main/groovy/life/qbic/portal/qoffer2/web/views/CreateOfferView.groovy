@@ -1,13 +1,10 @@
 package life.qbic.portal.qoffer2.web.views
 
+import com.vaadin.ui.Component
 import com.vaadin.ui.FormLayout
 import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.portal.portlet.customers.create.CreateCustomer
-import life.qbic.portal.qoffer2.DependencyManager
-import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
-import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
@@ -46,6 +43,8 @@ class CreateOfferView extends FormLayout{
     private ButtonNavigationView navigationView
     final private CreateAffiliationView createAffiliationView
 
+    final private ViewHistory viewHistory
+
 
     CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController, CreateCustomerView createCustomerView, CreateAffiliationView createAffiliationView) {
         super()
@@ -55,19 +54,24 @@ class CreateOfferView extends FormLayout{
         this.listProductsController = listProductsController
         this.createCustomerView = createCustomerView
         this.createAffiliationView = createAffiliationView
+        this.projectInformationView = new ProjectInformationView(view)
+        this.customerSelectionView = new CustomerSelectionView(view)
 
-        projectInformationView = new ProjectInformationView(view)
-        customerSelectionView = new CustomerSelectionView(view)
-
-        projectManagerSelectionView = new ProjectManagerSelectionView(view)
-        selectItemsView = new SelectItemsView(view,sharedViewModel)
-        overviewView = new OfferOverviewView(view)
-
-        this.setSizeFull()
+        this.projectManagerSelectionView = new ProjectManagerSelectionView(view)
+        this.selectItemsView = new SelectItemsView(view,sharedViewModel)
+        this.overviewView = new OfferOverviewView(view)
 
         initLayout()
         registerListeners()
         fetchData()
+
+        // add all step views to the main view
+        addStepViewsToCurrent()
+        // hide all views
+        hideViews()
+
+        // Init the view navigation history to be able to navigate back in history
+        this.viewHistory = new ViewHistory(projectInformationView)
     }
 
     /**
@@ -84,6 +88,8 @@ class CreateOfferView extends FormLayout{
         navigationView.showNextStep()
         this.addComponent(navigationView)
         this.addComponent(projectInformationView)
+        overviewView.fillPanel()
+        this.setSizeFull()
     }
 
     /**
@@ -98,75 +104,64 @@ class CreateOfferView extends FormLayout{
      * Registers all listeners for the buttons that enable switching between the different subviews of CreateOfferView and saving the offer
      */
     private void registerListeners() {
+
         this.projectInformationView.next.addClickListener({ event ->
-            this.removeComponent(projectInformationView)
-            this.addComponent(customerSelectionView)
+            viewHistory.loadNewView(customerSelectionView)
             navigationView.showNextStep()
         })
         this.customerSelectionView.next.addClickListener({
-            this.removeComponent(customerSelectionView)
-            this.addComponent(projectManagerSelectionView)
+            viewHistory.loadNewView(projectManagerSelectionView)
             navigationView.showNextStep()
         })
         this.customerSelectionView.previous.addClickListener({
-            this.removeComponent(customerSelectionView)
-            this.addComponent(projectInformationView)
+            viewHistory.showPrevious()
             navigationView.showPreviousStep()
         })
         this.customerSelectionView.createCustomerButton.addClickListener({
-            this.removeComponent(customerSelectionView)
-            this.addComponent(createCustomerView)
+            viewHistory.loadNewView(createCustomerView)
         })
         this.createCustomerView.abortButton.addClickListener({
-            this.removeComponent(createCustomerView)
-            this.addComponent(customerSelectionView)
+            viewHistory.showPrevious()
         })
         this.createCustomerView.submitButton.addClickListener({
-            this.removeComponent(createCustomerView)
-            this.addComponent(customerSelectionView)
+            viewHistory.showPrevious()
         })
         this.customerSelectionView.createAffiliationButton.addClickListener({
-            this.removeComponent(customerSelectionView)
-            this.addComponent(createAffiliationView)
+            viewHistory.loadNewView(createAffiliationView)
         })
         this.createAffiliationView.abortButton.addClickListener({
-            this.removeComponent(createAffiliationView)
-            this.addComponent(customerSelectionView)
+            viewHistory.showPrevious()
         })
         this.createAffiliationView.submitButton.addClickListener({
-            this.removeComponent(createAffiliationView)
-            this.addComponent(customerSelectionView)
+            viewHistory.showPrevious()
         })
         this.projectManagerSelectionView.next.addClickListener({
-            this.removeComponent(projectManagerSelectionView)
-            this.addComponent(selectItemsView)
+            viewHistory.loadNewView(selectItemsView)
             navigationView.showNextStep()
         })
         this.projectManagerSelectionView.previous.addClickListener({
-            this.removeComponent(projectManagerSelectionView)
-            this.addComponent(customerSelectionView)
+            viewHistory.loadNewView(customerSelectionView)
             navigationView.showPreviousStep()
         })
         this.selectItemsView.next.addClickListener({
-            this.removeComponent(selectItemsView)
             controller.calculatePriceForItems(getProductItems(view.productItems),view.customerAffiliation)
-            overviewView.fillPanel()
-            this.addComponent(overviewView)
+            viewHistory.loadNewView(overviewView)
             navigationView.showNextStep()
         })
         this.selectItemsView.previous.addClickListener({
-            this.removeComponent(selectItemsView)
-            this.addComponent(projectManagerSelectionView)
+            viewHistory.loadNewView(projectManagerSelectionView)
             navigationView.showPreviousStep()
         })
         this.overviewView.previous.addClickListener({
-            this.removeComponent(overviewView)
-            this.addComponent(selectItemsView)
+            viewHistory.loadNewView(selectItemsView)
             navigationView.showPreviousStep()
         })
         this.overviewView.save.addClickListener({
             controller.createOffer(view.projectTitle, view.projectDescription,view.customer,view.projectManager,
                     getProductItems(view.productItems),view.offerPrice,view.customerAffiliation)
+        })
+        this.createCustomerView.createAffiliationButton.addClickListener({
+            viewHistory.loadNewView(createAffiliationView)
         })
     }
 
@@ -181,5 +176,78 @@ class CreateOfferView extends FormLayout{
             productItems.add(new ProductItem(it.quantity,it.product))
         }
         return productItems
+    }
+
+    private void hideViews() {
+        this.projectInformationView.setVisible(false)
+        this.customerSelectionView.setVisible(false)
+        this.createCustomerView.setVisible(false)
+        this.createAffiliationView.setVisible(false)
+        this.projectManagerSelectionView.setVisible(false)
+        this.selectItemsView.setVisible(false)
+        this.overviewView.setVisible(false)
+    }
+
+    private void addStepViewsToCurrent() {
+        this.addComponents(
+                this.projectInformationView,
+                this.customerSelectionView,
+                this.createCustomerView,
+                this.createAffiliationView,
+                this.projectManagerSelectionView,
+                this.selectItemsView,
+                this.overviewView)
+    }
+
+    /*
+     * Small helper class that assists us keeping track of the view components
+     * history.
+     */
+    private class ViewHistory {
+
+        private List<Component> history
+
+        private int currentPosition
+
+        private Component currentView
+
+        ViewHistory(Component c) {
+            history = new LinkedList<>()
+            currentPosition = 0
+            currentView = c
+            history.add(c)
+            currentView.setVisible(true)
+        }
+
+        def loadNewView(Component view) {
+            history = history.size() > 1 ? history.subList(0, currentPosition+1) : history
+            history.add(view)
+            currentView.setVisible(false)
+            currentView = view
+            currentView.setVisible(true)
+            currentPosition++
+        }
+
+        def showNext() {
+            if(currentPosition == history.size()-1) {
+                // the current view is the latest view in history
+            } else {
+                currentPosition++
+                currentView.setVisible(false)
+                currentView = history.get(currentPosition)
+                currentView.setVisible(true)
+            }
+        }
+
+        def showPrevious() {
+            if(currentPosition == 0) {
+                // the current view is the oldest view in history
+            } else {
+                currentPosition -= 1
+                currentView.setVisible(false)
+                currentView = history.get(currentPosition)
+                currentView.setVisible(true)
+            }
+        }
     }
 }
