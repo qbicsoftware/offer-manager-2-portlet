@@ -20,7 +20,6 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 1.11
-          server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
           settings-path: ${{ github.workspace }}
       
       - name: Load local Maven repository cache
@@ -35,7 +34,7 @@ jobs:
         run: mvn -B package --file pom.xml
 
       - name: Publish artefact to QBiC Nexus Repository
-        run: mvn --quiet --activate-profiles development-build,!release-build --settings $GITHUB_WORKSPACE/.github.settings.xml deploy
+        run: mvn --settings $GITHUB_WORKSPACE/.github.settings.xml deploy
         env:
           MAVEN_REPO_USERNAME: ${{ secrets.NEXUS_USERNAME }}
           MAVEN_REPO_PASSWORD: ${{ secrets.NEXUS_PASSWORD }}

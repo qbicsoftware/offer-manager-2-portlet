@@ -23,7 +23,7 @@ class Presenter implements UpdateOfferOutput, UpdateCustomerOutput {
     final private ViewModel viewModel
 
     Presenter(ViewModel viewModel){
-        this.viewModel = viewModel
+        this.viewModel = viewModel 
     }
 
     void successNotification(String notification) {
