@@ -1,5 +1,6 @@
 package life.qbic.portal.qoffer2.web.viewmodel
 
+import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Customer
 
 /**
@@ -15,9 +16,12 @@ import life.qbic.datamodel.dtos.business.Customer
  */
 class SearchCustomerViewModel {
 
-    List<Customer> foundCustomers = new ArrayList<>()
+    final ObservableList foundCustomers = new ObservableList(new ArrayList<Customer>())
 
-    String searchedFirstName
-    String searchedLastName
+    @Bindable String firstName
+    @Bindable String lastName
+
+    @Bindable Boolean firstNameValid
+    @Bindable Boolean lastNameValid
 
 }

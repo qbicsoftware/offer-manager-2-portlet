@@ -26,14 +26,17 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
     private final CreateCustomerView createCustomerView
     private final CreateAffiliationView createAffiliationView
     private final SearchCustomerView searchCustomerView
+    private final CreateOfferView createOfferView
 
     PortletView(ViewModel portletViewModel,
-                CreateCustomerView createCustomerView, CreateAffiliationView createAffiliationView, SearchCustomerView searchCustomerView) {
+                CreateCustomerView createCustomerView, CreateAffiliationView createAffiliationView, SearchCustomerView searchCustomerView,
+                CreateOfferView createOfferView) {
         super()
         this.portletViewModel = portletViewModel
         this.createCustomerView = createCustomerView
         this.createAffiliationView = createAffiliationView
         this.searchCustomerView = searchCustomerView
+        this.createOfferView = createOfferView
         initLayout()
         registerListeners()
     }
@@ -45,16 +48,15 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
         this.setMargin(false)
         this.setSpacing(false)
 
-        this.createAffiliationView.setVisible(portletViewModel.createAffiliationVisible)
-
         GridLayout gridLayout = new GridLayout()
 
         gridLayout.setRows(2)
         gridLayout.setSizeFull()
         //ToDo Find solution on how to best host different views in the portlet
-        gridLayout.addComponent(this.searchCustomerView)
-        gridLayout.addComponent(this.createCustomerView)
-        gridLayout.addComponent(this.createAffiliationView)
+        //gridLayout.addComponent(this.searchCustomerView)
+        //gridLayout.addComponent(this.createCustomerView)
+        //gridLayout.addComponent(this.createAffiliationView)
+        gridLayout.addComponent(this.createOfferView)
 
         this.setSizeFull()
         this.addComponent(gridLayout)
@@ -79,16 +81,6 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
                 portletViewModel.failureNotifications.remove(evt.newValue)
             }
         }
-
-        this.portletViewModel.addPropertyChangeListener({
-            switch (it.propertyName) {
-                case "createAffiliationVisible":
-                    this.createAffiliationView.setVisible(portletViewModel.createAffiliationVisible)
-                    break
-                default:
-                    break
-            }
-        })
     }
 
     private static def showNotification(String message, Notification.Type type) {
