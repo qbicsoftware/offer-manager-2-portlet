@@ -41,7 +41,7 @@ class CreateCustomerView extends VerticalLayout {
     ComboBox<Affiliation> affiliationComboBox
     ComboBox<Affiliation> addressAdditionComboBox
     Button submitButton
-    Button affiliationButton
+    Button createAffiliationButton
     Button abortButton
     Panel affiliationDetails
 
@@ -86,8 +86,8 @@ class CreateCustomerView extends VerticalLayout {
         addressAdditionComboBox.setCaption("Address Addition")
         addressAdditionComboBox.enabled = false
 
-        this.affiliationButton = new Button()
-        styleDetailsToggle()
+        this.createAffiliationButton = new Button("Create Affiliation")
+        createAffiliationButton.setIcon(VaadinIcons.INSTITUTION)
 
         this.submitButton = new Button("Create Customer")
         submitButton.setIcon(VaadinIcons.USER_CHECK)
@@ -117,7 +117,8 @@ class CreateCustomerView extends VerticalLayout {
         VerticalLayout affiliationPanel = new VerticalLayout(affiliationDetails)
         affiliationPanel.setMargin(false)
         affiliationPanel.setComponentAlignment(affiliationDetails, Alignment.TOP_LEFT)
-        HorizontalLayout buttonLayout = new HorizontalLayout(abortButton, submitButton)
+        HorizontalLayout buttonLayout = new HorizontalLayout(createAffiliationButton, abortButton,
+                submitButton)
         buttonLayout.setMargin(false)
         HorizontalLayout row4 = new HorizontalLayout(affiliationPanel, buttonLayout)
         row4.setComponentAlignment(buttonLayout, Alignment.BOTTOM_RIGHT)
@@ -240,15 +241,7 @@ class CreateCustomerView extends VerticalLayout {
             submitButton.enabled = allValuesValid()
             addressAdditionComboBox.enabled = Objects.isNull(createCustomerViewModel.affiliation)
         })
-        sharedViewModel.addPropertyChangeListener({it ->
-            switch (it.propertyName) {
-                case "createAffiliationVisible":
-                    styleDetailsToggle()
-                    break
-                default:
-                    break
-            }
-        })
+
         /* refresh affiliation list and set added item as selected item. This is needed to keep this
         field up to date and select an affiliation after it was created */
         sharedViewModel.affiliations.addPropertyChangeListener({
@@ -373,10 +366,6 @@ class CreateCustomerView extends VerticalLayout {
             }
         })
 
-        this.affiliationButton.addClickListener({
-            sharedViewModel.createAffiliationVisible = !sharedViewModel.createAffiliationVisible
-        })
-
         this.affiliationComboBox.addSelectionListener({
             fireAffiliationSelectionEvent(it.value)
             updateAffiliationDetails(it.value)
@@ -395,11 +384,6 @@ class CreateCustomerView extends VerticalLayout {
         content.setMargin(true)
         content.setSpacing(false)
         this.affiliationDetails.setContent(content)
-    }
-
-    private void styleDetailsToggle() {
-        affiliationButton.icon = sharedViewModel.createAffiliationVisible ? VaadinIcons.MINUS : VaadinIcons.PLUS
-        affiliationButton.caption = sharedViewModel.createAffiliationVisible ? "Hide Affiliation Details" : "Show Affiliation Details"
     }
 
     /**
