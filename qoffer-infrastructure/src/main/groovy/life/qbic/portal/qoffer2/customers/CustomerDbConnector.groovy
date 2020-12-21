@@ -250,7 +250,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
             "VALUES(?, ?)"
 
     affiliations.each {affiliation ->
-      def affiliationId = this.getAffiliationId(affiliation)
+      def affiliationId = getAffiliationId(affiliation)
       def statement = connection.prepareStatement(query)
       statement.setInt(1, customerId)
       statement.setInt(2, affiliationId)
