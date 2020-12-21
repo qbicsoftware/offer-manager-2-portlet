@@ -1,7 +1,7 @@
 package life.qbic.portal.portlet.customers.create
 
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.portlet.customers.CustomerDbGateway
+
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 
 /**
@@ -14,24 +14,24 @@ import life.qbic.portal.portlet.exceptions.DatabaseQueryException
  */
 class CreateCustomer implements CreateCustomerInput {
 
-  private CustomerDbGateway customerDbGateway
+  private CreateCustomerDataSource dataSource
   private CreateCustomerOutput output
 
 
-  CreateCustomer(CreateCustomerOutput output, CustomerDbGateway customerDbGateway){
+  CreateCustomer(CreateCustomerOutput output, CreateCustomerDataSource dataSource){
     this.output = output
-    this.customerDbGateway = customerDbGateway
+    this.dataSource = dataSource
   }
 
   @Override
   void createCustomer(Customer customer) {
     try {
-      customerDbGateway.addCustomer(customer)
-      output.successNotification("Successfully added new Customer")
+      dataSource.addCustomer(customer)
+      output.successNotification("Successfully added new customer")
     } catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)
-    } catch(Exception exception) {
-      output.failNotification()
+    } catch(Exception ignored) {
+      output.failNotification("Could not create new customer")
     }
   }
 }

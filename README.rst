@@ -11,11 +11,7 @@ qOffer 2.0
 
 .. image:: https://github.com/qbicsoftware/qOffer_2.0/workflows/QUBE%20lint/badge.svg
     :target: https://github.com/qbicsoftware/qOffer_2.0/workflows/QUBE%20lint/badge.svg
-    :alt: QUBE Lint Status
-
-.. image:: https://img.shields.io/travis/qbicsoftware/qOffer_2.0.svg
-    :target: https://travis-ci.org/qbicsoftware/qOffer_2.0
-    :alt: Travis CI Status
+    :alt: qube Lint Status
 
 .. image:: https://readthedocs.org/projects/qOffer-2.0/badge/?version=latest
     :target: https://qOffer-2.0.readthedocs.io/en/latest/?badge=latest
@@ -28,7 +24,7 @@ qOffer 2.0
 
 qOffer assists in managing and creating offers
 
-* Free software: MIT license
+* Free software: MIT
 * Documentation: https://qOffer-2.0.readthedocs.io.
 
 Features
@@ -39,6 +35,6 @@ Features
 Credits
 -------
 
-This project was created with QUBE_.
+This project was created with qube_.
 
-.. _QUBE: https://github.com/qbicsoftware/qube
+.. _qube: https://github.com/qbicsoftware/qube

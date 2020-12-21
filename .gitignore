@@ -3,9 +3,6 @@
 .project
 .settings/
 
-# Maven
-.flattened-pom.xml
-
 # VS Code
 .vscode
 
@@ -19,16 +16,19 @@
 
 # Maven
 target/
+**/.flattened-pom.xml
 
 # Some of our applications generate logs, which should be ignored by git
 logs/
 
 # Other
 **/.factorypath
-**/developer.properties
 
 # compiled Vaadin widgetsets
-**/src/main/webapp/VAADIN/widgetsets
+**/VAADIN/widgetsets
 
 # From docs
 **/__pycache__
+
+# Properties, which may contain sensitive information
+**/developer.properties

@@ -1,6 +1,6 @@
 package life.qbic.portal.portlet.offers.search
 
-import life.qbic.portal.portlet.SearchCriteria
+
 import life.qbic.portal.portlet.offers.OfferExporter
 
 /**
@@ -23,12 +23,7 @@ class SearchOffers implements SearchOffersInput{
     }
 
     @Override
-    void searchOffers(SearchCriteria searchCriteria) {
-
-    }
-
-    @Override
-    void downloadOfferAsPdf(String offerId) {
+    void searchOffer(String offerContent) {
 
     }
 }

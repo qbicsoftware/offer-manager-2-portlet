@@ -1,14 +1,10 @@
 package life.qbic.portal.qoffer2.database
 
-import life.qbic.portal.utils.ConfigurationManager
-import life.qbic.portal.utils.ConfigurationManagerFactory
+import groovy.util.logging.Log4j2
 import org.apache.commons.dbcp2.BasicDataSource
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 
 import java.sql.Connection
 import java.sql.SQLException
-
 
 /**
  * Creates a connection to the user database
@@ -20,42 +16,44 @@ import java.sql.SQLException
  * @author: Jennifer Bödker
  *
  */
-class DatabaseSession {
+@Log4j2
+class DatabaseSession implements ConnectionProvider {
 
     protected static DatabaseSession INSTANCE
 
     private BasicDataSource dataSource
 
-    private static final Logger LOG = LogManager.getLogger(DatabaseSession.class)
-
-    //create session with DatabaseSession.init() and then DatabaseSession.INSTANCE to use the created session
-    private DatabaseSession(String user, String password, String host, String port, String sql_database) {
-
-        def url = "jdbc:mysql://" + host + ":" + port + "/" + sql_database
-
-        dataSource = new BasicDataSource()
-        dataSource.setUrl(url)
-        dataSource.setUsername(user)
-        dataSource.setPassword(password)
-        dataSource.setMinIdle(5)
-        dataSource.setMaxIdle(10)
-        dataSource.setMaxOpenPreparedStatements(100)
-
-        LOG.info("MySQL Database instance created")
+    private DatabaseSession() {
+        //This is a private Singleton constructor
+        dataSource = null
     }
 
 
     /**
-     * Initiates the database connection by retrieving configuration information from the {@link ConfigurationManager}
+     * Initiates the database connection
      * The instance is only created if there is no other existing
+     * @param user the user to use for the database
+     * @param password the password to use for the database connection
+     * @param host the database host
+     * @param port the port on which the database is hosted
+     * @param sqlDatabase the name of the database
      */
-    static void create() {
-        ConfigurationManager conf = ConfigurationManagerFactory.getInstance()
+    static void init(String user, String password, String host, String port, String sqlDatabase) {
         if (INSTANCE == null) {
-            INSTANCE = new DatabaseSession(conf.getMysqlUser(), conf.getMysqlPass(), conf.getMysqlHost(),
-                    conf.getMysqlPort(), conf.getMysqlDB())
-        } else{
-            LOG.info("There is already an existing database instance")
+            INSTANCE = new DatabaseSession()
+
+            def url = "jdbc:mysql://" + host + ":" + port + "/" + sqlDatabase
+
+            BasicDataSource basicDataSource = new BasicDataSource()
+            basicDataSource.setUrl(url)
+            basicDataSource.setUsername(user)
+            basicDataSource.setPassword(password)
+            basicDataSource.setMinIdle(5)
+            basicDataSource.setMaxIdle(10)
+            basicDataSource.setMaxOpenPreparedStatements(100)
+            INSTANCE.dataSource = basicDataSource
+        } else {
+            log.warn("Skipped overwrite existing connection to $host:$port with $host:$port.")
         }
     }
 
@@ -65,7 +63,7 @@ class DatabaseSession {
      * @return Connection, otherwise null if connecting to the database fails
      * @throws SQLException if a database access error occurs or the url is {@code null}
      */
-    Connection getConnection() throws SQLException {
+    Connection connect() throws SQLException {
         return dataSource.getConnection()
     }
 
@@ -73,7 +71,11 @@ class DatabaseSession {
      * Returns the current DatabaseSession object
      * @return
      */
-    static DatabaseSession getINSTANCE() {
-        return INSTANCE
+    static DatabaseSession getInstance() {
+        if (! INSTANCE) {
+            throw new AssertionError("Call the init method first. Instance has not been initialized.")
+        } else {
+            return INSTANCE
+        }
     }
 }

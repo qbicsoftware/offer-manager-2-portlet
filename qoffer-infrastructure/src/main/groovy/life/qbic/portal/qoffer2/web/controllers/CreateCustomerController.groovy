@@ -18,7 +18,7 @@ import life.qbic.portal.portlet.customers.create.CreateCustomerInput
 @Log4j2
 class CreateCustomerController {
 
-    CreateCustomerInput useCaseInput
+    private final CreateCustomerInput useCaseInput
 
     CreateCustomerController(CreateCustomerInput useCaseInput) {
         this.useCaseInput = useCaseInput
@@ -38,11 +38,18 @@ class CreateCustomerController {
      */
     void createNewCustomer(String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations) {
         AcademicTitleFactory academicTitleFactory = new AcademicTitleFactory()
-        if (title.isEmpty()) {
-            title = "None"
+        AcademicTitle academicTitle
+        if (!title || title?.isEmpty()) {
+            academicTitle = AcademicTitle.NONE
+        } else {
+            academicTitle = academicTitleFactory.getForString(title)
         }
-        AcademicTitle academicTitle = academicTitleFactory.getForString(title)
-        Customer customer = new Customer(firstName, lastName, academicTitle, email, affiliations as List<Affiliation>)
-        this.useCaseInput.createCustomer(customer)
+
+        try {
+            Customer customer = new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build()
+            this.useCaseInput.createCustomer(customer)
+        } catch(Exception ignored) {
+            throw new IllegalArgumentException("Could not create customer from provided arguments.")
+        }
     }
 }

@@ -13,6 +13,7 @@ import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
 
 import java.sql.Connection
+import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Statement
 
@@ -44,10 +45,10 @@ class CustomerDatabaseQueries {
      */
     List<Customer> findPersonByName(String lastName){
         List<Customer> result = []
-        String query = "SELECT id, first_name, last_name, title, email from customer WHERE " +
+        String query = "SELECT id, first_name, last_name, title, email from person WHERE " +
             "last_name = ?"
 
-        Connection connection = databaseSession.getConnection()
+        Connection connection = databaseSession.connect()
 
         connection.withCloseable {
             def statement = it.prepareStatement(query)
@@ -59,13 +60,7 @@ class CustomerDatabaseQueries {
                 String firstName = "${rs.getString(2)}"
                 String emailAddress = "${rs.getString(5)}";
                 AcademicTitle academicTitle = academicTitleFactory.getForString("${rs.getString(4)}")
-                def customer = new Customer(
-                    firstName,
-                    lastName,
-                    academicTitle,
-                    emailAddress,
-                    affiliations
-                )
+                Customer customer = new Customer.Builder(firstName, lastName, emailAddress).title(academicTitle).affiliations(affiliations).build()
                 result.add(customer)
             }
         }
@@ -96,10 +91,10 @@ class CustomerDatabaseQueries {
      */
     private List<Integer> getAffiliationIdsForPerson(int customerId) {
         List<Integer> result = []
-        String query = "SELECT affiliation_id FROM customer_affiliation WHERE " +
-            "customer_id = ?"
+        String query = "SELECT affiliation_id FROM person_affiliation WHERE " +
+            "person_id = ?"
 
-        Connection connection = databaseSession.getConnection()
+        Connection connection = databaseSession.connect()
 
         connection.withCloseable {
             def statement = it.prepareStatement(query)
@@ -123,7 +118,7 @@ class CustomerDatabaseQueries {
         String affiliationProperties = "organization, address_addition, street, postal_code, city, country, category"
         String query = "SELECT ${affiliationProperties} from affiliation WHERE " + "id = ?"
 
-        Connection connection = databaseSession.getConnection()
+        Connection connection = databaseSession.connect()
 
         connection.withCloseable {
             def statement = it.prepareStatement(query)
@@ -203,7 +198,7 @@ class CustomerDatabaseQueries {
         if (customerExists(customer)) {
             throw new DatabaseQueryException("Customer is already in the database.")
         }
-        Connection connection = databaseSession.getConnection()
+        Connection connection = databaseSession.connect()
         connection.setAutoCommit(false)
 
         connection.withCloseable {it ->
@@ -223,8 +218,8 @@ class CustomerDatabaseQueries {
     }
 
     private boolean customerExists(Customer customer) {
-        String query = "SELECT * FROM customer WHERE first_name = ? AND last_name = ? AND email = ?"
-        Connection connection = databaseSession.getConnection()
+        String query = "SELECT * FROM person WHERE first_name = ? AND last_name = ? AND email = ?"
+        Connection connection = databaseSession.connect()
 
         def customerAlreadyInDb = false
 
@@ -232,7 +227,7 @@ class CustomerDatabaseQueries {
             def statement = connection.prepareStatement(query)
             statement.setString(1, customer.firstName)
             statement.setString(2, customer.lastName)
-            statement.setString(3, customer.eMailAddress)
+            statement.setString(3, customer.emailAddress)
             statement.execute()
             def result = statement.getResultSet()
             customerAlreadyInDb = result.next()
@@ -241,7 +236,7 @@ class CustomerDatabaseQueries {
     }
 
     private static int createNewCustomer(Connection connection, Customer customer) {
-        String query = "INSERT INTO customer (first_name, last_name, title, email) " +
+        String query = "INSERT INTO person (first_name, last_name, title, email) " +
             "VALUES(?, ?, ?, ?)"
 
         List<Integer> generatedKeys = []
@@ -250,7 +245,7 @@ class CustomerDatabaseQueries {
         statement.setString(1, customer.firstName )
         statement.setString(2, customer.lastName)
         statement.setString(3, customer.title.value)
-        statement.setString(4, customer.eMailAddress )
+        statement.setString(4, customer.emailAddress)
         statement.execute()
         def keys = statement.getGeneratedKeys()
         while (keys.next()){
@@ -262,7 +257,7 @@ class CustomerDatabaseQueries {
 
     private static void storeAffiliation(Connection connection, int customerId, List<Affiliation>
         affiliations) {
-        String query = "INSERT INTO customer_affiliation (affiliation_id, customer_id) " +
+        String query = "INSERT INTO person_affiliation (affiliation_id, customer_id) " +
             "VALUES(?, ?)"
 
         affiliations.each {affiliation ->
@@ -321,7 +316,7 @@ class CustomerDatabaseQueries {
         List<Affiliation> result = []
         String query = "SELECT * from affiliation"
 
-        Connection connection = databaseSession.getConnection()
+        Connection connection = databaseSession.connect()
 
         connection.withCloseable {
             def statement = it.prepareStatement(query)
@@ -341,4 +336,92 @@ class CustomerDatabaseQueries {
         }
         return result
     }
+
+    /**
+     * Add an affiliation to the database
+     *
+     * @param affiliation which needs to be added to the database
+     */
+    void addAffiliation(Affiliation affiliation) throws DatabaseQueryException {
+        if (affiliationExists(affiliation)) {
+            throw new DatabaseQueryException("Affiliation is already in the database.")
+        }
+        Connection connection = databaseSession.connect()
+        connection.setAutoCommit(false)
+
+        connection.withCloseable {it ->
+            try {
+                createNewAffiliation(it, affiliation)
+                connection.commit()
+            }
+            catch(DatabaseQueryException e) {
+                log.error(e.message)
+                log.error(e.stackTrace.join("\n"))
+                connection.rollback()
+                connection.close()
+                throw new DatabaseQueryException("Could not create affiliation in database")
+            }
+            catch (Exception e) {
+                log.error(e.message)
+                log.error(e.stackTrace.join("\n"))
+                connection.rollback()
+                connection.close()
+                throw new DatabaseQueryException("Unexpected exception occurred")
+            }
+
+        }
+    }
+
+    private boolean affiliationExists(Affiliation affiliation) {
+        String query = "SELECT * FROM affiliation WHERE organization = ? " +
+                "AND address_addition=? " +
+                "AND street=? " +
+                "AND country=? " +
+                "AND postal_code=? " +
+                "AND city=? " +
+                "AND category=?"
+
+        Connection connection = databaseSession.connect()
+
+        boolean affiliationAlreadyInDb = false
+
+        connection.withCloseable {
+            PreparedStatement statement = connection.prepareStatement(query)
+            statement.setString(1, affiliation.organisation)
+            statement.setString(2, affiliation.addressAddition)
+            statement.setString(3, affiliation.street)
+            statement.setString(4, affiliation.country)
+            statement.setString(5, affiliation.postalCode)
+            statement.setString(6, affiliation.city)
+            statement.setString(7, affiliation.category.toString())
+            statement.execute()
+            ResultSet affiliationResultSet = statement.getResultSet()
+            affiliationAlreadyInDb = affiliationResultSet.next()
+        }
+        return affiliationAlreadyInDb
+    }
+
+    private static int createNewAffiliation(Connection connection, Affiliation affiliation) {
+        String query = "INSERT INTO affiliation (organization, address_addition, street, country, postal_code, city, category) " +
+                "VALUES(?, ?, ?, ?, ?, ?, ?)"
+
+        List<Integer> generatedKeys = []
+
+        PreparedStatement statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
+        statement.setString(1, affiliation.organisation)
+        statement.setString(2, affiliation.addressAddition)
+        statement.setString(3, affiliation.street)
+        statement.setString(4, affiliation.country)
+        statement.setString(5, affiliation.postalCode)
+        statement.setString(6, affiliation.city)
+        statement.setString(7, affiliation.category.toString())
+        statement.execute()
+        ResultSet affiliationResultSetKeys = statement.getGeneratedKeys()
+        while (affiliationResultSetKeys.next()){
+            generatedKeys.add(affiliationResultSetKeys.getInt(1))
+        }
+
+        return generatedKeys[0]
+    }
+
 }

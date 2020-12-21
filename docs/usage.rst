@@ -2,6 +2,7 @@
 Usage
 =====
 
-To use qOffer_2.0 in a project::
+To use qOffer_2.0::
 
-    import qOffer_2.0
+     create the qOffer_2.0.war/.jar according to the installation description and deploy the the project to the current Liferay instance
+
