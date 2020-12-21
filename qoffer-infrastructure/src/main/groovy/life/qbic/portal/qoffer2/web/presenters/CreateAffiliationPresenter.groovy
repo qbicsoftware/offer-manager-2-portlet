@@ -65,7 +65,6 @@ class CreateAffiliationPresenter implements CreateAffiliationOutput {
             log.warn("Tried to add already listed affiliation to the view model. This should never happen.")
         } else {
             sharedViewModel.affiliations.add(affiliation)
-            sharedViewModel.createAffiliationVisible = false
         }
     }
 }

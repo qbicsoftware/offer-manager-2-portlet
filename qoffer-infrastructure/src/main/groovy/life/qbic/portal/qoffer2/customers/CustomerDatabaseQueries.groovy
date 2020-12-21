@@ -227,7 +227,7 @@ class CustomerDatabaseQueries {
             def statement = connection.prepareStatement(query)
             statement.setString(1, customer.firstName)
             statement.setString(2, customer.lastName)
-            statement.setString(3, customer.eMailAddress)
+            statement.setString(3, customer.emailAddress)
             statement.execute()
             def result = statement.getResultSet()
             customerAlreadyInDb = result.next()

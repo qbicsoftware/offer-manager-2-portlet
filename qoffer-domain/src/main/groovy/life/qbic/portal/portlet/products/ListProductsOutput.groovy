@@ -1,6 +1,6 @@
 package life.qbic.portal.portlet.products
 
-import life.qbic.datamodel.accounting.Product
+import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.portlet.UseCaseFailure
 
 /**

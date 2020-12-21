@@ -9,8 +9,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 ----------------------------------------------
 
 **Added**
-
-* Implement customer search in db connector
+* Add the option to create an affiliation while creating an offer
+* Add the option to create a customer while creating an offer
+* Implement SearchCustomer use case
 * Connect CreateAffiliation and CreateCustomer use case
 * Implement GUI for CreateAffiliation use case
 * Implement CreateCustomer use case
@@ -18,10 +19,11 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Create DependencyManager class
 * Maven structure and dependency management of core libraries
 * Create empty infrastructure classes
-* Create usecase classes and interfaces
+* Create use case classes and interfaces
 * Created the project using QUBE
 * Implement queries for affiliation creation in database
 * Implement use case _List Packages_
+* Dynamic cost overview upon offer creation
 
 **Fixed**
 
