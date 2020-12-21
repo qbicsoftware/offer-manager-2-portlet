@@ -244,13 +244,13 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     return generatedKeys[0]
   }
 
-  private static void storeAffiliation(Connection connection, int customerId, List<Affiliation>
+  private void storeAffiliation(Connection connection, int customerId, List<Affiliation>
           affiliations) {
     String query = "INSERT INTO person_affiliation (person_id, affiliation_id) " +
             "VALUES(?, ?)"
 
     affiliations.each {affiliation ->
-      def affiliationId = getAffiliationId(affiliation)
+      def affiliationId = this.getAffiliationId(affiliation)
       def statement = connection.prepareStatement(query)
       statement.setInt(1, customerId)
       statement.setInt(2, affiliationId)
