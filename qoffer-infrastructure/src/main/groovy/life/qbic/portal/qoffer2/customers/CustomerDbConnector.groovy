@@ -465,4 +465,23 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return personId
   }
+
+  List<Customer> fetchAllCustomers() {
+    List<Customer> customers = []
+    String query = "SELECT * from person"
+    Connection connection = connectionProvider.connect()
+    connection.withCloseable {
+      def preparedStatement = it.prepareStatement(query)
+      ResultSet resultSet = preparedStatement.executeQuery()
+      while(resultSet.next()) {
+        def firstName = resultSet.getString('first_name')
+        def lastName = resultSet.getString('last_name')
+        def email = resultSet.getString('email')
+        def customer = new Customer.Builder(firstName, lastName, email).build()
+        customers.add(customer)
+      }
+    }
+    return customers
+  }
+
 }

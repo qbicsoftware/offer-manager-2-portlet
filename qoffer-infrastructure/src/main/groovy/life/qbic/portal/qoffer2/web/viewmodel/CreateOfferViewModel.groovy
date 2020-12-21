@@ -5,6 +5,8 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.portal.qoffer2.events.Subscription
+import life.qbic.portal.qoffer2.services.CustomerService
 
 /**
  * A ViewModel holding data that is presented in a
@@ -43,4 +45,18 @@ class CreateOfferViewModel {
     @Bindable double taxes = 0
     @Bindable double overheads = 0
     @Bindable double totalPrice = 0
+
+    final private CustomerService customerService
+
+    CreateOfferViewModel(CustomerService customerService) {
+        this.customerService = customerService
+        this.customerService.eventEmitter.register( (List<Customer> customerList) -> {
+            this.foundCustomers = customerList
+        })
+        this.customerService.reloadResources()
+    }
+
+    void refresh() {
+        this.customerService.reloadResources()
+    }
 }

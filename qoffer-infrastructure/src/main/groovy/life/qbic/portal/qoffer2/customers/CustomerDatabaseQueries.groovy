@@ -8,6 +8,7 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
+import life.qbic.portal.qoffer2.database.ConnectionProvider
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
@@ -188,7 +189,6 @@ class CustomerDatabaseQueries {
 
         return null
     }
-
     /**
      * Add a customer to the database
      *
@@ -213,7 +213,6 @@ class CustomerDatabaseQueries {
                 connection.close()
                 throw new DatabaseQueryException("Could not create customer.")
             }
-
         }
     }
 
