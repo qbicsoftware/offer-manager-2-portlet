@@ -88,7 +88,6 @@ class CreateOfferView extends FormLayout{
         navigationView.showNextStep()
         this.addComponent(navigationView)
         this.addComponent(projectInformationView)
-        overviewView.fillPanel()
         this.setSizeFull()
     }
 
@@ -145,6 +144,7 @@ class CreateOfferView extends FormLayout{
         })
         this.selectItemsView.next.addClickListener({
             controller.calculatePriceForItems(getProductItems(view.productItems),view.customerAffiliation)
+            overviewView.fillPanel()
             viewHistory.loadNewView(overviewView)
             navigationView.showNextStep()
         })
