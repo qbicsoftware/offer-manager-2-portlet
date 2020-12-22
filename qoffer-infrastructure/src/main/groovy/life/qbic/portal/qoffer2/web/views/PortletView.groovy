@@ -54,9 +54,9 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
         gridLayout.setSizeFull()
         //ToDo Find solution on how to best host different views in the portlet
         //gridLayout.addComponent(this.searchCustomerView)
-        gridLayout.addComponent(this.createCustomerView)
+        //gridLayout.addComponent(this.createCustomerView)
         //gridLayout.addComponent(this.createAffiliationView)
-        //gridLayout.addComponent(this.createOfferView)
+        gridLayout.addComponent(this.createOfferView)
 
         this.setSizeFull()
         this.addComponent(gridLayout)

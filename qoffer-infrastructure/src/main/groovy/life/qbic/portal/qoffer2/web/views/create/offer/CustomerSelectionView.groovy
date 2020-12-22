@@ -51,11 +51,8 @@ class CustomerSelectionView extends VerticalLayout{
         Affiliation testAffiliation = new Affiliation.Builder("organization","Street","postal code","city").category(AffiliationCategory.INTERNAL).build()
         Affiliation testAffiliation2 = new Affiliation.Builder("QBiC","Street","postal code","city").category(AffiliationCategory.EXTERNAL_ACADEMIC).build()
 
-        Customer customer = new Customer.Builder("Max", "Mustermann", "a.b@c.de").title(AcademicTitle.DOCTOR).affiliation(testAffiliation).build()
-        Customer customer2 = new Customer.Builder("Max2", "Mustermann", "a.b@c.de").title(AcademicTitle.DOCTOR).affiliations([testAffiliation,testAffiliation2]).build()
-        Customer customer3 = new Customer.Builder("Max3", "Mustermann", "a.b@c.de").title(AcademicTitle.DOCTOR).affiliation(testAffiliation2).build()
 
-        this.foundCustomerList = [customer,customer2,customer3] //searchCustomerViewModel.foundCustomers
+        this.foundCustomerList = viewModel.foundCustomers
 
         initLayout()
         setupDataProvider()

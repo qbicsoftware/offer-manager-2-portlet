@@ -450,4 +450,80 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return personId
   }
+
+  /**
+   * List all available affiliations.
+   * @return A list of affiliations
+   */
+  List<Customer> fetchAllCustomers() {
+    List<Customer> customers = []
+    String query = "SELECT * from person"
+    Connection connection = connectionProvider.connect()
+    connection.withCloseable {
+      def preparedStatement = it.prepareStatement(query)
+      ResultSet resultSet = preparedStatement.executeQuery()
+      while(resultSet.next()) {
+        def personId = resultSet.getInt(1)
+        def firstName = resultSet.getString('first_name')
+        def lastName = resultSet.getString('last_name')
+        def email = resultSet.getString('email')
+        def customerBuilder = new Customer.Builder(firstName, lastName, email)
+        def affiliations = getAffiliationForPersonId(personId)
+        customers.add(customerBuilder.affiliations(affiliations).build())
+      }
+    }
+    return customers
+  }
+
+  private List<Affiliation> getAffiliationForPersonId(int personId) {
+    def affiliations = []
+    String query = "SELECT *\n" +
+            "FROM \n" +
+            "    person_affiliation\n" +
+            "    LEFT JOIN affiliation\n" +
+            "    ON  person_affiliation.affiliation_id = affiliation.id\n" +
+            "    WHERE person_affiliation.person_id = ?"
+    Connection connection = connectionProvider.connect()
+    connection.withCloseable {
+      def preparedStatement = it.prepareStatement(query)
+      preparedStatement.setInt(1, personId)
+      ResultSet resultSet = preparedStatement.executeQuery()
+      while (resultSet.next()) {
+        def organization = resultSet.getString('organization')
+        def addressAddition = resultSet.getString('address_addition')
+        def street = resultSet.getString('street')
+        def postalCode = resultSet.getString('postal_code')
+        def city = resultSet.getString('city')
+        def country = resultSet.getString('country')
+        def category = determineAffiliationCategory(resultSet.getString('category'))
+        def affiliation = new Affiliation.Builder(organization, street, postalCode, city)
+                .addressAddition(addressAddition)
+                .country(country)
+                .category(category)
+                .build()
+        affiliations.add(affiliation)
+      }
+    }
+    return affiliations
+  }
+
+  private static AffiliationCategory determineAffiliationCategory(String value) {
+    def category
+    switch(value.toLowerCase()) {
+      case "internal":
+        category = AffiliationCategory.INTERNAL
+        break
+      case "external academic":
+        category = AffiliationCategory.EXTERNAL_ACADEMIC
+        break
+      case "external":
+        category = AffiliationCategory.EXTERNAL
+        break
+      default:
+        category = AffiliationCategory.EXTERNAL
+        break
+    }
+    return category
+  }
+
 }
