@@ -194,7 +194,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
           log.error(e.stackTrace.join("\n"))
           connection.rollback()
           connection.close()
-          throw new DatabaseQueryException("Could not create customer....")
+          throw new DatabaseQueryException("Could not create customer.")
         }
       }
     } catch (DatabaseQueryException ignored) {
