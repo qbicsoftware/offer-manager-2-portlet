@@ -1,13 +1,22 @@
 package life.qbic.portal.qoffer2.web.views
 
+import com.vaadin.event.MouseEvents.ClickListener
+import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.Page
+import com.vaadin.ui.Button
+import com.vaadin.ui.Component
 import com.vaadin.ui.GridLayout
+import com.vaadin.ui.HorizontalLayout
+import com.vaadin.ui.Label
+import com.vaadin.ui.Link
 import com.vaadin.ui.Notification
 import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.qoffer2.web.StyledNotification
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
+import sun.java2d.Spans
 
 /**
  * Class which connects the view elements with the ViewModel and the Controller
@@ -27,6 +36,7 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
     private final CreateAffiliationView createAffiliationView
     private final SearchCustomerView searchCustomerView
     private final CreateOfferView createOfferView
+    private final List<Component> featureViews
 
     PortletView(ViewModel portletViewModel,
                 CreateCustomerView createCustomerView, CreateAffiliationView createAffiliationView, SearchCustomerView searchCustomerView,
@@ -37,8 +47,23 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
         this.createAffiliationView = createAffiliationView
         this.searchCustomerView = searchCustomerView
         this.createOfferView = createOfferView
+        this.featureViews = []
         initLayout()
         registerListeners()
+        setupFeatureViews()
+        hideAllFeatureViews()
+    }
+
+    private void setupFeatureViews() {
+        featureViews.addAll([
+                createCustomerView,
+                createAffiliationView,
+                createOfferView
+        ])
+    }
+
+    private void hideAllFeatureViews() {
+        featureViews.each {it.setVisible(false)}
     }
 
     /**
@@ -48,18 +73,19 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
         this.setMargin(false)
         this.setSpacing(false)
 
-        GridLayout gridLayout = new GridLayout()
+        VerticalLayout verticalLayout = new VerticalLayout()
 
-        gridLayout.setRows(2)
-        gridLayout.setSizeFull()
+
+        verticalLayout.setSizeFull()
         //ToDo Find solution on how to best host different views in the portlet
         //gridLayout.addComponent(this.searchCustomerView)
-        gridLayout.addComponent(this.createCustomerView)
-        //gridLayout.addComponent(this.createAffiliationView)
-        //gridLayout.addComponent(this.createOfferView)
+        verticalLayout.addComponent(new TomatoFeatures())
+        verticalLayout.addComponent(this.createCustomerView)
+        verticalLayout.addComponent(this.createOfferView)
+        verticalLayout.addComponents(this.createAffiliationView)
 
         this.setSizeFull()
-        this.addComponent(gridLayout)
+        this.addComponent(verticalLayout)
     }
 
     private def registerListeners() {
@@ -104,5 +130,67 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
         viewModel.street = affiliation?.getStreet()
         viewModel.addressAddition = affiliation?.addressAddition
         viewModel.organisation = affiliation?.organisation
+    }
+
+    private class TomatoFeatures extends HorizontalLayout {
+
+        Button createOfferBtn
+
+        Button createCustomerBtn
+
+        Button createAffiliationBtn
+
+        TomatoFeatures() {
+            this.createOfferBtn = new Button("New Offer")
+            this.createCustomerBtn = new Button("New Customer")
+            this.createAffiliationBtn = new Button("New Affiliation")
+            this.addComponents(
+                    createOfferBtn,
+                    createCustomerBtn,
+                    createAffiliationBtn
+            )
+            setStyles()
+            setupListeners()
+            setIcons()
+        }
+
+        private void setStyles() {
+            createOfferBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+            createCustomerBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+            createAffiliationBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+        }
+
+        private void setIcons() {
+            createOfferBtn.setIcon(VaadinIcons.GRID_BIG_O)
+            createCustomerBtn.setIcon(VaadinIcons.GRID_BIG_O)
+            createAffiliationBtn.setIcon(VaadinIcons.GRID_BIG_O)
+        }
+
+        private void setButtonActive(Button b) {
+            b.setIcon(VaadinIcons.GRID_BIG)
+        }
+
+        private void setupListeners() {
+            this.createOfferBtn.addClickListener(listener -> {
+                hideAllFeatureViews()
+                setIcons()
+                createOfferView.setVisible(true)
+                setButtonActive(this.createOfferBtn)
+            })
+            this.createCustomerBtn.addClickListener(listener -> {
+                hideAllFeatureViews()
+                setIcons()
+                createCustomerView.setVisible(true)
+                setButtonActive(this.createCustomerBtn)
+            })
+            this.createAffiliationBtn.addClickListener(listener -> {
+                hideAllFeatureViews()
+                setIcons()
+                createAffiliationView.setVisible(true)
+                setButtonActive(this.createAffiliationBtn)
+            })
+
+        }
+
     }
 }

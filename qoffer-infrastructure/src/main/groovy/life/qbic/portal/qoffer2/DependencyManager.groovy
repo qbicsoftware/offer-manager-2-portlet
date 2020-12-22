@@ -321,7 +321,13 @@ class DependencyManager {
 
         PortletView portletView
         try {
-            portletView = new PortletView(this.viewModel, createCustomerView, createAffiliationView, searchCustomerView, createOfferView)
+            def createCustomerView2 = new CreateCustomerView(createCustomerController, this
+                    .viewModel, createCustomerViewModel)
+            def createAffiliationView2 = new CreateAffiliationView(this.viewModel,
+                    createAffiliationViewModel, createAffiliationController)
+            portletView = new PortletView(this.viewModel, createCustomerView2,
+                    createAffiliationView2,
+                    searchCustomerView, createOfferView)
             this.portletView = portletView
         } catch (Exception e) {
             log.error("Could not create ${PortletView.getSimpleName()} view.", e)
