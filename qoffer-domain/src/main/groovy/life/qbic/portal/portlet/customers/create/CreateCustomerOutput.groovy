@@ -11,4 +11,6 @@ import life.qbic.portal.portlet.UseCaseFailure
  */
 interface CreateCustomerOutput extends UseCaseFailure {
 
+    void customerCreated(String message)
+
 }

@@ -36,13 +36,14 @@ class CreateCustomerPresenter implements CreateCustomerOutput{
         createCustomerViewModel.affiliationValid = null
     }
 
-    void successNotification(String notification) {
-        viewModel.successNotifications.add(notification)
-        clearCustomerData()
-    }
-
     @Override
     void failNotification(String notification) {
         viewModel.failureNotifications.add(notification)
+    }
+
+    @Override
+    void customerCreated(String message) {
+        viewModel.successNotifications.add(message)
+        clearCustomerData()
     }
 }

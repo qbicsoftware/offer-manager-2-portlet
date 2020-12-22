@@ -138,24 +138,7 @@ class CustomerDatabaseQueries {
         }
     }
 
-    private static AffiliationCategory determineAffiliationCategory(String value) {
-        def category
-        switch(value.toLowerCase()) {
-            case "internal":
-                category = AffiliationCategory.INTERNAL
-                break
-            case "external academic":
-                category = AffiliationCategory.EXTERNAL_ACADEMIC
-                break
-            case "external":
-                category = AffiliationCategory.EXTERNAL
-                break
-            default:
-                category = AffiliationCategory.UNKNOWN
-                break
-        }
-        return category
-    }
+
 
     /**
      * Searches for a customer based on an additional address, which can be either an department or an institute
@@ -311,6 +294,10 @@ class CustomerDatabaseQueries {
 
     }
 
+    /**
+     * List all available affiliations.
+     * @return A list of affiliations
+     */
     List<Affiliation> getAffiliations() {
         List<Affiliation> result = []
         String query = "SELECT * from affiliation"
