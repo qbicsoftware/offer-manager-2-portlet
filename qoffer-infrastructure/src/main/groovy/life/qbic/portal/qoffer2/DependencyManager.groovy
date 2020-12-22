@@ -175,7 +175,7 @@ class DependencyManager {
         }
 
         try {
-            this.createCustomerViewModel = new CreateCustomerViewModel()
+            this.createCustomerViewModel = new CreateCustomerViewModel(customerService)
             createCustomerViewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
 
         } catch (Exception e) {

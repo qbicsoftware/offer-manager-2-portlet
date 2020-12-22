@@ -356,6 +356,9 @@ class CreateCustomerView extends VerticalLayout {
                 affiliations.add(createCustomerViewModel.affiliation)
 
                 controller.createNewCustomer(firstName, lastName, title, email, affiliations)
+
+                createCustomerViewModel.customerService.reloadResources()
+
             } catch (IllegalArgumentException illegalArgumentException) {
                 log.error("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}")
                 log.debug("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}", illegalArgumentException)
