@@ -17,12 +17,12 @@ import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.portlet.customers.search.SearchCustomer
 import life.qbic.portal.portlet.offers.create.CreateOffer
 import life.qbic.portal.portlet.products.ListProducts
-
+import life.qbic.portal.qoffer2.events.Subscription
 import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.products.ProductsDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
-
+import life.qbic.portal.qoffer2.services.CustomerService
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
@@ -102,6 +102,8 @@ class DependencyManager {
     private PortletView portletView
     private ConfigurationManager configurationManager
 
+    private CustomerService customerService
+
     /**
      * Public constructor.
      *
@@ -116,6 +118,7 @@ class DependencyManager {
     private void initializeDependencies() {
         // The ORDER in which the methods below are called MUST NOT CHANGE
         setupDbConnections()
+        setupServices()
         setupViewModels()
         setupPresenters()
         setupUseCaseInteractors()
@@ -157,6 +160,11 @@ class DependencyManager {
         }
     }
 
+    private void setupServices() {
+     this.customerService = new CustomerService(customerDbConnector)
+
+    }
+
     private void setupViewModels() {
         // setup view models
         try {
@@ -191,7 +199,7 @@ class DependencyManager {
         }
 
         try {
-            this.createOfferViewModel = new CreateOfferViewModel()
+            this.createOfferViewModel = new CreateOfferViewModel(customerService)
             //todo add affiliations, customers and project managers to the model
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)

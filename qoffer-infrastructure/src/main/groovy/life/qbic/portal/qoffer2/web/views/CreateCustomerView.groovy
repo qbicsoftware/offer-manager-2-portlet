@@ -30,7 +30,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 class CreateCustomerView extends VerticalLayout {
     final private ViewModel sharedViewModel
     final private CreateCustomerViewModel createCustomerViewModel
-    final private CreateCustomerController controller
+    final CreateCustomerController controller
 
     final private List<AffiliationSelectionListener> affiliationSelectionListeners
 

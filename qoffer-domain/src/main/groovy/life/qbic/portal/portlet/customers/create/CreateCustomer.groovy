@@ -27,10 +27,14 @@ class CreateCustomer implements CreateCustomerInput {
   void createCustomer(Customer customer) {
     try {
       dataSource.addCustomer(customer)
-      output.successNotification("Successfully added new customer")
+      output.customerCreated("Successfully added new customer")
     } catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)
     } catch(Exception ignored) {
+      println "-------------------------"
+      println "Unexpected Exception ...."
+      println ignored.message
+      println ignored.stackTrace.join("\n")
       output.failNotification("Could not create new customer")
     }
   }

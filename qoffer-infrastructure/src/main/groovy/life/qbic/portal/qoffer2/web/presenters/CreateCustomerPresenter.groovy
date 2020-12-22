@@ -37,13 +37,13 @@ class CreateCustomerPresenter implements CreateCustomerOutput{
     }
 
     @Override
-    void successNotification(String notification) {
-        viewModel.successNotifications.add(notification)
-        clearCustomerData()
+    void failNotification(String notification) {
+        viewModel.failureNotifications.add(notification)
     }
 
     @Override
-    void failNotification(String notification) {
-        viewModel.failureNotifications.add(notification)
+    void customerCreated(String message) {
+        viewModel.successNotifications.add(message)
+        clearCustomerData()
     }
 }
