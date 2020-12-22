@@ -1,7 +1,7 @@
 package life.qbic.portal.qoffer2.services
 
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
+
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.events.EventEmitter
 
