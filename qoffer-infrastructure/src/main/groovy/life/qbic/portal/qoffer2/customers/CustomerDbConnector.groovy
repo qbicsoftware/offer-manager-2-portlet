@@ -34,12 +34,6 @@ import java.sql.Statement
 @Log4j2
 class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
-
-  /**
-   * This field should no longer be used but instead {@link #connectionProvider} should be provided
-   */
-  @Deprecated
-  CustomerDatabaseQueries databaseQueries
   /**
    * A connection to the customer database used to create queries.
    */
@@ -50,17 +44,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   private static final String CUSTOMER_SELECT_QUERY = "SELECT id, first_name AS firstName, last_name AS lastName, title as academicTitle, email as eMailAddress FROM person"
   private static final String AFFILIATION_SELECT_QUERY = "SELECT id, organization AS organisation, address_addition AS addressAddition, street, postal_code AS postalCode, city, country, category FROM affiliation"
 
-  /**
-   * This method should be replaced by C
-   * @param databaseQueries
-   * @param connectionProvider {@link #connectionProvider}
-   * @see CustomerDbConnector#CustomerDbConnector(ConnectionProvider)
-   */
-  @Deprecated
-  CustomerDbConnector(CustomerDatabaseQueries databaseQueries, ConnectionProvider connectionProvider){
-    this.databaseQueries = databaseQueries
-    this.connectionProvider = connectionProvider
-  }
 
   /**
    * Constructor for a CustomerDbConnector
@@ -389,6 +372,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       throw new DatabaseQueryException("The affiliation could not be created: ${affiliation.toString()}")
     }
   }
+
   private boolean affiliationExists(Affiliation affiliation) {
     String query = "SELECT * FROM affiliation WHERE organization = ? " +
             "AND address_addition=? " +
@@ -417,6 +401,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return affiliationAlreadyInDb
   }
+
   private static int createNewAffiliation(Connection connection, Affiliation affiliation) {
     String query = "INSERT INTO affiliation (organization, address_addition, street, country, postal_code, city, category) " +
             "VALUES(?, ?, ?, ?, ?, ?, ?)"

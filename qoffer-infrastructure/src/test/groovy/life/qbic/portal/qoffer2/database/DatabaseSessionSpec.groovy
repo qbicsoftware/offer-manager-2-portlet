@@ -1,9 +1,7 @@
 package life.qbic.portal.qoffer2.database
 
-import life.qbic.portal.qoffer2.customers.CustomerDatabaseQueries
-import spock.lang.Specification
 
-import java.sql.Connection
+import spock.lang.Specification
 
 /**
  * Test the database connection
