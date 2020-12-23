@@ -449,8 +449,10 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       }
     }
     if (personId == -1) {
-      throw new DatabaseQueryException("Could not find ${person.firstName} ${person.lastName} " +
-              "(${person.emailAddress}).")
+      def msg = "Could not find ${person.firstName} ${person.lastName} " +
+              "(${person.emailAddress})."
+      log.error(msg)
+      throw new DatabaseQueryException(msg)
     }
     return personId
   }

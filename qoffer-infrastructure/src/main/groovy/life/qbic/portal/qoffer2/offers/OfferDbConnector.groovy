@@ -58,6 +58,9 @@ class OfferDbConnector implements CreateOfferDataSource{
 
                 productGateway.createOfferItems(offer.items, offerId)
                 connection.commit()
+            } catch (DatabaseQueryException e) {
+                // We can safely proxy DatabaseQueryExceptions back to the use case
+                throw new DatabaseQueryException(e.message)
             } catch (Exception e) {
                 log.error(e.message)
                 log.error(e.stackTrace.join("\n"))

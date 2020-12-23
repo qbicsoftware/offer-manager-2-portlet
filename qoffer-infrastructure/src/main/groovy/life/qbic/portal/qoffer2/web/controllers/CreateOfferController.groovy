@@ -41,8 +41,7 @@ class CreateOfferController {
      * @param customerAffiliation The affiliation of the customer for this specific offer
      */
     void createOffer(String projectTitle, String projectDescription, Customer customer, ProjectManager manager, List<ProductItem> items, Affiliation customerAffiliation){
-        try {
-            Offer offer = new Offer.Builder(
+        Offer offer = new Offer.Builder(
                     customer,
                     manager,
                     projectDescription,
@@ -50,11 +49,7 @@ class CreateOfferController {
                     customerAffiliation)
                     .items(items)
                     .build()
-            this.input.createOffer(offer)
-        } catch(Exception e) {
-            log.error(e.stackTrace.join("\n"))
-            throw new IllegalArgumentException("Could not create offer from provided arguments.")
-        }
+        this.input.createOffer(offer)
     }
 
     /**
