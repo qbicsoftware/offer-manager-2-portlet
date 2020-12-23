@@ -7,8 +7,8 @@ import life.qbic.portal.qoffer2.events.EventEmitter
 
 /**
  * Customer service that holds resources about customer information
- * and can exposes an event emitter, that can be used to subscribe
- * to any update event of the underlying resource data.
+ * and exposes an event emitter, that can be used to subscribe
+ * to any update event of the underlying customer resource data.
  *
  * @since 1.0.0
  */
