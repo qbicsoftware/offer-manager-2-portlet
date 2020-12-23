@@ -1,4 +1,4 @@
-qOffer 2.0
+qOffer 2.0 (IN DEVELOPMENT)
 -----------------------------------
 
 .. image:: https://github.com/qbicsoftware/qoffer-2-portlet/workflows/Build%20Maven%20Package/badge.svg
