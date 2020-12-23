@@ -60,11 +60,6 @@ class CreateAffiliationPresenter implements CreateAffiliationOutput {
      */
     @Override
     void affiliationCreated(Affiliation affiliation) {
-        if (affiliation in sharedViewModel.affiliations) {
-            // This behaviour should not appear and should be handled by the use case
-            log.warn("Tried to add already listed affiliation to the view model. This should never happen.")
-        } else {
-            sharedViewModel.affiliations.add(affiliation)
-        }
+        createAffiliationViewModel.affiliationService.reloadResources()
     }
 }

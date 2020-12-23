@@ -22,6 +22,7 @@ import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.products.ProductsDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
+import life.qbic.portal.qoffer2.services.AffiliationService
 import life.qbic.portal.qoffer2.services.CustomerService
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
@@ -103,6 +104,7 @@ class DependencyManager {
     private ConfigurationManager configurationManager
 
     private CustomerService customerService
+    private AffiliationService affiliationService
 
     /**
      * Public constructor.
@@ -161,14 +163,14 @@ class DependencyManager {
     }
 
     private void setupServices() {
-     this.customerService = new CustomerService(customerDbConnector)
-
+        this.customerService = new CustomerService(customerDbConnector)
+        this.affiliationService = new AffiliationService(customerDbConnector)
     }
 
     private void setupViewModels() {
         // setup view models
         try {
-            this.viewModel = new ViewModel()
+            this.viewModel = new ViewModel(affiliationService)
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${ViewModel.getSimpleName()} view model setup.", e)
             throw e
@@ -184,7 +186,7 @@ class DependencyManager {
         }
 
         try {
-            this.createAffiliationViewModel = new CreateAffiliationViewModel()
+            this.createAffiliationViewModel = new CreateAffiliationViewModel(affiliationService)
             createAffiliationViewModel.affiliationCategories.addAll(AffiliationCategory.values().collect{it.value})
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${CreateAffiliationViewModel.getSimpleName()} view model setup.", e)
