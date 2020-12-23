@@ -6,6 +6,8 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.portal.portlet.Constants
+import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.offers.Offer
 
 /**
@@ -42,7 +44,16 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
                 .modificationDate(new Date())
                 .build()
 
-        dataSource.store(Converter.convertOfferToDTO(finalizedOffer))
+        try {
+            final offer = Converter.convertOfferToDTO(finalizedOffer)
+            dataSource.store(offer)
+            output.createdNewOffer(offer)
+        } catch (DatabaseQueryException e) {
+            output.failNotification(e.message)
+        } catch (Exception ignored) {
+            output.failNotification("An unexpected during the saving of your offer occurred. " +
+                    "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
+        }
     }
 
     /**
@@ -88,7 +99,10 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
                     .netPrice(offer.getTotalNetPrice())
                     .taxes(offer.getTaxCosts())
                     .overheads(offer.getOverheadSum())
-                    .totalPrice(offer.getTotalCosts()).build()
+                    .totalPrice(offer.getTotalCosts())
+                    .modificationDate(offer.modificationDate)
+                    .expirationDate(offer.expirationDate)
+                    .build()
         }
 
         static Offer buildOfferForCostCalculation(List<ProductItem> items,

@@ -33,8 +33,8 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
 
     @Override
     void createdNewOffer(Offer createdOffer) {
-        //TODO implement
-        throw new Exception("Method not implemented.")
+        this.viewModel.successNotifications.add("Created offer with title\n" +
+                "\'${createdOffer.projectTitle}\'\nsuccessfully")
     }
 
     @Override
@@ -50,15 +50,9 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
         this.createOfferViewModel.totalPrice = totalPrice
     }
 
-    void successNotification(String notification) {
-        //TODO implement
-        throw new Exception("Method not implemented.")
-    }
-
     @Override
     void failNotification(String notification) {
-        //TODO implement
-        throw new Exception("Method not implemented.")
+       this.viewModel.failureNotifications.add(notification)
     }
 
     @Override

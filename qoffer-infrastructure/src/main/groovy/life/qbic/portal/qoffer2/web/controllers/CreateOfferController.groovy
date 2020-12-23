@@ -1,5 +1,6 @@
 package life.qbic.portal.qoffer2.web.controllers
 
+import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
@@ -18,6 +19,7 @@ import life.qbic.portal.portlet.offers.create.CreateOfferInput
  * @since: 0.1.0
  *
  */
+@Log4j2
 class CreateOfferController {
 
     private final CreateOfferInput input
@@ -36,16 +38,18 @@ class CreateOfferController {
      * @param customer The customer for whom the offer is created
      * @param manager The project manager who is managing this project
      * @param items The product items listed on the offer
-     * @param totalPrice The total price for the offer
      * @param customerAffiliation The affiliation of the customer for this specific offer
      */
-    void createOffer(String projectTitle, String projectDescription, Customer customer, ProjectManager manager, List<ProductItem> items, double totalPrice, Affiliation customerAffiliation){
-        try {
-            Offer offer = new Offer.Builder(customer,manager,projectDescription,projectTitle,items,customerAffiliation).totalPrice(totalPrice).build()
-            this.input.createOffer(offer)
-        } catch(Exception ignored) {
-            throw new IllegalArgumentException("Could not create offer from provided arguments.")
-        }
+    void createOffer(String projectTitle, String projectDescription, Customer customer, ProjectManager manager, List<ProductItem> items, Affiliation customerAffiliation){
+        Offer offer = new Offer.Builder(
+                    customer,
+                    manager,
+                    projectDescription,
+                    projectTitle,
+                    customerAffiliation)
+                    .items(items)
+                    .build()
+        this.input.createOffer(offer)
     }
 
     /**
