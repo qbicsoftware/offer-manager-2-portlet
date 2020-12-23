@@ -88,7 +88,10 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
                     .netPrice(offer.getTotalNetPrice())
                     .taxes(offer.getTaxCosts())
                     .overheads(offer.getOverheadSum())
-                    .totalPrice(offer.getTotalCosts()).build()
+                    .totalPrice(offer.getTotalCosts())
+                    .modificationDate(offer.modificationDate)
+                    .expirationDate(offer.expirationDate)
+                    .build()
         }
 
         static Offer buildOfferForCostCalculation(List<ProductItem> items,

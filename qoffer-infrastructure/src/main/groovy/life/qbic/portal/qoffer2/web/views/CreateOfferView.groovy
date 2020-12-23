@@ -158,8 +158,13 @@ class CreateOfferView extends FormLayout{
             navigationView.showPreviousStep()
         })
         this.overviewView.save.addClickListener({
-            controller.createOffer(view.projectTitle, view.projectDescription,view.customer,view.projectManager,
-                    getProductItems(view.productItems),view.offerPrice,view.customerAffiliation)
+            controller.createOffer(
+                    view.projectTitle,
+                    view.projectDescription,
+                    view.customer,
+                    view.projectManager,
+                    getProductItems(view.productItems),
+                    view.customerAffiliation)
         })
         this.createCustomerView.createAffiliationButton.addClickListener({
             viewHistory.loadNewView(createAffiliationView)
