@@ -7,6 +7,7 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliationDataSource
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliationsDataSource
@@ -448,12 +449,18 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
         personId = result.getInt(1)
       }
     }
+    if (personId == -1) {
+      def msg = "Could not find ${person.firstName} ${person.lastName} " +
+              "(${person.emailAddress})."
+      log.error(msg)
+      throw new DatabaseQueryException(msg)
+    }
     return personId
   }
 
   /**
-   * List all available affiliations.
-   * @return A list of affiliations
+   * List all available customers.
+   * @return A list of customers
    */
   List<Customer> fetchAllCustomers() {
     List<Customer> customers = []
@@ -473,6 +480,30 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       }
     }
     return customers
+  }
+
+  /**
+   * List all available project managers.
+   * @return A list of project managers
+   */
+  List<ProjectManager> fetchAllProjectManagers() {
+    List<ProjectManager> pms = []
+    String query = "SELECT * from person"
+    Connection connection = connectionProvider.connect()
+    connection.withCloseable {
+      def preparedStatement = it.prepareStatement(query)
+      ResultSet resultSet = preparedStatement.executeQuery()
+      while(resultSet.next()) {
+        def personId = resultSet.getInt(1)
+        def firstName = resultSet.getString('first_name')
+        def lastName = resultSet.getString('last_name')
+        def email = resultSet.getString('email')
+        def customerBuilder = new ProjectManager.Builder(firstName, lastName, email)
+        def affiliations = getAffiliationForPersonId(personId)
+        pms.add(customerBuilder.affiliations(affiliations).build())
+      }
+    }
+    return pms
   }
 
   private List<Affiliation> getAffiliationForPersonId(int personId) {
