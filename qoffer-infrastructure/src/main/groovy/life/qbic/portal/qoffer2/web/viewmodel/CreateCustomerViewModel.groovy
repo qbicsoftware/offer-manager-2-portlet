@@ -2,7 +2,7 @@ package life.qbic.portal.qoffer2.web.viewmodel
 
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.portal.qoffer2.services.CustomerService
+import life.qbic.portal.qoffer2.services.PersonService
 
 /**
  * A ViewModel holding data that is presented in a
@@ -31,9 +31,9 @@ class CreateCustomerViewModel {
     @Bindable Boolean emailValid
     @Bindable Boolean affiliationValid
 
-    final CustomerService customerService
+    final PersonService customerService
 
-    CreateCustomerViewModel(CustomerService customerService) {
+    CreateCustomerViewModel(PersonService customerService) {
         this.customerService = customerService
     }
 }
