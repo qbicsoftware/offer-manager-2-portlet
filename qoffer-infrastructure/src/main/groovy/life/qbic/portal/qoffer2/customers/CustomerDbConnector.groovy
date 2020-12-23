@@ -448,6 +448,10 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
         personId = result.getInt(1)
       }
     }
+    if (personId == -1) {
+      throw new DatabaseQueryException("Could not find ${person.firstName} ${person.lastName} " +
+              "(${person.emailAddress}).")
+    }
     return personId
   }
 
