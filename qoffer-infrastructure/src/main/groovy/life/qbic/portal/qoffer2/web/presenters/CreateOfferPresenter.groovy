@@ -33,8 +33,8 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
 
     @Override
     void createdNewOffer(Offer createdOffer) {
-        //TODO implement
-        throw new Exception("Method not implemented.")
+        this.viewModel.successNotifications.add("Created offer with title\n" +
+                "\'${createdOffer.projectTitle}\'\nsuccessfully")
     }
 
     @Override

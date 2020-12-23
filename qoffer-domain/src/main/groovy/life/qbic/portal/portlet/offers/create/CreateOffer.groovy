@@ -45,7 +45,9 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
                 .build()
 
         try {
-            dataSource.store(Converter.convertOfferToDTO(finalizedOffer))
+            final offer = Converter.convertOfferToDTO(finalizedOffer)
+            dataSource.store(offer)
+            output.createdNewOffer(offer)
         } catch (DatabaseQueryException e) {
             output.failNotification(e.message)
         } catch (Exception ignored) {
