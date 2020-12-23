@@ -4,9 +4,8 @@ import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.portal.qoffer2.events.Subscription
-import life.qbic.portal.qoffer2.services.CustomerService
+import life.qbic.datamodel.dtos.general.Person
+import life.qbic.portal.qoffer2.services.PersonService
 
 /**
  * A ViewModel holding data that is presented in a
@@ -30,7 +29,7 @@ class CreateOfferViewModel {
     List<ProductItemViewModel> storageProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
 
     List<Customer> foundCustomers = []
-    List<ProjectManager> projectManagers = []
+    List<ProjectManager> availableProjectManagers = []
 
 
     @Bindable String projectTitle
@@ -46,17 +45,21 @@ class CreateOfferViewModel {
     @Bindable double overheads = 0
     @Bindable double totalPrice = 0
 
-    final private CustomerService customerService
+    final private PersonService personService
 
-    CreateOfferViewModel(CustomerService customerService) {
-        this.customerService = customerService
-        this.customerService.eventEmitter.register( (List<Customer> customerList) -> {
+    CreateOfferViewModel(PersonService personService) {
+        this.personService = personService
+        this.foundCustomers = personService.getCustomers()
+        this.availableProjectManagers = personService.getProjectManagers()
+        this.personService.customerEvent.register( (List<Customer> customerList) -> {
             this.foundCustomers = customerList
         })
-        this.customerService.reloadResources()
+        this.personService.projectManagerEvent.register((List<ProjectManager> managerList) -> {
+            this.availableProjectManagers = managerList
+        })
     }
 
     void refresh() {
-        this.customerService.reloadResources()
+        this.personService.reloadResources()
     }
 }

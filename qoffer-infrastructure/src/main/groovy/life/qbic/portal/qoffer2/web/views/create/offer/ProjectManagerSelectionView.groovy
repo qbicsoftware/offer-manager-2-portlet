@@ -5,11 +5,9 @@ import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Label
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProjectManager
-
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 
 /**
@@ -26,8 +24,6 @@ class ProjectManagerSelectionView extends VerticalLayout{
 
     private final CreateOfferViewModel viewModel
 
-    private final List<ProjectManager> foundProjectManagers
-
     Button next
     Button previous
 
@@ -36,12 +32,6 @@ class ProjectManagerSelectionView extends VerticalLayout{
 
     ProjectManagerSelectionView(CreateOfferViewModel viewModel){
         this.viewModel = viewModel
-
-        ProjectManager manager = new ProjectManager.Builder("John","Doe","john.do@web.de").build()
-        ProjectManager manager2 = new ProjectManager.Builder("Janet","Doe","janet.do@web.de").build()
-
-        foundProjectManagers = [manager,manager2]
-
         initLayout()
         setupDataProvider()
         generateCustomerGrid()
@@ -74,7 +64,7 @@ class ProjectManagerSelectionView extends VerticalLayout{
      * This method adds the retrieved Customer Information to the Customer grid
      */
     private void setupDataProvider() {
-        this.projectManagerGrid.setItems(foundProjectManagers)
+        this.projectManagerGrid.setItems(viewModel.availableProjectManagers)
     }
 
     /**

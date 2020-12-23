@@ -17,13 +17,12 @@ import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.portlet.customers.search.SearchCustomer
 import life.qbic.portal.portlet.offers.create.CreateOffer
 import life.qbic.portal.portlet.products.ListProducts
-import life.qbic.portal.qoffer2.events.Subscription
 import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.products.ProductsDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import life.qbic.portal.qoffer2.services.AffiliationService
-import life.qbic.portal.qoffer2.services.CustomerService
+import life.qbic.portal.qoffer2.services.PersonService
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
@@ -103,7 +102,7 @@ class DependencyManager {
     private PortletView portletView
     private ConfigurationManager configurationManager
 
-    private CustomerService customerService
+    private PersonService customerService
     private AffiliationService affiliationService
 
     /**
@@ -163,7 +162,7 @@ class DependencyManager {
     }
 
     private void setupServices() {
-        this.customerService = new CustomerService(customerDbConnector)
+        this.customerService = new PersonService(customerDbConnector)
         this.affiliationService = new AffiliationService(customerDbConnector)
     }
 
