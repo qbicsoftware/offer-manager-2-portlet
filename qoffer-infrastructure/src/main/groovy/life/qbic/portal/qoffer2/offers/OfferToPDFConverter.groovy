@@ -4,6 +4,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.portal.portlet.offers.OfferExporter
 import org.jsoup.nodes.Document
 import org.jsoup.parser.Parser
@@ -15,7 +16,7 @@ import java.nio.file.StandardCopyOption
 
 
 /**
- * Handles the convertion of offers to pdf files
+ * Handles the conversion of offers to pdf files
  *
  * Implements {@link OfferExporter} and is responsible for converting an offer into PDF Format
  *
@@ -103,9 +104,23 @@ class OfferToPDFConverter implements OfferExporter{
                 customer.lastName))
         htmlContent.getElementById("cOrganisation").text(affiliation.organisation)
         htmlContent.getElementById("cStreet").text(affiliation.street)
+        htmlContent.getElementById("cPostalCode").text(affiliation.postalCode)
+        htmlContent.getElementById("cCity").text(affiliation.city)
+        htmlContent.getElementById("cCountry").text(affiliation.country)
     }
 
-    void setManagerInformation() {}
+    void setManagerInformation() {
+        final ProjectManager pm = offer.projectManager
+        final Affiliation affiliation = pm.affiliations.get(0)
+        htmlContent.getElementById("pmName").text(String.format(
+                "%s %s %s",
+                pm.title,
+                pm.firstName,
+                pm.lastName))
+        htmlContent.getElementById("pmStreet").text(affiliation.street)
+        htmlContent.getElementById("pmCity").text("${affiliation.postalCode} ${affiliation.city}")
+        htmlContent.getElementById("pmEmail").text(pm.emailAddress)
+    }
 
     void setSelectedItems() {}
 
