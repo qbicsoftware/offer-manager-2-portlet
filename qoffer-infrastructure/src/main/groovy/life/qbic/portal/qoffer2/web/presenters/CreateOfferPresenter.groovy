@@ -9,7 +9,7 @@ import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.portal.portlet.offers.create.CreateOfferOutput
 import life.qbic.portal.portlet.products.ListProductsOutput
-
+import life.qbic.portal.qoffer2.services.OfferService
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
@@ -25,8 +25,10 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
 
     private final ViewModel viewModel
     private final CreateOfferViewModel createOfferViewModel
+    private final OfferService offerService
 
-    CreateOfferPresenter(ViewModel viewModel, CreateOfferViewModel createOfferViewModel){
+    CreateOfferPresenter(ViewModel viewModel, CreateOfferViewModel createOfferViewModel,
+                         OfferService offerService){
         this.viewModel = viewModel
         this.createOfferViewModel = createOfferViewModel
     }
@@ -35,6 +37,7 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
     void createdNewOffer(Offer createdOffer) {
         this.viewModel.successNotifications.add("Created offer with title\n" +
                 "\'${createdOffer.projectTitle}\'\nsuccessfully")
+        this.offerService.offerCreatedEvent.emit(createdOffer)
     }
 
     @Override

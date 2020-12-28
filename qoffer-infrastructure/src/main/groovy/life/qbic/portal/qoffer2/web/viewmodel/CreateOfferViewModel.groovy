@@ -3,6 +3,7 @@ package life.qbic.portal.qoffer2.web.viewmodel
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.qoffer2.services.PersonService
@@ -44,6 +45,8 @@ class CreateOfferViewModel {
     @Bindable double taxes = 0
     @Bindable double overheads = 0
     @Bindable double totalPrice = 0
+
+    @Bindable boolean downloadButtonActive = false
 
     final private PersonService personService
 

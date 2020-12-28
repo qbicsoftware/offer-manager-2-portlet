@@ -10,6 +10,7 @@ import com.vaadin.ui.Panel
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.portlet.offers.Currency
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
@@ -36,6 +37,7 @@ class OfferOverviewView extends VerticalLayout{
     Grid<ProductItemViewModel> itemGrid
     Button previous
     Button save
+    Button downloadOffer
 
     OfferOverviewView(CreateOfferViewModel viewModel){
         this.createOfferViewModel = viewModel
@@ -53,11 +55,16 @@ class OfferOverviewView extends VerticalLayout{
         this.save = new Button(VaadinIcons.SAFE)
         save.addStyleName(ValoTheme.LABEL_LARGE)
 
+        this.downloadOffer = new Button(VaadinIcons.DOWNLOAD)
+        downloadOffer.addStyleName(ValoTheme.LABEL_LARGE)
+        downloadOffer.setEnabled(createOfferViewModel.downloadButtonActive)
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(previous,save)
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(previous,save, downloadOffer)
         buttonLayout.setSizeFull()
         buttonLayout.setComponentAlignment(previous, Alignment.MIDDLE_LEFT)
         buttonLayout.setComponentAlignment(save, Alignment.MIDDLE_RIGHT)
+        buttonLayout.setComponentAlignment(downloadOffer, Alignment.MIDDLE_RIGHT)
 
         this.offerOverview = new Panel("Offer Details:")
 
@@ -166,5 +173,4 @@ class OfferOverviewView extends VerticalLayout{
             this.value = value
         }
     }
-
 }
