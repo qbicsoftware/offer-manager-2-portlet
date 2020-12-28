@@ -2,8 +2,12 @@ package life.qbic.portal.qoffer2;
 
 import com.vaadin.annotations.Theme;
 import com.vaadin.annotations.Widgetset;
+import com.vaadin.server.FileDownloader;
+import com.vaadin.server.StreamResource;
+import com.vaadin.server.StreamResource.StreamSource;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.shared.ui.ContentMode;
+import com.vaadin.ui.Button;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Layout;
@@ -11,6 +15,7 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import java.io.InputStream;
 import java.util.Properties;
+import life.qbic.portal.qoffer2.offers.OfferToPDFConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -79,8 +84,25 @@ public abstract class QBiCPortletUI extends UI {
     // add the portlet
     layout.addComponent(getPortletContent(request));
 
+    // TODO remove
+    createOfferDownloadButton(layout);
+
     addPortletInfo(layout);
     setContent(layout);
+  }
+
+  private void createOfferDownloadButton(VerticalLayout layout) {
+    final Button downloadButton = new Button("Download offer");
+    OfferToPDFConverter converter = new OfferToPDFConverter();
+    StreamResource myResource =
+        new StreamResource((StreamSource) () -> {
+          String text = "My image";
+
+          return converter.getHTMLOutputStream();
+        }, "mynewoffer.html");
+    FileDownloader fileDownloader = new FileDownloader(myResource);
+    fileDownloader.extend(downloadButton);
+    layout.addComponent(downloadButton);
   }
 
   @Override
