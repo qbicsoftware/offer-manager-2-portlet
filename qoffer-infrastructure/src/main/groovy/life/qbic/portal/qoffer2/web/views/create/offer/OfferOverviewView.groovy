@@ -1,10 +1,15 @@
 package life.qbic.portal.qoffer2.web.views.create.offer
 
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.server.ExternalResource
 import com.vaadin.server.FileDownloader
+import com.vaadin.server.Resource
 import com.vaadin.server.StreamResource
+import com.vaadin.server.ThemeResource
 import com.vaadin.ui.Alignment
+import com.vaadin.ui.BrowserFrame
 import com.vaadin.ui.Button
+import com.vaadin.ui.Embedded
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
@@ -168,8 +173,8 @@ class OfferOverviewView extends VerticalLayout{
         final def converter = new OfferToPDFConverter(offer)
         StreamResource offerResource =
                 new StreamResource((StreamResource.StreamSource res) -> {
-                    return converter.getHTMLOutputStream()
-                }, "myoffer.html")
+                    return converter.getArchiveOutputStream()
+                }, "myoffer.zip")
         FileDownloader fileDownloader = new FileDownloader(offerResource)
         fileDownloader.extend(downloadOffer)
         downloadOffer.setEnabled(true)

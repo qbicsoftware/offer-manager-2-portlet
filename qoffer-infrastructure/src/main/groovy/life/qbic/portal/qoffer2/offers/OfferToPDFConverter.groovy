@@ -13,6 +13,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.util.zip.ZipEntry
+import java.util.zip.ZipOutputStream
 
 
 /**
@@ -33,7 +35,13 @@ class OfferToPDFConverter implements OfferExporter{
 
     final private Document htmlContent
 
-    private Path createdOffer
+    final private Path createdOffer
+
+    final private Path createdOfferArchive
+
+    final private Path newOfferImage
+
+    final private Path newOfferStyle
 
     final private Path OFFER_HTML_TEMPLATE =
             Paths.get(getClass().getClassLoader()
@@ -48,33 +56,31 @@ class OfferToPDFConverter implements OfferExporter{
                     .getResource("offer-template/stylesheet.css")
                     .toURI())
 
-    OfferToPDFConverter(){
+    OfferToPDFConverter(Offer offer) {
+        this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.tempDir = Files.createTempDirectory("offer")
         this.createdOffer = Paths.get(tempDir.toString(), "offer.html")
+        this.createdOfferArchive = Paths.get(tempDir.toString(), "offer.zip")
+        this.newOfferImage = Paths.get(tempDir.toString(), "offer_header.png")
+        this.newOfferStyle = Paths.get(tempDir.toString(), "stylesheet.css")
         copyTemplate()
         this.htmlContent = Parser.xmlParser().parseInput(new File(this.createdOffer.toUri()).text, "")
+        fillTemplateWithOfferContent()
+        writeHTMLContentToFile()
+        createDownloadArchive()
     }
 
     private void copyTemplate() {
-        Path newOfferImage = Paths.get(tempDir.toString(), "offer_header.png")
-        Path newOfferStyle = Paths.get(tempDir.toString(), "stylesheet.css")
         Files.copy(OFFER_HTML_TEMPLATE, createdOffer, StandardCopyOption.REPLACE_EXISTING)
         Files.copy(OFFER_HEADER_IMAGE, newOfferImage, StandardCopyOption.REPLACE_EXISTING)
         Files.copy(OFFER_STYLESHEET, newOfferStyle, StandardCopyOption.REPLACE_EXISTING)
     }
 
-    private void writeContentToFile() {
+    private void writeHTMLContentToFile() {
         new File(this.createdOffer.toUri()).withWriter {
             it.write(this.htmlContent.toString())
             it.flush()
         }
-    }
-
-    OfferToPDFConverter(Offer offer) {
-        this()
-        this.offer = offer
-        fillTemplateWithOfferContent()
-        writeContentToFile()
     }
 
     private void fillTemplateWithOfferContent() {
@@ -85,8 +91,12 @@ class OfferToPDFConverter implements OfferExporter{
         setPrices()
     }
 
-    InputStream getHTMLOutputStream() {
-        return new BufferedInputStream(new FileInputStream(new File(this.createdOffer.toUri())))
+    /**
+     * Provides the offer resources (HTML + CSS) as ZIP-archive.
+     * @return The archived offer
+     */
+    InputStream getArchiveOutputStream() {
+        return new BufferedInputStream(new FileInputStream(new File(this.createdOfferArchive.toUri())))
     }
 
     void setProjectInformation() {
@@ -125,4 +135,29 @@ class OfferToPDFConverter implements OfferExporter{
     void setSelectedItems() {}
 
     void setPrices() {}
+
+    void createDownloadArchive() {
+        List<String> srcFiles = Arrays.asList(
+                createdOffer.toString(),
+                newOfferImage.toString(),
+                newOfferStyle.toString()
+        )
+        FileOutputStream fos = new FileOutputStream(createdOfferArchive.toString())
+        ZipOutputStream zipOut = new ZipOutputStream(fos)
+        for (String srcFile : srcFiles) {
+            File fileToZip = new File(srcFile)
+            FileInputStream fis = new FileInputStream(fileToZip)
+            ZipEntry zipEntry = new ZipEntry(fileToZip.getName())
+            zipOut.putNextEntry(zipEntry)
+
+            byte[] bytes = new byte[1024]
+            int length;
+            while((length = fis.read(bytes)) >= 0) {
+                zipOut.write(bytes, 0, length)
+            }
+            fis.close()
+        }
+        zipOut.close()
+        fos.close()
+    }
 }

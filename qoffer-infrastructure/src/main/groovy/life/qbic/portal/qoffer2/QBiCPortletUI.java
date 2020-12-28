@@ -84,25 +84,8 @@ public abstract class QBiCPortletUI extends UI {
     // add the portlet
     layout.addComponent(getPortletContent(request));
 
-    // TODO remove
-    createOfferDownloadButton(layout);
-
     addPortletInfo(layout);
     setContent(layout);
-  }
-
-  private void createOfferDownloadButton(VerticalLayout layout) {
-    final Button downloadButton = new Button("Download offer");
-    OfferToPDFConverter converter = new OfferToPDFConverter();
-    StreamResource myResource =
-        new StreamResource((StreamSource) () -> {
-          String text = "My image";
-
-          return converter.getHTMLOutputStream();
-        }, "mynewoffer.html");
-    FileDownloader fileDownloader = new FileDownloader(myResource);
-    fileDownloader.extend(downloadButton);
-    layout.addComponent(downloadButton);
   }
 
   @Override
