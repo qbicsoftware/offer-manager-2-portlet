@@ -1,6 +1,8 @@
 package life.qbic.portal.qoffer2.web.views.create.offer
 
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.server.FileDownloader
+import com.vaadin.server.StreamResource
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
@@ -13,6 +15,8 @@ import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.portlet.offers.Currency
+import life.qbic.portal.qoffer2.offers.OfferToPDFConverter
+import life.qbic.portal.qoffer2.services.OfferService
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 
@@ -39,10 +43,12 @@ class OfferOverviewView extends VerticalLayout{
     Button save
     Button downloadOffer
 
-    OfferOverviewView(CreateOfferViewModel viewModel){
+    OfferOverviewView(CreateOfferViewModel viewModel, OfferService service){
         this.createOfferViewModel = viewModel
-
         initLayout()
+        service.offerCreatedEvent.register((Offer offer) -> {
+            addOfferResource(offer)
+        })
     }
 
     /**
@@ -57,7 +63,7 @@ class OfferOverviewView extends VerticalLayout{
 
         this.downloadOffer = new Button(VaadinIcons.DOWNLOAD)
         downloadOffer.addStyleName(ValoTheme.LABEL_LARGE)
-        downloadOffer.setEnabled(createOfferViewModel.downloadButtonActive)
+        downloadOffer.setEnabled(false)
 
 
         HorizontalLayout buttonLayout = new HorizontalLayout(previous,save, downloadOffer)
@@ -156,6 +162,17 @@ class OfferOverviewView extends VerticalLayout{
         panel.setContent(gridLayout)
 
         return panel
+    }
+
+    private void addOfferResource(Offer offer) {
+        final def converter = new OfferToPDFConverter(offer)
+        StreamResource offerResource =
+                new StreamResource((StreamResource.StreamSource res) -> {
+                    return converter.getHTMLOutputStream()
+                }, "myoffer.html")
+        FileDownloader fileDownloader = new FileDownloader(offerResource)
+        fileDownloader.extend(downloadOffer)
+        downloadOffer.setEnabled(true)
     }
 
     /*

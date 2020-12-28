@@ -46,8 +46,6 @@ class CreateOfferViewModel {
     @Bindable double overheads = 0
     @Bindable double totalPrice = 0
 
-    @Bindable boolean downloadButtonActive = false
-
     final private PersonService personService
 
     CreateOfferViewModel(PersonService personService) {

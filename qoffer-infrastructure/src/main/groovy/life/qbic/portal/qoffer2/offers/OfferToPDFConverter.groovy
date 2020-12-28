@@ -1,6 +1,8 @@
 package life.qbic.portal.qoffer2.offers
 
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.portlet.offers.OfferExporter
 import org.jsoup.nodes.Document
@@ -46,12 +48,10 @@ class OfferToPDFConverter implements OfferExporter{
                     .toURI())
 
     OfferToPDFConverter(){
-        this.offer = null
         this.tempDir = Files.createTempDirectory("offer")
         this.createdOffer = Paths.get(tempDir.toString(), "offer.html")
         copyTemplate()
         this.htmlContent = Parser.xmlParser().parseInput(new File(this.createdOffer.toUri()).text, "")
-        makeExampleManipulation()
     }
 
     private void copyTemplate() {
@@ -62,18 +62,52 @@ class OfferToPDFConverter implements OfferExporter{
         Files.copy(OFFER_STYLESHEET, newOfferStyle, StandardCopyOption.REPLACE_EXISTING)
     }
 
-    private void makeExampleManipulation() {
-        this.htmlContent.getElementById("project-title").text("My new awesome project")
+    private void writeContentToFile() {
         new File(this.createdOffer.toUri()).withWriter {
             it.write(this.htmlContent.toString())
+            it.flush()
         }
     }
 
     OfferToPDFConverter(Offer offer) {
+        this()
         this.offer = offer
+        fillTemplateWithOfferContent()
+        writeContentToFile()
+    }
+
+    private void fillTemplateWithOfferContent() {
+        setProjectInformation()
+        setCustomerInformation()
+        setManagerInformation()
+        setSelectedItems()
+        setPrices()
     }
 
     InputStream getHTMLOutputStream() {
         return new BufferedInputStream(new FileInputStream(new File(this.createdOffer.toUri())))
     }
+
+    void setProjectInformation() {
+        htmlContent.getElementById("project-title").text(offer.projectTitle)
+        htmlContent.getElementById("project-objective").text(offer.projectDescription)
+    }
+
+    void setCustomerInformation() {
+        final Customer customer = offer.customer
+        final Affiliation affiliation = offer.selectedCustomerAffiliation
+        htmlContent.getElementById("cName").text(String.format(
+                "%s %s %s",
+                customer.title,
+                customer.firstName,
+                customer.lastName))
+        htmlContent.getElementById("cOrganisation").text(affiliation.organisation)
+        htmlContent.getElementById("cStreet").text(affiliation.street)
+    }
+
+    void setManagerInformation() {}
+
+    void setSelectedItems() {}
+
+    void setPrices() {}
 }

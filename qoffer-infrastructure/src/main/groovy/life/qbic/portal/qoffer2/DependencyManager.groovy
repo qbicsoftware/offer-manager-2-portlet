@@ -22,6 +22,7 @@ import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.products.ProductsDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
 import life.qbic.portal.qoffer2.services.AffiliationService
+import life.qbic.portal.qoffer2.services.OfferService
 import life.qbic.portal.qoffer2.services.PersonService
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
@@ -104,6 +105,7 @@ class DependencyManager {
 
     private PersonService customerService
     private AffiliationService affiliationService
+    private OfferService offerService
 
     /**
      * Public constructor.
@@ -154,6 +156,7 @@ class DependencyManager {
     private void setupServices() {
         this.customerService = new PersonService(customerDbConnector)
         this.affiliationService = new AffiliationService(customerDbConnector)
+        this.offerService = new OfferService()
     }
 
     private void setupViewModels() {
@@ -233,7 +236,8 @@ class DependencyManager {
         }
 
         try {
-            this.createOfferPresenter = new CreateOfferPresenter(this.viewModel, this.createOfferViewModel)
+            this.createOfferPresenter = new CreateOfferPresenter(this.viewModel,
+                    this.createOfferViewModel, this.offerService)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} setup", e)
         }
@@ -312,7 +316,14 @@ class DependencyManager {
 
         CreateOfferView createOfferView
         try {
-            createOfferView = new CreateOfferView(this.viewModel, this.createOfferViewModel,this.createOfferController,this.listProductsController, createCustomerView, createAffiliationView)
+            createOfferView = new CreateOfferView(
+                    this.viewModel,
+                    this.createOfferViewModel,
+                    this.createOfferController,
+                    this.listProductsController,
+                    this.createCustomerView,
+                    this.createAffiliationView,
+                    this.offerService)
         } catch (Exception e) {
             log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
             throw e

@@ -31,6 +31,7 @@ class CreateOfferPresenter implements CreateOfferOutput, ListProductsOutput{
                          OfferService offerService){
         this.viewModel = viewModel
         this.createOfferViewModel = createOfferViewModel
+        this.offerService = offerService
     }
 
     @Override
