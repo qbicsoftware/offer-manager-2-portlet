@@ -173,8 +173,8 @@ class OfferOverviewView extends VerticalLayout{
         final def converter = new OfferToPDFConverter(offer)
         StreamResource offerResource =
                 new StreamResource((StreamResource.StreamSource res) -> {
-                    return converter.getArchiveOutputStream()
-                }, "myoffer.zip")
+                    return converter.getOfferAsPdf()
+                }, "myoffer.pdf")
         FileDownloader fileDownloader = new FileDownloader(offerResource)
         fileDownloader.extend(downloadOffer)
         downloadOffer.setEnabled(true)

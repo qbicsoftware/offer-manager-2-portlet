@@ -15,6 +15,10 @@ import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import java.io.InputStream;
 import java.util.Properties;
+import life.qbic.datamodel.dtos.business.Affiliation;
+import life.qbic.datamodel.dtos.business.Customer;
+import life.qbic.datamodel.dtos.business.Offer;
+import life.qbic.datamodel.dtos.business.ProjectManager;
 import life.qbic.portal.qoffer2.offers.OfferToPDFConverter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -84,8 +88,29 @@ public abstract class QBiCPortletUI extends UI {
     // add the portlet
     layout.addComponent(getPortletContent(request));
 
+    // TODO remove
+    createOfferDownloadButton(layout);
+
     addPortletInfo(layout);
     setContent(layout);
+  }
+
+  private void createOfferDownloadButton(VerticalLayout layout) {
+    final Button downloadButton = new Button("Download offer");
+    final Affiliation testAffiliation = new Affiliation.Builder("", "", "", "").build();
+    Offer offer = new Offer.Builder(
+        new Customer.Builder("Test", "Test", "").build(),
+        new ProjectManager.Builder("Teest", "", "").affiliation(testAffiliation).build(),
+        "",
+        "",
+        testAffiliation
+    ).build();
+    OfferToPDFConverter converter = new OfferToPDFConverter(offer);
+    StreamResource myResource =
+        new StreamResource((StreamSource) converter::getOfferAsPdf, "mynewoffer.pdf");
+    FileDownloader fileDownloader = new FileDownloader(myResource);
+    fileDownloader.extend(downloadButton);
+    layout.addComponent(downloadButton);
   }
 
   @Override

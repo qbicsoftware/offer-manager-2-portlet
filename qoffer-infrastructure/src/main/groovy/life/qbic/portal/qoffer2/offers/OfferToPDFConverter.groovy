@@ -13,8 +13,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-import java.util.zip.ZipEntry
-import java.util.zip.ZipOutputStream
 
 
 /**
@@ -37,7 +35,7 @@ class OfferToPDFConverter implements OfferExporter{
 
     final private Path createdOffer
 
-    final private Path createdOfferArchive
+    final private Path createdOfferPdf
 
     final private Path newOfferImage
 
@@ -60,14 +58,18 @@ class OfferToPDFConverter implements OfferExporter{
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.tempDir = Files.createTempDirectory("offer")
         this.createdOffer = Paths.get(tempDir.toString(), "offer.html")
-        this.createdOfferArchive = Paths.get(tempDir.toString(), "offer.zip")
         this.newOfferImage = Paths.get(tempDir.toString(), "offer_header.png")
         this.newOfferStyle = Paths.get(tempDir.toString(), "stylesheet.css")
+        this.createdOfferPdf = Paths.get(tempDir.toString(), "offer.pdf")
         copyTemplate()
         this.htmlContent = Parser.xmlParser().parseInput(new File(this.createdOffer.toUri()).text, "")
         fillTemplateWithOfferContent()
         writeHTMLContentToFile()
-        createDownloadArchive()
+        generatePDF()
+    }
+
+    InputStream getOfferAsPdf() {
+        return new BufferedInputStream(new FileInputStream(new File(createdOfferPdf.toString())))
     }
 
     private void copyTemplate() {
@@ -91,20 +93,17 @@ class OfferToPDFConverter implements OfferExporter{
         setPrices()
     }
 
-    /**
-     * Provides the offer resources (HTML + CSS) as ZIP-archive.
-     * @return The archived offer
-     */
-    InputStream getArchiveOutputStream() {
-        return new BufferedInputStream(new FileInputStream(new File(this.createdOfferArchive.toUri())))
+    private void generatePDF() {
+        PdfPrinter pdfPrinter = new PdfPrinter(createdOffer)
+        pdfPrinter.print(createdOfferPdf)
     }
 
-    void setProjectInformation() {
+    private void setProjectInformation() {
         htmlContent.getElementById("project-title").text(offer.projectTitle)
         htmlContent.getElementById("project-objective").text(offer.projectDescription)
     }
 
-    void setCustomerInformation() {
+    private void setCustomerInformation() {
         final Customer customer = offer.customer
         final Affiliation affiliation = offer.selectedCustomerAffiliation
         htmlContent.getElementById("cName").text(String.format(
@@ -119,7 +118,7 @@ class OfferToPDFConverter implements OfferExporter{
         htmlContent.getElementById("cCountry").text(affiliation.country)
     }
 
-    void setManagerInformation() {
+    private void setManagerInformation() {
         final ProjectManager pm = offer.projectManager
         final Affiliation affiliation = pm.affiliations.get(0)
         htmlContent.getElementById("pmName").text(String.format(
@@ -136,28 +135,43 @@ class OfferToPDFConverter implements OfferExporter{
 
     void setPrices() {}
 
-    void createDownloadArchive() {
-        List<String> srcFiles = Arrays.asList(
-                createdOffer.toString(),
-                newOfferImage.toString(),
-                newOfferStyle.toString()
-        )
-        FileOutputStream fos = new FileOutputStream(createdOfferArchive.toString())
-        ZipOutputStream zipOut = new ZipOutputStream(fos)
-        for (String srcFile : srcFiles) {
-            File fileToZip = new File(srcFile)
-            FileInputStream fis = new FileInputStream(fileToZip)
-            ZipEntry zipEntry = new ZipEntry(fileToZip.getName())
-            zipOut.putNextEntry(zipEntry)
+    /**
+     * Small helper class to handle the HTML to PDF conversion.
+     */
+    class PdfPrinter {
 
-            byte[] bytes = new byte[1024]
-            int length;
-            while((length = fis.read(bytes)) >= 0) {
-                zipOut.write(bytes, 0, length)
-            }
-            fis.close()
+        final Path sourceFile
+
+        final String chromeAlias
+
+        PdfPrinter(Path sourceFile) {
+            this.sourceFile = sourceFile
+            this.chromeAlias = "chromium"
         }
-        zipOut.close()
-        fos.close()
+
+        PdfPrinter(Path sourceFile, String alias) {
+            this.sourceFile = sourceFile
+            this.chromeAlias = alias
+        }
+
+        void print(Path outputFile) {
+            final Path output = outputFile
+            println output.toString()
+            ProcessBuilder builder = new ProcessBuilder()
+            builder.command(chromeAlias,
+                    "--headless",
+                    "--disable-gpu",
+                    "--print-to-pdf-no-header",
+                    "--print-to-pdf=${output.toString()}",
+                    "${sourceFile}")
+            builder.directory(new File(sourceFile.getParent().toString()))
+            builder.redirectErrorStream(true)
+            Process process = builder.start()
+            process.waitFor()
+            process.getInputStream().eachLine {log.info(it)}
+            if (! new File(output.toString()).exists()) {
+                throw new RuntimeException("Offer PDF has not been generated.")
+            }
+        }
     }
 }
