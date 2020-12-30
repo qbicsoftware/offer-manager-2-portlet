@@ -8,6 +8,7 @@ import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
+import com.vaadin.ui.ProgressBar
 import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
@@ -33,7 +34,7 @@ class OverviewView extends VerticalLayout {
 
     final private Button downloadBtn
 
-    final private Label downloadSpinner
+    final private ProgressBar downloadSpinner
 
     private FileDownloader fileDownloader
 
@@ -41,7 +42,7 @@ class OverviewView extends VerticalLayout {
         this.model = model
         this.overviewGrid = new Grid<>()
         this.downloadBtn = new Button(VaadinIcons.DOWNLOAD)
-        this.downloadSpinner = new Label()
+        this.downloadSpinner = new ProgressBar()
         initLayout()
         setupDataProvider()
         setupGrid()
@@ -65,10 +66,15 @@ class OverviewView extends VerticalLayout {
         right component will be the offer download button.
          */
         final def overviewRow = new HorizontalLayout()
+        final def activityContainer = new VerticalLayout()
         downloadBtn.setStyleName(ValoTheme.BUTTON_LARGE)
         downloadBtn.setEnabled(false)
-        //downloadSpinner.setVisible(model.displaySpinner)
-        overviewRow.addComponents(overviewGrid, downloadBtn, downloadSpinner)
+        // Makes the progress bar a spinner
+        downloadSpinner.setIndeterminate(true)
+        downloadSpinner.setVisible(false)
+        activityContainer.addComponents(downloadBtn, downloadSpinner)
+        activityContainer.setMargin(false)
+        overviewRow.addComponents(overviewGrid, activityContainer)
         this.addComponent(overviewRow)
 
         overviewRow.setWidthFull()
@@ -130,7 +136,7 @@ class OverviewView extends VerticalLayout {
         @Override
         void run() {
             ui.access(() -> {
-                downloadSpinner.setValue("Loading...")
+                downloadSpinner.setVisible(true)
                 overviewGrid.setEnabled(false)
                 downloadBtn.setEnabled(false)
             })
@@ -139,7 +145,7 @@ class OverviewView extends VerticalLayout {
             createResourceForDownload()
 
             ui.access(() -> {
-                downloadSpinner.setValue("Complete")
+                downloadSpinner.setVisible(false)
                 overviewGrid.setEnabled(true)
                 downloadBtn.setEnabled(true)
                 ui.setPollInterval(-1)
