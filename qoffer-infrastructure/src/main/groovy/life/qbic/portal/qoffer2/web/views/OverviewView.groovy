@@ -67,7 +67,6 @@ class OverviewView extends VerticalLayout {
 
         overviewRow.setWidthFull()
         this.setWidthFull()
-        this.setMargin(false)
     }
 
     private void setupDataProvider() {
