@@ -8,9 +8,11 @@ import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
+import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
+import life.qbic.portal.portlet.offers.Offer
 import life.qbic.portal.qoffer2.shared.OfferOverview
 import life.qbic.portal.qoffer2.web.viewmodel.OfferOverviewModel
 
@@ -31,12 +33,15 @@ class OverviewView extends VerticalLayout {
 
     final private Button downloadBtn
 
+    final private Label downloadSpinner
+
     private FileDownloader fileDownloader
 
     OverviewView(OfferOverviewModel model) {
         this.model = model
         this.overviewGrid = new Grid<>()
         this.downloadBtn = new Button(VaadinIcons.DOWNLOAD)
+        this.downloadSpinner = new Label()
         initLayout()
         setupDataProvider()
         setupGrid()
@@ -62,7 +67,8 @@ class OverviewView extends VerticalLayout {
         final def overviewRow = new HorizontalLayout()
         downloadBtn.setStyleName(ValoTheme.BUTTON_LARGE)
         downloadBtn.setEnabled(false)
-        overviewRow.addComponents(overviewGrid, downloadBtn)
+        //downloadSpinner.setVisible(model.displaySpinner)
+        overviewRow.addComponents(overviewGrid, downloadBtn, downloadSpinner)
         this.addComponent(overviewRow)
 
         overviewRow.setWidthFull()
@@ -87,12 +93,10 @@ class OverviewView extends VerticalLayout {
         overviewGrid.addSelectionListener(
                 { selection ->
                     selection.firstSelectedItem.ifPresentOrElse({overview ->
-                        model.selectedOffer = Optional.of(overview)
-                        downloadBtn.setEnabled(true)
-                        createResourceForDownload()
-                    }, {
-                        model.selectedOffer = Optional.empty()
-                        downloadBtn.setEnabled(false)})
+                        UI.getCurrent().setPollInterval(50)
+                        downloadSpinner.setVisible(true)
+                        new LoadOfferInfoThread(UI.getCurrent(), overview).start()
+                    }, {})
                 })
     }
 
@@ -109,6 +113,37 @@ class OverviewView extends VerticalLayout {
     private void removeExistingResources() {
         if (fileDownloader) {
             downloadBtn.removeExtension(fileDownloader)
+        }
+    }
+
+    private class LoadOfferInfoThread extends Thread {
+
+        final private OfferOverview offerOverview
+
+        final private UI ui
+
+        LoadOfferInfoThread(UI ui, OfferOverview offerOverview) {
+            this.ui = ui
+            this.offerOverview = offerOverview
+        }
+
+        @Override
+        void run() {
+            ui.access(() -> {
+                downloadSpinner.setValue("Loading...")
+                overviewGrid.setEnabled(false)
+                downloadBtn.setEnabled(false)
+            })
+
+            model.setSelectedOffer(offerOverview)
+            createResourceForDownload()
+
+            ui.access(() -> {
+                downloadSpinner.setValue("Complete")
+                overviewGrid.setEnabled(true)
+                downloadBtn.setEnabled(true)
+                ui.setPollInterval(-1)
+            })
         }
     }
 }

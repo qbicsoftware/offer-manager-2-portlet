@@ -1,10 +1,12 @@
 package life.qbic.portal.qoffer2.web.viewmodel
 
+import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import life.qbic.portal.qoffer2.offers.OfferToPDFConverter
 import life.qbic.portal.qoffer2.services.OverviewService
 import life.qbic.portal.qoffer2.shared.OfferOverview
+import life.qbic.portal.qoffer2.web.views.create.offer.OfferOverviewView
 
 /**
  * Model for the offer overview view.
@@ -29,11 +31,17 @@ class OfferOverviewModel {
      */
     Optional<OfferOverview> selectedOffer
 
+    private Optional<Offer> offer
+
     private final OverviewService service
 
     private final OfferDbConnector connector
 
     private final ViewModel viewModel
+
+    private boolean downloadButtonActive
+
+    @Bindable boolean displaySpinner
 
     OfferOverviewModel(OverviewService service,
                        OfferDbConnector connector,
@@ -43,6 +51,16 @@ class OfferOverviewModel {
         this.offerOverviewList = service.getOfferOverviewList()
         this.selectedOffer = Optional.empty()
         this.viewModel = viewModel
+        this.downloadButtonActive = false
+        this.displaySpinner = false
+    }
+
+    void setSelectedOffer(OfferOverview selectedOffer) {
+        this.selectedOffer = Optional.ofNullable(selectedOffer)
+        this.downloadButtonActive = false
+        if (this.selectedOffer.isPresent()) {
+            this.offer = loadOfferInfo()
+        }
     }
 
     /**
@@ -51,7 +69,6 @@ class OfferOverviewModel {
      * @throws RuntimeException if the offer cannot be converted to PDF
      */
     InputStream getOfferAsPdf() throws RuntimeException {
-        Optional<Offer> offer = loadOfferInfo()
         offer.map({
             def converter = new OfferToPDFConverter(it)
             return converter.getOfferAsPdf()
