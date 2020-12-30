@@ -10,8 +10,6 @@ import life.qbic.portal.qoffer2.events.EventEmitter
  * used for inter component communication, when a new offer
  * source is available for download.
  *
- * <More detailed description - When to use, what it solves, etc.>
- *
  * @since 1.0.0
  */
 class OfferService implements Service {

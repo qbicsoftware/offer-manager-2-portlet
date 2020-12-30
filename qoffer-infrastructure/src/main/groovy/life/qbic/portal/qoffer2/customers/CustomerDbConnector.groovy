@@ -8,6 +8,7 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.general.CommonPerson
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliationDataSource
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliationsDataSource
@@ -538,7 +539,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     return affiliations
   }
 
-  private static AffiliationCategory determineAffiliationCategory(String value) {
+  static AffiliationCategory determineAffiliationCategory(String value) {
     def category
     switch(value.toLowerCase()) {
       case "internal":
@@ -557,4 +558,74 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     return category
   }
 
+  Customer getCustomer(int personPrimaryId) {
+    String query = "SELECT * FROM person WHERE id=?"
+    Connection connection = connectionProvider.connect()
+
+    connection.withCloseable {
+     PreparedStatement statement = it.prepareStatement(query)
+     statement.setInt(1, personPrimaryId)
+     ResultSet result = statement.executeQuery()
+     def person = null
+     while (result.next()) {
+
+       def firstName = result.getString("first_name")
+       def lastName = result.getString("last_name")
+       def email = result.getString("email")
+       def title = TITLE_FACTORY.getForString(result.getString("title"))
+       def affiliations = getAffiliationForPersonId(result.getInt("id"))
+       person = new Customer.Builder(firstName, lastName, email)
+               .affiliations(affiliations).title(title).build()
+     }
+     return person
+    }
+  }
+
+  ProjectManager getProjectManager(int personPrimaryId) {
+    String query = "SELECT * FROM person WHERE id=?"
+    Connection connection = connectionProvider.connect()
+
+    connection.withCloseable {
+      PreparedStatement statement = it.prepareStatement(query)
+      statement.setInt(1, personPrimaryId)
+      ResultSet result = statement.executeQuery()
+      def person = null
+      while (result.next()) {
+
+        def firstName = result.getString("first_name")
+        def lastName = result.getString("last_name")
+        def email = result.getString("email")
+        def title = TITLE_FACTORY.getForString(result.getString("title"))
+        def affiliations = getAffiliationForPersonId(result.getInt("id"))
+        person = new ProjectManager.Builder(firstName, lastName, email)
+                .affiliations(affiliations).title(title).build()
+      }
+      return person
+    }
+  }
+
+  Affiliation getAffiliation(int affiliationPrimaryId) {
+    String query = "SELECT * FROM affiliation WHERE id=?"
+    Connection connection = connectionProvider.connect()
+
+    connection.withCloseable {
+      PreparedStatement statement = it.prepareStatement(query)
+      statement.setInt(1, affiliationPrimaryId)
+      ResultSet result = statement.executeQuery()
+      def affiliation = null
+      while (result.next()) {
+
+        def organization = result.getString("organization")
+        def address_addition = result.getString("address_addition")
+        def street = result.getString("street")
+        def city = result.getString("city")
+        def postalCode = result.getString("postal_code")
+        def country = result.getString("country")
+        def category = CATEGORY_FACTORY.getForString(result.getString("category"))
+        affiliation = new Affiliation.Builder(organization, street, postalCode, city)
+          .country(country).addressAddition(address_addition).category(category).build()
+      }
+      return affiliation
+    }
+  }
 }
