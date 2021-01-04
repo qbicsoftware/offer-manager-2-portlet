@@ -1,5 +1,7 @@
 package life.qbic.portal.portlet.offers.update
 
+import life.qbic.datamodel.dtos.business.Offer
+
 
 /**
  * Output interface for the {@link life.qbic.portal.portlet.offers.update.UpdateOffer} use case
@@ -9,4 +11,9 @@ package life.qbic.portal.portlet.offers.update
  */
 interface UpdateOfferOutput {
 
+    /**
+     * Gets called, when an offer has been successfully updated.
+     * @param offer The updated offer
+     */
+    void onOfferUpdated(Offer offer)
 }
