@@ -1,6 +1,7 @@
 package life.qbic.portal.portlet.offers.update
 
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.portal.portlet.UseCaseFailure
 
 
 /**
@@ -9,7 +10,7 @@ import life.qbic.datamodel.dtos.business.Offer
  * @since: 1.0.0
  * @author: Tobias Koch
  */
-interface UpdateOfferOutput {
+interface UpdateOfferOutput extends UseCaseFailure {
 
     /**
      * Gets called, when an offer has been successfully updated.

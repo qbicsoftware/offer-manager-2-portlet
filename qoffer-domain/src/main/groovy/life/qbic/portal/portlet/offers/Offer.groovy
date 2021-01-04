@@ -3,11 +3,11 @@ package life.qbic.portal.portlet.offers
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
+import life.qbic.portal.portlet.offers.identifier.OfferId
 
 /**
  * Represents the Offer business model.
@@ -24,45 +24,45 @@ class Offer {
     /**
      * Date on which the offer was lastly modified
      */
-    final Date modificationDate
+    private Date modificationDate
     /**
      * The date on which the offer expires
      */
-    final Date expirationDate
+    private Date expirationDate
     /**
      * The customer for which this offer was created
      */
-    final Customer customer
+    private Customer customer
     /**
      * The QBiC project manager who was assigned to the project
      */
-    final ProjectManager projectManager
+    private ProjectManager projectManager
     /**
      * The title of the project
      */
-    final String projectTitle
+    private String projectTitle
     /**
      * A short description of the project
      */
-    final String projectDescription
+    private String projectDescription
     /**
      * A list of items for which the customer will be charged
      */
-    final List<ProductItem> items
+    private List<ProductItem> items
     /**
      * The identifier for the offer which makes it distinguishable from other offers
      */
-    final OfferId identifier
+    private OfferId identifier
     /**
      * The affiliation of the customer selected for this offer
      */
-    final Affiliation selectedCustomerAffiliation
+    private Affiliation selectedCustomerAffiliation
 
     /*
      * Holds the determined overhead derived from the
      * customer's affiliation.
      */
-    private final double overhead
+    private double overhead
 
     /*
      * Holds the current VAT rate
@@ -111,6 +111,13 @@ class Offer {
         Offer build() {
             return new Offer(this)
         }
+    }
+
+    /**
+     * Increases the version of the current offer.
+     */
+    void increaseVersion () {
+        this.identifier.increaseVersion()
     }
 
     private Offer(Builder builder) {

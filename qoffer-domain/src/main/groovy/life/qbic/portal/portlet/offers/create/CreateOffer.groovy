@@ -5,9 +5,9 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.portal.portlet.Constants
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
+import life.qbic.portal.portlet.offers.Converter
 import life.qbic.portal.portlet.offers.Offer
 
 /**
@@ -39,7 +39,7 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
                 offerContent.projectDescription,
                 offerContent.items,
                 offerContent.selectedCustomerAffiliation)
-                .identifier(identifier)
+                .identifier(Converter.buildOfferId(offerContent.identifier))
                 .expirationDate(new Date(2030,12,24)) //todo how to determine this?
                 .modificationDate(new Date())
                 .build()
@@ -87,40 +87,5 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
                 offer.getTaxCosts(),
                 offer.getOverheadSum(),
                 offer.getTotalCosts())
-    }
-
-    private static class Converter {
-        static life.qbic.datamodel.dtos.business.Offer convertOfferToDTO(Offer offer) {
-            new life.qbic.datamodel.dtos.business.Offer.Builder(
-                    offer.customer,
-                    offer.projectManager,
-                    offer.projectTitle,
-                    offer.projectDescription,
-                    offer.selectedCustomerAffiliation)
-                    .items(offer.getItems())
-                    .netPrice(offer.getTotalNetPrice())
-                    .taxes(offer.getTaxCosts())
-                    .overheads(offer.getOverheadSum())
-                    .totalPrice(offer.getTotalCosts())
-                    .modificationDate(offer.modificationDate)
-                    .expirationDate(offer.expirationDate)
-                    .build()
-        }
-
-        static Offer buildOfferForCostCalculation(List<ProductItem> items,
-                                                  Affiliation affiliation) {
-            final def dummyCustomer = new Customer.Builder("Nobody", "Nobody",
-                    "nobody@qbic.com").build()
-            final def dummyProjectManager = new ProjectManager.Builder("Nobody", "Nobody",
-                    "nobody@qbic.com").build()
-            new Offer.Builder(
-                    dummyCustomer,
-                    dummyProjectManager,
-                    "",
-                    "",
-                    items,
-                    affiliation).build()
-        }
-
     }
 }
