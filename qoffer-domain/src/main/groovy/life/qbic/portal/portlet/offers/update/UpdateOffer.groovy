@@ -1,5 +1,7 @@
 package life.qbic.portal.portlet.offers.update
 
+import life.qbic.datamodel.dtos.business.Offer
+
 /**
  * Update offer use case.
  *
@@ -14,5 +16,22 @@ package life.qbic.portal.portlet.offers.update
  * @since: 1.0.0
  * @author: Tobias Koch
  */
-class UpdateOffer {
+class UpdateOffer implements UpdateOfferInput {
+
+    final private UpdateOfferOutput output
+
+    final private UpdateOfferDataSource dataSource
+
+    UpdateOffer(UpdateOfferOutput output, UpdateOfferDataSource dataSource) {
+        this.output = output
+        this.dataSource = dataSource
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void update(Offer offer) {
+
+    }
 }
