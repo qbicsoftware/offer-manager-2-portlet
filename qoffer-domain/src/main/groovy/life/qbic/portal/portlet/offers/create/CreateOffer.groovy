@@ -3,12 +3,15 @@ package life.qbic.portal.portlet.offers.create
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.portlet.Constants
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.offers.Converter
 import life.qbic.portal.portlet.offers.Offer
+import life.qbic.portal.portlet.offers.identifier.OfferId
+import life.qbic.portal.portlet.offers.identifier.ProjectPart
+import life.qbic.portal.portlet.offers.identifier.RandomPart
+import life.qbic.portal.portlet.offers.identifier.Version
 
 /**
  * This class implements logic to create new offers.
@@ -39,7 +42,7 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
                 offerContent.projectDescription,
                 offerContent.items,
                 offerContent.selectedCustomerAffiliation)
-                .identifier(Converter.buildOfferId(offerContent.identifier))
+                .identifier(identifier)
                 .expirationDate(new Date(2030,12,24)) //todo how to determine this?
                 .modificationDate(new Date())
                 .build()
@@ -64,14 +67,14 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
      * @return
      */
     private static OfferId generateQuotationID(Customer customer){
-    //todo: do we want to have a person here? 
-    //todo: update the datamodellib
-        String projectConservedPart = customer.lastName.toLowerCase()
-        String randomPart = "abcd"
+        //todo: do we want to have a person here?
+        //todo: update the datamodellib
+        def randomPart = new RandomPart()
+        def projectConservedPart = new ProjectPart(customer.lastName.toLowerCase())
+        def version = new Version(1)
         //TODO make random ID part random
-        int version = 1
 
-        return new OfferId(projectConservedPart,randomPart,version)
+        return new OfferId(randomPart, projectConservedPart, version)
     }
 
     @Override

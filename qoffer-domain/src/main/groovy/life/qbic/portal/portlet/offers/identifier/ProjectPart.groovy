@@ -9,9 +9,21 @@ package life.qbic.portal.portlet.offers.identifier
  */
 class ProjectPart {
 
-    private String value
+    protected String value
 
     ProjectPart(String value) {
         this.value = value
+    }
+
+    ProjectPart(ProjectPart projectPart) {
+        this.value = projectPart.getRawValue()
+    }
+
+    protected getRawValue() {
+        this.value
+    }
+
+    String getValue() {
+        this.value
     }
 }

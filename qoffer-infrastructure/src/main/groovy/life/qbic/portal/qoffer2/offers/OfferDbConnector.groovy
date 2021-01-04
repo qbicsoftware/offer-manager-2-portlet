@@ -2,13 +2,10 @@ package life.qbic.portal.qoffer2.offers
 
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory
-import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.offers.create.CreateOfferDataSource
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
@@ -44,7 +41,8 @@ class OfferDbConnector implements CreateOfferDataSource{
     private static final AffiliationCategoryFactory CATEGORY_FACTORY = new AffiliationCategoryFactory()
     private static final AcademicTitleFactory TITLE_FACTORY = new AcademicTitleFactory()
 
-    private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (modificationDate, expirationDate, customerId, projectManagerId, projectTitle, projectDescription, totalPrice, customerAffiliationId)"
+    private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (offerId, " +
+            "modificationDate, expirationDate, customerId, projectManagerId, projectTitle, projectDescription, totalPrice, customerAffiliationId)"
 
 
     OfferDbConnector(ConnectionProvider connectionProvider, CustomerDbConnector customerDbConnector, ProductsDbConnector productsDbConnector){
@@ -87,22 +85,23 @@ class OfferDbConnector implements CreateOfferDataSource{
      * @return the id of the stored offer in the database
      */
     private int storeOffer(Offer offer, int projectManagerId, int customerId, int affiliationId){
-        String sqlValues = "VALUE(?,?,?,?,?,?,?,?)"
+        String sqlValues = "VALUE(?,?,?,?,?,?,?,?,?)"
         String queryTemplate = OFFER_INSERT_QUERY + " " + sqlValues
-
+        def identifier = offer.identifier
         List<Integer> generatedKeys = []
         Connection connection = connectionProvider.connect()
-
+        log.info("New offer with id: ${offer.identifier}")
         connection.withCloseable {
             PreparedStatement preparedStatement = it.prepareStatement(queryTemplate, Statement.RETURN_GENERATED_KEYS)
-            preparedStatement.setDate(1, new Date(offer.modificationDate.time))
-            preparedStatement.setDate(2, new Date(offer.expirationDate.time))
-            preparedStatement.setInt(3, customerId)
-            preparedStatement.setInt(4, projectManagerId)
-            preparedStatement.setString(5, offer.projectTitle)
-            preparedStatement.setString(6, offer.projectDescription)
-            preparedStatement.setDouble(7, offer.totalPrice)
-            preparedStatement.setInt(8, affiliationId)
+            preparedStatement.setString(1, offerIdToString(identifier))
+            preparedStatement.setDate(2, new Date(offer.modificationDate.time))
+            preparedStatement.setDate(3, new Date(offer.expirationDate.time))
+            preparedStatement.setInt(4, customerId)
+            preparedStatement.setInt(5, projectManagerId)
+            preparedStatement.setString(6, offer.projectTitle)
+            preparedStatement.setString(7, offer.projectDescription)
+            preparedStatement.setDouble(8, offer.totalPrice)
+            preparedStatement.setInt(9, affiliationId)
 
             preparedStatement.execute()
 
@@ -115,10 +114,14 @@ class OfferDbConnector implements CreateOfferDataSource{
         }
     }
 
+    static String offerIdToString(OfferId id) {
+        return "${id.getProjectConservedPart()}_${id.getRandomPart()}_${id.getVersion()}"
+    }
+
     List<OfferOverview> loadOfferOverview() {
         List<OfferOverview> offerOverviewList = []
 
-        String query = "SELECT modificationDate, projectTitle, " +
+        String query = "SELECT offerId, modificationDate, projectTitle, " +
                 "totalPrice, first_name, last_name, email\n" +
                 "FROM offer \n" +
                 "LEFT JOIN person \n" +
@@ -138,13 +141,22 @@ class OfferDbConnector implements CreateOfferDataSource{
                 def totalCosts = resultSet.getDouble("totalPrice")
                 def modificationDate = resultSet.getDate("modificationDate")
                 def customerName = "${customer.getFirstName()} ${customer.getLastName()}"
-                OfferOverview offerOverview = new OfferOverview(
+                def offerId = parseOfferId(resultSet.getString("offerId"))
+                OfferOverview offerOverview = new OfferOverview(offerId,
                         modificationDate,projectTitle, "-",
                         customerName, totalCosts)
                 offerOverviewList.add(offerOverview)
             }
         }
         return offerOverviewList
+    }
+
+    static OfferId parseOfferId(String offerId) {
+        def splitId = offerId.split("_")
+        def projectPart = splitId[0]
+        def randomPart = splitId[1]
+        def version = splitId[2]
+        return new OfferId(projectPart, randomPart, version)
     }
 
     Optional<Offer> getOffer(String title) {

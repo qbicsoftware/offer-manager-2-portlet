@@ -9,15 +9,24 @@ package life.qbic.portal.portlet.offers.identifier
  */
 class RandomPart {
 
-    private String value
+    protected String value
 
     RandomPart () {
         // TODO implement a real random part
         this.value = "abcd"
     }
 
+    RandomPart (RandomPart randomPart) {
+        // TODO implement a real random part
+        this.value = randomPart.getRawValue()
+    }
+
     RandomPart (String preAssignedValue) {
         this.value = preAssignedValue
+    }
+
+    protected getRawValue() {
+        return this.value
     }
 
     String getValue() {

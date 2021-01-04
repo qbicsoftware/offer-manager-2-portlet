@@ -188,6 +188,42 @@ class Offer {
         return (calculateNetPrice() + getOverheadSum()) * VAT
     }
 
+    Date getModificationDate() {
+        return modificationDate
+    }
+
+    Date getExpirationDate() {
+        return expirationDate
+    }
+
+    Customer getCustomer() {
+        return customer
+    }
+
+    ProjectManager getProjectManager() {
+        return projectManager
+    }
+
+    String getProjectTitle() {
+        return projectTitle
+    }
+
+    String getProjectDescription() {
+        return projectDescription
+    }
+
+    List<ProductItem> getItems() {
+        return items
+    }
+
+    OfferId getIdentifier() {
+        return identifier
+    }
+
+    Affiliation getSelectedCustomerAffiliation() {
+        return selectedCustomerAffiliation
+    }
+
     private double calculateNetPrice() {
         double netSum = 0.0
         for (item in items) {

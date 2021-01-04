@@ -88,6 +88,7 @@ class OverviewView extends VerticalLayout {
     private void setupGrid() {
         def dateColumn = overviewGrid.addColumn({ overview -> overview.getModificationDate() })
                 .setCaption("Date")
+        overviewGrid.addColumn({overview -> overview.offerId.getIdentifier()}).setCaption("Offer ID")
         overviewGrid.addColumn({overview -> overview.getProjectTitle()}).setCaption("Title")
         overviewGrid.addColumn({overview -> overview.getCustomer()}).setCaption("Customer")
         overviewGrid.addColumn({overview -> overview.getTotalPrice()}).setCaption("Total Price")

@@ -24,6 +24,7 @@ class Converter {
                 offer.projectTitle,
                 offer.projectDescription,
                 offer.selectedCustomerAffiliation)
+                .identifier(convertIdToDTO(offer.identifier))
                 .items(offer.getItems())
                 .netPrice(offer.getTotalNetPrice())
                 .taxes(offer.getTaxCosts())
@@ -54,5 +55,12 @@ class Converter {
         def projectPart = new ProjectPart(id.projectConservedPart)
         def version = new Version(id.version)
         return new OfferId(randomPart, projectPart, version)
+    }
+
+    static life.qbic.datamodel.dtos.business.OfferId convertIdToDTO(OfferId id) {
+        return new life.qbic.datamodel.dtos.business.OfferId(
+                id.getProjectPart().value,
+                id.getRandomPart().value,
+                id.getVersion().value)
     }
 }

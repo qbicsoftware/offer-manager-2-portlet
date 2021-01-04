@@ -1,4 +1,7 @@
 package life.qbic.portal.portlet.offers.identifier
+
+import groovy.transform.CompileStatic
+
 /**
  * <class short description - 1 Line!>
  *
@@ -6,18 +9,31 @@ package life.qbic.portal.portlet.offers.identifier
  *
  * @since <versiontag>
  */
+@CompileStatic
 class TomatoId {
 
-    protected RandomPart randomPart
+    private RandomPart randomPart
 
-    protected ProjectPart projectPart
+    private ProjectPart projectPart
 
-    protected Version version
+    private Version version
 
     TomatoId(RandomPart randomPart, ProjectPart projectPart, Version version) {
         this.randomPart = randomPart
         this.projectPart = projectPart
         this.version = version
+    }
+
+    RandomPart getRandomPart() {
+        return new RandomPart(randomPart)
+    }
+
+    ProjectPart getProjectPart() {
+        return new ProjectPart(projectPart)
+    }
+
+    Version getVersion() {
+        return new Version(version)
     }
 
     void increaseVersion() {

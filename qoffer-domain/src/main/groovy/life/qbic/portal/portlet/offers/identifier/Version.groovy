@@ -23,12 +23,16 @@ class Version {
         this.version = preAssignedVersion
     }
 
+    Version(String preAssignedVersion) {
+        this.version = Integer.parseInt(preAssignedVersion)
+    }
+
     protected int getRawValue() {
         return this.version
     }
 
     String getValue() {
-        return version.toString()
+        return version
     }
 
     void increaseVersion() {

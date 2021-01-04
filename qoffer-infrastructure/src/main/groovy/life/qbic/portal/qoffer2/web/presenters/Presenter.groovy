@@ -1,9 +1,7 @@
 package life.qbic.portal.qoffer2.web.presenters
 
-
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.portlet.customers.update.UpdateCustomerOutput
-import life.qbic.portal.portlet.offers.create.CreateOfferOutput
-import life.qbic.portal.portlet.offers.search.SearchOffersOutput
 import life.qbic.portal.portlet.offers.update.UpdateOfferOutput
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
@@ -26,12 +24,13 @@ class Presenter implements UpdateOfferOutput, UpdateCustomerOutput {
         this.viewModel = viewModel 
     }
 
-    void successNotification(String notification) {
-        viewModel.successNotifications.add(notification)
-    }
-
     @Override
     void failNotification(String notification) {
         viewModel.failureNotifications.add(notification)
+    }
+
+    @Override
+    void onOfferUpdated(Offer offer) {
+        throw new RuntimeException("Not yet implemented")
     }
 }
