@@ -2,7 +2,6 @@ package life.qbic.portal.qoffer2.web.presenters
 
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.portlet.customers.update.UpdateCustomerOutput
-import life.qbic.portal.portlet.offers.update.UpdateOfferOutput
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 /**
@@ -16,7 +15,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  * @author: Jennifer Bödker
  *
  */
-class Presenter implements UpdateOfferOutput, UpdateCustomerOutput {
+class Presenter implements UpdateCustomerOutput {
 
     final private ViewModel viewModel
 
