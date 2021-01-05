@@ -33,13 +33,15 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
     private final CreateOfferView createOfferView
     private final List<Component> featureViews
     private final OverviewView overviewView
+    private final CreateOfferView updateOfferView
 
     PortletView(ViewModel portletViewModel,
                 CreateCustomerView createCustomerView,
                 CreateAffiliationView createAffiliationView,
                 SearchCustomerView searchCustomerView,
                 CreateOfferView createOfferView,
-                OverviewView overviewView) {
+                OverviewView overviewView,
+                CreateOfferView updateOfferView) {
         super()
         this.portletViewModel = portletViewModel
         this.createCustomerView = createCustomerView
@@ -48,6 +50,7 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
         this.createOfferView = createOfferView
         this.featureViews = []
         this.overviewView = overviewView
+        this.updateOfferView = updateOfferView
         initLayout()
         registerListeners()
         setupFeatureViews()
@@ -65,7 +68,8 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
                 createCustomerView,
                 createAffiliationView,
                 createOfferView,
-                overviewView
+                overviewView,
+                updateOfferView
         ])
     }
 
@@ -91,6 +95,7 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
         verticalLayout.addComponent(this.createOfferView)
         verticalLayout.addComponents(this.createAffiliationView)
         verticalLayout.addComponent(this.overviewView)
+        verticalLayout.addComponent(this.updateOfferView)
 
         this.setSizeFull()
         this.addComponent(verticalLayout)
@@ -115,6 +120,11 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
                 portletViewModel.failureNotifications.remove(evt.newValue)
             }
         }
+
+        this.overviewView.updateOfferBtn.addClickListener({
+            hideAllFeatureViews()
+            this.updateOfferView.setVisible(true)
+        })
     }
 
     private static def showNotification(String message, Notification.Type type) {

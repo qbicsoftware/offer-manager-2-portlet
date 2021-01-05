@@ -167,6 +167,7 @@ class CreateOfferView extends FormLayout{
         })
         this.overviewView.save.addClickListener({
             controller.createOffer(
+                    view.offerId,
                     view.projectTitle,
                     view.projectDescription,
                     view.customer,

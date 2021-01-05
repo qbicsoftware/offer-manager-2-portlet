@@ -6,7 +6,6 @@ import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import life.qbic.portal.qoffer2.offers.OfferToPDFConverter
 import life.qbic.portal.qoffer2.services.OverviewService
 import life.qbic.portal.qoffer2.shared.OfferOverview
-import life.qbic.portal.qoffer2.web.views.create.offer.OfferOverviewView
 
 /**
  * Model for the offer overview view.
@@ -60,6 +59,14 @@ class OfferOverviewModel {
         this.downloadButtonActive = false
         if (this.selectedOffer.isPresent()) {
             this.offer = loadOfferInfo()
+        }
+    }
+
+    Offer getSelectedOffer() {
+        if(offer.isPresent()) {
+            return offer.get()
+        } else {
+            throw new RuntimeException("No offer is currently selected.")
         }
     }
 

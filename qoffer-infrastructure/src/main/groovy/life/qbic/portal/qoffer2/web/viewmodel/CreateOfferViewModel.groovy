@@ -3,9 +3,8 @@ package life.qbic.portal.qoffer2.web.viewmodel
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.qoffer2.services.PersonService
 
 /**
@@ -32,7 +31,7 @@ class CreateOfferViewModel {
     List<Customer> foundCustomers = []
     List<ProjectManager> availableProjectManagers = []
 
-
+    @Bindable OfferId offerId
     @Bindable String projectTitle
     @Bindable String projectDescription
     @Bindable Customer customer
@@ -50,8 +49,8 @@ class CreateOfferViewModel {
 
     CreateOfferViewModel(PersonService personService) {
         this.personService = personService
-        this.foundCustomers = personService.getCustomers()
         this.availableProjectManagers = personService.getProjectManagers()
+        this.foundCustomers = personService.getCustomers()
         this.personService.customerEvent.register( (List<Customer> customerList) -> {
             this.foundCustomers = customerList
         })
@@ -63,4 +62,6 @@ class CreateOfferViewModel {
     void refresh() {
         this.personService.reloadResources()
     }
+
+
 }

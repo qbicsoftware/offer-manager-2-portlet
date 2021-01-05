@@ -13,6 +13,7 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
+import life.qbic.portal.qoffer2.services.OfferUpdateService
 import life.qbic.portal.qoffer2.shared.OfferOverview
 import life.qbic.portal.qoffer2.web.viewmodel.OfferOverviewModel
 
@@ -33,15 +34,21 @@ class OverviewView extends VerticalLayout {
 
     final private Button downloadBtn
 
+    final Button updateOfferBtn
+
     final private ProgressBar downloadSpinner
 
     private FileDownloader fileDownloader
 
-    OverviewView(OfferOverviewModel model) {
+    final private OfferUpdateService offerUpdateService
+
+    OverviewView(OfferOverviewModel model, OfferUpdateService offerUpdateService) {
         this.model = model
         this.overviewGrid = new Grid<>()
         this.downloadBtn = new Button(VaadinIcons.DOWNLOAD)
+        this.updateOfferBtn = new Button(VaadinIcons.ARROW_CIRCLE_DOWN)
         this.downloadSpinner = new ProgressBar()
+        this.offerUpdateService = offerUpdateService
         initLayout()
         setupDataProvider()
         setupGrid()
@@ -68,10 +75,12 @@ class OverviewView extends VerticalLayout {
         final def activityContainer = new VerticalLayout()
         downloadBtn.setStyleName(ValoTheme.BUTTON_LARGE)
         downloadBtn.setEnabled(false)
+        updateOfferBtn.setStyleName(ValoTheme.BUTTON_LARGE)
+        updateOfferBtn.setEnabled(false)
         // Makes the progress bar a spinner
         downloadSpinner.setIndeterminate(true)
         downloadSpinner.setVisible(false)
-        activityContainer.addComponents(downloadBtn, downloadSpinner)
+        activityContainer.addComponents(downloadBtn, updateOfferBtn, downloadSpinner)
         activityContainer.setMargin(false)
         overviewRow.addComponents(overviewGrid, activityContainer)
         this.addComponent(overviewRow)
@@ -104,6 +113,9 @@ class OverviewView extends VerticalLayout {
                         new LoadOfferInfoThread(UI.getCurrent(), overview).start()
                     }, {})
                 })
+        updateOfferBtn.addClickListener({
+            offerUpdateService.offerForUpdateEvent.emit(model.getSelectedOffer())
+        })
     }
 
     private void createResourceForDownload() {
@@ -139,6 +151,7 @@ class OverviewView extends VerticalLayout {
                 downloadSpinner.setVisible(true)
                 overviewGrid.setEnabled(false)
                 downloadBtn.setEnabled(false)
+                updateOfferBtn.setEnabled(false)
             })
 
             model.setSelectedOffer(offerOverview)
@@ -148,6 +161,7 @@ class OverviewView extends VerticalLayout {
                 downloadSpinner.setVisible(false)
                 overviewGrid.setEnabled(true)
                 downloadBtn.setEnabled(true)
+                updateOfferBtn.setEnabled(true)
                 ui.setPollInterval(-1)
             })
         }
