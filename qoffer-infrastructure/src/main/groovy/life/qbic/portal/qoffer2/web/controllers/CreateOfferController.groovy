@@ -5,6 +5,7 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 
@@ -33,6 +34,7 @@ class CreateOfferController {
     /**
      * This method creates an offer based on the information provided from the view
      *
+     * @param offerId The current offer id, if available
      * @param projectTitle The title of the project
      * @param projectDescription The description of the project title
      * @param customer The customer for whom the offer is created
@@ -40,7 +42,14 @@ class CreateOfferController {
      * @param items The product items listed on the offer
      * @param customerAffiliation The affiliation of the customer for this specific offer
      */
-    void createOffer(String projectTitle, String projectDescription, Customer customer, ProjectManager manager, List<ProductItem> items, Affiliation customerAffiliation){
+    void createOffer(
+            OfferId offerId,
+            String projectTitle,
+            String projectDescription,
+            Customer customer,
+            ProjectManager manager,
+            List<ProductItem> items,
+            Affiliation customerAffiliation){
         Offer offer = new Offer.Builder(
                     customer,
                     manager,
@@ -48,6 +57,7 @@ class CreateOfferController {
                     projectTitle,
                     customerAffiliation)
                     .items(items)
+                    .identifier(offerId)
                     .build()
         this.input.createOffer(offer)
     }

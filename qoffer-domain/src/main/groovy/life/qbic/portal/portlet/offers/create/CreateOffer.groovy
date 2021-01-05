@@ -33,7 +33,20 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
 
     @Override
     void createOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
-        OfferId identifier = generateQuotationID(offerContent.customer)
+        /*
+        If no identifier is provided, we create a new identifier. Otherwise
+        we assume, that the customer updated an existing offer.
+         */
+        if (offerContent.identifier) {
+            updateExistingOffer(offerContent)
+        } else {
+            createNewOffer(offerContent)
+        }
+    }
+
+    private void updateExistingOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
+        OfferId identifier = Converter.buildOfferId(offerContent.identifier)
+        identifier.increaseVersion()
 
         Offer finalizedOffer = new Offer.Builder(
                 offerContent.customer,
@@ -43,10 +56,32 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
                 offerContent.items,
                 offerContent.selectedCustomerAffiliation)
                 .identifier(identifier)
-                .expirationDate(new Date(2030,12,24)) //todo how to determine this?
+                .expirationDate(new Date(2030,12,24))
                 .modificationDate(new Date())
                 .build()
 
+        storeOffer(finalizedOffer)
+    }
+
+    private void createNewOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
+        OfferId newOfferId = generateQuotationID(offerContent.customer)
+
+        Offer finalizedOffer = new Offer.Builder(
+                offerContent.customer,
+                offerContent.projectManager,
+                offerContent.projectTitle,
+                offerContent.projectDescription,
+                offerContent.items,
+                offerContent.selectedCustomerAffiliation)
+                .identifier(newOfferId)
+                .expirationDate(new Date(2030,12,24))
+                .modificationDate(new Date())
+                .build()
+
+        storeOffer(finalizedOffer)
+    }
+
+    private void storeOffer(Offer finalizedOffer) {
         try {
             final offer = Converter.convertOfferToDTO(finalizedOffer)
             dataSource.store(offer)
