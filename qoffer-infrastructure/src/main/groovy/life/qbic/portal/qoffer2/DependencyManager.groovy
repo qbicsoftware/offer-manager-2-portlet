@@ -168,7 +168,7 @@ class DependencyManager {
         this.customerService = new PersonService(customerDbConnector)
         this.affiliationService = new AffiliationService(customerDbConnector)
         this.offerService = new OfferService()
-        this.overviewService = new OverviewService(offerDbConnector)
+        this.overviewService = new OverviewService(offerDbConnector, offerService)
         this.offerUpdateService = new OfferUpdateService()
     }
 

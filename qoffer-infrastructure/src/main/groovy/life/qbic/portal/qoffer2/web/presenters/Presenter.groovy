@@ -1,6 +1,5 @@
 package life.qbic.portal.qoffer2.web.presenters
 
-import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.portlet.customers.update.UpdateCustomerOutput
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
@@ -26,10 +25,5 @@ class Presenter implements UpdateCustomerOutput {
     @Override
     void failNotification(String notification) {
         viewModel.failureNotifications.add(notification)
-    }
-
-    @Override
-    void onOfferUpdated(Offer offer) {
-        throw new RuntimeException("Not yet implemented")
     }
 }

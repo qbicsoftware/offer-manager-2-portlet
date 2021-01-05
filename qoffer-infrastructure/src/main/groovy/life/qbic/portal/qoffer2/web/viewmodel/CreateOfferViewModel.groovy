@@ -37,7 +37,7 @@ class CreateOfferViewModel {
     @Bindable Customer customer
     @Bindable Affiliation customerAffiliation
     @Bindable ProjectManager projectManager
-    @Bindable List<ProductItemViewModel> productItems
+    @Bindable List<ProductItemViewModel> productItems = []
     @Bindable double offerPrice
 
     @Bindable double netPrice = 0
@@ -62,6 +62,4 @@ class CreateOfferViewModel {
     void refresh() {
         this.personService.reloadResources()
     }
-
-
 }

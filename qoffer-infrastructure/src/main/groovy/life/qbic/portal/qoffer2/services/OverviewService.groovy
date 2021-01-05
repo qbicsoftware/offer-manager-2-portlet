@@ -19,13 +19,29 @@ class OverviewService implements Service {
 
     private final OfferDbConnector offerDbConnector
 
-    final EventEmitter<OfferOverview> updatedOverviewEvent
+    final private OfferService offerService
 
-    OverviewService(OfferDbConnector offerDbConnector) {
+    final EventEmitter<String> updatedOverviewEvent
+
+    OverviewService(OfferDbConnector offerDbConnector,
+                    OfferService offerService) {
         this.offerDbConnector = offerDbConnector
         this.updatedOverviewEvent = new EventEmitter<>()
+        this.offerService = offerService
         this.offerOverviewList = []
+        subscribeToNewOffers()
         reloadResources()
+    }
+
+    private void subscribeToNewOffers(){
+        /*
+        Whenever a new offer is created, we want
+        to update the offer overview content.
+         */
+        offerService.offerCreatedEvent.register({
+            reloadResources()
+            updatedOverviewEvent.emit("New overview content available!")
+        })
     }
 
     @Override

@@ -52,6 +52,14 @@ class OfferOverviewModel {
         this.viewModel = viewModel
         this.downloadButtonActive = false
         this.displaySpinner = false
+        subscribeToOverviewService()
+    }
+
+    private void subscribeToOverviewService() {
+        service.updatedOverviewEvent.register({
+            offerOverviewList.clear()
+            offerOverviewList.addAll(service.getOfferOverviewList())
+        })
     }
 
     void setSelectedOffer(OfferOverview selectedOffer) {

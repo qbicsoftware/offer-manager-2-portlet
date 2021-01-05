@@ -33,6 +33,7 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
     }
 
     private void loadData(Offer offer) {
+        this.offerId = offer.identifier
         this.projectTitle = offer.projectTitle
         this.projectDescription = offer.projectDescription
         this.productItems.addAll(offer.items.collect {
