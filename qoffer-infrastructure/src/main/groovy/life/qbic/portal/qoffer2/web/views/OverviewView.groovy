@@ -46,7 +46,7 @@ class OverviewView extends VerticalLayout {
         this.model = model
         this.overviewGrid = new Grid<>()
         this.downloadBtn = new Button(VaadinIcons.DOWNLOAD)
-        this.updateOfferBtn = new Button(VaadinIcons.ARROW_CIRCLE_DOWN)
+        this.updateOfferBtn = new Button(VaadinIcons.EDIT)
         this.downloadSpinner = new ProgressBar()
         this.offerUpdateService = offerUpdateService
         initLayout()
@@ -75,8 +75,10 @@ class OverviewView extends VerticalLayout {
         final def activityContainer = new VerticalLayout()
         downloadBtn.setStyleName(ValoTheme.BUTTON_LARGE)
         downloadBtn.setEnabled(false)
+        downloadBtn.setDescription("Download offer")
         updateOfferBtn.setStyleName(ValoTheme.BUTTON_LARGE)
         updateOfferBtn.setEnabled(false)
+        updateOfferBtn.setDescription("Update offer")
         // Makes the progress bar a spinner
         downloadSpinner.setIndeterminate(true)
         downloadSpinner.setVisible(false)

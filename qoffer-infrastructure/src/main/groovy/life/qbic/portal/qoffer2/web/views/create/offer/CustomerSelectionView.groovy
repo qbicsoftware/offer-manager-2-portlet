@@ -45,6 +45,10 @@ class CustomerSelectionView extends VerticalLayout{
     HorizontalLayout createAffiliationLayout
     Button createAffiliationButton
 
+    Label selectedCustomer
+
+    Label selectedAffiliation
+
     CustomerSelectionView(CreateOfferViewModel viewModel){
         this.viewModel = viewModel
         //this.searchCustomerView = searchCustomerView
@@ -70,6 +74,24 @@ class CustomerSelectionView extends VerticalLayout{
         affiliationLabelLayout.addComponent(affiliationLabel)
         affiliationLabelLayout.setComponentAlignment(affiliationLabel, Alignment.MIDDLE_LEFT)
 
+        /*
+        Provide a display the current selected customer with the selected affiliation
+         */
+        HorizontalLayout selectedCustomerOverview = new HorizontalLayout()
+
+        selectedCustomer = new Label(viewModel.customer?.lastName ?: "-")
+        selectedCustomer.setCaption("Selected Customer")
+        selectedCustomerOverview.addComponents(selectedCustomer)
+
+        // We also add some basic affiliation information in the overview
+        def affiliationInfo = "${viewModel.customerAffiliation?.organisation ?: "-"}"
+        selectedAffiliation = new Label(affiliationInfo)
+        selectedAffiliation.setCaption("Selected Affiliation")
+        selectedCustomerOverview.addComponents(selectedAffiliation)
+
+        /*
+        Add navigation elements
+         */
         addButtonsLayout = new HorizontalLayout()
         this.createCustomerButton = new Button("Create Customer", VaadinIcons.USER)
         createCustomerButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
@@ -96,7 +118,11 @@ class CustomerSelectionView extends VerticalLayout{
         this.affiliationGrid = new Grid<>()
         affiliationLayout = new HorizontalLayout(affiliationGrid)
 
-        this.addComponents(customerLayout, addButtonsLayout , buttonLayout)
+        this.addComponents(
+                selectedCustomerOverview,
+                customerLayout,
+                addButtonsLayout,
+                buttonLayout)
     }
 
     /**
@@ -168,6 +194,9 @@ class CustomerSelectionView extends VerticalLayout{
             Customer customer = customerGrid.getSelectedItems().getAt(0)
 
             viewModel.customer = customer
+            // We explicitly reset any existing selected affiliation, as the user
+            // must provide it again after changing the customer.
+            viewModel.customerAffiliation = null
 
             //todo do we need to clear the grid for another selection?
             affiliationGrid.setItems(affiliations)
@@ -181,8 +210,32 @@ class CustomerSelectionView extends VerticalLayout{
         affiliationGrid.addSelectionListener({
             Affiliation affiliation = affiliationGrid.getSelectedItems().getAt(0)
             viewModel.customerAffiliation = affiliation
+        })
 
-            next.setEnabled(true)
+        /*
+        Let's listen to changes in customer selections and update it in the
+        display, if the customer or affiliation selection has changed.
+         */
+        viewModel.addPropertyChangeListener({
+            if (it.propertyName.equals("customer")) {
+                def customerFullName =
+                        "${ viewModel.customer?.firstName ?: "" } " +
+                                "${viewModel.customer?.lastName ?: "" }"
+                selectedCustomer.setValue(customerFullName)
+            }
+            if (it.propertyName.equals("customerAffiliation")) {
+                def affiliationInfo = "${viewModel.customerAffiliation?.organisation ?: "-"}"
+                selectedAffiliation.setValue(affiliationInfo)
+            }
+            /*
+            We allow the user to continue with the offer,
+            if a customer and an affiliation has been selected.
+             */
+            if (viewModel.customer && viewModel.customerAffiliation) {
+                next.setEnabled(true)
+            } else {
+                next.setEnabled(false)
+            }
         })
     }
 }
