@@ -5,6 +5,7 @@ import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
+import com.vaadin.ui.Label
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProjectManager
@@ -30,6 +31,8 @@ class ProjectManagerSelectionView extends VerticalLayout{
     Grid<ProjectManager> projectManagerGrid
     HorizontalLayout projectManagerLayout
 
+    Label selectedProjectManager
+
     ProjectManagerSelectionView(CreateOfferViewModel viewModel){
         this.viewModel = viewModel
         initLayout()
@@ -42,6 +45,29 @@ class ProjectManagerSelectionView extends VerticalLayout{
      * Initializes the start layout for this view
      */
     private void initLayout(){
+        /*
+        We start with the header, that contains a descriptive
+        title of what the view is about.
+         */
+        final def title = new HorizontalLayout()
+        final def label = new Label("Select A Project Manager")
+        label.addStyleName(ValoTheme.LABEL_HUGE)
+        title.addComponent(label)
+        this.addComponent(title)
+
+        /*
+        Provide a display the current selected customer with the selected affiliation
+         */
+        HorizontalLayout selectedManagerOverview = new HorizontalLayout()
+        def managerFullName =
+                "${ viewModel.projectManager?.firstName ?: "" } " +
+                        "${viewModel.projectManager?.lastName ?: "" }"
+        selectedProjectManager =
+                new Label(viewModel.projectManager?.lastName ? managerFullName : "-")
+        selectedProjectManager.setCaption("Current Project Manager")
+        selectedManagerOverview.addComponents(selectedProjectManager)
+
+
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.addStyleName(ValoTheme.LABEL_LARGE)
         next.setEnabled(false)
@@ -57,7 +83,11 @@ class ProjectManagerSelectionView extends VerticalLayout{
         this.projectManagerGrid = new Grid<ProjectManager>()
         projectManagerLayout = new HorizontalLayout(projectManagerGrid)
 
-        this.addComponents(projectManagerLayout, buttonLayout)
+        this.addComponents(
+                selectedManagerOverview,
+                projectManagerLayout,
+                buttonLayout
+        )
     }
 
     /**
@@ -97,8 +127,27 @@ class ProjectManagerSelectionView extends VerticalLayout{
             ProjectManager projectManager = projectManagerGrid.getSelectedItems().getAt(0)
 
             viewModel.projectManager = projectManager
-            next.setEnabled(true)
         })
-    }
 
+        /*
+       Let's listen to changes to the project manager selection and update it in the
+       display, if the manager selection has changed.
+        */
+        viewModel.addPropertyChangeListener({
+            if (it.propertyName.equals("projectManager")) {
+                def projectManagerFullName =
+                        "${viewModel.projectManager?.firstName ?: ""} " +
+                                "${viewModel.projectManager?.lastName ?: ""}"
+                selectedProjectManager.setValue(projectManagerFullName)
+            }
+            /*
+            If a project manager has been selected, we can let the user continue
+            with the offer creation.
+             */
+            if (viewModel.projectManager){
+                next.setEnabled(true)
+            }
+        })
+
+    }
 }

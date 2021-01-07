@@ -41,6 +41,5 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
         this.projectManager = offer.projectManager
         this.productItems.addAll(offer.items.collect {
             new ProductItemViewModel(it.quantity, it.product)})
-
     }
 }

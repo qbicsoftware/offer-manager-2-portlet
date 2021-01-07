@@ -426,7 +426,7 @@ class SelectItemsView extends VerticalLayout{
             applyDataStorage.setEnabled(false)
         })
 
-        createOfferViewModel.addPropertyChangeListener({
+        createOfferViewModel.productItems.addPropertyChangeListener({
             if (createOfferViewModel.productItems) {
                 next.setEnabled(true)
             } else {

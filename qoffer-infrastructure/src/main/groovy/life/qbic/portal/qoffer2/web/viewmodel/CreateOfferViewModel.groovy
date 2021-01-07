@@ -37,7 +37,8 @@ class CreateOfferViewModel {
     @Bindable Customer customer
     @Bindable Affiliation customerAffiliation
     @Bindable ProjectManager projectManager
-    @Bindable List<ProductItemViewModel> productItems = []
+    ObservableList productItems = new ObservableList(new
+            ArrayList<ProductItemViewModel>())
     @Bindable double offerPrice
 
     @Bindable double netPrice = 0

@@ -49,6 +49,8 @@ class CustomerSelectionView extends VerticalLayout{
 
     Label selectedAffiliation
 
+    VerticalLayout affiliationSelectionContainer
+
     CustomerSelectionView(CreateOfferViewModel viewModel){
         this.viewModel = viewModel
         //this.searchCustomerView = searchCustomerView
@@ -75,18 +77,30 @@ class CustomerSelectionView extends VerticalLayout{
         affiliationLabelLayout.setComponentAlignment(affiliationLabel, Alignment.MIDDLE_LEFT)
 
         /*
+        We start with the header, that contains a descriptive
+        title of what the view is about.
+         */
+        final def title = new HorizontalLayout()
+        final def label = new Label("Select A Customer")
+        label.addStyleName(ValoTheme.LABEL_HUGE)
+        title.addComponent(label)
+        this.addComponent(title)
+
+        /*
         Provide a display the current selected customer with the selected affiliation
          */
         HorizontalLayout selectedCustomerOverview = new HorizontalLayout()
-
-        selectedCustomer = new Label(viewModel.customer?.lastName ?: "-")
-        selectedCustomer.setCaption("Selected Customer")
+        def customerFullName =
+                "${ viewModel.customer?.firstName ?: "" } " +
+                "${viewModel.customer?.lastName ?: "" }"
+        selectedCustomer = new Label(viewModel.customer?.lastName ? customerFullName : "-")
+        selectedCustomer.setCaption("Current Customer")
         selectedCustomerOverview.addComponents(selectedCustomer)
 
         // We also add some basic affiliation information in the overview
         def affiliationInfo = "${viewModel.customerAffiliation?.organisation ?: "-"}"
         selectedAffiliation = new Label(affiliationInfo)
-        selectedAffiliation.setCaption("Selected Affiliation")
+        selectedAffiliation.setCaption("Current Affiliation")
         selectedCustomerOverview.addComponents(selectedAffiliation)
 
         /*
@@ -118,11 +132,29 @@ class CustomerSelectionView extends VerticalLayout{
         this.affiliationGrid = new Grid<>()
         affiliationLayout = new HorizontalLayout(affiliationGrid)
 
+        createAffiliationLayout = new HorizontalLayout()
+        createAffiliationButton = new Button("Create Affiliation", VaadinIcons.OFFICE)
+        createAffiliationButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
+
+        createAffiliationLayout.addComponent(createAffiliationButton)
+        createAffiliationLayout.setComponentAlignment(createAffiliationButton, Alignment.MIDDLE_RIGHT)
+        createAffiliationLayout.setSizeFull()
+
+        affiliationSelectionContainer = new VerticalLayout()
+        affiliationSelectionContainer.addComponents(
+                affiliationLabelLayout,
+                affiliationLayout,
+                createAffiliationLayout)
+        affiliationSelectionContainer.setMargin(false)
+
         this.addComponents(
                 selectedCustomerOverview,
                 customerLayout,
                 addButtonsLayout,
+                affiliationSelectionContainer,
                 buttonLayout)
+
+        affiliationSelectionContainer.setVisible(false)
     }
 
     /**
@@ -172,13 +204,6 @@ class CustomerSelectionView extends VerticalLayout{
             //specify size of grid and layout
             affiliationLayout.setSizeFull()
             affiliationGrid.setSizeFull()
-            createAffiliationLayout = new HorizontalLayout()
-            createAffiliationButton = new Button("Create Affiliation", VaadinIcons.OFFICE)
-            createAffiliationButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
-
-            createAffiliationLayout.addComponent(createAffiliationButton)
-            createAffiliationLayout.setComponentAlignment(createAffiliationButton, Alignment.MIDDLE_RIGHT)
-            createAffiliationLayout.setSizeFull()
 
         } catch (Exception e) {
             new Exception("Unexpected exception in building the affiliation grid", e)
@@ -201,9 +226,10 @@ class CustomerSelectionView extends VerticalLayout{
             //todo do we need to clear the grid for another selection?
             affiliationGrid.setItems(affiliations)
 
-            this.addComponent(affiliationLabelLayout,2)
-            this.addComponent(affiliationGrid,3)
-            this.addComponent(createAffiliationLayout,4)
+            //this.addComponent(affiliationLabelLayout,2)
+            //this.addComponent(affiliationGrid,3)
+            //this.addComponent(createAffiliationLayout,4)
+            affiliationSelectionContainer.setVisible(true)
 
         })
 
