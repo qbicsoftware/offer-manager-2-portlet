@@ -87,6 +87,7 @@ class DependencyManager {
     private ListAffiliationsPresenter listAffiliationsPresenter
     private SearchCustomerPresenter searchCustomerPresenter
     private CreateOfferPresenter createOfferPresenter
+    private CreateOfferPresenter updateOfferPresenter
 
     private CustomerDbConnector customerDbConnector
     private OfferDbConnector offerDbConnector
@@ -97,6 +98,7 @@ class DependencyManager {
     private ListAffiliations listAffiliations
     private SearchCustomer searchCustomer
     private CreateOffer createOffer
+    private CreateOffer updateOffer
     private ListProducts listProducts
 
     private CreateCustomerController createCustomerController
@@ -104,6 +106,7 @@ class DependencyManager {
     private SearchCustomerController searchCustomerController
     private ListAffiliationsController listAffiliationsController
     private CreateOfferController createOfferController
+    private CreateOfferController updateOfferController
     private ListProductsController listProductsController
 
     private CreateCustomerView createCustomerView
@@ -268,6 +271,13 @@ class DependencyManager {
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} setup", e)
         }
+
+        try {
+            this.updateOfferPresenter = new CreateOfferPresenter(this.viewModel,
+                    this.updateOfferViewModel, this.offerService)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} setup", e)
+        }
     }
 
     private void setupUseCaseInteractors() {
@@ -275,6 +285,7 @@ class DependencyManager {
         this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbConnector)
         this.listAffiliations = new ListAffiliations(listAffiliationsPresenter, customerDbConnector)
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
+        this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
         this.listProducts = new ListProducts(productsDbConnector,createOfferPresenter)
         this.searchCustomer = new SearchCustomer(searchCustomerPresenter, customerDbConnector)
     }
@@ -305,6 +316,11 @@ class DependencyManager {
         }
         try {
             this.createOfferController = new CreateOfferController(this.createOffer,this.createOffer)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
+        }
+        try {
+            this.updateOfferController = new CreateOfferController(this.updateOffer,this.updateOffer)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
         }
@@ -361,7 +377,7 @@ class DependencyManager {
             updateOfferView = new CreateOfferView(
                     this.viewModel,
                     this.updateOfferViewModel,
-                    this.createOfferController,
+                    this.updateOfferController,
                     this.listProductsController,
                     this.createCustomerView,
                     this.createAffiliationView,
