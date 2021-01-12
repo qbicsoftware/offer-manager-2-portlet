@@ -6,9 +6,11 @@ import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.events.EventEmitter
 
 /**
- * Customer service that holds resources about customer and project manager information
- * and exposes an event emitter, that can be used to subscribe
- * to any update event of the underlying resource data.
+ * Customer service that holds resources about customer and project manager
+ *
+ * This service holds resources about customer and project manager information
+ * and exposes an event emitter, that can be used to subscribe to any update
+ * event of the underlying resource data.
  *
  * @since 1.0.0
  */

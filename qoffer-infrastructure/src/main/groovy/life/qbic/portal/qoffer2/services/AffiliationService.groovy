@@ -5,6 +5,8 @@ import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.events.EventEmitter
 
 /**
+ * Customer service that holds resources about available affiliations
+ *
  * Customer service that holds resources about available affiliation information
  * and exposes an event emitter, that can be used to subscribe
  * to any update event of the underlying affiliation resource data.
