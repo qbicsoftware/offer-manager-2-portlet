@@ -25,7 +25,6 @@ import life.qbic.portal.qoffer2.services.AffiliationService
 import life.qbic.portal.qoffer2.services.OfferService
 import life.qbic.portal.qoffer2.services.OverviewService
 import life.qbic.portal.qoffer2.services.PersonService
-import life.qbic.portal.qoffer2.shared.OfferOverview
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
@@ -107,7 +106,6 @@ class DependencyManager {
     private CreateAffiliationView createAffiliationView
     private PortletView portletView
     private ConfigurationManager configurationManager
-    private OverviewView overviewView
 
     private PersonService customerService
     private AffiliationService affiliationService
@@ -153,7 +151,6 @@ class DependencyManager {
             customerDbConnector = new CustomerDbConnector(DatabaseSession.getInstance())
             productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
             offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(), customerDbConnector, productsDbConnector)
-            println offerDbConnector.loadOfferOverview()
 
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
@@ -205,7 +202,7 @@ class DependencyManager {
             this.createOfferViewModel = new CreateOfferViewModel(customerService)
             //todo add affiliations, customers and project managers to the model
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
@@ -213,7 +210,7 @@ class DependencyManager {
             this.offerOverviewModel = new OfferOverviewModel(overviewService, offerDbConnector,
                     viewModel)
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
         }
     }
 
