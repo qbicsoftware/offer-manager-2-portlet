@@ -72,7 +72,8 @@ class OfferOverviewModel {
         offer.map({
             def converter = new OfferToPDFConverter(it)
             return converter.getOfferAsPdf()
-        }).orElseThrow(RuntimeException::new)
+        }).orElseThrow({new RuntimeException("The offer content seems to be empty, nothing to " +
+                "convert.")})
     }
 
     private Optional<Offer> loadOfferInfo() {
