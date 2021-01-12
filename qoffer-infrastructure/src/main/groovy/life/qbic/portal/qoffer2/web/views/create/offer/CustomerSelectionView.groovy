@@ -1,12 +1,17 @@
 package life.qbic.portal.qoffer2.web.views.create.offer
 
+import com.vaadin.data.provider.DataProvider
+import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.shared.ui.ValueChangeMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
+import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
@@ -14,6 +19,8 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
+import life.qbic.portal.qoffer2.web.views.GridUtils
+import org.apache.commons.lang3.StringUtils
 
 /**
  * This class generates a Layout in which the user
@@ -55,10 +62,11 @@ class CustomerSelectionView extends VerticalLayout{
         this.foundCustomerList = viewModel.foundCustomers
 
         initLayout()
-        setupDataProvider()
+        def customerDataProvider = setupCustomerDataProvider()
         generateCustomerGrid()
         generateAffiliationGrid()
         bindViewModel()
+        addFilters(customerDataProvider)
     }
 
     /**
@@ -102,8 +110,10 @@ class CustomerSelectionView extends VerticalLayout{
     /**
      * This method adds the retrieved Customer Information to the Customer grid
      */
-    private void setupDataProvider() {
-        this.customerGrid.setItems(foundCustomerList)
+    private ListDataProvider setupCustomerDataProvider() {
+        def customerListDataProvider = new ListDataProvider<>(foundCustomerList)
+        this.customerGrid.setDataProvider(customerListDataProvider)
+        return customerListDataProvider
     }
 
     /**
@@ -113,11 +123,14 @@ class CustomerSelectionView extends VerticalLayout{
      */
     private def generateCustomerGrid() {
         try {
-            this.customerGrid.addColumn({ customer -> customer.title }).setCaption("Title")
-            this.customerGrid.addColumn({ customer -> customer.firstName }).setCaption("First Name")
-            this.customerGrid.addColumn({ customer -> customer.lastName }).setCaption("Last Name")
-            this.customerGrid.addColumn({ customer -> customer.emailAddress }).setCaption("Email Address")
-            //this.customerGrid.addColumn({ customer -> customer.getAffiliations().toString() }).setCaption("Affiliation")
+            this.customerGrid.addColumn({ customer -> customer.title })
+                    .setCaption("Title").setId("title")
+            this.customerGrid.addColumn({ customer -> customer.firstName })
+                    .setCaption("First Name").setId("FirstName")
+            this.customerGrid.addColumn({ customer -> customer.lastName })
+                    .setCaption("Last Name").setId("LastName")
+            this.customerGrid.addColumn({ customer -> customer.emailAddress })
+                    .setCaption("Email Address").setId("EmailAddress")
 
             //specify size of grid and layout
             customerLayout.setSizeFull()
@@ -184,5 +197,18 @@ class CustomerSelectionView extends VerticalLayout{
 
             next.setEnabled(true)
         })
+    }
+
+    private void addFilters(ListDataProvider customerListDataProvider) {
+        HeaderRow customerFilterRow = customerGrid.appendHeaderRow()
+        GridUtils.setupColumnFilter(customerListDataProvider,
+                customerGrid.getColumn("FirstName"),
+                customerFilterRow)
+        GridUtils.setupColumnFilter(customerListDataProvider,
+                customerGrid.getColumn("LastName"),
+                customerFilterRow)
+        GridUtils.setupColumnFilter(customerListDataProvider,
+                customerGrid.getColumn("EmailAddress"),
+                customerFilterRow)
     }
 }
