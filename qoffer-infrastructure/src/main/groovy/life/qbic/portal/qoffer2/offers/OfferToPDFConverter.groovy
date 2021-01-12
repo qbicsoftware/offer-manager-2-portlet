@@ -29,15 +29,15 @@ class OfferToPDFConverter implements OfferExporter{
 
     final private Offer offer
 
-    final private Path tempDir
+   private final Path tempDir
 
-    final private Document htmlContent
+   private final Document htmlContent
 
     final private Path createdOffer
 
-    final private Path createdOfferPdf
+   private final Path createdOfferPdf
 
-    final private Path newOfferImage
+   private final Path newOfferImage
 
     final private Path newOfferStyle
 
@@ -61,7 +61,7 @@ class OfferToPDFConverter implements OfferExporter{
         this.newOfferImage = Paths.get(tempDir.toString(), "offer_header.png")
         this.newOfferStyle = Paths.get(tempDir.toString(), "stylesheet.css")
         this.createdOfferPdf = Paths.get(tempDir.toString(), "offer.pdf")
-        copyTemplate()
+        importTemplate()
         this.htmlContent = Parser.xmlParser().parseInput(new File(this.createdOffer.toUri()).text, "")
         fillTemplateWithOfferContent()
         writeHTMLContentToFile()
@@ -78,9 +78,9 @@ class OfferToPDFConverter implements OfferExporter{
         Files.copy(OFFER_STYLESHEET, newOfferStyle, StandardCopyOption.REPLACE_EXISTING)
     }
 
-    private void writeHTMLContentToFile() {
-        new File(this.createdOffer.toUri()).withWriter {
-            it.write(this.htmlContent.toString())
+    private void writeHTMLContentToFile(Path fileLocation, Document htmlContent) {
+        new File(fileLocation.toUri()).withWriter {
+            it.write(htmlContent.toString())
             it.flush()
         }
     }
@@ -131,9 +131,13 @@ class OfferToPDFConverter implements OfferExporter{
         htmlContent.getElementById("pmEmail").text(pm.emailAddress)
     }
 
-    void setSelectedItems() {}
+    void setSelectedItems() {
+    //TODO implement
+    }
 
-    void setPrices() {}
+    void setPrices() {
+    //TODO implement
+    }
 
     /**
      * Small helper class to handle the HTML to PDF conversion.
@@ -156,7 +160,6 @@ class OfferToPDFConverter implements OfferExporter{
 
         void print(Path outputFile) {
             final Path output = outputFile
-            println output.toString()
             ProcessBuilder builder = new ProcessBuilder()
             builder.command(chromeAlias,
                     "--headless",

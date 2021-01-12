@@ -67,7 +67,7 @@ class CreateOfferView extends FormLayout{
 
         this.projectManagerSelectionView = new ProjectManagerSelectionView(view)
         this.selectItemsView = new SelectItemsView(view,sharedViewModel)
-        this.overviewView = new OfferOverviewView(view, service)
+        this.overviewView = new OfferOverviewView(view, offerProviderService)
 
         initLayout()
         registerListeners()
