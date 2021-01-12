@@ -41,16 +41,16 @@ class OfferToPDFConverter implements OfferExporter{
 
     private final Path newOfferStyle
 
-    private final Path OFFER_HTML_TEMPLATE =
-            Paths.get(getClass().getClassLoader()
+    private static final Path OFFER_HTML_TEMPLATE =
+            Paths.get(OfferToPDFConverter.class.getClassLoader()
                     .getResource("offer-template/offer.html")
                     .toURI())
-    private final Path OFFER_HEADER_IMAGE =
-            Paths.get(getClass().getClassLoader()
+    private static final Path OFFER_HEADER_IMAGE =
+            Paths.get(OfferToPDFConverter.class.getClassLoader()
                     .getResource("offer-template/offer_header.png")
                     .toURI())
-    private final Path OFFER_STYLESHEET =
-            Paths.get(getClass().getClassLoader()
+    private static final Path OFFER_STYLESHEET =
+            Paths.get(OfferToPDFConverter.class.getClassLoader()
                     .getResource("offer-template/stylesheet.css")
                     .toURI())
 
