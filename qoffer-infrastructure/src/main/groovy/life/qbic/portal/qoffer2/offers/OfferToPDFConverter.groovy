@@ -72,7 +72,7 @@ class OfferToPDFConverter implements OfferExporter{
         return new BufferedInputStream(new FileInputStream(new File(createdOfferPdf.toString())))
     }
 
-    private void copyTemplate() {
+    private void importTemplate() {
         Files.copy(OFFER_HTML_TEMPLATE, createdOffer, StandardCopyOption.REPLACE_EXISTING)
         Files.copy(OFFER_HEADER_IMAGE, newOfferImage, StandardCopyOption.REPLACE_EXISTING)
         Files.copy(OFFER_STYLESHEET, newOfferStyle, StandardCopyOption.REPLACE_EXISTING)
