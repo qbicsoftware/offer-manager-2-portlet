@@ -64,7 +64,7 @@ class OfferToPDFConverter implements OfferExporter{
         importTemplate()
         this.htmlContent = Parser.xmlParser().parseInput(new File(this.createdOffer.toUri()).text, "")
         fillTemplateWithOfferContent()
-        writeHTMLContentToFile()
+        writeHTMLContentToFile(this.createdOffer, this.htmlContent)
         generatePDF()
     }
 
@@ -78,7 +78,7 @@ class OfferToPDFConverter implements OfferExporter{
         Files.copy(OFFER_STYLESHEET, newOfferStyle, StandardCopyOption.REPLACE_EXISTING)
     }
 
-    private void writeHTMLContentToFile(Path fileLocation, Document htmlContent) {
+    private static void writeHTMLContentToFile(Path fileLocation, Document htmlContent) {
         new File(fileLocation.toUri()).withWriter {
             it.write(htmlContent.toString())
             it.flush()
