@@ -6,17 +6,13 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.offers.create.CreateOfferDataSource
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.database.ConnectionProvider
 import life.qbic.portal.qoffer2.products.ProductsDbConnector
 import life.qbic.portal.qoffer2.shared.OfferOverview
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 
 import java.sql.Connection
 import java.sql.Date
@@ -41,8 +37,6 @@ class OfferDbConnector implements CreateOfferDataSource{
     CustomerDbConnector customerGateway
     ProductsDbConnector productGateway
 
-    private static final AffiliationCategoryFactory CATEGORY_FACTORY = new AffiliationCategoryFactory()
-    private static final AcademicTitleFactory TITLE_FACTORY = new AcademicTitleFactory()
 
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (modificationDate, expirationDate, customerId, projectManagerId, projectTitle, projectDescription, totalPrice, customerAffiliationId)"
 

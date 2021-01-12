@@ -6,7 +6,6 @@ import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import life.qbic.portal.qoffer2.offers.OfferToPDFConverter
 import life.qbic.portal.qoffer2.services.OverviewService
 import life.qbic.portal.qoffer2.shared.OfferOverview
-import life.qbic.portal.qoffer2.web.views.create.offer.OfferOverviewView
 
 /**
  * Model for the offer overview view.
@@ -15,7 +14,7 @@ import life.qbic.portal.qoffer2.web.views.create.offer.OfferOverviewView
  * such as a list of available offer overviews and
  * a property for a selected offer overview.
  *
- * The model holds on public method to retrieve the
+ * The model provides a public method to retrieve the
  * selected offer in PDF.
  *
  * @since 1.0.0
