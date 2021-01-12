@@ -19,7 +19,7 @@ class ViewModel {
     final ObservableList successNotifications
     final ObservableList failureNotifications
 
-    final private AffiliationService service
+    private final AffiliationService service
 
     ViewModel(AffiliationService service) {
         this(new ArrayList<Affiliation>(),

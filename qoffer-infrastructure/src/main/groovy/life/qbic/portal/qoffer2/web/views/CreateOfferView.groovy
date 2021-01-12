@@ -28,23 +28,23 @@ import life.qbic.portal.qoffer2.web.views.create.offer.SelectItemsView
  */
 class CreateOfferView extends FormLayout{
 
-    final private ViewModel sharedViewModel
-    final private CreateOfferViewModel view
+    private final ViewModel sharedViewModel
+    private final CreateOfferViewModel view
 
-    final private CreateOfferController controller
-    final private ListProductsController listProductsController
+    private final CreateOfferController controller
+    private final ListProductsController listProductsController
 
-    final private ProjectInformationView projectInformationView
-    final private CustomerSelectionView customerSelectionView
-    final private ProjectManagerSelectionView projectManagerSelectionView
-    final private SelectItemsView selectItemsView
-    final private OfferOverviewView overviewView
+    private final ProjectInformationView projectInformationView
+    private final CustomerSelectionView customerSelectionView
+    private final ProjectManagerSelectionView projectManagerSelectionView
+    private final SelectItemsView selectItemsView
+    private final OfferOverviewView overviewView
 
-    final private CreateCustomerView createCustomerView
+    private final CreateCustomerView createCustomerView
     private ButtonNavigationView navigationView
-    final private CreateAffiliationView createAffiliationView
+    private final CreateAffiliationView createAffiliationView
 
-    final private ViewHistory viewHistory
+    private final ViewHistory viewHistory
 
 
     CreateOfferView(ViewModel sharedViewModel,

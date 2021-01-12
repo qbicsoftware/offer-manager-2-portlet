@@ -46,7 +46,7 @@ class CreateOfferViewModel {
     @Bindable double overheads = 0
     @Bindable double totalPrice = 0
 
-    final private PersonService personService
+    private final PersonService personService
 
     CreateOfferViewModel(PersonService personService) {
         this.personService = personService

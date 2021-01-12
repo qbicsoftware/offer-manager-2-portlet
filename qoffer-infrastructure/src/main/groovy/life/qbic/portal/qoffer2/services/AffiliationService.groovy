@@ -13,9 +13,9 @@ import life.qbic.portal.qoffer2.events.EventEmitter
  */
 class AffiliationService implements Service {
 
-    final private CustomerDbConnector dbConnector
+    private final CustomerDbConnector dbConnector
 
-    final private List<Affiliation> availableAffiliations
+    private final List<Affiliation> availableAffiliations
 
     final EventEmitter<List<Affiliation>> eventEmitter
 

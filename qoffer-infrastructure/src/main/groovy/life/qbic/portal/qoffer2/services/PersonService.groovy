@@ -14,11 +14,11 @@ import life.qbic.portal.qoffer2.events.EventEmitter
  */
 class PersonService implements Service {
 
-    final private CustomerDbConnector dbConnector
+    private final CustomerDbConnector dbConnector
 
-    final private List<Customer> customers
+    private final List<Customer> customers
 
-    final private List<ProjectManager> projectManagers
+    private final List<ProjectManager> projectManagers
 
     final EventEmitter<List<Customer>> customerEvent
 

@@ -27,29 +27,29 @@ import java.nio.file.StandardCopyOption
 @Log4j2
 class OfferToPDFConverter implements OfferExporter{
 
-    final private Offer offer
+    private final Offer offer
 
    private final Path tempDir
 
    private final Document htmlContent
 
-    final private Path createdOffer
+    private final Path createdOffer
 
    private final Path createdOfferPdf
 
    private final Path newOfferImage
 
-    final private Path newOfferStyle
+    private final Path newOfferStyle
 
-    final private Path OFFER_HTML_TEMPLATE =
+    private final Path OFFER_HTML_TEMPLATE =
             Paths.get(getClass().getClassLoader()
                     .getResource("offer-template/offer.html")
                     .toURI())
-    final private Path OFFER_HEADER_IMAGE =
+    private final Path OFFER_HEADER_IMAGE =
             Paths.get(getClass().getClassLoader()
                     .getResource("offer-template/offer_header.png")
                     .toURI())
-    final private Path OFFER_STYLESHEET =
+    private final Path OFFER_STYLESHEET =
             Paths.get(getClass().getClassLoader()
                     .getResource("offer-template/stylesheet.css")
                     .toURI())

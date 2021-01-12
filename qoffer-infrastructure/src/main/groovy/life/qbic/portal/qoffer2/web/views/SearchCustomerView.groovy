@@ -29,9 +29,9 @@ import org.apache.commons.lang3.StringUtils
 @Log4j2
 class SearchCustomerView extends FormLayout {
 
-    final private ViewModel viewModel
-    final private SearchCustomerViewModel searchCustomerViewModel
-    final private SearchCustomerController controller
+    private final ViewModel viewModel
+    private final SearchCustomerViewModel searchCustomerViewModel
+    private final SearchCustomerController controller
     private TextField firstNameField
     private TextField lastNameField
     private Button submitButton
