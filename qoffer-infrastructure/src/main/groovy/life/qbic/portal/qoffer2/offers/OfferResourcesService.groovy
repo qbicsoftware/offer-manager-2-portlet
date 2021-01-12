@@ -1,10 +1,11 @@
-package life.qbic.portal.qoffer2.services
+package life.qbic.portal.qoffer2.offers
 
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.qoffer2.events.EventEmitter
+import life.qbic.portal.qoffer2.services.ResourcesService
 
 /**
- * Service that represents available offer for downloads.
+ * ResourcesService that represents available offer for downloads.
  *
  * This service offers an EventEmitter property that can be
  * used for inter component communication, when a new offer
@@ -12,11 +13,11 @@ import life.qbic.portal.qoffer2.events.EventEmitter
  *
  * @since 1.0.0
  */
-class OfferService implements Service {
+class OfferResourcesService implements ResourcesService {
 
     final EventEmitter<Offer> offerCreatedEvent
 
-    OfferService() {
+    OfferResourcesService() {
         offerCreatedEvent = new EventEmitter<>()
     }
 

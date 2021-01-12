@@ -1,8 +1,7 @@
 package life.qbic.portal.qoffer2.web.viewmodel
 
 import groovy.beans.Bindable
-import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.portal.qoffer2.services.Service
+import life.qbic.portal.qoffer2.services.ResourcesService
 
 /**
  * A ViewModel holding data that is presented in a
@@ -35,9 +34,9 @@ class CreateAffiliationViewModel {
     @Bindable Boolean countryValid
     @Bindable Boolean affiliationCategoryValid
 
-    final Service affiliationService
+    final ResourcesService affiliationService
 
-    CreateAffiliationViewModel(Service affiliationService) {
+    CreateAffiliationViewModel(ResourcesService affiliationService) {
         this.affiliationService = affiliationService
     }
 }

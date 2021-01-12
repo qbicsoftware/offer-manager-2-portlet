@@ -1,8 +1,8 @@
-package life.qbic.portal.qoffer2.services
+package life.qbic.portal.qoffer2.customers
 
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.events.EventEmitter
+import life.qbic.portal.qoffer2.services.ResourcesService
 
 /**
  * Customer service that holds resources about available affiliations
@@ -13,7 +13,7 @@ import life.qbic.portal.qoffer2.events.EventEmitter
  *
  * @since 1.0.0
  */
-class AffiliationService implements Service {
+class AffiliationResourcesService implements ResourcesService {
 
     private final CustomerDbConnector dbConnector
 
@@ -21,7 +21,7 @@ class AffiliationService implements Service {
 
     final EventEmitter<List<Affiliation>> eventEmitter
 
-    AffiliationService(CustomerDbConnector dbConnector) {
+    AffiliationResourcesService(CustomerDbConnector dbConnector) {
         this.dbConnector = dbConnector
         this.availableAffiliations = dbConnector.listAllAffiliations()
         this.eventEmitter = new EventEmitter<>()

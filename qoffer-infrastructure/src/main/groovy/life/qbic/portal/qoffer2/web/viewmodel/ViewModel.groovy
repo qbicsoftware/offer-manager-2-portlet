@@ -1,8 +1,8 @@
 package life.qbic.portal.qoffer2.web.viewmodel
 
-import groovy.beans.Bindable
+
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.portal.qoffer2.services.AffiliationService
+import life.qbic.portal.qoffer2.customers.AffiliationResourcesService
 
 
 /**
@@ -19,9 +19,9 @@ class ViewModel {
     final ObservableList successNotifications
     final ObservableList failureNotifications
 
-    private final AffiliationService service
+    private final AffiliationResourcesService service
 
-    ViewModel(AffiliationService service) {
+    ViewModel(AffiliationResourcesService service) {
         this(new ArrayList<Affiliation>(),
                 new ArrayList<String>(),
                 new ArrayList<String>(),
@@ -33,7 +33,7 @@ class ViewModel {
                       List<String> academicTitles,
                       List<String> successNotifications,
                       List<String> failureNotifications,
-                      AffiliationService service) {
+                      AffiliationResourcesService service) {
         this.affiliations = new ObservableList(affiliations)
         this.successNotifications = new ObservableList(successNotifications)
         this.failureNotifications = new ObservableList(failureNotifications)

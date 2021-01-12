@@ -3,7 +3,7 @@ package life.qbic.portal.qoffer2.web.views
 import com.vaadin.ui.Component
 import com.vaadin.ui.FormLayout
 import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.portal.qoffer2.services.OfferService
+import life.qbic.portal.qoffer2.offers.OfferResourcesService
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
@@ -53,7 +53,7 @@ class CreateOfferView extends FormLayout{
                     ListProductsController listProductsController,
                     CreateCustomerView createCustomerView,
                     CreateAffiliationView createAffiliationView,
-                    OfferService service
+                    OfferResourcesService service
     ) {
         super()
         this.sharedViewModel = sharedViewModel
