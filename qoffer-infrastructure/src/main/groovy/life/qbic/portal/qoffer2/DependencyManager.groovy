@@ -3,14 +3,7 @@ package life.qbic.portal.qoffer2
 import groovy.util.logging.Log4j2
 
 import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliations
 import life.qbic.portal.portlet.customers.create.CreateCustomer
@@ -21,10 +14,11 @@ import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.products.ProductsDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
-import life.qbic.portal.qoffer2.services.AffiliationService
-import life.qbic.portal.qoffer2.services.OfferService
 import life.qbic.portal.qoffer2.services.OverviewService
-import life.qbic.portal.qoffer2.services.PersonService
+import life.qbic.portal.qoffer2.customers.AffiliationResourcesService
+import life.qbic.portal.qoffer2.offers.OfferResourcesService
+import life.qbic.portal.qoffer2.customers.PersonResourcesService
+
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
@@ -107,10 +101,10 @@ class DependencyManager {
     private PortletView portletView
     private ConfigurationManager configurationManager
 
-    private PersonService customerService
-    private AffiliationService affiliationService
-    private OfferService offerService
     private OverviewService overviewService
+    private PersonResourcesService customerService
+    private AffiliationResourcesService affiliationService
+    private OfferResourcesService offerService
 
     /**
      * Public constructor.
@@ -159,9 +153,9 @@ class DependencyManager {
     }
 
     private void setupServices() {
-        this.customerService = new PersonService(customerDbConnector)
-        this.affiliationService = new AffiliationService(customerDbConnector)
-        this.offerService = new OfferService()
+        this.customerService = new PersonResourcesService(customerDbConnector)
+        this.affiliationService = new AffiliationResourcesService(customerDbConnector)
+        this.offerService = new OfferResourcesService()
         this.overviewService = new OverviewService(offerDbConnector)
     }
 

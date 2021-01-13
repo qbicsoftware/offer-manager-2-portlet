@@ -3,7 +3,7 @@ package life.qbic.portal.qoffer2.web.views
 import com.vaadin.ui.Component
 import com.vaadin.ui.FormLayout
 import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.portal.qoffer2.services.OfferService
+import life.qbic.portal.qoffer2.offers.OfferResourcesService
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
@@ -28,23 +28,23 @@ import life.qbic.portal.qoffer2.web.views.create.offer.SelectItemsView
  */
 class CreateOfferView extends FormLayout{
 
-    final private ViewModel sharedViewModel
-    final private CreateOfferViewModel view
+    private final ViewModel sharedViewModel
+    private final CreateOfferViewModel view
 
-    final private CreateOfferController controller
-    final private ListProductsController listProductsController
+    private final CreateOfferController controller
+    private final ListProductsController listProductsController
 
-    final private ProjectInformationView projectInformationView
-    final private CustomerSelectionView customerSelectionView
-    final private ProjectManagerSelectionView projectManagerSelectionView
-    final private SelectItemsView selectItemsView
-    final private OfferOverviewView overviewView
+    private final ProjectInformationView projectInformationView
+    private final CustomerSelectionView customerSelectionView
+    private final ProjectManagerSelectionView projectManagerSelectionView
+    private final SelectItemsView selectItemsView
+    private final OfferOverviewView overviewView
 
-    final private CreateCustomerView createCustomerView
+    private final CreateCustomerView createCustomerView
     private ButtonNavigationView navigationView
-    final private CreateAffiliationView createAffiliationView
+    private final CreateAffiliationView createAffiliationView
 
-    final private ViewHistory viewHistory
+    private final ViewHistory viewHistory
 
 
     CreateOfferView(ViewModel sharedViewModel,
@@ -53,7 +53,7 @@ class CreateOfferView extends FormLayout{
                     ListProductsController listProductsController,
                     CreateCustomerView createCustomerView,
                     CreateAffiliationView createAffiliationView,
-                    OfferService service
+                    OfferResourcesService offerProviderService
     ) {
         super()
         this.sharedViewModel = sharedViewModel
@@ -67,7 +67,7 @@ class CreateOfferView extends FormLayout{
 
         this.projectManagerSelectionView = new ProjectManagerSelectionView(view)
         this.selectItemsView = new SelectItemsView(view,sharedViewModel)
-        this.overviewView = new OfferOverviewView(view, service)
+        this.overviewView = new OfferOverviewView(view, offerProviderService)
 
         initLayout()
         registerListeners()
@@ -121,7 +121,7 @@ class CreateOfferView extends FormLayout{
             navigationView.showNextStep()
         })
         this.customerSelectionView.previous.addClickListener({
-            viewHistory.showPrevious()
+            viewHistory.loadNewView(projectInformationView)
             navigationView.showPreviousStep()
         })
         this.customerSelectionView.createCustomerButton.addClickListener({

@@ -1,30 +1,32 @@
-package life.qbic.portal.qoffer2.services
+package life.qbic.portal.qoffer2.customers
 
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.events.EventEmitter
+import life.qbic.portal.qoffer2.services.ResourcesService
 
 /**
- * Customer service that holds resources about customer and project manager information
- * and exposes an event emitter, that can be used to subscribe
- * to any update event of the underlying resource data.
+ * Customer service that holds resources about customer and project manager
+ *
+ * This service holds resources about customer and project manager information
+ * and exposes an event emitter, that can be used to subscribe to any update
+ * event of the underlying resource data.
  *
  * @since 1.0.0
  */
-class PersonService implements Service {
+class PersonResourcesService implements ResourcesService {
 
-    final private CustomerDbConnector dbConnector
+    private final CustomerDbConnector dbConnector
 
-    final private List<Customer> customers
+    private final List<Customer> customers
 
-    final private List<ProjectManager> projectManagers
+    private final List<ProjectManager> projectManagers
 
     final EventEmitter<List<Customer>> customerEvent
 
     final EventEmitter<List<ProjectManager>> projectManagerEvent
 
-    PersonService(CustomerDbConnector dbConnector) {
+    PersonResourcesService(CustomerDbConnector dbConnector) {
         this.dbConnector = dbConnector
         this.customers = dbConnector.fetchAllCustomers()
         this.projectManagers = dbConnector.fetchAllProjectManagers()

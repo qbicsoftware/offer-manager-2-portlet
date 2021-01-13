@@ -25,7 +25,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 class CreateAffiliationView extends VerticalLayout {
     final public ViewModel sharedViewModel
     final public CreateAffiliationViewModel createAffiliationViewModel
-    final private CreateAffiliationController controller
+    private final CreateAffiliationController controller
 
     private TextField organisationField
     private TextField addressAdditionField
