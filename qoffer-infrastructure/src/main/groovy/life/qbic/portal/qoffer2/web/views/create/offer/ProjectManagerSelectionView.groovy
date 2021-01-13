@@ -36,10 +36,8 @@ class ProjectManagerSelectionView extends VerticalLayout{
     ProjectManagerSelectionView(CreateOfferViewModel viewModel){
         this.viewModel = viewModel
         initLayout()
-        def projectManagerDataProvider = setupDataProvider()
         generateCustomerGrid()
         addListener()
-        setupFilters(projectManagerDataProvider)
     }
 
     /**
@@ -93,6 +91,14 @@ class ProjectManagerSelectionView extends VerticalLayout{
         } catch (Exception e) {
             new Exception("Unexpected exception in building the project manager grid", e)
         }
+        /*
+        We need to add a data provider for the grid content
+         */
+        def projectManagerDataProvider = setupDataProvider()
+        /*
+        Lastly, we add some nice content filters
+         */
+        setupFilters(projectManagerDataProvider)
     }
 
     /**

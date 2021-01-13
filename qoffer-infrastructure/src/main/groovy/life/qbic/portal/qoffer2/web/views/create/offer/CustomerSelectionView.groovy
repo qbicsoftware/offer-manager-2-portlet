@@ -62,11 +62,9 @@ class CustomerSelectionView extends VerticalLayout{
         this.foundCustomerList = viewModel.foundCustomers
 
         initLayout()
-        def customerDataProvider = setupCustomerDataProvider()
         generateCustomerGrid()
         generateAffiliationGrid()
         bindViewModel()
-        addFilters(customerDataProvider)
     }
 
     /**
@@ -124,7 +122,7 @@ class CustomerSelectionView extends VerticalLayout{
     private def generateCustomerGrid() {
         try {
             this.customerGrid.addColumn({ customer -> customer.title })
-                    .setCaption("Title").setId("title")
+                    .setCaption("Title").setId("Title")
             this.customerGrid.addColumn({ customer -> customer.firstName })
                     .setCaption("First Name").setId("FirstName")
             this.customerGrid.addColumn({ customer -> customer.lastName })
@@ -139,6 +137,14 @@ class CustomerSelectionView extends VerticalLayout{
         } catch (Exception e) {
             new Exception("Unexpected exception in building the customer grid", e)
         }
+        /*
+        Let's not forget to setup the grid's data provider
+         */
+        def customerDataProvider = setupCustomerDataProvider()
+        /*
+        Lastly, we add some content filters for the columns
+         */
+        addFilters(customerDataProvider)
     }
 
     /**
