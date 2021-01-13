@@ -36,6 +36,7 @@ class GridUtils {
         })
         filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
         filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)
+        filterTextField.setPlaceholder("Filter Me")
 
         headerRow.getCell(column).setComponent(filterTextField)
         filterTextField.setSizeFull()
