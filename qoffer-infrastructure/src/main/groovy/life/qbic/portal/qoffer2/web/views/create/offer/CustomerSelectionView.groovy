@@ -36,8 +36,6 @@ import org.apache.commons.lang3.StringUtils
 class CustomerSelectionView extends VerticalLayout{
 
     private final CreateOfferViewModel viewModel
-    //private final SearchCustomerView searchCustomerView
-    private final List<Customer> foundCustomerList
 
     Button next
     Button previous
@@ -54,12 +52,6 @@ class CustomerSelectionView extends VerticalLayout{
 
     CustomerSelectionView(CreateOfferViewModel viewModel){
         this.viewModel = viewModel
-        //this.searchCustomerView = searchCustomerView
-        Affiliation testAffiliation = new Affiliation.Builder("organization","Street","postal code","city").category(AffiliationCategory.INTERNAL).build()
-        Affiliation testAffiliation2 = new Affiliation.Builder("QBiC","Street","postal code","city").category(AffiliationCategory.EXTERNAL_ACADEMIC).build()
-
-
-        this.foundCustomerList = viewModel.foundCustomers
 
         initLayout()
         generateCustomerGrid()
@@ -109,7 +101,7 @@ class CustomerSelectionView extends VerticalLayout{
      * This method adds the retrieved Customer Information to the Customer grid
      */
     private ListDataProvider setupCustomerDataProvider() {
-        def customerListDataProvider = new ListDataProvider<>(foundCustomerList)
+        def customerListDataProvider = new ListDataProvider<>(viewModel.getFoundCustomers())
         this.customerGrid.setDataProvider(customerListDataProvider)
         return customerListDataProvider
     }
