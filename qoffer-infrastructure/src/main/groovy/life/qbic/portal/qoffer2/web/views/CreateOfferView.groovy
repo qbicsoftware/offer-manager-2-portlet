@@ -28,8 +28,8 @@ import life.qbic.portal.qoffer2.web.views.create.offer.SelectItemsView
  */
 class CreateOfferView extends FormLayout{
 
-    private final ViewModel sharedViewModel
-    private final CreateOfferViewModel view
+    final private ViewModel sharedViewModel
+    final private CreateOfferViewModel viewModel
 
     private final CreateOfferController controller
     private final ListProductsController listProductsController
@@ -57,17 +57,17 @@ class CreateOfferView extends FormLayout{
     ) {
         super()
         this.sharedViewModel = sharedViewModel
-        this.view = createOfferViewModel
+        this.viewModel = createOfferViewModel
         this.controller = controller
         this.listProductsController = listProductsController
         this.createCustomerView = createCustomerView
         this.createAffiliationView = createAffiliationView
-        this.projectInformationView = new ProjectInformationView(view)
-        this.customerSelectionView = new CustomerSelectionView(view)
+        this.projectInformationView = new ProjectInformationView(viewModel)
+        this.customerSelectionView = new CustomerSelectionView(viewModel)
 
-        this.projectManagerSelectionView = new ProjectManagerSelectionView(view)
-        this.selectItemsView = new SelectItemsView(view,sharedViewModel)
-        this.overviewView = new OfferOverviewView(view, offerProviderService)
+        this.projectManagerSelectionView = new ProjectManagerSelectionView(viewModel)
+        this.selectItemsView = new SelectItemsView(viewModel,sharedViewModel)
+        this.overviewView = new OfferOverviewView(viewModel, offerProviderService)
 
         initLayout()
         registerListeners()
@@ -131,7 +131,7 @@ class CreateOfferView extends FormLayout{
             viewHistory.showPrevious()
         })
         this.createCustomerView.submitButton.addClickListener({
-            view.refresh()
+            viewModel.refresh()
             viewHistory.showPrevious()
         })
         this.customerSelectionView.createAffiliationButton.addClickListener({
@@ -152,7 +152,8 @@ class CreateOfferView extends FormLayout{
             navigationView.showPreviousStep()
         })
         this.selectItemsView.next.addClickListener({
-            controller.calculatePriceForItems(getProductItems(view.productItems),view.customerAffiliation)
+            controller.calculatePriceForItems(getProductItems(viewModel.productItems),
+                    viewModel.customerAffiliation)
             overviewView.fillPanel()
             viewHistory.loadNewView(overviewView)
             navigationView.showNextStep()
@@ -167,12 +168,13 @@ class CreateOfferView extends FormLayout{
         })
         this.overviewView.save.addClickListener({
             controller.createOffer(
-                    view.projectTitle,
-                    view.projectDescription,
-                    view.customer,
-                    view.projectManager,
-                    getProductItems(view.productItems),
-                    view.customerAffiliation)
+                    viewModel.offerId,
+                    viewModel.projectTitle,
+                    viewModel.projectDescription,
+                    viewModel.customer,
+                    viewModel.projectManager,
+                    getProductItems(viewModel.productItems),
+                    viewModel.customerAffiliation)
         })
         this.createCustomerView.createAffiliationButton.addClickListener({
             viewHistory.loadNewView(createAffiliationView)

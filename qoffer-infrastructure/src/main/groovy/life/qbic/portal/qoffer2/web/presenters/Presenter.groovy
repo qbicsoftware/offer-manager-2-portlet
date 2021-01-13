@@ -1,10 +1,6 @@
 package life.qbic.portal.qoffer2.web.presenters
 
-
 import life.qbic.portal.portlet.customers.update.UpdateCustomerOutput
-import life.qbic.portal.portlet.offers.create.CreateOfferOutput
-import life.qbic.portal.portlet.offers.search.SearchOffersOutput
-import life.qbic.portal.portlet.offers.update.UpdateOfferOutput
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 /**
@@ -18,16 +14,12 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  * @author: Jennifer Bödker
  *
  */
-class Presenter implements UpdateOfferOutput, UpdateCustomerOutput {
+class Presenter implements UpdateCustomerOutput {
 
     private final ViewModel viewModel
 
     Presenter(ViewModel viewModel){
         this.viewModel = viewModel 
-    }
-
-    void successNotification(String notification) {
-        viewModel.successNotifications.add(notification)
     }
 
     @Override

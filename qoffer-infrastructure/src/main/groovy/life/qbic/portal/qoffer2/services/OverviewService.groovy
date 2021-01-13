@@ -2,6 +2,7 @@ package life.qbic.portal.qoffer2.services
 
 import life.qbic.portal.qoffer2.events.EventEmitter
 import life.qbic.portal.qoffer2.offers.OfferDbConnector
+import life.qbic.portal.qoffer2.offers.OfferResourcesService
 import life.qbic.portal.qoffer2.shared.OfferOverview
 
 /**
@@ -13,19 +14,35 @@ import life.qbic.portal.qoffer2.shared.OfferOverview
  *
  * @since 1.0.0
  */
-class OverviewService implements Service {
+class OverviewService implements ResourcesService {
 
     private List<OfferOverview> offerOverviewList
 
     private final OfferDbConnector offerDbConnector
 
-    final EventEmitter<OfferOverview> updatedOverviewEvent
+    private final OfferResourcesService offerService
 
-    OverviewService(OfferDbConnector offerDbConnector) {
+    final EventEmitter<String> updatedOverviewEvent
+
+    OverviewService(OfferDbConnector offerDbConnector,
+                    OfferResourcesService offerService) {
         this.offerDbConnector = offerDbConnector
         this.updatedOverviewEvent = new EventEmitter<>()
+        this.offerService = offerService
         this.offerOverviewList = []
+        subscribeToNewOffers()
         reloadResources()
+    }
+
+    private void subscribeToNewOffers(){
+        /*
+        Whenever a new offer is created, we want
+        to update the offer overview content.
+         */
+        offerService.offerCreatedEvent.register({
+            reloadResources()
+            updatedOverviewEvent.emit("New overview content available!")
+        })
     }
 
     @Override

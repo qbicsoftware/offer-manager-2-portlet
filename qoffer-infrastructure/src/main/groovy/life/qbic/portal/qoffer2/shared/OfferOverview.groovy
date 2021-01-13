@@ -1,5 +1,7 @@
 package life.qbic.portal.qoffer2.shared
 
+import life.qbic.datamodel.dtos.business.OfferId
+
 /**
  * This class holds data for an offer overview
  *
@@ -21,12 +23,16 @@ class OfferOverview {
 
     final double totalPrice
 
+    final OfferId offerId
+
     OfferOverview(
+            OfferId offerId,
             Date modificationDate,
             String projectTitle,
             String projectId,
             String customer,
             double totalPrice) {
+        this.offerId = offerId
         this.modificationDate = modificationDate
         this.projectId = projectId
         this.projectTitle = projectTitle

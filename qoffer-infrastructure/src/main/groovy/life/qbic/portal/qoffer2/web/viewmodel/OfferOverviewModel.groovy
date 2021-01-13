@@ -52,6 +52,14 @@ class OfferOverviewModel {
         this.viewModel = viewModel
         this.downloadButtonActive = false
         this.displaySpinner = false
+        subscribeToOverviewService()
+    }
+
+    private void subscribeToOverviewService() {
+        service.updatedOverviewEvent.register({
+            offerOverviewList.clear()
+            offerOverviewList.addAll(service.getOfferOverviewList())
+        })
     }
 
     void setSelectedOffer(OfferOverview selectedOffer) {
@@ -59,6 +67,14 @@ class OfferOverviewModel {
         this.downloadButtonActive = false
         if (this.selectedOffer.isPresent()) {
             this.offer = loadOfferInfo()
+        }
+    }
+
+    Offer getSelectedOffer() {
+        if(offer.isPresent()) {
+            return offer.get()
+        } else {
+            throw new RuntimeException("No offer is currently selected.")
         }
     }
 

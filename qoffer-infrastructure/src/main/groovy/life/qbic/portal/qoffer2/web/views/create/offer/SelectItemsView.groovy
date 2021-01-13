@@ -45,7 +45,7 @@ class SelectItemsView extends VerticalLayout{
     private List<ProductItemViewModel> storageProduct
     private List<ProductItemViewModel> primaryAnalyseProduct
     private List<ProductItemViewModel> secondaryAnalyseProduct
-    private List<ProductItemViewModel> selectedItems
+
 
     Grid<ProductItemViewModel> sequencingGrid
     Grid<ProductItemViewModel> projectManagementGrid
@@ -107,10 +107,6 @@ class SelectItemsView extends VerticalLayout{
                 secondaryAnalyseGrid.dataProvider.refreshAll()
             }
         })
-
-        this.selectedItems = []
-
-        this.createOfferViewModel.productItems = selectedItems
 
         initLayout()
         setupDataProvider()
@@ -240,7 +236,7 @@ class SelectItemsView extends VerticalLayout{
         ListDataProvider<ProductItemViewModel> storageProductDataProvider = new ListDataProvider(createOfferViewModel.storageProducts)
         this.storageGrid.setDataProvider(storageProductDataProvider)
 
-        this.overviewGrid.setItems(selectedItems)
+        this.overviewGrid.setItems(createOfferViewModel.getProductItems())
     }
 
     private void addDummyValues(){
@@ -429,21 +425,29 @@ class SelectItemsView extends VerticalLayout{
             storageGrid.deselectAll()
             applyDataStorage.setEnabled(false)
         })
+
+        createOfferViewModel.productItems.addPropertyChangeListener({
+            if (createOfferViewModel.productItems) {
+                next.setEnabled(true)
+            } else {
+                next.setEnabled(false)
+            }
+        })
     }
 
     /**
      * This method should be called whenever the quantity of a ProductItemViewModel changes. It updates the items in overview grid respectively
      */
     void updateOverviewGrid(ProductItemViewModel item){
-        if(!selectedItems.contains(item)){
-            selectedItems.add(item)
+        if(!createOfferViewModel.productItems.contains(item)){
+            createOfferViewModel.productItems.add(item)
         }
         if(item.quantity == 0.0 as Double){
-            selectedItems.remove(item)
+            createOfferViewModel.productItems.remove(item)
         }
         overviewGrid.getDataProvider().refreshAll()
 
-        if(selectedItems.size() > 0){
+        if(createOfferViewModel.productItems.size() > 0){
             next.setEnabled(true)
         }else{
             next.setEnabled(false)

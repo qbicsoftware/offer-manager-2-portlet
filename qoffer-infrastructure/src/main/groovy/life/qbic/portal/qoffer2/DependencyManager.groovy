@@ -14,6 +14,8 @@ import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.products.ProductsDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
+
+import life.qbic.portal.qoffer2.services.OfferUpdateService
 import life.qbic.portal.qoffer2.services.OverviewService
 import life.qbic.portal.qoffer2.customers.AffiliationResourcesService
 import life.qbic.portal.qoffer2.offers.OfferResourcesService
@@ -33,12 +35,12 @@ import life.qbic.portal.qoffer2.web.presenters.ListAffiliationsPresenter
 import life.qbic.portal.qoffer2.web.presenters.SearchCustomerPresenter
 import life.qbic.portal.qoffer2.web.presenters.Presenter
 
-
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.OfferOverviewModel
 import life.qbic.portal.qoffer2.web.viewmodel.SearchCustomerViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.UpdateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 import life.qbic.portal.qoffer2.web.views.CreateAffiliationView
@@ -69,6 +71,7 @@ class DependencyManager {
     private CreateAffiliationViewModel createAffiliationViewModel
     private SearchCustomerViewModel searchCustomerViewModel
     private CreateOfferViewModel createOfferViewModel
+    private CreateOfferViewModel updateOfferViewModel
     private OfferOverviewModel offerOverviewModel
 
     private Presenter presenter
@@ -77,6 +80,7 @@ class DependencyManager {
     private ListAffiliationsPresenter listAffiliationsPresenter
     private SearchCustomerPresenter searchCustomerPresenter
     private CreateOfferPresenter createOfferPresenter
+    private CreateOfferPresenter updateOfferPresenter
 
     private CustomerDbConnector customerDbConnector
     private OfferDbConnector offerDbConnector
@@ -87,6 +91,7 @@ class DependencyManager {
     private ListAffiliations listAffiliations
     private SearchCustomer searchCustomer
     private CreateOffer createOffer
+    private CreateOffer updateOffer
     private ListProducts listProducts
 
     private CreateCustomerController createCustomerController
@@ -94,6 +99,7 @@ class DependencyManager {
     private SearchCustomerController searchCustomerController
     private ListAffiliationsController listAffiliationsController
     private CreateOfferController createOfferController
+    private CreateOfferController updateOfferController
     private ListProductsController listProductsController
 
     private CreateCustomerView createCustomerView
@@ -102,6 +108,7 @@ class DependencyManager {
     private ConfigurationManager configurationManager
 
     private OverviewService overviewService
+    private OfferUpdateService offerUpdateService
     private PersonResourcesService customerService
     private AffiliationResourcesService affiliationService
     private OfferResourcesService offerService
@@ -145,6 +152,7 @@ class DependencyManager {
             customerDbConnector = new CustomerDbConnector(DatabaseSession.getInstance())
             productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
             offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(), customerDbConnector, productsDbConnector)
+            println offerDbConnector.loadOfferOverview()
 
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
@@ -153,10 +161,11 @@ class DependencyManager {
     }
 
     private void setupServices() {
+        this.offerService = new OfferResourcesService()
+        this.overviewService = new OverviewService(offerDbConnector, offerService)
+        this.offerUpdateService = new OfferUpdateService()
         this.customerService = new PersonResourcesService(customerDbConnector)
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
-        this.offerService = new OfferResourcesService()
-        this.overviewService = new OverviewService(offerDbConnector)
     }
 
     private void setupViewModels() {
@@ -201,10 +210,18 @@ class DependencyManager {
         }
 
         try {
+            this.updateOfferViewModel = new UpdateOfferViewModel(customerService,
+                    offerUpdateService)
+        } catch (Exception e) {
+            log.error("Unexpected excpetion during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
+            throw e
+        }
+
+        try {
             this.offerOverviewModel = new OfferOverviewModel(overviewService, offerDbConnector,
                     viewModel)
         } catch (Exception e) {
-            log.error("Unexpected exception during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected excpetion during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
         }
     }
 
@@ -248,6 +265,13 @@ class DependencyManager {
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} setup", e)
         }
+
+        try {
+            this.updateOfferPresenter = new CreateOfferPresenter(this.viewModel,
+                    this.updateOfferViewModel, this.offerService)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} setup", e)
+        }
     }
 
     private void setupUseCaseInteractors() {
@@ -255,6 +279,7 @@ class DependencyManager {
         this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbConnector)
         this.listAffiliations = new ListAffiliations(listAffiliationsPresenter, customerDbConnector)
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
+        this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
         this.listProducts = new ListProducts(productsDbConnector,createOfferPresenter)
         this.searchCustomer = new SearchCustomer(searchCustomerPresenter, customerDbConnector)
     }
@@ -285,6 +310,11 @@ class DependencyManager {
         }
         try {
             this.createOfferController = new CreateOfferController(this.createOffer,this.createOffer)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
+        }
+        try {
+            this.updateOfferController = new CreateOfferController(this.updateOffer,this.updateOffer)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
         }
@@ -335,9 +365,25 @@ class DependencyManager {
             log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
             throw e
         }
+
+        CreateOfferView updateOfferView
+        try {
+            updateOfferView = new CreateOfferView(
+                    this.viewModel,
+                    this.updateOfferViewModel,
+                    this.updateOfferController,
+                    this.listProductsController,
+                    this.createCustomerView,
+                    this.createAffiliationView,
+                    this.offerService)
+        } catch (Exception e) {
+            log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
+            throw e
+        }
+
         OverviewView overviewView
         try {
-            overviewView = new OverviewView(offerOverviewModel)
+            overviewView = new OverviewView(offerOverviewModel, offerUpdateService)
         } catch (Exception e) {
             log.error("Could not create ${OverviewView.getSimpleName()} view.", e)
             throw e
@@ -353,7 +399,8 @@ class DependencyManager {
                     createAffiliationView2,
                     searchCustomerView,
                     createOfferView,
-                    overviewView
+                    overviewView,
+                    updateOfferView
             )
             this.portletView = portletView
         } catch (Exception e) {
