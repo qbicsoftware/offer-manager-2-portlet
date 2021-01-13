@@ -101,12 +101,9 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
      * @return
      */
     private static OfferId generateQuotationID(Customer customer){
-        //todo: do we want to have a person here?
-        //todo: update the datamodellib
-        def randomPart = new RandomPart()
-        def projectConservedPart = new ProjectPart(customer.lastName.toLowerCase())
-        def version = new Version(1)
-        //TODO make random ID part random
+        RandomPart randomPart = new RandomPart()
+        ProjectPart projectConservedPart = new ProjectPart(customer.lastName.toLowerCase())
+        Version version = new Version(1)
 
         return new OfferId(randomPart, projectConservedPart, version)
     }
