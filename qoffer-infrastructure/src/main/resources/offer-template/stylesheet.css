@@ -63,7 +63,7 @@ body {
         grid-column-end: 2;
     }
 
-    .qbic-affiliation {
+    .project-manager {
         border:0px solid #aaaaaa;
         padding: 20px 0px 20px 0px;
         text-align: left;
@@ -119,7 +119,7 @@ body {
         font-weight: bold;
     }
 
-    .project-content {
+    .project-description {
         font-size: 10pt;
         margin-bottom: 10px;
     }
@@ -239,7 +239,7 @@ body {
         grid-column-end: 2;
     }
 
-    .qbic-affiliation {
+    .project-manager {
         border:0px solid #aaaaaa;
         padding: 20px 0px 20px 0px;
         text-align: left;
@@ -295,7 +295,7 @@ body {
         font-weight: bold;
     }
 
-    .project-content {
+    .project-description {
         font-size: 1.5vw;
         margin-bottom: 10px;
     }
