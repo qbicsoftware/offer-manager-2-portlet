@@ -3,11 +3,11 @@ package life.qbic.portal.portlet.offers.identifier
 import groovy.transform.CompileStatic
 
 /**
- * <class short description - 1 Line!>
+ * Represents and identifier for an offer
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * Contains the random part, project conserved part and the version of an identifier
  *
- * @since <versiontag>
+ * @since 0.1.0
  */
 @CompileStatic
 class TomatoId {

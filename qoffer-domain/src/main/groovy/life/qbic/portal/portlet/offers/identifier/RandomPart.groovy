@@ -1,11 +1,11 @@
 package life.qbic.portal.portlet.offers.identifier
 
 /**
- * <class short description - 1 Line!>
+ * Represents the random part of the offer identifier.
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * This class contains the value of the random part of the offer identifier.
  *
- * @since <versiontag>
+ * @since 0.1.0
  */
 class RandomPart {
 

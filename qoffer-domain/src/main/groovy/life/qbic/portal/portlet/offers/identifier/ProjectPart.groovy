@@ -1,11 +1,11 @@
 package life.qbic.portal.portlet.offers.identifier
 
 /**
- * <class short description - 1 Line!>
+ * Represents the project part conserved of the identifier
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * Contains the value of the project conserved part of the identifier
  *
- * @since <versiontag>
+ * @since 0.1.0
  */
 class ProjectPart {
 
