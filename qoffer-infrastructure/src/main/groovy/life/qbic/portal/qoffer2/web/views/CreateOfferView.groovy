@@ -113,7 +113,7 @@ class CreateOfferView extends FormLayout{
             navigationView.showNextStep()
         })
         this.customerSelectionView.previous.addClickListener({
-            viewHistory.showPrevious()
+            viewHistory.loadNewView(projectInformationView)
             navigationView.showPreviousStep()
         })
         this.customerSelectionView.createCustomerButton.addClickListener({
