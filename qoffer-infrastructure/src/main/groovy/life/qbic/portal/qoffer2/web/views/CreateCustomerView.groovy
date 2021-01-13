@@ -188,19 +188,20 @@ class CreateCustomerView extends VerticalLayout {
                     String newValue = it.newValue as String
                     emailField.value = newValue ?: emailField.emptyValue
                     break
-                case "affiliation":
-                    Affiliation newValue = it.newValue as Affiliation
-                    if (newValue) {
-                        affiliationComboBox.selectedItem = newValue
-                        addressAdditionComboBox.setItems(sharedViewModel.affiliations?.findAll{ ((it as Affiliation)?.organisation == newValue?.organisation) })
-                        addressAdditionComboBox.selectedItem = newValue
-                    } else {
-                        affiliationComboBox.selectedItem = affiliationComboBox.emptyValue
-                        addressAdditionComboBox.selectedItem = addressAdditionComboBox.emptyValue
-                    }
-                    break
                 default:
                     break
+            }
+        })
+
+        createCustomerViewModel.addPropertyChangeListener("affiliation", {
+            Affiliation newValue = it.newValue as Affiliation
+            if (newValue) {
+                affiliationComboBox.selectedItem = newValue
+                addressAdditionComboBox.setItems(sharedViewModel.affiliations?.findAll{ ((it as Affiliation)?.organisation == newValue?.organisation) })
+                addressAdditionComboBox.selectedItem = newValue
+            } else {
+                affiliationComboBox.selectedItem = affiliationComboBox.emptyValue
+                addressAdditionComboBox.selectedItem = addressAdditionComboBox.emptyValue
             }
         })
         /*
@@ -239,7 +240,6 @@ class CreateCustomerView extends VerticalLayout {
                     break
             }
             submitButton.enabled = allValuesValid()
-            addressAdditionComboBox.enabled = Objects.isNull(createCustomerViewModel.affiliation)
         })
 
         /* refresh affiliation list and set added item as selected item. This is needed to keep this
@@ -357,7 +357,7 @@ class CreateCustomerView extends VerticalLayout {
 
                 controller.createNewCustomer(firstName, lastName, title, email, affiliations)
 
-                createCustomerViewModel.customerService.reloadResources()
+                //createCustomerViewModel.customerService.reloadResources()
 
             } catch (IllegalArgumentException illegalArgumentException) {
                 log.error("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}")
@@ -370,7 +370,9 @@ class CreateCustomerView extends VerticalLayout {
         })
 
         this.affiliationComboBox.addSelectionListener({
-            fireAffiliationSelectionEvent(it.value)
+            if (it.value) {
+                fireAffiliationSelectionEvent(it.value)
+            }
             updateAffiliationDetails(it.value)
         })
     }
