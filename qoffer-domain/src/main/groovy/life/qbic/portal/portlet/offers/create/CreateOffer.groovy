@@ -74,7 +74,6 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
                 offerContent.items,
                 offerContent.selectedCustomerAffiliation)
                 .identifier(newOfferId)
-                .expirationDate(new Date(2030,12,24))
                 .modificationDate(new Date())
                 .build()
 
