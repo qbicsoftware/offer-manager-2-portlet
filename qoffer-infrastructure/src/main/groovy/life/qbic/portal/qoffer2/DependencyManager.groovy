@@ -161,11 +161,11 @@ class DependencyManager {
     }
 
     private void setupServices() {
+        this.offerService = new OfferResourcesService()
         this.overviewService = new OverviewService(offerDbConnector, offerService)
         this.offerUpdateService = new OfferUpdateService()
         this.customerService = new PersonResourcesService(customerDbConnector)
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
-        this.offerService = new OfferResourcesService()
     }
 
     private void setupViewModels() {

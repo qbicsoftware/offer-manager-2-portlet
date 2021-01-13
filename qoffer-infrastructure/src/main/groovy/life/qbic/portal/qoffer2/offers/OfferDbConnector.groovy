@@ -177,7 +177,6 @@ class OfferDbConnector implements CreateOfferDataSource{
             ResultSet resultSet = statement.executeQuery()
             while (resultSet.next()) {
                 /*
-<<<<<<< HEAD
                 Load the offer Id first
                  */
                 def offerId = parseOfferId(resultSet.getString("offerId"))
@@ -196,6 +195,7 @@ class OfferDbConnector implements CreateOfferDataSource{
                 def projectDescription = resultSet.getString("projectDescription")
                 def totalCosts = resultSet.getDouble("totalPrice")
                 def creationDate = resultSet.getDate("creationDate")
+                def expirationDate = resultSet.getDate("expirationDate")
                 def selectedAffiliationId = resultSet.getInt("customerAffiliationId")
                 def selectedAffiliation = customerGateway.getAffiliation(selectedAffiliationId)
                 def items = productGateway.getItemsForOffer(offerPrimaryId)
@@ -206,8 +206,11 @@ class OfferDbConnector implements CreateOfferDataSource{
                         projectTitle,
                         projectDescription,
                         selectedAffiliation)
+                        .modificationDate(creationDate)
+                        .expirationDate(expirationDate)
                         .identifier(offerId)
                         .items(items)
+                        .totalPrice(totalCosts)
                         .build())
             }
         }

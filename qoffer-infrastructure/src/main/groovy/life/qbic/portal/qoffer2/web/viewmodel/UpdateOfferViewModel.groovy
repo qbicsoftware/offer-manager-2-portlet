@@ -1,8 +1,8 @@
 package life.qbic.portal.qoffer2.web.viewmodel
 
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.portal.qoffer2.customers.PersonResourcesService
 import life.qbic.portal.qoffer2.services.OfferUpdateService
-import life.qbic.portal.qoffer2.services.PersonService
 
 
 /**
@@ -22,7 +22,7 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
 
     final private OfferUpdateService offerUpdateService
 
-    UpdateOfferViewModel(PersonService personService,
+    UpdateOfferViewModel(PersonResourcesService personService,
                          OfferUpdateService offerUpdateService) {
         super(personService)
         this.offerUpdateService = offerUpdateService

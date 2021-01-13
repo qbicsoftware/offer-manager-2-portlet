@@ -12,7 +12,7 @@ import life.qbic.portal.qoffer2.events.EventEmitter
  *
  * @since 1.0.0
  */
-class OfferUpdateService implements Service {
+class OfferUpdateService implements ResourcesService {
 
     EventEmitter<Offer> offerForUpdateEvent
 
