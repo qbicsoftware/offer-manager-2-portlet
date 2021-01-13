@@ -3,14 +3,7 @@ package life.qbic.portal.qoffer2
 import groovy.util.logging.Log4j2
 
 import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliations
 import life.qbic.portal.portlet.customers.create.CreateCustomer
@@ -21,8 +14,9 @@ import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.products.ProductsDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
-import life.qbic.portal.qoffer2.services.AffiliationService
-import life.qbic.portal.qoffer2.services.PersonService
+import life.qbic.portal.qoffer2.customers.AffiliationResourcesService
+import life.qbic.portal.qoffer2.offers.OfferResourcesService
+import life.qbic.portal.qoffer2.customers.PersonResourcesService
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
@@ -102,8 +96,9 @@ class DependencyManager {
     private PortletView portletView
     private ConfigurationManager configurationManager
 
-    private PersonService customerService
-    private AffiliationService affiliationService
+    private PersonResourcesService customerService
+    private AffiliationResourcesService affiliationService
+    private OfferResourcesService offerService
 
     /**
      * Public constructor.
@@ -152,8 +147,9 @@ class DependencyManager {
     }
 
     private void setupServices() {
-        this.customerService = new PersonService(customerDbConnector)
-        this.affiliationService = new AffiliationService(customerDbConnector)
+        this.customerService = new PersonResourcesService(customerDbConnector)
+        this.affiliationService = new AffiliationResourcesService(customerDbConnector)
+        this.offerService = new OfferResourcesService()
     }
 
     private void setupViewModels() {
@@ -233,7 +229,8 @@ class DependencyManager {
         }
 
         try {
-            this.createOfferPresenter = new CreateOfferPresenter(this.viewModel, this.createOfferViewModel)
+            this.createOfferPresenter = new CreateOfferPresenter(this.viewModel,
+                    this.createOfferViewModel, this.offerService)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} setup", e)
         }
@@ -312,7 +309,14 @@ class DependencyManager {
 
         CreateOfferView createOfferView
         try {
-            createOfferView = new CreateOfferView(this.viewModel, this.createOfferViewModel,this.createOfferController,this.listProductsController, createCustomerView, createAffiliationView)
+            createOfferView = new CreateOfferView(
+                    this.viewModel,
+                    this.createOfferViewModel,
+                    this.createOfferController,
+                    this.listProductsController,
+                    this.createCustomerView,
+                    this.createAffiliationView,
+                    this.offerService)
         } catch (Exception e) {
             log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
             throw e

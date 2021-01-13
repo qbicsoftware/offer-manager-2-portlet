@@ -4,8 +4,7 @@ import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.general.Person
-import life.qbic.portal.qoffer2.services.PersonService
+import life.qbic.portal.qoffer2.customers.PersonResourcesService
 
 /**
  * A ViewModel holding data that is presented in a
@@ -45,9 +44,9 @@ class CreateOfferViewModel {
     @Bindable double overheads = 0
     @Bindable double totalPrice = 0
 
-    final private PersonService personService
+    private final PersonResourcesService personService
 
-    CreateOfferViewModel(PersonService personService) {
+    CreateOfferViewModel(PersonResourcesService personService) {
         this.personService = personService
         this.foundCustomers = personService.getCustomers()
         this.availableProjectManagers = personService.getProjectManagers()

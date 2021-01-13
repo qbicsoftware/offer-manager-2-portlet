@@ -37,8 +37,8 @@ import java.text.DecimalFormat
  */
 class SelectItemsView extends VerticalLayout{
 
-    final private CreateOfferViewModel createOfferViewModel
-    final private ViewModel viewModel
+    private final CreateOfferViewModel createOfferViewModel
+    private final ViewModel viewModel
 
     private List<ProductItemViewModel> sequencingProduct
     private List<ProductItemViewModel> projectManagementProduct
