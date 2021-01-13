@@ -1,11 +1,13 @@
 package life.qbic.portal.qoffer2.shared
 
 /**
- * <class short description - 1 Line!>
+ * This class holds data for an offer overview
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * It is not always necessary to pass along complete offer data in the application and display this to the user.
+ * For this purpose, you can use this class and provide a concise offer overview, 
+ * and its content can be loaded quick and easy.
  *
- * @since <versiontag>
+ * @since 1.0.0
  */
 class OfferOverview {
 
