@@ -53,8 +53,8 @@ class OverviewView extends VerticalLayout {
         We start with the header, that contains a descriptive
         title of what the view is about.
          */
-        final def headerRow = new HorizontalLayout()
-        final def label = new Label("Available Offers")
+        final HorizontalLayout headerRow = new HorizontalLayout()
+        final Label label = new Label("Available Offers")
         label.addStyleName(ValoTheme.LABEL_HUGE)
         headerRow.addComponent(label)
         this.addComponent(headerRow)
@@ -64,8 +64,8 @@ class OverviewView extends VerticalLayout {
         The left component will be the offer overview, the
         right component will be the offer download button.
          */
-        final def overviewRow = new HorizontalLayout()
-        final def activityContainer = new VerticalLayout()
+        final HorizontalLayout overviewRow = new HorizontalLayout()
+        final VerticalLayout activityContainer = new VerticalLayout()
         downloadBtn.setStyleName(ValoTheme.BUTTON_LARGE)
         downloadBtn.setEnabled(false)
         // Makes the progress bar a spinner
