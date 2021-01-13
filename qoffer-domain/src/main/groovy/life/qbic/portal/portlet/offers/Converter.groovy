@@ -10,11 +10,20 @@ import life.qbic.portal.portlet.offers.identifier.RandomPart
 import life.qbic.portal.portlet.offers.identifier.Version
 
 /**
- * <class short description - 1 Line!>
+ * Helper class to convert DTOs in Business Objects and vice versa.
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * This helper class provides some static conversion methods to convert
+ * DTOs content into business objects and vice versa.
  *
- * @since <versiontag>
+ * This class can be used anywhere in the application domain code, where information must
+ * cross architectural boundaries. Business objects must not leave the domain layer and therefore
+ * data needs to be prepared to be exported back into the outer application layers.
+ *
+ * Feel free to add new converter methods and be careful with the class paths of objects, especially
+ * if DTOs and business objects have the same class name. In this case use the full qualified
+ * package domain for the DTO class explicitly.
+ *
+ * @since 1.0.0
  */
 class Converter {
     static life.qbic.datamodel.dtos.business.Offer convertOfferToDTO(Offer offer) {
