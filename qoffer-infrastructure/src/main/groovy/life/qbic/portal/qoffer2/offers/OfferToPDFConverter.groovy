@@ -117,7 +117,7 @@ class OfferToPDFConverter implements OfferExporter{
                 customer.lastName))
         htmlContent.getElementById("customer-organisation").text(affiliation.organisation)
         htmlContent.getElementById("customer-street").text(affiliation.street)
-        htmlContent.getElementById("customer-postalCode").text(affiliation.postalCode)
+        htmlContent.getElementById("customer-postal-code").text(affiliation.postalCode)
         htmlContent.getElementById("customer-city").text(affiliation.city)
         htmlContent.getElementById("customer-country").text(affiliation.country)
     }
