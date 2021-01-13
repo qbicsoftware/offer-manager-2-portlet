@@ -1,11 +1,11 @@
 package life.qbic.portal.portlet.offers.identifier
 
 /**
- * <class short description - 1 Line!>
+ * Represents the version of an offer
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * Contains the value of the version of the offer
  *
- * @since <versiontag>
+ * @since 0.1.0
  */
 class Version {
 
