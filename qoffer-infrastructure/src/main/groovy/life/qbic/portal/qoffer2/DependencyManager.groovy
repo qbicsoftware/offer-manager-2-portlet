@@ -351,9 +351,9 @@ class DependencyManager {
 
         PortletView portletView
         try {
-            def createCustomerView2 = new CreateCustomerView(createCustomerController, this
+            CreateCustomerView createCustomerView2 = new CreateCustomerView(createCustomerController, this
                     .viewModel, createCustomerViewModel)
-            def createAffiliationView2 = new CreateAffiliationView(this.viewModel,
+            CreateAffiliationView createAffiliationView2 = new CreateAffiliationView(this.viewModel,
                     createAffiliationViewModel, createAffiliationController)
             portletView = new PortletView(this.viewModel, createCustomerView2,
                     createAffiliationView2,

@@ -123,15 +123,15 @@ class OfferDbConnector implements CreateOfferDataSource{
             PreparedStatement statement = it.prepareStatement(query)
             ResultSet resultSet = statement.executeQuery()
             while (resultSet.next()) {
-                def customer = new Customer.Builder(
+                Customer customer = new Customer.Builder(
                         resultSet.getString("first_name"),
                         resultSet.getString("last_name"),
                         resultSet.getString("email"))
                         .build()
-                def projectTitle = resultSet.getString("projectTitle")
-                def totalCosts = resultSet.getDouble("totalPrice")
-                def modificationDate = resultSet.getDate("modificationDate")
-                def customerName = "${customer.getFirstName()} ${customer.getLastName()}"
+                String projectTitle = resultSet.getString("projectTitle")
+                double totalCosts = resultSet.getDouble("totalPrice")
+                Date modificationDate = resultSet.getDate("modificationDate")
+                String customerName = "${customer.getFirstName()} ${customer.getLastName()}"
                 OfferOverview offerOverview = new OfferOverview(
                         modificationDate,projectTitle, "-",
                         customerName, totalCosts)
@@ -157,19 +157,19 @@ class OfferDbConnector implements CreateOfferDataSource{
                 /*
                 Load customer and project manager info
                  */
-                def customerId =  resultSet.getInt("customerId")
-                def projectManagerId = resultSet.getInt("projectManagerId")
-                def customer = customerGateway.getCustomer(customerId)
-                def projectManager = customerGateway.getProjectManager(customerId)
+                int customerId =  resultSet.getInt("customerId")
+                int projectManagerId = resultSet.getInt("projectManagerId")
+                Customer customer = customerGateway.getCustomer(customerId)
+                ProjectManager projectManager = customerGateway.getProjectManager(customerId)
                 /*
                 Load general offer info
                  */
-                def projectTitle = resultSet.getString("projectTitle")
-                def projectDescription = resultSet.getString("projectDescription")
-                def totalCosts = resultSet.getDouble("totalPrice")
-                def modificationDate = resultSet.getDate("modificationDate")
-                def selectedAffiliationId = resultSet.getInt("customerAffiliationId")
-                def selectedAffiliation = customerGateway.getAffiliation(selectedAffiliationId)
+                String projectTitle = resultSet.getString("projectTitle")
+                String projectDescription = resultSet.getString("projectDescription")
+                double totalCosts = resultSet.getDouble("totalPrice")
+                Date modificationDate = resultSet.getDate("modificationDate")
+                int selectedAffiliationId = resultSet.getInt("customerAffiliationId")
+                Affiliation selectedAffiliation = customerGateway.getAffiliation(selectedAffiliationId)
 
                 offer = Optional.of(new Offer.Builder(
                         customer,

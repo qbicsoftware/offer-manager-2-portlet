@@ -69,7 +69,7 @@ class OfferOverviewModel {
      */
     InputStream getOfferAsPdf() throws RuntimeException {
         offer.map({
-            def converter = new OfferToPDFConverter(it)
+            OfferToPDFConverter converter = new OfferToPDFConverter(it)
             return converter.getOfferAsPdf()
         }).orElseThrow({new RuntimeException("The offer content seems to be empty, nothing to " +
                 "convert.")})
