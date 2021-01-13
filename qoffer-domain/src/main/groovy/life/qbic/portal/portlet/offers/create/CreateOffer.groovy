@@ -51,8 +51,6 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
         } catch (DatabaseQueryException e) {
             output.failNotification(e.message)
         } catch (Exception ignored) {
-            println ignored.message
-            println ignored.stackTrace.join("\n")
             output.failNotification("An unexpected during the saving of your offer occurred. " +
                     "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
