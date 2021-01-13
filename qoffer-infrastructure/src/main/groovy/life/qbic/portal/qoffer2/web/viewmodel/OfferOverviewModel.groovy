@@ -14,7 +14,7 @@ import life.qbic.portal.qoffer2.shared.OfferOverview
  * such as a list of available offer overviews and
  * a property for a selected offer overview.
  *
- * The model holds on public method to retrieve the
+ * The model provides a public method to retrieve the
  * selected offer in PDF.
  *
  * @since 1.0.0
@@ -85,9 +85,10 @@ class OfferOverviewModel {
      */
     InputStream getOfferAsPdf() throws RuntimeException {
         offer.map({
-            def converter = new OfferToPDFConverter(it)
+            OfferToPDFConverter converter = new OfferToPDFConverter(it)
             return converter.getOfferAsPdf()
-        }).orElseThrow(RuntimeException::new)
+        }).orElseThrow({new RuntimeException("The offer content seems to be empty, nothing to " +
+                "convert.")})
     }
 
     private Optional<Offer> loadOfferInfo() {

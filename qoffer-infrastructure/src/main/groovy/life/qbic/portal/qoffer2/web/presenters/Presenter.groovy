@@ -16,7 +16,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
  */
 class Presenter implements UpdateCustomerOutput {
 
-    final private ViewModel viewModel
+    private final ViewModel viewModel
 
     Presenter(ViewModel viewModel){
         this.viewModel = viewModel 

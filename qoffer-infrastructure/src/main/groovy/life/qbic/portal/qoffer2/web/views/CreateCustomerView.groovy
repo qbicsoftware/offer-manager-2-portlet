@@ -28,11 +28,11 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 @Log4j2
 class CreateCustomerView extends VerticalLayout {
-    final private ViewModel sharedViewModel
-    final private CreateCustomerViewModel createCustomerViewModel
+    private final ViewModel sharedViewModel
+    private final CreateCustomerViewModel createCustomerViewModel
     final CreateCustomerController controller
 
-    final private List<AffiliationSelectionListener> affiliationSelectionListeners
+    private final List<AffiliationSelectionListener> affiliationSelectionListeners
 
     ComboBox<String> titleField
     TextField firstNameField

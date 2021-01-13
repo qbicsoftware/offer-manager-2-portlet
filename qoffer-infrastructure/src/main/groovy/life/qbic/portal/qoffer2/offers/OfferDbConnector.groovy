@@ -6,6 +6,11 @@ import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
+import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.offers.create.CreateOfferDataSource
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
@@ -38,8 +43,6 @@ class OfferDbConnector implements CreateOfferDataSource{
     CustomerDbConnector customerGateway
     ProductsDbConnector productGateway
 
-    private static final AffiliationCategoryFactory CATEGORY_FACTORY = new AffiliationCategoryFactory()
-    private static final AcademicTitleFactory TITLE_FACTORY = new AcademicTitleFactory()
 
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (offerId, " +
             "creationDate, expirationDate, customerId, projectManagerId, projectTitle, " +
@@ -133,7 +136,7 @@ class OfferDbConnector implements CreateOfferDataSource{
             PreparedStatement statement = it.prepareStatement(query)
             ResultSet resultSet = statement.executeQuery()
             while (resultSet.next()) {
-                def customer = new Customer.Builder(
+                Customer customer = new Customer.Builder(
                         resultSet.getString("first_name"),
                         resultSet.getString("last_name"),
                         resultSet.getString("email"))
@@ -174,6 +177,7 @@ class OfferDbConnector implements CreateOfferDataSource{
             ResultSet resultSet = statement.executeQuery()
             while (resultSet.next()) {
                 /*
+<<<<<<< HEAD
                 Load the offer Id first
                  */
                 def offerId = parseOfferId(resultSet.getString("offerId"))

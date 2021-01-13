@@ -49,6 +49,7 @@ class OverviewView extends VerticalLayout {
         this.updateOfferBtn = new Button(VaadinIcons.EDIT)
         this.downloadSpinner = new ProgressBar()
         this.offerUpdateService = offerUpdateService
+
         initLayout()
         setupDataProvider()
         setupGrid()
@@ -60,8 +61,9 @@ class OverviewView extends VerticalLayout {
         We start with the header, that contains a descriptive
         title of what the view is about.
          */
-        final def headerRow = new HorizontalLayout()
-        final def label = new Label("Available Offers")
+        final HorizontalLayout headerRow = new HorizontalLayout()
+        final Label label = new Label("Available Offers")
+
         label.addStyleName(ValoTheme.LABEL_HUGE)
         headerRow.addComponent(label)
         this.addComponent(headerRow)
@@ -71,8 +73,8 @@ class OverviewView extends VerticalLayout {
         The left component will be the offer overview, the
         right component will be the offer download button.
          */
-        final def overviewRow = new HorizontalLayout()
-        final def activityContainer = new VerticalLayout()
+        final HorizontalLayout overviewRow = new HorizontalLayout()
+        final VerticalLayout activityContainer = new VerticalLayout()
         downloadBtn.setStyleName(ValoTheme.BUTTON_LARGE)
         downloadBtn.setEnabled(false)
         downloadBtn.setDescription("Download offer")
@@ -83,6 +85,7 @@ class OverviewView extends VerticalLayout {
         downloadSpinner.setIndeterminate(true)
         downloadSpinner.setVisible(false)
         activityContainer.addComponents(downloadBtn, updateOfferBtn, downloadSpinner)
+
         activityContainer.setMargin(false)
         overviewRow.addComponents(overviewGrid, activityContainer)
         this.addComponent(overviewRow)
@@ -99,6 +102,7 @@ class OverviewView extends VerticalLayout {
         def dateColumn = overviewGrid.addColumn({ overview -> overview.getModificationDate() })
                 .setCaption("Date")
         overviewGrid.addColumn({overview -> overview.offerId.getIdentifier()}).setCaption("Offer ID")
+
         overviewGrid.addColumn({overview -> overview.getProjectTitle()}).setCaption("Title")
         overviewGrid.addColumn({overview -> overview.getCustomer()}).setCaption("Customer")
         overviewGrid.addColumn({overview -> overview.getTotalPrice()}).setCaption("Total Price")

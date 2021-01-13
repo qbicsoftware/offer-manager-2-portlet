@@ -8,7 +8,6 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.general.CommonPerson
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliationDataSource
 import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliationsDataSource
@@ -566,14 +565,14 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
      PreparedStatement statement = it.prepareStatement(query)
      statement.setInt(1, personPrimaryId)
      ResultSet result = statement.executeQuery()
-     def person = null
+     Customer person = null
      while (result.next()) {
 
-       def firstName = result.getString("first_name")
-       def lastName = result.getString("last_name")
-       def email = result.getString("email")
-       def title = TITLE_FACTORY.getForString(result.getString("title"))
-       def affiliations = getAffiliationForPersonId(result.getInt("id"))
+       String firstName = result.getString("first_name")
+       String lastName = result.getString("last_name")
+       String email = result.getString("email")
+       AcademicTitle title = TITLE_FACTORY.getForString(result.getString("title"))
+       List<Affiliation> affiliations = getAffiliationForPersonId(result.getInt("id"))
        person = new Customer.Builder(firstName, lastName, email)
                .affiliations(affiliations).title(title).build()
      }
@@ -589,14 +588,14 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       PreparedStatement statement = it.prepareStatement(query)
       statement.setInt(1, personPrimaryId)
       ResultSet result = statement.executeQuery()
-      def person = null
+      ProjectManager person = null
       while (result.next()) {
 
-        def firstName = result.getString("first_name")
-        def lastName = result.getString("last_name")
-        def email = result.getString("email")
-        def title = TITLE_FACTORY.getForString(result.getString("title"))
-        def affiliations = getAffiliationForPersonId(result.getInt("id"))
+        String firstName = result.getString("first_name")
+        String lastName = result.getString("last_name")
+        String email = result.getString("email")
+        AcademicTitle title = TITLE_FACTORY.getForString(result.getString("title"))
+        List<Affiliation> affiliations = getAffiliationForPersonId(result.getInt("id"))
         person = new ProjectManager.Builder(firstName, lastName, email)
                 .affiliations(affiliations).title(title).build()
       }
@@ -612,16 +611,16 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       PreparedStatement statement = it.prepareStatement(query)
       statement.setInt(1, affiliationPrimaryId)
       ResultSet result = statement.executeQuery()
-      def affiliation = null
+      Affiliation affiliation = null
       while (result.next()) {
 
-        def organization = result.getString("organization")
-        def address_addition = result.getString("address_addition")
-        def street = result.getString("street")
-        def city = result.getString("city")
-        def postalCode = result.getString("postal_code")
-        def country = result.getString("country")
-        def category = CATEGORY_FACTORY.getForString(result.getString("category"))
+        String organization = result.getString("organization")
+        String address_addition = result.getString("address_addition")
+        String street = result.getString("street")
+        String city = result.getString("city")
+        String postalCode = result.getString("postal_code")
+        String country = result.getString("country")
+        AffiliationCategory category = CATEGORY_FACTORY.getForString(result.getString("category"))
         affiliation = new Affiliation.Builder(organization, street, postalCode, city)
           .country(country).addressAddition(address_addition).category(category).build()
       }

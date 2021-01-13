@@ -1,5 +1,6 @@
 package life.qbic.portal.qoffer2.web.views.create.offer
 
+import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
@@ -7,9 +8,11 @@ import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
+import life.qbic.portal.qoffer2.web.views.GridUtils
 
 /**
  * This class generates a Layout in which the user
@@ -36,7 +39,6 @@ class ProjectManagerSelectionView extends VerticalLayout{
     ProjectManagerSelectionView(CreateOfferViewModel viewModel){
         this.viewModel = viewModel
         initLayout()
-        setupDataProvider()
         generateCustomerGrid()
         addListener()
     }
@@ -93,8 +95,10 @@ class ProjectManagerSelectionView extends VerticalLayout{
     /**
      * This method adds the retrieved Customer Information to the Customer grid
      */
-    private void setupDataProvider() {
-        this.projectManagerGrid.setItems(viewModel.availableProjectManagers)
+    private ListDataProvider setupDataProvider() {
+        def dataProvider = new ListDataProvider<>(viewModel.availableProjectManagers)
+        this.projectManagerGrid.setDataProvider(dataProvider)
+        return dataProvider
     }
 
     /**
@@ -104,17 +108,27 @@ class ProjectManagerSelectionView extends VerticalLayout{
      */
     private def generateCustomerGrid() {
         try {
-            this.projectManagerGrid.addColumn({ customer -> customer.getFirstName() }).setCaption("First Name")
-            this.projectManagerGrid.addColumn({ customer -> customer.getLastName() }).setCaption("Last Name")
-            this.projectManagerGrid.addColumn({ customer -> customer.getEmailAddress() }).setCaption("Email Address")
+            this.projectManagerGrid.addColumn({ customer -> customer.getFirstName() })
+                    .setCaption("First Name").setId("FirstName")
+            this.projectManagerGrid.addColumn({ customer -> customer.getLastName() })
+                    .setCaption("Last Name").setId("LastName")
+            this.projectManagerGrid.addColumn({ customer -> customer.getEmailAddress() })
+                    .setCaption("Email Address").setId("EmailAddress")
 
             //specify size of grid and layout
             projectManagerLayout.setSizeFull()
             projectManagerGrid.setSizeFull()
-
         } catch (Exception e) {
             new Exception("Unexpected exception in building the project manager grid", e)
         }
+        /*
+        We need to add a data provider for the grid content
+         */
+        def projectManagerDataProvider = setupDataProvider()
+        /*
+        Lastly, we add some nice content filters
+         */
+        setupFilters(projectManagerDataProvider)
     }
 
     /**
@@ -148,6 +162,18 @@ class ProjectManagerSelectionView extends VerticalLayout{
                 next.setEnabled(true)
             }
         })
+    }
 
+    private void setupFilters(ListDataProvider<ProjectManager> projectManagerListDataProvider) {
+        HeaderRow customerFilterRow = projectManagerGrid.appendHeaderRow()
+        GridUtils.setupColumnFilter(projectManagerListDataProvider,
+                projectManagerGrid.getColumn("FirstName"),
+                customerFilterRow)
+        GridUtils.setupColumnFilter(projectManagerListDataProvider,
+                projectManagerGrid.getColumn("LastName"),
+                customerFilterRow)
+        GridUtils.setupColumnFilter(projectManagerListDataProvider,
+                projectManagerGrid.getColumn("EmailAddress"),
+                customerFilterRow)
     }
 }

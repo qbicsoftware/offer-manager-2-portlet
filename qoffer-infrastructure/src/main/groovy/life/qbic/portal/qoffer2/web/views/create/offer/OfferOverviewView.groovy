@@ -1,15 +1,10 @@
 package life.qbic.portal.qoffer2.web.views.create.offer
 
 import com.vaadin.icons.VaadinIcons
-import com.vaadin.server.ExternalResource
 import com.vaadin.server.FileDownloader
-import com.vaadin.server.Resource
 import com.vaadin.server.StreamResource
-import com.vaadin.server.ThemeResource
 import com.vaadin.ui.Alignment
-import com.vaadin.ui.BrowserFrame
 import com.vaadin.ui.Button
-import com.vaadin.ui.Embedded
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
@@ -18,14 +13,11 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.portlet.offers.Currency
 import life.qbic.portal.qoffer2.offers.OfferToPDFConverter
-import life.qbic.portal.qoffer2.services.OfferService
+import life.qbic.portal.qoffer2.offers.OfferResourcesService
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
-
-import java.text.DecimalFormat
 
 /**
  * This class generates a Layout in which the user
@@ -48,7 +40,7 @@ class OfferOverviewView extends VerticalLayout{
     Button save
     Button downloadOffer
 
-    OfferOverviewView(CreateOfferViewModel viewModel, OfferService service){
+    OfferOverviewView(CreateOfferViewModel viewModel, OfferResourcesService service){
         this.createOfferViewModel = viewModel
         initLayout()
         service.offerCreatedEvent.register((Offer offer) -> {
@@ -174,7 +166,7 @@ class OfferOverviewView extends VerticalLayout{
         StreamResource offerResource =
                 new StreamResource((StreamResource.StreamSource res) -> {
                     return converter.getOfferAsPdf()
-                }, "myoffer.pdf")
+                }, new Date().toLocalDateTime().toString()+".pdf")
         FileDownloader fileDownloader = new FileDownloader(offerResource)
         fileDownloader.extend(downloadOffer)
         downloadOffer.setEnabled(true)

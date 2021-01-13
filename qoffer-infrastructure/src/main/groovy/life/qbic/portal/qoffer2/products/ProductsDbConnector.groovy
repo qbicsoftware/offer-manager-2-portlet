@@ -194,9 +194,9 @@ class ProductsDbConnector implements ListProductsDataSource {
       statement.setInt(1, offerPrimaryId)
       ResultSet result = statement.executeQuery()
       while (result.next()) {
-        def product = rowResultToProduct(SqlExtensions.toRowResult(result))
-        def quantity = result.getDouble("quantity")
-        def item = new ProductItem(quantity, product)
+        Product product = rowResultToProduct(SqlExtensions.toRowResult(result))
+        double quantity = result.getDouble("quantity")
+        ProductItem item = new ProductItem(quantity, product)
         productItems << item
       }
     }

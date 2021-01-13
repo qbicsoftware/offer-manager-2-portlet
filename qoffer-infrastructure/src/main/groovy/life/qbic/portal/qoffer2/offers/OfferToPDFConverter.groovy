@@ -27,30 +27,30 @@ import java.nio.file.StandardCopyOption
 @Log4j2
 class OfferToPDFConverter implements OfferExporter{
 
-    final private Offer offer
+    private final Offer offer
 
-    final private Path tempDir
+   private final Path tempDir
 
-    final private Document htmlContent
+   private final Document htmlContent
 
-    final private Path createdOffer
+    private final Path createdOffer
 
-    final private Path createdOfferPdf
+   private final Path createdOfferPdf
 
-    final private Path newOfferImage
+   private final Path newOfferImage
 
-    final private Path newOfferStyle
+    private final Path newOfferStyle
 
-    final private Path OFFER_HTML_TEMPLATE =
-            Paths.get(getClass().getClassLoader()
+    private static final Path OFFER_HTML_TEMPLATE =
+            Paths.get(OfferToPDFConverter.class.getClassLoader()
                     .getResource("offer-template/offer.html")
                     .toURI())
-    final private Path OFFER_HEADER_IMAGE =
-            Paths.get(getClass().getClassLoader()
+    private static final Path OFFER_HEADER_IMAGE =
+            Paths.get(OfferToPDFConverter.class.getClassLoader()
                     .getResource("offer-template/offer_header.png")
                     .toURI())
-    final private Path OFFER_STYLESHEET =
-            Paths.get(getClass().getClassLoader()
+    private static final Path OFFER_STYLESHEET =
+            Paths.get(OfferToPDFConverter.class.getClassLoader()
                     .getResource("offer-template/stylesheet.css")
                     .toURI())
 
@@ -61,10 +61,10 @@ class OfferToPDFConverter implements OfferExporter{
         this.newOfferImage = Paths.get(tempDir.toString(), "offer_header.png")
         this.newOfferStyle = Paths.get(tempDir.toString(), "stylesheet.css")
         this.createdOfferPdf = Paths.get(tempDir.toString(), "offer.pdf")
-        copyTemplate()
+        importTemplate()
         this.htmlContent = Parser.xmlParser().parseInput(new File(this.createdOffer.toUri()).text, "")
         fillTemplateWithOfferContent()
-        writeHTMLContentToFile()
+        writeHTMLContentToFile(this.createdOffer, this.htmlContent)
         generatePDF()
     }
 
@@ -72,15 +72,15 @@ class OfferToPDFConverter implements OfferExporter{
         return new BufferedInputStream(new FileInputStream(new File(createdOfferPdf.toString())))
     }
 
-    private void copyTemplate() {
+    private void importTemplate() {
         Files.copy(OFFER_HTML_TEMPLATE, createdOffer, StandardCopyOption.REPLACE_EXISTING)
         Files.copy(OFFER_HEADER_IMAGE, newOfferImage, StandardCopyOption.REPLACE_EXISTING)
         Files.copy(OFFER_STYLESHEET, newOfferStyle, StandardCopyOption.REPLACE_EXISTING)
     }
 
-    private void writeHTMLContentToFile() {
-        new File(this.createdOffer.toUri()).withWriter {
-            it.write(this.htmlContent.toString())
+    private static void writeHTMLContentToFile(Path fileLocation, Document htmlContent) {
+        new File(fileLocation.toUri()).withWriter {
+            it.write(htmlContent.toString())
             it.flush()
         }
     }
@@ -91,6 +91,7 @@ class OfferToPDFConverter implements OfferExporter{
         setManagerInformation()
         setSelectedItems()
         setPrices()
+        setQuotationDetails()
     }
 
     private void generatePDF() {
@@ -100,40 +101,58 @@ class OfferToPDFConverter implements OfferExporter{
 
     private void setProjectInformation() {
         htmlContent.getElementById("project-title").text(offer.projectTitle)
-        htmlContent.getElementById("project-objective").text(offer.projectDescription)
+        htmlContent.getElementById("project-description").text(offer.projectDescription)
     }
 
     private void setCustomerInformation() {
         final Customer customer = offer.customer
         final Affiliation affiliation = offer.selectedCustomerAffiliation
-        htmlContent.getElementById("cName").text(String.format(
+        htmlContent.getElementById("customer-name").text(String.format(
                 "%s %s %s",
                 customer.title,
                 customer.firstName,
                 customer.lastName))
-        htmlContent.getElementById("cOrganisation").text(affiliation.organisation)
-        htmlContent.getElementById("cStreet").text(affiliation.street)
-        htmlContent.getElementById("cPostalCode").text(affiliation.postalCode)
-        htmlContent.getElementById("cCity").text(affiliation.city)
-        htmlContent.getElementById("cCountry").text(affiliation.country)
+        htmlContent.getElementById("customer-organisation").text(affiliation.organisation)
+        htmlContent.getElementById("customer-street").text(affiliation.street)
+        htmlContent.getElementById("customer-postal-code").text(affiliation.postalCode)
+        htmlContent.getElementById("customer-city").text(affiliation.city)
+        htmlContent.getElementById("customer-country").text(affiliation.country)
     }
 
     private void setManagerInformation() {
         final ProjectManager pm = offer.projectManager
         final Affiliation affiliation = pm.affiliations.get(0)
-        htmlContent.getElementById("pmName").text(String.format(
+        htmlContent.getElementById("project-manager-name").text(String.format(
                 "%s %s %s",
                 pm.title,
                 pm.firstName,
                 pm.lastName))
-        htmlContent.getElementById("pmStreet").text(affiliation.street)
-        htmlContent.getElementById("pmCity").text("${affiliation.postalCode} ${affiliation.city}")
-        htmlContent.getElementById("pmEmail").text(pm.emailAddress)
+        htmlContent.getElementById("project-manager-street").text(affiliation.street)
+        htmlContent.getElementById("project-manager-city").text("${affiliation.postalCode} ${affiliation.city}")
+        htmlContent.getElementById("project-manager-email").text(pm.emailAddress)
     }
 
-    void setSelectedItems() {}
+    void setSelectedItems() {
+    //TODO implement
+    }
 
-    void setPrices() {}
+    void setPrices() {
+        final totalPrice = offer.totalPrice
+        final taxes = offer.taxes
+        final netPrice = offer.netPrice
+
+        htmlContent.getElementById("total-costs").text(totalPrice.toString()+" €")
+
+        htmlContent.getElementById("total-cost-value-net").text(totalPrice.toString())
+        htmlContent.getElementById("vat-cost-value").text(taxes.toString())
+        htmlContent.getElementById("final-cost-value").text(netPrice.toString())
+    }
+
+    void setQuotationDetails(){
+        htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
+        htmlContent.getElementById("offer-expiry-date").text(offer.expirationDate.toLocalDate().toString())
+        htmlContent.getElementById("offer-date").text(offer.modificationDate.toLocalDate().toString())
+    }
 
     /**
      * Small helper class to handle the HTML to PDF conversion.
@@ -156,7 +175,6 @@ class OfferToPDFConverter implements OfferExporter{
 
         void print(Path outputFile) {
             final Path output = outputFile
-            println output.toString()
             ProcessBuilder builder = new ProcessBuilder()
             builder.command(chromeAlias,
                     "--headless",

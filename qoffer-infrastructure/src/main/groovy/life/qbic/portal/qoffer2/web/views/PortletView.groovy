@@ -33,6 +33,7 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
     private final CreateOfferView createOfferView
     private final List<Component> featureViews
     private final OverviewView overviewView
+
     private final CreateOfferView updateOfferView
 
     PortletView(ViewModel portletViewModel,
@@ -51,6 +52,7 @@ class PortletView extends VerticalLayout implements AffiliationSelectionListener
         this.featureViews = []
         this.overviewView = overviewView
         this.updateOfferView = updateOfferView
+
         initLayout()
         registerListeners()
         setupFeatureViews()

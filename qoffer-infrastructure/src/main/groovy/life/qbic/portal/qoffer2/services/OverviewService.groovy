@@ -2,6 +2,7 @@ package life.qbic.portal.qoffer2.services
 
 import life.qbic.portal.qoffer2.events.EventEmitter
 import life.qbic.portal.qoffer2.offers.OfferDbConnector
+import life.qbic.portal.qoffer2.offers.OfferResourcesService
 import life.qbic.portal.qoffer2.shared.OfferOverview
 
 /**
@@ -13,18 +14,18 @@ import life.qbic.portal.qoffer2.shared.OfferOverview
  *
  * @since 1.0.0
  */
-class OverviewService implements Service {
+class OverviewService implements ResourcesService {
 
     private List<OfferOverview> offerOverviewList
 
     private final OfferDbConnector offerDbConnector
 
-    private final OfferService offerService
+    private final OfferResourcesService offerService
 
     final EventEmitter<String> updatedOverviewEvent
 
     OverviewService(OfferDbConnector offerDbConnector,
-                    OfferService offerService) {
+                    OfferResourcesService offerService) {
         this.offerDbConnector = offerDbConnector
         this.updatedOverviewEvent = new EventEmitter<>()
         this.offerService = offerService
