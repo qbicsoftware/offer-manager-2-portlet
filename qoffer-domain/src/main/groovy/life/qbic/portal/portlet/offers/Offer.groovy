@@ -1,5 +1,6 @@
 package life.qbic.portal.portlet.offers
 
+import groovy.time.TimeCategory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
@@ -24,7 +25,7 @@ class Offer {
     /**
      * Date on which the offer was lastly modified
      */
-    private Date modificationDate
+    private Date creationDate
     /**
      * The date on which the offer expires
      */
@@ -69,10 +70,15 @@ class Offer {
      */
     private static final double VAT = 0.19
 
+    private static Date calculateExpirationDate(Date date) {
+        use (TimeCategory) {
+            return date + 90.days
+        }
+    }
+
     static class Builder {
 
-        Date modificationDate
-        Date expirationDate
+        Date creationDate
         Customer customer
         ProjectManager projectManager
         String projectTitle
@@ -87,19 +93,15 @@ class Offer {
             this.projectTitle = Objects.requireNonNull(projectTitle, "Project Title must not be null")
             this.projectDescription = Objects.requireNonNull(projectDescription, "Project Description must not be null")
             this.items = []
+            this.creationDate = new Date()
             // Since the incoming item list is mutable we need to
             // copy all immutable items to out internal list
             items.each {this.items.add(it)}
             this.selectedCustomerAffiliation = Objects.requireNonNull(selectedCustomerAffiliation, "Customer Affiliation must not be null")
         }
 
-        Builder modificationDate(Date modificationDate) {
-            this.modificationDate = modificationDate
-            return this
-        }
-
-        Builder expirationDate(Date expirationDate) {
-            this.expirationDate = expirationDate
+        Builder creationDate(Date creationDate) {
+            this.creationDate = creationDate
             return this
         }
 
@@ -125,8 +127,8 @@ class Offer {
         this.identifier = builder.identifier
         this.items = []
         builder.items.each {this.items.add(it)}
-        this.expirationDate = builder.expirationDate
-        this.modificationDate = builder.modificationDate
+        this.expirationDate = calculateExpirationDate(builder.creationDate)
+        this.creationDate = builder.creationDate
         this.projectManager = builder.projectManager
         this.projectDescription = builder.projectDescription
         this.projectTitle = builder.projectTitle
@@ -189,7 +191,7 @@ class Offer {
     }
 
     Date getModificationDate() {
-        return modificationDate
+        return creationDate
     }
 
     Date getExpirationDate() {

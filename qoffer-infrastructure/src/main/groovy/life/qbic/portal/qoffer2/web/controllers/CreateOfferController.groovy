@@ -71,6 +71,8 @@ class CreateOfferController {
         try {
             this.calculatePrice.calculatePrice(items, affiliation)
         } catch(Exception ignored) {
+            log.error(ignored.message)
+            log.error(ignored.stackTrace.join("\n"))
             throw new IllegalArgumentException("Could not calculate price from provided arguments.")
         }
     }

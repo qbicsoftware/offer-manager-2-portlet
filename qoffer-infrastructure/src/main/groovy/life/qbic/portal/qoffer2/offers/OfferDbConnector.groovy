@@ -42,7 +42,8 @@ class OfferDbConnector implements CreateOfferDataSource{
     private static final AcademicTitleFactory TITLE_FACTORY = new AcademicTitleFactory()
 
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (offerId, " +
-            "modificationDate, expirationDate, customerId, projectManagerId, projectTitle, projectDescription, totalPrice, customerAffiliationId)"
+            "creationDate, expirationDate, customerId, projectManagerId, projectTitle, " +
+            "projectDescription, totalPrice, customerAffiliationId)"
 
 
     OfferDbConnector(ConnectionProvider connectionProvider, CustomerDbConnector customerDbConnector, ProductsDbConnector productsDbConnector){
@@ -121,7 +122,7 @@ class OfferDbConnector implements CreateOfferDataSource{
     List<OfferOverview> loadOfferOverview() {
         List<OfferOverview> offerOverviewList = []
 
-        String query = "SELECT offerId, modificationDate, projectTitle, " +
+        String query = "SELECT offerId, creationDate, projectTitle, " +
                 "totalPrice, first_name, last_name, email\n" +
                 "FROM offer \n" +
                 "LEFT JOIN person \n" +
@@ -139,11 +140,11 @@ class OfferDbConnector implements CreateOfferDataSource{
                         .build()
                 def projectTitle = resultSet.getString("projectTitle")
                 def totalCosts = resultSet.getDouble("totalPrice")
-                def modificationDate = resultSet.getDate("modificationDate")
+                def creationDate = resultSet.getDate("creationDate")
                 def customerName = "${customer.getFirstName()} ${customer.getLastName()}"
                 def offerId = parseOfferId(resultSet.getString("offerId"))
                 OfferOverview offerOverview = new OfferOverview(offerId,
-                        modificationDate,projectTitle, "-",
+                        creationDate,projectTitle, "-",
                         customerName, totalCosts)
                 offerOverviewList.add(offerOverview)
             }
@@ -190,7 +191,7 @@ class OfferDbConnector implements CreateOfferDataSource{
                 def projectTitle = resultSet.getString("projectTitle")
                 def projectDescription = resultSet.getString("projectDescription")
                 def totalCosts = resultSet.getDouble("totalPrice")
-                def modificationDate = resultSet.getDate("modificationDate")
+                def creationDate = resultSet.getDate("creationDate")
                 def selectedAffiliationId = resultSet.getInt("customerAffiliationId")
                 def selectedAffiliation = customerGateway.getAffiliation(selectedAffiliationId)
                 def items = productGateway.getItemsForOffer(offerPrimaryId)
