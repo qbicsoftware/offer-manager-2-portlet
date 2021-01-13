@@ -53,7 +53,7 @@ class CreateOfferView extends FormLayout{
                     ListProductsController listProductsController,
                     CreateCustomerView createCustomerView,
                     CreateAffiliationView createAffiliationView,
-                    OfferResourcesService service
+                    OfferResourcesService offerProviderService
     ) {
         super()
         this.sharedViewModel = sharedViewModel
