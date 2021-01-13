@@ -19,7 +19,7 @@ class OverviewService implements Service {
 
     private final OfferDbConnector offerDbConnector
 
-    final private OfferService offerService
+    private final OfferService offerService
 
     final EventEmitter<String> updatedOverviewEvent
 
