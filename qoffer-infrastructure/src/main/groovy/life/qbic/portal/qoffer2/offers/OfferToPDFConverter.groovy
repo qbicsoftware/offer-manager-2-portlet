@@ -101,10 +101,7 @@ class OfferToPDFConverter implements OfferExporter{
 
     private void setProjectInformation() {
         htmlContent.getElementById("project-title").text(offer.projectTitle)
-
-        String projectDescription = ""
-        offer.projectDescription.split("\t").each {projectDescription += it + "<br>"}
-        htmlContent.getElementById("project-description").text(projectDescription)
+        htmlContent.getElementById("project-description").text(offer.projectDescription)
     }
 
     private void setCustomerInformation() {
@@ -144,7 +141,7 @@ class OfferToPDFConverter implements OfferExporter{
         final taxes = offer.taxes
         final netPrice = offer.netPrice
 
-        htmlContent.getElementById("total-costs").text(totalPrice.toString())
+        htmlContent.getElementById("total-costs").text(totalPrice.toString()+" €")
 
         htmlContent.getElementById("total-cost-value-net").text(totalPrice.toString())
         htmlContent.getElementById("vat-cost-value").text(taxes.toString())
@@ -153,8 +150,8 @@ class OfferToPDFConverter implements OfferExporter{
 
     void setQuotationDetails(){
         htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
-        htmlContent.getElementById("offer-expiry-date").text(offer.expirationDate.toString())
-        htmlContent.getElementById("offer-date").text(offer.modificationDate.toString())
+        htmlContent.getElementById("offer-expiry-date").text(offer.expirationDate.toLocalDate().toString())
+        htmlContent.getElementById("offer-date").text(offer.modificationDate.toLocalDate().toString())
     }
 
     /**
