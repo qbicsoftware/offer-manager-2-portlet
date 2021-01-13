@@ -5,6 +5,7 @@ import com.vaadin.shared.ui.ValueChangeMode
 import com.vaadin.ui.Grid
 import com.vaadin.ui.TextField
 import com.vaadin.ui.components.grid.HeaderRow
+import com.vaadin.ui.themes.ValoTheme
 import org.apache.commons.lang3.StringUtils
 
 /**
@@ -34,6 +35,8 @@ class GridUtils {
             )
         })
         filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
+        filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)
+        filterTextField.setPlaceholder("Filter Me")
 
         headerRow.getCell(column).setComponent(filterTextField)
         filterTextField.setSizeFull()
