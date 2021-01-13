@@ -1,11 +1,11 @@
 package life.qbic.portal.portlet.offers.identifier
 
 /**
- * <class short description - 1 Line!>
+ * Describes the offer identifier
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * Contains the random part, the project conserved part and the version from which the offer identifier is build
  *
- * @since <versiontag>
+ * @since 0.1.0
  */
 class OfferId extends TomatoId{
 
