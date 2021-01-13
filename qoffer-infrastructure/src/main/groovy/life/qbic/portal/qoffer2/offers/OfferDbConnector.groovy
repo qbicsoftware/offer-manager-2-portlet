@@ -1,18 +1,23 @@
 package life.qbic.portal.qoffer2.offers
 
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitleFactory
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.offers.create.CreateOfferDataSource
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.database.ConnectionProvider
 import life.qbic.portal.qoffer2.products.ProductsDbConnector
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
+import life.qbic.portal.qoffer2.shared.OfferOverview
 
 import java.sql.Connection
 import java.sql.Date
 import java.sql.PreparedStatement
+import java.sql.ResultSet
 import java.sql.Statement
 
 /**
@@ -32,7 +37,6 @@ class OfferDbConnector implements CreateOfferDataSource{
     CustomerDbConnector customerGateway
     ProductsDbConnector productGateway
 
-    private static final Logger LOG = LogManager.getLogger(OfferDbConnector.class)
 
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (modificationDate, expirationDate, customerId, projectManagerId, projectTitle, projectDescription, totalPrice, customerAffiliationId)"
 
@@ -103,5 +107,79 @@ class OfferDbConnector implements CreateOfferDataSource{
 
             return generatedKeys[0]
         }
+    }
+
+    List<OfferOverview> loadOfferOverview() {
+        List<OfferOverview> offerOverviewList = []
+
+        String query = "SELECT modificationDate, projectTitle, " +
+                "totalPrice, first_name, last_name, email\n" +
+                "FROM offer \n" +
+                "LEFT JOIN person \n" +
+                "ON offer.customerId = person.id"
+
+        Connection connection = connectionProvider.connect()
+        connection.withCloseable {
+            PreparedStatement statement = it.prepareStatement(query)
+            ResultSet resultSet = statement.executeQuery()
+            while (resultSet.next()) {
+                Customer customer = new Customer.Builder(
+                        resultSet.getString("first_name"),
+                        resultSet.getString("last_name"),
+                        resultSet.getString("email"))
+                        .build()
+                String projectTitle = resultSet.getString("projectTitle")
+                double totalCosts = resultSet.getDouble("totalPrice")
+                Date modificationDate = resultSet.getDate("modificationDate")
+                String customerName = "${customer.getFirstName()} ${customer.getLastName()}"
+                OfferOverview offerOverview = new OfferOverview(
+                        modificationDate,projectTitle, "-",
+                        customerName, totalCosts)
+                offerOverviewList.add(offerOverview)
+            }
+        }
+        return offerOverviewList
+    }
+
+    Optional<Offer> getOffer(String title) {
+        Optional<Offer> offer = Optional.empty()
+
+        String query = "SELECT * " +
+                "FROM offer \n" +
+                "WHERE projectTitle=?"
+
+        Connection connection = connectionProvider.connect()
+        connection.withCloseable {
+            PreparedStatement statement = it.prepareStatement(query)
+            statement.setString(1, title)
+            ResultSet resultSet = statement.executeQuery()
+            while (resultSet.next()) {
+                /*
+                Load customer and project manager info
+                 */
+                int customerId =  resultSet.getInt("customerId")
+                int projectManagerId = resultSet.getInt("projectManagerId")
+                Customer customer = customerGateway.getCustomer(customerId)
+                ProjectManager projectManager = customerGateway.getProjectManager(customerId)
+                /*
+                Load general offer info
+                 */
+                String projectTitle = resultSet.getString("projectTitle")
+                String projectDescription = resultSet.getString("projectDescription")
+                double totalCosts = resultSet.getDouble("totalPrice")
+                Date modificationDate = resultSet.getDate("modificationDate")
+                int selectedAffiliationId = resultSet.getInt("customerAffiliationId")
+                Affiliation selectedAffiliation = customerGateway.getAffiliation(selectedAffiliationId)
+
+                offer = Optional.of(new Offer.Builder(
+                        customer,
+                        projectManager,
+                        projectTitle,
+                        projectDescription,
+                        selectedAffiliation)
+                        .build())
+            }
+        }
+        return offer
     }
 }

@@ -14,9 +14,11 @@ import life.qbic.portal.qoffer2.offers.OfferDbConnector
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.products.ProductsDbConnector
 import life.qbic.portal.qoffer2.database.DatabaseSession
+import life.qbic.portal.qoffer2.services.OverviewService
 import life.qbic.portal.qoffer2.customers.AffiliationResourcesService
 import life.qbic.portal.qoffer2.offers.OfferResourcesService
 import life.qbic.portal.qoffer2.customers.PersonResourcesService
+
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
@@ -35,11 +37,13 @@ import life.qbic.portal.qoffer2.web.presenters.Presenter
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.OfferOverviewModel
 import life.qbic.portal.qoffer2.web.viewmodel.SearchCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 import life.qbic.portal.qoffer2.web.views.CreateAffiliationView
 import life.qbic.portal.qoffer2.web.views.CreateOfferView
+import life.qbic.portal.qoffer2.web.views.OverviewView
 import life.qbic.portal.qoffer2.web.views.PortletView
 import life.qbic.portal.qoffer2.web.views.CreateCustomerView
 import life.qbic.portal.qoffer2.web.views.SearchCustomerView
@@ -65,6 +69,7 @@ class DependencyManager {
     private CreateAffiliationViewModel createAffiliationViewModel
     private SearchCustomerViewModel searchCustomerViewModel
     private CreateOfferViewModel createOfferViewModel
+    private OfferOverviewModel offerOverviewModel
 
     private Presenter presenter
     private CreateCustomerPresenter createCustomerPresenter
@@ -96,6 +101,7 @@ class DependencyManager {
     private PortletView portletView
     private ConfigurationManager configurationManager
 
+    private OverviewService overviewService
     private PersonResourcesService customerService
     private AffiliationResourcesService affiliationService
     private OfferResourcesService offerService
@@ -150,6 +156,7 @@ class DependencyManager {
         this.customerService = new PersonResourcesService(customerDbConnector)
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
         this.offerService = new OfferResourcesService()
+        this.overviewService = new OverviewService(offerDbConnector)
     }
 
     private void setupViewModels() {
@@ -189,8 +196,15 @@ class DependencyManager {
             this.createOfferViewModel = new CreateOfferViewModel(customerService)
             //todo add affiliations, customers and project managers to the model
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
             throw e
+        }
+
+        try {
+            this.offerOverviewModel = new OfferOverviewModel(overviewService, offerDbConnector,
+                    viewModel)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
         }
     }
 
@@ -321,16 +335,26 @@ class DependencyManager {
             log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
             throw e
         }
+        OverviewView overviewView
+        try {
+            overviewView = new OverviewView(offerOverviewModel)
+        } catch (Exception e) {
+            log.error("Could not create ${OverviewView.getSimpleName()} view.", e)
+            throw e
+        }
 
         PortletView portletView
         try {
-            def createCustomerView2 = new CreateCustomerView(createCustomerController, this
+            CreateCustomerView createCustomerView2 = new CreateCustomerView(createCustomerController, this
                     .viewModel, createCustomerViewModel)
-            def createAffiliationView2 = new CreateAffiliationView(this.viewModel,
+            CreateAffiliationView createAffiliationView2 = new CreateAffiliationView(this.viewModel,
                     createAffiliationViewModel, createAffiliationController)
             portletView = new PortletView(this.viewModel, createCustomerView2,
                     createAffiliationView2,
-                    searchCustomerView, createOfferView)
+                    searchCustomerView,
+                    createOfferView,
+                    overviewView
+            )
             this.portletView = portletView
         } catch (Exception e) {
             log.error("Could not create ${PortletView.getSimpleName()} view.", e)

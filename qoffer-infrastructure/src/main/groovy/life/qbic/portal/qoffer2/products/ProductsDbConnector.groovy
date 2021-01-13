@@ -16,6 +16,7 @@ import life.qbic.portal.qoffer2.database.ConnectionProvider
 
 import org.apache.groovy.sql.extensions.SqlExtensions
 
+import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
@@ -162,6 +163,8 @@ class ProductsDbConnector implements ListProductsDataSource {
     return foundId[0]
   }
 
+
+
   /**
    * Returns the product type of a product based on its implemented class
    *
@@ -179,6 +182,28 @@ class ProductsDbConnector implements ListProductsDataSource {
   }
 
   /**
+   * Queries all items of an offer.
+   * @param offerPrimaryId The offer's primary key.
+   * @return A list of offer-associated product items.
+   */
+  List<ProductItem> getItemsForOffer(int offerPrimaryId) {
+    List<ProductItem> productItems = []
+    Connection connection = provider.connect()
+    connection.withCloseable {
+      PreparedStatement statement = it.prepareStatement(Queries.SELECT_ALL_ITEMS_FOR_OFFER)
+      statement.setInt(1, offerPrimaryId)
+      ResultSet result = statement.executeQuery()
+      while (result.next()) {
+        Product product = rowResultToProduct(SqlExtensions.toRowResult(result))
+        double quantity = result.getDouble("quantity")
+        ProductItem item = new ProductItem(quantity, product)
+        productItems << item
+      }
+    }
+    return productItems
+  }
+
+  /**
    * Class that encapsulates the available SQL queries.
    */
   private static class Queries {
@@ -187,6 +212,14 @@ class ProductsDbConnector implements ListProductsDataSource {
      * Query for all available products.
      */
     final static String SELECT_ALL_PRODUCTS = "SELECT * FROM product"
+
+    /**
+     * Query for all items of an offer.
+     */
+    final static String SELECT_ALL_ITEMS_FOR_OFFER =
+            "SELECT * FROM productitem " +
+                    "LEFT JOIN product ON productitem.productId = product.id " +
+                    "WHERE offerId=?;"
 
   }
 }
