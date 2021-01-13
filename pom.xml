@@ -22,7 +22,7 @@
 
 		<groovy.version>3.0.7</groovy.version>
 
-		<vaadin.version>8.12.0</vaadin.version>
+		<vaadin.version>18.0.5</vaadin.version>
 		<vaadin.plugin.version>8.12.0</vaadin.plugin.version>
 	</properties>
 	<distributionManagement>
