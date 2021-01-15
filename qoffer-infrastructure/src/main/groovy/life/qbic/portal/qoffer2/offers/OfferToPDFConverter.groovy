@@ -151,7 +151,14 @@ class OfferToPDFConverter implements OfferExporter{
     void setQuotationDetails(){
         htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
         htmlContent.getElementById("offer-expiry-date").text(offer.expirationDate.toLocalDate().toString())
-        htmlContent.getElementById("offer-date").text(offer.modificationDate.toLocalDate().toString())
+        Date offerDate = offer.modificationDate
+        htmlContent.getElementById("offer-date").text(String.format(
+                "%s, %d %s %d",
+                offerDate.toDayOfWeek().name(),// write lowercase
+                offerDate.toDayOfWeek().value,
+                offerDate.toMonth().name(), //write lowercase
+                offerDate.toYear().value
+        ))
     }
 
     /**
@@ -181,7 +188,8 @@ class OfferToPDFConverter implements OfferExporter{
                     "--disable-gpu",
                     "--print-to-pdf-no-header",
                     "--print-to-pdf=${output.toString()}",
-                    "${sourceFile}")
+                    "${sourceFile}",
+                    "--aggressive-cache-discard")
             builder.directory(new File(sourceFile.getParent().toString()))
             builder.redirectErrorStream(true)
             Process process = builder.start()
