@@ -143,9 +143,9 @@ class OfferToPDFConverter implements OfferExporter{
 
         htmlContent.getElementById("total-costs").text(totalPrice.toString()+" €")
 
-        htmlContent.getElementById("total-cost-value-net").text(totalPrice.toString())
+        htmlContent.getElementById("total-cost-value-net").text(netPrice.toString())
         htmlContent.getElementById("vat-cost-value").text(taxes.toString())
-        htmlContent.getElementById("final-cost-value").text(netPrice.toString())
+        htmlContent.getElementById("final-cost-value").text(totalPrice.toString())
     }
 
     void setQuotationDetails(){
