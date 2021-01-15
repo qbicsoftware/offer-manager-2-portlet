@@ -13,6 +13,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 
 /**
@@ -149,16 +151,11 @@ class OfferToPDFConverter implements OfferExporter{
     }
 
     void setQuotationDetails(){
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG)
+
         htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
         htmlContent.getElementById("offer-expiry-date").text(offer.expirationDate.toLocalDate().toString())
-        Date offerDate = offer.modificationDate
-        htmlContent.getElementById("offer-date").text(String.format(
-                "%s, %d %s %d",
-                offerDate.toDayOfWeek().name(),// write lowercase
-                offerDate.toDayOfWeek().value,
-                offerDate.toMonth().name(), //write lowercase
-                offerDate.toYear().value
-        ))
+        htmlContent.getElementById("offer-date").text(dateFormat.format(offer.modificationDate))
     }
 
     /**
@@ -186,10 +183,10 @@ class OfferToPDFConverter implements OfferExporter{
             builder.command(chromeAlias,
                     "--headless",
                     "--disable-gpu",
+                    "--aggressive-cache-discard",
                     "--print-to-pdf-no-header",
                     "--print-to-pdf=${output.toString()}",
-                    "${sourceFile}",
-                    "--aggressive-cache-discard")
+                    "${sourceFile}")
             builder.directory(new File(sourceFile.getParent().toString()))
             builder.redirectErrorStream(true)
             Process process = builder.start()
