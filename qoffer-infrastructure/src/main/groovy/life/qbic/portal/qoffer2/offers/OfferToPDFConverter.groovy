@@ -13,6 +13,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 
 /**
@@ -149,9 +151,11 @@ class OfferToPDFConverter implements OfferExporter{
     }
 
     void setQuotationDetails(){
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG)
+
         htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
         htmlContent.getElementById("offer-expiry-date").text(offer.expirationDate.toLocalDate().toString())
-        htmlContent.getElementById("offer-date").text(offer.modificationDate.toLocalDate().toString())
+        htmlContent.getElementById("offer-date").text(dateFormat.format(offer.modificationDate))
     }
 
     /**
@@ -179,6 +183,7 @@ class OfferToPDFConverter implements OfferExporter{
             builder.command(chromeAlias,
                     "--headless",
                     "--disable-gpu",
+                    "--aggressive-cache-discard",
                     "--print-to-pdf-no-header",
                     "--print-to-pdf=${output.toString()}",
                     "${sourceFile}")
