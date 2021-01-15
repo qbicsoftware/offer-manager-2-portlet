@@ -96,6 +96,7 @@ class CreateOfferView extends FormLayout{
         navigationView.showNextStep()
         this.addComponent(navigationView)
         this.addComponent(projectInformationView)
+        this.addComponent(createCustomerView)
         this.setSizeFull()
     }
 
