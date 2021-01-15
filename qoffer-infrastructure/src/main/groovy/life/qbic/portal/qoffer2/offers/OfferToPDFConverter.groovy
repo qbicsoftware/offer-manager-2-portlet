@@ -149,7 +149,7 @@ class OfferToPDFConverter implements OfferExporter{
     }
 
     void setQuotationDetails(){
-        htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
+        htmlContent.getElementById("offer-identifier").text(offer.identifier.identifier)
         htmlContent.getElementById("offer-expiry-date").text(offer.expirationDate.toLocalDate().toString())
         htmlContent.getElementById("offer-date").text(offer.modificationDate.toLocalDate().toString())
     }
