@@ -147,19 +147,23 @@ class ProjectManagerSelectionView extends VerticalLayout{
        Let's listen to changes to the project manager selection and update it in the
        display, if the manager selection has changed.
         */
-        viewModel.addPropertyChangeListener({
-            if (it.propertyName.equals("projectManager")) {
-                def projectManagerFullName =
-                        "${viewModel.projectManager?.firstName ?: ""} " +
-                                "${viewModel.projectManager?.lastName ?: ""}"
-                selectedProjectManager.setValue(projectManagerFullName)
-            }
+        viewModel.addPropertyChangeListener("projectManager", {
+            def projectManagerFullName =
+                    "${viewModel.projectManager?.firstName ?: ""} " +
+                            "${viewModel.projectManager?.lastName ?: ""}"
+            selectedProjectManager.setValue(projectManagerFullName)
             /*
             If a project manager has been selected, we can let the user continue
             with the offer creation.
              */
-            if (viewModel.projectManager){
+            if (it.newValue) {
                 next.setEnabled(true)
+            }
+        })
+
+        viewModel.addPropertyChangeListener("availableProjectManagers", {
+            if (it instanceof ObservableList.ElementEvent) {
+                this.projectManagerGrid.getDataProvider().refreshAll()
             }
         })
     }

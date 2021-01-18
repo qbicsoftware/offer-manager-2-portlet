@@ -271,6 +271,12 @@ class CustomerSelectionView extends VerticalLayout{
                 next.setEnabled(false)
             }
         })
+
+        viewModel.addPropertyChangeListener("foundCustomers", {
+            if (it instanceof ObservableList.ElementEvent) {
+                this.customerGrid.getDataProvider().refreshAll()
+            }
+        })
     }
 
     private void addFilters(ListDataProvider customerListDataProvider) {
