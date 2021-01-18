@@ -29,9 +29,9 @@ import org.apache.commons.lang3.StringUtils
 @Log4j2
 class SearchCustomerView extends FormLayout {
 
-    final private ViewModel viewModel
-    final private SearchCustomerViewModel searchCustomerViewModel
-    final private SearchCustomerController controller
+    private final ViewModel viewModel
+    private final SearchCustomerViewModel searchCustomerViewModel
+    private final SearchCustomerController controller
     private TextField firstNameField
     private TextField lastNameField
     private Button submitButton
@@ -189,11 +189,11 @@ class SearchCustomerView extends FormLayout {
 
         HeaderRow customerFilterRow = grid.appendHeaderRow()
 
-        setupColumnFilter(customerDataProvider, firstNameColumn, customerFilterRow)
-        setupColumnFilter(customerDataProvider, lastNameColumn, customerFilterRow)
-        setupColumnFilter(customerDataProvider, emailColumn, customerFilterRow)
-        setupColumnFilter(customerDataProvider, titleColumn, customerFilterRow)
-        setupColumnFilter(customerDataProvider, affiliationColumn, customerFilterRow)
+        GridUtils.setupColumnFilter(customerDataProvider, firstNameColumn, customerFilterRow)
+        GridUtils.setupColumnFilter(customerDataProvider, lastNameColumn, customerFilterRow)
+        GridUtils.setupColumnFilter(customerDataProvider, emailColumn, customerFilterRow)
+        GridUtils.setupColumnFilter(customerDataProvider, titleColumn, customerFilterRow)
+        GridUtils.setupColumnFilter(customerDataProvider, affiliationColumn, customerFilterRow)
         return grid
     }
 
@@ -205,26 +205,6 @@ class SearchCustomerView extends FormLayout {
      */
     private def clearSearchResults() {
         searchCustomerViewModel.foundCustomers.clear()
-    }
-
-    /**
-     * This method creates a TextField to filter a given column
-     * @param dataProvider a {@link ListDataProvider} on which the filtering is applied on
-     * @param column the column to be filtered
-     * @param headerRow a {@link com.vaadin.ui.components.grid.HeaderRow} to the corresponding {@link Grid}
-     */
-    private static <T> void setupColumnFilter(ListDataProvider<T> dataProvider,
-                                              Grid.Column<T, String> column, HeaderRow headerRow) {
-        TextField filterTextField = new TextField()
-        filterTextField.addValueChangeListener(event -> {
-            dataProvider.addFilter(element ->
-                    StringUtils.containsIgnoreCase(column.getValueProvider().apply(element), filterTextField.getValue())
-            )
-        })
-        filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
-
-        headerRow.getCell(column).setComponent(filterTextField)
-        filterTextField.setSizeFull()
     }
 
     /**

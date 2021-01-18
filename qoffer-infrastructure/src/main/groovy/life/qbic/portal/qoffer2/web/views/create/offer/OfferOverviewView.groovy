@@ -1,6 +1,8 @@
 package life.qbic.portal.qoffer2.web.views.create.offer
 
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.server.FileDownloader
+import com.vaadin.server.StreamResource
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
@@ -10,12 +12,12 @@ import com.vaadin.ui.Panel
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
-import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.portlet.offers.Currency
+import life.qbic.portal.qoffer2.offers.OfferToPDFConverter
+import life.qbic.portal.qoffer2.offers.OfferResourcesService
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
-
-import java.text.DecimalFormat
 
 /**
  * This class generates a Layout in which the user
@@ -36,11 +38,14 @@ class OfferOverviewView extends VerticalLayout{
     Grid<ProductItemViewModel> itemGrid
     Button previous
     Button save
+    Button downloadOffer
 
-    OfferOverviewView(CreateOfferViewModel viewModel){
+    OfferOverviewView(CreateOfferViewModel viewModel, OfferResourcesService service){
         this.createOfferViewModel = viewModel
-
         initLayout()
+        service.offerCreatedEvent.register((Offer offer) -> {
+            addOfferResource(offer)
+        })
     }
 
     /**
@@ -53,11 +58,16 @@ class OfferOverviewView extends VerticalLayout{
         this.save = new Button(VaadinIcons.SAFE)
         save.addStyleName(ValoTheme.LABEL_LARGE)
 
+        this.downloadOffer = new Button(VaadinIcons.DOWNLOAD)
+        downloadOffer.addStyleName(ValoTheme.LABEL_LARGE)
+        downloadOffer.setEnabled(false)
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(previous,save)
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(previous,save, downloadOffer)
         buttonLayout.setSizeFull()
         buttonLayout.setComponentAlignment(previous, Alignment.MIDDLE_LEFT)
         buttonLayout.setComponentAlignment(save, Alignment.MIDDLE_RIGHT)
+        buttonLayout.setComponentAlignment(downloadOffer, Alignment.MIDDLE_RIGHT)
 
         this.offerOverview = new Panel("Offer Details:")
 
@@ -151,6 +161,17 @@ class OfferOverviewView extends VerticalLayout{
         return panel
     }
 
+    private void addOfferResource(Offer offer) {
+        final def converter = new OfferToPDFConverter(offer)
+        StreamResource offerResource =
+                new StreamResource((StreamResource.StreamSource res) -> {
+                    return converter.getOfferAsPdf()
+                }, new Date().toLocalDateTime().toString()+".pdf")
+        FileDownloader fileDownloader = new FileDownloader(offerResource)
+        fileDownloader.extend(downloadOffer)
+        downloadOffer.setEnabled(true)
+    }
+
     /*
     Small helper object, that will display information
     about individual price positions for offer overviews.
@@ -166,5 +187,4 @@ class OfferOverviewView extends VerticalLayout{
             this.value = value
         }
     }
-
 }

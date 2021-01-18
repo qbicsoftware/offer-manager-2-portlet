@@ -3,6 +3,7 @@ package life.qbic.portal.qoffer2.web.views
 import com.vaadin.ui.Component
 import com.vaadin.ui.FormLayout
 import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.portal.qoffer2.offers.OfferResourcesService
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
 import life.qbic.portal.qoffer2.web.controllers.ListProductsController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
@@ -28,38 +29,45 @@ import life.qbic.portal.qoffer2.web.views.create.offer.SelectItemsView
 class CreateOfferView extends FormLayout{
 
     final private ViewModel sharedViewModel
-    final private CreateOfferViewModel view
+    final private CreateOfferViewModel viewModel
 
-    final private CreateOfferController controller
-    final private ListProductsController listProductsController
+    private final CreateOfferController controller
+    private final ListProductsController listProductsController
 
-    final private ProjectInformationView projectInformationView
-    final private CustomerSelectionView customerSelectionView
-    final private ProjectManagerSelectionView projectManagerSelectionView
-    final private SelectItemsView selectItemsView
-    final private OfferOverviewView overviewView
+    private final ProjectInformationView projectInformationView
+    private final CustomerSelectionView customerSelectionView
+    private final ProjectManagerSelectionView projectManagerSelectionView
+    private final SelectItemsView selectItemsView
+    private final OfferOverviewView overviewView
 
-    final private CreateCustomerView createCustomerView
+    private final CreateCustomerView createCustomerView
     private ButtonNavigationView navigationView
-    final private CreateAffiliationView createAffiliationView
+    private final CreateAffiliationView createAffiliationView
 
-    final private ViewHistory viewHistory
+    private final ViewHistory viewHistory
 
 
-    CreateOfferView(ViewModel sharedViewModel, CreateOfferViewModel createOfferViewModel, CreateOfferController controller, ListProductsController listProductsController, CreateCustomerView createCustomerView, CreateAffiliationView createAffiliationView) {
+    CreateOfferView(ViewModel sharedViewModel,
+                    CreateOfferViewModel createOfferViewModel,
+                    CreateOfferController controller,
+                    ListProductsController listProductsController,
+                    CreateCustomerView createCustomerView,
+                    CreateAffiliationView createAffiliationView,
+                    OfferResourcesService offerProviderService
+    ) {
         super()
         this.sharedViewModel = sharedViewModel
-        this.view = createOfferViewModel
+        this.viewModel = createOfferViewModel
         this.controller = controller
         this.listProductsController = listProductsController
         this.createCustomerView = createCustomerView
         this.createAffiliationView = createAffiliationView
-        this.projectInformationView = new ProjectInformationView(view)
-        this.customerSelectionView = new CustomerSelectionView(view)
+        this.projectInformationView = new ProjectInformationView(viewModel)
+        this.customerSelectionView = new CustomerSelectionView(viewModel)
 
-        this.projectManagerSelectionView = new ProjectManagerSelectionView(view)
-        this.selectItemsView = new SelectItemsView(view,sharedViewModel)
-        this.overviewView = new OfferOverviewView(view)
+        this.projectManagerSelectionView = new ProjectManagerSelectionView(viewModel)
+        this.selectItemsView = new SelectItemsView(viewModel,sharedViewModel)
+        this.overviewView = new OfferOverviewView(viewModel, offerProviderService)
 
         initLayout()
         registerListeners()
@@ -87,7 +95,14 @@ class CreateOfferView extends FormLayout{
 
         navigationView.showNextStep()
         this.addComponent(navigationView)
-        this.addComponent(projectInformationView)
+        this.addComponents(
+                projectInformationView,
+                customerSelectionView,
+                createCustomerView,
+                projectManagerSelectionView,
+                selectItemsView,
+                overviewView
+        )
         this.setSizeFull()
     }
 
@@ -123,7 +138,7 @@ class CreateOfferView extends FormLayout{
             viewHistory.showPrevious()
         })
         this.createCustomerView.submitButton.addClickListener({
-            view.refresh()
+            viewModel.refresh()
             viewHistory.showPrevious()
         })
         this.customerSelectionView.createAffiliationButton.addClickListener({
@@ -144,7 +159,8 @@ class CreateOfferView extends FormLayout{
             navigationView.showPreviousStep()
         })
         this.selectItemsView.next.addClickListener({
-            controller.calculatePriceForItems(getProductItems(view.productItems),view.customerAffiliation)
+            controller.calculatePriceForItems(getProductItems(viewModel.productItems),
+                    viewModel.customerAffiliation)
             overviewView.fillPanel()
             viewHistory.loadNewView(overviewView)
             navigationView.showNextStep()
@@ -159,15 +175,13 @@ class CreateOfferView extends FormLayout{
         })
         this.overviewView.save.addClickListener({
             controller.createOffer(
-                    view.projectTitle,
-                    view.projectDescription,
-                    view.customer,
-                    view.projectManager,
-                    getProductItems(view.productItems),
-                    view.customerAffiliation)
-        })
-        this.createCustomerView.createAffiliationButton.addClickListener({
-            viewHistory.loadNewView(createAffiliationView)
+                    viewModel.offerId,
+                    viewModel.projectTitle,
+                    viewModel.projectDescription,
+                    viewModel.customer,
+                    viewModel.projectManager,
+                    getProductItems(viewModel.productItems),
+                    viewModel.customerAffiliation)
         })
     }
 

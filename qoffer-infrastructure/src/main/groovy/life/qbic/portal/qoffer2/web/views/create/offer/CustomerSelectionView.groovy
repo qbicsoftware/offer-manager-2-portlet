@@ -1,12 +1,17 @@
 package life.qbic.portal.qoffer2.web.views.create.offer
 
+import com.vaadin.data.provider.DataProvider
+import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.shared.ui.ValueChangeMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
+import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
@@ -14,6 +19,8 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
+import life.qbic.portal.qoffer2.web.views.GridUtils
+import org.apache.commons.lang3.StringUtils
 
 /**
  * This class generates a Layout in which the user
@@ -29,8 +36,6 @@ import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 class CustomerSelectionView extends VerticalLayout{
 
     private final CreateOfferViewModel viewModel
-    //private final SearchCustomerView searchCustomerView
-    private final List<Customer> foundCustomerList
 
     Button next
     Button previous
@@ -45,17 +50,16 @@ class CustomerSelectionView extends VerticalLayout{
     HorizontalLayout createAffiliationLayout
     Button createAffiliationButton
 
+    Label selectedCustomer
+
+    Label selectedAffiliation
+
+    VerticalLayout affiliationSelectionContainer
+
     CustomerSelectionView(CreateOfferViewModel viewModel){
         this.viewModel = viewModel
-        //this.searchCustomerView = searchCustomerView
-        Affiliation testAffiliation = new Affiliation.Builder("organization","Street","postal code","city").category(AffiliationCategory.INTERNAL).build()
-        Affiliation testAffiliation2 = new Affiliation.Builder("QBiC","Street","postal code","city").category(AffiliationCategory.EXTERNAL_ACADEMIC).build()
-
-
-        this.foundCustomerList = viewModel.foundCustomers
 
         initLayout()
-        setupDataProvider()
         generateCustomerGrid()
         generateAffiliationGrid()
         bindViewModel()
@@ -70,6 +74,36 @@ class CustomerSelectionView extends VerticalLayout{
         affiliationLabelLayout.addComponent(affiliationLabel)
         affiliationLabelLayout.setComponentAlignment(affiliationLabel, Alignment.MIDDLE_LEFT)
 
+        /*
+        We start with the header, that contains a descriptive
+        title of what the view is about.
+         */
+        final def title = new HorizontalLayout()
+        final def label = new Label("Select A Customer")
+        label.addStyleName(ValoTheme.LABEL_HUGE)
+        title.addComponent(label)
+        this.addComponent(title)
+
+        /*
+        Provide a display the current selected customer with the selected affiliation
+         */
+        HorizontalLayout selectedCustomerOverview = new HorizontalLayout()
+        def customerFullName =
+                "${ viewModel.customer?.firstName ?: "" } " +
+                "${viewModel.customer?.lastName ?: "" }"
+        selectedCustomer = new Label(viewModel.customer?.lastName ? customerFullName : "-")
+        selectedCustomer.setCaption("Current Customer")
+        selectedCustomerOverview.addComponents(selectedCustomer)
+
+        // We also add some basic affiliation information in the overview
+        def affiliationInfo = "${viewModel.customerAffiliation?.organisation ?: "-"}"
+        selectedAffiliation = new Label(affiliationInfo)
+        selectedAffiliation.setCaption("Current Affiliation")
+        selectedCustomerOverview.addComponents(selectedAffiliation)
+
+        /*
+        Add navigation elements
+         */
         addButtonsLayout = new HorizontalLayout()
         this.createCustomerButton = new Button("Create Customer", VaadinIcons.USER)
         createCustomerButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
@@ -96,14 +130,38 @@ class CustomerSelectionView extends VerticalLayout{
         this.affiliationGrid = new Grid<>()
         affiliationLayout = new HorizontalLayout(affiliationGrid)
 
-        this.addComponents(customerLayout, addButtonsLayout , buttonLayout)
+        createAffiliationLayout = new HorizontalLayout()
+        createAffiliationButton = new Button("Create Affiliation", VaadinIcons.OFFICE)
+        createAffiliationButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
+
+        createAffiliationLayout.addComponent(createAffiliationButton)
+        createAffiliationLayout.setComponentAlignment(createAffiliationButton, Alignment.MIDDLE_RIGHT)
+        createAffiliationLayout.setSizeFull()
+
+        affiliationSelectionContainer = new VerticalLayout()
+        affiliationSelectionContainer.addComponents(
+                affiliationLabelLayout,
+                affiliationLayout,
+                createAffiliationLayout)
+        affiliationSelectionContainer.setMargin(false)
+
+        this.addComponents(
+                selectedCustomerOverview,
+                customerLayout,
+                addButtonsLayout,
+                affiliationSelectionContainer,
+                buttonLayout)
+
+        affiliationSelectionContainer.setVisible(false)
     }
 
     /**
      * This method adds the retrieved Customer Information to the Customer grid
      */
-    private void setupDataProvider() {
-        this.customerGrid.setItems(foundCustomerList)
+    private ListDataProvider setupCustomerDataProvider() {
+        def customerListDataProvider = new ListDataProvider<>(viewModel.getFoundCustomers())
+        this.customerGrid.setDataProvider(customerListDataProvider)
+        return customerListDataProvider
     }
 
     /**
@@ -113,11 +171,14 @@ class CustomerSelectionView extends VerticalLayout{
      */
     private def generateCustomerGrid() {
         try {
-            this.customerGrid.addColumn({ customer -> customer.title }).setCaption("Title")
-            this.customerGrid.addColumn({ customer -> customer.firstName }).setCaption("First Name")
-            this.customerGrid.addColumn({ customer -> customer.lastName }).setCaption("Last Name")
-            this.customerGrid.addColumn({ customer -> customer.emailAddress }).setCaption("Email Address")
-            //this.customerGrid.addColumn({ customer -> customer.getAffiliations().toString() }).setCaption("Affiliation")
+            this.customerGrid.addColumn({ customer -> customer.title })
+                    .setCaption("Title").setId("Title")
+            this.customerGrid.addColumn({ customer -> customer.firstName })
+                    .setCaption("First Name").setId("FirstName")
+            this.customerGrid.addColumn({ customer -> customer.lastName })
+                    .setCaption("Last Name").setId("LastName")
+            this.customerGrid.addColumn({ customer -> customer.emailAddress })
+                    .setCaption("Email Address").setId("EmailAddress")
 
             //specify size of grid and layout
             customerLayout.setSizeFull()
@@ -126,6 +187,14 @@ class CustomerSelectionView extends VerticalLayout{
         } catch (Exception e) {
             new Exception("Unexpected exception in building the customer grid", e)
         }
+        /*
+        Let's not forget to setup the grid's data provider
+         */
+        def customerDataProvider = setupCustomerDataProvider()
+        /*
+        Lastly, we add some content filters for the columns
+         */
+        addFilters(customerDataProvider)
     }
 
     /**
@@ -146,13 +215,6 @@ class CustomerSelectionView extends VerticalLayout{
             //specify size of grid and layout
             affiliationLayout.setSizeFull()
             affiliationGrid.setSizeFull()
-            createAffiliationLayout = new HorizontalLayout()
-            createAffiliationButton = new Button("Create Affiliation", VaadinIcons.OFFICE)
-            createAffiliationButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
-
-            createAffiliationLayout.addComponent(createAffiliationButton)
-            createAffiliationLayout.setComponentAlignment(createAffiliationButton, Alignment.MIDDLE_RIGHT)
-            createAffiliationLayout.setSizeFull()
 
         } catch (Exception e) {
             new Exception("Unexpected exception in building the affiliation grid", e)
@@ -168,21 +230,65 @@ class CustomerSelectionView extends VerticalLayout{
             Customer customer = customerGrid.getSelectedItems().getAt(0)
 
             viewModel.customer = customer
+            // We explicitly reset any existing selected affiliation, as the user
+            // must provide it again after changing the customer.
+            viewModel.customerAffiliation = null
 
             //todo do we need to clear the grid for another selection?
             affiliationGrid.setItems(affiliations)
 
-            this.addComponent(affiliationLabelLayout,2)
-            this.addComponent(affiliationGrid,3)
-            this.addComponent(createAffiliationLayout,4)
+            affiliationSelectionContainer.setVisible(true)
 
         })
 
         affiliationGrid.addSelectionListener({
             Affiliation affiliation = affiliationGrid.getSelectedItems().getAt(0)
             viewModel.customerAffiliation = affiliation
-
-            next.setEnabled(true)
         })
+
+        /*
+        Let's listen to changes in customer selections and update it in the
+        display, if the customer or affiliation selection has changed.
+         */
+        viewModel.addPropertyChangeListener({
+            if (it.propertyName.equals("customer")) {
+                def customerFullName =
+                        "${ viewModel.customer?.firstName ?: "" } " +
+                                "${viewModel.customer?.lastName ?: "" }"
+                selectedCustomer.setValue(customerFullName)
+            }
+            if (it.propertyName.equals("customerAffiliation")) {
+                def affiliationInfo = "${viewModel.customerAffiliation?.organisation ?: "-"}"
+                selectedAffiliation.setValue(affiliationInfo)
+            }
+            /*
+            We allow the user to continue with the offer,
+            if a customer and an affiliation has been selected.
+             */
+            if (viewModel.customer && viewModel.customerAffiliation) {
+                next.setEnabled(true)
+            } else {
+                next.setEnabled(false)
+            }
+        })
+
+        viewModel.addPropertyChangeListener("foundCustomers", {
+            if (it instanceof ObservableList.ElementEvent) {
+                this.customerGrid.getDataProvider().refreshAll()
+            }
+        })
+    }
+
+    private void addFilters(ListDataProvider customerListDataProvider) {
+        HeaderRow customerFilterRow = customerGrid.appendHeaderRow()
+        GridUtils.setupColumnFilter(customerListDataProvider,
+                customerGrid.getColumn("FirstName"),
+                customerFilterRow)
+        GridUtils.setupColumnFilter(customerListDataProvider,
+                customerGrid.getColumn("LastName"),
+                customerFilterRow)
+        GridUtils.setupColumnFilter(customerListDataProvider,
+                customerGrid.getColumn("EmailAddress"),
+                customerFilterRow)
     }
 }

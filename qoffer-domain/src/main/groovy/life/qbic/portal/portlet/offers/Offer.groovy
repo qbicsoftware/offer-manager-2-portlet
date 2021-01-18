@@ -1,13 +1,14 @@
 package life.qbic.portal.portlet.offers
 
+import groovy.time.TimeCategory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
+import life.qbic.portal.portlet.offers.identifier.OfferId
 
 /**
  * Represents the Offer business model.
@@ -24,55 +25,60 @@ class Offer {
     /**
      * Date on which the offer was lastly modified
      */
-    final Date modificationDate
+    private Date creationDate
     /**
      * The date on which the offer expires
      */
-    final Date expirationDate
+    private Date expirationDate
     /**
      * The customer for which this offer was created
      */
-    final Customer customer
+    private Customer customer
     /**
      * The QBiC project manager who was assigned to the project
      */
-    final ProjectManager projectManager
+    private ProjectManager projectManager
     /**
      * The title of the project
      */
-    final String projectTitle
+    private String projectTitle
     /**
      * A short description of the project
      */
-    final String projectDescription
+    private String projectDescription
     /**
      * A list of items for which the customer will be charged
      */
-    final List<ProductItem> items
+    private List<ProductItem> items
     /**
      * The identifier for the offer which makes it distinguishable from other offers
      */
-    final OfferId identifier
+    private OfferId identifier
     /**
      * The affiliation of the customer selected for this offer
      */
-    final Affiliation selectedCustomerAffiliation
+    private Affiliation selectedCustomerAffiliation
 
     /*
      * Holds the determined overhead derived from the
      * customer's affiliation.
      */
-    private final double overhead
+    private double overhead
 
     /*
      * Holds the current VAT rate
      */
     private static final double VAT = 0.19
 
+    private static Date calculateExpirationDate(Date date) {
+        use (TimeCategory) {
+            return date + 90.days
+        }
+    }
+
     static class Builder {
 
-        Date modificationDate
-        Date expirationDate
+        Date creationDate
         Customer customer
         ProjectManager projectManager
         String projectTitle
@@ -87,19 +93,15 @@ class Offer {
             this.projectTitle = Objects.requireNonNull(projectTitle, "Project Title must not be null")
             this.projectDescription = Objects.requireNonNull(projectDescription, "Project Description must not be null")
             this.items = []
+            this.creationDate = new Date()
             // Since the incoming item list is mutable we need to
             // copy all immutable items to out internal list
             items.each {this.items.add(it)}
             this.selectedCustomerAffiliation = Objects.requireNonNull(selectedCustomerAffiliation, "Customer Affiliation must not be null")
         }
 
-        Builder modificationDate(Date modificationDate) {
-            this.modificationDate = modificationDate
-            return this
-        }
-
-        Builder expirationDate(Date expirationDate) {
-            this.expirationDate = expirationDate
+        Builder creationDate(Date creationDate) {
+            this.creationDate = creationDate
             return this
         }
 
@@ -113,13 +115,20 @@ class Offer {
         }
     }
 
+    /**
+     * Increases the version of the current offer.
+     */
+    void increaseVersion () {
+        this.identifier.increaseVersion()
+    }
+
     private Offer(Builder builder) {
         this.customer = builder.customer
         this.identifier = builder.identifier
         this.items = []
         builder.items.each {this.items.add(it)}
-        this.expirationDate = builder.expirationDate
-        this.modificationDate = builder.modificationDate
+        this.expirationDate = calculateExpirationDate(builder.creationDate)
+        this.creationDate = builder.creationDate
         this.projectManager = builder.projectManager
         this.projectDescription = builder.projectDescription
         this.projectTitle = builder.projectTitle
@@ -181,6 +190,42 @@ class Offer {
         return (calculateNetPrice() + getOverheadSum()) * VAT
     }
 
+    Date getModificationDate() {
+        return creationDate
+    }
+
+    Date getExpirationDate() {
+        return expirationDate
+    }
+
+    Customer getCustomer() {
+        return customer
+    }
+
+    ProjectManager getProjectManager() {
+        return projectManager
+    }
+
+    String getProjectTitle() {
+        return projectTitle
+    }
+
+    String getProjectDescription() {
+        return projectDescription
+    }
+
+    List<ProductItem> getItems() {
+        return items
+    }
+
+    OfferId getIdentifier() {
+        return identifier
+    }
+
+    Affiliation getSelectedCustomerAffiliation() {
+        return selectedCustomerAffiliation
+    }
+
     private double calculateNetPrice() {
         double netSum = 0.0
         for (item in items) {
@@ -190,7 +235,7 @@ class Offer {
     }
 
     private double determineOverhead() {
-        double overhead = 0.0
+        double overhead
         switch(selectedCustomerAffiliation.category) {
             case AffiliationCategory.INTERNAL:
                 overhead = 0.0

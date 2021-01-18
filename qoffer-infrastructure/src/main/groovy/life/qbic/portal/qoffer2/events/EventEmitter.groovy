@@ -8,7 +8,7 @@ package life.qbic.portal.qoffer2.events
  */
 class EventEmitter<T> {
 
-    final private List<Subscription<T>> subscriptions
+    private final List<Subscription<T>> subscriptions
 
     EventEmitter() {
         subscriptions = new LinkedList<>()

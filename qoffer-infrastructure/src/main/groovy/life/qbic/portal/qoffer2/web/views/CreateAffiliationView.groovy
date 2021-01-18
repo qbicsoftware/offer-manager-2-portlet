@@ -25,7 +25,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 class CreateAffiliationView extends VerticalLayout {
     final public ViewModel sharedViewModel
     final public CreateAffiliationViewModel createAffiliationViewModel
-    final private CreateAffiliationController controller
+    private final CreateAffiliationController controller
 
     private TextField organisationField
     private TextField addressAdditionField
@@ -312,6 +312,14 @@ class CreateAffiliationView extends VerticalLayout {
 
             this.controller.createAffiliation(organisation, addressAddition, street, postalCode, city, country, category)
         })
+        this.abortButton.addClickListener({ event ->
+            try {
+                clearAllFields()
+            }
+            catch (Exception e) {
+                sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
+            }
+        })
     }
 
     private static ComboBox generateAffiliationCategorySelect(List<String> possibleCategories) {
@@ -328,4 +336,28 @@ class CreateAffiliationView extends VerticalLayout {
             An outside affiliation but not academic (i.e. private sector, companies, etc)""".stripIndent(), ContentMode.PREFORMATTED)
         return comboBox
     }
+
+    /**
+     *  Clears User Input from all Fields in the Create Affiliation View and reset validation status of all Fields
+     */
+    private void clearAllFields() {
+        addressAdditionField.clear()
+        affiliationCategoryField.clear()
+        cityField.clear()
+        countryField.clear()
+        organisationField.clear()
+        postalCodeField.clear()
+        streetField.clear()
+
+        createAffiliationViewModel.addressAdditionValid = null
+        createAffiliationViewModel.affiliationCategoryValid = null
+        createAffiliationViewModel.cityValid = null
+        createAffiliationViewModel.countryValid = null
+        createAffiliationViewModel.organisationValid = null
+        createAffiliationViewModel.postalCodeValid = null
+        createAffiliationViewModel.streetValid = null
+
+    }
+
+
 }
