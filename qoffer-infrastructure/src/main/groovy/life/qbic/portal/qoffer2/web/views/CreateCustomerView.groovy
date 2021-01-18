@@ -84,7 +84,6 @@ class CreateCustomerView extends VerticalLayout {
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
         addressAdditionComboBox.setItemCaptionGenerator({it.addressAddition})
         addressAdditionComboBox.setCaption("Address Addition")
-        addressAdditionComboBox.enabled = false
 
         this.createAffiliationButton = new Button("Create Affiliation")
         createAffiliationButton.setIcon(VaadinIcons.INSTITUTION)
@@ -143,65 +142,43 @@ class CreateCustomerView extends VerticalLayout {
      * This method connects the form fields to the corresponding values in the view model
      */
     private void bindViewModel() {
-        Binder<CreateCustomerViewModel> binder = new Binder<>()
 
-        // by binding the fields to the view model, the model is updated when the user input changed
-        binder.setBean(createCustomerViewModel)
+        this.titleField.addValueChangeListener({this.createCustomerViewModel.academicTitle = it.value })
+        createCustomerViewModel.addPropertyChangeListener("academicTitle", {
+            String newValue = it.newValue as String
+            titleField.value = newValue ?: titleField.emptyValue
+        })
 
-        binder.forField(this.titleField)
-                .bind({ it.academicTitle }, { it, updatedValue -> it.setAcademicTitle(updatedValue) })
-        binder.forField(this.firstNameField)
-                .bind({ it.firstName }, { it, updatedValue -> it.setFirstName(updatedValue) })
-        binder.forField(this.lastNameField)
-                .bind({ it.lastName }, { it, updatedValue -> it.setLastName(updatedValue) })
-        binder.forField(this.emailField)
-                .bind({ it.email }, { it, updatedValue -> it.setEmail(updatedValue) })
-        binder.forField(this.affiliationComboBox)
-                .bind({ it.affiliation }, { it, updatedValue -> it.setAffiliation(updatedValue) })
-        binder.forField(this.addressAdditionComboBox)
-                .bind({ it.affiliation }, { it, updatedValue -> it.setAffiliation(updatedValue) })
-        /*
-        Here we setup a listener to the viewModel that hold displayed information.
-        The listener is needed since Vaadin bindings only work one-way
+        this.firstNameField.addValueChangeListener({this.createCustomerViewModel.firstName = it.value })
+        createCustomerViewModel.addPropertyChangeListener("firstName", {
+            String newValue = it.newValue as String
+            firstNameField.value = newValue ?: firstNameField.emptyValue
+        })
 
-        Please NOTE: we cannot use the binder.readBean(binder.getBean) refresh here since it would
-        overwrite all validators attached to the fields. We furthermore cannot use the
-        BinderBuilder#withValidator method since this would prevent the form from showing invalid
-        information that is stored within the viewModel. We want the view to reflect the view model
-        at all times!
-         */
-        createCustomerViewModel.addPropertyChangeListener({it ->
-            switch (it.propertyName) {
-                case "academicTitle":
-                    String newValue = it.newValue as String
-                    titleField.selectedItem = newValue ?: titleField.emptyValue
-                    break
-                case "firstName":
-                    String newValue = it.newValue as String
-                    firstNameField.value = newValue ?: firstNameField.emptyValue
-                    break
-                case "lastName":
-                    String newValue = it.newValue as String
-                    lastNameField.value = newValue ?: lastNameField.emptyValue
-                    break
-                case "email":
-                    String newValue = it.newValue as String
-                    emailField.value = newValue ?: emailField.emptyValue
-                    break
-                default:
-                    break
-            }
+        this.lastNameField.addValueChangeListener({this.createCustomerViewModel.lastName = it.value })
+        createCustomerViewModel.addPropertyChangeListener("lastName", {
+            String newValue = it.newValue as String
+            lastNameField.value = newValue ?: lastNameField.emptyValue
+        })
+
+        this.emailField.addValueChangeListener({this.createCustomerViewModel.email = it.value })
+        createCustomerViewModel.addPropertyChangeListener("email", {
+            String newValue = it.newValue as String
+            emailField.value = newValue ?: emailField.emptyValue
+        })
+        this.affiliationComboBox.addValueChangeListener({
+            this.createCustomerViewModel.setAffiliation(it.value)
         })
 
         createCustomerViewModel.addPropertyChangeListener("affiliation", {
             Affiliation newValue = it.newValue as Affiliation
             if (newValue) {
-                affiliationComboBox.selectedItem = newValue
+                affiliationComboBox.value = newValue
                 addressAdditionComboBox.setItems(sharedViewModel.affiliations?.findAll{ ((it as Affiliation)?.organisation == newValue?.organisation) })
-                addressAdditionComboBox.selectedItem = newValue
+                addressAdditionComboBox.value = newValue
             } else {
-                affiliationComboBox.selectedItem = affiliationComboBox.emptyValue
-                addressAdditionComboBox.selectedItem = addressAdditionComboBox.emptyValue
+                affiliationComboBox.value = affiliationComboBox.emptyValue
+                addressAdditionComboBox.value = addressAdditionComboBox.emptyValue
             }
         })
         /*
@@ -357,7 +334,7 @@ class CreateCustomerView extends VerticalLayout {
 
                 controller.createNewCustomer(firstName, lastName, title, email, affiliations)
 
-                //createCustomerViewModel.customerService.reloadResources()
+                createCustomerViewModel.customerService.reloadResources()
 
             } catch (IllegalArgumentException illegalArgumentException) {
                 log.error("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}")
@@ -378,17 +355,21 @@ class CreateCustomerView extends VerticalLayout {
     }
 
     private void updateAffiliationDetails(Affiliation affiliation) {
-        VerticalLayout content = new VerticalLayout()
-        content.addComponent(new Label("<strong>${affiliation.category.value}</strong>", ContentMode.HTML))
-        content.addComponent(new Label("${affiliation.organisation}"))
-        if (affiliation.addressAddition) {
-            content.addComponent(new Label("${affiliation.addressAddition}"))
+        if(affiliation == null) {
+            this.affiliationDetails.setContent(null)
+        } else {
+            VerticalLayout content = new VerticalLayout()
+            content.addComponent(new Label("<strong>${affiliation.category.value}</strong>", ContentMode.HTML))
+            content.addComponent(new Label("${affiliation.organisation}"))
+            if (affiliation.addressAddition) {
+                content.addComponent(new Label("${affiliation.addressAddition}"))
+            }
+            content.addComponent(new Label("${affiliation.street}"))
+            content.addComponent(new Label("${affiliation.postalCode} ${affiliation.city} - ${affiliation.country}"))
+            content.setMargin(true)
+            content.setSpacing(false)
+            this.affiliationDetails.setContent(content)
         }
-        content.addComponent(new Label("${affiliation.street}"))
-        content.addComponent(new Label("${affiliation.postalCode} ${affiliation.city} - ${affiliation.country}"))
-        content.setMargin(true)
-        content.setSpacing(false)
-        this.affiliationDetails.setContent(content)
     }
 
     /**
