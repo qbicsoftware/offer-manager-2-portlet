@@ -171,7 +171,8 @@ class CustomerSelectionView extends VerticalLayout{
      */
     private def generateCustomerGrid() {
         try {
-            this.customerGrid.addColumn({ customer -> customer.title })
+            this.customerGrid.addColumn({ customer ->
+                customer.title == AcademicTitle.NONE ? "" : customer.title})
                     .setCaption("Title").setId("Title")
             this.customerGrid.addColumn({ customer -> customer.firstName })
                     .setCaption("First Name").setId("FirstName")

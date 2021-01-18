@@ -1,6 +1,7 @@
 package life.qbic.portal.qoffer2.offers
 
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
@@ -109,9 +110,10 @@ class OfferToPDFConverter implements OfferExporter{
     private void setCustomerInformation() {
         final Customer customer = offer.customer
         final Affiliation affiliation = offer.selectedCustomerAffiliation
+        String customerTitle = customer.title == AcademicTitle.NONE ? "" : customer.title
         htmlContent.getElementById("customer-name").text(String.format(
                 "%s %s %s",
-                customer.title,
+                customerTitle,
                 customer.firstName,
                 customer.lastName))
         htmlContent.getElementById("customer-organisation").text(affiliation.organisation)
@@ -124,9 +126,10 @@ class OfferToPDFConverter implements OfferExporter{
     private void setManagerInformation() {
         final ProjectManager pm = offer.projectManager
         final Affiliation affiliation = pm.affiliations.get(0)
+        String pmTitle = pm.title == AcademicTitle.NONE ? "" : pm.title
         htmlContent.getElementById("project-manager-name").text(String.format(
                 "%s %s %s",
-                pm.title,
+                pmTitle,
                 pm.firstName,
                 pm.lastName))
         htmlContent.getElementById("project-manager-street").text(affiliation.street)
