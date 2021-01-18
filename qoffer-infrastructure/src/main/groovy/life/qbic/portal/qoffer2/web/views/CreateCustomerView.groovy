@@ -359,9 +359,6 @@ class CreateCustomerView extends VerticalLayout {
                 log.error("Unexpected error aborting the customer creation.", e)
                 sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
             }
-            if (it.value) {
-                fireAffiliationSelectionEvent(it.value)
-            }
         })
     }
 
