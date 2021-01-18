@@ -1,9 +1,10 @@
 package life.qbic.portal.qoffer2.web.presenters
 
-
+import com.vaadin.event.ListenerMethod.MethodException
+import groovy.util.logging.Log4j2
 import life.qbic.portal.portlet.customers.create.CreateCustomerOutput
-import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
+import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 /**
  * Presenter for the CreateCustomerView
@@ -13,6 +14,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
  *
  * @since: 1.0.0
  */
+@Log4j2
 class CreateCustomerPresenter implements CreateCustomerOutput{
     private final ViewModel viewModel
     private final CreateCustomerViewModel createCustomerViewModel
@@ -43,7 +45,17 @@ class CreateCustomerPresenter implements CreateCustomerOutput{
 
     @Override
     void customerCreated(String message) {
-        viewModel.successNotifications.add(message)
-        clearCustomerData()
+        try {
+            viewModel.successNotifications.add(message)
+            clearCustomerData()
+        } catch (MethodException listenerMethodException) {
+            //fixme
+            // Invocation of method selectionChange failed for `null`
+            // See https://github.com/qbicsoftware/qoffer-2-portlet/issues/208
+            log.error("Issue #208 $listenerMethodException.message")
+        } catch (Exception e) {
+            // do not propagate exceptions to the use case
+            log.error(e)
+        }
     }
 }
