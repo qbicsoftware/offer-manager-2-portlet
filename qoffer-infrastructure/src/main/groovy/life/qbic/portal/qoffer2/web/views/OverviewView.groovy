@@ -88,9 +88,12 @@ class OverviewView extends VerticalLayout {
 
         activityContainer.setMargin(false)
         overviewRow.addComponents(overviewGrid, activityContainer)
-        this.addComponent(overviewRow)
-
+        overviewRow.setSizeFull()
         overviewRow.setWidthFull()
+        overviewRow.setExpandRatio(overviewGrid,0.95f)
+        overviewRow.setExpandRatio(activityContainer, 0.05f)
+
+        this.addComponent(overviewRow)
         this.setWidthFull()
     }
 
@@ -101,13 +104,19 @@ class OverviewView extends VerticalLayout {
     private void setupGrid() {
         def dateColumn = overviewGrid.addColumn({ overview -> overview.getModificationDate() })
                 .setCaption("Date")
-        overviewGrid.addColumn({overview -> overview.offerId.toString()})
+        dateColumn.setMinimumWidth(50)
+        def idColumn = overviewGrid.addColumn({overview -> overview.offerId.toString()})
                 .setCaption("Offer ID")
-        overviewGrid.addColumn({overview -> overview.getProjectTitle()}).setCaption("Title")
-        overviewGrid.addColumn({overview -> overview.getCustomer()}).setCaption("Customer")
-        overviewGrid.addColumn({overview -> overview.getTotalPrice()}).setCaption("Total Price")
+        idColumn.setMinimumWidth(50)
+        def titleColumn = overviewGrid.addColumn({overview -> overview.getProjectTitle()}).setCaption("Title")
+        titleColumn.setMinimumWidth(50)
+        def customerColumn = overviewGrid.addColumn({overview -> overview.getCustomer()}).setCaption("Customer")
+        customerColumn.setMinimumWidth(50)
+        def priceColumn = overviewGrid.addColumn({overview -> overview.getTotalPrice()}).setCaption("Total Price")
+        priceColumn.setWidth(110)
+
         overviewGrid.sort(dateColumn, SortDirection.DESCENDING)
-        overviewGrid.setWidthFull()
+        overviewGrid.setSizeFull()
     }
 
     private void setupListeners() {
