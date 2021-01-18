@@ -366,8 +366,20 @@ class CreateCustomerView extends VerticalLayout {
         })
 
         this.affiliationComboBox.addSelectionListener({
-            fireAffiliationSelectionEvent(it.value)
-            updateAffiliationDetails(it.value)
+            if (it.value != null) {
+                fireAffiliationSelectionEvent(it.value)
+                updateAffiliationDetails(it.value)
+            }
+        })
+
+        this.abortButton.addClickListener({ event ->
+            try {
+                clearAllFields()
+            }
+            catch (Exception e) {
+                log.error("Unexpected error aborting the customer creation.", e)
+                sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
+            }
         })
     }
 
@@ -410,5 +422,26 @@ class CreateCustomerView extends VerticalLayout {
     private void fireAffiliationSelectionEvent(Affiliation affiliation) {
         AffiliationSelectionEvent event = new AffiliationSelectionEvent(this, affiliation)
         this.affiliationSelectionListeners.each {it.affiliationSelected(event)}
+    }
+
+    /**
+     *  Clears User Input from all fields in the Create Customer View and reset validation status of all Fields
+     */
+    private void clearAllFields() {
+
+        titleField.clear()
+        firstNameField.clear()
+        lastNameField.clear()
+        emailField.clear()
+        affiliationComboBox.selectedItem = affiliationComboBox.clear()
+        addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
+        affiliationDetails.setContent(null)
+
+        createCustomerViewModel.academicTitleValid = null
+        createCustomerViewModel.firstNameValid = null
+        createCustomerViewModel.lastNameValid = null
+        createCustomerViewModel.emailValid = null
+        createCustomerViewModel.affiliationValid = null
+
     }
 }
