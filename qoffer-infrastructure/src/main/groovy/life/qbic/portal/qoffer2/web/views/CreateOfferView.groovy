@@ -95,7 +95,14 @@ class CreateOfferView extends FormLayout{
 
         navigationView.showNextStep()
         this.addComponent(navigationView)
-        this.addComponent(projectInformationView)
+        this.addComponents(
+                projectInformationView,
+                customerSelectionView,
+                createCustomerView,
+                projectManagerSelectionView,
+                selectItemsView,
+                overviewView
+        )
         this.setSizeFull()
     }
 
@@ -175,9 +182,6 @@ class CreateOfferView extends FormLayout{
                     viewModel.projectManager,
                     getProductItems(viewModel.productItems),
                     viewModel.customerAffiliation)
-        })
-        this.createCustomerView.createAffiliationButton.addClickListener({
-            viewHistory.loadNewView(createAffiliationView)
         })
     }
 
