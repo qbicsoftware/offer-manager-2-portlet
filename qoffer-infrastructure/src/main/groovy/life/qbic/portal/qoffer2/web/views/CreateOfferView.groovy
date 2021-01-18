@@ -183,9 +183,6 @@ class CreateOfferView extends FormLayout{
                     getProductItems(viewModel.productItems),
                     viewModel.customerAffiliation)
         })
-        this.createCustomerView.createAffiliationButton.addClickListener({
-            viewHistory.loadNewView(createAffiliationView)
-        })
     }
 
     /**

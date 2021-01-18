@@ -41,7 +41,6 @@ class CreateCustomerView extends VerticalLayout {
     ComboBox<Affiliation> affiliationComboBox
     ComboBox<Affiliation> addressAdditionComboBox
     Button submitButton
-    Button createAffiliationButton
     Button abortButton
     Panel affiliationDetails
 
@@ -86,9 +85,6 @@ class CreateCustomerView extends VerticalLayout {
         addressAdditionComboBox.setCaption("Address Addition")
         addressAdditionComboBox.enabled = false
 
-        this.createAffiliationButton = new Button("Create Affiliation")
-        createAffiliationButton.setIcon(VaadinIcons.INSTITUTION)
-
         this.submitButton = new Button("Create Customer")
         submitButton.setIcon(VaadinIcons.USER_CHECK)
         submitButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
@@ -117,7 +113,7 @@ class CreateCustomerView extends VerticalLayout {
         VerticalLayout affiliationPanel = new VerticalLayout(affiliationDetails)
         affiliationPanel.setMargin(false)
         affiliationPanel.setComponentAlignment(affiliationDetails, Alignment.TOP_LEFT)
-        HorizontalLayout buttonLayout = new HorizontalLayout(createAffiliationButton, abortButton,
+        HorizontalLayout buttonLayout = new HorizontalLayout(abortButton,
                 submitButton)
         buttonLayout.setMargin(false)
         HorizontalLayout row4 = new HorizontalLayout(affiliationPanel, buttonLayout)
