@@ -53,8 +53,8 @@ class CreateOfferController {
         Offer offer = new Offer.Builder(
                     customer,
                     manager,
-                    projectDescription,
                     projectTitle,
+                    projectDescription,
                     customerAffiliation)
                     .items(items)
                     .identifier(offerId)
