@@ -355,9 +355,7 @@ class CreateCustomerView extends VerticalLayout {
     }
 
     private void updateAffiliationDetails(Affiliation affiliation) {
-        if(affiliation == null) {
-            this.affiliationDetails.setContent(null)
-        } else {
+        if (affiliation) {
             VerticalLayout content = new VerticalLayout()
             content.addComponent(new Label("<strong>${affiliation.category.value}</strong>", ContentMode.HTML))
             content.addComponent(new Label("${affiliation.organisation}"))
@@ -369,6 +367,8 @@ class CreateCustomerView extends VerticalLayout {
             content.setMargin(true)
             content.setSpacing(false)
             this.affiliationDetails.setContent(content)
+        } else {
+            this.affiliationDetails.content = null
         }
     }
 
