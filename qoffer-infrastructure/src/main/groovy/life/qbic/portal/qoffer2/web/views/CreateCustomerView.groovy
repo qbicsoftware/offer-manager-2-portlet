@@ -214,7 +214,7 @@ class CreateCustomerView extends VerticalLayout {
                     break
             }
             submitButton.enabled = allValuesValid()
-            addressAdditionComboBox.enabled = Objects.isNull(createCustomerViewModel.affiliation)
+            addressAdditionComboBox.enabled = !Objects.isNull(createCustomerViewModel.affiliation)
         })
 
         /* refresh affiliation list and set added item as selected item. This is needed to keep this
