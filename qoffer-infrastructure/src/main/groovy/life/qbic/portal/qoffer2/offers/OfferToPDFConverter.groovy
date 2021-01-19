@@ -4,6 +4,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.portal.portlet.offers.OfferExporter
 import org.jsoup.nodes.Document
@@ -133,7 +134,15 @@ class OfferToPDFConverter implements OfferExporter{
     }
 
     void setSelectedItems() {
-    //TODO implement
+        // Let's clear the existing item template content first
+        htmlContent.getElementById("product-items").empty()
+        // Set the start offer position
+        def itemPos = 1
+        // Create the items in html in the overview table
+        offer.items.each {item ->
+            htmlContent.getElementById("product-items")
+                    .append(ItemPrintout.itemInHTML(itemPos++, item))
+        }
     }
 
     void setPrices() {
@@ -191,5 +200,28 @@ class OfferToPDFConverter implements OfferExporter{
                 throw new RuntimeException("Offer PDF has not been generated.")
             }
         }
+    }
+
+    private static class ItemPrintout {
+
+        static String itemInHTML(int offerPosition, ProductItem item) {
+            return """<tr class="product-item">
+            <td>${offerPosition}</td>
+            <td>${item.product.productName}</td>
+            <td class="price-value">${item.quantity}</td>
+            <td>${item.product.unit}</td>
+            <td class="price-value">${item.product.unitPrice}</td>
+            <td class="price-value">${item.quantity * item.product.unitPrice}</td>
+            </tr>
+            <tr class="product-item">
+            <td></td>
+            <td>${item.product.description}</td>
+            <td class="price-value"></td>
+            <td></td>
+            <td class="price-value"></td>
+            <td class="price-value"></td>
+            </tr>"""
+        }
+
     }
 }
