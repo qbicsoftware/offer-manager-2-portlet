@@ -207,11 +207,19 @@ class OfferToPDFConverter implements OfferExporter{
         static String itemInHTML(int offerPosition, ProductItem item) {
             return """<tr class="product-item">
             <td>${offerPosition}</td>
-            <td>${item.product.description}</td>
+            <td>${item.product.productName}</td>
             <td class="price-value">${item.quantity}</td>
             <td>${item.product.unit}</td>
             <td class="price-value">${item.product.unitPrice}</td>
             <td class="price-value">${item.quantity * item.product.unitPrice}</td>
+            </tr>
+            <tr class="product-item">
+            <td></td>
+            <td>${item.product.description}</td>
+            <td class="price-value"></td>
+            <td></td>
+            <td class="price-value"></td>
+            <td class="price-value"></td>
             </tr>"""
         }
 
