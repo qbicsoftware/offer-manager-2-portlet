@@ -91,7 +91,6 @@ class OverviewView extends FormLayout {
         headerRow.addComponents(activityContainer,overviewGrid)
         headerRow.setSizeFull()
 
-        //this.addComponent(overviewRow)
         this.setWidthFull()
     }
 
@@ -102,17 +101,20 @@ class OverviewView extends FormLayout {
     private void setupGrid() {
         def dateColumn = overviewGrid.addColumn({ overview -> overview.getModificationDate() })
                 .setCaption("Date")
+        dateColumn.setExpandRatio(0)
         def idColumn = overviewGrid.addColumn({overview -> overview.offerId.toString()})
                 .setCaption("Offer ID")
+        idColumn.setExpandRatio(1)
         def titleColumn = overviewGrid.addColumn({overview -> overview.getProjectTitle()}).setCaption("Title")
-        titleColumn.setMinimumWidth(50)
+        titleColumn.setMinimumWidth(300)
         titleColumn.setExpandRatio(1)
         def customerColumn = overviewGrid.addColumn({overview -> overview.getCustomer()}).setCaption("Customer")
         customerColumn.setExpandRatio(1)
         def priceColumn = overviewGrid.addColumn({overview -> overview.getTotalPrice()}).setCaption("Total Price")
+        priceColumn.setExpandRatio(0)
 
         overviewGrid.sort(dateColumn, SortDirection.DESCENDING)
-        overviewGrid.setSizeFull()
+        overviewGrid.setWidthFull()
     }
 
     private void setupListeners() {
