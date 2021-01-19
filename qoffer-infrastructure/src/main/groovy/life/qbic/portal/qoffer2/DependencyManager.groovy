@@ -281,7 +281,7 @@ class DependencyManager {
         this.listAffiliations = new ListAffiliations(listAffiliationsPresenter, customerDbConnector)
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
         this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
-        this.listProducts = new ListProducts(productsDbConnector,createOfferPresenter)
+        this.listProducts = new ListProducts(productsDbConnector,[createOfferPresenter,updateOfferPresenter])
         this.searchCustomer = new SearchCustomer(searchCustomerPresenter, customerDbConnector)
     }
 
