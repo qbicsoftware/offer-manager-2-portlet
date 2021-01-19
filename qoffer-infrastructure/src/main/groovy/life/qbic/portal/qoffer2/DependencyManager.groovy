@@ -93,6 +93,8 @@ class DependencyManager {
     private CreateOffer createOffer
     private CreateOffer updateOffer
     private ListProducts listProducts
+    private ListProducts listProducts_2
+
 
     private CreateCustomerController createCustomerController
     private CreateAffiliationController createAffiliationController
@@ -101,6 +103,7 @@ class DependencyManager {
     private CreateOfferController createOfferController
     private CreateOfferController updateOfferController
     private ListProductsController listProductsController
+    private ListProductsController listProductsController_2
 
     private CreateCustomerView createCustomerView
     private CreateCustomerView createCustomerViewNewOffer
@@ -282,6 +285,7 @@ class DependencyManager {
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
         this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
         this.listProducts = new ListProducts(productsDbConnector,createOfferPresenter)
+        this.listProducts_2 = new ListProducts(productsDbConnector,updateOfferPresenter)
         this.searchCustomer = new SearchCustomer(searchCustomerPresenter, customerDbConnector)
     }
 
@@ -321,6 +325,11 @@ class DependencyManager {
         }
         try {
             this.listProductsController = new ListProductsController(this.listProducts)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${ListProductsController.getSimpleName()} setup", e)
+        }
+        try {
+            this.listProductsController_2 = new ListProductsController(this.listProducts_2)
         } catch (Exception e) {
             log.error("Unexpected exception during ${ListProductsController.getSimpleName()} setup", e)
         }
@@ -381,7 +390,7 @@ class DependencyManager {
                     this.viewModel,
                     this.updateOfferViewModel,
                     this.updateOfferController,
-                    this.listProductsController,
+                    this.listProductsController_2,
                     this.createCustomerView,
                     this.createAffiliationView,
                     this.offerService)
