@@ -34,11 +34,14 @@ class OfferOverviewView extends VerticalLayout{
 
     private final CreateOfferViewModel createOfferViewModel
 
+    private FileDownloader currentFileDownloader
+
     Panel offerOverview
     Grid<ProductItemViewModel> itemGrid
     Button previous
     Button save
     Button downloadOffer
+
 
     OfferOverviewView(CreateOfferViewModel viewModel, OfferResourcesService service){
         this.createOfferViewModel = viewModel
@@ -162,15 +165,32 @@ class OfferOverviewView extends VerticalLayout{
     }
 
     private void addOfferResource(Offer offer) {
+        /*
+        First, we make sure that no download resources are still attached to the download
+        button.
+         */
+        removeExistingResources()
+        // Then we create a new PDF resource ...
         final def converter = new OfferToPDFConverter(offer)
         StreamResource offerResource =
                 new StreamResource((StreamResource.StreamSource res) -> {
                     return converter.getOfferAsPdf()
                 }, new Date().toLocalDateTime().toString()+".pdf")
-        FileDownloader fileDownloader = new FileDownloader(offerResource)
-        fileDownloader.extend(downloadOffer)
+        // ... and attach it to the download button
+        currentFileDownloader = new FileDownloader(offerResource)
+        currentFileDownloader.extend(downloadOffer)
         downloadOffer.setEnabled(true)
     }
+
+    private void removeExistingResources() {
+        if (currentFileDownloader) {
+            downloadOffer.removeExtension(currentFileDownloader)
+        }
+    }
+
+
+
+
 
     /*
     Small helper object, that will display information
