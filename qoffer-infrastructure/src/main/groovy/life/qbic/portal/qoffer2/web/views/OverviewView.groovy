@@ -4,7 +4,9 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.FileDownloader
 import com.vaadin.server.StreamResource
 import com.vaadin.shared.data.sort.SortDirection
+import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
+import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
@@ -26,7 +28,7 @@ import life.qbic.portal.qoffer2.web.viewmodel.OfferOverviewModel
  * @since 1.0.0
  */
 @Log4j2
-class OverviewView extends VerticalLayout {
+class OverviewView extends FormLayout {
 
     final private OfferOverviewModel model
 
@@ -61,7 +63,7 @@ class OverviewView extends VerticalLayout {
         We start with the header, that contains a descriptive
         title of what the view is about.
          */
-        final HorizontalLayout headerRow = new HorizontalLayout()
+        final VerticalLayout headerRow = new VerticalLayout()
         final Label label = new Label("Available Offers")
 
         label.addStyleName(ValoTheme.LABEL_HUGE)
@@ -73,8 +75,7 @@ class OverviewView extends VerticalLayout {
         The left component will be the offer overview, the
         right component will be the offer download button.
          */
-        final HorizontalLayout overviewRow = new HorizontalLayout()
-        final VerticalLayout activityContainer = new VerticalLayout()
+        final HorizontalLayout activityContainer = new HorizontalLayout()
         downloadBtn.setStyleName(ValoTheme.BUTTON_LARGE)
         downloadBtn.setEnabled(false)
         downloadBtn.setDescription("Download offer")
@@ -87,13 +88,10 @@ class OverviewView extends VerticalLayout {
         activityContainer.addComponents(downloadBtn, updateOfferBtn, downloadSpinner)
 
         activityContainer.setMargin(false)
-        overviewRow.addComponents(overviewGrid, activityContainer)
-        overviewRow.setSizeFull()
-        overviewRow.setWidthFull()
-        overviewRow.setExpandRatio(overviewGrid,0.95f)
-        overviewRow.setExpandRatio(activityContainer, 0.05f)
+        headerRow.addComponents(activityContainer,overviewGrid)
+        headerRow.setSizeFull()
 
-        this.addComponent(overviewRow)
+        //this.addComponent(overviewRow)
         this.setWidthFull()
     }
 
@@ -104,16 +102,14 @@ class OverviewView extends VerticalLayout {
     private void setupGrid() {
         def dateColumn = overviewGrid.addColumn({ overview -> overview.getModificationDate() })
                 .setCaption("Date")
-        dateColumn.setMinimumWidth(50)
         def idColumn = overviewGrid.addColumn({overview -> overview.offerId.toString()})
                 .setCaption("Offer ID")
-        idColumn.setMinimumWidth(50)
         def titleColumn = overviewGrid.addColumn({overview -> overview.getProjectTitle()}).setCaption("Title")
         titleColumn.setMinimumWidth(50)
+        titleColumn.setExpandRatio(1)
         def customerColumn = overviewGrid.addColumn({overview -> overview.getCustomer()}).setCaption("Customer")
-        customerColumn.setMinimumWidth(50)
+        customerColumn.setExpandRatio(1)
         def priceColumn = overviewGrid.addColumn({overview -> overview.getTotalPrice()}).setCaption("Total Price")
-        priceColumn.setWidth(110)
 
         overviewGrid.sort(dateColumn, SortDirection.DESCENDING)
         overviewGrid.setSizeFull()
