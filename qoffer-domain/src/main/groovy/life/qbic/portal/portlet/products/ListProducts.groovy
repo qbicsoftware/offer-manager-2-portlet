@@ -12,29 +12,11 @@ import life.qbic.portal.portlet.exceptions.DatabaseQueryException
  * @since 1.0.0
  */
 @Log4j2
-class ListProducts implements ListProductsInput {
-
-  private final List<ListProductsOutput> output
+class ListProducts {
 
   private final ListProductsDataSource source
 
-    ListProducts(ListProductsDataSource source, List<ListProductsOutput> output) {
-    this.output = output
+    ListProducts(ListProductsDataSource source) {
     this.source = source
-  }
-
-  @Override
-  void listAvailableProducts() {
-    try {
-      List<Product> availableProducts = source.findAllAvailableProducts()
-      output.each {
-        it.showAvailableProducts(availableProducts)
-      }
-    } catch (DatabaseQueryException e) {
-      log.error(e)
-      output.each {
-        it.failNotification("Something went wrong during the request of available products.")
-      }
-    }
   }
 }

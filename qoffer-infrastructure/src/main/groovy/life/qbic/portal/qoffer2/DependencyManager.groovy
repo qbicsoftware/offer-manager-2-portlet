@@ -73,7 +73,6 @@ class DependencyManager {
     private ListAffiliationsController listAffiliationsController
     private CreateOfferController createOfferController
     private CreateOfferController updateOfferController
-    private ListProductsController listProductsController
 
     private CreateCustomerView createCustomerView
     private CreateCustomerView createCustomerViewNewOffer
@@ -292,11 +291,6 @@ class DependencyManager {
             this.updateOfferController = new CreateOfferController(this.updateOffer,this.updateOffer)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
-        }
-        try {
-            this.listProductsController = new ListProductsController(this.listProducts)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${ListProductsController.getSimpleName()} setup", e)
         }
     }
 

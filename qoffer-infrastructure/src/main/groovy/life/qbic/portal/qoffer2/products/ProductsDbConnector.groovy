@@ -3,17 +3,10 @@ package life.qbic.portal.qoffer2.products
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.datamodel.dtos.business.services.ProductUnitFactory
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Sequencing
+import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 import life.qbic.portal.portlet.products.ListProductsDataSource
 import life.qbic.portal.qoffer2.database.ConnectionProvider
-
 import org.apache.groovy.sql.extensions.SqlExtensions
 
 import java.sql.Connection
@@ -27,7 +20,7 @@ import java.sql.SQLException
  * @since 1.0.0
  */
 @Log4j2
-class ProductsDbConnector implements ListProductsDataSource {
+class ProductsDbConnector {
 
   private final ConnectionProvider provider
 
@@ -42,7 +35,18 @@ class ProductsDbConnector implements ListProductsDataSource {
     this.provider = Objects.requireNonNull(provider, "Provider must not be null.")
   }
 
-  @Override
+  /**
+   * Queries a data source for all available service
+   * product that have been defined by the organisation.
+   *
+   * Throws a {@link DatabaseQueryException} if the query
+   * fails for some reason. An exception must NOT be thrown,
+   * if no product can be found. The returned list needs to
+   * be empty then.
+   *
+   * @return A list of service {@link Product}.
+   * @throws DatabaseQueryException
+   */
   List<Product> findAllAvailableProducts() throws DatabaseQueryException {
     try {
       tryToFindAllProducts()
