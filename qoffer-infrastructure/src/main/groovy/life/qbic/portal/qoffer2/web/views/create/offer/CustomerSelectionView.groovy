@@ -47,8 +47,6 @@ class CustomerSelectionView extends VerticalLayout{
     Grid<Affiliation> affiliationGrid
     HorizontalLayout affiliationLayout
     VerticalLayout affiliationLabelLayout
-    HorizontalLayout createAffiliationLayout
-    Button createAffiliationButton
 
     Label selectedCustomer
 
@@ -130,19 +128,10 @@ class CustomerSelectionView extends VerticalLayout{
         this.affiliationGrid = new Grid<>()
         affiliationLayout = new HorizontalLayout(affiliationGrid)
 
-        createAffiliationLayout = new HorizontalLayout()
-        createAffiliationButton = new Button("Create Affiliation", VaadinIcons.OFFICE)
-        createAffiliationButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
-
-        createAffiliationLayout.addComponent(createAffiliationButton)
-        createAffiliationLayout.setComponentAlignment(createAffiliationButton, Alignment.MIDDLE_RIGHT)
-        createAffiliationLayout.setSizeFull()
-
         affiliationSelectionContainer = new VerticalLayout()
         affiliationSelectionContainer.addComponents(
                 affiliationLabelLayout,
-                affiliationLayout,
-                createAffiliationLayout)
+                affiliationLayout)
         affiliationSelectionContainer.setMargin(false)
 
         this.addComponents(
