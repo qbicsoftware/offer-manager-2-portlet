@@ -1,7 +1,6 @@
 package life.qbic.portal.qoffer2
 
 import groovy.util.logging.Log4j2
-
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
@@ -10,46 +9,20 @@ import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.portlet.customers.search.SearchCustomer
 import life.qbic.portal.portlet.offers.create.CreateOffer
 import life.qbic.portal.portlet.products.ListProducts
-import life.qbic.portal.qoffer2.offers.OfferDbConnector
+import life.qbic.portal.qoffer2.customers.AffiliationResourcesService
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
-import life.qbic.portal.qoffer2.products.ProductsDbConnector
+import life.qbic.portal.qoffer2.customers.PersonResourcesService
 import life.qbic.portal.qoffer2.database.DatabaseSession
-
+import life.qbic.portal.qoffer2.offers.OfferDbConnector
+import life.qbic.portal.qoffer2.offers.OfferResourcesService
+import life.qbic.portal.qoffer2.products.ProductsDbConnector
+import life.qbic.portal.qoffer2.products.ProductsResourcesService
 import life.qbic.portal.qoffer2.services.OfferUpdateService
 import life.qbic.portal.qoffer2.services.OverviewService
-import life.qbic.portal.qoffer2.customers.AffiliationResourcesService
-import life.qbic.portal.qoffer2.offers.OfferResourcesService
-import life.qbic.portal.qoffer2.customers.PersonResourcesService
-
-import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
-import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
-import life.qbic.portal.qoffer2.web.controllers.ListProductsController
-import life.qbic.portal.qoffer2.web.controllers.SearchCustomerController
-import life.qbic.portal.qoffer2.web.controllers.ListAffiliationsController
-import life.qbic.portal.qoffer2.web.controllers.CreateCustomerController
-
-import life.qbic.portal.qoffer2.web.presenters.CreateAffiliationPresenter
-import life.qbic.portal.qoffer2.web.presenters.CreateCustomerPresenter
-import life.qbic.portal.qoffer2.web.presenters.CreateOfferPresenter
-import life.qbic.portal.qoffer2.web.presenters.ListAffiliationsPresenter
-import life.qbic.portal.qoffer2.web.presenters.SearchCustomerPresenter
-import life.qbic.portal.qoffer2.web.presenters.Presenter
-
-import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
-import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
-import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
-import life.qbic.portal.qoffer2.web.viewmodel.OfferOverviewModel
-import life.qbic.portal.qoffer2.web.viewmodel.SearchCustomerViewModel
-import life.qbic.portal.qoffer2.web.viewmodel.UpdateOfferViewModel
-import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
-
-import life.qbic.portal.qoffer2.web.views.CreateAffiliationView
-import life.qbic.portal.qoffer2.web.views.CreateOfferView
-import life.qbic.portal.qoffer2.web.views.OverviewView
-import life.qbic.portal.qoffer2.web.views.PortletView
-import life.qbic.portal.qoffer2.web.views.CreateCustomerView
-import life.qbic.portal.qoffer2.web.views.SearchCustomerView
-
+import life.qbic.portal.qoffer2.web.controllers.*
+import life.qbic.portal.qoffer2.web.presenters.*
+import life.qbic.portal.qoffer2.web.viewmodel.*
+import life.qbic.portal.qoffer2.web.views.*
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
 
@@ -113,6 +86,7 @@ class DependencyManager {
     private PersonResourcesService customerService
     private AffiliationResourcesService affiliationService
     private OfferResourcesService offerService
+    private ProductsResourcesService productsResourcesService
 
     /**
      * Public constructor.
@@ -165,6 +139,7 @@ class DependencyManager {
         this.overviewService = new OverviewService(offerDbConnector, offerService)
         this.offerUpdateService = new OfferUpdateService()
         this.customerService = new PersonResourcesService(customerDbConnector)
+        this.productsResourcesService = new ProductsResourcesService(productsDbConnector)
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
     }
 
@@ -202,7 +177,7 @@ class DependencyManager {
         }
 
         try {
-            this.createOfferViewModel = new CreateOfferViewModel(customerService)
+            this.createOfferViewModel = new CreateOfferViewModel(customerService, productsResourcesService)
             //todo add affiliations, customers and project managers to the model
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
@@ -210,7 +185,7 @@ class DependencyManager {
         }
 
         try {
-            this.updateOfferViewModel = new UpdateOfferViewModel(customerService,
+            this.updateOfferViewModel = new UpdateOfferViewModel(customerService, productsResourcesService,
                     offerUpdateService)
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
@@ -365,7 +340,6 @@ class DependencyManager {
                     this.viewModel,
                     this.createOfferViewModel,
                     this.createOfferController,
-                    this.listProductsController,
                     this.createCustomerViewNewOffer,
                     this.createAffiliationView,
                     this.offerService)
@@ -380,7 +354,6 @@ class DependencyManager {
                     this.viewModel,
                     this.updateOfferViewModel,
                     this.updateOfferController,
-                    this.listProductsController,
                     this.createCustomerView,
                     this.createAffiliationView,
                     this.offerService)
