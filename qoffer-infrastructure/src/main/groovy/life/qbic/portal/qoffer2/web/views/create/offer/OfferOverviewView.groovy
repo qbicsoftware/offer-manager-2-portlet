@@ -185,6 +185,7 @@ class OfferOverviewView extends VerticalLayout{
     private void removeExistingResources() {
         if (currentFileDownloader) {
             downloadOffer.removeExtension(currentFileDownloader)
+            downloadOffer.setEnabled(false)
         }
     }
 
