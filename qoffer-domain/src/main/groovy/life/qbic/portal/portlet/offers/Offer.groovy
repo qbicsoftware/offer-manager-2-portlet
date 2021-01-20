@@ -235,7 +235,7 @@ class Offer {
     }
 
     private double determineOverhead() {
-        double overhead = 0.0
+        double overhead
         switch(selectedCustomerAffiliation.category) {
             case AffiliationCategory.INTERNAL:
                 overhead = 0.0

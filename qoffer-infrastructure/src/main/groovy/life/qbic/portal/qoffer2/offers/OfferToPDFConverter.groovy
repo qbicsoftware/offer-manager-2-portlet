@@ -1,6 +1,7 @@
 package life.qbic.portal.qoffer2.offers
 
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
@@ -14,6 +15,8 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
+import java.text.DateFormat
+import java.text.SimpleDateFormat
 
 
 /**
@@ -108,9 +111,10 @@ class OfferToPDFConverter implements OfferExporter{
     private void setCustomerInformation() {
         final Customer customer = offer.customer
         final Affiliation affiliation = offer.selectedCustomerAffiliation
+        String customerTitle = customer.title == AcademicTitle.NONE ? "" : customer.title
         htmlContent.getElementById("customer-name").text(String.format(
                 "%s %s %s",
-                customer.title,
+                customerTitle,
                 customer.firstName,
                 customer.lastName))
         htmlContent.getElementById("customer-organisation").text(affiliation.organisation)
@@ -123,9 +127,10 @@ class OfferToPDFConverter implements OfferExporter{
     private void setManagerInformation() {
         final ProjectManager pm = offer.projectManager
         final Affiliation affiliation = pm.affiliations.get(0)
+        String pmTitle = pm.title == AcademicTitle.NONE ? "" : pm.title
         htmlContent.getElementById("project-manager-name").text(String.format(
                 "%s %s %s",
-                pm.title,
+                pmTitle,
                 pm.firstName,
                 pm.lastName))
         htmlContent.getElementById("project-manager-street").text(affiliation.street)
@@ -152,15 +157,17 @@ class OfferToPDFConverter implements OfferExporter{
 
         htmlContent.getElementById("total-costs").text(totalPrice.toString()+" €")
 
-        htmlContent.getElementById("total-cost-value-net").text(totalPrice.toString())
+        htmlContent.getElementById("total-cost-value-net").text(netPrice.toString())
         htmlContent.getElementById("vat-cost-value").text(taxes.toString())
-        htmlContent.getElementById("final-cost-value").text(netPrice.toString())
+        htmlContent.getElementById("final-cost-value").text(totalPrice.toString())
     }
 
     void setQuotationDetails(){
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG)
+
         htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
         htmlContent.getElementById("offer-expiry-date").text(offer.expirationDate.toLocalDate().toString())
-        htmlContent.getElementById("offer-date").text(offer.modificationDate.toLocalDate().toString())
+        htmlContent.getElementById("offer-date").text(dateFormat.format(offer.modificationDate))
     }
 
     /**
@@ -188,6 +195,7 @@ class OfferToPDFConverter implements OfferExporter{
             builder.command(chromeAlias,
                     "--headless",
                     "--disable-gpu",
+                    "--aggressive-cache-discard",
                     "--print-to-pdf-no-header",
                     "--print-to-pdf=${output.toString()}",
                     "${sourceFile}")
