@@ -31,9 +31,7 @@ class CreateCustomerView extends VerticalLayout {
     private final ViewModel sharedViewModel
     private final CreateCustomerViewModel createCustomerViewModel
     final CreateCustomerController controller
-
-    private final List<AffiliationSelectionListener> affiliationSelectionListeners
-
+    
     ComboBox<String> titleField
     TextField firstNameField
     TextField lastNameField
@@ -50,7 +48,6 @@ class CreateCustomerView extends VerticalLayout {
         this.controller = controller
         this.sharedViewModel = sharedViewModel
         this.createCustomerViewModel = createCustomerViewModel
-        this.affiliationSelectionListeners = new ArrayList<>()
         initLayout()
         bindViewModel()
         setupFieldValidators()
@@ -347,9 +344,6 @@ class CreateCustomerView extends VerticalLayout {
         })
 
         this.affiliationComboBox.addSelectionListener({
-            if (it.value) {
-                fireAffiliationSelectionEvent(it.value)
-            }
             updateAffiliationDetails(it.value)
         })
     }
@@ -370,32 +364,5 @@ class CreateCustomerView extends VerticalLayout {
         } else {
             this.affiliationDetails.content = null
         }
-    }
-
-    /**
-     * Adds an AffiliationSelectionListener to be notified when the selected affiliation changes
-     * @param listener
-     * @see AffiliationSelectionListener
-     */
-    void addAffiliationSelectionListener(AffiliationSelectionListener listener) {
-        this.affiliationSelectionListeners.add(listener)
-    }
-
-    /**
-     * Removes an AffiliationSelectionListener to be notified when the selected affiliation changes
-     * @param listener
-     * @see AffiliationSelectionListener
-     */
-    void removeAffiliationSelectionListener(AffiliationSelectionListener listener) {
-        this.affiliationSelectionListeners.remove(listener)
-    }
-
-    /**
-     * Fires an AffiliationSelectionEvent
-     * @param event
-     */
-    private void fireAffiliationSelectionEvent(Affiliation affiliation) {
-        AffiliationSelectionEvent event = new AffiliationSelectionEvent(this, affiliation)
-        this.affiliationSelectionListeners.each {it.affiliationSelected(event)}
     }
 }
