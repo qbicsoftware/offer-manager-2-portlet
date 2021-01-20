@@ -2,6 +2,7 @@ package life.qbic.portal.qoffer2.web.views.create.offer
 
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
@@ -273,8 +274,8 @@ class SelectItemsView extends VerticalLayout{
             grid.addColumn({ productItem -> productItem.product.unit.value }).setCaption("Product Unit")
 
             //specify size of grid and layout
-            grid.setSizeFull()
-
+            grid.setWidthFull()
+            grid.setHeightMode(HeightMode.UNDEFINED)
         } catch (Exception e) {
             new Exception("Unexpected exception in building the product item grid", e)
         }
