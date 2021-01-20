@@ -2,7 +2,6 @@ package life.qbic.portal.qoffer2.web.views.create.offer
 
 import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
-import com.vaadin.data.provider.Query
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.ValueChangeMode
 import com.vaadin.shared.ui.grid.HeightMode
