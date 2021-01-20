@@ -189,10 +189,6 @@ class OfferOverviewView extends VerticalLayout{
         }
     }
 
-
-
-
-
     /*
     Small helper object, that will display information
     about individual price positions for offer overviews.
