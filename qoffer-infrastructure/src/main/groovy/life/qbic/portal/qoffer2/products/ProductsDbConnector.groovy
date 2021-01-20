@@ -5,7 +5,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
-import life.qbic.portal.portlet.products.ListProductsDataSource
+
 import life.qbic.portal.qoffer2.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
 
@@ -15,7 +15,7 @@ import java.sql.ResultSet
 import java.sql.SQLException
 
 /**
- * Provides a MariaDB connector implementation for {@link ListProductsDataSource}.
+ * Provides a MariaDB connector provides access to available service products.
  *
  * @since 1.0.0
  */
@@ -49,22 +49,18 @@ class ProductsDbConnector {
    */
   List<Product> findAllAvailableProducts() throws DatabaseQueryException {
     try {
-      tryToFindAllProducts()
+      def products = []
+      provider.connect().withCloseable {
+        final def query = it.prepareStatement(Queries.SELECT_ALL_PRODUCTS)
+        final ResultSet result = query.executeQuery()
+        products.addAll(convertResultSet(result))
+      }
+      return products
     } catch (SQLException e) {
       log.error(e.message)
       log.error(e.stackTrace.join("\n"))
       throw new DatabaseQueryException("Unable to list all available products.")
     }
-  }
-
-  private List<Product> tryToFindAllProducts() {
-    def products = []
-    provider.connect().withCloseable {
-      final def query = it.prepareStatement(Queries.SELECT_ALL_PRODUCTS)
-      final ResultSet result = query.executeQuery()
-      products.addAll(convertResultSet(result))
-    }
-    return products
   }
 
   private static List<Product> convertResultSet(ResultSet resultSet) {
