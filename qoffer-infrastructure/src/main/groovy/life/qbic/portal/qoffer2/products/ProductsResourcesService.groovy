@@ -36,15 +36,11 @@ class ProductsResourcesService implements ResourcesService {
         reloadResources()
     }
 
-    private void setupProductEventEmitter() {
-        this.productEventEmitter.emit(this.products.asList())
-    }
-
     @Override
     void reloadResources() {
         this.products.clear()
         this.products.addAll(dbConnector.findAllAvailableProducts())
-        this.productEventEmitter.emit(this.products.asList().asImmutable())
+        this.productEventEmitter.emit(List.copyOf(this.products))
     }
 
     /**
@@ -52,6 +48,6 @@ class ProductsResourcesService implements ResourcesService {
      * @return currently loaded available products
      */
     List<Product> getProducts() {
-        return List.copyOf(this.products.asImmutable())
+        return List.copyOf(this.products)
     }
 }

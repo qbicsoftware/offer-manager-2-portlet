@@ -7,6 +7,7 @@ import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.portal.qoffer2.customers.PersonResourcesService
+import life.qbic.portal.qoffer2.events.Subscription
 import life.qbic.portal.qoffer2.products.ProductsResourcesService
 
 /**
@@ -24,11 +25,11 @@ import life.qbic.portal.qoffer2.products.ProductsResourcesService
  */
 class CreateOfferViewModel {
 
-    List<ProductItemViewModel> sequencingProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> primaryAnalysisProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> secondaryAnalysisProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> managementProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> storageProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<ProductItemViewModel> sequencingProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<ProductItemViewModel> primaryAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<ProductItemViewModel> secondaryAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<ProductItemViewModel> managementProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<ProductItemViewModel> storageProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
 
     ObservableList productItems = new ObservableList(new ArrayList<ProductItemViewModel>())
     ObservableList foundCustomers = new ObservableList(new ArrayList<Customer>())
@@ -54,8 +55,19 @@ class CreateOfferViewModel {
     CreateOfferViewModel(PersonResourcesService personService, ProductsResourcesService productsResourcesService) {
         this.personService = personService
         this.productsResourcesService = productsResourcesService
-        this.availableProjectManagers = personService.getProjectManagers()
-        this.foundCustomers = personService.getCustomers()
+        fetchPersonData()
+        fetchProductData()
+        subscribeToResources()
+    }
+
+    private void fetchPersonData() {
+        this.availableProjectManagers.clear()
+        this.availableProjectManagers.addAll(personService.getProjectManagers())
+        this.foundCustomers.clear()
+        this.foundCustomers.addAll(personService.getCustomers())
+    }
+
+    private void fetchProductData() {
         populateProductLists(productsResourcesService.getProducts())
     }
 
@@ -68,9 +80,14 @@ class CreateOfferViewModel {
             this.availableProjectManagers.clear()
             this.availableProjectManagers.addAll(managerList)
         })
-        this.productsResourcesService.productEventEmitter.register((List<Product> products) -> {
-            populateProductLists(products)
-        })
+
+        Subscription<List<Product>> productSubscription = new Subscription<List<Product>>() {
+            @Override
+            void receive(List<Product> products) {
+                populateProductLists(products)
+            }
+        }
+        this.productsResourcesService.productEventEmitter.register(productSubscription)
     }
 
     private void populateProductLists(List<Product> products) {
@@ -97,15 +114,27 @@ class CreateOfferViewModel {
         }
     }
 
+    /**
+     * This method refreshes the data underlying the current view model
+     */
     void refresh() {
+        //TODO where and how to catch DatabaseQueryException ?
         refreshPersons()
         refreshProducts()
     }
 
+    /**
+     * This method triggers a refresh for all Person resources
+     * @see life.qbic.datamodel.dtos.general.Person
+     */
     void refreshPersons() {
         this.personService.reloadResources()
     }
 
+    /**
+     * Calling this method triggers a refresh of all available Product resources.
+     * @see Product
+     */
     void refreshProducts() {
         this.productsResourcesService.reloadResources()
     }
