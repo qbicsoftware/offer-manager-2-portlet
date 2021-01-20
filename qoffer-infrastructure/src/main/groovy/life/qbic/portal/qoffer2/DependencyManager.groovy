@@ -153,7 +153,6 @@ class DependencyManager {
             customerDbConnector = new CustomerDbConnector(DatabaseSession.getInstance())
             productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
             offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(), customerDbConnector, productsDbConnector)
-            println offerDbConnector.loadOfferOverview()
 
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
