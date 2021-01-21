@@ -297,7 +297,7 @@ class SelectItemsView extends VerticalLayout{
                     .setCaption("Product Name").setId("ProductName")
             grid.addColumn({ productItem -> productItem.product.description })
                     .setCaption("Product Description").setId("ProductDescription")
-            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.currencyFormat))
+            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol()))
                     .setCaption("Product Unit Price").setId("ProductUnitPrice")
             grid.addColumn({ productItem -> productItem.product.unit.value })
                     .setCaption("Product Unit").setId("ProductUnit")
