@@ -7,6 +7,7 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.portal.portlet.offers.Currency
 import life.qbic.portal.portlet.offers.OfferExporter
 import org.jsoup.nodes.Document
 import org.jsoup.parser.Parser
@@ -29,19 +30,19 @@ import java.text.SimpleDateFormat
  *
  */
 @Log4j2
-class OfferToPDFConverter implements OfferExporter{
+class OfferToPDFConverter implements OfferExporter {
 
     private final Offer offer
 
-   private final Path tempDir
+    private final Path tempDir
 
-   private final Document htmlContent
+    private final Document htmlContent
 
     private final Path createdOffer
 
-   private final Path createdOfferPdf
+    private final Path createdOfferPdf
 
-   private final Path newOfferImage
+    private final Path newOfferImage
 
     private final Path newOfferStyle
 
@@ -144,25 +145,32 @@ class OfferToPDFConverter implements OfferExporter{
         // Set the start offer position
         def itemPos = 1
         // Create the items in html in the overview table
-        offer.items.each {item ->
+        offer.items.each { item ->
             htmlContent.getElementById("product-items")
                     .append(ItemPrintout.itemInHTML(itemPos++, item))
         }
     }
 
     void setPrices() {
-        final totalPrice = offer.totalPrice
-        final taxes = offer.taxes
-        final netPrice = offer.netPrice
+        final totalPrice = Currency.getFormatterWithoutSymbol().format(offer.totalPrice)
+        final totalPrice_withCurrency = Currency.getFormatterWithSymbol().format(offer.totalPrice)
 
-        htmlContent.getElementById("total-costs").text(totalPrice.toString()+" €")
+        final taxes = Currency.getFormatterWithoutSymbol().format(offer.taxes)
+        final netPrice = Currency.getFormatterWithoutSymbol().format(offer.netPrice)
 
-        htmlContent.getElementById("total-cost-value-net").text(netPrice.toString())
-        htmlContent.getElementById("vat-cost-value").text(taxes.toString())
-        htmlContent.getElementById("final-cost-value").text(totalPrice.toString())
+        println Currency.getFormatterWithSymbol().format(111111111111111110000000.0000)
+        println taxes
+        println totalPrice
+
+        //todo use the correct net value here!
+        htmlContent.getElementById("total-costs").text(totalPrice_withCurrency)
+
+        htmlContent.getElementById("total-cost-value-net").text(netPrice)
+        htmlContent.getElementById("vat-cost-value").text(taxes)
+        htmlContent.getElementById("final-cost-value").text(totalPrice)
     }
 
-    void setQuotationDetails(){
+    void setQuotationDetails() {
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG)
 
         htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
@@ -218,8 +226,8 @@ class OfferToPDFConverter implements OfferExporter{
             <td>${item.product.productName}</td>
             <td class="price-value">${item.quantity}</td>
             <td>${item.product.unit}</td>
-            <td class="price-value">${item.product.unitPrice}</td>
-            <td class="price-value">${item.quantity * item.product.unitPrice}</td>
+            <td class="price-value">${Currency.getFormatterWithoutSymbol().format(item.product.unitPrice)}</td>
+            <td class="price-value">${Currency.getFormatterWithoutSymbol().format(item.quantity * item.product.unitPrice)}</td>
             </tr>
             <tr class="product-item">
             <td></td>
