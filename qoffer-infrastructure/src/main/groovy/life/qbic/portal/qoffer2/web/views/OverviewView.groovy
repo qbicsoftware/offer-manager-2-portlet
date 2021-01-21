@@ -154,7 +154,7 @@ class OverviewView extends FormLayout {
         StreamResource offerResource =
                 new StreamResource((StreamResource.StreamSource res) -> {
                     return model.getOfferAsPdf()
-                }, "myoffer.pdf")
+                }, "${model.selectedOffer.identifier.toString()}.pdf")
         fileDownloader = new FileDownloader(offerResource)
         fileDownloader.extend(downloadBtn)
     }
