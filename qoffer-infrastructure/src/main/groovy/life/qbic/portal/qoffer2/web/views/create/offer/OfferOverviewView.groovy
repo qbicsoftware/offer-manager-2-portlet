@@ -199,7 +199,7 @@ class OfferOverviewView extends VerticalLayout{
         StreamResource offerResource =
                 new StreamResource((StreamResource.StreamSource res) -> {
                     return converter.getOfferAsPdf()
-                }, new Date().toLocalDateTime().toString()+".pdf")
+                }, "${offer.identifier.toString()}.pdf")
         // ... and attach it to the download button
         currentFileDownloader = new FileDownloader(offerResource)
         currentFileDownloader.extend(downloadOffer)
