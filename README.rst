@@ -31,7 +31,6 @@ Features
 --------
 
 * Create new offers
-* Update stored offers
 * Add new customers to the database
 * Add new affiliations to the database
 * Search for offers in the database
