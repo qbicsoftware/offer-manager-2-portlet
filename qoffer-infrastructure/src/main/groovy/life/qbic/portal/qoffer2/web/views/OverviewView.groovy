@@ -11,6 +11,7 @@ import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.ProgressBar
+import com.vaadin.ui.TextField
 import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
@@ -19,6 +20,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.portal.qoffer2.services.OfferUpdateService
 import life.qbic.portal.qoffer2.shared.OfferOverview
 import life.qbic.portal.qoffer2.web.viewmodel.OfferOverviewModel
+import org.apache.commons.lang3.StringUtils
 
 /**
  * A basic offer overview user interface.
@@ -121,17 +123,52 @@ class OverviewView extends VerticalLayout {
         setupFilters(offerOverviewDataProvider)
     }
 
+    private static Date fromString(String date) {
+        try {
+            String[] dateFields = date.split("-")
+            return new Date(Integer.parseInt(dateFields[0]),
+                    Integer.parseInt(dateFields[1]),
+                    Integer.parseInt(dateFields[2]))
+        } catch (Exception ignored) {
+            println ignored.message
+            return new Date()
+        }
+    }
+
+
     private void setupFilters(ListDataProvider<OfferOverview> offerOverviewDataProvider) {
         HeaderRow customerFilterRow = overviewGrid.appendHeaderRow()
+        final TextField dateFilterInput = new TextField()
+        final def dateFilter = (Date v) -> (v < new Date(2021,01,17))
+        GridUtils.setupColumnFilter(offerOverviewDataProvider,
+                overviewGrid.getColumn("CreationDate"),
+                customerFilterRow,
+                dateFilterInput,
+                dateFilter)
+        final TextField offerIdFilterInput = new TextField()
+        final def offerIdFilter = (String v) -> StringUtils.contains(v, offerIdFilterInput.getValue())
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("OfferId"),
-                customerFilterRow)
-        GridUtils.setupColumnFilter(offerOverviewDataProvider,
+                customerFilterRow,
+                offerIdFilterInput,
+                offerIdFilter)
+        /*GridUtils.setupColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("ProjectTitle"),
-                customerFilterRow)
+                customerFilterRow,
+                offerIdFilterInput,
+                offerIdFilter)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("Customer"),
-                customerFilterRow)
+                customerFilterRow,
+                offerIdFilterInput,
+                offerIdFilter)*/
+        final TextField filterInput = new TextField()
+        final def filter = (Double d) -> d <= Double.parseDouble(filterInput.getValue() ?: "-1")
+        GridUtils.setupColumnFilter(offerOverviewDataProvider,
+                overviewGrid.getColumn("TotalPrice"),
+                customerFilterRow,
+                filterInput,
+                filter)
     }
 
     private void setupListeners() {

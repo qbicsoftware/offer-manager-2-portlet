@@ -282,7 +282,7 @@ class CustomerSelectionView extends VerticalLayout{
 
     private void addFilters(ListDataProvider customerListDataProvider) {
         HeaderRow customerFilterRow = customerGrid.appendHeaderRow()
-        GridUtils.setupColumnFilter(customerListDataProvider,
+        /*GridUtils.setupColumnFilter(customerListDataProvider,
                 customerGrid.getColumn("FirstName"),
                 customerFilterRow)
         GridUtils.setupColumnFilter(customerListDataProvider,
@@ -290,6 +290,6 @@ class CustomerSelectionView extends VerticalLayout{
                 customerFilterRow)
         GridUtils.setupColumnFilter(customerListDataProvider,
                 customerGrid.getColumn("EmailAddress"),
-                customerFilterRow)
+                customerFilterRow)*/
     }
 }

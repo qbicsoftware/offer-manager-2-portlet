@@ -189,11 +189,11 @@ class SearchCustomerView extends FormLayout {
 
         HeaderRow customerFilterRow = grid.appendHeaderRow()
 
-        GridUtils.setupColumnFilter(customerDataProvider, firstNameColumn, customerFilterRow)
+       /* GridUtils.setupColumnFilter(customerDataProvider, firstNameColumn, customerFilterRow)
         GridUtils.setupColumnFilter(customerDataProvider, lastNameColumn, customerFilterRow)
         GridUtils.setupColumnFilter(customerDataProvider, emailColumn, customerFilterRow)
         GridUtils.setupColumnFilter(customerDataProvider, titleColumn, customerFilterRow)
-        GridUtils.setupColumnFilter(customerDataProvider, affiliationColumn, customerFilterRow)
+        GridUtils.setupColumnFilter(customerDataProvider, affiliationColumn, customerFilterRow)*/
         return grid
     }
 

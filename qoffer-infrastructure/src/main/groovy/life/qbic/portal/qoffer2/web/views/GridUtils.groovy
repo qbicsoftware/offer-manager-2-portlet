@@ -1,6 +1,7 @@
 package life.qbic.portal.qoffer2.web.views
 
 import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.server.SerializablePredicate
 import com.vaadin.shared.ui.ValueChangeMode
 import com.vaadin.ui.Grid
 import com.vaadin.ui.TextField
@@ -25,14 +26,14 @@ class GridUtils {
      * @param column The column to add the filter to
      * @param headerRow The{@link com.vaadin.ui.components.grid.HeaderRow} of the {@link Grid}, where the filter input field is added
      */
-    static <T> void setupColumnFilter(ListDataProvider<T> dataProvider,
-                                      Grid.Column<T, String> column,
-                                      HeaderRow headerRow) {
-        TextField filterTextField = new TextField()
+    static <T, V> void setupColumnFilter(ListDataProvider<T> dataProvider,
+                                         Grid.Column<T, V> column,
+                                         HeaderRow headerRow,
+                                         TextField filterTextField,
+                                         SerializablePredicate<V> predicate) {
         filterTextField.addValueChangeListener(event -> {
-            dataProvider.addFilter(element ->
-                    StringUtils.containsIgnoreCase(column.getValueProvider().apply(element), filterTextField.getValue())
-            )
+            println dataProvider.getClass().getTypeName()
+            dataProvider.addFilter(column.getValueProvider(), predicate)
         })
         filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
         filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)

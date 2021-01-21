@@ -170,7 +170,7 @@ class ProjectManagerSelectionView extends VerticalLayout{
 
     private void setupFilters(ListDataProvider<ProjectManager> projectManagerListDataProvider) {
         HeaderRow customerFilterRow = projectManagerGrid.appendHeaderRow()
-        GridUtils.setupColumnFilter(projectManagerListDataProvider,
+        /*GridUtils.setupColumnFilter(projectManagerListDataProvider,
                 projectManagerGrid.getColumn("FirstName"),
                 customerFilterRow)
         GridUtils.setupColumnFilter(projectManagerListDataProvider,
@@ -178,6 +178,6 @@ class ProjectManagerSelectionView extends VerticalLayout{
                 customerFilterRow)
         GridUtils.setupColumnFilter(projectManagerListDataProvider,
                 projectManagerGrid.getColumn("EmailAddress"),
-                customerFilterRow)
+                customerFilterRow)*/
     }
 }
