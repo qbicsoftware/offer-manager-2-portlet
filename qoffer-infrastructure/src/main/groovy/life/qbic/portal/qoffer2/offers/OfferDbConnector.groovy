@@ -46,7 +46,7 @@ class OfferDbConnector implements CreateOfferDataSource{
 
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (offerId, " +
             "creationDate, expirationDate, customerId, projectManagerId, projectTitle, " +
-            "projectDescription, totalPrice, customerAffiliationId)"
+            "projectDescription, totalPrice, customerAffiliationId, vat, netPrice, overheads)"
 
 
     OfferDbConnector(ConnectionProvider connectionProvider, CustomerDbConnector customerDbConnector, ProductsDbConnector productsDbConnector){
@@ -89,7 +89,7 @@ class OfferDbConnector implements CreateOfferDataSource{
      * @return the id of the stored offer in the database
      */
     private int storeOffer(Offer offer, int projectManagerId, int customerId, int affiliationId){
-        String sqlValues = "VALUE(?,?,?,?,?,?,?,?,?)"
+        String sqlValues = "VALUE(?,?,?,?,?,?,?,?,?,?,?,?)"
         String queryTemplate = OFFER_INSERT_QUERY + " " + sqlValues
         def identifier = offer.identifier
         List<Integer> generatedKeys = []
@@ -106,6 +106,10 @@ class OfferDbConnector implements CreateOfferDataSource{
             preparedStatement.setString(7, offer.projectDescription)
             preparedStatement.setDouble(8, offer.totalPrice)
             preparedStatement.setInt(9, affiliationId)
+            preparedStatement.setDouble(10, offer.taxes)
+            preparedStatement.setDouble(11, offer.netPrice)
+            preparedStatement.setDouble(12, offer.overheads)
+
 
             preparedStatement.execute()
 
@@ -187,13 +191,16 @@ class OfferDbConnector implements CreateOfferDataSource{
                 def customerId =  resultSet.getInt("customerId")
                 def projectManagerId = resultSet.getInt("projectManagerId")
                 def customer = customerGateway.getCustomer(customerId)
-                def projectManager = customerGateway.getProjectManager(customerId)
+                def projectManager = customerGateway.getProjectManager(projectManagerId)
                 /*
                 Load general offer info
                  */
                 def projectTitle = resultSet.getString("projectTitle")
                 def projectDescription = resultSet.getString("projectDescription")
                 def totalCosts = resultSet.getDouble("totalPrice")
+                def vat = resultSet.getDouble("vat")
+                def overheads = resultSet.getDouble("overheads")
+                def net = resultSet.getDouble("netPrice")
                 def creationDate = resultSet.getDate("creationDate")
                 def expirationDate = resultSet.getDate("expirationDate")
                 def selectedAffiliationId = resultSet.getInt("customerAffiliationId")
@@ -211,6 +218,9 @@ class OfferDbConnector implements CreateOfferDataSource{
                         .identifier(offerId)
                         .items(items)
                         .totalPrice(totalCosts)
+                        .taxes(vat)
+                        .overheads(overheads)
+                        .netPrice(net)
                         .build())
             }
         }

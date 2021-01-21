@@ -42,7 +42,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
   private static final AffiliationCategoryFactory CATEGORY_FACTORY = new AffiliationCategoryFactory()
   private static final AcademicTitleFactory TITLE_FACTORY = new AcademicTitleFactory()
-  private static final String CUSTOMER_SELECT_QUERY = "SELECT id, first_name AS firstName, last_name AS lastName, title as academicTitle, email as eMailAddress FROM person"
+  private static final String CUSTOMER_SELECT_QUERY = "SELECT id, first_name, last_name, title, email FROM person"
   private static final String AFFILIATION_SELECT_QUERY = "SELECT id, organization AS organisation, address_addition AS addressAddition, street, postal_code AS postalCode, city, country, category FROM affiliation"
 
 
@@ -59,8 +59,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   List<Customer> findCustomer(String firstName, String lastName) throws DatabaseQueryException {
     String sqlCondition = "WHERE first_name = ? AND last_name = ?"
     String queryTemplate = CUSTOMER_SELECT_QUERY + " " + sqlCondition
-    List<Map> resultRows = new ArrayList()
     Connection connection = connectionProvider.connect()
+    List<Customer> customerList = new ArrayList<>()
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(queryTemplate)
 
@@ -68,15 +68,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       preparedStatement.setString(2, lastName)
       ResultSet resultSet = preparedStatement.executeQuery()
       while (resultSet.next()) {
-        resultRows.add(SqlExtensions.toRowResult(resultSet))
+        customerList.add(parseCustomerFromResultSet(resultSet))
       }
-    }
-    List<Customer> customerList = new ArrayList<>()
-    resultRows.forEach {Map row ->
-      AcademicTitle title = TITLE_FACTORY.getForString(row.academicTitle as String)
-      List<Affiliation> affiliations = fetchAffiliationsForPerson(row.id as int)
-      Customer customer = new Customer.Builder(row.firstName as String, row.lastName as String, row.eMailAddress as String).title(title).affiliations(affiliations).build()
-      customerList.add(customer)
     }
     return customerList
   }
@@ -464,19 +457,14 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    */
   List<Customer> fetchAllCustomers() {
     List<Customer> customers = []
-    String query = "SELECT * from person"
+    String query = CUSTOMER_SELECT_QUERY
     Connection connection = connectionProvider.connect()
     connection.withCloseable {
       def preparedStatement = it.prepareStatement(query)
       ResultSet resultSet = preparedStatement.executeQuery()
       while(resultSet.next()) {
-        def personId = resultSet.getInt(1)
-        def firstName = resultSet.getString('first_name')
-        def lastName = resultSet.getString('last_name')
-        def email = resultSet.getString('email')
-        def customerBuilder = new Customer.Builder(firstName, lastName, email)
-        def affiliations = getAffiliationForPersonId(personId)
-        customers.add(customerBuilder.affiliations(affiliations).build())
+        Customer customer = parseCustomerFromResultSet(resultSet)
+        customers.add(customer)
       }
     }
     return customers
@@ -488,7 +476,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    */
   List<ProjectManager> fetchAllProjectManagers() {
     List<ProjectManager> pms = []
-    String query = "SELECT * from person"
+    String query = CUSTOMER_SELECT_QUERY
     Connection connection = connectionProvider.connect()
     connection.withCloseable {
       def preparedStatement = it.prepareStatement(query)
@@ -504,6 +492,23 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       }
     }
     return pms
+  }
+
+  /**
+   * This method creates a customer for a result set obtained with the CUSTOMER_SELECT_QUERY
+   * @param resultSet
+   * @return a Customer DTO containing the information from the query result set
+   */
+  private Customer parseCustomerFromResultSet(ResultSet resultSet) {
+    int personId = resultSet.getInt(1)
+    String titleValue = resultSet.getString('title')
+    AcademicTitle title = TITLE_FACTORY.getForString(titleValue)
+    String firstName = resultSet.getString('first_name')
+    String lastName = resultSet.getString('last_name')
+    String email = resultSet.getString('email')
+    Customer.Builder customerBuilder = new Customer.Builder(firstName, lastName, email).title(title)
+    List<Affiliation> affiliations = getAffiliationForPersonId(personId)
+    return customerBuilder.affiliations(affiliations).build()
   }
 
   private List<Affiliation> getAffiliationForPersonId(int personId) {

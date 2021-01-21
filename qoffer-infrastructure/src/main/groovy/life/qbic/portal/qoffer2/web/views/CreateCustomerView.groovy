@@ -31,7 +31,7 @@ class CreateCustomerView extends VerticalLayout {
     private final ViewModel sharedViewModel
     private final CreateCustomerViewModel createCustomerViewModel
     final CreateCustomerController controller
-    
+
     ComboBox<String> titleField
     TextField firstNameField
     TextField lastNameField
@@ -39,7 +39,6 @@ class CreateCustomerView extends VerticalLayout {
     ComboBox<Affiliation> affiliationComboBox
     ComboBox<Affiliation> addressAdditionComboBox
     Button submitButton
-    Button createAffiliationButton
     Button abortButton
     Panel affiliationDetails
 
@@ -81,9 +80,7 @@ class CreateCustomerView extends VerticalLayout {
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
         addressAdditionComboBox.setItemCaptionGenerator({it.addressAddition})
         addressAdditionComboBox.setCaption("Address Addition")
-
-        this.createAffiliationButton = new Button("Create Affiliation")
-        createAffiliationButton.setIcon(VaadinIcons.INSTITUTION)
+        addressAdditionComboBox.enabled = false
 
         this.submitButton = new Button("Create Customer")
         submitButton.setIcon(VaadinIcons.USER_CHECK)
@@ -113,7 +110,7 @@ class CreateCustomerView extends VerticalLayout {
         VerticalLayout affiliationPanel = new VerticalLayout(affiliationDetails)
         affiliationPanel.setMargin(false)
         affiliationPanel.setComponentAlignment(affiliationDetails, Alignment.TOP_LEFT)
-        HorizontalLayout buttonLayout = new HorizontalLayout(createAffiliationButton, abortButton,
+        HorizontalLayout buttonLayout = new HorizontalLayout(abortButton,
                 submitButton)
         buttonLayout.setMargin(false)
         HorizontalLayout row4 = new HorizontalLayout(affiliationPanel, buttonLayout)
@@ -214,6 +211,7 @@ class CreateCustomerView extends VerticalLayout {
                     break
             }
             submitButton.enabled = allValuesValid()
+            addressAdditionComboBox.enabled = !Objects.isNull(createCustomerViewModel.affiliation)
         })
 
         /* refresh affiliation list and set added item as selected item. This is needed to keep this
@@ -346,6 +344,16 @@ class CreateCustomerView extends VerticalLayout {
         this.affiliationComboBox.addSelectionListener({
             updateAffiliationDetails(it.value)
         })
+
+        this.abortButton.addClickListener({ event ->
+            try {
+                clearAllFields()
+            }
+            catch (Exception e) {
+                log.error("Unexpected error aborting the customer creation.", e)
+                sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
+            }
+        })
     }
 
     private void updateAffiliationDetails(Affiliation affiliation) {
@@ -364,5 +372,26 @@ class CreateCustomerView extends VerticalLayout {
         } else {
             this.affiliationDetails.content = null
         }
+    }
+
+    /**
+     *  Clears User Input from all fields in the Create Customer View and reset validation status of all Fields
+     */
+    private void clearAllFields() {
+
+        titleField.clear()
+        firstNameField.clear()
+        lastNameField.clear()
+        emailField.clear()
+        affiliationComboBox.selectedItem = affiliationComboBox.clear()
+        addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
+        affiliationDetails.setContent(null)
+
+        createCustomerViewModel.academicTitleValid = null
+        createCustomerViewModel.firstNameValid = null
+        createCustomerViewModel.lastNameValid = null
+        createCustomerViewModel.emailValid = null
+        createCustomerViewModel.affiliationValid = null
+
     }
 }

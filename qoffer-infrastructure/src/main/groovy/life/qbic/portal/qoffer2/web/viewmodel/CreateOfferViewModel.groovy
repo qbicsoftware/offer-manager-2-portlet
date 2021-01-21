@@ -28,8 +28,8 @@ class CreateOfferViewModel {
     List<ProductItemViewModel> managementProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
     List<ProductItemViewModel> storageProducts =  new ObservableList(new ArrayList<ProductItemViewModel>())
 
-    List<Customer> foundCustomers = []
-    List<ProjectManager> availableProjectManagers = []
+    ObservableList foundCustomers = new ObservableList(new ArrayList<Customer>())
+    ObservableList availableProjectManagers = new ObservableList(new ArrayList<ProjectManager>())
 
     @Bindable OfferId offerId
     @Bindable String projectTitle
@@ -53,10 +53,12 @@ class CreateOfferViewModel {
         this.availableProjectManagers = personService.getProjectManagers()
         this.foundCustomers = personService.getCustomers()
         this.personService.customerEvent.register( (List<Customer> customerList) -> {
-            this.foundCustomers = customerList
+            this.foundCustomers.clear()
+            this.foundCustomers.addAll(customerList)
         })
         this.personService.projectManagerEvent.register((List<ProjectManager> managerList) -> {
-            this.availableProjectManagers = managerList
+            this.availableProjectManagers.clear()
+            this.availableProjectManagers.addAll(managerList)
         })
     }
 

@@ -14,11 +14,11 @@ import life.qbic.portal.portlet.exceptions.DatabaseQueryException
 @Log4j2
 class ListProducts implements ListProductsInput {
 
-  private final ListProductsOutput output
+  private final List<ListProductsOutput> output
 
   private final ListProductsDataSource source
 
-    ListProducts(ListProductsDataSource source, ListProductsOutput output) {
+    ListProducts(ListProductsDataSource source, List<ListProductsOutput> output) {
     this.output = output
     this.source = source
   }
@@ -27,10 +27,14 @@ class ListProducts implements ListProductsInput {
   void listAvailableProducts() {
     try {
       List<Product> availableProducts = source.findAllAvailableProducts()
-      output.showAvailableProducts(availableProducts)
+      output.each {
+        it.showAvailableProducts(availableProducts)
+      }
     } catch (DatabaseQueryException e) {
       log.error(e)
-      output.failNotification("Something went wrong during the request of available products.")
+      output.each {
+        it.failNotification("Something went wrong during the request of available products.")
+      }
     }
   }
 }
