@@ -6,7 +6,9 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.FileDownloader
 import com.vaadin.server.StreamResource
 import com.vaadin.shared.data.sort.SortDirection
+import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
+import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
@@ -30,7 +32,7 @@ import life.qbic.portal.portlet.offers.Currency
  * @since 1.0.0
  */
 @Log4j2
-class OverviewView extends VerticalLayout {
+class OverviewView extends FormLayout {
 
     final private OfferOverviewModel model
 
@@ -64,7 +66,7 @@ class OverviewView extends VerticalLayout {
         We start with the header, that contains a descriptive
         title of what the view is about.
          */
-        final HorizontalLayout headerRow = new HorizontalLayout()
+        final VerticalLayout headerRow = new VerticalLayout()
         final Label label = new Label("Available Offers")
 
         label.addStyleName(ValoTheme.LABEL_HUGE)
@@ -76,8 +78,7 @@ class OverviewView extends VerticalLayout {
         The left component will be the offer overview, the
         right component will be the offer download button.
          */
-        final HorizontalLayout overviewRow = new HorizontalLayout()
-        final VerticalLayout activityContainer = new VerticalLayout()
+        final HorizontalLayout activityContainer = new HorizontalLayout()
         downloadBtn.setStyleName(ValoTheme.BUTTON_LARGE)
         downloadBtn.setEnabled(false)
         downloadBtn.setDescription("Download offer")
@@ -90,10 +91,9 @@ class OverviewView extends VerticalLayout {
         activityContainer.addComponents(downloadBtn, updateOfferBtn, downloadSpinner)
 
         activityContainer.setMargin(false)
-        overviewRow.addComponents(overviewGrid, activityContainer)
-        this.addComponent(overviewRow)
+        headerRow.addComponents(activityContainer,overviewGrid)
+        headerRow.setSizeFull()
 
-        overviewRow.setWidthFull()
         this.setWidthFull()
     }
 
