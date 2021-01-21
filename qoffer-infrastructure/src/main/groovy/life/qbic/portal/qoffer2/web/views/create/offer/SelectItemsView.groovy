@@ -2,6 +2,7 @@ package life.qbic.portal.qoffer2.web.views.create.offer
 
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
@@ -207,11 +208,11 @@ class SelectItemsView extends VerticalLayout{
 
 
         TabSheet packageAccordion = new TabSheet()
-        packageAccordion.addTab(seqLayout,"Sequencing Products")
-        packageAccordion.addTab(primaryAnalysisLayout,"Primary Bioinformatics Products")
-        packageAccordion.addTab(secondaryAnalysisLayout,"Secondary Bioinformatics Products")
-        packageAccordion.addTab(projectManagementLayout,"Project Management Products")
-        packageAccordion.addTab(dataStorageLayout,"Data Storage Products")
+        packageAccordion.addTab(seqLayout,"Sequencing")
+        packageAccordion.addTab(primaryAnalysisLayout,"Primary Bioinformatics")
+        packageAccordion.addTab(secondaryAnalysisLayout,"Secondary Bioinformatics")
+        packageAccordion.addTab(projectManagementLayout,"Project Management")
+        packageAccordion.addTab(dataStorageLayout,"Data Storage")
 
         this.addComponents(packageAccordion, overview, buttonLayout)
         this.setSizeFull()
@@ -273,7 +274,8 @@ class SelectItemsView extends VerticalLayout{
             grid.addColumn({ productItem -> productItem.product.unit.value }).setCaption("Product Unit")
 
             //specify size of grid and layout
-            grid.setSizeFull()
+            grid.setHeightMode(HeightMode.UNDEFINED)
+            grid.setWidthFull()
 
         } catch (Exception e) {
             new Exception("Unexpected exception in building the product item grid", e)
