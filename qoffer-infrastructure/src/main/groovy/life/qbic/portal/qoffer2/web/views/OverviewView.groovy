@@ -1,5 +1,7 @@
 package life.qbic.portal.qoffer2.web.views
 
+import com.vaadin.data.provider.DataProvider
+import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.FileDownloader
 import com.vaadin.server.StreamResource
@@ -13,11 +15,13 @@ import com.vaadin.ui.Label
 import com.vaadin.ui.ProgressBar
 import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.portal.qoffer2.services.OfferUpdateService
 import life.qbic.portal.qoffer2.shared.OfferOverview
 import life.qbic.portal.qoffer2.web.viewmodel.OfferOverviewModel
+import life.qbic.portal.portlet.offers.Currency
 
 /**
  * A basic offer overview user interface.
@@ -53,7 +57,6 @@ class OverviewView extends FormLayout {
         this.offerUpdateService = offerUpdateService
 
         initLayout()
-        setupDataProvider()
         setupGrid()
         setupListeners()
     }
@@ -94,22 +97,42 @@ class OverviewView extends FormLayout {
         this.setWidthFull()
     }
 
-    private void setupDataProvider() {
-        overviewGrid.setItems(model.offerOverviewList)
+    private DataProvider setupDataProvider() {
+        def dataProvider = new ListDataProvider(model.offerOverviewList)
+        overviewGrid.setDataProvider(dataProvider)
+        return dataProvider
     }
 
     private void setupGrid() {
         def dateColumn = overviewGrid.addColumn({ overview -> overview.getModificationDate() })
-                .setCaption("Date")
-
+                .setCaption("Creation Date").setId("CreationDate")
         overviewGrid.addColumn({overview -> overview.offerId.toString()})
-                .setCaption("Offer ID")
-        overviewGrid.addColumn({overview -> overview.getProjectTitle()}).setCaption("Title")
-        overviewGrid.addColumn({overview -> overview.getCustomer()}).setCaption("Customer")
-        overviewGrid.addColumn({overview -> overview.getTotalPrice()}).setCaption("Total Price")
-
+                .setCaption("Offer ID").setId("OfferId")
+        overviewGrid.addColumn({overview -> overview.getProjectTitle()})
+                .setCaption("Project Title").setId("ProjectTitle")
+        overviewGrid.addColumn({overview -> overview.getCustomer()})
+                .setCaption("Customer").setId("Customer")
+        // fix formatting of price
+        overviewGrid.addColumn({overview -> Currency.getFormatterWithSymbol().format(overview.getTotalPrice())}).setCaption("Total Price")
         overviewGrid.sort(dateColumn, SortDirection.DESCENDING)
         overviewGrid.setWidthFull()
+
+        def offerOverviewDataProvider = setupDataProvider()
+
+        setupFilters(offerOverviewDataProvider)
+    }
+
+    private void setupFilters(ListDataProvider<OfferOverview> offerOverviewDataProvider) {
+        HeaderRow customerFilterRow = overviewGrid.appendHeaderRow()
+        GridUtils.setupColumnFilter(offerOverviewDataProvider,
+                overviewGrid.getColumn("OfferId"),
+                customerFilterRow)
+        GridUtils.setupColumnFilter(offerOverviewDataProvider,
+                overviewGrid.getColumn("ProjectTitle"),
+                customerFilterRow)
+        GridUtils.setupColumnFilter(offerOverviewDataProvider,
+                overviewGrid.getColumn("Customer"),
+                customerFilterRow)
     }
 
     private void setupListeners() {

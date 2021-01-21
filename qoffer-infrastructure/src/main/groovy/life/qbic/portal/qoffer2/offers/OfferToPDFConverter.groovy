@@ -1,10 +1,13 @@
 package life.qbic.portal.qoffer2.offers
 
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.portal.portlet.offers.Currency
 import life.qbic.portal.portlet.offers.OfferExporter
 import org.jsoup.nodes.Document
 import org.jsoup.parser.Parser
@@ -27,19 +30,19 @@ import java.text.SimpleDateFormat
  *
  */
 @Log4j2
-class OfferToPDFConverter implements OfferExporter{
+class OfferToPDFConverter implements OfferExporter {
 
     private final Offer offer
 
-   private final Path tempDir
+    private final Path tempDir
 
-   private final Document htmlContent
+    private final Document htmlContent
 
     private final Path createdOffer
 
-   private final Path createdOfferPdf
+    private final Path createdOfferPdf
 
-   private final Path newOfferImage
+    private final Path newOfferImage
 
     private final Path newOfferStyle
 
@@ -109,9 +112,10 @@ class OfferToPDFConverter implements OfferExporter{
     private void setCustomerInformation() {
         final Customer customer = offer.customer
         final Affiliation affiliation = offer.selectedCustomerAffiliation
+        String customerTitle = customer.title == AcademicTitle.NONE ? "" : customer.title
         htmlContent.getElementById("customer-name").text(String.format(
                 "%s %s %s",
-                customer.title,
+                customerTitle,
                 customer.firstName,
                 customer.lastName))
         htmlContent.getElementById("customer-organisation").text(affiliation.organisation)
@@ -124,9 +128,10 @@ class OfferToPDFConverter implements OfferExporter{
     private void setManagerInformation() {
         final ProjectManager pm = offer.projectManager
         final Affiliation affiliation = pm.affiliations.get(0)
+        String pmTitle = pm.title == AcademicTitle.NONE ? "" : pm.title
         htmlContent.getElementById("project-manager-name").text(String.format(
                 "%s %s %s",
-                pm.title,
+                pmTitle,
                 pm.firstName,
                 pm.lastName))
         htmlContent.getElementById("project-manager-street").text(affiliation.street)
@@ -135,22 +140,32 @@ class OfferToPDFConverter implements OfferExporter{
     }
 
     void setSelectedItems() {
-    //TODO implement
+        // Let's clear the existing item template content first
+        htmlContent.getElementById("product-items").empty()
+        // Set the start offer position
+        def itemPos = 1
+        // Create the items in html in the overview table
+        offer.items.each { item ->
+            htmlContent.getElementById("product-items")
+                    .append(ItemPrintout.itemInHTML(itemPos++, item))
+        }
     }
 
     void setPrices() {
-        final totalPrice = offer.totalPrice
-        final taxes = offer.taxes
-        final netPrice = offer.netPrice
+        final totalPrice = Currency.getFormatterWithoutSymbol().format(offer.totalPrice)
+        final taxes = Currency.getFormatterWithoutSymbol().format(offer.taxes)
+        final netPrice = Currency.getFormatterWithoutSymbol().format(offer.netPrice)
+        final netPrice_withSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
 
-        htmlContent.getElementById("total-costs").text(totalPrice.toString()+" €")
 
-        htmlContent.getElementById("total-cost-value-net").text(totalPrice.toString())
-        htmlContent.getElementById("vat-cost-value").text(taxes.toString())
-        htmlContent.getElementById("final-cost-value").text(netPrice.toString())
+        htmlContent.getElementById("total-costs-net").text(netPrice_withSymbol)
+
+        htmlContent.getElementById("total-cost-value-net").text(netPrice)
+        htmlContent.getElementById("vat-cost-value").text(taxes)
+        htmlContent.getElementById("final-cost-value").text(totalPrice)
     }
 
-    void setQuotationDetails(){
+    void setQuotationDetails() {
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG)
 
         htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
@@ -196,5 +211,28 @@ class OfferToPDFConverter implements OfferExporter{
                 throw new RuntimeException("Offer PDF has not been generated.")
             }
         }
+    }
+
+    private static class ItemPrintout {
+
+        static String itemInHTML(int offerPosition, ProductItem item) {
+            return """<tr class="product-item">
+            <td>${offerPosition}</td>
+            <td>${item.product.productName}</td>
+            <td class="price-value">${item.quantity}</td>
+            <td>${item.product.unit}</td>
+            <td class="price-value">${Currency.getFormatterWithoutSymbol().format(item.product.unitPrice)}</td>
+            <td class="price-value">${Currency.getFormatterWithoutSymbol().format(item.quantity * item.product.unitPrice)}</td>
+            </tr>
+            <tr class="product-item">
+            <td></td>
+            <td>${item.product.description}</td>
+            <td class="price-value"></td>
+            <td></td>
+            <td class="price-value"></td>
+            <td class="price-value"></td>
+            </tr>"""
+        }
+
     }
 }

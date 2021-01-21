@@ -141,9 +141,6 @@ class CreateOfferView extends FormLayout{
             viewModel.refresh()
             viewHistory.showPrevious()
         })
-        this.customerSelectionView.createAffiliationButton.addClickListener({
-            viewHistory.loadNewView(createAffiliationView)
-        })
         this.createAffiliationView.abortButton.addClickListener({
             viewHistory.showPrevious()
         })

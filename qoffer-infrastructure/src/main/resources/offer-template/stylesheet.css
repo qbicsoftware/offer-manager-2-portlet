@@ -1,6 +1,6 @@
 
 body {
-    font-family: Open Sans;
+    font-family: Roboto, Helvetica;
 }
 
 @page {
@@ -192,6 +192,11 @@ body {
         font-size: 10pt;
     }
 
+    .item-description {
+            font-style: italic;
+            font-size: 9pt;
+     }
+
     .items-outroduction-text {
         grid-column-start: 1;
         grid-column-end: 4;
@@ -216,6 +221,11 @@ body {
     .grid-container {
         display: grid;
         grid-template-columns: 30% auto 30%;
+    }
+
+    .item-description {
+        font-style: italic;
+        font-size: 1.2vw;
     }
 
     .grid-container-footer {

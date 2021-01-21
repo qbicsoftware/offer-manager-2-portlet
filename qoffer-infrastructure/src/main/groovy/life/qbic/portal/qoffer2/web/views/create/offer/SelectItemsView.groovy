@@ -9,10 +9,13 @@ import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.TabSheet
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
+import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
+import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
@@ -21,6 +24,7 @@ import life.qbic.portal.portlet.offers.Currency
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
+import life.qbic.portal.qoffer2.web.views.GridUtils
 
 import java.text.DecimalFormat
 
@@ -223,20 +227,41 @@ class SelectItemsView extends VerticalLayout{
     private void setupDataProvider() {
         ListDataProvider<ProductItemViewModel> sequencingProductDataProvider = new ListDataProvider(createOfferViewModel.sequencingProducts)
         this.sequencingGrid.setDataProvider(sequencingProductDataProvider)
+        setupFilters(sequencingProductDataProvider, sequencingGrid)
+
 
         ListDataProvider<ProductItemViewModel> managementProductDataProvider = new ListDataProvider(createOfferViewModel.managementProducts)
         this.projectManagementGrid.setDataProvider(managementProductDataProvider)
+        setupFilters(managementProductDataProvider, projectManagementGrid)
+
 
         ListDataProvider<ProductItemViewModel> primaryAnalysisProductDataProvider = new ListDataProvider(createOfferViewModel.primaryAnalysisProducts)
         this.primaryAnalyseGrid.setDataProvider(primaryAnalysisProductDataProvider)
+        setupFilters(primaryAnalysisProductDataProvider, primaryAnalyseGrid)
 
         ListDataProvider<ProductItemViewModel> secondaryAnalysisProductDataProvider = new ListDataProvider(createOfferViewModel.secondaryAnalysisProducts)
         this.secondaryAnalyseGrid.setDataProvider(secondaryAnalysisProductDataProvider)
+        setupFilters(secondaryAnalysisProductDataProvider, secondaryAnalyseGrid)
 
         ListDataProvider<ProductItemViewModel> storageProductDataProvider = new ListDataProvider(createOfferViewModel.storageProducts)
         this.storageGrid.setDataProvider(storageProductDataProvider)
+        setupFilters(storageProductDataProvider, storageGrid)
 
-        this.overviewGrid.setItems(createOfferViewModel.getProductItems())
+        ListDataProvider<ProductItemViewModel> selectedItemsDataProvider =
+                new ListDataProvider(createOfferViewModel.getProductItems())
+        this.overviewGrid.setDataProvider(selectedItemsDataProvider)
+        setupFilters(selectedItemsDataProvider, overviewGrid)
+    }
+
+    private static void setupFilters(ListDataProvider<Product> productListDataProvider,
+                                     Grid targetGrid) {
+        HeaderRow customerFilterRow = targetGrid.appendHeaderRow()
+        GridUtils.setupColumnFilter(productListDataProvider,
+                targetGrid.getColumn("ProductName"),
+                customerFilterRow)
+        GridUtils.setupColumnFilter(productListDataProvider,
+                targetGrid.getColumn("ProductDescription"),
+                customerFilterRow)
     }
 
     private void addDummyValues(){
@@ -266,11 +291,16 @@ class SelectItemsView extends VerticalLayout{
      */
     private static void generateProductGrid(Grid<ProductItemViewModel> grid) {
         try {
-            grid.addColumn({ productItem -> productItem.quantity }).setCaption("Quantity")
-            grid.addColumn({ productItem -> productItem.product.productName }).setCaption("Product Name")
-            grid.addColumn({ productItem -> productItem.product.description }).setCaption("Product Description")
-            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.currencyFormat)).setCaption("Product Unit Price")
-            grid.addColumn({ productItem -> productItem.product.unit.value }).setCaption("Product Unit")
+            grid.addColumn({ productItem -> productItem.quantity })
+                    .setCaption("Quantity").setId("Quantity")
+            grid.addColumn({ productItem -> productItem.product.productName })
+                    .setCaption("Product Name").setId("ProductName")
+            grid.addColumn({ productItem -> productItem.product.description })
+                    .setCaption("Product Description").setId("ProductDescription")
+            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.currencyFormat))
+                    .setCaption("Product Unit Price").setId("ProductUnitPrice")
+            grid.addColumn({ productItem -> productItem.product.unit.value })
+                    .setCaption("Product Unit").setId("ProductUnit")
 
             //specify size of grid and layout
             grid.setSizeFull()
