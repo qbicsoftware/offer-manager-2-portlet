@@ -247,7 +247,10 @@ class SelectItemsView extends VerticalLayout{
         this.storageGrid.setDataProvider(storageProductDataProvider)
         setupFilters(storageProductDataProvider, storageGrid)
 
-        this.overviewGrid.setItems(createOfferViewModel.getProductItems())
+        ListDataProvider<ProductItemViewModel> selectedItemsDataProvider =
+                new ListDataProvider(createOfferViewModel.getProductItems())
+        this.overviewGrid.setDataProvider(selectedItemsDataProvider)
+        setupFilters(selectedItemsDataProvider, overviewGrid)
     }
 
     private static void setupFilters(ListDataProvider<Product> productListDataProvider,
