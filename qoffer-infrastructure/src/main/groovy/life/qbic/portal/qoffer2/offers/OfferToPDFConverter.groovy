@@ -155,7 +155,7 @@ class OfferToPDFConverter implements OfferExporter{
         final taxes = offer.taxes
         final netPrice = offer.netPrice
 
-        htmlContent.getElementById("total-costs").text(totalPrice.toString()+" €")
+        htmlContent.getElementById("total-costs-net").text(netPrice.toString()+" €")
 
         htmlContent.getElementById("total-cost-value-net").text(netPrice.toString())
         htmlContent.getElementById("vat-cost-value").text(taxes.toString())
