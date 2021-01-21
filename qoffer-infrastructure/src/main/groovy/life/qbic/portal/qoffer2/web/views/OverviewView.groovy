@@ -112,8 +112,6 @@ class OverviewView extends VerticalLayout {
                 .setCaption("Project Title").setId("ProjectTitle")
         overviewGrid.addColumn({overview -> overview.getCustomer()})
                 .setCaption("Customer").setId("Customer")
-        overviewGrid.addColumn({overview -> overview.getTotalPrice()})
-                .setCaption("Total Price").setId("TotalPrice")
         // fix formatting of price
         overviewGrid.addColumn({overview -> Currency.getFormatterWithSymbol().format(overview.getTotalPrice())}).setCaption("Total Price")
         overviewGrid.sort(dateColumn, SortDirection.DESCENDING)
