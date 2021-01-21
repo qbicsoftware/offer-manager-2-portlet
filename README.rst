@@ -30,7 +30,37 @@ qOffer assists in managing and creating offers
 Features
 --------
 
-* TODO
+* Create new offers
+* Update stored offers
+* Add new customers to the database
+* Add new affiliations to the database
+* Search for offers in the database
+
+Usage information
+------------------
+
+Build the project with
+
+mvn clean package
+
+Deploy the created portlet in a Liferay instance.
+Make sure that the chromium is installed on the server, it is required for the download of the offer.
+
+Local testing
+--------------
+
+Make sure to have chromium installed on your laptop.
+You can do so via homebrew
+
+.. code-block: bash
+brew install --cask chromium
+
+Create the project with
+
+mvn clean jetty:run
+
+open the application through localhost:8080
+
 
 Credits
 -------

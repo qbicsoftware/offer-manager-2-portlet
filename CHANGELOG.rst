@@ -9,6 +9,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 ----------------------------------------------
 
 **Added**
+
 * Add the option to create an affiliation while creating an offer
 * Add the option to create a customer while creating an offer
 * Implement SearchCustomer use case
@@ -24,6 +25,17 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Implement queries for affiliation creation in database
 * Implement use case _List Packages_
 * Dynamic cost overview upon offer creation
+
+* Create project with QUBE
+* Create project modules infrastructure and domain
+* Possibility to list all affiliations stored in the database
+* Create and add a new customer to the database
+* Create and add a new affiliation to the database
+* Create and add a new offer to the database
+* Possibility to list all packages stored in the database
+* Show affiliation details when selecting an affiliation for a customer
+* Possibility to filter for
+
 
 **Fixed**
 
