@@ -19,6 +19,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.portal.qoffer2.services.OfferUpdateService
 import life.qbic.portal.qoffer2.shared.OfferOverview
 import life.qbic.portal.qoffer2.web.viewmodel.OfferOverviewModel
+import life.qbic.portal.portlet.offers.Currency
 
 /**
  * A basic offer overview user interface.
@@ -113,6 +114,8 @@ class OverviewView extends VerticalLayout {
                 .setCaption("Customer").setId("Customer")
         overviewGrid.addColumn({overview -> overview.getTotalPrice()})
                 .setCaption("Total Price").setId("TotalPrice")
+        // fix formatting of price
+        overviewGrid.addColumn({overview -> Currency.getFormatterWithSymbol().format(overview.getTotalPrice())}).setCaption("Total Price")
         overviewGrid.sort(dateColumn, SortDirection.DESCENDING)
         overviewGrid.setWidthFull()
 
