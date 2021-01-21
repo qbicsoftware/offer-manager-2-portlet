@@ -11,9 +11,6 @@ import java.text.NumberFormat
  */
 class Currency {
 
-    @Deprecated
-    static final DecimalFormat currencyFormat = new DecimalFormat("#,##0.00 €")
-
     private final static NumberFormat numberFormat = NumberFormat.getInstance(Locale.US)
 
     /**
