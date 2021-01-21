@@ -41,6 +41,7 @@ Usage information
 
 Build the project with
 
+.. code-block: bash
 mvn clean package
 
 Deploy the created portlet in a Liferay instance.
@@ -57,6 +58,7 @@ brew install --cask chromium
 
 Create the project with
 
+.. code-block: bash
 mvn clean jetty:run
 
 open the application through localhost:8080
