@@ -274,7 +274,6 @@ class SelectItemsView extends VerticalLayout{
             grid.addColumn({ productItem -> productItem.product.unit.value }).setCaption("Product Unit")
 
             //specify size of grid and layout
-            grid.setHeightMode(HeightMode.UNDEFINED)
             grid.setWidthFull()
 
         } catch (Exception e) {
