@@ -2,16 +2,33 @@
 Changelog
 ==========
 
-This document records all notable changes to `HTTPie <https://httpie.org>`_.
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 
-1.0.0 (2020-07-31)
-------------------
+1.0.0-SNAPSHOT (2020-11-09)
+----------------------------------------------
 
 **Added**
 
-* Created the project using QUBE
+* Create project with QUBE
+* Create project modules infrastructure and domain
+* Possibility to list all affiliations stored in the database
+* Possibility to list all customers and project managers stored in the database
+* Possibility to list all offers stored in the database
+* Create and add a new customer to the database
+* Create and add a new affiliation to the database
+* Create and add a new offer to the database
+* Possibility to list all packages stored in the database
+* Add the option to create a customer while creating an offer
+* Show affiliation details when selecting an affiliation for a customer
+* Possibility to filter for customers in table overview
+* Show overview over all offers in database
+* Possibility to download an offer
+* Possibility to abort customer creation
+* Dynamic cost overview upon offer creation
+* Calculate prices of an offer (VAT, overheads, net price)
+* Create an unique offer id
+
 
 **Fixed**
 
