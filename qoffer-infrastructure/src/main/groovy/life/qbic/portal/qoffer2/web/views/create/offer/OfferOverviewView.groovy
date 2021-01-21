@@ -116,7 +116,7 @@ class OfferOverviewView extends VerticalLayout{
                     .setCaption("Product Name").setId("ProductName")
             grid.addColumn({ productItem -> productItem.product.description })
                     .setCaption("Product Description").setId("ProductDescription")
-            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.currencyFormat)).setCaption("Product Unit Price")
+            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol())).setCaption("Product Unit Price")
             grid.addColumn({ productItem -> productItem.product.unit }).setCaption("Product Unit")
 
 
@@ -180,7 +180,7 @@ class OfferOverviewView extends VerticalLayout{
         gridLayout.addColumn(PriceField::getName)
         gridLayout.addColumn(  {
             costs -> costs.value},
-                new NumberRenderer(Currency.currencyFormat))
+                new NumberRenderer(Currency.getFormatterWithSymbol()))
 
         gridLayout.headerVisible = false
         panel.setContent(gridLayout)
