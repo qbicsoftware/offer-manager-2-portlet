@@ -1,5 +1,6 @@
 package life.qbic.portal.qoffer2.web.views.create.offer
 
+import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.FileDownloader
 import com.vaadin.server.StreamResource
@@ -10,14 +11,17 @@ import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.Panel
 import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.portlet.offers.Currency
 import life.qbic.portal.qoffer2.offers.OfferToPDFConverter
 import life.qbic.portal.qoffer2.offers.OfferResourcesService
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
+import life.qbic.portal.qoffer2.web.views.GridUtils
 
 /**
  * This class generates a Layout in which the user
@@ -43,9 +47,29 @@ class OfferOverviewView extends VerticalLayout{
     OfferOverviewView(CreateOfferViewModel viewModel, OfferResourcesService service){
         this.createOfferViewModel = viewModel
         initLayout()
+        setUpGrid()
         service.offerCreatedEvent.register((Offer offer) -> {
             addOfferResource(offer)
         })
+    }
+
+    private void setUpGrid() {
+        generateProductGrid(itemGrid)
+        ListDataProvider<ProductItemViewModel> dataProvider =
+                new ListDataProvider(createOfferViewModel.getProductItems())
+        itemGrid.setDataProvider(dataProvider)
+        setupFilters(dataProvider, itemGrid)
+    }
+
+    private static void setupFilters(ListDataProvider<Product> productListDataProvider,
+                                     Grid targetGrid) {
+        HeaderRow customerFilterRow = targetGrid.appendHeaderRow()
+        GridUtils.setupColumnFilter(productListDataProvider,
+                targetGrid.getColumn("ProductName"),
+                customerFilterRow)
+        GridUtils.setupColumnFilter(productListDataProvider,
+                targetGrid.getColumn("ProductDescription"),
+                customerFilterRow)
     }
 
     /**
@@ -72,8 +96,6 @@ class OfferOverviewView extends VerticalLayout{
         this.offerOverview = new Panel("Offer Details:")
 
         this.itemGrid = new Grid<>("Selected items:")
-        this.itemGrid.setItems(createOfferViewModel.productItems)
-        generateProductGrid(itemGrid)
 
         this.addComponents(offerOverview,buttonLayout)
     }
@@ -87,8 +109,10 @@ class OfferOverviewView extends VerticalLayout{
         try {
 
             grid.addColumn({ productItem -> productItem.quantity }).setCaption("Quantity")
-            grid.addColumn({ productItem -> productItem.product.productName }).setCaption("Product Name")
-            grid.addColumn({ productItem -> productItem.product.description }).setCaption("Product Description")
+            grid.addColumn({ productItem -> productItem.product.productName })
+                    .setCaption("Product Name").setId("ProductName")
+            grid.addColumn({ productItem -> productItem.product.description })
+                    .setCaption("Product Description").setId("ProductDescription")
             grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.currencyFormat)).setCaption("Product Unit Price")
             grid.addColumn({ productItem -> productItem.product.unit }).setCaption("Product Unit")
 
