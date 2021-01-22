@@ -53,6 +53,8 @@ body {
         visibility: visible;
         page-break-after: always;
         margin-bottom: 0px;
+        position: fixed;
+        bottom: 0;
     }
 
     .customer {
@@ -349,7 +351,6 @@ body {
     footer {
         visibility: hidden;
         page-break-after: always;
-    
     }
 
     #items-table th {
