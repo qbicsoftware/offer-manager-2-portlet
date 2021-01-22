@@ -8,7 +8,6 @@ import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliations
 import life.qbic.portal.portlet.customers.create.CreateCustomer
 import life.qbic.portal.portlet.customers.search.SearchCustomer
 import life.qbic.portal.portlet.offers.create.CreateOffer
-
 import life.qbic.portal.qoffer2.customers.AffiliationResourcesService
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.customers.PersonResourcesService
@@ -380,8 +379,6 @@ class DependencyManager {
             log.error("Could not create ${PortletView.getSimpleName()} view.", e)
             throw e
         }
-
-        createCustomerView?.addAffiliationSelectionListener(portletView)
     }
 
 

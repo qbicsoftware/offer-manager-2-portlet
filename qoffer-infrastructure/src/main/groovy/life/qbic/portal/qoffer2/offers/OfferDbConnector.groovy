@@ -97,7 +97,7 @@ class OfferDbConnector implements CreateOfferDataSource{
         log.info("New offer with id: ${offer.identifier}")
         connection.withCloseable {
             PreparedStatement preparedStatement = it.prepareStatement(queryTemplate, Statement.RETURN_GENERATED_KEYS)
-            preparedStatement.setString(1, offerIdToString(identifier))
+            preparedStatement.setString(1, identifier.toString())
             preparedStatement.setDate(2, new Date(offer.modificationDate.time))
             preparedStatement.setDate(3, new Date(offer.expirationDate.time))
             preparedStatement.setInt(4, customerId)
@@ -120,10 +120,6 @@ class OfferDbConnector implements CreateOfferDataSource{
 
             return generatedKeys[0]
         }
-    }
-
-    static String offerIdToString(OfferId id) {
-        return "${id.getProjectConservedPart()}_${id.getRandomPart()}_${id.getVersion()}"
     }
 
     List<OfferOverview> loadOfferOverview() {
@@ -161,29 +157,30 @@ class OfferDbConnector implements CreateOfferDataSource{
 
     static OfferId parseOfferId(String offerId) {
         def splitId = offerId.split("_")
-        def projectPart = splitId[0]
-        def randomPart = splitId[1]
-        def version = splitId[2]
+        // The first entry [0] contains the id prefix, no need to parse it.
+        def projectPart = splitId[1]
+        def randomPart = splitId[2]
+        def version = splitId[3]
         return new OfferId(projectPart, randomPart, version)
     }
 
-    Optional<Offer> getOffer(String title) {
+    Optional<Offer> getOffer(OfferId offerId) {
         Optional<Offer> offer = Optional.empty()
 
         String query = "SELECT * " +
                 "FROM offer \n" +
-                "WHERE projectTitle=?"
+                "WHERE offerId=?"
 
         Connection connection = connectionProvider.connect()
         connection.withCloseable {
             PreparedStatement statement = it.prepareStatement(query)
-            statement.setString(1, title)
+            statement.setString(1, offerId.toString())
             ResultSet resultSet = statement.executeQuery()
             while (resultSet.next()) {
                 /*
                 Load the offer Id first
                  */
-                def offerId = parseOfferId(resultSet.getString("offerId"))
+                def fetchedOfferId = parseOfferId(resultSet.getString("offerId"))
                 def offerPrimaryId = resultSet.getInt("id")
                 /*
                 Load customer and project manager info
@@ -215,7 +212,7 @@ class OfferDbConnector implements CreateOfferDataSource{
                         selectedAffiliation)
                         .modificationDate(creationDate)
                         .expirationDate(expirationDate)
-                        .identifier(offerId)
+                        .identifier(fetchedOfferId)
                         .items(items)
                         .totalPrice(totalCosts)
                         .taxes(vat)

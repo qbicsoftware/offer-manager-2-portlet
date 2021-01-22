@@ -40,6 +40,7 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
         this.customer = offer.customer
         this.customerAffiliation = offer.selectedCustomerAffiliation
         this.projectManager = offer.projectManager
+        this.productItems.clear()
         this.productItems.addAll(offer.items.collect {
             new ProductItemViewModel(it.quantity, it.product)})
     }
