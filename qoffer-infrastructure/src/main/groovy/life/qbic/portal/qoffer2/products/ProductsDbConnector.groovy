@@ -49,18 +49,22 @@ class ProductsDbConnector {
    */
   List<Product> findAllAvailableProducts() throws DatabaseQueryException {
     try {
-      def products = []
-      provider.connect().withCloseable {
-        final def query = it.prepareStatement(Queries.SELECT_ALL_PRODUCTS)
-        final ResultSet result = query.executeQuery()
-        products.addAll(convertResultSet(result))
-      }
-      return products
+      return fetchAllProductsFromDb()
     } catch (SQLException e) {
       log.error(e.message)
       log.error(e.stackTrace.join("\n"))
       throw new DatabaseQueryException("Unable to list all available products.")
     }
+  }
+
+  private List<Product> fetchAllProductsFromDb() {
+    List<Product> products = []
+    provider.connect().withCloseable {
+      final PreparedStatement query = it.prepareStatement(Queries.SELECT_ALL_PRODUCTS)
+      final ResultSet resultSet = query.executeQuery()
+      products.addAll(convertResultSet(resultSet))
+    }
+    return products
   }
 
   private static List<Product> convertResultSet(ResultSet resultSet) {
