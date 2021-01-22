@@ -5,16 +5,10 @@ import com.vaadin.ui.FormLayout
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.qoffer2.offers.OfferResourcesService
 import life.qbic.portal.qoffer2.web.controllers.CreateOfferController
-import life.qbic.portal.qoffer2.web.controllers.ListProductsController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
-
-import life.qbic.portal.qoffer2.web.views.create.offer.CustomerSelectionView
-import life.qbic.portal.qoffer2.web.views.create.offer.OfferOverviewView
-import life.qbic.portal.qoffer2.web.views.create.offer.ProjectInformationView
-import life.qbic.portal.qoffer2.web.views.create.offer.ProjectManagerSelectionView
-import life.qbic.portal.qoffer2.web.views.create.offer.SelectItemsView
+import life.qbic.portal.qoffer2.web.views.create.offer.*
 
 /**
  * This class generates a Layout in which the user
@@ -32,7 +26,6 @@ class CreateOfferView extends FormLayout{
     final private CreateOfferViewModel viewModel
 
     private final CreateOfferController controller
-    private final ListProductsController listProductsController
 
     private final ProjectInformationView projectInformationView
     private final CustomerSelectionView customerSelectionView
@@ -50,7 +43,6 @@ class CreateOfferView extends FormLayout{
     CreateOfferView(ViewModel sharedViewModel,
                     CreateOfferViewModel createOfferViewModel,
                     CreateOfferController controller,
-                    ListProductsController listProductsController,
                     CreateCustomerView createCustomerView,
                     CreateAffiliationView createAffiliationView,
                     OfferResourcesService offerProviderService
@@ -59,7 +51,6 @@ class CreateOfferView extends FormLayout{
         this.sharedViewModel = sharedViewModel
         this.viewModel = createOfferViewModel
         this.controller = controller
-        this.listProductsController = listProductsController
         this.createCustomerView = createCustomerView
         this.createAffiliationView = createAffiliationView
         this.projectInformationView = new ProjectInformationView(viewModel)
@@ -71,7 +62,6 @@ class CreateOfferView extends FormLayout{
 
         initLayout()
         registerListeners()
-        fetchData()
 
         // add all step views to the main view
         addStepViewsToCurrent()
@@ -80,6 +70,8 @@ class CreateOfferView extends FormLayout{
 
         // Init the view navigation history to be able to navigate back in history
         this.viewHistory = new ViewHistory(projectInformationView)
+
+        viewModel.refresh()
     }
 
     /**
@@ -107,14 +99,6 @@ class CreateOfferView extends FormLayout{
     }
 
     /**
-     * Fetch data from database for observable lists
-     */
-    private void fetchData(){
-        listProductsController.listProducts()
-        //todo add the initalization of data e.g. customer and PM here
-    }
-
-    /**
      * Registers all listeners for the buttons that enable switching between the different subviews of CreateOfferView and saving the offer
      */
     private void registerListeners() {
@@ -138,7 +122,7 @@ class CreateOfferView extends FormLayout{
             viewHistory.showPrevious()
         })
         this.createCustomerView.submitButton.addClickListener({
-            viewModel.refresh()
+            viewModel.refreshPersons()
             viewHistory.showPrevious()
         })
         this.createAffiliationView.abortButton.addClickListener({
