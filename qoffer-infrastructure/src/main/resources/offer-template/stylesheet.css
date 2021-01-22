@@ -52,7 +52,7 @@ body {
         clear: both;
         page-break-after: always;
     }
-    
+
     footer {
         visibility: visible;
         page-break-after: always;
@@ -146,6 +146,13 @@ body {
         width: 90%;
     }
 
+    table tr.page-break{
+      page-break-after:always
+    }
+
+    table.page-break{
+      page-break-after:always
+    }
     #items-table {
         width: 100%;
         font-size: 10pt;
