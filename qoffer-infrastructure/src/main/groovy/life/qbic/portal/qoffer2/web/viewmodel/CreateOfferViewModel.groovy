@@ -100,16 +100,25 @@ class CreateOfferViewModel {
         products.each { product ->
             ProductItemViewModel productItem = new ProductItemViewModel(0, product)
 
-            if (product instanceof Sequencing) {
-                this.sequencingProducts.add(productItem)
-            } else if (product instanceof ProjectManagement) {
-                this.managementProducts.add(productItem)
-            } else if (product instanceof PrimaryAnalysis) {
-                this.primaryAnalysisProducts.add(productItem)
-            } else if (product instanceof SecondaryAnalysis) {
-                this.secondaryAnalysisProducts.add(productItem)
-            } else if (product instanceof DataStorage) {
-                this.storageProducts.add(productItem)
+            switch (product) {
+                case Sequencing:
+                    sequencingProducts.add(productItem)
+                    break
+                case ProjectManagement:
+                    managementProducts.add(productItem)
+                    break
+                case PrimaryAnalysis:
+                    primaryAnalysisProducts.add(productItem)
+                    break
+                case SecondaryAnalysis:
+                    secondaryAnalysisProducts.add(productItem)
+                    break
+                case DataStorage:
+                    storageProducts.add(productItem)
+                    break
+                default:
+                    // this should not happen
+                    throw new RuntimeException("Unknown product category '${product.getClass().getSimpleName()}'")
             }
         }
     }
