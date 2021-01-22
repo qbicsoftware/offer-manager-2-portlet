@@ -93,7 +93,7 @@ class OfferOverviewModel {
 
     private Optional<Offer> loadOfferInfo() {
         Optional<Offer> offer = selectedOffer
-                .map({ connector.getOffer(it.projectTitle) })
+                .map({ connector.getOffer(it.offerId) })
                 .orElse(Optional.empty())
         return offer
     }

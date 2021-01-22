@@ -9,15 +9,15 @@ package life.qbic.portal.portlet.offers.identifier
  */
 class RandomPart {
 
+    private static final String alphabet = "abcdefghijklmnopqrstuvwxyz"
+
     protected String value
 
     RandomPart () {
-        // TODO implement a real random part
-        this.value = "abcd"
+        this.value = createRandomFourLetterString()
     }
 
     RandomPart (RandomPart randomPart) {
-        // TODO implement a real random part
         this.value = randomPart.getRawValue()
     }
 
@@ -31,5 +31,14 @@ class RandomPart {
 
     String getValue() {
         return this.value
+    }
+
+    private static String createRandomFourLetterString() {
+        StringBuilder randomString = new StringBuilder()
+        for (int i = 0; i < 4; i++){
+            def newRandomChar = alphabet[(int) (Math.random() * 25)]
+            randomString.append(newRandomChar)
+        }
+        return randomString.toString()
     }
 }

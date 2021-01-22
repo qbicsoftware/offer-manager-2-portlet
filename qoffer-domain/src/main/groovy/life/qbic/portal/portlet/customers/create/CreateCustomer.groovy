@@ -27,6 +27,11 @@ class CreateCustomer implements CreateCustomerInput {
   void createCustomer(Customer customer) {
     try {
       dataSource.addCustomer(customer)
+      try {
+        output.customerCreated("Successfully added new customer")
+      } catch (Exception ignored) {
+        //quiet output message failed
+      }
     } catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)
     } catch(Exception unexpected) {
@@ -36,7 +41,6 @@ class CreateCustomer implements CreateCustomerInput {
       println unexpected.stackTrace.join("\n")
       output.failNotification("Could not create new customer")
     }
-    output.customerCreated("Successfully added new customer")
 
   }
 }
