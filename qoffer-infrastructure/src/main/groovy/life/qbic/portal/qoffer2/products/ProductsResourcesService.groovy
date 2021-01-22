@@ -26,7 +26,7 @@ class ProductsResourcesService implements ResourcesService {
 
 
     /**
-     *
+     * Constructor expecting a customer database connector
      * @param dbConnector
      */
     ProductsResourcesService(ProductsDbConnector dbConnector) {
