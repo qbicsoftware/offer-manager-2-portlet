@@ -48,7 +48,11 @@ body {
         height: 100vh;
     }
     
-
+    .pagebreak {
+        clear: both;
+        page-break-after: always;
+    }
+    
     footer {
         visibility: visible;
         page-break-after: always;
