@@ -15,7 +15,7 @@ import java.sql.ResultSet
 import java.sql.SQLException
 
 /**
- * Provides a MariaDB connector provides access to available service products.
+ * This MariaDb connector offers access to available products.
  *
  * @since 1.0.0
  */
