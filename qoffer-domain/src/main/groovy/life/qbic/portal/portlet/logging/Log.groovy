@@ -1,4 +1,4 @@
-package life.qbic.portal.portlet
+package life.qbic.portal.portlet.logging
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,11 +12,11 @@ import org.apache.logging.log4j.Logger;
  * @since: 1.0.0
  *
  */
-class Logger {
+class Log {
 
-    private final org.apache.logging.log4j.Logger logger
+    private final Logger logger
 
-    Logger(Class clazz){
+    Log(Class clazz){
         logger = LogManager.getLogger(clazz)
     }
 
@@ -25,7 +25,7 @@ class Logger {
      *
      * @param message that should be logged
      */
-    void logError(String message){
+    void error(String message){
         logger.error(message)
     }
 
@@ -34,7 +34,7 @@ class Logger {
      *
      * @param message that should be logged
      */
-    void logWarning(String message){
+    void warning(String message){
         logger.warn(message)
     }
 
@@ -43,7 +43,7 @@ class Logger {
      *
      * @param message that should be logged
      */
-    void logDebug(String message){
+    void debug(String message){
         logger.debug(message)
     }
 
@@ -52,7 +52,7 @@ class Logger {
      *
      * @param message that should be logged
      */
-    void logInfo(String message){
+    void info(String message){
         logger.info(message)
     }
 }
