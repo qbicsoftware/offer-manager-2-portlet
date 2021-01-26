@@ -15,4 +15,24 @@
           <artifactId>data-model-lib</artifactId>
       </dependency>
   </dependencies>
+  <build>
+    <plugins>
+    <plugin>
+    <groupId>org.codehaus.gmavenplus</groupId>
+    <artifactId>gmavenplus-plugin</artifactId>
+      <configuration>
+        <groovyDocOutputDirectory>${project.build.directory}/site/gapidocs</groovyDocOutputDirectory>
+        <testGroovyDocOutputDirectory>${project.build.directory}/site/testgapidocs</testGroovyDocOutputDirectory>
+      </configuration>
+    </plugin>
+    </plugins>
+  </build>
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>life.qbic</groupId>
+        <artifactId>groovydoc-maven-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </reporting>
 </project>
