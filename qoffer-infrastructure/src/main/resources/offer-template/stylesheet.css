@@ -146,12 +146,12 @@ body {
         font-size: 10pt;
         margin: 0 auto auto auto;
         width: 90%;
-        break-after: always !important;
     }
 
     table tr.page-break{
-      page-break-after:always
+        page-break-after: always;
     }
+
 
     #items-table {
         width: 100%;
@@ -206,9 +206,9 @@ body {
     }
 
     .item-description {
-            font-style: italic;
-            font-size: 9pt;
-     }
+        font-style: italic;
+        font-size: 9pt;
+    }
 
     .items-outroduction-text {
         grid-column-start: 1;
@@ -223,7 +223,6 @@ body {
     }
 
     .agreement-section {
-        /* page-break-before: always !important;*/
         break-before: always;
         grid-column-start: 1;
         grid-column-end: 4;
