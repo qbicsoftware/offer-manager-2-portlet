@@ -2,7 +2,7 @@ package life.qbic.portal.portlet.customers.affiliation.create
 
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.portlet.exceptions.DatabaseQueryException
-import life.qbic.portal.portlet.logging.Log
+import life.qbic.portal.portlet.logging.Logger
 import life.qbic.portal.portlet.logging.LogFactory
 
 /**
@@ -17,7 +17,7 @@ class CreateAffiliation implements CreateAffiliationInput{
 
     private final CreateAffiliationDataSource dataSource
     private final CreateAffiliationOutput output
-    private final Log log = LogFactory.createLog(this.class)
+    private final Logger log = LogFactory.createLog(this.class)
 
     /**
      * Creates a use case interactor for creating an affiliation in the provided customer database
