@@ -25,9 +25,11 @@ body {
     }
 
     .grid-container {
-        max-height: 85vh;
+        /*max-height: 85vh;*/
         display: grid;
         grid-template-columns: 50mm auto 50mm;
+        position: relative;
+        border: 1px solid black;
     }
 
     .grid-container-footer {
@@ -144,15 +146,13 @@ body {
         font-size: 10pt;
         margin: 0 auto auto auto;
         width: 90%;
+        break-after: always !important;
     }
 
     table tr.page-break{
       page-break-after:always
     }
 
-    table.page-break{
-      page-break-after:always
-    }
     #items-table {
         width: 100%;
         font-size: 10pt;
@@ -223,10 +223,12 @@ body {
     }
 
     .agreement-section {
-        page-break-before: always;
+        /* page-break-before: always !important;*/
+        break-before: always;
         grid-column-start: 1;
         grid-column-end: 4;
         font-size: 10pt;
+        clear: both;
     }
 }
 
