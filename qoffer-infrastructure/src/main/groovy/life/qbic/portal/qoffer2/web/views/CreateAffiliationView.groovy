@@ -51,21 +51,21 @@ class CreateAffiliationView extends VerticalLayout {
 
     private void initLayout() {
         this.organisationField = new TextField("Organisation Name")
-        organisationField.setPlaceholder("name of the organisation")
+        organisationField.setPlaceholder("Name of the organisation")
         organisationField.setDescription("Please enter the name of the organisation e.g. Universität Tübingen.")
 
-        this.addressAdditionField = new TextField("Department")
-        addressAdditionField.setPlaceholder("optional department name")
+        this.addressAdditionField = new TextField("Address Addition")
+        addressAdditionField.setPlaceholder("Department, Faculty, or other specification of affiliation name")
         addressAdditionField.setDescription("In case the affiliation differs from the organisation you can further specify that here.")
 
         this.streetField = new TextField("Street")
-        streetField.setPlaceholder("street name and street number ")
+        streetField.setPlaceholder("Street name and street number ")
         this.postalCodeField = new TextField("Postal Code")
-        postalCodeField.setPlaceholder("customer postal code")
+        postalCodeField.setPlaceholder("Customer postal code")
         this.cityField = new TextField("City")
-        cityField.setPlaceholder("name of the city")
+        cityField.setPlaceholder("Name of the city")
         this.countryField = new TextField("Country")
-        countryField.setPlaceholder("name of the country")
+        countryField.setPlaceholder("Name of the country")
         this.affiliationCategoryField = generateAffiliationCategorySelect(createAffiliationViewModel.affiliationCategories)
 
         this.abortButton = new Button("Abort Affiliation Creation")
@@ -326,7 +326,7 @@ class CreateAffiliationView extends VerticalLayout {
         ComboBox comboBox = new ComboBox<>("Affiliation Category")
         comboBox.setItems(possibleCategories)
         comboBox.setEmptySelectionAllowed(false)
-        comboBox.setPlaceholder("the affiliation category")
+        comboBox.setPlaceholder("The affiliation category")
         comboBox.setDescription("""We define three major business affiliation categories here
         - internal: 
             An affiliation we consider as within the University of Tübingen or University Hospital of Tübingen
