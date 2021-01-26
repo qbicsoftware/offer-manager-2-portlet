@@ -29,7 +29,6 @@ body {
         display: grid;
         grid-template-columns: 50mm auto 50mm;
         position: relative;
-        border: 1px solid black;
     }
 
     .grid-container-footer {
@@ -150,6 +149,10 @@ body {
 
     table tr.page-break{
         page-break-after: always;
+    }
+
+    .spacer-paragraph{
+        padding-bottom: 60px;
     }
 
 
