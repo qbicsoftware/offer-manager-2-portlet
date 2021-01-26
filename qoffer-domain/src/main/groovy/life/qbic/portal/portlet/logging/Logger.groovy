@@ -3,7 +3,7 @@ package life.qbic.portal.portlet.logging
 import org.apache.logging.log4j.LogManager
 
 /**
- * This class should enables logging for the domain module
+ * This class enables logging for the domain module
  *
  * To stick to clean architecture concepts the domain module should not contain external libraries. This class enables logging
  * though the facade patterns and allows logging while still sticking to the CA concept
