@@ -16,10 +16,4 @@ interface CreateAffiliationOutput extends UseCaseFailure {
      * @since 1.0.0
      */
     void affiliationCreated(Affiliation affiliation)
-
-    /**
-     * This method informs the output that the afiliation was created successfully
-     * @param message
-     */
-    void successNotification(String message)
 }
