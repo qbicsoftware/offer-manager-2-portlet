@@ -1,5 +1,7 @@
 package life.qbic.portal.portlet.logging
 
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import spock.lang.Specification
 
 /**

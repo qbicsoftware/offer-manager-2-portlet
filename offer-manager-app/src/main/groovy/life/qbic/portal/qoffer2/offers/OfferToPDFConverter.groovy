@@ -7,8 +7,8 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.portal.portlet.offers.Currency
-import life.qbic.portal.portlet.offers.OfferExporter
+import life.qbic.business.offers.Currency
+import life.qbic.business.offers.OfferExporter
 import org.jsoup.nodes.Document
 import org.jsoup.parser.Parser
 
@@ -17,8 +17,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.text.DateFormat
-import java.text.SimpleDateFormat
-
 
 /**
  * Handles the conversion of offers to pdf files

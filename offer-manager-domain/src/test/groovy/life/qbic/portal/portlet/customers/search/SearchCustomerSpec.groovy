@@ -1,15 +1,16 @@
 package life.qbic.portal.portlet.customers.search
 
-import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.business.customers.search.SearchCustomer
+import life.qbic.business.customers.search.SearchCustomerDataSource
+import life.qbic.business.customers.search.SearchCustomerOutput
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.portlet.exceptions.DatabaseQueryException
+import life.qbic.business.exceptions.DatabaseQueryException
 import spock.lang.Specification
 
 /**
  * Test the search of customers
  *
- * Stubs the database connection and verifies that if a customer is found the {@link SearchCustomerOutput} is verified or if not
+ * Stubs the database connection and verifies that if a customer is found the {@link life.qbic.business.customers.search.SearchCustomerOutput} is verified or if not
  * an exception leads to a failure notification
  *
  * @since: 1.0.0

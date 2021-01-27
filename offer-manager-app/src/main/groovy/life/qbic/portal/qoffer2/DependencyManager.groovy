@@ -3,11 +3,11 @@ package life.qbic.portal.qoffer2
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliation
-import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliations
-import life.qbic.portal.portlet.customers.create.CreateCustomer
-import life.qbic.portal.portlet.customers.search.SearchCustomer
-import life.qbic.portal.portlet.offers.create.CreateOffer
+import life.qbic.business.customers.affiliation.create.CreateAffiliation
+import life.qbic.business.customers.affiliation.list.ListAffiliations
+import life.qbic.business.customers.create.CreateCustomer
+import life.qbic.business.customers.search.SearchCustomer
+import life.qbic.business.offers.create.CreateOffer
 import life.qbic.portal.qoffer2.customers.AffiliationResourcesService
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import life.qbic.portal.qoffer2.customers.PersonResourcesService

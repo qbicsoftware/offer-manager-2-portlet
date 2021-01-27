@@ -1,11 +1,10 @@
 package life.qbic.portal.qoffer2.web.controllers
 
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
-import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliationInput
+import life.qbic.business.customers.affiliation.create.CreateAffiliationInput
 
 /**
  * Controller class adapter from view information into use case input interface

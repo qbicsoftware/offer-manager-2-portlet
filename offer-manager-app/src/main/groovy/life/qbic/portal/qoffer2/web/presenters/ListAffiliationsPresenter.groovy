@@ -1,7 +1,7 @@
 package life.qbic.portal.qoffer2.web.presenters
 
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliationsOutput
+import life.qbic.business.customers.affiliation.list.ListAffiliationsOutput
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 /**

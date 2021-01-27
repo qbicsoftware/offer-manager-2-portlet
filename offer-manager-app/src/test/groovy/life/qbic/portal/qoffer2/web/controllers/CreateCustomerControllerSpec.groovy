@@ -4,7 +4,7 @@ import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.portlet.customers.create.CreateCustomerInput
+import life.qbic.business.customers.create.CreateCustomerInput
 import spock.lang.Specification
 
 /**

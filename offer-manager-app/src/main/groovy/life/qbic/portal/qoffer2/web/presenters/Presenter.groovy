@@ -1,6 +1,6 @@
 package life.qbic.portal.qoffer2.web.presenters
 
-import life.qbic.portal.portlet.customers.update.UpdateCustomerOutput
+import life.qbic.business.customers.update.UpdateCustomerOutput
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 
 /**

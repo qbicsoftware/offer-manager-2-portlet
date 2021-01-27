@@ -16,7 +16,7 @@ import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.portal.portlet.offers.Currency
+import life.qbic.business.offers.Currency
 import life.qbic.portal.qoffer2.offers.OfferToPDFConverter
 import life.qbic.portal.qoffer2.offers.OfferResourcesService
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel

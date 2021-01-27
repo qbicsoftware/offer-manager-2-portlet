@@ -2,15 +2,14 @@ package life.qbic.portal.qoffer2.web.controllers
 
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 
-import life.qbic.portal.portlet.offers.create.CalculatePrice
-import life.qbic.portal.portlet.offers.create.CreateOfferInput
+import life.qbic.business.offers.create.CalculatePrice
+import life.qbic.business.offers.create.CreateOfferInput
 
 /**
  * Controller class adapter from view information into use case input interface

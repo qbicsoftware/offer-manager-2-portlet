@@ -2,7 +2,7 @@ package life.qbic.portal.qoffer2.web.presenters
 
 import com.vaadin.event.ListenerMethod.MethodException
 import groovy.util.logging.Log4j2
-import life.qbic.portal.portlet.customers.create.CreateCustomerOutput
+import life.qbic.business.customers.create.CreateCustomerOutput
 import life.qbic.portal.qoffer2.web.viewmodel.CreateCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 

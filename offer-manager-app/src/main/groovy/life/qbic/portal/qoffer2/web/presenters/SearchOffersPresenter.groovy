@@ -1,7 +1,7 @@
 package life.qbic.portal.qoffer2.web.presenters
 
 import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.portal.portlet.offers.search.SearchOffersOutput
+import life.qbic.business.offers.search.SearchOffersOutput
 
 /**
  * Presenter for the SearchOffers

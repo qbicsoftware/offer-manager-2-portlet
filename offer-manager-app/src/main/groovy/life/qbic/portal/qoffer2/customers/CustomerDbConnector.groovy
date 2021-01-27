@@ -9,12 +9,12 @@ import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
-import life.qbic.portal.portlet.customers.affiliation.create.CreateAffiliationDataSource
-import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliationsDataSource
-import life.qbic.portal.portlet.customers.create.CreateCustomerDataSource
-import life.qbic.portal.portlet.customers.search.SearchCustomerDataSource
-import life.qbic.portal.portlet.customers.update.UpdateCustomerDataSource
-import life.qbic.portal.portlet.exceptions.DatabaseQueryException
+import life.qbic.business.customers.affiliation.create.CreateAffiliationDataSource
+import life.qbic.business.customers.affiliation.list.ListAffiliationsDataSource
+import life.qbic.business.customers.create.CreateCustomerDataSource
+import life.qbic.business.customers.search.SearchCustomerDataSource
+import life.qbic.business.customers.update.UpdateCustomerDataSource
+import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
 

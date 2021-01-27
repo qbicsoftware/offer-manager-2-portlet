@@ -1,7 +1,7 @@
 package life.qbic.portal.qoffer2.web.presenters
 
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.portlet.customers.search.SearchCustomerOutput
+import life.qbic.business.customers.search.SearchCustomerOutput
 import life.qbic.portal.qoffer2.web.viewmodel.SearchCustomerViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
 

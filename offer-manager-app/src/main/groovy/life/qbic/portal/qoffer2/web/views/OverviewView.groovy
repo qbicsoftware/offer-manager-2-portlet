@@ -6,7 +6,6 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.FileDownloader
 import com.vaadin.server.StreamResource
 import com.vaadin.shared.data.sort.SortDirection
-import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
@@ -21,7 +20,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.portal.qoffer2.services.OfferUpdateService
 import life.qbic.portal.qoffer2.shared.OfferOverview
 import life.qbic.portal.qoffer2.web.viewmodel.OfferOverviewModel
-import life.qbic.portal.portlet.offers.Currency
+import life.qbic.business.offers.Currency
 
 /**
  * A basic offer overview user interface.

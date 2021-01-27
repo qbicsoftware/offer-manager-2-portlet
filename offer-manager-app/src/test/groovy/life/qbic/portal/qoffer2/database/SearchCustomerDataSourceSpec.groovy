@@ -3,7 +3,7 @@ package life.qbic.portal.qoffer2.database
 import groovy.sql.GroovyRowResult
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.portlet.customers.search.SearchCustomerDataSource
+import life.qbic.business.customers.search.SearchCustomerDataSource
 import life.qbic.portal.qoffer2.customers.CustomerDbConnector
 import org.apache.groovy.sql.extensions.SqlExtensions
 import spock.lang.Ignore

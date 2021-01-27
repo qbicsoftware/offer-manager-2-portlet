@@ -1,5 +1,8 @@
 package life.qbic.portal.portlet.customers.create
 
+import life.qbic.business.customers.create.CreateCustomer
+import life.qbic.business.customers.create.CreateCustomerDataSource
+import life.qbic.business.customers.create.CreateCustomerOutput
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Customer
 import spock.lang.Specification

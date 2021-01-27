@@ -4,7 +4,7 @@ import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
-import life.qbic.portal.portlet.exceptions.DatabaseQueryException
+import life.qbic.business.exceptions.DatabaseQueryException
 
 import life.qbic.portal.qoffer2.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions

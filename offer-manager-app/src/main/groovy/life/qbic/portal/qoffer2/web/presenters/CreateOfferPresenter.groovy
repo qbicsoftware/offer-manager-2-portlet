@@ -1,7 +1,7 @@
 package life.qbic.portal.qoffer2.web.presenters
 
 import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.portal.portlet.offers.create.CreateOfferOutput
+import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.portal.qoffer2.offers.OfferResourcesService
 import life.qbic.portal.qoffer2.web.viewmodel.CreateOfferViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel

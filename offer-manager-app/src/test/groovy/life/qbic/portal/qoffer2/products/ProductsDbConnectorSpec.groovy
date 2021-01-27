@@ -1,13 +1,11 @@
 package life.qbic.portal.qoffer2.products
 
 import groovy.sql.GroovyRowResult
-import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.portal.portlet.exceptions.DatabaseQueryException
-import life.qbic.portal.qoffer2.customers.CustomerDbConnector
+import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.portal.qoffer2.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
 import spock.lang.Specification

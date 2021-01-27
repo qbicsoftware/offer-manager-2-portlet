@@ -1,7 +1,7 @@
 package life.qbic.portal.qoffer2.web.controllers
 
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.portal.portlet.customers.affiliation.list.ListAffiliationsInput
+
+import life.qbic.business.customers.affiliation.list.ListAffiliationsInput
 
 /**
  * This class serves as adapter for the ListAffiliations use case

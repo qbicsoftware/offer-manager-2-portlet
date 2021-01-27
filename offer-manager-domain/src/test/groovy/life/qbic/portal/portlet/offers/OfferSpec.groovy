@@ -1,5 +1,6 @@
 package life.qbic.portal.portlet.offers
 
+import life.qbic.business.offers.Offer
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer

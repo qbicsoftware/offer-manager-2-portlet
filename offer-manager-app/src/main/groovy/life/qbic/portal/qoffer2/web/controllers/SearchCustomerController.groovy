@@ -1,8 +1,7 @@
 package life.qbic.portal.qoffer2.web.controllers
 
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.portlet.customers.search.SearchCustomerInput
+
+import life.qbic.business.customers.search.SearchCustomerInput
 
 /**
  * Controller class adapter which in from view information into use case input interface
