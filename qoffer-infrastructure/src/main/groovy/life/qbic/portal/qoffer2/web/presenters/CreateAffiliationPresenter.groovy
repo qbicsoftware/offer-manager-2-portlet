@@ -46,21 +46,15 @@ class CreateAffiliationPresenter implements CreateAffiliationOutput {
     }
 
     @Override
-    void successNotification(String notification) {
-        sharedViewModel.successNotifications.add(notification)
-        clearAffiliationData()
-    }
-
-    @Override
     void failNotification(String notification) {
         sharedViewModel.failureNotifications.add(notification)
     }
 
-    /**
-     * @inheritDoc
-     */
+
     @Override
     void affiliationCreated(Affiliation affiliation) {
         createAffiliationViewModel.affiliationService.reloadResources()
+        sharedViewModel.successNotifications.add("Successfully added new affiliation " + affiliation.organisation)
+        clearAffiliationData()
     }
 }
