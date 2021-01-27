@@ -36,8 +36,17 @@ class TomatoId {
         return new Version(version)
     }
 
+    /**
+     * TODO documentation
+     * @since 1.0.0
+     */
     void increaseVersion() {
         this.version.increaseVersion()
+        //TODO  https://github.com/qbicsoftware/offer-manager-2-portlet/issues/232
+        // query for the latest version first and increase this version
+        // make sure the increased version does not already exist
+        // this should be done somewhere with access to the database
+        // and is part of the business rules
     }
 
     @Override

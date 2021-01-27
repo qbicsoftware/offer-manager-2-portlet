@@ -33,35 +33,6 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
 
     @Override
     void createOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
-        /*
-        If no identifier is provided, we create a new identifier. Otherwise
-        we assume, that the customer updated an existing offer.
-         */
-        if (offerContent.identifier) {
-            updateExistingOffer(offerContent)
-        } else {
-            createNewOffer(offerContent)
-        }
-    }
-
-    private void updateExistingOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
-        OfferId identifier = Converter.buildOfferId(offerContent.identifier)
-        identifier.increaseVersion()
-
-        Offer finalizedOffer = new Offer.Builder(
-                offerContent.customer,
-                offerContent.projectManager,
-                offerContent.projectTitle,
-                offerContent.projectDescription,
-                offerContent.items,
-                offerContent.selectedCustomerAffiliation)
-                .identifier(identifier)
-                .build()
-
-        storeOffer(finalizedOffer)
-    }
-
-    private void createNewOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
         OfferId newOfferId = generateQuotationID(offerContent.customer)
 
         Offer finalizedOffer = new Offer.Builder(
@@ -84,9 +55,10 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
             output.createdNewOffer(offer)
         } catch (DatabaseQueryException e) {
             output.failNotification(e.message)
-        } catch (Exception ignored) {
-            println ignored.message
-            println ignored.stackTrace.join("\n")
+        } catch (Exception unexpected) {
+            //TODO use logger facade instead of println
+            println unexpected.message
+            println unexpected.stackTrace.join("\n")
             output.failNotification("An unexpected during the saving of your offer occurred. " +
                     "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }

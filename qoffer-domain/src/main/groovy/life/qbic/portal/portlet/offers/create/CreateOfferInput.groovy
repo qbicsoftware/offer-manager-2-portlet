@@ -26,6 +26,7 @@ interface CreateOfferInput {
    * If the identifier is passed with the content, it will be ignored.
    *
    * @param offer {@link life.qbic.datamodel.dtos.business.Offer}
+   * @since 1.0.0
    */
   void createOffer(Offer offerContent)
 
