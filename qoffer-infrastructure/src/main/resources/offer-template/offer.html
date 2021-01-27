@@ -122,11 +122,50 @@
             <p>The following table shows a detailed listing of 
                 the cost information for individual service items and the calculated total:</p>          
         </div>
-        <div id="grid-table">
-            <div id="">
-                
-            </div>
 
+        <div class="items-overview">
+            <div class="grid-container-table"></div>
+                <div id="grid-table-header">
+                    <div class="row_ row-lines">
+                        <div class="col-1 text-center">Pos.</div>
+                        <div class="col-4 text-center">Service Description</div>
+                        <div class="col-1 text-center">Amount</div>
+                        <div class="col-2 text-center">Unit</div>
+                        <div class="col-2 text-right">Price/Unit (€)</div>
+                        <div class="col-2 text-right">Total (€)</div>
+                    </div>
+                </div>
+                <div id="grid-table-body">
+                    <div class="row_">
+                        <div class="col-1">1</div>
+                        <div class="col-4">Dataset Storage</div>
+                        <div class="col-1">40</div>
+                        <div class="col-2">Terabyte</div>
+                        <div class="col-2 text-right">250.00</div>
+                        <div class="col-2 text-right">10,000.00</div>
+                    </div>
+                    <div class="row_">
+                        <div class="col-1"></div>
+                        <div class="col-4">A more detailed description</div>
+                        <div class="col-7"></div>
+                    </div>
+                </div>
+                <div id="grid-table-footer">
+                    <div class="row_ row-lines-upper" id = "offer-net">
+                        <div class="col-6"></div>
+                        <div class="col-4" id="cost-summary-field">Estimated total (net):</div>
+                        <div class="col-2" id="total-cost-value-net">12,500.00</div>
+                        </div>
+                    <div class="row_ row-lines-upper" id = "offer-vat">
+                        <div class="col-10" id="cost-summary-field">VAT (19%):</div>
+                        <div class="col-2" id="vat-cost-value">0.00</div>
+                    </div>
+                    <div class="row_ row-lines-upper" id ="offer-total">
+                        <div class="col-10" id="cost-summary-field">Estimtated total (VAT included)</div>
+                        <div class="col-2" id="final-cost-value">12,500.00</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="items-overview">
