@@ -4,7 +4,8 @@ import groovy.sql.GroovyRowResult
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.qoffer2.customers.CustomerDbConnector
+import life.qbic.portal.offermanager.customers.CustomerDbConnector
+import life.qbic.portal.offermanager.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
 import spock.lang.Specification
 

@@ -6,7 +6,8 @@ import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.portal.qoffer2.database.ConnectionProvider
+import life.qbic.portal.offermanager.database.ConnectionProvider
+import life.qbic.portal.offermanager.products.ProductsDbConnector
 import org.apache.groovy.sql.extensions.SqlExtensions
 import spock.lang.Specification
 
@@ -16,7 +17,7 @@ import java.sql.ResultSet
 import java.sql.SQLException
 
 /**
- * Tests for the correct behaviour of the {@link ProductsDbConnector}
+ * Tests for the correct behaviour of the {@link life.qbic.portal.offermanager.products.ProductsDbConnector}
  *
  * @since 1.0.0
  */

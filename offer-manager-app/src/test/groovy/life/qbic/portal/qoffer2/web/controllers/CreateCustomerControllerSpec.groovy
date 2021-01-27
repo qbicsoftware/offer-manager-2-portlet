@@ -5,6 +5,7 @@ import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.business.customers.create.CreateCustomerInput
+import life.qbic.portal.offermanager.web.controllers.CreateCustomerController
 import spock.lang.Specification
 
 /**
