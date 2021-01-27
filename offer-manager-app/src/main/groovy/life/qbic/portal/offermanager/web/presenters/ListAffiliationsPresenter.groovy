@@ -2,7 +2,7 @@ package life.qbic.portal.offermanager.web.presenters
 
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.business.customers.affiliation.list.ListAffiliationsOutput
-import life.qbic.portal.offermanager.web.viewmodel.ViewModel
+import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
  * This class acts as a presenter for the ListAffiliation use case. It takes care of reflecting the updated information in the view model
@@ -11,9 +11,9 @@ import life.qbic.portal.offermanager.web.viewmodel.ViewModel
  */
 class ListAffiliationsPresenter implements ListAffiliationsOutput{
 
-    private final ViewModel viewModel
+    private final AppViewModel viewModel
 
-    ListAffiliationsPresenter(ViewModel viewModel) {
+    ListAffiliationsPresenter(AppViewModel viewModel) {
         this.viewModel = viewModel
     }
 

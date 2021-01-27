@@ -17,7 +17,7 @@ http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
 
 		<init-param>
 			<param-name>UI</param-name>
-			<param-value>life.qbic.portal.offermanager.QOfferPortlet</param-value>
+			<param-value>life.qbic.portal.offermanager.OfferManagerApp</param-value>
 		</init-param>
 
 	</servlet>

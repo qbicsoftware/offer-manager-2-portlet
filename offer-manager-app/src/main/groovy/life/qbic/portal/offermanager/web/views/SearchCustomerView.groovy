@@ -12,6 +12,10 @@ import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.portal.offermanager.components.GridUtils
+import life.qbic.portal.offermanager.components.AppViewModel
+import life.qbic.portal.offermanager.web.controllers.SearchCustomerController
+import life.qbic.portal.offermanager.web.viewmodel.SearchCustomerViewModel
 
 /**
  * This class generates a Form Layout with which the user can search if a customer is already contained in the database
@@ -24,16 +28,16 @@ import life.qbic.datamodel.dtos.business.Customer
 @Log4j2
 class SearchCustomerView extends FormLayout {
 
-    private final life.qbic.portal.offermanager.web.viewmodel.ViewModel viewModel
-    private final life.qbic.portal.offermanager.web.viewmodel.SearchCustomerViewModel searchCustomerViewModel
-    private final life.qbic.portal.offermanager.web.controllers.SearchCustomerController controller
+    private final AppViewModel viewModel
+    private final SearchCustomerViewModel searchCustomerViewModel
+    private final SearchCustomerController controller
     private TextField firstNameField
     private TextField lastNameField
     private Button submitButton
     private Button clearButton
     private Grid<Customer> customerGrid
 
-    SearchCustomerView(life.qbic.portal.offermanager.web.controllers.SearchCustomerController controller, life.qbic.portal.offermanager.web.viewmodel.ViewModel viewModel, life.qbic.portal.offermanager.web.viewmodel.SearchCustomerViewModel searchCustomerViewModel) {
+    SearchCustomerView(SearchCustomerController controller, AppViewModel viewModel, SearchCustomerViewModel searchCustomerViewModel) {
         super()
         this.controller = controller
         this.viewModel = viewModel
@@ -99,7 +103,7 @@ class SearchCustomerView extends FormLayout {
 
 
     /**
-     * registers listeners for user events to components
+     * registers listeners for user communication to components
      */
     private void registerListeners() {
 

@@ -4,7 +4,7 @@ import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.offers.search.SearchOffersOutput
 
 /**
- * Presenter for the SearchOffers
+ * AppPresenter for the SearchOffers
  *
  * This presenter handles the output of the Search Offers use case and prepares it for an appropriate view.
  *

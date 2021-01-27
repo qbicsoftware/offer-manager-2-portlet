@@ -5,7 +5,7 @@ import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.business.customers.create.CreateCustomerInput
-import life.qbic.portal.offermanager.web.controllers.CreateCustomerController
+import life.qbic.portal.offermanager.components.createperson.CreatePersonController
 import spock.lang.Specification
 
 /**
@@ -27,7 +27,7 @@ class CreateCustomerControllerSpec extends Specification {
         List<Affiliation> affiliations = [ affiliation ]
 
         CreateCustomerInput createCustomerInput = Mock()
-        CreateCustomerController controller = new CreateCustomerController(createCustomerInput)
+        CreatePersonController controller = new CreatePersonController(createCustomerInput)
         when:
         controller.createNewCustomer(firstName, lastName, title, email, affiliations)
         then:

@@ -3,10 +3,10 @@ package life.qbic.portal.offermanager.web.presenters
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.business.customers.search.SearchCustomerOutput
 import life.qbic.portal.offermanager.web.viewmodel.SearchCustomerViewModel
-import life.qbic.portal.offermanager.web.viewmodel.ViewModel
+import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
- * Presenter for the SearchCustomerView
+ * AppPresenter for the SearchCustomerView
  *
  * This presenter handles the output of the Search Customer use case and prepares it for the
  * SearchCustomerView
@@ -14,10 +14,10 @@ import life.qbic.portal.offermanager.web.viewmodel.ViewModel
  * @since: 1.0.0
  */
 class SearchCustomerPresenter implements SearchCustomerOutput {
-    private ViewModel viewModel
+    private AppViewModel viewModel
     private SearchCustomerViewModel searchCustomerViewModel
 
-    SearchCustomerPresenter(ViewModel viewModel, SearchCustomerViewModel searchCustomerViewModel) {
+    SearchCustomerPresenter(AppViewModel viewModel, SearchCustomerViewModel searchCustomerViewModel) {
         this.viewModel = viewModel
         this.searchCustomerViewModel = searchCustomerViewModel
     }
