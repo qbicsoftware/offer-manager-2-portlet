@@ -45,6 +45,7 @@ class CreateAffiliationPresenter implements CreateAffiliationOutput {
         this.createAffiliationViewModel.affiliationCategoryValid = null
     }
 
+    @Override
     void successNotification(String notification) {
         sharedViewModel.successNotifications.add(notification)
         clearAffiliationData()
