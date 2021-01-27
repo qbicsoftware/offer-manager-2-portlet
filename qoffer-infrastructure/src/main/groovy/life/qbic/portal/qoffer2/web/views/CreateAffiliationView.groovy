@@ -9,6 +9,7 @@ import com.vaadin.server.UserError
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
+import java.util.stream.Collectors;
 import life.qbic.portal.qoffer2.web.controllers.CreateAffiliationController
 import life.qbic.portal.qoffer2.web.viewmodel.CreateAffiliationViewModel
 import life.qbic.portal.qoffer2.web.viewmodel.ViewModel
@@ -27,7 +28,7 @@ class CreateAffiliationView extends VerticalLayout {
     final public CreateAffiliationViewModel createAffiliationViewModel
     private final CreateAffiliationController controller
 
-    private TextField organisationField
+    private ComboBox<String> organisationBox
     private TextField addressAdditionField
     private TextField streetField
     private TextField postalCodeField
@@ -50,9 +51,30 @@ class CreateAffiliationView extends VerticalLayout {
     }
 
     private void initLayout() {
-        this.organisationField = new TextField("Organisation Name")
-        organisationField.setPlaceholder("Name of the organisation")
-        organisationField.setDescription("Please enter the name of the organisation e.g. Universität Tübingen.")
+        this.organisationBox = new ComboBox<>("Organisation Name")
+        
+        // we don't need the whole affiliation object, just the unique organization names.
+        List<String> organisationNames = sharedViewModel.affiliations.stream().map(affi -> affi.organisation).distinct().collect(Collectors.toList())
+
+        organisationBox.setItems(organisationNames)
+        organisationBox.setTextInputAllowed(true)
+        
+        // Check if the caption for new item already exists in the list of item
+        // captions before approving it as a new item.
+        ComboBox.NewItemProvider<String> itemHandler = newItemCaption -> {
+            boolean newItem = organisationNames.stream().noneMatch(data -> data.equalsIgnoreCase(newItemCaption))
+            if (newItem) {
+                // Adds new option
+                organisationNames.add(newItemCaption)
+                organisationBox.setItems(organisationNames)
+                organisationBox.setSelectedItem(newItemCaption)
+            }
+            return Optional.ofNullable(newItemCaption)
+        };
+        organisationBox.setNewItemProvider(itemHandler)
+        
+        organisationBox.setPlaceholder("Name of the organisation")
+        organisationBox.setDescription("Select or enter new name of the organisation e.g. Universität Tübingen.")
 
         this.addressAdditionField = new TextField("Address Addition")
         addressAdditionField.setPlaceholder("Department, Faculty, or other specification of affiliation name")
@@ -77,7 +99,7 @@ class CreateAffiliationView extends VerticalLayout {
         submitButton.setIcon(VaadinIcons.OFFICE)
         submitButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
 
-        organisationField.setRequiredIndicatorVisible(true)
+        organisationBox.setRequiredIndicatorVisible(true)
         addressAdditionField.setRequiredIndicatorVisible(false)
         streetField.setRequiredIndicatorVisible(true)
         postalCodeField.setRequiredIndicatorVisible(true)
@@ -85,7 +107,7 @@ class CreateAffiliationView extends VerticalLayout {
         countryField.setRequiredIndicatorVisible(true)
         affiliationCategoryField.setRequiredIndicatorVisible(true)
 
-        HorizontalLayout row1 = new HorizontalLayout(organisationField, addressAdditionField)
+        HorizontalLayout row1 = new HorizontalLayout(organisationBox, addressAdditionField)
         row1.setSizeFull()
         HorizontalLayout row2 = new HorizontalLayout(streetField)
         row2.setSizeFull()
@@ -102,7 +124,7 @@ class CreateAffiliationView extends VerticalLayout {
         row5.setComponentAlignment(buttonLayout, Alignment.BOTTOM_RIGHT)
         row5.setSizeFull()
 
-        organisationField.setSizeFull()
+        organisationBox.setSizeFull()
         addressAdditionField.setSizeFull()
         streetField.setSizeFull()
         postalCodeField.setSizeFull()
@@ -119,12 +141,12 @@ class CreateAffiliationView extends VerticalLayout {
 
         // by binding the fields to the view model, the model is updated when the user input changed
         binder.setBean(this.createAffiliationViewModel)
-
+        
+        binder.forField(this.organisationBox).bind({ it.organisation }, { it, updatedValue -> it.setOrganisation(updatedValue) })
         binder.forField(this.addressAdditionField).bind({ it.addressAddition }, { it, updatedValue -> it.setAddressAddition(updatedValue) })
         binder.forField(this.affiliationCategoryField).bind({ it.affiliationCategory }, { it, updatedValue -> it.setAffiliationCategory(updatedValue) })
         binder.forField(this.cityField).bind({ it.city }, { it, updatedValue -> it.setCity(updatedValue) })
         binder.forField(this.countryField).bind({ it.country }, { it, updatedValue -> it.setCountry(updatedValue) })
-        binder.forField(this.organisationField).bind({ it.organisation }, { it, updatedValue -> it.setOrganisation(updatedValue) })
         binder.forField(this.postalCodeField).bind({ it.postalCode }, { it, updatedValue -> it.setPostalCode(updatedValue) })
         binder.forField(this.streetField).bind({ it.street }, { it, updatedValue -> it.setStreet(updatedValue) })
 
@@ -158,7 +180,7 @@ class CreateAffiliationView extends VerticalLayout {
                     break
                 case "organisation":
                     String newValue = it.newValue as String
-                    organisationField.value = newValue ?: organisationField.emptyValue
+                    organisationBox.value = newValue ?: organisationBox.emptyValue
                     break
                 case "postalCode":
                     String newValue = it.newValue as String
@@ -201,7 +223,7 @@ class CreateAffiliationView extends VerticalLayout {
                     break
                 case "organisationValid":
                     if (it.newValue || it.newValue == null) {
-                        organisationField.componentError = null
+                        organisationBox.componentError = null
                     }
                     break
                 case "postalCodeValid":
@@ -259,12 +281,12 @@ class CreateAffiliationView extends VerticalLayout {
                 createAffiliationViewModel.countryValid = true
             }
         })
-        this.organisationField.addValueChangeListener({event ->
-            ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.organisationField))
+        this.organisationBox.addValueChangeListener({event ->
+            ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.organisationBox))
             if (result.isError()) {
                 createAffiliationViewModel.organisationValid = false
                 UserError error = new UserError(result.getErrorMessage())
-                organisationField.setComponentError(error)
+                organisationBox.setComponentError(error)
             } else {
                 createAffiliationViewModel.organisationValid = true
             }
@@ -345,7 +367,7 @@ class CreateAffiliationView extends VerticalLayout {
         affiliationCategoryField.clear()
         cityField.clear()
         countryField.clear()
-        organisationField.clear()
+        organisationBox.clear()
         postalCodeField.clear()
         streetField.clear()
 
