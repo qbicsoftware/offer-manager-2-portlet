@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.createperson
+package life.qbic.portal.offermanager.components.person.create
 
 
 import com.vaadin.data.ValidationResult

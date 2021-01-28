@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.createperson
+package life.qbic.portal.offermanager.components.person.create
 
 import com.vaadin.event.ListenerMethod.MethodException
 import groovy.util.logging.Log4j2

@@ -1,18 +1,12 @@
-package life.qbic.portal.offermanager.components.createoffer
+package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.ui.Component
 import com.vaadin.ui.FormLayout
 import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.portal.offermanager.components.createaffiliation.CreateAffiliationView
-import life.qbic.portal.offermanager.components.createoffer.customerselection.CustomerSelectionView
-import life.qbic.portal.offermanager.components.createoffer.overview.OfferOverviewView
-import life.qbic.portal.offermanager.components.createperson.CreatePersonView
+import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
+import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
-import life.qbic.portal.offermanager.web.viewmodel.ProductItemViewModel
 import life.qbic.portal.offermanager.components.AppViewModel
-import life.qbic.portal.offermanager.components.createoffer.projectinformation.ProjectInformationView
-import life.qbic.portal.offermanager.components.createoffer.managerselection.ProjectManagerSelectionView
-import life.qbic.portal.offermanager.components.createoffer.productitemselection.SelectItemsView
 
 /**
  * This class generates a Layout in which the user

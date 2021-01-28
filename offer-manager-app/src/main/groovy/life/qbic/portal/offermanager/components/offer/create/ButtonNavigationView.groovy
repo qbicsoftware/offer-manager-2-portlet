@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.createoffer
+package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.ui.Button
 import com.vaadin.ui.HorizontalLayout

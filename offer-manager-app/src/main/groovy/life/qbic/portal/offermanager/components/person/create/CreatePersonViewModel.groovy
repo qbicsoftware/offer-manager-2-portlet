@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.createperson
+package life.qbic.portal.offermanager.components.person.create
 
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation

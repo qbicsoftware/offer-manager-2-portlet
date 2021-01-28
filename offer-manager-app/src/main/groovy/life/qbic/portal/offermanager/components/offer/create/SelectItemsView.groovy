@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.createoffer.productitemselection
+package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
@@ -21,8 +21,8 @@ import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.business.offers.Currency
 import life.qbic.portal.offermanager.components.GridUtils
-import life.qbic.portal.offermanager.components.createoffer.CreateOfferViewModel
-import life.qbic.portal.offermanager.web.viewmodel.ProductItemViewModel
+import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
+import life.qbic.portal.offermanager.components.offer.create.ProductItemViewModel
 import life.qbic.portal.offermanager.components.AppViewModel
 
 /**

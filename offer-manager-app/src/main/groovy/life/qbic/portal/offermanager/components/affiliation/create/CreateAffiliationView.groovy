@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.createaffiliation
+package life.qbic.portal.offermanager.components.affiliation.create
 
 import com.vaadin.data.Binder
 import com.vaadin.data.ValidationResult

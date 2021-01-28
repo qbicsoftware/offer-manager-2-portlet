@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.createoffer.projectinformation
+package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.data.Binder
 import com.vaadin.icons.VaadinIcons
@@ -9,7 +9,7 @@ import com.vaadin.ui.TextArea
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
-import life.qbic.portal.offermanager.components.createoffer.CreateOfferViewModel
+import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
 
 /**
  * This class generates a Layout in which the user

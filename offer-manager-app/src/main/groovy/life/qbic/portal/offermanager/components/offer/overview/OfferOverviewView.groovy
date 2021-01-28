@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.offeroverview
+package life.qbic.portal.offermanager.components.offer.overview
 
 import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider

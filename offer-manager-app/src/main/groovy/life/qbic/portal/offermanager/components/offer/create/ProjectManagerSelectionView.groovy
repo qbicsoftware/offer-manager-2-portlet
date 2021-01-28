@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.createoffer.managerselection
+package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
@@ -12,7 +12,7 @@ import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.portal.offermanager.components.GridUtils
-import life.qbic.portal.offermanager.components.createoffer.CreateOfferViewModel
+import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
 
 /**
  * This class generates a Layout in which the user

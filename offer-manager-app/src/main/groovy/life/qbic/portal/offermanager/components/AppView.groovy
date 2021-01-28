@@ -4,10 +4,10 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.Page
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
-import life.qbic.portal.offermanager.components.createaffiliation.CreateAffiliationView
-import life.qbic.portal.offermanager.components.createoffer.CreateOfferView
-import life.qbic.portal.offermanager.components.createperson.CreatePersonView
-import life.qbic.portal.offermanager.components.offeroverview.OfferOverviewView
+import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
+import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
+import life.qbic.portal.offermanager.components.person.create.CreatePersonView
+import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
 import life.qbic.portal.offermanager.web.views.SearchCustomerView
 
 /**

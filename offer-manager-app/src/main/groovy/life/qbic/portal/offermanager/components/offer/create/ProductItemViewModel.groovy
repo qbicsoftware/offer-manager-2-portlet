@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.web.viewmodel
+package life.qbic.portal.offermanager.components.offer.create
 
 import life.qbic.datamodel.dtos.business.services.Product
 

@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.createaffiliation
+package life.qbic.portal.offermanager.components.affiliation.create
 
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation

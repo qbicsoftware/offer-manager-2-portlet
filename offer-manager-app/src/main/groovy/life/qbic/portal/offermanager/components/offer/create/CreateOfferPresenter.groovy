@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.createoffer
+package life.qbic.portal.offermanager.components.offer.create
 
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.offers.create.CreateOfferOutput

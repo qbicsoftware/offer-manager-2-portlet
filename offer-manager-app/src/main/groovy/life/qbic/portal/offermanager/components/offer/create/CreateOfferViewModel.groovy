@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.createoffer
+package life.qbic.portal.offermanager.components.offer.create
 
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
@@ -9,7 +9,6 @@ import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.portal.offermanager.dataresources.customers.PersonResourcesService
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
 import life.qbic.portal.offermanager.communication.Subscription
-import life.qbic.portal.offermanager.web.viewmodel.ProductItemViewModel
 
 /**
  * A ViewModel holding data that is presented in a

@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.offeroverview
+package life.qbic.portal.offermanager.components.offer.overview
 
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Offer
