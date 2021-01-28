@@ -54,7 +54,7 @@ class CreateAffiliationView extends VerticalLayout {
         this.organisationBox = new ComboBox<>("Organisation Name")
         
         // we don't need the whole affiliation object, just the unique organization names.
-        List<String> organisationNames = sharedViewModel.affiliations.stream().map(it.organisation).distinct().collect(Collectors.toList())
+        List<String> organisationNames = sharedViewModel.affiliations.stream().map(affiliation -> affiliation.organisation).distinct().collect(Collectors.toList())
 
         organisationBox.setItems(organisationNames)
         organisationBox.setTextInputAllowed(true)
