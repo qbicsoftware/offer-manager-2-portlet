@@ -163,6 +163,9 @@ class CreateCustomerView extends VerticalLayout {
         this.affiliationComboBox.addValueChangeListener({
             this.createCustomerViewModel.setAffiliation(it.value)
         })
+        this.addressAdditionComboBox.addValueChangeListener({
+            this.createCustomerViewModel.setAffiliation(it.value)
+        })
 
         createCustomerViewModel.addPropertyChangeListener("affiliation", {
             Affiliation newValue = it.newValue as Affiliation
