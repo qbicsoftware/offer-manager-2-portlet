@@ -34,6 +34,7 @@ class AppView extends VerticalLayout {
     AppView(AppViewModel portletViewModel,
             CreatePersonView createCustomerView,
             CreateAffiliationView createAffiliationView,
+            CreateOfferView createOfferView,
             OfferOverviewView overviewView,
             CreateOfferView updateOfferView) {
         super()

@@ -4,7 +4,6 @@ import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.business.customers.affiliation.create.CreateAffiliation
-import life.qbic.business.customers.affiliation.list.ListAffiliations
 import life.qbic.business.customers.create.CreateCustomer
 import life.qbic.business.customers.search.SearchCustomer
 import life.qbic.business.offers.create.CreateOffer
@@ -72,8 +71,6 @@ class DependencyManager {
 
     private CreateCustomer createCustomer
     private CreateAffiliation createAffiliation
-    private ListAffiliations listAffiliations
-    private SearchCustomer searchCustomer
     private CreateOffer createOffer
     private CreateOffer updateOffer
 
@@ -240,10 +237,8 @@ class DependencyManager {
     private void setupUseCaseInteractors() {
         this.createCustomer = new CreateCustomer(createCustomerPresenter, customerDbConnector)
         this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbConnector)
-        this.listAffiliations = new ListAffiliations(listAffiliationsPresenter, customerDbConnector)
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
         this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
-        this.searchCustomer = new SearchCustomer(searchCustomerPresenter, customerDbConnector)
     }
 
     private void setupControllers() {
@@ -275,7 +270,6 @@ class DependencyManager {
 
         try {
             this.createCustomerView = new CreatePersonView(this.createCustomerController, this.viewModel, this.createCustomerViewModel)
-            listAffiliationsController.listAffiliations()
         } catch (Exception e) {
             log.error("Could not create ${CreatePersonView.getSimpleName()} view.", e)
             throw e
@@ -283,7 +277,6 @@ class DependencyManager {
 
         try {
             this.createCustomerViewNewOffer = new CreatePersonView(this.createCustomerController, this.viewModel, this.createCustomerViewModel)
-            listAffiliationsController.listAffiliations()
         } catch (Exception e) {
             log.error("Could not create ${CreatePersonView.getSimpleName()} view.", e)
             throw e
