@@ -126,43 +126,43 @@
         <div class="items-overview">
             <div class="grid-container-table"></div>
                 <div id="grid-table-header">
-                    <div class="row_ row-lines">
-                        <div class="col-1 text-center">Pos.</div>
-                        <div class="col-4 text-center">Service Description</div>
-                        <div class="col-1 text-center">Amount</div>
-                        <div class="col-2 text-center">Unit</div>
-                        <div class="col-2 text-right">Price/Unit (€)</div>
-                        <div class="col-2 text-right">Total (€)</div>
+                    <div class="row_ table-header" id="grid-table-header">
+                        <div class="col-1">Pos.</div>
+                        <div class="col-4">Service Description</div>
+                        <div class="col-1 price-value">Amount</div>
+                        <div class="col-2 ">Unit</div>
+                        <div class="col-2 price-value">Price/Unit (€)</div>
+                        <div class="col-2 price-value">Total (€)</div>
                     </div>
                 </div>
-                <div id="grid-table-body">
-                    <div class="row_">
+                <div id="product-items">
+                    <div class="row_ product-item">
                         <div class="col-1">1</div>
-                        <div class="col-4">Dataset Storage</div>
-                        <div class="col-1">40</div>
-                        <div class="col-2">Terabyte</div>
-                        <div class="col-2 text-right">250.00</div>
-                        <div class="col-2 text-right">10,000.00</div>
+                        <div class="col-4 ">Dataset Storage</div>
+                        <div class="col-1 price-value">40</div>
+                        <div class="col-2 ">Terabyte</div>
+                        <div class="col-2 price-value">250.00</div>
+                        <div class="col-2 price-value">10,000.00</div>
                     </div>
-                    <div class="row_">
+                    <div class="row_ product-item">
                         <div class="col-1"></div>
-                        <div class="col-4">A more detailed description</div>
+                        <div class="col-4 item-description">A more detailed description</div>
                         <div class="col-7"></div>
                     </div>
                 </div>
                 <div id="grid-table-footer">
                     <div class="row_ row-lines-upper" id = "offer-net">
                         <div class="col-6"></div>
-                        <div class="col-4" id="cost-summary-field">Estimated total (net):</div>
-                        <div class="col-2" id="total-cost-value-net">12,500.00</div>
+                        <div class="col-4 cost-summary-field">Estimated total (net):</div>
+                        <div class="col-2 price-value" id="total-cost-value-net">12,500.00</div>
                         </div>
                     <div class="row_ row-lines-upper" id = "offer-vat">
-                        <div class="col-10" id="cost-summary-field">VAT (19%):</div>
-                        <div class="col-2" id="vat-cost-value">0.00</div>
+                        <div class="col-10 cost-summary-field">VAT (19%):</div>
+                        <div class="col-2 price-value" id="vat-cost-value">0.00</div>
                     </div>
                     <div class="row_ row-lines-upper" id ="offer-total">
-                        <div class="col-10" id="cost-summary-field">Estimtated total (VAT included)</div>
-                        <div class="col-2" id="final-cost-value">12,500.00</div>
+                        <div class="col-10 cost-summary-field">Estimtated total (VAT included)</div>
+                        <div class="col-2 price-value" id="final-cost-value">12,500.00</div>
                     </div>
                 </div>
             </div>
@@ -213,279 +213,6 @@
                         <td class="price-value"></td>
                         <td class="price-value"></td>
                     </tr>
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr><tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr><tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-
-                    <tr class="product-item" class="page-break">
-                        <td>2</td>
-                        <td>Another data management service</td>
-                        <td class="price-value">10</td>
-                        <td>Terabyte</td>
-                        <td class="price-value">250.00</td>
-                        <td class="price-value">2,500.00</td>
-                    </tr>
-                    <tr class="product-item">
-                        <td></td>
-                        <td class="item-description">A more detailed description</td>
-                        <td class="price-value"></td>
-                        <td></td>
-                        <td class="price-value"></td>
-                        <td class="price-value"></td>
-                    </tr>
-
                 </tbody>
                 <tfoot id = "costs">
                     <tr id = "offer-net" class="total-costs">
@@ -499,116 +226,6 @@
                     <tr id = "offer-total" class="total-costs">
                         <td colspan="5" class="cost-summary-field">Estimtated total (VAT included)</td>
                         <td id="final-cost-value" class="price-value">12,500.00</td>
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
-                    <tr>  
-                    </tr>
                 </tfoot>
             </table>
         </div>

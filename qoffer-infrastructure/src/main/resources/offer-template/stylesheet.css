@@ -142,11 +142,6 @@ body {
         font-size: 10pt;
     }
 
-    .item-description {
-        font-style: italic;
-        font-size: 9pt;
-    }
-
     .items-outroduction-text {
         grid-column-start: 1;
         grid-column-end: 4;
@@ -159,6 +154,7 @@ body {
         padding-left: 15px;
         margin-right: auto;
         margin-left: auto;
+        font-size: 10pt;
     }
     
     .row_ {
@@ -257,21 +253,16 @@ body {
         max-width: 100%;
       }
 
-    .row-lines{
-        border-bottom: 1px solid #bbbbbb;
-        border-top: 1px solid #bbbbbb;
-    }
     .row-lines-upper{
         border-top: 1px solid #bbbbbb;
     }
-          
-    
+              
     #grid-table-header{
         padding-left: 20px;
         font-weight: bold;
     }
     
-    #grid-table-body{
+    #product-items{
         padding-left: 20px;
     }
     
@@ -279,13 +270,23 @@ body {
         padding-left: 20px;
         text-align: right;
     }
-    
-    .text-right{
-        text-align: right;
-    }
-    
+        
     .text-center{
         text-align: center;
+    }
+
+    .table-data {
+        text-align: left;
+        vertical-align: top;
+        padding: 10px 2px 0px 2px;
+    }
+
+    .table-header {
+        padding: 10px 2px 10px 2px;
+        border-bottom: 1px solid #bbbbbb;
+        border-top: 1px solid #bbbbbb;
+        text-align: left;
+        white-space: nowrap;
     }
 
     /* old items table*/
@@ -329,10 +330,15 @@ body {
         border-top: 1px solid #bbbbbb;
     }
 
-    /* old table end */
+    /* table value stylings */
 
     .price-value {
         text-align: right !important;
+    }
+
+    .item-description {
+        font-style: italic;
+        font-size: 9pt;
     }
 
     #total-costs {
