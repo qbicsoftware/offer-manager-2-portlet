@@ -8,7 +8,6 @@ import life.qbic.portal.offermanager.components.affiliation.create.CreateAffilia
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
-import life.qbic.portal.offermanager.web.views.SearchCustomerView
 
 /**
  * Class which connects the view elements with the ViewModel and the Controller
@@ -26,7 +25,6 @@ class AppView extends VerticalLayout {
 
     private final CreatePersonView createCustomerView
     private final CreateAffiliationView createAffiliationView
-    private final SearchCustomerView searchCustomerView
     private final CreateOfferView createOfferView
     private final List<Component> featureViews
     private final OfferOverviewView overviewView
@@ -36,15 +34,12 @@ class AppView extends VerticalLayout {
     AppView(AppViewModel portletViewModel,
             CreatePersonView createCustomerView,
             CreateAffiliationView createAffiliationView,
-            SearchCustomerView searchCustomerView,
-            CreateOfferView createOfferView,
             OfferOverviewView overviewView,
             CreateOfferView updateOfferView) {
         super()
         this.portletViewModel = portletViewModel
         this.createCustomerView = createCustomerView
         this.createAffiliationView = createAffiliationView
-        this.searchCustomerView = searchCustomerView
         this.createOfferView = createOfferView
         this.featureViews = []
         this.overviewView = overviewView
