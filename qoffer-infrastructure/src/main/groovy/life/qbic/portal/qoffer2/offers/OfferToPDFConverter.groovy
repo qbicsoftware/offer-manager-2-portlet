@@ -142,6 +142,8 @@ class OfferToPDFConverter implements OfferExporter {
     void setSelectedItems() {
         // Let's clear the existing item template content first
         htmlContent.getElementById("product-items-1").empty()
+        //and remove the footer on the first page
+        htmlContent.getElementById("grid-table-footer").remove()
         // Set the start offer position
         def itemPos = 1
         // max number of table items per page
@@ -150,21 +152,23 @@ class OfferToPDFConverter implements OfferExporter {
         def tableNum = 1
         def elementId = "product-items"+"-"+tableNum
         // Create the items in html in the overview table
-        List<ProductItem> items = offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items +
-                        offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items
+        List<ProductItem> items = offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items
 
         items.each { item ->
 
-            if (itemPos % maxTableItems == 0) //start next table
+            if (itemPos % maxTableItems == 0) //start (next) table
             {
-                tableNum++
+                elementId = "product-items"+"-"+ ++tableNum
                 htmlContent.getElementById("items-container-table").append(ItemPrintout.tableInHTML(elementId))
             }
-            else{
-                htmlContent.getElementById(elementId)
-                        .append(ItemPrintout.itemInHTML(itemPos++, item))
-            }
+            htmlContent.getElementById(elementId)
+                    .append(ItemPrintout.itemInHTML(itemPos++, item))
+
         }
+
+        //create the footer only for the last page containing a table
+        htmlContent.getElementById(elementId)
+                .append(ItemPrintout.tableEnd())
     }
 
     void setPrices() {
@@ -264,7 +268,11 @@ class OfferToPDFConverter implements OfferExporter {
                                  </div>
                                  <div class="product-items" id="${elementId}">
                                  </div>
-                                 <div id="grid-table-footer">
+                             </div>"""
+        }
+
+        static String tableEnd(){
+            return """<div id="grid-table-footer">
                                      <div class="row_ row-lines-upper total-costs" id = "offer-net">
                                          <div class="col-6"></div>
                                          <div class="col-4 cost-summary-field">Estimated total (net):</div>
@@ -278,8 +286,7 @@ class OfferToPDFConverter implements OfferExporter {
                                          <div class="col-10 cost-summary-field">Estimtated total (VAT included)</div>
                                          <div class="col-2 price-value" id="final-cost-value">12,500.00</div>
                                      </div>
-                                 </div>
-                             </div>"""
+                                 </div>"""
         }
 
     }
