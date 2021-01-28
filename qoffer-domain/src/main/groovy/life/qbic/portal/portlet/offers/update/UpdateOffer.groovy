@@ -14,7 +14,6 @@ import life.qbic.portal.portlet.offers.identifier.OfferId
  * The offer manager provides an interface to update an existing offer and create a new version from it. </p>
  *
  * @since: 1.0.0
- * @author: Tobias Koch
  */
 class UpdateOffer implements UpdateOfferInput{
 
