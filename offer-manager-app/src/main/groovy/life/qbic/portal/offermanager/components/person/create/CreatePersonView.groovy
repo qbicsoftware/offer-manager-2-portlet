@@ -60,15 +60,15 @@ class CreatePersonView extends VerticalLayout {
         this.titleField = generateTitleSelector(createCustomerViewModel.academicTitles)
 
         this.firstNameField = new TextField("First Name")
-        firstNameField.setPlaceholder("customer first name")
+        firstNameField.setPlaceholder("Customer first name")
         firstNameField.setRequiredIndicatorVisible(true)
 
         this.lastNameField = new TextField("Last Name")
-        lastNameField.setPlaceholder("customer last name")
+        lastNameField.setPlaceholder("Customer last name")
         lastNameField.setRequiredIndicatorVisible(true)
 
         this.emailField = new TextField("Email Address")
-        emailField.setPlaceholder("customer email address")
+        emailField.setPlaceholder("Customer email address")
         emailField.setRequiredIndicatorVisible(true)
 
         this.affiliationComboBox = generateAffiliationSelector(sharedViewModel.affiliations)
@@ -159,6 +159,9 @@ class CreatePersonView extends VerticalLayout {
             emailField.value = newValue ?: emailField.emptyValue
         })
         this.affiliationComboBox.addValueChangeListener({
+            this.createCustomerViewModel.setAffiliation(it.value)
+        })
+        this.addressAdditionComboBox.addValueChangeListener({
             this.createCustomerViewModel.setAffiliation(it.value)
         })
 
@@ -282,7 +285,7 @@ class CreatePersonView extends VerticalLayout {
     private static ComboBox<Affiliation> generateAffiliationSelector(List<Affiliation> affiliationList) {
         ComboBox<Affiliation> affiliationComboBox =
                 new ComboBox<>("Affiliation")
-        affiliationComboBox.setPlaceholder("select customer affiliation")
+        affiliationComboBox.setPlaceholder("Select customer affiliation")
         affiliationComboBox.setItems(affiliationList)
         affiliationComboBox.setEmptySelectionAllowed(false)
         affiliationComboBox.setItemCaptionGenerator({it.organisation})
@@ -296,7 +299,7 @@ class CreatePersonView extends VerticalLayout {
     private static ComboBox<String> generateTitleSelector(List<String> academicTitles) {
         ComboBox<String> titleCombobox =
                 new ComboBox<>("Academic Title")
-        titleCombobox.setPlaceholder("select academic title")
+        titleCombobox.setPlaceholder("Select academic title")
         titleCombobox.setItems(academicTitles)
         titleCombobox.setEmptySelectionAllowed(true)
         return titleCombobox

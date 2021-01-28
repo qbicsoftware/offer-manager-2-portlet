@@ -34,7 +34,6 @@ class CreateAffiliation implements CreateAffiliationInput{
     void createAffiliation(Affiliation affiliation) {
         try {
             dataSource.addAffiliation(affiliation)
-            output.successNotification("Successfully added new affiliation " + affiliation.organisation)
             output.affiliationCreated(affiliation)
 
             log.info("Successfully added new affiliation " + affiliation.organisation)
