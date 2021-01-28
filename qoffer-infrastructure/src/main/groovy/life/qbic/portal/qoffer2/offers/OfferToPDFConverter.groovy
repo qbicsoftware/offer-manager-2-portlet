@@ -141,13 +141,29 @@ class OfferToPDFConverter implements OfferExporter {
 
     void setSelectedItems() {
         // Let's clear the existing item template content first
-        htmlContent.getElementById("product-items").empty()
+        htmlContent.getElementById("product-items-1").empty()
         // Set the start offer position
         def itemPos = 1
+        // max number of table items per page
+        def maxTableItems = 10
+        //
+        def tableNum = 1
+        def elementId = "product-items"+"-"+tableNum
         // Create the items in html in the overview table
-        offer.items.each { item ->
-            htmlContent.getElementById("product-items")
-                    .append(ItemPrintout.itemInHTML(itemPos++, item))
+        List<ProductItem> items = offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items +
+                        offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items
+
+        items.each { item ->
+
+            if (itemPos % maxTableItems == 0) //start next table
+            {
+                tableNum++
+                htmlContent.getElementById("items-container-table").append(ItemPrintout.tableInHTML(elementId))
+            }
+            else{
+                htmlContent.getElementById(elementId)
+                        .append(ItemPrintout.itemInHTML(itemPos++, item))
+            }
         }
     }
 
@@ -216,22 +232,54 @@ class OfferToPDFConverter implements OfferExporter {
     private static class ItemPrintout {
 
         static String itemInHTML(int offerPosition, ProductItem item) {
-            return """<tr class="product-item">
-            <td>${offerPosition}</td>
-            <td>${item.product.productName}</td>
-            <td class="price-value">${item.quantity}</td>
-            <td>${item.product.unit}</td>
-            <td class="price-value">${Currency.getFormatterWithoutSymbol().format(item.product.unitPrice)}</td>
-            <td class="price-value">${Currency.getFormatterWithoutSymbol().format(item.quantity * item.product.unitPrice)}</td>
-            </tr>
-            <tr class="product-item">
-            <td></td>
-            <td>${item.product.description}</td>
-            <td class="price-value"></td>
-            <td></td>
-            <td class="price-value"></td>
-            <td class="price-value"></td>
-            </tr>"""
+            return """<div class="row_ product-item">
+                        <div class="col-1">${offerPosition}</div>
+                        <div class="col-4 ">${item.product.productName}</div>
+                        <div class="col-1 price-value">${item.quantity}</div>
+                        <div class="col-2 text-center">${item.product.unit}</div>
+                        <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(item.product.unitPrice)}</div>
+                        <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(item.quantity * item.product.unitPrice)}</div>
+                    </div>
+                    <div class="row_ product-item">
+                        <div class="col-1"></div>
+                        <div class="col-4 item-description">${item.product.description}</div>
+                        <div class="col-7"></div>
+                    </div>"""
+        }
+
+        static String tableInHTML(String elementId){
+            //1. add pagebreak
+            //2. create empty table for elementId
+            return """<div class="pagebreak"> </div>
+                             <div class="grid-container-table">
+                                 <div id="grid-table-header">
+                                     <div class="row_ table-header" id="grid-table-header">
+                                         <div class="col-1">Pos.</div>
+                                         <div class="col-4">Service Description</div>
+                                         <div class="col-1 price-value">Amount</div>
+                                         <div class="col-2 text-center">Unit</div>
+                                         <div class="col-2 price-value">Price/Unit (€)</div>
+                                         <div class="col-2 price-value">Total (€)</div>
+                                    </div>
+                                 </div>
+                                 <div class="product-items" id="${elementId}">
+                                 </div>
+                                 <div id="grid-table-footer">
+                                     <div class="row_ row-lines-upper total-costs" id = "offer-net">
+                                         <div class="col-6"></div>
+                                         <div class="col-4 cost-summary-field">Estimated total (net):</div>
+                                         <div class="col-2 price-value" id="total-cost-value-net">12,500.00</div>
+                                         </div>
+                                     <div class="row_ row-lines-upper total-costs" id = "offer-vat">
+                                         <div class="col-10 cost-summary-field">VAT (19%):</div>
+                                         <div class="col-2 price-value" id="vat-cost-value">0.00</div>
+                                     </div>
+                                     <div class="row_ row-lines-upper total-costs" id ="offer-total">
+                                         <div class="col-10 cost-summary-field">Estimtated total (VAT included)</div>
+                                         <div class="col-2 price-value" id="final-cost-value">12,500.00</div>
+                                     </div>
+                                 </div>
+                             </div>"""
         }
 
     }

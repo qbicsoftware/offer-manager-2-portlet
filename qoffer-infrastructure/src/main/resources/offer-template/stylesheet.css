@@ -186,8 +186,6 @@ body {
         -ms-flex: 0 0 8.333333%;
         flex: 0 0 8.333333%;
         max-width: 8.333333%;
-        padding-left: 10px;
-        padding-right: 10px;
       }
       
       .col-2 {
@@ -267,7 +265,7 @@ body {
         font-weight: bold;
     }
     
-    #product-items{
+    .product-items{
         padding-left: 20px;
         padding-right: 20px;
     }
