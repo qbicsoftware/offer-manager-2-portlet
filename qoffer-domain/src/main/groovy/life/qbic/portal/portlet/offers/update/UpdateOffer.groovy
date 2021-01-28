@@ -18,8 +18,13 @@ import life.qbic.portal.portlet.offers.identifier.OfferId
  */
 class UpdateOffer implements UpdateOfferInput{
 
-    UpdateOfferDataSource dataSource
-    UpdateOfferOutput output
+    private final UpdateOfferDataSource dataSource
+    private final UpdateOfferOutput output
+
+    UpdateOffer(UpdateOfferDataSource dataSource, UpdateOfferOutput output) {
+        this.dataSource = dataSource
+        this.output = output
+    }
 
     @Override
     void updateExistingOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
@@ -48,9 +53,10 @@ class UpdateOffer implements UpdateOfferInput{
             output.updatedOffer(offer)
         } catch (DatabaseQueryException e) {
             output.failNotification(e.message)
-        } catch (Exception ignored) {
-            println ignored.message
-            println ignored.stackTrace.join("\n")
+        } catch (Exception unexpected) {
+            //TODO use logger facade instead of println
+            println unexpected.message
+            println unexpected.stackTrace.join("\n")
             output.failNotification("An unexpected during the saving of your offer occurred. " +
                     "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
