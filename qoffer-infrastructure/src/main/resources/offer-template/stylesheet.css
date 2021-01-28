@@ -157,7 +157,116 @@ body {
         font-size: 10pt;
     }
     
-    .row_ {
+    #grid-table-header{
+        padding-left: 20px;
+        padding-right: 20px;
+        font-weight: bold;
+    }
+    
+    .product-items{
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    #grid-table-footer{
+        text-align: right;
+        border-top: 1px solid #bbbbbb;
+        padding: 10px 20px 2px 20px;
+    }
+        
+    .text-center{
+        text-align: center;
+    }
+
+    .table-data {
+        text-align: left;
+        vertical-align: top;
+        padding: 10px 2px 0px 2px;
+    }
+
+    .table-header {
+        padding: 10px 2px 10px 2px;
+        border-bottom: 1px solid #bbbbbb;
+        border-top: 1px solid #bbbbbb;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .items-overview {
+        grid-column-start: 1;
+        grid-column-end: 4;
+        font-size: 10pt;
+        padding: 10px 10px 10px 10px;
+        width: 90%;
+    }
+
+    .spacer-paragraph{
+        padding-bottom: 60px;
+    }
+
+    #items-table {
+        width: 100%;
+        font-size: 10pt;
+    }
+
+    /* table value stylings */
+
+    .price-value {
+        text-align: right !important;
+    }
+
+    .item-description {
+        font-style: italic;
+        font-size: 9pt;
+    }
+
+    #total-costs {
+        text-align: left;
+    }
+
+    .cost-summary-field {
+        text-align: right !important;
+        font-weight: bold;
+    }
+
+    .total-costs > td {
+        border-top: 1px solid #bbbbbb;
+    }
+
+    /* Agreement Section */
+
+    .agreement-section {
+        grid-column-start: 1;
+        grid-column-end: 4;
+    }
+
+    .signature {
+        padding-top: 50px;
+        grid-column-start: 1;
+        grid-column-end: 4;
+        font-size: 10pt;
+    }
+
+    .agreement-section {
+        break-before: always;
+        grid-column-start: 1;
+        grid-column-end: 4;
+        font-size: 10pt;
+        clear: both;
+    }
+
+    /*Footer*/
+
+    footer {
+        visibility: visible;
+        page-break-after: always;
+        margin-bottom: 0px;
+        position: fixed;
+        bottom: 0;
+    }
+
+    /*Bootstrap*/
+    .row {
         display: -ms-flexbox;
         display: flex;
         -ms-flex-wrap: wrap;
@@ -253,119 +362,3 @@ body {
         flex: 0 0 100%;
         max-width: 100%;
       }
-
-    .row-lines-upper{
-        border-top: 1px solid #bbbbbb;
-        padding: 10px 2px 2px 2px;
-    }
-              
-    #grid-table-header{
-        padding-left: 20px;
-        padding-right: 20px;
-        font-weight: bold;
-    }
-    
-    .product-items{
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-    
-    #grid-table-footer{
-        padding-left: 20px;
-        padding-right: 20px;
-        text-align: right;
-    }
-        
-    .text-center{
-        text-align: center;
-    }
-
-    .table-data {
-        text-align: left;
-        vertical-align: top;
-        padding: 10px 2px 0px 2px;
-    }
-
-    .table-header {
-        padding: 10px 2px 10px 2px;
-        border-bottom: 1px solid #bbbbbb;
-        border-top: 1px solid #bbbbbb;
-        text-align: left;
-        white-space: nowrap;
-    }
-
-    /* old items table*/
-    .items-overview {
-        grid-column-start: 1;
-        grid-column-end: 4;
-        padding-top: 20px;
-        padding-bottom: 20px;
-        font-size: 10pt;
-        margin: 0 auto auto auto;
-        width: 90%;
-    }
-
-    .spacer-paragraph{
-        padding-bottom: 60px;
-    }
-
-    #items-table {
-        width: 100%;
-        font-size: 10pt;
-    }
-
-    /* table value stylings */
-
-    .price-value {
-        text-align: right !important;
-    }
-
-    .item-description {
-        font-style: italic;
-        font-size: 9pt;
-    }
-
-    #total-costs {
-        text-align: left;
-    }
-
-    .cost-summary-field {
-        text-align: right !important;
-        font-weight: bold;
-    }
-
-    .total-costs > td {
-        border-top: 1px solid #bbbbbb;
-    }
-
-    /* Agreement Section */
-
-    .agreement-section {
-        grid-column-start: 1;
-        grid-column-end: 4;
-    }
-
-    .signature {
-        padding-top: 50px;
-        grid-column-start: 1;
-        grid-column-end: 4;
-        font-size: 10pt;
-    }
-
-    .agreement-section {
-        break-before: always;
-        grid-column-start: 1;
-        grid-column-end: 4;
-        font-size: 10pt;
-        clear: both;
-    }
-
-    /*Footer*/
-
-    footer {
-        visibility: visible;
-        page-break-after: always;
-        margin-bottom: 0px;
-        position: fixed;
-        bottom: 0;
-    }

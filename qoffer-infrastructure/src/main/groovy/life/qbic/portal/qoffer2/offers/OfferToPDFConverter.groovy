@@ -17,8 +17,6 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.text.DateFormat
-import java.text.SimpleDateFormat
-
 
 /**
  * Handles the conversion of offers to pdf files
@@ -159,7 +157,7 @@ class OfferToPDFConverter implements OfferExporter {
             if (itemPos % maxTableItems == 0) //start (next) table
             {
                 elementId = "product-items"+"-"+ ++tableNum
-                htmlContent.getElementById("items-container-table").append(ItemPrintout.tableInHTML(elementId))
+                htmlContent.getElementById("items-container-table").append(ItemPrintout.tableHeader(elementId))
             }
             htmlContent.getElementById(elementId)
                     .append(ItemPrintout.itemInHTML(itemPos++, item))
@@ -168,7 +166,7 @@ class OfferToPDFConverter implements OfferExporter {
 
         //create the footer only for the last page containing a table
         htmlContent.getElementById(elementId)
-                .append(ItemPrintout.tableEnd())
+                .append(ItemPrintout.tableFooter())
     }
 
     void setPrices() {
@@ -236,7 +234,7 @@ class OfferToPDFConverter implements OfferExporter {
     private static class ItemPrintout {
 
         static String itemInHTML(int offerPosition, ProductItem item) {
-            return """<div class="row_ product-item">
+            return """<div class="row product-item">
                         <div class="col-1">${offerPosition}</div>
                         <div class="col-4 ">${item.product.productName}</div>
                         <div class="col-1 price-value">${item.quantity}</div>
@@ -244,20 +242,19 @@ class OfferToPDFConverter implements OfferExporter {
                         <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(item.product.unitPrice)}</div>
                         <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(item.quantity * item.product.unitPrice)}</div>
                     </div>
-                    <div class="row_ product-item">
+                    <div class="row product-item">
                         <div class="col-1"></div>
                         <div class="col-4 item-description">${item.product.description}</div>
                         <div class="col-7"></div>
                     </div>"""
         }
 
-        static String tableInHTML(String elementId){
+        static String tableHeader(String elementId){
             //1. add pagebreak
             //2. create empty table for elementId
-            return """<div class="pagebreak"> </div>
+            return """<div class="pagebreak"></div>
                              <div class="grid-container-table">
-                                 <div id="grid-table-header">
-                                     <div class="row_ table-header" id="grid-table-header">
+                                     <div class="row table-header" id="grid-table-header">
                                          <div class="col-1">Pos.</div>
                                          <div class="col-4">Service Description</div>
                                          <div class="col-1 price-value">Amount</div>
@@ -265,25 +262,23 @@ class OfferToPDFConverter implements OfferExporter {
                                          <div class="col-2 price-value">Price/Unit (€)</div>
                                          <div class="col-2 price-value">Total (€)</div>
                                     </div>
-                                 </div>
-                                 <div class="product-items" id="${elementId}">
-                                 </div>
+                                 <div class="product-items" id="${elementId}"></div>
                              </div>"""
         }
 
-        static String tableEnd(){
+        static String tableFooter(){
             return """<div id="grid-table-footer">
-                                     <div class="row_ row-lines-upper total-costs" id = "offer-net">
+                                     <div class="row total-costs" id = "offer-net">
                                          <div class="col-6"></div>
                                          <div class="col-4 cost-summary-field">Estimated total (net):</div>
                                          <div class="col-2 price-value" id="total-cost-value-net">12,500.00</div>
-                                         </div>
-                                     <div class="row_ row-lines-upper total-costs" id = "offer-vat">
+                                     </div>
+                                     <div class="row total-costs" id = "offer-vat">
                                          <div class="col-10 cost-summary-field">VAT (19%):</div>
                                          <div class="col-2 price-value" id="vat-cost-value">0.00</div>
                                      </div>
-                                     <div class="row_ row-lines-upper total-costs" id ="offer-total">
-                                         <div class="col-10 cost-summary-field">Estimtated total (VAT included)</div>
+                                     <div class="row total-costs" id ="offer-total">
+                                         <div class="col-10 cost-summary-field">Estimated total (VAT included):</div>
                                          <div class="col-2 price-value" id="final-cost-value">12,500.00</div>
                                      </div>
                                  </div>"""
