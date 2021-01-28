@@ -8,10 +8,10 @@
 		<module>offer-manager-domain</module>
 		<module>offer-manager-app</module>
 	</modules>
-	<artifactId>qOffer_2.0</artifactId>
+	<artifactId>offer-manager</artifactId>
 	<version>1.0.0-SNAPSHOT</version> <!-- <<QUBE_FORCE_BUMP>> -->
 	<groupId>life.qbic</groupId>
-	<name>qOffer 2.0</name>
+	<name>The new offer manager</name>
 	<url>http://github.com/qbicsoftware/qOffer_2.0</url>
 	<description>qOffer assists in managing and creating offers</description>
 	<packaging>pom</packaging>
