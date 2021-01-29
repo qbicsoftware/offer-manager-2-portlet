@@ -166,8 +166,10 @@ class OfferToPDFConverter implements OfferExporter {
         }
 
         //create the footer only for the last page containing a table
-        htmlContent.getElementById("items-container-table")
+        htmlContent.getElementById("item-table-grid")
                 .append(ItemPrintout.tableFooter())
+
+        println htmlContent
     }
 
     void setPrices() {
