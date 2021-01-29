@@ -5,7 +5,7 @@ import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
 import life.qbic.portal.offermanager.OfferToPDFConverter
-import life.qbic.portal.offermanager.dataresources.database.OverviewService
+import life.qbic.portal.offermanager.dataresources.offers.OverviewService
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
 /**
@@ -57,9 +57,9 @@ class OfferOverviewModel {
     }
 
     private void subscribeToOverviewService() {
-        service.updatedOverviewEvent.register({
+        service.subscribe({
             offerOverviewList.clear()
-            offerOverviewList.addAll(service.getOfferOverviewList())
+            offerOverviewList.addAll(service.iterator())
         })
     }
 

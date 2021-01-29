@@ -1,0 +1,56 @@
+package life.qbic.portal.offermanager.dataresources.persons
+
+import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.portal.offermanager.communication.EventEmitter
+import life.qbic.portal.offermanager.communication.Subscription
+import life.qbic.portal.offermanager.dataresources.ResourcesService
+
+/**
+ * Project manager service that holds resources about available managers
+ *
+ * This service holds resources about project manager information and can be used to subscribe to
+ * any update event of the underlying resource data.
+ *
+ * @since 1.0.0
+ */
+class ProjectManagerResourceService implements ResourcesService<ProjectManager>{
+
+    private final List<ProjectManager> availableProjectManagers
+
+    private final EventEmitter<ProjectManager> resourceUpdateEvent
+
+    ProjectManagerResourceService(CustomerDbConnector dbConnector) {
+        availableProjectManagers = dbConnector.fetchAllProjectManagers()
+        resourceUpdateEvent = new EventEmitter<>()
+    }
+
+    @Override
+    void reloadResources() {
+
+    }
+
+    @Override
+    void subscribe(Subscription<ProjectManager> subscription) {
+        resourceUpdateEvent.register(subscription)
+    }
+
+    @Override
+    void unsubscribe(Subscription<ProjectManager> subscription) {
+        resourceUpdateEvent.unregister(subscription)
+    }
+
+    @Override
+    void addToResource(ProjectManager resourceItem) {
+        availableProjectManagers.add(resourceItem)
+    }
+
+    @Override
+    void removeFromResource(ProjectManager resourceItem) {
+        availableProjectManagers.remove(resourceItem)
+    }
+
+    @Override
+    Iterator<ProjectManager> iterator() {
+        return availableProjectManagers.iterator()
+    }
+}

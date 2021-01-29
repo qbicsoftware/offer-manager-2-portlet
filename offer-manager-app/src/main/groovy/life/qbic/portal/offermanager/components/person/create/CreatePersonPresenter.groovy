@@ -4,6 +4,7 @@ import com.vaadin.event.ListenerMethod.MethodException
 import groovy.util.logging.Log4j2
 import life.qbic.business.customers.create.CreateCustomerOutput
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.AppViewModel
 
@@ -67,6 +68,12 @@ class CreatePersonPresenter implements CreateCustomerOutput{
                 person.emailAddress)
                 .title(person.title)
                 .affiliations(person.affiliations).build()
+        ProjectManager manager = new ProjectManager.Builder(person.firstName,
+                person.lastName,
+                person.emailAddress)
+                .title(person.title)
+                .affiliations(person.affiliations).build()
         createCustomerViewModel.customerService.addToResource(customer)
+        createCustomerViewModel.managerResourceService.addToResource(manager)
     }
 }

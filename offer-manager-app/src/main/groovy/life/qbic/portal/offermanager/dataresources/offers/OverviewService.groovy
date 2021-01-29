@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.dataresources.database
+package life.qbic.portal.offermanager.dataresources.offers
 
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
@@ -16,7 +16,7 @@ import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
  *
  * @since 1.0.0
  */
-class OverviewService implements ResourcesService {
+class OverviewService implements ResourcesService<OfferOverview> {
 
     private List<OfferOverview> offerOverviewList
 
@@ -24,16 +24,15 @@ class OverviewService implements ResourcesService {
 
     private final OfferResourcesService offerService
 
-    final EventEmitter<String> updatedOverviewEvent
+    private final EventEmitter<OfferOverview> updatedOverviewEvent
 
     OverviewService(OfferDbConnector offerDbConnector,
                     OfferResourcesService offerService) {
         this.offerDbConnector = offerDbConnector
         this.updatedOverviewEvent = new EventEmitter<>()
         this.offerService = offerService
-        this.offerOverviewList = []
+        this.offerOverviewList = offerDbConnector.loadOfferOverview()
         subscribeToNewOffers()
-        reloadResources()
     }
 
     private void subscribeToNewOffers(){
@@ -41,41 +40,54 @@ class OverviewService implements ResourcesService {
         Whenever a new offer is created, we want
         to update the offer overview content.
          */
-        offerService.offerCreatedEvent.register({
-            reloadResources()
-            updatedOverviewEvent.emit("New overview content available!")
+        offerService.subscribe({
+            def newOfferOverview = createOverviewFromOffer(it)
+            offerOverviewList.add(newOfferOverview)
+            updatedOverviewEvent.emit(newOfferOverview)
         })
+    }
+
+    static OfferOverview createOverviewFromOffer(it) {
+        return new OfferOverview(
+                it.identifier,
+                it.modificationDate,
+                it.projectTitle,
+                "",
+                "${it.customer.firstName} ${it.customer.lastName}",
+                it.totalPrice
+        )
     }
 
     @Override
     void reloadResources() {
-        offerOverviewList = offerDbConnector.loadOfferOverview()
-    }
-
-    @Override
-    void subscribe(Subscription subscription) {
 
     }
 
     @Override
-    void unsubscribe(Subscription subscription) {
-
+    void addToResource(OfferOverview resourceItem) {
+        offerOverviewList.add(resourceItem)
     }
 
     @Override
-    void addToResource(Object resourceItem) {
-
+    void removeFromResource(OfferOverview resourceItem) {
+        offerOverviewList.remove(resourceItem)
     }
 
     @Override
-    void removeFromResource(Object resourceItem) {
-
+    Iterator<OfferOverview> iterator() {
+        return offerOverviewList.iterator()
     }
 
     @Override
-    Iterator iterator() {
-        return null
+    void subscribe(Subscription<OfferOverview> subscription) {
+        updatedOverviewEvent.register(subscription)
     }
+
+    @Override
+    void unsubscribe(Subscription<OfferOverview> subscription) {
+        updatedOverviewEvent.unregister(subscription)
+    }
+
 /**
      * Returns a list of available offer overviews.
      * @return A list of available offer overviews.
