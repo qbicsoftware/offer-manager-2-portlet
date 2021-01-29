@@ -150,9 +150,10 @@ class OfferToPDFConverter implements OfferExporter {
         def tableNum = 1
         def elementId = "product-items"+"-"+tableNum
         // Create the items in html in the overview table
-        List<ProductItem> items = offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items
-
-        items.each { item ->
+        //Todo delete, this is left for you (reviewer) to test how the code acts if a lot of items are to be printed
+        //List<ProductItem> items = offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items + offer.items
+        //todo just put the list here instead of offer.items
+        offer.items.each { item ->
 
             if (itemPos % maxTableItems == 0) //start (next) table
             {
@@ -167,8 +168,6 @@ class OfferToPDFConverter implements OfferExporter {
         //create the footer only for the last page containing a table
         htmlContent.getElementById("items-container-table")
                 .append(ItemPrintout.tableFooter())
-
-        println htmlContent
     }
 
     void setPrices() {
