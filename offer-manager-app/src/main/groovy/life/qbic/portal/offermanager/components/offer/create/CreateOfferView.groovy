@@ -120,7 +120,6 @@ class CreateOfferView extends FormLayout{
             viewHistory.showPrevious()
         })
         this.createCustomerView.submitButton.addClickListener({
-            viewModel.refreshPersons()
             viewHistory.showPrevious()
         })
         this.createAffiliationView.abortButton.addClickListener({

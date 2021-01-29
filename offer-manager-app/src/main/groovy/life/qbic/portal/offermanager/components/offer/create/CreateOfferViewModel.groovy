@@ -73,7 +73,7 @@ class CreateOfferViewModel {
     }
 
     private void fetchProductData() {
-        populateProductLists(productsResourcesService.getProducts())
+        populateProductLists(productsResourcesService.iterator().toList())
     }
 
     private void subscribeToResources() {
@@ -130,27 +130,10 @@ class CreateOfferViewModel {
     }
 
     /**
-     * This method refreshes the data underlying the current view model
-     */
-    void refresh() {
-        //TODO where and how to catch DatabaseQueryException ?
-        refreshPersons()
-        refreshProducts()
-    }
-
-    /**
      * This method triggers a refresh for all Person resources
      * @see life.qbic.datamodel.dtos.general.Person
      */
     void refreshPersons() {
         this.customerService.reloadResources()
-    }
-
-    /**
-     * Calling this method triggers a refresh of all available Product resources.
-     * @see Product
-     */
-    void refreshProducts() {
-//        this.productsResourcesService.reloadResources()
     }
 }
