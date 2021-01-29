@@ -158,7 +158,7 @@ class OfferToPDFConverter implements OfferExporter {
             if (itemPos % maxTableItems == 0) //start (next) table
             {
                 elementId = "product-items"+"-"+ ++tableNum
-                htmlContent.getElementById("items-container-table").append(ItemPrintout.tableHeader(elementId))
+                htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
             }
             htmlContent.getElementById(elementId)
                     .append(ItemPrintout.itemInHTML(itemPos++, item))
@@ -169,7 +169,6 @@ class OfferToPDFConverter implements OfferExporter {
         htmlContent.getElementById("item-table-grid")
                 .append(ItemPrintout.tableFooter())
 
-        println htmlContent
     }
 
     void setPrices() {
