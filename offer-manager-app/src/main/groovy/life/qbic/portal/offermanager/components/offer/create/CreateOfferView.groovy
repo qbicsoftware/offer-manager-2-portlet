@@ -69,7 +69,7 @@ class CreateOfferView extends FormLayout{
         // Init the view navigation history to be able to navigate back in history
         this.viewHistory = new ViewHistory(projectInformationView)
 
-        viewModel.refresh()
+//        viewModel.refresh()
     }
 
     /**

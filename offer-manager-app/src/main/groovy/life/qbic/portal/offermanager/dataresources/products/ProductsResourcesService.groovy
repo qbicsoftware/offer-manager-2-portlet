@@ -15,7 +15,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * @since: 1.0.0
  */
-class ProductsResourcesService implements ResourcesService {
+class ProductsResourcesService implements ResourcesService<Product> {
 
     private final ProductsDbConnector dbConnector
     private final List<Product> products
@@ -23,7 +23,7 @@ class ProductsResourcesService implements ResourcesService {
      * EventEmitter for products. Fires every time the resources are reloaded
      * @see #reloadResources
      */
-    final EventEmitter<List<Product>> productEventEmitter
+    private final EventEmitter<Product> productEventEmitter
 
 
     /**
@@ -34,44 +34,60 @@ class ProductsResourcesService implements ResourcesService {
         this.dbConnector = dbConnector
         this.products = new LinkedList<>()
         this.productEventEmitter = new EventEmitter<>()
-        reloadResources()
+        populateResources()
     }
 
     @Override
+    @Deprecated(since = "1.0.0", forRemoval = true)
     void reloadResources() {
         this.products.clear()
         this.products.addAll(dbConnector.findAllAvailableProducts())
-        this.productEventEmitter.emit(List.copyOf(this.products))
+    }
+
+    private void populateResources() {
+        this.products.addAll(dbConnector.findAllAvailableProducts())
     }
 
     @Override
-    void subscribe(Subscription subscription) {
+    void addToResource(Product resourceItem) {
+        this.products.add(resourceItem)
+        productEventEmitter.emit(resourceItem)
+    }
+
+    @Override
+    void removeFromResource(Product resourceItem) {
+        this.products.remove(resourceItem)
+        productEventEmitter.emit(resourceItem)
+    }
+
+    @Override
+    void subscribe(Subscription<Product> subscription) {
+        this.productEventEmitter.register(subscription)
 
     }
 
     @Override
-    void unsubscribe(Subscription subscription) {
-
+    void unsubscribe(Subscription<Product> subscription) {
+        this.productEventEmitter.unregister(subscription)
     }
 
+
+    /**
+     * @inheritdoc
+     *
+     * @return An iterator over the list of available products
+     */
     @Override
-    void addToResource(Object resourceItem) {
-
+    Iterator<Product> iterator() {
+        return List.copyOf(this.products).iterator()
     }
 
-    @Override
-    void removeFromResource(Object resourceItem) {
-
-    }
-
-    @Override
-    Iterator iterator() {
-        return null
-    }
-/**
+    /**
      *
      * @return currently loaded available products
+     * @deprecated please use {@link #iterator()} instead
      */
+    @Deprecated(since = "1.0.0", forRemoval = true)
     List<Product> getProducts() {
         return List.copyOf(this.products)
     }

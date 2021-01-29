@@ -81,13 +81,14 @@ class CreateOfferViewModel {
             this.availableProjectManagers.addAll(managerList)
         })*/
 
-        Subscription<List<Product>> productSubscription = new Subscription<List<Product>>() {
+        Subscription<Product> productSubscription = new Subscription<Product>() {
             @Override
-            void receive(List<Product> products) {
+            void receive(Product product) {
+                List<Product> products = productsResourcesService.iterator().toList()
                 populateProductLists(products)
             }
         }
-        this.productsResourcesService.productEventEmitter.register(productSubscription)
+        this.productsResourcesService.subscribe(productSubscription)
     }
 
     private void populateProductLists(List<Product> products) {
@@ -145,6 +146,6 @@ class CreateOfferViewModel {
      * @see Product
      */
     void refreshProducts() {
-        this.productsResourcesService.reloadResources()
+//        this.productsResourcesService.reloadResources()
     }
 }
