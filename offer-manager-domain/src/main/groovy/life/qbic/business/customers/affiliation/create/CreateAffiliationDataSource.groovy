@@ -14,7 +14,7 @@ interface CreateAffiliationDataSource {
     /**
      * Adds an affiliation to the user database
      *
-     * @param customer a person to be added to known customers
+     * @param customer a person to be added to known persons
      * @throws DatabaseQueryException in case an affiliation could not been added to the customer database
      * @since 1.0.0
      */

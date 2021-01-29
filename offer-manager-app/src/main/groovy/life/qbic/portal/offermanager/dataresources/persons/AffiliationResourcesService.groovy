@@ -1,7 +1,8 @@
-package life.qbic.portal.offermanager.dataresources.customers
+package life.qbic.portal.offermanager.dataresources.persons
 
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.communication.EventEmitter
+import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
@@ -13,13 +14,13 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * @since 1.0.0
  */
-class AffiliationResourcesService implements ResourcesService {
+class AffiliationResourcesService implements ResourcesService<Affiliation> {
 
     private final CustomerDbConnector dbConnector
 
     private final List<Affiliation> availableAffiliations
 
-    final EventEmitter<List<Affiliation>> eventEmitter
+    private final EventEmitter<Affiliation> eventEmitter
 
     AffiliationResourcesService(CustomerDbConnector dbConnector) {
         this.dbConnector = dbConnector
@@ -31,6 +32,30 @@ class AffiliationResourcesService implements ResourcesService {
     void reloadResources() {
         this.availableAffiliations.clear()
         this.availableAffiliations.addAll(dbConnector.listAllAffiliations())
-        this.eventEmitter.emit(availableAffiliations.asList())
+    }
+
+    @Override
+    void subscribe(Subscription<Affiliation> subscription) {
+        eventEmitter.register(subscription)
+    }
+
+    @Override
+    void unsubscribe(Subscription<Affiliation> subscription) {
+        eventEmitter.unregister(subscription)
+    }
+
+    @Override
+    void addToResource(Affiliation resourceItem) {
+        this.availableAffiliations.add(resourceItem)
+    }
+
+    @Override
+    void removeFromResource(Affiliation resourceItem) {
+        this.availableAffiliations.remove(resourceItem)
+    }
+
+    @Override
+    Iterator<Affiliation> iterator() {
+        this.availableAffiliations.iterator()
     }
 }

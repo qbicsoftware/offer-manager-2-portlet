@@ -268,7 +268,7 @@ class SelectItemsView extends VerticalLayout{
 
         //todo add product unit per hour?
         ProjectManagement management = new ProjectManagement("Consultation","Initial consultation for a project",4,ProductUnit.PER_DATASET)
-        ProjectManagement management2 = new ProjectManagement("Project Design","Advising customers on how to design their project",5,ProductUnit.PER_SAMPLE)
+        ProjectManagement management2 = new ProjectManagement("Project Design","Advising persons on how to design their project",5,ProductUnit.PER_SAMPLE)
         projectManagementProduct = [new ProductItemViewModel(0,management), new ProductItemViewModel(0,management2)]
 
         DataStorage dataStorage = new DataStorage("Sequencing Data","Storage for all sequencing related data",3,ProductUnit.PER_GIGABYTE)

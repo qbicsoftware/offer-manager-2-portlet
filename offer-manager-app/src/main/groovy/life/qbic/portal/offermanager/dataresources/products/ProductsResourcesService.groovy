@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager.dataresources.products
 
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.communication.EventEmitter
+import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
@@ -43,7 +44,31 @@ class ProductsResourcesService implements ResourcesService {
         this.productEventEmitter.emit(List.copyOf(this.products))
     }
 
-    /**
+    @Override
+    void subscribe(Subscription subscription) {
+
+    }
+
+    @Override
+    void unsubscribe(Subscription subscription) {
+
+    }
+
+    @Override
+    void addToResource(Object resourceItem) {
+
+    }
+
+    @Override
+    void removeFromResource(Object resourceItem) {
+
+    }
+
+    @Override
+    Iterator iterator() {
+        return null
+    }
+/**
      *
      * @return currently loaded available products
      */

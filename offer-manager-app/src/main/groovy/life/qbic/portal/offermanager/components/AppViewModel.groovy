@@ -2,7 +2,7 @@ package life.qbic.portal.offermanager.components
 
 
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.portal.offermanager.dataresources.customers.AffiliationResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 
 
 /**

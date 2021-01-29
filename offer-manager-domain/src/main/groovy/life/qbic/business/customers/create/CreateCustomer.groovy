@@ -7,7 +7,7 @@ import life.qbic.business.exceptions.DatabaseQueryException
 /**
  * This use case creates a customer in the system
  *
- * Information on customers such as affiliation and names can be added to the user database.
+ * Information on persons such as affiliation and names can be added to the user database.
  *
  * @since: 1.0.0
  * @author: Tobias Koch
@@ -29,6 +29,7 @@ class CreateCustomer implements CreateCustomerInput {
       dataSource.addCustomer(customer)
       try {
         output.customerCreated("Successfully added new customer")
+        output.customerCreated(customer)
       } catch (Exception ignored) {
         //quiet output message failed
       }

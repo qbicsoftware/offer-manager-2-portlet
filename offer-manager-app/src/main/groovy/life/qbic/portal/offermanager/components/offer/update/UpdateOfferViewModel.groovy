@@ -2,7 +2,8 @@ package life.qbic.portal.offermanager.components.offer.update
 
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
-import life.qbic.portal.offermanager.dataresources.customers.PersonResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
+import life.qbic.portal.offermanager.dataresources.persons.PersonResourcesService
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
 import life.qbic.portal.offermanager.dataresources.offers.OfferUpdateService
 import life.qbic.portal.offermanager.components.offer.create.ProductItemViewModel
@@ -25,7 +26,7 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
 
     final private OfferUpdateService offerUpdateService
 
-    UpdateOfferViewModel(PersonResourcesService personService, ProductsResourcesService productsService,
+    UpdateOfferViewModel(CustomerResourceService personService, ProductsResourcesService productsService,
                          OfferUpdateService offerUpdateService) {
         super(personService, productsService)
         this.offerUpdateService = offerUpdateService

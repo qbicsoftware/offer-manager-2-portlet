@@ -1,8 +1,10 @@
-package life.qbic.portal.offermanager.dataresources.customers
+package life.qbic.portal.offermanager.dataresources.persons
 
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
+import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
@@ -14,7 +16,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * @since 1.0.0
  */
-class PersonResourcesService implements ResourcesService {
+class PersonResourcesService implements ResourcesService<Person> {
 
     private final CustomerDbConnector dbConnector
 
@@ -45,6 +47,31 @@ class PersonResourcesService implements ResourcesService {
         this.projectManagers.clear()
         this.projectManagers.addAll(dbConnector.fetchAllProjectManagers())
         this.projectManagerEvent.emit(projectManagers.asList())
+    }
+
+    @Override
+    void subscribe(Subscription<Person> subscription) {
+
+    }
+
+    @Override
+    void unsubscribe(Subscription<Person> subscription) {
+
+    }
+
+    @Override
+    void addToResource(Person resourceItem) {
+
+    }
+
+    @Override
+    void removeFromResource(Person resourceItem) {
+
+    }
+
+    @Override
+    Iterator<Person> iterator() {
+        return null
     }
 
     List<Customer> getCustomers() {

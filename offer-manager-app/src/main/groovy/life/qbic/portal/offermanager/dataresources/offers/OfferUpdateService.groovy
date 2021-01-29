@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.dataresources.offers
 
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.communication.EventEmitter
+import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
@@ -24,5 +25,30 @@ class OfferUpdateService implements ResourcesService {
     @Override
     void reloadResources() {
         // Nothing to reload
+    }
+
+    @Override
+    void subscribe(Subscription subscription) {
+
+    }
+
+    @Override
+    void unsubscribe(Subscription subscription) {
+
+    }
+
+    @Override
+    void addToResource(Object resourceItem) {
+
+    }
+
+    @Override
+    void removeFromResource(Object resourceItem) {
+
+    }
+
+    @Override
+    Iterator iterator() {
+        return null
     }
 }

@@ -5,11 +5,11 @@ import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.business.customers.affiliation.create.CreateAffiliation
 import life.qbic.business.customers.create.CreateCustomer
-import life.qbic.business.customers.search.SearchCustomer
 import life.qbic.business.offers.create.CreateOffer
-import life.qbic.portal.offermanager.dataresources.customers.AffiliationResourcesService
-import life.qbic.portal.offermanager.dataresources.customers.CustomerDbConnector
-import life.qbic.portal.offermanager.dataresources.customers.PersonResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.CustomerDbConnector
+import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
+import life.qbic.portal.offermanager.dataresources.persons.PersonResourcesService
 import life.qbic.portal.offermanager.dataresources.database.DatabaseSession
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
@@ -88,6 +88,7 @@ class DependencyManager {
     private OverviewService overviewService
     private OfferUpdateService offerUpdateService
     private PersonResourcesService customerService
+    private CustomerResourceService customerResourceService
     private AffiliationResourcesService affiliationService
     private OfferResourcesService offerService
     private ProductsResourcesService productsResourcesService
@@ -130,7 +131,8 @@ class DependencyManager {
             DatabaseSession.init(user, password, host, port, sqlDatabase)
             customerDbConnector = new CustomerDbConnector(DatabaseSession.getInstance())
             productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
-            offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(), customerDbConnector, productsDbConnector)
+            offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(),
+                    customerDbConnector, productsDbConnector)
 
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
@@ -145,6 +147,7 @@ class DependencyManager {
         this.customerService = new PersonResourcesService(customerDbConnector)
         this.productsResourcesService = new ProductsResourcesService(productsDbConnector)
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
+        this.customerResourceService = new CustomerResourceService(customerDbConnector)
     }
 
     private void setupViewModels() {
@@ -157,7 +160,7 @@ class DependencyManager {
         }
 
         try {
-            this.createCustomerViewModel = new CreatePersonViewModel(customerService,
+            this.createCustomerViewModel = new CreatePersonViewModel(customerResourceService,
                     affiliationService)
             createCustomerViewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
 
@@ -175,15 +178,15 @@ class DependencyManager {
         }
 
         try {
-            this.createOfferViewModel = new CreateOfferViewModel(customerService, productsResourcesService)
-            //todo add affiliations, customers and project managers to the model
+            this.createOfferViewModel = new CreateOfferViewModel(customerResourceService, productsResourcesService)
+            //todo add affiliations, persons and project managers to the model
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
         try {
-            this.updateOfferViewModel = new UpdateOfferViewModel(customerService, productsResourcesService,
+            this.updateOfferViewModel = new UpdateOfferViewModel(customerResourceService, productsResourcesService,
                     offerUpdateService)
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)

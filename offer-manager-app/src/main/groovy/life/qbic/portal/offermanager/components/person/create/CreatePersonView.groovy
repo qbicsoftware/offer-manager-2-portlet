@@ -71,7 +71,7 @@ class CreatePersonView extends VerticalLayout {
         emailField.setPlaceholder("Customer email address")
         emailField.setRequiredIndicatorVisible(true)
 
-        this.affiliationComboBox = generateAffiliationSelector(sharedViewModel.affiliations)
+        this.affiliationComboBox = generateAffiliationSelector(createCustomerViewModel.availableAffiliations)
         affiliationComboBox.setRequiredIndicatorVisible(true)
 
         this.addressAdditionComboBox = generateAffiliationSelector(sharedViewModel.affiliations.findAll{(it as Affiliation).organisation == createCustomerViewModel.affiliation?.organisation})

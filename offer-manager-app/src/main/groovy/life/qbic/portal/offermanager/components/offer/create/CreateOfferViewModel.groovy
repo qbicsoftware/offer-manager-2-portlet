@@ -6,7 +6,7 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.*
-import life.qbic.portal.offermanager.dataresources.customers.PersonResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
 import life.qbic.portal.offermanager.communication.Subscription
 
@@ -49,11 +49,11 @@ class CreateOfferViewModel {
     @Bindable
     double totalPrice = 0
 
-    private final PersonResourcesService personService
+    private final CustomerResourceService customerService
     private final ProductsResourcesService productsResourcesService
 
-    CreateOfferViewModel(PersonResourcesService personService, ProductsResourcesService productsResourcesService) {
-        this.personService = personService
+    CreateOfferViewModel(CustomerResourceService customerService, ProductsResourcesService productsResourcesService) {
+        this.customerService = customerService
         this.productsResourcesService = productsResourcesService
         fetchPersonData()
         fetchProductData()
@@ -62,9 +62,9 @@ class CreateOfferViewModel {
 
     private void fetchPersonData() {
         this.availableProjectManagers.clear()
-        this.availableProjectManagers.addAll(personService.getProjectManagers())
+        //this.availableProjectManagers.addAll(personService.getProjectManagers())
         this.foundCustomers.clear()
-        this.foundCustomers.addAll(personService.getCustomers())
+        this.foundCustomers.addAll(customerService.iterator())
     }
 
     private void fetchProductData() {
@@ -72,14 +72,14 @@ class CreateOfferViewModel {
     }
 
     private void subscribeToResources() {
-        this.personService.customerEvent.register((List<Customer> customerList) -> {
+        this.customerService.subscribe((Customer customer) -> {
             this.foundCustomers.clear()
-            this.foundCustomers.addAll(customerList)
+            this.foundCustomers.addAll(customerService.iterator())
         })
-        this.personService.projectManagerEvent.register((List<ProjectManager> managerList) -> {
+        /*this.personService.projectManagerEvent.register((List<ProjectManager> managerList) -> {
             this.availableProjectManagers.clear()
             this.availableProjectManagers.addAll(managerList)
-        })
+        })*/
 
         Subscription<List<Product>> productSubscription = new Subscription<List<Product>>() {
             @Override
@@ -137,7 +137,7 @@ class CreateOfferViewModel {
      * @see life.qbic.datamodel.dtos.general.Person
      */
     void refreshPersons() {
-        this.personService.reloadResources()
+        this.customerService.reloadResources()
     }
 
     /**

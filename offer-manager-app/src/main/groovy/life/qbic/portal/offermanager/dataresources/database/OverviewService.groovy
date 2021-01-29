@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.database
 
 import life.qbic.portal.offermanager.communication.EventEmitter
+import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
 import life.qbic.portal.offermanager.dataresources.ResourcesService
@@ -51,7 +52,31 @@ class OverviewService implements ResourcesService {
         offerOverviewList = offerDbConnector.loadOfferOverview()
     }
 
-    /**
+    @Override
+    void subscribe(Subscription subscription) {
+
+    }
+
+    @Override
+    void unsubscribe(Subscription subscription) {
+
+    }
+
+    @Override
+    void addToResource(Object resourceItem) {
+
+    }
+
+    @Override
+    void removeFromResource(Object resourceItem) {
+
+    }
+
+    @Override
+    Iterator iterator() {
+        return null
+    }
+/**
      * Returns a list of available offer overviews.
      * @return A list of available offer overviews.
      */
