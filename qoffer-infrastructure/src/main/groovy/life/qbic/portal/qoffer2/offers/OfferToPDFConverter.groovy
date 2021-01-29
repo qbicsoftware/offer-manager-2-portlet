@@ -165,8 +165,10 @@ class OfferToPDFConverter implements OfferExporter {
         }
 
         //create the footer only for the last page containing a table
-        htmlContent.getElementById(elementId)
+        htmlContent.getElementById("items-container-table")
                 .append(ItemPrintout.tableFooter())
+
+        println htmlContent
     }
 
     void setPrices() {
@@ -253,7 +255,6 @@ class OfferToPDFConverter implements OfferExporter {
             //1. add pagebreak
             //2. create empty table for elementId
             return """<div class="pagebreak"></div>
-                             <div class="grid-container-table">
                                      <div class="row table-header" id="grid-table-header">
                                          <div class="col-1">Pos.</div>
                                          <div class="col-4">Service Description</div>
@@ -263,7 +264,7 @@ class OfferToPDFConverter implements OfferExporter {
                                          <div class="col-2 price-value">Total (€)</div>
                                     </div>
                                  <div class="product-items" id="${elementId}"></div>
-                             </div>"""
+                             """
         }
 
         static String tableFooter(){
