@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
 import groovy.util.logging.Log4j2
+import life.qbic.business.offers.update.UpdateOfferDataSource
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
@@ -10,7 +11,6 @@ import life.qbic.portal.offermanager.dataresources.customers.CustomerDbConnector
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
-import life.qbic.portal.portlet.offers.update.UpdateOfferDataSource
 
 import java.sql.*
 
