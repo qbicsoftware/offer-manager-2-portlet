@@ -7,6 +7,7 @@ import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
+import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
 import life.qbic.portal.offermanager.communication.Subscription
 
@@ -51,10 +52,14 @@ class CreateOfferViewModel {
 
     private final CustomerResourceService customerService
     private final ProductsResourcesService productsResourcesService
+    private final ProjectManagerResourceService managerResourceService
 
-    CreateOfferViewModel(CustomerResourceService customerService, ProductsResourcesService productsResourcesService) {
+    CreateOfferViewModel(CustomerResourceService customerService,
+                         ProjectManagerResourceService managerResourceService,
+                         ProductsResourcesService productsResourcesService) {
         this.customerService = customerService
         this.productsResourcesService = productsResourcesService
+        this.managerResourceService = managerResourceService
         fetchPersonData()
         fetchProductData()
         subscribeToResources()
@@ -62,7 +67,7 @@ class CreateOfferViewModel {
 
     private void fetchPersonData() {
         this.availableProjectManagers.clear()
-        //this.availableProjectManagers.addAll(personService.getProjectManagers())
+        this.availableProjectManagers.addAll(managerResourceService.iterator())
         this.foundCustomers.clear()
         this.foundCustomers.addAll(customerService.iterator())
     }
@@ -76,10 +81,10 @@ class CreateOfferViewModel {
             this.foundCustomers.clear()
             this.foundCustomers.addAll(customerService.iterator())
         })
-        /*this.personService.projectManagerEvent.register((List<ProjectManager> managerList) -> {
+        this.managerResourceService.subscribe((List<ProjectManager> managerList) -> {
             this.availableProjectManagers.clear()
-            this.availableProjectManagers.addAll(managerList)
-        })*/
+            this.availableProjectManagers.addAll(managerResourceService.iterator())
+        })
 
         Subscription<Product> productSubscription = new Subscription<Product>() {
             @Override

@@ -14,12 +14,16 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * @since 1.0.0
  */
-class OfferResourcesService implements ResourcesService {
+class OfferResourcesService implements ResourcesService<Offer> {
 
-    final EventEmitter<Offer> offerCreatedEvent
+    private final EventEmitter<Offer> offerResourceEvent
+
+    private final List<Offer> availableOffers
 
     OfferResourcesService() {
-        offerCreatedEvent = new EventEmitter<>()
+        offerResourceEvent = new EventEmitter<>()
+        // For now it is fine to not preload the content from the database (time intensive)
+        availableOffers = []
     }
 
     @Override
@@ -28,27 +32,29 @@ class OfferResourcesService implements ResourcesService {
     }
 
     @Override
-    void subscribe(Subscription subscription) {
-
+    void subscribe(Subscription<Offer> subscription) {
+        offerResourceEvent.register(subscription)
     }
 
     @Override
-    void unsubscribe(Subscription subscription) {
-
+    void unsubscribe(Subscription<Offer> subscription) {
+        offerResourceEvent.unregister(subscription)
     }
 
     @Override
-    void addToResource(Object resourceItem) {
-
+    void addToResource(Offer resourceItem) {
+        availableOffers.add(resourceItem)
+        offerResourceEvent.emit(resourceItem)
     }
 
     @Override
-    void removeFromResource(Object resourceItem) {
-
+    void removeFromResource(Offer resourceItem) {
+        availableOffers.remove(resourceItem)
+        offerResourceEvent.emit(resourceItem)
     }
 
     @Override
-    Iterator iterator() {
-        return null
+    Iterator<Offer> iterator() {
+        return availableOffers.iterator()
     }
 }

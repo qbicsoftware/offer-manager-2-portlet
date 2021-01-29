@@ -4,7 +4,8 @@ import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
-import life.qbic.portal.offermanager.dataresources.persons.PersonResourcesService
+
+import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 
 /**
  * A ViewModel holding data that is presented in a
@@ -36,14 +37,16 @@ class CreatePersonViewModel {
     List<Affiliation> availableAffiliations
 
     final CustomerResourceService customerService
+    final ProjectManagerResourceService managerResourceService
     final AffiliationResourcesService affiliationService
 
     CreatePersonViewModel(CustomerResourceService customerService,
+                          ProjectManagerResourceService managerResourceService,
                           AffiliationResourcesService affiliationService) {
         this.affiliationService = affiliationService
         this.customerService = customerService
+        this.managerResourceService = managerResourceService
         availableAffiliations = new ArrayList<>(affiliationService.iterator().collect())
-
     }
 
     private void setupServices() {
