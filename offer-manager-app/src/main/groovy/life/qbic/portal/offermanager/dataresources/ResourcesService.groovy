@@ -44,4 +44,11 @@ interface ResourcesService<T> {
      * @param resourceItem
      */
     void removeFromResource(T resourceItem)
+
+    /**
+     * Returns an iterator that provides access to all resource items of the service.
+     *
+     * @return An iterator of type resource type T
+     */
+    Iterator<T> iterator()
 }
