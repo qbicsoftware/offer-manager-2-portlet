@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
@@ -47,14 +48,14 @@ class OverviewService implements ResourcesService<OfferOverview> {
         })
     }
 
-    static OfferOverview createOverviewFromOffer(Offer it) {
+    static OfferOverview createOverviewFromOffer(Offer offer) {
         return new OfferOverview(
-                it.identifier,
-                it.modificationDate,
-                it.projectTitle,
+                offer.identifier,
+                offer.modificationDate,
+                offer.projectTitle,
                 "",
-                "${it.customer.firstName} ${it.customer.lastName}",
-                it.totalPrice
+                "${offer.customer.firstName} ${offer.customer.lastName}",
+                offer.totalPrice
         )
     }
 
