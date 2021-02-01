@@ -172,6 +172,13 @@ class ProductsDbConnector {
     }
     return foundId[0]
   }
+
+  /**
+   * Generates ProductId from String stored in the database
+   *
+   * @param productId String of product stored in database stored as type_version
+   * @return ProductId Dto
+   */
   static ProductId parseProductId(String productId) {
     def splitId = productId.split("_")
     // The first entry [0] contains the id prefix, no need to parse it.
@@ -179,8 +186,6 @@ class ProductsDbConnector {
     def version = splitId[1]
     return new ProductId(type, version)
   }
-
-
 
   /**
    * Returns the product type of a product based on its implemented class
