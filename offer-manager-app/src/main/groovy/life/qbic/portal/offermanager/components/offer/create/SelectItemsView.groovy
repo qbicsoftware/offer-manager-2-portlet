@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
@@ -206,6 +207,9 @@ class SelectItemsView extends VerticalLayout{
         generateProductGrid(projectManagementGrid)
         generateProductGrid(overviewGrid)
 
+        //make the overview over selected items grow dynamically
+        overviewGrid.setHeightMode(HeightMode.UNDEFINED)
+
 
         TabSheet packageAccordion = new TabSheet()
         packageAccordion.addTab(seqLayout,"Sequencing Products")
@@ -300,8 +304,8 @@ class SelectItemsView extends VerticalLayout{
                     .setCaption("Product Unit").setId("ProductUnit")
 
             //specify size of grid and layout
-            grid.setSizeFull()
-
+            grid.setWidthFull()
+            grid.setHeightMode(HeightMode.ROW)
         } catch (Exception e) {
             new Exception("Unexpected exception in building the product item grid", e)
         }
