@@ -128,6 +128,7 @@ class CreatePersonView extends VerticalLayout {
         affiliationDetails.setSizeFull()
 
         this.setSpacing(true)
+        this.setMargin(false)
     }
 
     /**

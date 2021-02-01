@@ -110,6 +110,7 @@ class CreateAffiliationView extends VerticalLayout {
 
         this.addComponents(row1, row2, row3, row4, row5)
         this.setSpacing(true)
+        this.setMargin(false)
     }
 
     private void bindViewModel() {
