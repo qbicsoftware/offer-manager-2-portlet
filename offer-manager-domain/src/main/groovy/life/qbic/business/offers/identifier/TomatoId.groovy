@@ -36,6 +36,10 @@ class TomatoId {
         return new Version(version)
     }
 
+    /**
+     * TODO documentation
+     * @since 1.0.0
+     */
     void increaseVersion() {
         this.version.increaseVersion()
     }

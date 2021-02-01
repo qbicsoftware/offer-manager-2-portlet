@@ -17,6 +17,7 @@ interface CreateOfferOutput extends UseCaseFailure {
    * the original offer information including the assigned identifier.
    *
    * @param createdOffer {@link life.qbic.datamodel.dtos.business.Offer}
+   * @since 1.0.0
    */
   void createdNewOffer(Offer createdOffer)
 
@@ -24,6 +25,7 @@ interface CreateOfferOutput extends UseCaseFailure {
    * Transfers the calculated price to an implementing class
    * @param price
    * @deprecated Please use {@link #calculatedPrice(double, double, double, double)}
+   * @since 1.0.0
    */
   @Deprecated
   void calculatedPrice(double price)
@@ -35,6 +37,7 @@ interface CreateOfferOutput extends UseCaseFailure {
    * @param taxes The amount of taxes for the requested services
    * @param overheads The amount of overheads for the requested services
    * @param totalPrice The total price for the requested services, includes taxes and overheads
+   * @since 1.0.0
    */
   void calculatedPrice(double netPrice, double taxes, double overheads, double totalPrice)
 }

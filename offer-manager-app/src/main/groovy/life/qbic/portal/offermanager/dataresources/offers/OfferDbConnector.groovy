@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
 import groovy.util.logging.Log4j2
+import life.qbic.business.offers.update.UpdateOfferDataSource
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
@@ -8,25 +9,23 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.portal.offermanager.dataresources.customers.CustomerDbConnector
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
+import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 
-import java.sql.Connection
-import java.sql.Date
-import java.sql.PreparedStatement
-import java.sql.ResultSet
-import java.sql.Statement
+import java.sql.*
 
 /**
  * Handles the connection to the offer database
  *
- * Implements {@link CreateOfferDataSource} and is responsible for transferring data between the offer database and qOffer
+ * Implements {@link CreateOfferDataSource} and {@link UpdateOfferDataSource}.
+ * This connector is responsible for transferring data between the offer database and qOffer
  *
  * @since: 1.0.0
  * @author: Jennifer Bödker
  *
  */
 @Log4j2
-class OfferDbConnector implements CreateOfferDataSource{
+class OfferDbConnector implements CreateOfferDataSource, UpdateOfferDataSource{
 
     ConnectionProvider connectionProvider
 
