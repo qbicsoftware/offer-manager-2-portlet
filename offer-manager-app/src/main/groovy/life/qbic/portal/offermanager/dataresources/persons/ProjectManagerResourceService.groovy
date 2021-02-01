@@ -42,11 +42,14 @@ class ProjectManagerResourceService implements ResourcesService<ProjectManager>{
     @Override
     void addToResource(ProjectManager resourceItem) {
         availableProjectManagers.add(resourceItem)
+        resourceUpdateEvent.emit(resourceItem)
     }
 
     @Override
     void removeFromResource(ProjectManager resourceItem) {
         availableProjectManagers.remove(resourceItem)
+        resourceUpdateEvent.emit(resourceItem)
+
     }
 
     @Override
