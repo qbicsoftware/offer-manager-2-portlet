@@ -70,6 +70,7 @@ class OfferOverviewView extends FormLayout {
 
         label.addStyleName(ValoTheme.LABEL_HUGE)
         headerRow.addComponent(label)
+        headerRow.setMargin(false)
         this.addComponent(headerRow)
 
         /*
@@ -92,6 +93,9 @@ class OfferOverviewView extends FormLayout {
         activityContainer.setMargin(false)
         headerRow.addComponents(activityContainer,overviewGrid)
         headerRow.setSizeFull()
+
+        this.setMargin(false)
+        this.setSpacing(false)
 
         this.setWidthFull()
     }
