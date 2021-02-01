@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
@@ -14,7 +15,6 @@ import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
 import life.qbic.portal.offermanager.components.GridUtils
 
 /**
@@ -167,7 +167,9 @@ class CustomerSelectionView extends VerticalLayout{
 
             //specify size of grid and layout
             customerLayout.setSizeFull()
-            customerGrid.setSizeFull()
+            customerGrid.setWidthFull()
+            customerGrid.setHeightMode(HeightMode.ROW)
+            customerGrid.setHeightByRows(5)
 
         } catch (Exception e) {
             new Exception("Unexpected exception in building the customer grid", e)
@@ -199,7 +201,9 @@ class CustomerSelectionView extends VerticalLayout{
 
             //specify size of grid and layout
             affiliationLayout.setSizeFull()
-            affiliationGrid.setSizeFull()
+            affiliationGrid.setWidthFull()
+
+            affiliationGrid.setHeightMode(HeightMode.UNDEFINED)
 
         } catch (Exception e) {
             new Exception("Unexpected exception in building the affiliation grid", e)
