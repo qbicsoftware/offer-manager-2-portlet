@@ -66,6 +66,7 @@ class CustomerSelectionView extends VerticalLayout{
         Label affiliationLabel = new Label("Select the Customers Affiliation")
         affiliationLabelLayout.addComponent(affiliationLabel)
         affiliationLabelLayout.setComponentAlignment(affiliationLabel, Alignment.MIDDLE_LEFT)
+        affiliationLabelLayout.setMargin(false)
 
         /*
         We start with the header, that contains a descriptive
@@ -137,6 +138,8 @@ class CustomerSelectionView extends VerticalLayout{
                 buttonLayout)
 
         affiliationSelectionContainer.setVisible(false)
+
+        this.setMargin(false)
     }
 
     /**

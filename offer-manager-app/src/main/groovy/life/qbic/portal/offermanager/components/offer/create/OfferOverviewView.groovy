@@ -101,6 +101,7 @@ class OfferOverviewView extends VerticalLayout{
         this.itemGrid = new Grid<>("Selected items:")
 
         this.addComponents(offerOverview,buttonLayout)
+        this.setMargin(false)
     }
 
     /**

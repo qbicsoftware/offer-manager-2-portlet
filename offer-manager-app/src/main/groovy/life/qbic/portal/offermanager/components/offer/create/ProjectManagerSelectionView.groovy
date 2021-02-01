@@ -90,6 +90,8 @@ class ProjectManagerSelectionView extends VerticalLayout{
                 projectManagerLayout,
                 buttonLayout
         )
+
+        this.setMargin(false)
     }
 
     /**
