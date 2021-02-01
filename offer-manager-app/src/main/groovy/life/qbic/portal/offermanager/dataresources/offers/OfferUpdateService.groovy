@@ -14,9 +14,9 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * @since 1.0.0
  */
-class OfferUpdateService implements ResourcesService {
+class OfferUpdateService implements ResourcesService<Offer> {
 
-    EventEmitter<Offer> offerForUpdateEvent
+    private final EventEmitter<Offer> offerForUpdateEvent
 
     OfferUpdateService() {
         this.offerForUpdateEvent = new EventEmitter<>()
@@ -28,27 +28,37 @@ class OfferUpdateService implements ResourcesService {
     }
 
     @Override
-    void subscribe(Subscription subscription) {
-
+    void subscribe(Subscription<Offer> subscription) {
+        offerForUpdateEvent.register(subscription)
     }
 
     @Override
-    void unsubscribe(Subscription subscription) {
-
+    void unsubscribe(Subscription<Offer> subscription) {
+        offerForUpdateEvent.unregister(subscription)
     }
 
     @Override
-    void addToResource(Object resourceItem) {
-
+    void addToResource(Offer resourceItem) {
+        /*
+        Since this service only is a proxy
+        of an offer update event, this service holds
+        no track of the resources.
+         */
+        offerForUpdateEvent.emit(resourceItem)
     }
 
     @Override
-    void removeFromResource(Object resourceItem) {
-
+    void removeFromResource(Offer resourceItem) {
+        /*
+        Since this service only is a proxy
+        of an offer update event, this service holds
+        no track of the resources.
+        */
+        offerForUpdateEvent.emit(resourceItem)
     }
 
     @Override
-    Iterator iterator() {
-        return null
+    Iterator<Offer> iterator() {
+        return [].iterator()
     }
 }
