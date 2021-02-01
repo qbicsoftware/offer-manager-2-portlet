@@ -169,6 +169,7 @@ class CustomerSelectionView extends VerticalLayout{
             customerLayout.setSizeFull()
             customerGrid.setWidthFull()
             customerGrid.setHeightMode(HeightMode.ROW)
+            customerGrid.setHeightByRows(5)
 
         } catch (Exception e) {
             new Exception("Unexpected exception in building the customer grid", e)

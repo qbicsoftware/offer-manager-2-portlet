@@ -120,6 +120,7 @@ class ProjectManagerSelectionView extends VerticalLayout{
             projectManagerLayout.setSizeFull()
             projectManagerGrid.setSizeFull()
             projectManagerGrid.setHeightMode(HeightMode.ROW)
+            projectManagerGrid.setHeightByRows(7)
 
         } catch (Exception e) {
             new Exception("Unexpected exception in building the project manager grid", e)
