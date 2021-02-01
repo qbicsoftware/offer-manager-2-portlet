@@ -47,7 +47,7 @@ class OverviewService implements ResourcesService<OfferOverview> {
         })
     }
 
-    static OfferOverview createOverviewFromOffer(it) {
+    static OfferOverview createOverviewFromOffer(Offer it) {
         return new OfferOverview(
                 it.identifier,
                 it.modificationDate,
