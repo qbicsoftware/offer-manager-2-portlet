@@ -54,7 +54,7 @@ class ProductsDbConnectorSpec extends Specification {
     GroovyMock(SqlExtensions, global: true)
     SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(
         ["id":id, "category":category, "description":description, "productName": productName,
-         "unitPrice": unitPrice, "unit": unit])
+         "unitPrice": unitPrice, "unit": unit, "productId": productId])
     ResultSet resultSet = Stub(ResultSet, {
       it.next() >>> [true, false]
     })
@@ -76,8 +76,8 @@ class ProductsDbConnectorSpec extends Specification {
     result.get(0).description == "Sample QC with report"
 
     where: "available products information is as follows"
-    id | category | description | productName | unitPrice | unit
-    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample"
+    id | category | description | productName | unitPrice | unit | productId
+    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample" | "PB_1"
 
   }
 
