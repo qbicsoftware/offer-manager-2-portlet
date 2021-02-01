@@ -75,7 +75,7 @@ class OverviewService implements ResourcesService<OfferOverview> {
 
     @Override
     Iterator<OfferOverview> iterator() {
-        return offerOverviewList.iterator()
+        return new ArrayList(offerOverviewList).iterator()
     }
 
     @Override
@@ -88,7 +88,7 @@ class OverviewService implements ResourcesService<OfferOverview> {
         updatedOverviewEvent.unregister(subscription)
     }
 
-/**
+    /**
      * Returns a list of available offer overviews.
      * @return A list of available offer overviews.
      */

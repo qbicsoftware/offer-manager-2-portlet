@@ -54,6 +54,6 @@ class ProjectManagerResourceService implements ResourcesService<ProjectManager>{
 
     @Override
     Iterator<ProjectManager> iterator() {
-        return availableProjectManagers.iterator()
+        return new ArrayList(availableProjectManagers).iterator()
     }
 }

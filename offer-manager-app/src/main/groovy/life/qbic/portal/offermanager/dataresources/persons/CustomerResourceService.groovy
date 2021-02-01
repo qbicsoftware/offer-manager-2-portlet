@@ -56,6 +56,6 @@ class CustomerResourceService implements ResourcesService<Customer>{
 
     @Override
     Iterator<Customer> iterator() {
-        return customerList.iterator()
+        return new ArrayList(customerList).iterator()
     }
 }

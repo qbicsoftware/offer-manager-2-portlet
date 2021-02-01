@@ -55,6 +55,6 @@ class OfferResourcesService implements ResourcesService<Offer> {
 
     @Override
     Iterator<Offer> iterator() {
-        return availableOffers.iterator()
+        return new ArrayList(availableOffers).iterator()
     }
 }

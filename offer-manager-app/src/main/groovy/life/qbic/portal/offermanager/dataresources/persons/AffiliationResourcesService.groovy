@@ -56,6 +56,6 @@ class AffiliationResourcesService implements ResourcesService<Affiliation> {
 
     @Override
     Iterator<Affiliation> iterator() {
-        this.availableAffiliations.iterator()
+        return new ArrayList(availableAffiliations).iterator()
     }
 }
