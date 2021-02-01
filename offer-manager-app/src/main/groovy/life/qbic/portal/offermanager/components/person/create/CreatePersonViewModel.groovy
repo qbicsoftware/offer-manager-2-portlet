@@ -48,10 +48,4 @@ class CreatePersonViewModel {
         this.managerResourceService = managerResourceService
         availableAffiliations = new ArrayList<>(affiliationService.iterator().collect())
     }
-
-    private void setupServices() {
-        affiliationService.eventEmitter.register({
-
-        })
-    }
 }
