@@ -158,9 +158,9 @@ texinfo_documents = [
      'Miscellaneous'),
 ]
 
-html_css_files = [
-    'custom_cookietemple.css'
-]
+#html_css_files = [
+#    'custom_cookietemple.css'
+#]
 
 
 
