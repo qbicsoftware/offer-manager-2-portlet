@@ -207,6 +207,9 @@ class SelectItemsView extends VerticalLayout{
         generateProductGrid(projectManagementGrid)
         generateProductGrid(overviewGrid)
 
+        //make the overview over selected items grow dynamically
+        overviewGrid.setHeightMode(HeightMode.UNDEFINED)
+
 
         TabSheet packageAccordion = new TabSheet()
         packageAccordion.addTab(seqLayout,"Sequencing Products")

@@ -122,8 +122,8 @@ class OfferOverviewView extends VerticalLayout{
 
 
             //specify size of grid and layout
-            grid.setSizeFull()
-            grid.setHeightMode(HeightMode.ROW)
+            grid.setWidthFull()
+            grid.setHeightMode(HeightMode.UNDEFINED)
 
         } catch (Exception e) {
             new Exception("Unexpected exception in building the product item grid", e)
