@@ -83,31 +83,37 @@ class ProductsDbConnector {
         product = new DataStorage(row.productName as String,
             row.description as String,
             row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String))
+            new ProductUnitFactory().getForString(row.unit as String),
+                parseProductId(row.ProductId as String))
+
         break
       case "Primary Bioinformatics":
         product = new PrimaryAnalysis(row.productName as String,
             row.description as String,
             row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String))
+            new ProductUnitFactory().getForString(row.unit as String),
+                parseProductId(row.ProductId as String))
         break
       case "Project Management":
         product = new ProjectManagement(row.productName as String,
             row.description as String,
             row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String))
+            new ProductUnitFactory().getForString(row.unit as String),
+                parseProductId(row.ProductId as String))
         break
       case "Secondary Bioinformatics":
         product = new SecondaryAnalysis(row.productName as String,
             row.description as String,
             row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String))
+            new ProductUnitFactory().getForString(row.unit as String),
+                parseProductId(row.ProductId as String))
         break
       case "Sequencing":
         product = new Sequencing(row.productName as String,
             row.description as String,
             row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String))
+            new ProductUnitFactory().getForString(row.unit as String),
+                parseProductId(row.ProductId as String))
         break
     }
     if(product == null) {
@@ -165,6 +171,13 @@ class ProductsDbConnector {
       }
     }
     return foundId[0]
+  }
+  static ProductId parseProductId(String productId) {
+    def splitId = productId.split("_")
+    // The first entry [0] contains the id prefix, no need to parse it.
+    def type = splitId[0]
+    def version = splitId[1]
+    return new ProductId(type, version)
   }
 
 
