@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
@@ -118,6 +119,8 @@ class ProjectManagerSelectionView extends VerticalLayout{
             //specify size of grid and layout
             projectManagerLayout.setSizeFull()
             projectManagerGrid.setSizeFull()
+            projectManagerGrid.setHeightMode(HeightMode.ROW)
+
         } catch (Exception e) {
             new Exception("Unexpected exception in building the project manager grid", e)
         }
