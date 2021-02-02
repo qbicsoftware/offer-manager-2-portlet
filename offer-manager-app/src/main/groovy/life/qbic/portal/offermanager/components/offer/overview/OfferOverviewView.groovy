@@ -147,6 +147,9 @@ class OfferOverviewView extends FormLayout {
         updateOfferBtn.addClickListener({
             offerUpdateService.addToResource(model.getSelectedOffer())
         })
+        model.addPropertyChangeListener("offerOverviewList", {
+            overviewGrid.getDataProvider().refreshAll()
+        })
     }
 
     private void createResourceForDownload() {

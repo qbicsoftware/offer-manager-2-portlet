@@ -25,7 +25,7 @@ class OfferOverviewModel {
     /**
      * A list with all available offer overviews
      */
-    List<OfferOverview> offerOverviewList
+    ObservableList offerOverviewList
     /**
      * The currently selected offer overview
      */
@@ -48,7 +48,7 @@ class OfferOverviewModel {
                        AppViewModel viewModel) {
         this.service = service
         this.connector = connector
-        this.offerOverviewList = service.getOfferOverviewList()
+        this.offerOverviewList = new ObservableList(new ArrayList(service.iterator().toList()))
         this.selectedOffer = Optional.empty()
         this.viewModel = viewModel
         this.downloadButtonActive = false
@@ -59,7 +59,8 @@ class OfferOverviewModel {
     private void subscribeToOverviewService() {
         service.subscribe({
             offerOverviewList.clear()
-            offerOverviewList.addAll(service.iterator())
+            Iterator<OfferOverview> iterator = service.iterator()
+            offerOverviewList.addAll(iterator)
         })
     }
 

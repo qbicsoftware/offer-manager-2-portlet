@@ -67,11 +67,13 @@ class OverviewService implements ResourcesService<OfferOverview> {
     @Override
     void addToResource(OfferOverview resourceItem) {
         offerOverviewList.add(resourceItem)
+        updatedOverviewEvent.emit(resourceItem)
     }
 
     @Override
     void removeFromResource(OfferOverview resourceItem) {
         offerOverviewList.remove(resourceItem)
+        updatedOverviewEvent.emit(resourceItem)
     }
 
     @Override
