@@ -169,6 +169,12 @@ class ProductsDbConnector {
     return foundId[0]
   }
 
+  /**
+   * Returns the product identifying running number given a productId
+   *
+   * @param productId String of productId stored in the DB e.g. "DS_1"
+   * @return identifier String of the iterative identifying part of the productId
+   */
   static String parseProductId(String productId) {
     def splitId = productId.split("_")
     // The first entry [0] contains the product type which is assigned automatically, no need to parse it.
