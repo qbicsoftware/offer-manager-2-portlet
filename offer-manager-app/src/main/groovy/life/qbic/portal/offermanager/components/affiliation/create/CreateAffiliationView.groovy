@@ -281,7 +281,7 @@ class CreateAffiliationView extends VerticalLayout {
             }
         })
         this.organisationBox.addValueChangeListener({event ->
-            ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.organisationField))
+            ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.organisationBox))
             if (result.isError()) {
                 createAffiliationViewModel.organisationValid = false
                 UserError error = new UserError(result.getErrorMessage())
