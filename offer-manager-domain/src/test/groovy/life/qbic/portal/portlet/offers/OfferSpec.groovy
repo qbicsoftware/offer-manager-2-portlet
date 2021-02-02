@@ -79,7 +79,7 @@ class OfferSpec extends Specification {
                 new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
                 " example", 1.0, ProductUnit.PER_SAMPLE, "1")),
                 new ProductItem(1, new ProjectManagement("Basic Management",
-               "Just an example", 10.0, ProductUnit.PER_DATASET, "!"))
+               "Just an example", 10.0, ProductUnit.PER_DATASET, "1"))
         ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
