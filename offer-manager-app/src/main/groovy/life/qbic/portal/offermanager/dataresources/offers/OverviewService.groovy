@@ -3,10 +3,7 @@ package life.qbic.portal.offermanager.dataresources.offers
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
-import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
-import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
 import life.qbic.portal.offermanager.dataresources.ResourcesService
-import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
 /**
  * Service that contains basic overview data about available offers.
