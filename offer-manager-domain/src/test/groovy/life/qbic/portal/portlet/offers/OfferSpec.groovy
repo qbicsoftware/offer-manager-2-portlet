@@ -52,9 +52,9 @@ class OfferSpec extends Specification {
         given: "A list of product items"
         List<ProductItem> items = [
                 new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                        " example", 1.0, ProductUnit.PER_SAMPLE)),
+                        " example", 1.0, ProductUnit.PER_SAMPLE, "1")),
                 new ProductItem(1, new ProjectManagement("Basic Management",
-                        "Just an example", 10.0, ProductUnit.PER_DATASET))
+                        "Just an example", 10.0, ProductUnit.PER_DATASET, "1"))
         ]
 
         and: "an internal offer containing these product items"
@@ -77,9 +77,9 @@ class OfferSpec extends Specification {
         given:
         List<ProductItem> items = [
                 new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                " example", 1.0, ProductUnit.PER_SAMPLE)),
+                " example", 1.0, ProductUnit.PER_SAMPLE, "1")),
                 new ProductItem(1, new ProjectManagement("Basic Management",
-               "Just an example", 10.0, ProductUnit.PER_DATASET))
+               "Just an example", 10.0, ProductUnit.PER_DATASET, "!"))
         ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
@@ -107,9 +107,9 @@ class OfferSpec extends Specification {
         given:
         List<ProductItem> items = [
                 new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                        " example", 1.0, ProductUnit.PER_SAMPLE)),
+                        " example", 1.0, ProductUnit.PER_SAMPLE, "1")),
                 new ProductItem(1, new ProjectManagement("Basic Management",
-                        "Just an example", 10.0, ProductUnit.PER_DATASET))
+                        "Just an example", 10.0, ProductUnit.PER_DATASET, "1"))
         ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
@@ -137,9 +137,9 @@ class OfferSpec extends Specification {
         given:
         List<ProductItem> items = [
                 new ProductItem(1, new ProjectManagement("Basic Management",
-                        "Just an example", 10.0, ProductUnit.PER_DATASET)),
+                        "Just an example", 10.0, ProductUnit.PER_DATASET, "1")),
                 new ProductItem(1, new DataStorage("Basic Management",
-                        "Just an example", 10.0, ProductUnit.PER_GIGABYTE))
+                        "Just an example", 10.0, ProductUnit.PER_GIGABYTE, "1"))
 
         ]
 
