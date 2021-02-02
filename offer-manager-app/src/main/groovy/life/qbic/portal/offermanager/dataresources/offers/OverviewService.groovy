@@ -89,21 +89,4 @@ class OverviewService implements ResourcesService<OfferOverview> {
     void unsubscribe(Subscription<OfferOverview> subscription) {
         updatedOverviewEvent.unregister(subscription)
     }
-
-    /**
-     * Returns a list of available offer overviews.
-     * @return A list of available offer overviews.
-     */
-    List<OfferOverview> getOfferOverviewList() {
-        final def overview = []
-        /*
-        We do not want to return a reference to the
-        internal list, as this would make the list
-        vulnerable for external changes.
-        The list however contains immutable objects, these
-        can be passed as reference.
-         */
-        overview.addAll(offerOverviewList.asList())
-        return overview
-    }
 }

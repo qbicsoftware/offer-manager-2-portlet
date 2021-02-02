@@ -128,12 +128,4 @@ class CreateOfferViewModel {
             }
         }
     }
-
-    /**
-     * This method triggers a refresh for all Person resources
-     * @see life.qbic.datamodel.dtos.general.Person
-     */
-    void refreshPersons() {
-        this.customerService.reloadResources()
-    }
 }
