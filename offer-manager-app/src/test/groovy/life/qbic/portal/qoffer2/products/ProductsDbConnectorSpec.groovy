@@ -77,8 +77,7 @@ class ProductsDbConnectorSpec extends Specification {
 
     where: "available products information is as follows"
     id | category | description | productName | unitPrice | unit | productId
-    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample" | "PB_1"
-
+    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample" | "DS_1"
   }
 
   def "Returns correct id for a given product"() {
@@ -111,14 +110,14 @@ class ProductsDbConnectorSpec extends Specification {
     ProductsDbConnector dataSource = new ProductsDbConnector(connectionProvider)
 
     when:
-    int resultId = dataSource.findProductId(new PrimaryAnalysis(productName,description,unitPrice, unit))
+    int resultId = dataSource.findProductId(new PrimaryAnalysis(productName,description,unitPrice, unit, identifier))
 
     then:
     resultId == id
 
     where: "available products information is as follows"
-    id | category | description | productName | unitPrice | unit
-    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | ProductUnit.PER_SAMPLE
+    id | category | description | productName | unitPrice | unit | identifier
+    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | ProductUnit.PER_SAMPLE | "1"
 
   }
 }
