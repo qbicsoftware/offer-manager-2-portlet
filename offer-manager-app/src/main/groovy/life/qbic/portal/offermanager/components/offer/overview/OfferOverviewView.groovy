@@ -6,6 +6,7 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.FileDownloader
 import com.vaadin.server.StreamResource
 import com.vaadin.shared.data.sort.SortDirection
+import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Button
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
@@ -70,6 +71,7 @@ class OfferOverviewView extends FormLayout {
 
         label.addStyleName(ValoTheme.LABEL_HUGE)
         headerRow.addComponent(label)
+        headerRow.setMargin(false)
         this.addComponent(headerRow)
 
         /*
@@ -92,6 +94,9 @@ class OfferOverviewView extends FormLayout {
         activityContainer.setMargin(false)
         headerRow.addComponents(activityContainer,overviewGrid)
         headerRow.setSizeFull()
+
+        this.setMargin(false)
+        this.setSpacing(false)
 
         this.setWidthFull()
     }

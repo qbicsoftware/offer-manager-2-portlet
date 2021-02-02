@@ -94,6 +94,7 @@ class CreateOfferView extends FormLayout{
                 overviewView
         )
         this.setSizeFull()
+        this.setMargin(false)
     }
 
     /**

@@ -4,6 +4,7 @@ import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.FileDownloader
 import com.vaadin.server.StreamResource
+import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
@@ -101,6 +102,7 @@ class OfferOverviewView extends VerticalLayout{
         this.itemGrid = new Grid<>("Selected items:")
 
         this.addComponents(offerOverview,buttonLayout)
+        this.setMargin(false)
     }
 
     /**
@@ -121,7 +123,8 @@ class OfferOverviewView extends VerticalLayout{
 
 
             //specify size of grid and layout
-            grid.setSizeFull()
+            grid.setWidthFull()
+            grid.setHeightMode(HeightMode.UNDEFINED)
 
         } catch (Exception e) {
             new Exception("Unexpected exception in building the product item grid", e)

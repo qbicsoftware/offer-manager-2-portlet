@@ -1,16 +1,14 @@
-package life.qbic.business.offers.create
+package life.qbic.business.offers.update
 
-import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.exceptions.DatabaseQueryException
-
+import life.qbic.datamodel.dtos.business.Offer
 
 /**
  * Provides methods to store offers in a data-source
  *
  * @since: 1.0.0
  */
-interface CreateOfferDataSource {
-
+interface UpdateOfferDataSource {
 
     /**
      * Saves an offer in a persistent data-source.
@@ -27,7 +25,6 @@ interface CreateOfferDataSource {
      *
      * @param offer
      * @throws DatabaseQueryException
-     * @since 1.0.0
      */
     void store(Offer offer) throws DatabaseQueryException
 }
