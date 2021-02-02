@@ -16,7 +16,7 @@ import life.qbic.business.offers.identifier.OfferId
  * This class should be used in the business context of offer creation.
  *
  * It holds all relevant business rules to compute the final prices for
- * offers based on the customers affiliation.
+ * offers based on the persons affiliation.
  *
  * @since 0.1.0
  */
@@ -179,7 +179,7 @@ class Offer {
     /**
      * The tax price on all items net price including overheads.
      *
-     * For internal customers, this will be 0.
+     * For internal persons, this will be 0.
      *
      * @return The amount of VAT price based on all items in the offer.
      */

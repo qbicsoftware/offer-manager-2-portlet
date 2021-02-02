@@ -8,7 +8,7 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import spock.lang.Specification
 
 /**
- * Test the search of customers
+ * Test the search of persons
  *
  * Stubs the database connection and verifies that if a customer is found the {@link life.qbic.business.customers.search.SearchCustomerOutput} is verified or if not
  * an exception leads to a failure notification

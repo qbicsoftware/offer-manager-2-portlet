@@ -5,7 +5,7 @@ import life.qbic.datamodel.dtos.business.Customer
 /**
  * A use case which describes how a customer is searched in the database
  *
- * A customer can be searched by its first and last name. The user gets a list with all customers matching the search.
+ * A customer can be searched by its first and last name. The user gets a list with all persons matching the search.
  *
  * @since: 1.0.0
  *

@@ -149,7 +149,7 @@ class OfferOverviewView extends FormLayout {
                     }, {})
                 })
         updateOfferBtn.addClickListener({
-            offerUpdateService.offerForUpdateEvent.emit(model.getSelectedOffer())
+            offerUpdateService.addToResource(model.getSelectedOffer())
         })
     }
 

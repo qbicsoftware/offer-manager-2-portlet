@@ -52,7 +52,7 @@ class OfferOverviewView extends VerticalLayout{
         this.createOfferViewModel = viewModel
         initLayout()
         setUpGrid()
-        service.offerCreatedEvent.register((Offer offer) -> {
+        service.subscribe((Offer offer) -> {
             addOfferResource(offer)
         })
     }

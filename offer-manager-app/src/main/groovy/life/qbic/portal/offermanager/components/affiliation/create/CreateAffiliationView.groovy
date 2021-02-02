@@ -9,6 +9,8 @@ import com.vaadin.server.UserError
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
+import life.qbic.datamodel.dtos.business.Affiliation
+
 import java.util.stream.Collectors;
 import life.qbic.portal.offermanager.components.AppViewModel
 
@@ -52,7 +54,12 @@ class CreateAffiliationView extends VerticalLayout {
         this.organisationBox = new ComboBox<>("Organisation Name")
 
         // we don't need the whole affiliation object, just the unique organization names.
-        List<String> organisationNames = sharedViewModel.affiliations.stream().map(affiliation -> affiliation.organisation).distinct().collect(Collectors.toList())
+        List<String> organisationNames = createAffiliationViewModel
+                .affiliationService.iterator().toList()
+                .stream()
+                .map( affiliation -> (affiliation as Affiliation).organisation)
+                .distinct()
+                .collect(Collectors.toList())
 
         println organisationNames
         organisationBox.setItems(organisationNames)

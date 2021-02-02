@@ -490,4 +490,3 @@ class SelectItemsView extends VerticalLayout{
 
 }
 
-

@@ -2,7 +2,9 @@ package life.qbic.portal.offermanager.components.offer.update
 
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
-import life.qbic.portal.offermanager.dataresources.customers.PersonResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
+import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
 import life.qbic.portal.offermanager.dataresources.offers.OfferUpdateService
 import life.qbic.portal.offermanager.components.offer.create.ProductItemViewModel
@@ -21,16 +23,21 @@ import life.qbic.portal.offermanager.components.offer.create.ProductItemViewMode
  *
  * @since 1.0.0
  */
+//fixme this might not be a real extension of the create offer use case
+// in any case the view model should not extend the other view model
+// this extension makes it difficult to debug imo (TK)
 class UpdateOfferViewModel extends CreateOfferViewModel{
 
     final private OfferUpdateService offerUpdateService
 
-    UpdateOfferViewModel(PersonResourcesService personService, ProductsResourcesService productsService,
+    UpdateOfferViewModel(CustomerResourceService customerResourceService,
+                         ProjectManagerResourceService managerResourceService,
+                         ProductsResourcesService productsService,
                          OfferUpdateService offerUpdateService) {
-        super(personService, productsService)
+        super(customerResourceService, managerResourceService, productsService)
         this.offerUpdateService = offerUpdateService
 
-        this.offerUpdateService.offerForUpdateEvent.register((Offer offer) -> {
+        this.offerUpdateService.subscribe((Offer offer) -> {
             loadData(offer)
         })
     }

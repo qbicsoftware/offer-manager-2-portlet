@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.dataresources.customers
+package life.qbic.portal.offermanager.dataresources.persons
 
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
@@ -453,8 +453,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   }
 
   /**
-   * List all available customers.
-   * @return A list of customers
+   * List all available persons.
+   * @return A list of persons
    */
   List<Customer> fetchAllCustomers() {
     List<Customer> customers = []
