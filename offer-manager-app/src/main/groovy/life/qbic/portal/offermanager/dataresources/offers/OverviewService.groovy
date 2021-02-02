@@ -43,15 +43,14 @@ class OverviewService implements ResourcesService<OfferOverview> {
          */
         offerService.subscribe({
             def newOfferOverview = createOverviewFromOffer(it)
-            offerOverviewList.add(newOfferOverview)
-            updatedOverviewEvent.emit(newOfferOverview)
+            addToResource(newOfferOverview)
         })
     }
 
     static OfferOverview createOverviewFromOffer(Offer offer) {
         return new OfferOverview(
                 offer.identifier,
-                offer.modificationDate,
+                offer.getModificationDate(),
                 offer.projectTitle,
                 "",
                 "${offer.customer.firstName} ${offer.customer.lastName}",
