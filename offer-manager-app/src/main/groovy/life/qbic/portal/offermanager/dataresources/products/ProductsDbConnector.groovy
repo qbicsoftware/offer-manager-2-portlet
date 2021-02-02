@@ -2,7 +2,6 @@ package life.qbic.portal.offermanager.dataresources.products
 
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.business.exceptions.DatabaseQueryException
