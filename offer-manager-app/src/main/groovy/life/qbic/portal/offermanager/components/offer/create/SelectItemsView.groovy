@@ -220,6 +220,7 @@ class SelectItemsView extends VerticalLayout{
 
         this.addComponents(packageAccordion, overview, buttonLayout)
         this.setSizeFull()
+        this.setMargin(false)
     }
 
     /**

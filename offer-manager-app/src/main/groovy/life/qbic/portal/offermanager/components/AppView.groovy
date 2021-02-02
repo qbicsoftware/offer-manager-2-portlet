@@ -76,11 +76,10 @@ class AppView extends VerticalLayout {
      * Initializes the layout of the view
      */
     private void initLayout() {
-        this.setMargin(false)
-        this.setSpacing(false)
+        this.setMargin(true)
 
         VerticalLayout verticalLayout = new VerticalLayout()
-
+        verticalLayout.setMargin(false)
 
         verticalLayout.setSizeFull()
         //ToDo Find solution on how to best host different views in the portlet
