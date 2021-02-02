@@ -29,7 +29,7 @@ class CreateOfferPresenter implements CreateOfferOutput {
     void createdNewOffer(Offer createdOffer) {
         this.viewModel.successNotifications.add("Created offer with title\n" +
                 "\'${createdOffer.projectTitle}\'\nsuccessfully")
-        this.offerService.offerCreatedEvent.emit(createdOffer)
+        this.offerService.addToResource(createdOffer)
     }
 
     @Override

@@ -34,7 +34,7 @@ class CreatePersonViewModel {
     @Bindable Boolean emailValid
     @Bindable Boolean affiliationValid
 
-    List<Affiliation> availableAffiliations
+    ObservableList availableAffiliations
 
     final CustomerResourceService customerService
     final ProjectManagerResourceService managerResourceService
@@ -46,6 +46,11 @@ class CreatePersonViewModel {
         this.affiliationService = affiliationService
         this.customerService = customerService
         this.managerResourceService = managerResourceService
-        availableAffiliations = new ArrayList<>(affiliationService.iterator().collect())
+        availableAffiliations = new ObservableList(new ArrayList<Affiliation>(affiliationService.iterator().collect()))
+
+        this.affiliationService.subscribe({
+            this.availableAffiliations.clear()
+            this.availableAffiliations.addAll(affiliationService.iterator().collect())
+        })
     }
 }

@@ -47,11 +47,13 @@ class AffiliationResourcesService implements ResourcesService<Affiliation> {
     @Override
     void addToResource(Affiliation resourceItem) {
         this.availableAffiliations.add(resourceItem)
+        this.eventEmitter.emit(resourceItem)
     }
 
     @Override
     void removeFromResource(Affiliation resourceItem) {
         this.availableAffiliations.remove(resourceItem)
+        this.eventEmitter.emit(resourceItem)
     }
 
     @Override
