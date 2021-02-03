@@ -54,7 +54,7 @@ class ProductsDbConnectorSpec extends Specification {
     GroovyMock(SqlExtensions, global: true)
     SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(
         ["id":id, "category":category, "description":description, "productName": productName,
-         "unitPrice": unitPrice, "unit": unit])
+         "unitPrice": unitPrice, "unit": unit, "productId": productId])
     ResultSet resultSet = Stub(ResultSet, {
       it.next() >>> [true, false]
     })
@@ -76,9 +76,8 @@ class ProductsDbConnectorSpec extends Specification {
     result.get(0).description == "Sample QC with report"
 
     where: "available products information is as follows"
-    id | category | description | productName | unitPrice | unit
-    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample"
-
+    id | category | description | productName | unitPrice | unit | productId
+    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample" | "DS_1"
   }
 
   def "Returns correct id for a given product"() {
@@ -111,14 +110,14 @@ class ProductsDbConnectorSpec extends Specification {
     ProductsDbConnector dataSource = new ProductsDbConnector(connectionProvider)
 
     when:
-    int resultId = dataSource.findProductId(new PrimaryAnalysis(productName,description,unitPrice, unit))
+    int resultId = dataSource.findProductId(new PrimaryAnalysis(productName,description,unitPrice, unit, identifier))
 
     then:
     resultId == id
 
     where: "available products information is as follows"
-    id | category | description | productName | unitPrice | unit
-    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | ProductUnit.PER_SAMPLE
+    id | category | description | productName | unitPrice | unit | identifier
+    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | ProductUnit.PER_SAMPLE | "1"
 
   }
 }

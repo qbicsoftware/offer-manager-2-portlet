@@ -5,18 +5,19 @@ import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.business.customers.affiliation.create.CreateAffiliation
 import life.qbic.business.customers.create.CreateCustomer
-import life.qbic.business.customers.search.SearchCustomer
 import life.qbic.business.offers.create.CreateOffer
-import life.qbic.portal.offermanager.dataresources.customers.AffiliationResourcesService
-import life.qbic.portal.offermanager.dataresources.customers.CustomerDbConnector
-import life.qbic.portal.offermanager.dataresources.customers.PersonResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.CustomerDbConnector
+import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
+
 import life.qbic.portal.offermanager.dataresources.database.DatabaseSession
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
 import life.qbic.portal.offermanager.dataresources.offers.OfferUpdateService
-import life.qbic.portal.offermanager.dataresources.database.OverviewService
+import life.qbic.portal.offermanager.dataresources.offers.OverviewService
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationController
 import life.qbic.portal.offermanager.components.person.create.CreatePersonController
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferController
@@ -38,6 +39,7 @@ import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
 import life.qbic.portal.offermanager.components.AppView
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
+import org.apache.tools.ant.Project
 
 /**
  * Class that manages all the dependency injections and class instance creations
@@ -87,10 +89,11 @@ class DependencyManager {
 
     private OverviewService overviewService
     private OfferUpdateService offerUpdateService
-    private PersonResourcesService customerService
+    private CustomerResourceService customerResourceService
     private AffiliationResourcesService affiliationService
     private OfferResourcesService offerService
     private ProductsResourcesService productsResourcesService
+    private ProjectManagerResourceService managerResourceService
 
     /**
      * Public constructor.
@@ -130,7 +133,8 @@ class DependencyManager {
             DatabaseSession.init(user, password, host, port, sqlDatabase)
             customerDbConnector = new CustomerDbConnector(DatabaseSession.getInstance())
             productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
-            offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(), customerDbConnector, productsDbConnector)
+            offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(),
+                    customerDbConnector, productsDbConnector)
 
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
@@ -142,9 +146,10 @@ class DependencyManager {
         this.offerService = new OfferResourcesService()
         this.overviewService = new OverviewService(offerDbConnector, offerService)
         this.offerUpdateService = new OfferUpdateService()
-        this.customerService = new PersonResourcesService(customerDbConnector)
+        this.managerResourceService = new ProjectManagerResourceService(customerDbConnector)
         this.productsResourcesService = new ProductsResourcesService(productsDbConnector)
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
+        this.customerResourceService = new CustomerResourceService(customerDbConnector)
     }
 
     private void setupViewModels() {
@@ -157,7 +162,10 @@ class DependencyManager {
         }
 
         try {
-            this.createCustomerViewModel = new CreatePersonViewModel(customerService)
+            this.createCustomerViewModel = new CreatePersonViewModel(
+                    customerResourceService,
+                    managerResourceService,
+                    affiliationService)
             createCustomerViewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
 
         } catch (Exception e) {
@@ -174,15 +182,21 @@ class DependencyManager {
         }
 
         try {
-            this.createOfferViewModel = new CreateOfferViewModel(customerService, productsResourcesService)
-            //todo add affiliations, customers and project managers to the model
+            this.createOfferViewModel = new CreateOfferViewModel(
+                    customerResourceService,
+                    managerResourceService,
+                    productsResourcesService)
+            //todo add affiliations, persons and project managers to the model
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
         try {
-            this.updateOfferViewModel = new UpdateOfferViewModel(customerService, productsResourcesService,
+            this.updateOfferViewModel = new UpdateOfferViewModel(
+                    customerResourceService,
+                    managerResourceService,
+                    productsResourcesService,
                     offerUpdateService)
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)

@@ -21,7 +21,7 @@ class ListAffiliations implements ListAffiliationsInput {
   /**
    * List Affiliations Use Case
    *
-   * Lists the available affiliations for customers.
+   * Lists the available affiliations for persons.
    * @param output Where the use case submits the result to
    * @param dataSource The database dataSource to make the query
    */

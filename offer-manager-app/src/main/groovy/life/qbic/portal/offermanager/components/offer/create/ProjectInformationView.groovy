@@ -59,11 +59,13 @@ class ProjectInformationView extends VerticalLayout {
         textLayout.setComponentAlignment(projectTitle, Alignment.TOP_CENTER)
         textLayout.setComponentAlignment(projectDescription, Alignment.BOTTOM_CENTER)
         textLayout.setSizeFull()
+        textLayout.setMargin(false)
 
         HorizontalLayout buttonLayout = new HorizontalLayout(next)
         buttonLayout.setComponentAlignment(next, Alignment.BOTTOM_RIGHT)
         buttonLayout.setSizeFull()
 
+        this.setMargin(false)
         this.addComponents(textLayout, buttonLayout)
     }
 

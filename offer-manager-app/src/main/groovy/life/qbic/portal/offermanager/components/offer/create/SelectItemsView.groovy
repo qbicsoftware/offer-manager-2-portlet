@@ -220,6 +220,7 @@ class SelectItemsView extends VerticalLayout{
 
         this.addComponents(packageAccordion, overview, buttonLayout)
         this.setSizeFull()
+        this.setMargin(false)
     }
 
     /**
@@ -294,6 +295,8 @@ class SelectItemsView extends VerticalLayout{
         try {
             grid.addColumn({ productItem -> productItem.quantity })
                     .setCaption("Quantity").setId("Quantity")
+            grid.addColumn({ productItem -> productItem.product.productId})
+                    .setCaption("Product Id").setId("ProductId")
             grid.addColumn({ productItem -> productItem.product.productName })
                     .setCaption("Product Name").setId("ProductName")
             grid.addColumn({ productItem -> productItem.product.description })
@@ -486,5 +489,4 @@ class SelectItemsView extends VerticalLayout{
     }
 
 }
-
 

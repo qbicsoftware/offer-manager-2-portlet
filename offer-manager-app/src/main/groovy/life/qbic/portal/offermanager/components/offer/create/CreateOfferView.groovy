@@ -69,7 +69,6 @@ class CreateOfferView extends FormLayout{
         // Init the view navigation history to be able to navigate back in history
         this.viewHistory = new ViewHistory(projectInformationView)
 
-        viewModel.refresh()
     }
 
     /**
@@ -94,6 +93,7 @@ class CreateOfferView extends FormLayout{
                 overviewView
         )
         this.setSizeFull()
+        this.setMargin(false)
     }
 
     /**
@@ -120,7 +120,6 @@ class CreateOfferView extends FormLayout{
             viewHistory.showPrevious()
         })
         this.createCustomerView.submitButton.addClickListener({
-            viewModel.refreshPersons()
             viewHistory.showPrevious()
         })
         this.createAffiliationView.abortButton.addClickListener({

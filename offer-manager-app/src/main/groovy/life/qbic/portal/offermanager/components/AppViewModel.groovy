@@ -2,7 +2,7 @@ package life.qbic.portal.offermanager.components
 
 
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.portal.offermanager.dataresources.customers.AffiliationResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 
 
 /**
@@ -15,7 +15,6 @@ import life.qbic.portal.offermanager.dataresources.customers.AffiliationResource
  * @author: Tobias Koch
  */
 class AppViewModel {
-    final ObservableList affiliations
     final ObservableList successNotifications
     final ObservableList failureNotifications
 
@@ -34,17 +33,8 @@ class AppViewModel {
                          List<String> successNotifications,
                          List<String> failureNotifications,
                          AffiliationResourcesService service) {
-        this.affiliations = new ObservableList(affiliations)
         this.successNotifications = new ObservableList(successNotifications)
         this.failureNotifications = new ObservableList(failureNotifications)
         this.service = service
-        /*
-        We register a subscription that will receive a list of affiliations, when
-        the affiliation service emits an update event.
-         */
-        this.service.eventEmitter.register((List<Affiliation> updatedAffiliations) -> {
-            this.affiliations.clear()
-            this.affiliations.addAll(updatedAffiliations)
-        })
     }
 }

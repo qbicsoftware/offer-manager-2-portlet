@@ -27,8 +27,8 @@ class CreateOfferSpec extends Specification {
         CreateOffer createOffer = new CreateOffer(Stub(CreateOfferDataSource),output)
 
         and:
-        List<ProductItem> items = [new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE)),
-                                   new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE))]
+        List<ProductItem> items = [new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE, "1")),
+                                   new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE, "1"))]
         when:
         createOffer.calculatePrice(items, new Affiliation.Builder("Test", "", "", "").category
         (AffiliationCategory.INTERNAL).build())

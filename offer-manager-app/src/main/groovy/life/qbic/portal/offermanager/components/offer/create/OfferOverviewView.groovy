@@ -52,7 +52,7 @@ class OfferOverviewView extends VerticalLayout{
         this.createOfferViewModel = viewModel
         initLayout()
         setUpGrid()
-        service.offerCreatedEvent.register((Offer offer) -> {
+        service.subscribe((Offer offer) -> {
             addOfferResource(offer)
         })
     }
@@ -102,6 +102,7 @@ class OfferOverviewView extends VerticalLayout{
         this.itemGrid = new Grid<>("Selected items:")
 
         this.addComponents(offerOverview,buttonLayout)
+        this.setMargin(false)
     }
 
     /**

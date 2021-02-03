@@ -14,7 +14,7 @@ interface CreateCustomerDataSource {
     /**
      * Adds a customer to the user database
      *
-     * @param customer a person to be added to known customers
+     * @param customer a person to be added to known persons
      * @throws DatabaseQueryException When a customer could not been added to the customer database
      * @since 1.0.0
      */

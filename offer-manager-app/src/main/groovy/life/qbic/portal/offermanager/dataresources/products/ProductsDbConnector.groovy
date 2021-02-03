@@ -77,37 +77,38 @@ class ProductsDbConnector {
 
   private static Product rowResultToProduct(GroovyRowResult row) {
     def productCategory = row.category
+    String productId = row.productId
     Product product
     switch(productCategory) {
       case "Data Storage":
         product = new DataStorage(row.productName as String,
             row.description as String,
             row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String))
+            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
         break
       case "Primary Bioinformatics":
         product = new PrimaryAnalysis(row.productName as String,
             row.description as String,
             row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String))
+            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
         break
       case "Project Management":
         product = new ProjectManagement(row.productName as String,
             row.description as String,
             row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String))
+            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
         break
       case "Secondary Bioinformatics":
         product = new SecondaryAnalysis(row.productName as String,
             row.description as String,
             row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String))
+            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
         break
       case "Sequencing":
         product = new Sequencing(row.productName as String,
             row.description as String,
             row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String))
+            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
         break
     }
     if(product == null) {
@@ -167,6 +168,18 @@ class ProductsDbConnector {
     return foundId[0]
   }
 
+  /**
+   * Returns the product identifying running number given a productId
+   *
+   * @param productId String of productId stored in the DB e.g. "DS_1"
+   * @return identifier String of the iterative identifying part of the productId
+   */
+  static String parseProductId(String productId) {
+    def splitId = productId.split("_")
+    // The first entry [0] contains the product type which is assigned automatically, no need to parse it.
+    String identifier = splitId[1]
+    return identifier
+  }
 
 
   /**

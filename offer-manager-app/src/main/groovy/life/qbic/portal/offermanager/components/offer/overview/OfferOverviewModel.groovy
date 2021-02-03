@@ -5,7 +5,7 @@ import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
 import life.qbic.portal.offermanager.OfferToPDFConverter
-import life.qbic.portal.offermanager.dataresources.database.OverviewService
+import life.qbic.portal.offermanager.dataresources.offers.OverviewService
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
 /**
@@ -25,7 +25,7 @@ class OfferOverviewModel {
     /**
      * A list with all available offer overviews
      */
-    List<OfferOverview> offerOverviewList
+    ObservableList offerOverviewList
     /**
      * The currently selected offer overview
      */
@@ -48,7 +48,7 @@ class OfferOverviewModel {
                        AppViewModel viewModel) {
         this.service = service
         this.connector = connector
-        this.offerOverviewList = service.getOfferOverviewList()
+        this.offerOverviewList = new ObservableList(new ArrayList(service.iterator().toList()))
         this.selectedOffer = Optional.empty()
         this.viewModel = viewModel
         this.downloadButtonActive = false
@@ -57,9 +57,10 @@ class OfferOverviewModel {
     }
 
     private void subscribeToOverviewService() {
-        service.updatedOverviewEvent.register({
+        service.subscribe({
             offerOverviewList.clear()
-            offerOverviewList.addAll(service.getOfferOverviewList())
+            Iterator<OfferOverview> iterator = service.iterator()
+            offerOverviewList.addAll(iterator)
         })
     }
 

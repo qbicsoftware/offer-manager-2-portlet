@@ -52,7 +52,7 @@ class CreateAffiliationPresenter implements CreateAffiliationOutput {
 
     @Override
     void affiliationCreated(Affiliation affiliation) {
-        createAffiliationViewModel.affiliationService.reloadResources()
+        createAffiliationViewModel.affiliationService.addToResource(affiliation)
         sharedViewModel.successNotifications.add("Successfully added new affiliation " + affiliation.organisation)
         clearAffiliationData()
     }

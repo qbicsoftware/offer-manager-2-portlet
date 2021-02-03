@@ -2,7 +2,10 @@ package life.qbic.portal.offermanager.components.person.create
 
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.portal.offermanager.dataresources.customers.PersonResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
+
+import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 
 /**
  * A ViewModel holding data that is presented in a
@@ -31,9 +34,23 @@ class CreatePersonViewModel {
     @Bindable Boolean emailValid
     @Bindable Boolean affiliationValid
 
-    final PersonResourcesService customerService
+    ObservableList availableAffiliations
 
-    CreatePersonViewModel(PersonResourcesService customerService) {
+    final CustomerResourceService customerService
+    final ProjectManagerResourceService managerResourceService
+    final AffiliationResourcesService affiliationService
+
+    CreatePersonViewModel(CustomerResourceService customerService,
+                          ProjectManagerResourceService managerResourceService,
+                          AffiliationResourcesService affiliationService) {
+        this.affiliationService = affiliationService
         this.customerService = customerService
+        this.managerResourceService = managerResourceService
+        availableAffiliations = new ObservableList(new ArrayList<Affiliation>(affiliationService.iterator().collect()))
+
+        this.affiliationService.subscribe({
+            this.availableAffiliations.clear()
+            this.availableAffiliations.addAll(affiliationService.iterator().collect())
+        })
     }
 }

@@ -7,7 +7,7 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.create.CreateOfferDataSource
-import life.qbic.portal.offermanager.dataresources.customers.CustomerDbConnector
+import life.qbic.portal.offermanager.dataresources.persons.CustomerDbConnector
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector

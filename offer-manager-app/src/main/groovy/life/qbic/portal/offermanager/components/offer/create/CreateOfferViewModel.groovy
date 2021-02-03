@@ -6,7 +6,8 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.*
-import life.qbic.portal.offermanager.dataresources.customers.PersonResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
+import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
 import life.qbic.portal.offermanager.communication.Subscription
 
@@ -49,12 +50,16 @@ class CreateOfferViewModel {
     @Bindable
     double totalPrice = 0
 
-    private final PersonResourcesService personService
+    private final CustomerResourceService customerService
     private final ProductsResourcesService productsResourcesService
+    private final ProjectManagerResourceService managerResourceService
 
-    CreateOfferViewModel(PersonResourcesService personService, ProductsResourcesService productsResourcesService) {
-        this.personService = personService
+    CreateOfferViewModel(CustomerResourceService customerService,
+                         ProjectManagerResourceService managerResourceService,
+                         ProductsResourcesService productsResourcesService) {
+        this.customerService = customerService
         this.productsResourcesService = productsResourcesService
+        this.managerResourceService = managerResourceService
         fetchPersonData()
         fetchProductData()
         subscribeToResources()
@@ -62,32 +67,33 @@ class CreateOfferViewModel {
 
     private void fetchPersonData() {
         this.availableProjectManagers.clear()
-        this.availableProjectManagers.addAll(personService.getProjectManagers())
+        this.availableProjectManagers.addAll(managerResourceService.iterator())
         this.foundCustomers.clear()
-        this.foundCustomers.addAll(personService.getCustomers())
+        this.foundCustomers.addAll(customerService.iterator())
     }
 
     private void fetchProductData() {
-        populateProductLists(productsResourcesService.getProducts())
+        populateProductLists(productsResourcesService.iterator().toList())
     }
 
     private void subscribeToResources() {
-        this.personService.customerEvent.register((List<Customer> customerList) -> {
+        this.customerService.subscribe((Customer customer) -> {
             this.foundCustomers.clear()
-            this.foundCustomers.addAll(customerList)
+            this.foundCustomers.addAll(customerService.iterator())
         })
-        this.personService.projectManagerEvent.register((List<ProjectManager> managerList) -> {
+        this.managerResourceService.subscribe((List<ProjectManager> managerList) -> {
             this.availableProjectManagers.clear()
-            this.availableProjectManagers.addAll(managerList)
+            this.availableProjectManagers.addAll(managerResourceService.iterator())
         })
 
-        Subscription<List<Product>> productSubscription = new Subscription<List<Product>>() {
+        Subscription<Product> productSubscription = new Subscription<Product>() {
             @Override
-            void receive(List<Product> products) {
+            void receive(Product product) {
+                List<Product> products = productsResourcesService.iterator().toList()
                 populateProductLists(products)
             }
         }
-        this.productsResourcesService.productEventEmitter.register(productSubscription)
+        this.productsResourcesService.subscribe(productSubscription)
     }
 
     private void populateProductLists(List<Product> products) {
@@ -121,30 +127,5 @@ class CreateOfferViewModel {
                     throw new RuntimeException("Unknown product category '${product.getClass().getSimpleName()}'")
             }
         }
-    }
-
-    /**
-     * This method refreshes the data underlying the current view model
-     */
-    void refresh() {
-        //TODO where and how to catch DatabaseQueryException ?
-        refreshPersons()
-        refreshProducts()
-    }
-
-    /**
-     * This method triggers a refresh for all Person resources
-     * @see life.qbic.datamodel.dtos.general.Person
-     */
-    void refreshPersons() {
-        this.personService.reloadResources()
-    }
-
-    /**
-     * Calling this method triggers a refresh of all available Product resources.
-     * @see Product
-     */
-    void refreshProducts() {
-        this.productsResourcesService.reloadResources()
     }
 }

@@ -4,15 +4,21 @@ package life.qbic.portal.offermanager.components.person.create
 import com.vaadin.data.ValidationResult
 import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
+import com.vaadin.data.provider.DataProvider
+import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.server.SerializableBiFunction
 import com.vaadin.server.UserError
+import com.vaadin.shared.data.sort.SortDirection
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
+
+import javax.swing.event.ListDataEvent
 
 /**
  * This class generates a Form Layout in which the user
@@ -71,10 +77,10 @@ class CreatePersonView extends VerticalLayout {
         emailField.setPlaceholder("Customer email address")
         emailField.setRequiredIndicatorVisible(true)
 
-        this.affiliationComboBox = generateAffiliationSelector(sharedViewModel.affiliations)
+        this.affiliationComboBox = generateAffiliationSelector(createCustomerViewModel.availableAffiliations)
         affiliationComboBox.setRequiredIndicatorVisible(true)
 
-        this.addressAdditionComboBox = generateAffiliationSelector(sharedViewModel.affiliations.findAll{(it as Affiliation).organisation == createCustomerViewModel.affiliation?.organisation})
+        this.addressAdditionComboBox = generateAffiliationSelector(createCustomerViewModel.availableAffiliations)
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
         addressAdditionComboBox.setItemCaptionGenerator({it.addressAddition})
         addressAdditionComboBox.setCaption("Address Addition")
@@ -128,6 +134,7 @@ class CreatePersonView extends VerticalLayout {
         affiliationDetails.setSizeFull()
 
         this.setSpacing(true)
+        this.setMargin(false)
     }
 
     /**
@@ -169,7 +176,7 @@ class CreatePersonView extends VerticalLayout {
             Affiliation newValue = it.newValue as Affiliation
             if (newValue) {
                 affiliationComboBox.value = newValue
-                addressAdditionComboBox.setItems(sharedViewModel.affiliations?.findAll{ ((it as Affiliation)?.organisation == newValue?.organisation) })
+                refreshAddressAdditions()
                 addressAdditionComboBox.value = newValue
             } else {
                 affiliationComboBox.value = affiliationComboBox.emptyValue
@@ -217,14 +224,21 @@ class CreatePersonView extends VerticalLayout {
 
         /* refresh affiliation list and set added item as selected item. This is needed to keep this
         field up to date and select an affiliation after it was created */
-        sharedViewModel.affiliations.addPropertyChangeListener({
+        createCustomerViewModel.availableAffiliations.addPropertyChangeListener({
             affiliationComboBox.getDataProvider().refreshAll()
+            refreshAddressAdditions()
             if (it instanceof ObservableList.ElementAddedEvent) {
                 affiliationComboBox.setSelectedItem(it.newValue as Affiliation)
             }
         })
     }
 
+    private void refreshAddressAdditions() {
+        ListDataProvider<Affiliation> dataProvider = this.addressAdditionComboBox.dataProvider as ListDataProvider<Affiliation>
+        dataProvider.clearFilters()
+        dataProvider.addFilterByValue({it.organisation},createCustomerViewModel.affiliation.organisation)
+        dataProvider.setSortOrder({it.addressAddition}, SortDirection.ASCENDING)
+    }
     /**
      * This method adds validation to the fields of this view
      */
@@ -286,7 +300,8 @@ class CreatePersonView extends VerticalLayout {
         ComboBox<Affiliation> affiliationComboBox =
                 new ComboBox<>("Affiliation")
         affiliationComboBox.setPlaceholder("Select customer affiliation")
-        affiliationComboBox.setItems(affiliationList)
+        ListDataProvider<Affiliation> dataProvider = new ListDataProvider<>(affiliationList)
+        affiliationComboBox.setDataProvider(dataProvider)
         affiliationComboBox.setEmptySelectionAllowed(false)
         affiliationComboBox.setItemCaptionGenerator({it.organisation})
         return affiliationComboBox
@@ -329,8 +344,6 @@ class CreatePersonView extends VerticalLayout {
                 affiliations.add(createCustomerViewModel.affiliation)
 
                 controller.createNewCustomer(firstName, lastName, title, email, affiliations)
-
-                createCustomerViewModel.customerService.reloadResources()
 
             } catch (IllegalArgumentException illegalArgumentException) {
                 log.error("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}")
