@@ -2,8 +2,11 @@ package life.qbic.business.offers.update
 
 import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Offer
+import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.update.UpdateOfferDataSource
 import life.qbic.business.offers.update.UpdateOfferInput
 import life.qbic.business.offers.update.UpdateOfferOutput
@@ -21,6 +24,8 @@ class UpdateOffer implements UpdateOfferInput{
 
     private final UpdateOfferDataSource dataSource
     private final UpdateOfferOutput output
+    private final Logging log = Logger.getLogger(this.class)
+
 
     UpdateOffer(UpdateOfferDataSource dataSource, UpdateOfferOutput output) {
         this.dataSource = dataSource
@@ -29,9 +34,7 @@ class UpdateOffer implements UpdateOfferInput{
 
     @Override
     void updateExistingOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
-        //TODO implement
-        throw new RuntimeException("Method not implemented.")
-        /*OfferId identifier = Converter.buildOfferId(offerContent.identifier)
+        OfferId identifier = Converter.buildOfferId(offerContent.identifier)
         identifier.increaseVersion()
 
         Offer finalizedOffer = new Offer.Builder(
@@ -44,7 +47,7 @@ class UpdateOffer implements UpdateOfferInput{
                 .identifier(identifier)
                 .build()
 
-        storeOffer(finalizedOffer)*/
+        storeOffer(finalizedOffer)
     }
 
     private void storeOffer(Offer finalizedOffer) {
@@ -55,9 +58,8 @@ class UpdateOffer implements UpdateOfferInput{
         } catch (DatabaseQueryException e) {
             output.failNotification(e.message)
         } catch (Exception unexpected) {
-            //TODO use logger facade instead of println
-            println unexpected.message
-            println unexpected.stackTrace.join("\n")
+            log.error unexpected.message
+            log.error unexpected.stackTrace.join("\n")
             output.failNotification("An unexpected during the saving of your offer occurred. " +
                     "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
