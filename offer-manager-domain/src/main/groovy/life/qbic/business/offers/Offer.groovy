@@ -10,6 +10,9 @@ import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.business.offers.identifier.OfferId
 
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
+
 /**
  * Represents the Offer business model.
  *
@@ -256,5 +259,57 @@ class Offer {
         final double netPrice = calculateNetPrice()
         final double overhead = getOverheadSum()
         return netPrice + overhead + getTaxCosts()
+    }
+
+    /**
+    * Compares the checksum of two offers
+    * @param offer Offer that should be compared to the current offer
+    */
+    boolean equals(Offer offer){
+        //Use SHA-1 algorithm
+        MessageDigest shaDigest = MessageDigest.getInstance("SHA-256")
+
+        //SHA-1 checksum
+        String shaChecksum = getOfferChecksum(shaDigest, offer)
+        String shaChecksum2 = getOfferChecksum(shaDigest, this)
+
+        return shaChecksum == shaChecksum2
+    }
+
+
+    /**
+     * Compute the checksum for an offer
+     * @param digest The digestor will digest the message that needs to be encrypted
+     * @param offer Contains the offer information
+     * @return a string that encrypts the offer object
+     */
+    private static String getOfferChecksum(MessageDigest digest, Offer offer)
+    {
+        //digest crucial offer characteristics
+        //digest.update(byteArray, 0, bytesCount)
+        digest.update(offer.projectTitle.getBytes(StandardCharsets.UTF_8))
+
+        offer.items.each {item ->
+            digest.update(item.product.toString().getBytes(StandardCharsets.UTF_8))
+            digest.update(item.quantity.toString().getBytes(StandardCharsets.UTF_8))
+        }
+        digest.update(offer.customer.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(offer.projectManager.toString().getBytes(StandardCharsets.UTF_8))
+
+        digest.update(offer.selectedCustomerAffiliation.toString().getBytes(StandardCharsets.UTF_8))
+
+        //Get the hash's bytes
+        byte[] bytes = digest.digest()
+
+        //This bytes[] has bytes in decimal format
+        //Convert it to hexadecimal format
+        StringBuilder sb = new StringBuilder()
+        for(int i=0; i< bytes.length ;i++)
+        {
+            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+        }
+
+        //return complete hash
+        return sb.toString()
     }
 }

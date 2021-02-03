@@ -78,11 +78,6 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
     }
 
     @Override
-    void calculatePrice(List<ProductItem> items, AffiliationCategory category) {
-        throw new RuntimeException("Method not implemented.")
-    }
-
-    @Override
     void calculatePrice(List<ProductItem> items, Affiliation affiliation) {
         life.qbic.business.offers.Offer offer = Converter.buildOfferForCostCalculation(items, affiliation)
         output.calculatedPrice(

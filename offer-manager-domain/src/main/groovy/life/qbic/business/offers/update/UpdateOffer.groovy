@@ -50,6 +50,38 @@ class UpdateOffer implements UpdateOfferInput{
         storeOffer(finalizedOffer)
     }
 
+    @Override
+    void updateExistingOffer(life.qbic.datamodel.dtos.business.Offer newOfferContent, life.qbic.datamodel.dtos.business.Offer oldOfferContent) {
+
+        OfferId identifier = Converter.buildOfferId(newOfferContent.identifier)
+        identifier.increaseVersion()
+
+        Offer finalizedOffer = new Offer.Builder(
+                newOfferContent.customer,
+                newOfferContent.projectManager,
+                newOfferContent.projectTitle,
+                newOfferContent.projectDescription,
+                newOfferContent.items,
+                newOfferContent.selectedCustomerAffiliation)
+                .identifier(identifier)
+                .build()
+
+
+        Offer oldOffer = new Offer.Builder(
+                oldOfferContent.customer,
+                oldOfferContent.projectManager,
+                oldOfferContent.projectTitle,
+                oldOfferContent.projectDescription,
+                oldOfferContent.items,
+                oldOfferContent.selectedCustomerAffiliation)
+                .identifier(Converter.buildOfferId(oldOfferContent.identifier))
+                .build()
+
+        if(!oldOffer.equals(finalizedOffer)){
+            storeOffer(finalizedOffer)
+        }
+    }
+
     private void storeOffer(Offer finalizedOffer) {
         try {
             final offer = Converter.convertOfferToDTO(finalizedOffer)
@@ -64,4 +96,5 @@ class UpdateOffer implements UpdateOfferInput{
                     "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
     }
+
 }

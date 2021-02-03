@@ -11,4 +11,8 @@ import spock.lang.Specification
  * @author: Tobias Koch
  */
 class UpdateOfferSpec extends Specification {
+
+    def "Updated offer has a new version"(){
+
+    }
 }

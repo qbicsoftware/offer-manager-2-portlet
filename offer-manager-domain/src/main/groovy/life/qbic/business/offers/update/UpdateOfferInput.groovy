@@ -24,4 +24,19 @@ interface UpdateOfferInput {
      */
     void updateExistingOffer(Offer offerContent)
 
+    /**
+     * Searches for and existing offer and creates a new version with the provided information only if the offer is different
+     * to the old offer.
+     * The output of the use case is then informed about the successful creation of a new offer version
+     * <br>
+     * <br>
+     * <b>Precondition</b>:    Offer with identifier exists
+     * <br>
+     * <b>Postcondition</b>:   Offer is updated and has new version
+
+     * @param offerContent
+     * @since 1.0.0
+     */
+    void updateExistingOffer(Offer newOfferContent, Offer oldOfferContent)
+
 }
