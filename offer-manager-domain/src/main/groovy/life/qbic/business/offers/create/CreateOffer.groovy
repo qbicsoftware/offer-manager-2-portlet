@@ -77,6 +77,12 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
         return new OfferId(randomPart, projectConservedPart, version)
     }
 
+    //todo remove this method, its unused!!
+    @Override
+    void calculatePrice(List<ProductItem> items, AffiliationCategory category) {
+        throw new RuntimeException("Method not implemented.")
+    }
+
     @Override
     void calculatePrice(List<ProductItem> items, Affiliation affiliation) {
         life.qbic.business.offers.Offer offer = Converter.buildOfferForCostCalculation(items, affiliation)
