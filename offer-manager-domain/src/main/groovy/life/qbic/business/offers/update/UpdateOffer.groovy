@@ -6,10 +6,14 @@ import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Offer
+import life.qbic.business.offers.create.CalculatePrice
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.update.UpdateOfferDataSource
 import life.qbic.business.offers.update.UpdateOfferInput
 import life.qbic.business.offers.update.UpdateOfferOutput
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AffiliationCategory
+import life.qbic.datamodel.dtos.business.ProductItem
 
 /**
  * <h1>SRS - 4.2.2 Update Offer</h1>
@@ -20,7 +24,7 @@ import life.qbic.business.offers.update.UpdateOfferOutput
  *
  * @since: 1.0.0
  */
-class UpdateOffer implements UpdateOfferInput{
+class UpdateOffer implements UpdateOfferInput, CalculatePrice{
 
     private final UpdateOfferDataSource dataSource
     private final UpdateOfferOutput output
@@ -97,4 +101,13 @@ class UpdateOffer implements UpdateOfferInput{
         }
     }
 
+    @Override
+    void calculatePrice(List<ProductItem> items, Affiliation affiliation) {
+        Offer offer = Converter.buildOfferForCostCalculation(items, affiliation)
+        output.calculatedPrice(
+                offer.getTotalNetPrice(),
+                offer.getTaxCosts(),
+                offer.getOverheadSum(),
+                offer.getTotalCosts())
+    }
 }
