@@ -1,9 +1,13 @@
 package life.qbic.portal.portlet.offers.update
 
+import life.qbic.business.offers.create.CreateOffer
+import life.qbic.business.offers.create.CreateOfferDataSource
+import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.update.UpdateOffer
 import life.qbic.business.offers.update.UpdateOfferDataSource
 import life.qbic.business.offers.update.UpdateOfferOutput
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
@@ -12,6 +16,7 @@ import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
+import life.qbic.datamodel.dtos.business.services.Sequencing
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -104,5 +109,21 @@ class UpdateOfferSpec extends Specification {
         then:
         0* output.updatedOffer(_)
         1* output.failNotification("An unchanged offer cannot be updated")
+    }
+
+    def "calculate offer price correctly"(){
+        given:
+        UpdateOfferOutput output = Mock(UpdateOfferOutput)
+        UpdateOffer updateOffer = new UpdateOffer(Stub(UpdateOfferDataSource),output)
+
+        and:
+        List<ProductItem> items = [new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE, "1")),
+                                   new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE, "1"))]
+        when:
+        updateOffer.calculatePrice(items, new Affiliation.Builder("Test", "", "", "").category
+        (AffiliationCategory.INTERNAL).build())
+
+        then:
+        1 * output.calculatedPrice(2.8, 0, 0, 2.8)
     }
 }
