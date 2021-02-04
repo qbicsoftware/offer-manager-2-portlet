@@ -286,7 +286,6 @@ class Offer {
     private static String getOfferChecksum(MessageDigest digest, Offer offer)
     {
         //digest crucial offer characteristics
-        //digest.update(byteArray, 0, bytesCount)
         digest.update(offer.projectTitle.getBytes(StandardCharsets.UTF_8))
 
         offer.items.each {item ->
