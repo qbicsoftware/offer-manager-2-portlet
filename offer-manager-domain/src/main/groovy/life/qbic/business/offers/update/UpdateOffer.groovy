@@ -57,7 +57,7 @@ class UpdateOffer implements UpdateOfferInput, CalculatePrice{
     @Override
     void updateExistingOffer(life.qbic.datamodel.dtos.business.Offer newOfferContent, life.qbic.datamodel.dtos.business.Offer oldOfferContent) {
 
-        OfferId identifier = Converter.buildOfferId(newOfferContent.identifier)
+        OfferId identifier = Converter.buildOfferId(oldOfferContent.identifier)
         identifier.increaseVersion()
 
         Offer finalizedOffer = new Offer.Builder(
@@ -69,7 +69,6 @@ class UpdateOffer implements UpdateOfferInput, CalculatePrice{
                 newOfferContent.selectedCustomerAffiliation)
                 .identifier(identifier)
                 .build()
-
 
         Offer oldOffer = new Offer.Builder(
                 oldOfferContent.customer,
@@ -83,6 +82,8 @@ class UpdateOffer implements UpdateOfferInput, CalculatePrice{
 
         if(!oldOffer.equals(finalizedOffer)){
             storeOffer(finalizedOffer)
+        }else{
+            output.failNotification("An unchanged offer cannot be updated")
         }
     }
 
