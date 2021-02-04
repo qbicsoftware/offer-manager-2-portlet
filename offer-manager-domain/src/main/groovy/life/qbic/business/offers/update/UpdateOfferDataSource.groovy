@@ -2,6 +2,7 @@ package life.qbic.business.offers.update
 
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.OfferId
 
 /**
  * Provides methods to store offers in a data-source
@@ -27,4 +28,13 @@ interface UpdateOfferDataSource {
      * @throws DatabaseQueryException
      */
     void store(Offer offer) throws DatabaseQueryException
+
+
+    /**
+     * Fetches all versions of one offer id that are stored in the database
+     *
+     * @param id The id for which all versions should be found
+     * @return a list of all different version identifiers of an id
+     */
+    List<OfferId> fetchAllVersionsForOfferId(String id)
 }

@@ -71,7 +71,12 @@ class OfferDbConnector implements CreateOfferDataSource, UpdateOfferDataSource{
         }
     }
 
-    /**
+    @Override
+    List<life.qbic.business.offers.identifier.OfferId> fetchAllVersionsForOfferId(String id) {
+        //todo implement
+        throw new RuntimeException("Method not implemented")
+    }
+/**
      * The method stores the offer in the QBiC database
      *
      * @param offer with the information of the offer to be stored

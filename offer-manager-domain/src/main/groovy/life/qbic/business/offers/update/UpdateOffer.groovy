@@ -53,8 +53,7 @@ class UpdateOffer implements UpdateOfferInput, CalculatePrice{
     @Override
     void updateExistingOffer(life.qbic.datamodel.dtos.business.Offer newOfferContent, life.qbic.datamodel.dtos.business.Offer oldOfferContent) {
 
-        OfferId identifier = Converter.buildOfferId(oldOfferContent.identifier)
-        identifier.increaseVersion()
+        OfferId identifier = increaseOfferIdentifier(oldOfferContent.identifier)
 
         Offer finalizedOffer = new Offer.Builder(
                 newOfferContent.customer,
@@ -96,6 +95,32 @@ class UpdateOffer implements UpdateOfferInput, CalculatePrice{
             output.failNotification("An unexpected during the saving of your offer occurred. " +
                     "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
+    }
+
+    private OfferId increaseOfferIdentifier(life.qbic.datamodel.dtos.business.OfferId oldOfferId){
+        //search for all ids in the database
+        List<life.qbic.datamodel.dtos.business.OfferId> allVersionIds = dataSource.fetchAllVersionsForOfferId(oldOfferId.toString())
+        //take the latest one and increase it
+        life.qbic.datamodel.dtos.business.OfferId latestVersion = getLatestVersion(allVersionIds)
+
+        OfferId convertedId = Converter.buildOfferId(latestVersion)
+        convertedId.increaseVersion()
+
+        return convertedId
+    }
+
+    private static life.qbic.datamodel.dtos.business.OfferId getLatestVersion(List<life.qbic.datamodel.dtos.business.OfferId> ids){
+        life.qbic.datamodel.dtos.business.OfferId maxID = null
+        int maxVersion = -1
+
+        ids.each {id ->
+            int currentVersion = Integer.parseInt(id.getVersion())
+            if ( currentVersion > maxVersion){
+                maxVersion = currentVersion
+                maxID = id
+            }
+        }
+        return maxID
     }
 
     @Override

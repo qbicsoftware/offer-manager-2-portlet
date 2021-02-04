@@ -1,5 +1,6 @@
 package life.qbic.portal.portlet.offers.update
 
+import life.qbic.business.offers.Converter
 import life.qbic.business.offers.update.UpdateOffer
 import life.qbic.business.offers.update.UpdateOfferDataSource
 import life.qbic.business.offers.update.UpdateOfferOutput
@@ -122,5 +123,42 @@ class UpdateOfferSpec extends Specification {
 
         then:
         1 * output.calculatedPrice(2.8, 0, 0, 2.8)
+    }
+
+    def "Increase version the latest version of an offer"(){
+        given:
+        UpdateOfferOutput output = Mock(UpdateOfferOutput)
+        UpdateOfferDataSource ds = Mock(UpdateOfferDataSource)
+        UpdateOffer updateOffer = new UpdateOffer(ds,output)
+
+        and: "given offers and items"
+        List<ProductItem> items = [new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE, "1")),
+                                   new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE, "1"))]
+
+        OfferId offer1 = new OfferId("Conserved","abcd","1")
+        OfferId offer2 = new OfferId("Conserved","abcd","2")
+        OfferId offer3 = new OfferId("Conserved","abcd","3")
+
+        Offer oldOffer = new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
+                .modificationDate(date).expirationDate(date).items([items[0]]).identifier(new OfferId("Conserved","abcd","2"))
+                .build()
+
+        Offer newOffer = new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
+                .modificationDate(date).expirationDate(date).items(items)
+                .build()
+
+        and: "Db returns that there are already 3 versions of the offer"
+        ds.fetchAllVersionsForOfferId(_ as String) >> [offer3,offer1,offer2]
+
+        when:
+        updateOffer.updateExistingOffer(newOffer,oldOffer)
+
+        then:
+        1* output.updatedOffer(_) >> {arguments ->
+            final Offer offer = arguments.get(0)
+            assert offer.identifier.version.toString() == "4"
+        }
+
+
     }
 }

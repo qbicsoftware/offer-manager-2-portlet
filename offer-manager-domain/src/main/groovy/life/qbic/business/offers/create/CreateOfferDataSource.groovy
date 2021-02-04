@@ -1,5 +1,6 @@
 package life.qbic.business.offers.create
 
+import life.qbic.business.offers.identifier.OfferId
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.exceptions.DatabaseQueryException
 
