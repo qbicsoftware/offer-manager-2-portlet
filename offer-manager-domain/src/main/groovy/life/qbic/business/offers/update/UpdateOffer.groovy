@@ -9,7 +9,6 @@ import life.qbic.business.offers.Offer
 import life.qbic.business.offers.create.CalculatePrice
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.ProductItem
 
 /**

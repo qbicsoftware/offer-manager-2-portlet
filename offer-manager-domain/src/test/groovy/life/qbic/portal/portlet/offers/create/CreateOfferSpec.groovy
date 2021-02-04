@@ -3,9 +3,6 @@ package life.qbic.portal.portlet.offers.create
 import life.qbic.business.offers.create.CreateOffer
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.create.CreateOfferOutput
-import life.qbic.business.offers.update.UpdateOffer
-import life.qbic.business.offers.update.UpdateOfferDataSource
-import life.qbic.business.offers.update.UpdateOfferOutput
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
