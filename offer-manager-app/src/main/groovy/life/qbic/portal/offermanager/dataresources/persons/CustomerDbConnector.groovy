@@ -270,15 +270,59 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     return affiliationIds[0]
   }
 
+  //TODO there is no 'active' field in this table
+  private void setCustomerActive(String customerId, boolean active) {
+    String query = "UPDATE person SET active = ? WHERE id = ?";
+    
+    Connection connection = connectionProvider.connect()
+
+    connection.withCloseable {
+      def statement = connection.prepareStatement(query)
+      statement.setBoolean(1, active)
+      statement.setInt(2, Integer.parseInt(customerId))//TODO is this the correct ID and format?
+      statement.execute()
+    }
+  }
+  
   /**
    * @inheritDoc
-   * @param customerId
+   * @param oldCustomerId
    * @param updatedCustomer
    */
   @Override
-  void updateCustomer(String customerId, Customer updatedCustomer) {
-    //TODO implement
-    throw new RuntimeException("Method not implemented.")
+  void updateCustomer(String oldCustomerId, Customer updatedCustomer) {
+    try {
+      if (!customerExists(customer)) {
+        throw new DatabaseQueryException("Customer is not in the database and can't be updated.")
+      }
+            
+      Connection connection = connectionProvider.connect()
+      connection.setAutoCommit(false)
+
+      connection.withCloseable {it ->
+        try {
+          int customerId = createNewCustomer(it, updatedCustomer)
+          storeAffiliation(it, customerId, updatedCustomer.affiliations)
+          connection.commit()
+          
+          // if our update is successful we set the old customer inactive
+          setCustomerActive(oldCustomerId, false)
+          
+        } catch (Exception e) {
+          log.error(e.message)
+          log.error(e.stackTrace.join("\n"))
+          connection.rollback()
+          connection.close()
+          throw new DatabaseQueryException("Could not update customer.")
+        }
+      }
+    } catch (DatabaseQueryException ignored) {
+      throw new DatabaseQueryException("The customer could not be updated: ${customer.toString()}")
+    } catch (Exception e) {
+      log.error(e)
+      log.error(e.stackTrace.join("\n"))
+      throw new DatabaseQueryException("The customer could not be updated: ${customer.toString()}")
+    }
   }
 
   /**
