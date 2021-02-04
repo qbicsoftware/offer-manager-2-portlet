@@ -271,7 +271,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   }
 
   //TODO there is no 'active' field in this table
-  private void setCustomerActive(String customerId, boolean active) {
+  private void setCustomerActive(int customerId, boolean active) {
     String query = "UPDATE person SET active = ? WHERE id = ?";
     
     Connection connection = connectionProvider.connect()
@@ -279,20 +279,22 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     connection.withCloseable {
       def statement = connection.prepareStatement(query)
       statement.setBoolean(1, active)
-      statement.setInt(2, Integer.parseInt(customerId))//TODO is this the correct ID and format?
+      statement.setInt(2, customerId)
       statement.execute()
     }
   }
   
   /**
    * @inheritDoc
-   * @param oldCustomerId
+   * @param customerId
    * @param updatedCustomer
    */
   @Override
-  void updateCustomer(String oldCustomerId, Customer updatedCustomer) {
+  void updateCustomer(String customerId, Customer updatedCustomer) {
+    //TODO is this the correct ID and format?
+    int oldCustomerId = Integer.parseInt(customerId)
     try {
-      if (!customerExists(customer)) {
+      if (getCustomer(oldCustomerId)==null)) {
         throw new DatabaseQueryException("Customer is not in the database and can't be updated.")
       }
             
@@ -301,8 +303,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
       connection.withCloseable {it ->
         try {
-          int customerId = createNewCustomer(it, updatedCustomer)
-          storeAffiliation(it, customerId, updatedCustomer.affiliations)
+          int newCustomerId = createNewCustomer(it, updatedCustomer)
+          storeAffiliation(it, newCustomerId, updatedCustomer.affiliations)
           connection.commit()
           
           // if our update is successful we set the old customer inactive
