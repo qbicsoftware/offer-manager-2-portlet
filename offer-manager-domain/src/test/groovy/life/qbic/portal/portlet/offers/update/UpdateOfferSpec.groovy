@@ -60,6 +60,9 @@ class UpdateOfferSpec extends Specification {
         UpdateOfferDataSource ds = Stub(UpdateOfferDataSource.class)
         UpdateOffer updateOffer = new UpdateOffer(ds,output)
 
+        and: "Db returns that there are already 3 versions of the offer"
+        ds.fetchAllVersionsForOfferId(_ as String) >> [new OfferId("Conserved","abcd","1")]
+
         and:
         List<ProductItem> items = [
                 new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
@@ -100,6 +103,9 @@ class UpdateOfferSpec extends Specification {
         Offer oldOffer = new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(new OfferId("Conserved","abcd","1"))
                 .build()
+
+        and: "Db returns that there are already 3 versions of the offer"
+        ds.fetchAllVersionsForOfferId(_ as String) >> [new OfferId("Conserved","abcd","1")]
 
         when:
         updateOffer.updateExistingOffer(oldOffer,oldOffer)
