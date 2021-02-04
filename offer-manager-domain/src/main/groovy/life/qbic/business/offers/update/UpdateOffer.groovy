@@ -8,9 +8,6 @@ import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Offer
 import life.qbic.business.offers.create.CalculatePrice
 import life.qbic.business.offers.identifier.OfferId
-import life.qbic.business.offers.update.UpdateOfferDataSource
-import life.qbic.business.offers.update.UpdateOfferInput
-import life.qbic.business.offers.update.UpdateOfferOutput
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.ProductItem
