@@ -30,7 +30,7 @@ import life.qbic.portal.offermanager.components.affiliation.create.CreateAffilia
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewModel
-import life.qbic.portal.offermanager.components.offer.update.UpdateOfferViewModel
+import life.qbic.portal.offermanager.components.offer.create.update.UpdateOfferViewModel
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
@@ -39,7 +39,6 @@ import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
 import life.qbic.portal.offermanager.components.AppView
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
-import org.apache.tools.ant.Project
 
 /**
  * Class that manages all the dependency injections and class instance creations

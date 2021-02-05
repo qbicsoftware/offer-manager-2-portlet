@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.offer.update
+package life.qbic.portal.offermanager.components.offer.create.update
 
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
@@ -30,6 +30,7 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
 
     final private OfferUpdateService offerUpdateService
 
+    //todo do we need this?
     boolean isUpdatedOffer
 
     UpdateOfferViewModel(CustomerResourceService customerResourceService,
