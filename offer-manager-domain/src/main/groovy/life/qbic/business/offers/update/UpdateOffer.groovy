@@ -9,6 +9,7 @@ import life.qbic.business.offers.Offer
 import life.qbic.business.offers.create.CalculatePrice
 import life.qbic.business.offers.create.CreateOffer
 import life.qbic.business.offers.create.CreateOfferInput
+import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.ProductItem
@@ -25,11 +26,11 @@ import life.qbic.datamodel.dtos.business.ProductItem
 class UpdateOffer implements CreateOfferInput, CalculatePrice{
 
     private final UpdateOfferDataSource dataSource
-    private final UpdateOfferOutput output
+    private final CreateOfferOutput output
     private final Logging log = Logger.getLogger(this.class)
 
 
-    UpdateOffer(UpdateOfferDataSource dataSource, UpdateOfferOutput output) {
+    UpdateOffer(UpdateOfferDataSource dataSource, CreateOfferOutput output) {
         this.dataSource = dataSource
         this.output = output
     }
@@ -75,7 +76,7 @@ class UpdateOffer implements CreateOfferInput, CalculatePrice{
         try {
             final offer = Converter.convertOfferToDTO(finalizedOffer)
             dataSource.store(offer)
-            output.updatedOffer(offer)
+            output.createdNewOffer(offer)
         } catch (DatabaseQueryException e) {
             output.failNotification(e.message)
         } catch (Exception unexpected) {

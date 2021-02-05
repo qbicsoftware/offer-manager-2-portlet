@@ -1,9 +1,10 @@
 package life.qbic.portal.portlet.offers.update
 
-import life.qbic.business.offers.Converter
+
+import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.update.UpdateOffer
 import life.qbic.business.offers.update.UpdateOfferDataSource
-import life.qbic.business.offers.update.UpdateOfferOutput
+
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
@@ -56,7 +57,7 @@ class UpdateOfferSpec extends Specification {
 
     def "Updating an offer is successful"(){
         given:
-        UpdateOfferOutput output = Mock(UpdateOfferOutput.class)
+        CreateOfferOutput output = Mock(CreateOfferOutput.class)
         UpdateOfferDataSource ds = Stub(UpdateOfferDataSource.class)
         UpdateOffer updateOffer = new UpdateOffer(ds,output)
 
@@ -79,7 +80,7 @@ class UpdateOfferSpec extends Specification {
 
         and: "Db returns that there are already 3 versions of the offer"
         ds.fetchAllVersionsForOfferId(_ as String) >> [new OfferId("Conserved","abcd","1")]
-        ds.getOfferById(_) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
+        ds.getOfferById(_ as OfferId) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOfferId)
                 .build()
 
@@ -87,12 +88,12 @@ class UpdateOfferSpec extends Specification {
         updateOffer.createOffer(newOffer)
 
         then:
-        1* output.updatedOffer(_)
+        1* output.createdNewOffer(_)
     }
 
     def "Unchanged offer does not lead to a database entry"(){
         given:
-        UpdateOfferOutput output = Mock(UpdateOfferOutput.class)
+        CreateOfferOutput output = Mock(CreateOfferOutput.class)
         UpdateOfferDataSource ds = Stub(UpdateOfferDataSource.class)
         UpdateOffer updateOffer = new UpdateOffer(ds,output)
 
@@ -111,7 +112,7 @@ class UpdateOfferSpec extends Specification {
 
         and: "Db returns that there are already 3 versions of the offer"
         ds.fetchAllVersionsForOfferId(_ as String) >> [new OfferId("Conserved","abcd","1")]
-        ds.getOfferById(_) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
+        ds.getOfferById(_ as OfferId) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOfferId)
                 .build()
 
@@ -119,13 +120,13 @@ class UpdateOfferSpec extends Specification {
         updateOffer.createOffer(oldOffer)
 
         then:
-        0* output.updatedOffer(_)
+        0* output.createdNewOffer(_)
         1* output.failNotification("An unchanged offer cannot be updated")
     }
 
     def "calculate offer price correctly"(){
         given:
-        UpdateOfferOutput output = Mock(UpdateOfferOutput)
+        CreateOfferOutput output = Mock(CreateOfferOutput)
         UpdateOffer updateOffer = new UpdateOffer(Stub(UpdateOfferDataSource),output)
 
         and:
@@ -141,7 +142,7 @@ class UpdateOfferSpec extends Specification {
 
     def "Increase version the latest version of an offer"(){
         given:
-        UpdateOfferOutput output = Mock(UpdateOfferOutput)
+        CreateOfferOutput output = Mock(CreateOfferOutput)
         UpdateOfferDataSource ds = Mock(UpdateOfferDataSource)
         UpdateOffer updateOffer = new UpdateOffer(ds,output)
 
@@ -161,7 +162,7 @@ class UpdateOfferSpec extends Specification {
 
         and: "Db returns that there are already 3 versions of the offer"
         ds.fetchAllVersionsForOfferId(_ as String) >> [offer3,offer1,offer2]
-        ds.getOfferById(_) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
+        ds.getOfferById(_ as OfferId) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOffer)
                 .build()
 
@@ -169,7 +170,7 @@ class UpdateOfferSpec extends Specification {
         updateOffer.createOffer(newOffer)
 
         then:
-        1* output.updatedOffer(_) >> {arguments ->
+        1* output.createdNewOffer(_) >> {arguments ->
             final Offer offer = arguments.get(0)
             assert offer.identifier.version.toString() == "4"
         }
