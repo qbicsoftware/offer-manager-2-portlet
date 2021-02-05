@@ -54,7 +54,7 @@ class UpdateOfferSpec extends Specification {
         projectDescription = "Cartoon Series"
     }
 
-    def "Updated an offer is successful"(){
+    def "Updating an offer is successful"(){
         given:
         UpdateOfferOutput output = Mock(UpdateOfferOutput.class)
         UpdateOfferDataSource ds = Stub(UpdateOfferDataSource.class)
@@ -71,16 +71,20 @@ class UpdateOfferSpec extends Specification {
                         "Just an example", 10.0, ProductUnit.PER_DATASET, "1"))
         ]
 
-        Offer oldOffer = new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
-                .modificationDate(date).expirationDate(date).items([items[0]]).identifier(new OfferId("Conserved","abcd","1"))
-                .build()
+        OfferId oldOfferId = new OfferId("Conserved","abcd","2")
 
         Offer newOffer = new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
-                .modificationDate(date).expirationDate(date).items(items)
+                .modificationDate(date).expirationDate(date).items(items).identifier(oldOfferId)
+                .build()
+
+        and: "Db returns that there are already 3 versions of the offer"
+        ds.fetchAllVersionsForOfferId(_ as String) >> [new OfferId("Conserved","abcd","1")]
+        ds.getOfferById(_) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
+                .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOfferId)
                 .build()
 
         when:
-        updateOffer.updateExistingOffer(newOffer,oldOffer)
+        updateOffer.createOffer(newOffer)
 
         then:
         1* output.updatedOffer(_)
@@ -103,12 +107,16 @@ class UpdateOfferSpec extends Specification {
         Offer oldOffer = new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(new OfferId("Conserved","abcd","1"))
                 .build()
+        OfferId oldOfferId = new OfferId("Conserved","abcd","2")
 
         and: "Db returns that there are already 3 versions of the offer"
         ds.fetchAllVersionsForOfferId(_ as String) >> [new OfferId("Conserved","abcd","1")]
+        ds.getOfferById(_) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
+                .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOfferId)
+                .build()
 
         when:
-        updateOffer.updateExistingOffer(oldOffer,oldOffer)
+        updateOffer.createOffer(oldOffer)
 
         then:
         0* output.updatedOffer(_)
@@ -145,19 +153,20 @@ class UpdateOfferSpec extends Specification {
         OfferId offer2 = new OfferId("Conserved","abcd","2")
         OfferId offer3 = new OfferId("Conserved","abcd","3")
 
-        Offer oldOffer = new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
-                .modificationDate(date).expirationDate(date).items([items[0]]).identifier(new OfferId("Conserved","abcd","2"))
-                .build()
+        OfferId oldOffer = new OfferId("Conserved","abcd","2")
 
         Offer newOffer = new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
-                .modificationDate(date).expirationDate(date).items(items)
+                .modificationDate(date).expirationDate(date).items(items).identifier(oldOffer)
                 .build()
 
         and: "Db returns that there are already 3 versions of the offer"
         ds.fetchAllVersionsForOfferId(_ as String) >> [offer3,offer1,offer2]
+        ds.getOfferById(_) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
+                .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOffer)
+                .build()
 
         when:
-        updateOffer.updateExistingOffer(newOffer,oldOffer)
+        updateOffer.createOffer(newOffer)
 
         then:
         1* output.updatedOffer(_) >> {arguments ->
