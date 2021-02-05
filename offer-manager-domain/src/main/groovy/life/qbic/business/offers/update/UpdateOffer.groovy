@@ -7,6 +7,8 @@ import life.qbic.business.logging.Logging
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Offer
 import life.qbic.business.offers.create.CalculatePrice
+import life.qbic.business.offers.create.CreateOffer
+import life.qbic.business.offers.create.CreateOfferInput
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.ProductItem
@@ -20,7 +22,7 @@ import life.qbic.datamodel.dtos.business.ProductItem
  *
  * @since: 1.0.0
  */
-class UpdateOffer implements UpdateOfferInput, CalculatePrice{
+class UpdateOffer implements CreateOfferInput, CalculatePrice{
 
     private final UpdateOfferDataSource dataSource
     private final UpdateOfferOutput output
@@ -33,9 +35,23 @@ class UpdateOffer implements UpdateOfferInput, CalculatePrice{
     }
 
     @Override
-    void updateExistingOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
-        OfferId identifier = Converter.buildOfferId(offerContent.identifier)
-        identifier.increaseVersion()
+    void createOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
+
+        OfferId oldId = Converter.buildOfferId(offerContent.identifier)
+        //fetch old offer by id
+        life.qbic.datamodel.dtos.business.Offer offer = dataSource.getOfferById(oldId)
+
+        Offer oldOffer = new Offer.Builder(
+                offer.customer,
+                offer.projectManager,
+                offer.projectTitle,
+                offer.projectDescription,
+                offer.items,
+                offer.selectedCustomerAffiliation)
+                .identifier(oldId)
+                .build()
+
+        OfferId identifier = increaseOfferIdentifier(offerContent.identifier)
 
         Offer finalizedOffer = new Offer.Builder(
                 offerContent.customer,
@@ -47,40 +63,13 @@ class UpdateOffer implements UpdateOfferInput, CalculatePrice{
                 .identifier(identifier)
                 .build()
 
-        storeOffer(finalizedOffer)
-    }
-
-    @Override
-    void updateExistingOffer(life.qbic.datamodel.dtos.business.Offer newOfferContent, life.qbic.datamodel.dtos.business.Offer oldOfferContent) {
-
-        OfferId identifier = increaseOfferIdentifier(oldOfferContent.identifier)
-
-        Offer finalizedOffer = new Offer.Builder(
-                newOfferContent.customer,
-                newOfferContent.projectManager,
-                newOfferContent.projectTitle,
-                newOfferContent.projectDescription,
-                newOfferContent.items,
-                newOfferContent.selectedCustomerAffiliation)
-                .identifier(identifier)
-                .build()
-
-        Offer oldOffer = new Offer.Builder(
-                oldOfferContent.customer,
-                oldOfferContent.projectManager,
-                oldOfferContent.projectTitle,
-                oldOfferContent.projectDescription,
-                oldOfferContent.items,
-                oldOfferContent.selectedCustomerAffiliation)
-                .identifier(Converter.buildOfferId(oldOfferContent.identifier))
-                .build()
-
-        if(!oldOffer.equals(finalizedOffer)){
+        if(oldOffer.checksum() != finalizedOffer.checksum()){
             storeOffer(finalizedOffer)
         }else{
             output.failNotification("An unchanged offer cannot be updated")
         }
     }
+
 
     private void storeOffer(Offer finalizedOffer) {
         try {
@@ -98,13 +87,19 @@ class UpdateOffer implements UpdateOfferInput, CalculatePrice{
     }
 
     private OfferId increaseOfferIdentifier(life.qbic.datamodel.dtos.business.OfferId oldOfferId){
-        //search for all ids in the database
-        List<life.qbic.datamodel.dtos.business.OfferId> allVersionIds = dataSource.fetchAllVersionsForOfferId(oldOfferId.toString())
-        //take the latest one and increase it
-        life.qbic.datamodel.dtos.business.OfferId latestVersion = getLatestVersion(allVersionIds)
+        OfferId convertedId = null
 
-        OfferId convertedId = Converter.buildOfferId(latestVersion)
-        convertedId.increaseVersion()
+        try{
+            //search for all ids in the database
+            List<life.qbic.datamodel.dtos.business.OfferId> allVersionIds = dataSource.fetchAllVersionsForOfferId(oldOfferId.toString())
+            //take the latest one and increase it
+            life.qbic.datamodel.dtos.business.OfferId latestVersion = getLatestVersion(allVersionIds)
+
+            convertedId = Converter.buildOfferId(latestVersion)
+            convertedId.increaseVersion()
+        }catch(DatabaseQueryException e){
+            output.failNotification(e.message)
+        }
 
         return convertedId
     }
@@ -132,4 +127,5 @@ class UpdateOffer implements UpdateOfferInput, CalculatePrice{
                 offer.getOverheadSum(),
                 offer.getTotalCosts())
     }
+
 }

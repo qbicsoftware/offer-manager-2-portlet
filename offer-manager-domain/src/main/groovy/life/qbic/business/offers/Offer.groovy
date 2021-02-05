@@ -265,15 +265,12 @@ class Offer {
     * Compares the checksum of two offers
     * @param offer Offer that should be compared to the current offer
     */
-    boolean equals(Offer offer){
+    String checksum(){
         //Use SHA-1 algorithm
         MessageDigest shaDigest = MessageDigest.getInstance("SHA-256")
 
         //SHA-1 checksum
-        String shaChecksum = getOfferChecksum(shaDigest, offer)
-        String shaChecksum2 = getOfferChecksum(shaDigest, this)
-
-        return shaChecksum == shaChecksum2
+        return getOfferChecksum(shaDigest, this)
     }
 
 

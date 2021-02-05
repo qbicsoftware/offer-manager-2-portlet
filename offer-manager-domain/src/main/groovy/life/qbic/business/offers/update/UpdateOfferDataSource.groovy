@@ -37,4 +37,12 @@ interface UpdateOfferDataSource {
      * @return a list of all different version identifiers of an id must be at least of size 1
      */
     List<OfferId> fetchAllVersionsForOfferId(String id)
+
+
+    /**
+     * Returns the offer content based on the given offer id
+     * @param oldId specifying the offer for which the content shall be fetched
+     * @return the offer content in form of the offer dto
+     */
+    Offer getOfferById(oldId)
 }
