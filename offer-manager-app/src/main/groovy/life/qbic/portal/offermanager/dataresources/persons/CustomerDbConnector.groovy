@@ -74,7 +74,26 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return customerList
   }
+  
+  @Override
+  List<Customer> findActiveCustomer(String firstName, String lastName) throws DatabaseQueryException {
+    String sqlCondition = "WHERE first_name = ? AND last_name = ? AND active = 1"
+    String queryTemplate = CUSTOMER_SELECT_QUERY + " " + sqlCondition
+    Connection connection = connectionProvider.connect()
+    List<Customer> customerList = new ArrayList<>()
+    connection.withCloseable {
+      PreparedStatement preparedStatement = it.prepareStatement(queryTemplate)
 
+      preparedStatement.setString(1, firstName)
+      preparedStatement.setString(2, lastName)
+      ResultSet resultSet = preparedStatement.executeQuery()
+      while (resultSet.next()) {
+        customerList.add(parseCustomerFromResultSet(resultSet))
+      }
+    }
+    return customerList
+  }
+  
   /*
     We want to fetch all affiliations for a given person id.
     As this is a n to m relationship, we need to look-up
@@ -201,7 +220,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return customerAlreadyInDb
   }
-
+  
   private static int createNewCustomer(Connection connection, Customer customer) {
     String query = "INSERT INTO person (first_name, last_name, title, email) " +
             "VALUES(?, ?, ?, ?)"
@@ -270,7 +289,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     return affiliationIds[0]
   }
 
-  //TODO there is no 'active' field in this table
   private void setCustomerActive(int customerId, boolean active) {
     String query = "UPDATE person SET active = ? WHERE id = ?";
     
@@ -291,8 +309,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    */
   @Override
   void updateCustomer(String customerId, Customer updatedCustomer) {
-    //TODO is this the correct ID and format?
-    int oldCustomerId = Integer.parseInt(customerId)
+
+        int oldCustomerId = Integer.parseInt(customerId)
     try {
       if (getCustomer(oldCustomerId)==null)) {
         throw new DatabaseQueryException("Customer is not in the database and can't be updated.")
@@ -497,7 +515,39 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return personId
   }
+  
+  /**
+   * Searches for a person and returns the matching ID from the person table if that person is set to active
+   *
+   * @param person The database entry is searched for a person
+   * @return the ID of the database entry matching the person
+   */
+  int getActivePersonId(Person person) {
+    String query = "SELECT id FROM person WHERE first_name = ? AND last_name = ? AND email = ? AND active = 1"
+    Connection connection = connectionProvider.connect()
 
+    int personId = -1
+
+    connection.withCloseable {
+      def statement = connection.prepareStatement(query)
+      statement.setString(1, person.firstName)
+      statement.setString(2, person.lastName)
+      statement.setString(3, person.emailAddress)
+
+      ResultSet result = statement.executeQuery()
+      while (result.next()){
+        personId = result.getInt(1)
+      }
+    }
+    if (personId == -1) {
+      def msg = "Could not find ${person.firstName} ${person.lastName} " +
+              "(${person.emailAddress}) in the list of active persons. They might be inactive."
+      log.error(msg)
+      throw new DatabaseQueryException(msg)
+    }
+    return personId
+  }
+  
   /**
    * List all available persons.
    * @return A list of persons
@@ -516,7 +566,26 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return customers
   }
-
+  
+  /**
+   * List all available persons that are set to active in the database.
+   * @return A list of active persons
+   */
+  List<Customer> fetchAllActiveCustomers() {
+    List<Customer> customers = []
+    String query = CUSTOMER_SELECT_QUERY + " WHERE active = 1;
+    Connection connection = connectionProvider.connect()
+    connection.withCloseable {
+      def preparedStatement = it.prepareStatement(query)
+      ResultSet resultSet = preparedStatement.executeQuery()
+      while(resultSet.next()) {
+        Customer customer = parseCustomerFromResultSet(resultSet)
+        customers.add(customer)
+      }
+    }
+    return customers
+  }
+  
   /**
    * List all available project managers.
    * @return A list of project managers
