@@ -312,7 +312,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
         int oldCustomerId = Integer.parseInt(customerId)
     try {
-      if (getCustomer(oldCustomerId)==null)) {
+      if (getCustomer(oldCustomerId)==null) {
         throw new DatabaseQueryException("Customer is not in the database and can't be updated.")
       }
             
@@ -573,7 +573,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    */
   List<Customer> fetchAllActiveCustomers() {
     List<Customer> customers = []
-    String query = CUSTOMER_SELECT_QUERY + " WHERE active = 1;
+    String query = CUSTOMER_SELECT_QUERY + " WHERE active = 1"
     Connection connection = connectionProvider.connect()
     connection.withCloseable {
       def preparedStatement = it.prepareStatement(query)
