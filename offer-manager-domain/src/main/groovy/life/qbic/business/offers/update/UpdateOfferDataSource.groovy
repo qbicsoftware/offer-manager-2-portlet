@@ -44,5 +44,5 @@ interface UpdateOfferDataSource {
      * @param oldId specifying the offer for which the content shall be fetched
      * @return the offer content in form of the offer dto
      */
-    Offer getOfferById(oldId)
+    Offer getOfferById(OfferId oldId)
 }

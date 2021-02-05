@@ -39,7 +39,7 @@ class UpdateOffer implements CreateOfferInput, CalculatePrice{
 
         OfferId oldId = Converter.buildOfferId(offerContent.identifier)
         //fetch old offer by id
-        life.qbic.datamodel.dtos.business.Offer offer = dataSource.getOfferById(oldId)
+        life.qbic.datamodel.dtos.business.Offer offer = dataSource.getOfferById(offerContent.identifier)
 
         Offer oldOffer = new Offer.Builder(
                 offer.customer,

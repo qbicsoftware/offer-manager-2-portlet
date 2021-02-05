@@ -9,7 +9,6 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.portal.offermanager.dataresources.persons.CustomerDbConnector
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
-import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 
 import java.sql.*
@@ -78,7 +77,7 @@ class OfferDbConnector implements CreateOfferDataSource, UpdateOfferDataSource{
     }
 
     @Override
-    Offer getOfferById(Object oldId) {
+    Offer getOfferById(OfferId oldId) {
         //todo implement
         throw new RuntimeException("Method not implemented")
     }
