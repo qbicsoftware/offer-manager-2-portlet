@@ -36,6 +36,9 @@ class OfferDbConnector implements CreateOfferDataSource, UpdateOfferDataSource{
             "creationDate, expirationDate, customerId, projectManagerId, projectTitle, " +
             "projectDescription, totalPrice, customerAffiliationId, vat, netPrice, overheads)"
 
+    private static final String OFFER_SELECT_QUERY = "SELECT offerId, creationDate, expirationDate, customerId, projectManagerId, projectTitle," +
+                                                        "projectDescription, totalPrice, customerAffiliationId, vat, netPrice, overheads FROM offer"
+
 
     OfferDbConnector(ConnectionProvider connectionProvider, CustomerDbConnector customerDbConnector, ProductsDbConnector productsDbConnector){
         this.connectionProvider = connectionProvider
@@ -72,14 +75,45 @@ class OfferDbConnector implements CreateOfferDataSource, UpdateOfferDataSource{
 
     @Override
     List<OfferId> fetchAllVersionsForOfferId(OfferId id) {
-        //todo implement
-        throw new RuntimeException("Method not implemented")
+        String query = OFFER_SELECT_QUERY + " WHERE offerId LIKE ? AND offerId LIKE ?"
+        Connection connection = null
+        List<OfferId> ids = []
+
+        try{
+            connection = connectionProvider.connect()
+            connection.withCloseable {
+                PreparedStatement preparedStatement = it.prepareStatement(query)
+                preparedStatement.setString(1, "O_"+id.projectConservedPart+"_%")
+                preparedStatement.setString(2, "%_"+id.randomPart+"_%")
+                ResultSet resultSet = preparedStatement.executeQuery()
+
+                while (resultSet.next()) {
+                    String resultID = resultSet.getString(1)
+                    OfferId offerId = parseOfferId(resultID)
+                    ids.add(offerId)
+                }
+
+                ids.each { println it }
+
+                return ids
+            }
+        }catch(Exception e){
+            log.error(e.message)
+            log.error(e.stackTrace.join("\n"))
+            connection.rollback()
+            throw new DatabaseQueryException("Could fetch offer versions for id ${id.toString()}.")
+        }
+
     }
 
     @Override
     Offer getOfferById(OfferId oldId) {
-        //todo implement
-        throw new RuntimeException("Method not implemented")
+        Optional<Offer> offer = getOffer(oldId)
+        if(offer.get() != null){
+            return offer.get()
+        }else{
+            throw new NullPointerException("Cannot find offer for id ${oldId.toString()}")
+        }
     }
 
 /**

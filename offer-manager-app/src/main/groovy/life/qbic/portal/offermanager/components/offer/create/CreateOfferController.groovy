@@ -1,7 +1,6 @@
 package life.qbic.portal.offermanager.components.offer.create
 
 import groovy.util.logging.Log4j2
-import life.qbic.business.offers.update.UpdateOfferInput
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
@@ -23,13 +22,11 @@ import life.qbic.business.offers.create.CreateOfferInput
 @Log4j2
 class CreateOfferController {
 
-    private final CreateOfferInput createOfferInput
-    private final UpdateOfferInput updateOfferInput
+    private final CreateOfferInput input
     private final CalculatePrice calculatePrice
 
-    CreateOfferController(CreateOfferInput input, UpdateOfferInput updateOfferInput, CalculatePrice calculatePrice){
-        this.createOfferInput = input
-        this.updateOfferInput = updateOfferInput
+    CreateOfferController(CreateOfferInput input, CalculatePrice calculatePrice){
+        this.input = input
         this.calculatePrice = calculatePrice
     }
 
@@ -62,13 +59,11 @@ class CreateOfferController {
                     .items(items)
                     .identifier(offerId)
                     .build()
-        //todo check if that works
+        //if the offer id is exists no identifier for the offer then it is a new offer that needs to be created
         if(offerId == null){
-            println "Create a new offer"
-            this.createOfferInput.createOffer(offer)
+            this.input.createOffer(offer)
         }else{
-            println "Update an offer"
-            this.updateOfferInput.updateExistingOffer(offer)
+            this.input.createOffer(offer)
         }
     }
 
