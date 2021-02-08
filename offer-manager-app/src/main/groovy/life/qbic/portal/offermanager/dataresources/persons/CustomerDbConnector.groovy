@@ -336,8 +336,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
           throw new DatabaseQueryException("Could not update customer.")
         }
       }
-    } catch (DatabaseQueryException ignored) {
-      throw new DatabaseQueryException("The customer could not be updated: ${customer.toString()}")
     } catch (Exception e) {
       log.error(e)
       log.error(e.stackTrace.join("\n"))
