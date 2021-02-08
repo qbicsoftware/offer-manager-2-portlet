@@ -30,6 +30,8 @@ class OfferSpec extends Specification {
     Customer customerWithAllAffiliations
     @Shared
     ProjectManager projectManager
+    @Shared
+    ProjectManager projectManager2
 
     def setup() {
         internalAffiliation = new Affiliation.Builder("Uni Tübingen", "Auf der " +
@@ -46,6 +48,8 @@ class OfferSpec extends Specification {
                 ".mustermann@qbic.uni-tuebingen.de").affiliations([internalAffiliation, externalAffiliation]).build()
         projectManager  = new ProjectManager.Builder("Maxime", "Musterfrau", "max" +
                 ".musterfrau@qbic.uni-tuebingen.de").build()
+        projectManager2  = new ProjectManager.Builder("Max", "Mustermann", "max" +
+                ".mustermann@qbic.uni-tuebingen.de").build()
     }
 
     def "A customer with an internal affiliation shall pay no overheads"() {
@@ -151,5 +155,85 @@ class OfferSpec extends Specification {
 
         then:
         overhead == 0
+    }
+
+    def "Different offer with updated item list can be differentiated"(){
+        given:
+        List<ProductItem> items = [
+                new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                        " example", 1.0, ProductUnit.PER_SAMPLE,"1")),
+                new ProductItem(1, new ProjectManagement("Basic Management",
+                        "Just an example", 10.0, ProductUnit.PER_DATASET,"1"))
+        ]
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, externalAffiliation).build()
+
+        List<ProductItem> items2 = [
+                new ProductItem(10, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                        " example", 1.0, ProductUnit.PER_SAMPLE,"1")),
+                new ProductItem(5, new ProjectManagement("Basic Management",
+                        "Just an example", 10.0, ProductUnit.PER_DATASET,"1"))
+        ]
+
+        Offer offer2 = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items2, externalAffiliation).build()
+
+        when:
+        def res = offer.equals(offer2)
+
+        then:
+        !res
+    }
+
+    def "Different offer with updated project manager can be differentiated"(){
+        given:
+        List<ProductItem> items = [
+                new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                        " example", 1.0, ProductUnit.PER_SAMPLE,"1")),
+                new ProductItem(1, new ProjectManagement("Basic Management",
+                        "Just an example", 10.0, ProductUnit.PER_DATASET,"1"))
+        ]
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, externalAffiliation).build()
+
+        Offer offer2 = new Offer.Builder(customerWithAllAffiliations, projectManager2, "Awesome Project", "An " +
+                "awesome project", items, externalAffiliation).build()
+
+        when:
+        def res = offer.equals(offer2)
+
+        then:
+        !res
+    }
+
+    def "Different offer with updated customer affiliation can be differentiated"(){
+        given:
+        List<ProductItem> items = [
+                new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                        " example", 1.0, ProductUnit.PER_SAMPLE,"1")),
+                new ProductItem(1, new ProjectManagement("Basic Management",
+                        "Just an example", 10.0, ProductUnit.PER_DATASET,"1"))
+        ]
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, externalAffiliation).build()
+
+        List<ProductItem> items2 = [
+                new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                        " example", 1.0, ProductUnit.PER_SAMPLE,"1")),
+                new ProductItem(1, new ProjectManagement("Basic Management",
+                        "Just an example", 10.0, ProductUnit.PER_DATASET,"1"))
+        ]
+
+        Offer offer2 = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items2, internalAffiliation).build()
+
+        when:
+        def res = offer.equals(offer2)
+
+        then:
+        !res
     }
 }

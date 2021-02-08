@@ -25,6 +25,24 @@
 		<vaadin.version>8.12.0</vaadin.version>
 		<vaadin.plugin.version>8.12.0</vaadin.plugin.version>
 	</properties>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>maven-central-plugins</id>
+			<url>
+				https://repo.maven.apache.org/maven2
+			</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>liferay-releases-plugins</id>
+			<url>
+				https://repository.liferay.com/nexus/content/repositories/liferay-public-releases/com/liferay/portal/
+			</url>
+		</pluginRepository>
+		<pluginRepository>
+			<id>qbic-plugins-2</id>
+			<url>https://qbic-repo.qbic.uni-tuebingen.de/repository/maven-releases</url>
+		</pluginRepository>
+	</pluginRepositories>
 	<distributionManagement>
 		<repository>
 			<uniqueVersion>true</uniqueVersion>
@@ -144,6 +162,16 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.7.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-project-info-reports-plugin</artifactId>
+				<version>3.0.0</version>
+			</plugin>
+			<plugin>
 				<groupId>org.codehaus.gmavenplus</groupId>
 				<artifactId>gmavenplus-plugin</artifactId>
 				<version>1.12.0</version>
@@ -161,7 +189,21 @@
 							<goal>removeTestStubs</goal>
 						</goals>
 					</execution>
+					<execution>
+						<id>site</id>
+						<phase>site</phase>
+						<goals>
+							<goal>generateStubs</goal>
+							<goal>generateTestStubs</goal>
+							<goal>groovydoc</goal>
+							<goal>groovydocTests</goal>
+						</goals>
+					</execution>
 				</executions>
+				<configuration>
+					<groovyDocOutputDirectory>${project.build.directory}/site/gapidocs</groovyDocOutputDirectory>
+					<testGroovyDocOutputDirectory>${project.build.directory}/site/testgapidocs</testGroovyDocOutputDirectory>
+				</configuration>
 			</plugin>
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
@@ -172,9 +214,13 @@
 					</includes>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>life.qbic</groupId>
+				<artifactId>groovydoc-maven-plugin</artifactId>
+				<version>1.0.2</version>
+			</plugin>
 		</plugins>
 	</build>
-
 	<profiles>
 		<profile>
 			<id>no-liferay</id>
