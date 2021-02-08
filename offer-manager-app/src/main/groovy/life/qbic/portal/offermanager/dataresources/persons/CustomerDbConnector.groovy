@@ -289,7 +289,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     return affiliationIds[0]
   }
 
-  private void setCustomerActive(int customerId, boolean active) {
+  private void changeCustomerActiveFlag(int customerId, boolean active) {
     String query = "UPDATE person SET active = ? WHERE id = ?";
     
     Connection connection = connectionProvider.connect()
@@ -326,7 +326,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
           connection.commit()
           
           // if our update is successful we set the old customer inactive
-          setCustomerActive(oldCustomerId, false)
+          changeCustomerActiveFlag(oldCustomerId, false)
           
         } catch (Exception e) {
           log.error(e.message)
