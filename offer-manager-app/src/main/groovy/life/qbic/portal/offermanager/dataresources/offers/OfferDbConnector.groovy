@@ -71,7 +71,7 @@ class OfferDbConnector implements CreateOfferDataSource, UpdateOfferDataSource{
     }
 
     @Override
-    List<OfferId> fetchAllVersionsForOfferId(String id) {
+    List<OfferId> fetchAllVersionsForOfferId(OfferId id) {
         //todo implement
         throw new RuntimeException("Method not implemented")
     }

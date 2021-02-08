@@ -36,7 +36,7 @@ interface UpdateOfferDataSource {
      * @param id The id for which all versions should be found
      * @return a list of all different version identifiers of an id must be at least of size 1
      */
-    List<OfferId> fetchAllVersionsForOfferId(String id)
+    List<OfferId> fetchAllVersionsForOfferId(OfferId id)
 
 
     /**

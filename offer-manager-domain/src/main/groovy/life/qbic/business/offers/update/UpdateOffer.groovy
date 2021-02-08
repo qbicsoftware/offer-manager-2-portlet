@@ -91,7 +91,7 @@ class UpdateOffer implements CreateOfferInput, CalculatePrice{
 
         try{
             //search for all ids in the database
-            List<life.qbic.datamodel.dtos.business.OfferId> allVersionIds = dataSource.fetchAllVersionsForOfferId(oldOfferId.toString())
+            List<life.qbic.datamodel.dtos.business.OfferId> allVersionIds = dataSource.fetchAllVersionsForOfferId(oldOfferId)
             //take the latest one and increase it
             life.qbic.datamodel.dtos.business.OfferId latestVersion = getLatestVersion(allVersionIds)
 
