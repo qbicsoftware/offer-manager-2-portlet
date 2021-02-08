@@ -77,7 +77,7 @@ class UpdateOfferSpec extends Specification {
                 .build()
 
         and: "Db returns that there is already one version of the offer"
-        ds.fetchAllVersionsForOfferId(_ as String) >> [new OfferId("Conserved","abcd","1")]
+        ds.fetchAllVersionsForOfferId(_ as OfferId) >> [new OfferId("Conserved","abcd","1")]
         ds.getOfferById(_ as OfferId) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOfferId)
                 .build()
@@ -109,7 +109,7 @@ class UpdateOfferSpec extends Specification {
         OfferId oldOfferId = new OfferId("Conserved","abcd","2")
 
         and: "Db returns that there is already one version of the offer"
-        ds.fetchAllVersionsForOfferId(_ as String) >> [new OfferId("Conserved","abcd","1")]
+        ds.fetchAllVersionsForOfferId(_ as OfferId) >> [new OfferId("Conserved","abcd","1")]
         ds.getOfferById(_ as OfferId) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOfferId)
                 .build()
@@ -159,7 +159,7 @@ class UpdateOfferSpec extends Specification {
                 .build()
 
         and: "Db returns that there are already 3 versions of the offer"
-        ds.fetchAllVersionsForOfferId(_ as String) >> [offer3,offer1,offer2]
+        ds.fetchAllVersionsForOfferId(_ as OfferId) >> [offer3,offer1,offer2]
         ds.getOfferById(_ as OfferId) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOffer)
                 .build()
