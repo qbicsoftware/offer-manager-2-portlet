@@ -7,7 +7,6 @@ import life.qbic.business.logging.Logging
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Offer
 import life.qbic.business.offers.create.CalculatePrice
-import life.qbic.business.offers.create.CreateOffer
 import life.qbic.business.offers.create.CreateOfferInput
 import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.identifier.OfferId

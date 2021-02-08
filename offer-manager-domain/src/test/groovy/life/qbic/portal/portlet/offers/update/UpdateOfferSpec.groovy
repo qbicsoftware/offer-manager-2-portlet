@@ -61,8 +61,6 @@ class UpdateOfferSpec extends Specification {
         UpdateOfferDataSource ds = Stub(UpdateOfferDataSource.class)
         UpdateOffer updateOffer = new UpdateOffer(ds,output)
 
-        and: "Db returns that there are already 3 versions of the offer"
-        ds.fetchAllVersionsForOfferId(_ as String) >> [new OfferId("Conserved","abcd","1")]
 
         and:
         List<ProductItem> items = [
@@ -78,7 +76,7 @@ class UpdateOfferSpec extends Specification {
                 .modificationDate(date).expirationDate(date).items(items).identifier(oldOfferId)
                 .build()
 
-        and: "Db returns that there are already 3 versions of the offer"
+        and: "Db returns that there is already one version of the offer"
         ds.fetchAllVersionsForOfferId(_ as String) >> [new OfferId("Conserved","abcd","1")]
         ds.getOfferById(_ as OfferId) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOfferId)
@@ -110,7 +108,7 @@ class UpdateOfferSpec extends Specification {
                 .build()
         OfferId oldOfferId = new OfferId("Conserved","abcd","2")
 
-        and: "Db returns that there are already 3 versions of the offer"
+        and: "Db returns that there is already one version of the offer"
         ds.fetchAllVersionsForOfferId(_ as String) >> [new OfferId("Conserved","abcd","1")]
         ds.getOfferById(_ as OfferId) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOfferId)
