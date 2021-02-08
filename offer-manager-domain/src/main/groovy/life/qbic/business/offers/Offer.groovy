@@ -262,8 +262,7 @@ class Offer {
     }
 
     /**
-    * Compares the checksum of two offers
-    * @param offer Offer that should be compared to the current offer
+    * Returns the checksum of the current Offer Object
     */
     String checksum(){
         //Use SHA-1 algorithm
