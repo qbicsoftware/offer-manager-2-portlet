@@ -1,6 +1,7 @@
 package life.qbic.business.customers.update
 
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.business.exceptions.DatabaseQueryException
 
 /**
