@@ -2,7 +2,7 @@ package life.qbic.portal.portlet.offers.update
 
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.create.CreateOfferOutput
-import life.qbic.business.offers.create.update.UpdateOffer
+import life.qbic.business.offers.update.UpdateOffer
 
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer

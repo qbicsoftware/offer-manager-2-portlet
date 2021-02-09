@@ -1,7 +1,7 @@
 package life.qbic.business.offers.create
 
 import life.qbic.business.offers.Converter
-import life.qbic.business.offers.create.update.UpdateOffer
+import life.qbic.business.offers.update.UpdateOffer
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart

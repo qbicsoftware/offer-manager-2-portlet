@@ -1,4 +1,4 @@
-package life.qbic.business.offers.create.update
+package life.qbic.business.offers.update
 
 import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
@@ -37,13 +37,12 @@ class UpdateOffer{
         //fetch old offer by id
         life.qbic.datamodel.dtos.business.Offer offer
         try {
-            getOfferById(offerContent.identifier)
+            offer = getOfferById(offerContent.identifier)
         } catch (Exception e) {
             log.debug(e.stackTrace.join("\n"))
             output.failNotification("sth")
             return
         }
-
 
         Offer oldOffer = new Offer.Builder(
                 offer.customer,
