@@ -1,12 +1,12 @@
 package life.qbic.business.offers.create
 
 import life.qbic.business.offers.Converter
+import life.qbic.business.offers.create.update.UpdateOffer
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
 import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductItem
@@ -25,27 +25,35 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
 
     private CreateOfferDataSource dataSource
     private CreateOfferOutput output
+    private UpdateOffer updateOffer
 
     CreateOffer(CreateOfferDataSource dataSource, CreateOfferOutput output){
         this.dataSource = dataSource
         this.output = output
+        updateOffer = new UpdateOffer(dataSource,output)
     }
 
     @Override
     void createOffer(Offer offerContent) {
-        OfferId newOfferId = generateQuotationID(offerContent.customer)
 
-        life.qbic.business.offers.Offer finalizedOffer = new life.qbic.business.offers.Offer.Builder(
-                offerContent.customer,
-                offerContent.projectManager,
-                offerContent.projectTitle,
-                offerContent.projectDescription,
-                offerContent.items,
-                offerContent.selectedCustomerAffiliation)
-                .identifier(newOfferId)
-                .build()
+        if(offerContent.identifier == null){
+            OfferId newOfferId = generateQuotationID(offerContent.customer)
 
-        storeOffer(finalizedOffer)
+            life.qbic.business.offers.Offer finalizedOffer = new life.qbic.business.offers.Offer.Builder(
+                    offerContent.customer,
+                    offerContent.projectManager,
+                    offerContent.projectTitle,
+                    offerContent.projectDescription,
+                    offerContent.items,
+                    offerContent.selectedCustomerAffiliation)
+                    .identifier(newOfferId)
+                    .build()
+
+            storeOffer(finalizedOffer)
+
+        }else{
+            updateOffer.updateOffer(offerContent)
+        }
     }
 
     private void storeOffer(life.qbic.business.offers.Offer finalizedOffer) {

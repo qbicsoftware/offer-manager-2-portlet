@@ -1,4 +1,4 @@
-package life.qbic.business.offers.update
+package life.qbic.business.offers.create.update
 
 import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
@@ -6,12 +6,9 @@ import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Offer
-import life.qbic.business.offers.create.CalculatePrice
-import life.qbic.business.offers.create.CreateOfferInput
+import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.identifier.OfferId
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.ProductItem
 
 /**
  * <h1>SRS - 4.2.2 Update Offer</h1>
@@ -22,20 +19,19 @@ import life.qbic.datamodel.dtos.business.ProductItem
  *
  * @since: 1.0.0
  */
-class UpdateOffer implements CreateOfferInput, CalculatePrice{
+class UpdateOffer{
 
-    private final UpdateOfferDataSource dataSource
+    private final CreateOfferDataSource dataSource
     private final CreateOfferOutput output
     private final Logging log = Logger.getLogger(this.class)
 
 
-    UpdateOffer(UpdateOfferDataSource dataSource, CreateOfferOutput output) {
+    UpdateOffer(CreateOfferDataSource dataSource, CreateOfferOutput output) {
         this.dataSource = dataSource
         this.output = output
     }
 
-    @Override
-    void createOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
+    void updateOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
 
         OfferId oldId = Converter.buildOfferId(offerContent.identifier)
         //fetch old offer by id
@@ -64,6 +60,7 @@ class UpdateOffer implements CreateOfferInput, CalculatePrice{
                 .build()
 
         if(oldOffer.checksum() != finalizedOffer.checksum()){
+            //todo remove the store method here to avoid duplicate storing?
             storeOffer(finalizedOffer)
         }else{
             output.failNotification("An unchanged offer cannot be updated")
@@ -118,16 +115,6 @@ class UpdateOffer implements CreateOfferInput, CalculatePrice{
         }
         println maxID
         return maxID
-    }
-
-    @Override
-    void calculatePrice(List<ProductItem> items, Affiliation affiliation) {
-        Offer offer = Converter.buildOfferForCostCalculation(items, affiliation)
-        output.calculatedPrice(
-                offer.getTotalNetPrice(),
-                offer.getTaxCosts(),
-                offer.getOverheadSum(),
-                offer.getTotalCosts())
     }
 
 }

@@ -1,7 +1,6 @@
 package life.qbic.portal.offermanager
 
 import groovy.util.logging.Log4j2
-import life.qbic.business.offers.update.UpdateOffer
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.business.customers.affiliation.create.CreateAffiliation
@@ -74,7 +73,7 @@ class DependencyManager {
     private CreateCustomer createCustomer
     private CreateAffiliation createAffiliation
     private CreateOffer createOffer
-    private UpdateOffer updateOffer
+    private CreateOffer updateOffer
 
     private CreatePersonController createCustomerController
     private CreateAffiliationController createAffiliationController
@@ -252,7 +251,7 @@ class DependencyManager {
         this.createCustomer = new CreateCustomer(createCustomerPresenter, customerDbConnector)
         this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbConnector)
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
-        this.updateOffer = new UpdateOffer(offerDbConnector, updateOfferPresenter)
+        this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
     }
 
     private void setupControllers() {

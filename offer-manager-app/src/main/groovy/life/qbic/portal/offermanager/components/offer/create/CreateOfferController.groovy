@@ -59,12 +59,8 @@ class CreateOfferController {
                     .items(items)
                     .identifier(offerId)
                     .build()
-        //if the offer id is exists no identifier for the offer then it is a new offer that needs to be created
-        if(offerId == null){
-            this.input.createOffer(offer)
-        }else{
-            this.input.createOffer(offer)
-        }
+
+        this.input.createOffer(offer)
     }
 
     /**

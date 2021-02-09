@@ -30,9 +30,6 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
 
     final private OfferUpdateService offerUpdateService
 
-    //todo do we need this?
-    boolean isUpdatedOffer
-
     UpdateOfferViewModel(CustomerResourceService customerResourceService,
                          ProjectManagerResourceService managerResourceService,
                          ProductsResourcesService productsService,
