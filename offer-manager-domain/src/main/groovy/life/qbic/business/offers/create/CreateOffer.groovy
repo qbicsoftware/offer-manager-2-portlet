@@ -36,10 +36,10 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
     @Override
     void createOffer(Offer offerContent) {
 
-        if(offerContent.identifier == null){
-            createNewOffer(offerContent)
-        }else{
+        if(offerContent.identifier){
             updateOffer.updateOffer(offerContent)
+        }else{
+            createNewOffer(offerContent)
         }
     }
 
