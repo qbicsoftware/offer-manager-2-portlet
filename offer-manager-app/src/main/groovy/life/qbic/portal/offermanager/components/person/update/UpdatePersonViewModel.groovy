@@ -8,7 +8,7 @@ import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
 import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 
 /**
- * Model with data for updating an existing customer.
+ * Model with data for updating an existing person.
  *
  * This specialisation of the {@link life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel} updates its data upon a received
  * customer update event.

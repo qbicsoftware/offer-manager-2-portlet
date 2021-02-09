@@ -1,16 +1,15 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
-import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
- * Service that represents an customer to be updated.
+ * Service that represents an person to be updated.
  *
  * This service offers an EventEmitter property that can be
- * used for inter component communication, when a new customer
+ * used for inter component communication, when a new person
  * source is available for update.
  *
  * @since: 1.0.0
@@ -60,7 +59,7 @@ class PersonUpdateService implements ResourcesService<Person> {
     }
 
     @Override
-    Iterator<Customer> iterator() {
+    Iterator<Person> iterator() {
         return [].iterator()
     }
 }
