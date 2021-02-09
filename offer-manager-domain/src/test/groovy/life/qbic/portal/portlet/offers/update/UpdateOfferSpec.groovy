@@ -76,9 +76,9 @@ class UpdateOfferSpec extends Specification {
 
         and: "Db returns that there is already one version of the offer"
         ds.fetchAllVersionsForOfferId(_ as OfferId) >> [new OfferId("Conserved","abcd","1")]
-        ds.getOfferById(_ as OfferId) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
+        ds.getOffer(_ as OfferId) >> Optional.of(new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOfferId)
-                .build()
+                .build())
 
         when:
         updateOffer.updateOffer(newOffer)
@@ -108,9 +108,9 @@ class UpdateOfferSpec extends Specification {
 
         and: "Db returns that there is already one version of the offer"
         ds.fetchAllVersionsForOfferId(_ as OfferId) >> [new OfferId("Conserved","abcd","1")]
-        ds.getOfferById(_ as OfferId) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
+        ds.getOffer(_ as OfferId) >> Optional.of(new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOfferId)
-                .build()
+                .build())
 
         when:
         updateOffer.updateOffer(oldOffer)
@@ -142,9 +142,9 @@ class UpdateOfferSpec extends Specification {
 
         and: "Db returns that there are already 3 versions of the offer"
         ds.fetchAllVersionsForOfferId(_ as OfferId) >> [offer3,offer1,offer2]
-        ds.getOfferById(_ as OfferId) >> new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
+        ds.getOffer(_ as OfferId) >> Optional.of(new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(oldOffer)
-                .build()
+                .build())
 
         when:
         updateOffer.updateOffer(newOffer)
