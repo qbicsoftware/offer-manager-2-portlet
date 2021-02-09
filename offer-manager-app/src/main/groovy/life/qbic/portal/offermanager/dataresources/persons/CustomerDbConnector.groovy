@@ -222,8 +222,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   }
   
   private static int createNewCustomer(Connection connection, Customer customer) {
-    String query = "INSERT INTO person (first_name, last_name, title, email) " +
-            "VALUES(?, ?, ?, ?)"
+    String query = "INSERT INTO person (first_name, last_name, title, email, active) " +
+            "VALUES(?, ?, ?, ?, ?)"
 
     List<Integer> generatedKeys = []
 
@@ -232,6 +232,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     statement.setString(2, customer.lastName)
     statement.setString(3, customer.title.value)
     statement.setString(4, customer.emailAddress )
+    //a new customer is always active
+    statement.setBoolean(5, true)
     statement.execute()
     def keys = statement.getGeneratedKeys()
     while (keys.next()){
@@ -239,6 +241,16 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
 
     return generatedKeys[0]
+  }
+  
+  private void removeCustomerAffiliations(Connection connection, int customerId, List<Integer> affiliationIds) {
+    String query = "DELETE FROM person_affiliation WHERE person_id = ? AND affiliation_id = ?"
+    
+    affiliationIds.each {affiliationId -> 
+      statement.setInt(1, customerId)
+      statement.setInt(2, affiliationId)
+      statement.execute()
+    }
   }
 
   private void storeAffiliation(Connection connection, int customerId, List<Affiliation>
@@ -287,6 +299,53 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       throw new DatabaseQueryException("No matching affiliation found for $affiliation.")
     }
     return affiliationIds[0]
+  }
+  
+  @Override
+  void updateCustomerAffiliations(String customerIdString, List<Affiliation> updatedAffiliations) {
+    int customerId = Integer.parseInt(customerIdString)
+    
+    try {
+    List<Affiliation> existingAffiliations = getAffiliationForPersonId(customerId)
+    List<Affiliation> newAffiliations = new ArrayList<>();
+    List<Integer> oldAffiliationIds = new ArrayList<>();
+    
+    // find added affiliations - could use set operations here, but we have lists...
+    for(Affiliation affiliation : updatedAffiliations) {
+      if(!existingAffiliations.contains(affiliation)) {
+        newAffiliations.add(affiliation)
+      }
+    }
+    
+    // find removed affiliations
+    for(Affiliation affiliation : existingAffiliations) {
+      if(!updatedAffiliations.contains(affiliation)) {
+        oldAffiliationIds.add(getAffiliationId(affiliation))
+      }
+    }
+    Connection connection = connectionProvider.connect()
+    connection.setAutoCommit(false)
+
+    connection.withCloseable {it ->
+      try {
+       
+    removeCustomerAffiliations(connection, customerId, oldAffiliationIds)
+    storeAffiliation(connection, customerId, newAffiliations)
+    
+      } catch (Exception e) {
+        log.error(e.message)
+        log.error(e.stackTrace.join("\n"))
+        connection.rollback()
+        connection.close()
+        throw new DatabaseQueryException("Could not update customer's affiliations.")
+      }
+    }
+  } catch (Exception e) {
+    log.error(e)
+    log.error(e.stackTrace.join("\n"))
+    throw new DatabaseQueryException("The customer's affiliations could not be updated.")
+  }
+    
   }
 
   private void changeCustomerActiveFlag(int customerId, boolean active) {
