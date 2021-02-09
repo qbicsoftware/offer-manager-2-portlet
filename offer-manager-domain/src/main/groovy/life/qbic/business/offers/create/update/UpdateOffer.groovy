@@ -123,7 +123,6 @@ class UpdateOffer{
                 maxID = id
             }
         }
-        println maxID
         return maxID
     }
 
