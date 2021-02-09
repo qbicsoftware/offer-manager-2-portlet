@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.components
 
 import life.qbic.business.customers.update.UpdateCustomerOutput
+import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
@@ -25,5 +26,10 @@ class AppPresenter implements UpdateCustomerOutput {
     @Override
     void failNotification(String notification) {
         viewModel.failureNotifications.add(notification)
+    }
+    
+    @Override
+    void customerUpdated(Person person) {
+      throw new RuntimeException("Method not implemented.")
     }
 }
