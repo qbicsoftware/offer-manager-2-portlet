@@ -64,7 +64,7 @@ class UpdateOffer{
             storeOffer(finalizedOffer)
         }else{
             output.failNotification("An unchanged offer cannot be updated")
-            log.error "No offer is currently selected."
+            log.error "An unchanged offer cannot be updated"
         }
     }
 
@@ -75,6 +75,8 @@ class UpdateOffer{
             return offer.get()
         } else {
             output.failNotification("No offer is currently selected.")
+            log.error "No offer is currently selected."
+            return null
         }
     }
 
