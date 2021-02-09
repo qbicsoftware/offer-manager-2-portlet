@@ -35,7 +35,15 @@ class UpdateOffer{
 
         OfferId oldId = Converter.buildOfferId(offerContent.identifier)
         //fetch old offer by id
-        life.qbic.datamodel.dtos.business.Offer offer = getOfferById(offerContent.identifier)
+        life.qbic.datamodel.dtos.business.Offer offer
+        try {
+            getOfferById(offerContent.identifier)
+        } catch (Exception e) {
+            log.debug(e.stackTrace.join("\n"))
+            output.failNotification("sth")
+            return
+        }
+
 
         Offer oldOffer = new Offer.Builder(
                 offer.customer,
@@ -59,12 +67,11 @@ class UpdateOffer{
                 .identifier(identifier)
                 .build()
 
-        if(oldOffer.checksum() != finalizedOffer.checksum()){
-            //todo remove the store method here to avoid duplicate storing?
+        if (theOfferHasChanged(oldOffer, finalizedOffer)) {
             storeOffer(finalizedOffer)
-        }else{
-            output.failNotification("An unchanged offer cannot be updated")
+        } else {
             log.error "An unchanged offer cannot be updated"
+            output.failNotification("An unchanged offer cannot be updated")
         }
     }
 
@@ -129,4 +136,7 @@ class UpdateOffer{
         return maxID
     }
 
+    private static boolean theOfferHasChanged(Offer oldOffer, Offer newOffer) {
+        return oldOffer.checksum() != newOffer.checksum()
+    }
 }
