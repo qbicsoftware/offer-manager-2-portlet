@@ -106,16 +106,6 @@ class OfferDbConnector implements CreateOfferDataSource{
 
     }
 
-    @Override
-    Offer getOfferById(OfferId oldId) {
-        Optional<Offer> offer = getOffer(oldId)
-        if(offer.get() != null){
-            return offer.get()
-        }else{
-            throw new NullPointerException("Cannot find offer for id ${oldId.toString()}")
-        }
-    }
-
 /**
      * The method stores the offer in the QBiC database
      *
@@ -198,6 +188,7 @@ class OfferDbConnector implements CreateOfferDataSource{
         return new OfferId(projectPart, randomPart, version)
     }
 
+    @Override
     Optional<Offer> getOffer(OfferId offerId) {
         Optional<Offer> offer = Optional.empty()
 

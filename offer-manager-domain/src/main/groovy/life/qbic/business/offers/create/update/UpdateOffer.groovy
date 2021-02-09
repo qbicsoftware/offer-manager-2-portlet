@@ -35,7 +35,7 @@ class UpdateOffer{
 
         OfferId oldId = Converter.buildOfferId(offerContent.identifier)
         //fetch old offer by id
-        life.qbic.datamodel.dtos.business.Offer offer = dataSource.getOfferById(offerContent.identifier)
+        life.qbic.datamodel.dtos.business.Offer offer = getOfferById(offerContent.identifier)
 
         Offer oldOffer = new Offer.Builder(
                 offer.customer,
@@ -64,6 +64,16 @@ class UpdateOffer{
             storeOffer(finalizedOffer)
         }else{
             output.failNotification("An unchanged offer cannot be updated")
+        }
+    }
+
+    private life.qbic.datamodel.dtos.business.Offer getOfferById(life.qbic.datamodel.dtos.business.OfferId offerId){
+        Optional<life.qbic.datamodel.dtos.business.Offer> offer = dataSource.getOffer(offerId)
+
+        if(offer.isPresent()) {
+            return offer.get()
+        } else {
+            throw new RuntimeException("No offer is currently selected.")
         }
     }
 
