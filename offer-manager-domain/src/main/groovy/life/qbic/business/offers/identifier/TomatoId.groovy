@@ -10,7 +10,7 @@ import groovy.transform.CompileStatic
  * @since 0.1.0
  */
 @CompileStatic
-class TomatoId {
+class TomatoId implements Comparable<TomatoId>{
 
     private RandomPart randomPart
 
@@ -47,5 +47,23 @@ class TomatoId {
     @Override
     String toString() {
         return "${randomPart}-${projectPart}-${version}"
+    }
+
+    @Override
+    int compareTo(TomatoId other) {
+        /*
+        -1: current Id version lower than other
+        0: current Id version equal to other
+        1: current Id version higher than other
+         */
+        int returnValue = 0
+        if(this.version.rawValue < other.version.rawValue) {
+            returnValue = -1
+        } else if(this.version.rawValue == other.version.rawValue) {
+            returnValue = 0
+        } else {
+            returnValue = 1
+        }
+        return returnValue
     }
 }

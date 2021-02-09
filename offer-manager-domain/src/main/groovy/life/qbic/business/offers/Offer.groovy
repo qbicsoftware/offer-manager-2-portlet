@@ -24,7 +24,10 @@ import java.security.MessageDigest
  * @since 0.1.0
  */
 class Offer {
-
+    /**
+     * Holds all available versions of an existing offer
+     */
+    private List<OfferId> availableVersions
     /**
      * Date on which the offer was lastly modified
      */
@@ -89,6 +92,7 @@ class Offer {
         List<ProductItem> items
         OfferId identifier
         Affiliation selectedCustomerAffiliation
+        List<OfferId> availableVersions
 
         Builder(Customer customer, ProjectManager projectManager, String projectTitle, String projectDescription, List<ProductItem> items, Affiliation selectedCustomerAffiliation) {
             this.customer = Objects.requireNonNull(customer, "Customer must not be null")
@@ -96,6 +100,7 @@ class Offer {
             this.projectTitle = Objects.requireNonNull(projectTitle, "Project Title must not be null")
             this.projectDescription = Objects.requireNonNull(projectDescription, "Project Description must not be null")
             this.items = []
+            this.availableVersions = []
             this.creationDate = new Date()
             // Since the incoming item list is mutable we need to
             // copy all immutable items to out internal list
@@ -113,16 +118,14 @@ class Offer {
             return this
         }
 
+        Builder availableVersions(List<OfferId> availableVersions) {
+            this.availableVersions.addAll(availableVersions)
+            return this
+        }
+
         Offer build() {
             return new Offer(this)
         }
-    }
-
-    /**
-     * Increases the version of the current offer.
-     */
-    void increaseVersion () {
-        this.identifier.increaseVersion()
     }
 
     private Offer(Builder builder) {
@@ -137,6 +140,10 @@ class Offer {
         this.projectTitle = builder.projectTitle
         this.selectedCustomerAffiliation = builder.selectedCustomerAffiliation
         this.overhead = determineOverhead()
+        this.availableVersions = builder.availableVersions
+                .stream()
+                .map(id -> new OfferId(id)).collect()
+        this.availableVersions.add(this.identifier)
     }
 
     /**
@@ -229,6 +236,23 @@ class Offer {
         return selectedCustomerAffiliation
     }
 
+    void addAvailableVersion(OfferId offerId) {
+        this.availableVersions.add(new OfferId(offerId))
+    }
+
+    void addAllAvailableVersions(Collection<OfferId> offerIdCollection) {
+        offerIdCollection.each {addAvailableVersion(it)}
+    }
+
+    /**
+     * Increases the version of an offer, resulting in a offer id with a new version tag.
+     */
+    void increaseVersion() {
+        def copyIdentifier = new OfferId(this.identifier)
+        this.identifier = getLatestVersion().increaseVersion()
+        this.availableVersions.addAll(copyIdentifier, this.identifier)
+    }
+
     private double calculateNetPrice() {
         double netSum = 0.0
         for (item in items) {
@@ -260,6 +284,18 @@ class Offer {
         final double overhead = getOverheadSum()
         return netPrice + overhead + getTaxCosts()
     }
+
+    /**
+     * Returns the latest available version for an offer.
+     *
+     * If there are no available versions in addition to the current one, this one is returned.
+     *
+     * @return The latest offer id
+     */
+    OfferId getLatestVersion() {
+        return availableVersions.sort().first() ?: this.identifier
+    }
+
 
     /**
     * Returns the checksum of the current Offer Object

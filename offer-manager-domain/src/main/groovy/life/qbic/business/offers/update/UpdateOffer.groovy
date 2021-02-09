@@ -24,6 +24,7 @@ class UpdateOffer{
     private final CreateOfferDataSource dataSource
     private final CreateOfferOutput output
     private final Logging log = Logger.getLogger(this.class)
+    private Offer offerToUpdate
 
 
     UpdateOffer(CreateOfferDataSource dataSource, CreateOfferOutput output) {
@@ -32,41 +33,48 @@ class UpdateOffer{
     }
 
     void updateOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
-
-        OfferId oldId = Converter.buildOfferId(offerContent.identifier)
+        offerToUpdate = createBusinessOffer(offerContent)
         //fetch old offer by id
-        life.qbic.datamodel.dtos.business.Offer offer
+        Offer existingOffer
         try {
-            offer = getOfferById(offerContent.identifier)
-        } catch (Exception e) {
+            existingOffer = getOfferById(offerToUpdate.getIdentifier())
+        } catch (NullPointerException e) {
             log.debug(e.stackTrace.join("\n"))
             output.failNotification("No offer was found for the ID ${offerContent.identifier.toString()}")
             return
+        } catch (Exception e) {
+            log.debug(e.stackTrace.join("\n"))
+            output.failNotification("An unexpected exception occurred during the offer update: " +
+                    "${offerContent.identifier.toString()}")
+            return
         }
 
-        Offer oldOffer = buildOffer(offer,oldId)
-
-        OfferId identifier = increaseOfferIdentifier(offerContent.identifier)
-        Offer finalizedOffer = buildOffer(offerContent,identifier)
-
-        if (theOfferHasChanged(oldOffer, finalizedOffer)) {
-            storeOffer(finalizedOffer)
+        if (theOfferHasChanged(existingOffer, offerToUpdate)) {
+            // Then we update the version
+            offerToUpdate.increaseVersion()
+            storeOffer(offerToUpdate)
         } else {
             log.error "An unchanged offer cannot be updated"
             output.failNotification("An unchanged offer cannot be updated")
         }
     }
 
-    private life.qbic.datamodel.dtos.business.Offer getOfferById(life.qbic.datamodel.dtos.business.OfferId offerId){
-        Optional<life.qbic.datamodel.dtos.business.Offer> offer = dataSource.getOffer(offerId)
+    private static Offer createBusinessOffer(life.qbic.datamodel.dtos.business.Offer offer){
+        return new Offer.Builder(
+                offer.customer,
+                offer.projectManager,
+                offer.projectTitle,
+                offer.projectDescription,
+                offer.items,
+                offer.selectedCustomerAffiliation)
+                .identifier(Converter.buildOfferId(offer.identifier))
+                .build()
+    }
 
-        if(offer.isPresent()) {
-            return offer.get()
-        } else {
-            output.failNotification("No offer is currently selected.")
-            log.error "No offer is currently selected."
-            return null
-        }
+    private Offer getOfferById(offerId){
+        // Will throw a NullPointer Exception, when the offer is not present
+        def offerDTO = dataSource.getOffer(offerId).get()
+        return createBusinessOffer(offerDTO)
     }
 
     private void storeOffer(Offer finalizedOffer) {
@@ -84,37 +92,20 @@ class UpdateOffer{
         }
     }
 
-    private OfferId increaseOfferIdentifier(life.qbic.datamodel.dtos.business.OfferId oldOfferId){
-        OfferId convertedId = null
+    private OfferId createNewVersionTag(){
 
-        try{
-            //search for all ids in the database
-            List<life.qbic.datamodel.dtos.business.OfferId> allVersionIds = dataSource.fetchAllVersionsForOfferId(oldOfferId)
+        //search for all ids in the database
+        List<OfferId> allVersionIds = dataSource
+                .fetchAllVersionsForOfferId(Converter.convertIdToDTO(offerToUpdate.identifier))
+                .stream().map(offerId -> Converter.buildOfferId(offerId))
+                .collect()
 
-            //take the latest one and increase it
-            life.qbic.datamodel.dtos.business.OfferId latestVersion = getLatestVersion(allVersionIds)
+        offerToUpdate.addAllAvailableVersions(allVersionIds)
 
-            convertedId = Converter.buildOfferId(latestVersion)
-            convertedId.increaseVersion()
-        }catch(DatabaseQueryException e){
-            output.failNotification(e.message)
-        }
+        OfferId convertedId = offerToUpdate.getLatestVersion()
+        convertedId.increaseVersion()
 
         return convertedId
-    }
-
-    private static life.qbic.datamodel.dtos.business.OfferId getLatestVersion(List<life.qbic.datamodel.dtos.business.OfferId> ids){
-        life.qbic.datamodel.dtos.business.OfferId maxID = null
-        int maxVersion = -1
-
-        ids.each {id ->
-            int currentVersion = Integer.parseInt(id.getVersion())
-            if ( currentVersion > maxVersion){
-                maxVersion = currentVersion
-                maxID = id
-            }
-        }
-        return maxID
     }
 
     private static boolean theOfferHasChanged(Offer oldOffer, Offer newOffer) {
