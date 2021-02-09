@@ -40,31 +40,14 @@ class UpdateOffer{
             offer = getOfferById(offerContent.identifier)
         } catch (Exception e) {
             log.debug(e.stackTrace.join("\n"))
-            output.failNotification("sth")
+            output.failNotification("No offer was found for the ID ${offerContent.identifier.toString()}")
             return
         }
 
-        Offer oldOffer = new Offer.Builder(
-                offer.customer,
-                offer.projectManager,
-                offer.projectTitle,
-                offer.projectDescription,
-                offer.items,
-                offer.selectedCustomerAffiliation)
-                .identifier(oldId)
-                .build()
+        Offer oldOffer = buildOffer(offer,oldId)
 
         OfferId identifier = increaseOfferIdentifier(offerContent.identifier)
-
-        Offer finalizedOffer = new Offer.Builder(
-                offerContent.customer,
-                offerContent.projectManager,
-                offerContent.projectTitle,
-                offerContent.projectDescription,
-                offerContent.items,
-                offerContent.selectedCustomerAffiliation)
-                .identifier(identifier)
-                .build()
+        Offer finalizedOffer = buildOffer(offerContent,identifier)
 
         if (theOfferHasChanged(oldOffer, finalizedOffer)) {
             storeOffer(finalizedOffer)
@@ -85,7 +68,6 @@ class UpdateOffer{
             return null
         }
     }
-
 
     private void storeOffer(Offer finalizedOffer) {
         try {
@@ -138,4 +120,17 @@ class UpdateOffer{
     private static boolean theOfferHasChanged(Offer oldOffer, Offer newOffer) {
         return oldOffer.checksum() != newOffer.checksum()
     }
+
+    private static Offer buildOffer(life.qbic.datamodel.dtos.business.Offer offer, OfferId identifier){
+        return new Offer.Builder(
+                        offer.customer,
+                        offer.projectManager,
+                        offer.projectTitle,
+                        offer.projectDescription,
+                        offer.items,
+                        offer.selectedCustomerAffiliation)
+                        .identifier(identifier)
+                        .build()
+    }
+
 }
