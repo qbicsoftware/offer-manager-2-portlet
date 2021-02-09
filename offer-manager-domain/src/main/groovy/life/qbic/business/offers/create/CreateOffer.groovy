@@ -37,23 +37,26 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
     void createOffer(Offer offerContent) {
 
         if(offerContent.identifier == null){
-            OfferId newOfferId = generateQuotationID(offerContent.customer)
-
-            life.qbic.business.offers.Offer finalizedOffer = new life.qbic.business.offers.Offer.Builder(
-                    offerContent.customer,
-                    offerContent.projectManager,
-                    offerContent.projectTitle,
-                    offerContent.projectDescription,
-                    offerContent.items,
-                    offerContent.selectedCustomerAffiliation)
-                    .identifier(newOfferId)
-                    .build()
-
-            storeOffer(finalizedOffer)
-
+            createNewOffer(offerContent)
         }else{
             updateOffer.updateOffer(offerContent)
         }
+    }
+
+    private void createNewOffer(Offer offerContent){
+        OfferId newOfferId = generateQuotationID(offerContent.customer)
+
+        life.qbic.business.offers.Offer finalizedOffer = new life.qbic.business.offers.Offer.Builder(
+                offerContent.customer,
+                offerContent.projectManager,
+                offerContent.projectTitle,
+                offerContent.projectDescription,
+                offerContent.items,
+                offerContent.selectedCustomerAffiliation)
+                .identifier(newOfferId)
+                .build()
+
+        storeOffer(finalizedOffer)
     }
 
     private void storeOffer(life.qbic.business.offers.Offer finalizedOffer) {
