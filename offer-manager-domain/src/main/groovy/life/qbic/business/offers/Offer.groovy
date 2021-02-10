@@ -1,6 +1,9 @@
 package life.qbic.business.offers
 
 import groovy.time.TimeCategory
+import life.qbic.business.offers.identifier.ProjectPart
+import life.qbic.business.offers.identifier.RandomPart
+import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
@@ -234,6 +237,20 @@ class Offer {
 
     Affiliation getSelectedCustomerAffiliation() {
         return selectedCustomerAffiliation
+    }
+
+    /**
+     * Returns a deep copy of all available offer versions.
+     *
+     * @return A list of available offer versions
+     */
+    List<OfferId> getAvailableVersions() {
+        return availableVersions.stream()
+                .map(offerId -> new OfferId(
+                        new RandomPart(offerId.randomPart),
+                        new ProjectPart(offerId.projectPart),
+                        new Version(offerId.version)
+                )).collect()
     }
 
     void addAvailableVersion(OfferId offerId) {
