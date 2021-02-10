@@ -308,7 +308,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     try {
     List<Affiliation> existingAffiliations = getAffiliationForPersonId(customerId)
     List<Affiliation> newAffiliations = new ArrayList<>();
-    List<Integer> oldAffiliationIds = new ArrayList<>();
     
     // find added affiliations - could use set operations here, but we have lists...
     for(Affiliation affiliation : updatedAffiliations) {
@@ -316,20 +315,13 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
         newAffiliations.add(affiliation)
       }
     }
-    
-    // find removed affiliations
-    for(Affiliation affiliation : existingAffiliations) {
-      if(!updatedAffiliations.contains(affiliation)) {
-        oldAffiliationIds.add(getAffiliationId(affiliation))
-      }
-    }
+
     Connection connection = connectionProvider.connect()
     connection.setAutoCommit(false)
 
     connection.withCloseable {it ->
       try {
        
-    removeCustomerAffiliations(connection, customerId, oldAffiliationIds)
     storeAffiliation(connection, customerId, newAffiliations)
     
       } catch (Exception e) {
