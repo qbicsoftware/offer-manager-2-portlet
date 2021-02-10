@@ -9,7 +9,6 @@ import life.qbic.business.exceptions.DatabaseQueryException
  * If other changes are made to the customer, a new customer is created in the system and the old customer is set to inactive.
  *
  * @since: 1.0.0
- * @author: Andreas Friedrich, Tobias Koch
  */
 class UpdateCustomer implements UpdateCustomerInput {
 

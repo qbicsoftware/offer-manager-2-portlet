@@ -7,7 +7,6 @@ import life.qbic.datamodel.dtos.business.Customer
  * <detailed description>
  *
  * @since: 1.0.0
- * @author: Andreas Friedrich
  */
 interface UpdateCustomerInput {
   

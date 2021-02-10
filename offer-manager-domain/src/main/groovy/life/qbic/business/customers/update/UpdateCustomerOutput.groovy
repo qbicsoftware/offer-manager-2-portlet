@@ -7,7 +7,6 @@ import life.qbic.datamodel.dtos.general.Person
  * Output interface for the {@link life.qbic.business.customers.create.UpdateCustomer} use case
  *
  * @since: 1.0.0
- * @author: Andreas Friedrich
  *
  */
 interface UpdateCustomerOutput extends UseCaseFailure {

@@ -11,7 +11,6 @@ import life.qbic.portal.offermanager.components.AppViewModel
  *  It converts the use case output into data that is stored in the {@link AppViewModel}.
  *
  * @since: 1.0.0
- * @author: Jennifer Bödker
  *
  */
 class AppPresenter implements UseCaseFailure {
