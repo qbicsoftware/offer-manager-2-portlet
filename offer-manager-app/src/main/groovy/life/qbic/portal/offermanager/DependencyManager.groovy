@@ -39,7 +39,6 @@ import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
 import life.qbic.portal.offermanager.components.AppView
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
-import org.apache.tools.ant.Project
 
 /**
  * Class that manages all the dependency injections and class instance creations

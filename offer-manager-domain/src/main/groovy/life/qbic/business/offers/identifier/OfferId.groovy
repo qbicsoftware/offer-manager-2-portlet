@@ -13,6 +13,12 @@ class OfferId extends TomatoId{
         super(randomPart, projectPart, versionTag)
     }
 
+    OfferId(OfferId offerId) {
+        super(new RandomPart(offerId.randomPart),
+                new ProjectPart(offerId.projectPart),
+                new Version(offerId.version))
+    }
+
     @Override
     String toString() {
         return "O-${super.randomPart}-${super.projectPart}-${super.version}"

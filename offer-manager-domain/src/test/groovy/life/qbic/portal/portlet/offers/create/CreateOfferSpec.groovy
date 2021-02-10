@@ -68,7 +68,7 @@ class CreateOfferSpec extends Specification {
         ]
 
         Offer offer = new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
-                .modificationDate(date).expirationDate(date).items([items[0]]).identifier(new OfferId("Conserved","abcd","1"))
+                .modificationDate(date).expirationDate(date).items([items[0]])
                 .build()
 
         when:

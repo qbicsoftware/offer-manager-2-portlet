@@ -1,6 +1,10 @@
 package life.qbic.portal.portlet.offers
 
 import life.qbic.business.offers.Offer
+import life.qbic.business.offers.identifier.OfferId
+import life.qbic.business.offers.identifier.ProjectPart
+import life.qbic.business.offers.identifier.RandomPart
+import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
@@ -32,6 +36,8 @@ class OfferSpec extends Specification {
     ProjectManager projectManager
     @Shared
     ProjectManager projectManager2
+    @Shared
+    List<OfferId> availableTestVersions
 
     def setup() {
         internalAffiliation = new Affiliation.Builder("Uni Tübingen", "Auf der " +
@@ -50,6 +56,41 @@ class OfferSpec extends Specification {
                 ".musterfrau@qbic.uni-tuebingen.de").build()
         projectManager2  = new ProjectManager.Builder("Max", "Mustermann", "max" +
                 ".mustermann@qbic.uni-tuebingen.de").build()
+        availableTestVersions = createExampleOfferId()
+    }
+
+    static List<OfferId> createExampleOfferId() {
+        def projectConservedPart = new ProjectPart("test")
+        def versions = [3,1,4,2]
+        return versions.stream()
+                .map( version -> new OfferId(new RandomPart(), projectConservedPart,
+                new Version(version)))
+                .collect()
+    }
+
+    def "An offer with multiple versions shall return the latest version on request"() {
+        given: "An offer id that is not the latest version of the offer"
+        OfferId offerId = new OfferId (new RandomPart(), new ProjectPart("test"), new Version(0))
+
+        and: "some example product items"
+        List<ProductItem> items = [
+                new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                        " example", 1.0, ProductUnit.PER_SAMPLE, "1")),
+                new ProductItem(1, new ProjectManagement("Basic Management",
+                        "Just an example", 10.0, ProductUnit.PER_DATASET, "1"))
+        ]
+
+        and: "some example versions, with 4 as the highest one"
+        def versions = availableTestVersions
+
+        when: "we create an offer with that id"
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, internalAffiliation)
+                .identifier(offerId)build()
+        offer.addAllAvailableVersions(versions)
+
+        then: "the latest version must be 4"
+        offer.getLatestVersion().version == new Version(4)
     }
 
     def "A customer with an internal affiliation shall pay no overheads"() {
