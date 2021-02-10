@@ -293,7 +293,7 @@ class Offer {
      * @return The latest offer id
      */
     OfferId getLatestVersion() {
-        return availableVersions.sort().first() ?: this.identifier
+        return availableVersions.sort().last() ?: this.identifier
     }
 
 
