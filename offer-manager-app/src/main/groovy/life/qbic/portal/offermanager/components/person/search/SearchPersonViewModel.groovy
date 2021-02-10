@@ -1,5 +1,7 @@
 package life.qbic.portal.offermanager.components.person.search
 
+import life.qbic.datamodel.dtos.business.Customer
+
 /**
  * <class short description - One Line!>
  *
@@ -8,5 +10,7 @@ package life.qbic.portal.offermanager.components.person.search
  * @since: <versiontag>
  *
  */
-class SearchCustomerController {
+class SearchPersonViewModel {
+
+    List<Customer> foundCustomers
 }

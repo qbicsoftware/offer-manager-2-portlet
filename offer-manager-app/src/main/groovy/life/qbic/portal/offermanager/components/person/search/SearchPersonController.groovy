@@ -8,5 +8,5 @@ package life.qbic.portal.offermanager.components.person.search
  * @since: <versiontag>
  *
  */
-class SearchCustomerViewModel {
+class SearchPersonController {
 }
