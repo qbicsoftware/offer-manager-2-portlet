@@ -1,10 +1,11 @@
 package life.qbic.business.customers.update
 
 import life.qbic.datamodel.dtos.business.Customer
+
 /**
  * Input interface for the {@link UpdateCustomer} use case
  *
- * <detailed description>
+ * This interface describes the methods the use case exposes to its caller.
  *
  * @since: 1.0.0
  */

@@ -9,7 +9,6 @@ import life.qbic.datamodel.dtos.business.Customer
  * This interface describes the methods the use case exposes to its caller.
  *
  * @since: 1.0.0
- * @author: Tobias Koch
  */
 interface CreateCustomerInput {
 
