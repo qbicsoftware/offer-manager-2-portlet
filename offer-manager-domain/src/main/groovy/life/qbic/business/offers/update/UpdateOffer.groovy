@@ -43,20 +43,52 @@ class UpdateOffer{
             output.failNotification("No offer was found for the ID ${offerContent.identifier.toString()}")
             return
         } catch (Exception e) {
+            log.debug(e.message)
             log.debug(e.stackTrace.join("\n"))
+            println e.message
+            println e.stackTrace.join("\n")
             output.failNotification("An unexpected exception occurred during the offer update: " +
                     "${offerContent.identifier.toString()}")
             return
         }
 
         if (theOfferHasChanged(existingOffer, offerToUpdate)) {
-            // Then we update the version
-            offerToUpdate.increaseVersion()
-            storeOffer(offerToUpdate)
+            updateVersion()
+            storeOffer()
         } else {
             log.error "An unchanged offer cannot be updated"
             output.failNotification("An unchanged offer cannot be updated")
         }
+    }
+
+    private void storeOffer() {
+        try {
+            final offer = Converter.convertOfferToDTO(offerToUpdate)
+            dataSource.store(offer)
+            output.createdNewOffer(Converter.convertOfferToDTO(offerToUpdate))
+        } catch (Exception e) {
+            log.error(e.message)
+            log.error(e.stackTrace.join("\n"))
+            output.failNotification("An unexpected error during the saving of your offer " +
+                    "occurred. " +
+                    "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
+        }
+    }
+
+    private void updateVersion(){
+        // We get all available versions first
+        fetchAllAvailableVersions()
+        // Then we update the version
+        offerToUpdate.increaseVersion()
+    }
+
+    private void fetchAllAvailableVersions() {
+        def versions = dataSource.fetchAllVersionsForOfferId(Converter.convertIdToDTO(offerToUpdate
+                .identifier))
+        offerToUpdate.addAllAvailableVersions(
+                versions.stream()
+                        .map(version -> Converter.buildOfferId(version))
+                        .collect())
     }
 
     private static Offer createBusinessOffer(life.qbic.datamodel.dtos.business.Offer offer){
@@ -73,23 +105,8 @@ class UpdateOffer{
 
     private Offer getOfferById(offerId){
         // Will throw a NullPointer Exception, when the offer is not present
-        def offerDTO = dataSource.getOffer(offerId).get()
+        def offerDTO = dataSource.getOffer(Converter.convertIdToDTO(offerId)).get()
         return createBusinessOffer(offerDTO)
-    }
-
-    private void storeOffer(Offer finalizedOffer) {
-        try {
-            final offer = Converter.convertOfferToDTO(finalizedOffer)
-            dataSource.store(offer)
-            output.createdNewOffer(offer)
-        } catch (DatabaseQueryException e) {
-            output.failNotification(e.message)
-        } catch (Exception unexpected) {
-            log.error unexpected.message
-            log.error unexpected.stackTrace.join("\n")
-            output.failNotification("An unexpected during the saving of your offer occurred. " +
-                    "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
-        }
     }
 
     private OfferId createNewVersionTag(){

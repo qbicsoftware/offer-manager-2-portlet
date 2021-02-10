@@ -249,7 +249,8 @@ class Offer {
      */
     void increaseVersion() {
         def copyIdentifier = new OfferId(this.identifier)
-        this.identifier = getLatestVersion().increaseVersion()
+        identifier = getLatestVersion()
+        identifier.increaseVersion()
         this.availableVersions.addAll(copyIdentifier, this.identifier)
     }
 
