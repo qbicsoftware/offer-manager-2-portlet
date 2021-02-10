@@ -45,8 +45,6 @@ class UpdateOffer{
         } catch (Exception e) {
             log.debug(e.message)
             log.debug(e.stackTrace.join("\n"))
-            println e.message
-            println e.stackTrace.join("\n")
             output.failNotification("An unexpected exception occurred during the offer update: " +
                     "${offerContent.identifier.toString()}")
             return
