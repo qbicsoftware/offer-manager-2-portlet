@@ -1,7 +1,6 @@
 package life.qbic.portal.offermanager.components
 
-import life.qbic.business.customers.update.UpdateCustomerOutput
-import life.qbic.datamodel.dtos.general.Person
+import life.qbic.business.UseCaseFailure
 import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
@@ -15,7 +14,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
  * @author: Jennifer Bödker
  *
  */
-class AppPresenter implements UpdateCustomerOutput {
+class AppPresenter implements UseCaseFailure {
 
     private final AppViewModel viewModel
 
@@ -27,9 +26,5 @@ class AppPresenter implements UpdateCustomerOutput {
     void failNotification(String notification) {
         viewModel.failureNotifications.add(notification)
     }
-    
-    @Override
-    void customerUpdated(Person person) {
-      throw new RuntimeException("Method not implemented.")
-    }
+
 }
