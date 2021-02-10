@@ -20,21 +20,28 @@ class UpdateCustomer implements UpdateCustomerInput {
     this.output = output
     this.dataSource = dataSource
   }
+  
+  // determines if customer properties other than affiliations have changed
+  private boolean hasBasicCustomerDataChanged(Customer existingCustomer, Customer newCustomer) {
+    boolean noFundamentalChange = existingCustomer.firstName.equals(newCustomer.firstName)
+    && existingCustomer.lastName.equals(newCustomer.lastName)
+    && existingCustomer.emailAddress.equals(newCustomer.emailAddress)
+    && existingCustomer.title.equals(newCustomer.title)
+    
+    return !noFundamentalChange
+  }
 
   @Override
   void updateCustomer(String customerId, Customer customer) {
     Customer existingCustomer = dataSource.getCustomer(Integer.parseInt(customerId))
 
-    boolean noFundamentalChange = existingCustomer.firstName.equals(customer.firstName)
-    && existingCustomer.lastName.equals(customer.lastName)
-    && existingCustomer.emailAddress.equals(customer.emailAddress)
-    && existingCustomer.title.equals(customer.title)
+    boolean customerChanged = hasBasicCustomerDataChanged(Customer existingCustomer, Customer customer)
 
     try {
-      if(noFundamentalChange) {
-        dataSource.updateCustomerAffiliations(customerId, customer.affiliations)
-      } else {
+      if(customerChanged) {
         dataSource.updateCustomer(customerId, customer)
+      } else {
+        dataSource.updateCustomerAffiliations(customerId, customer.affiliations)
       }
       try {
         output.customerUpdated(customer)
