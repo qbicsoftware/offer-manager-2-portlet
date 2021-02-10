@@ -4,9 +4,10 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.business.exceptions.DatabaseQueryException
 
 /**
- * <short description>
+ * Updates a customer in the database for the UpdateCustomer use case
  *
- * <detailed description>
+ * This interface should be used to allow the use case to forward data to a data source that implements this use case
+ * and still follow the correct dependency flow from infrastructure to the domain logic
  *
  * @since: 1.0.0
  */
