@@ -3,6 +3,7 @@ package life.qbic.portal.portlet.customers.update
 import life.qbic.business.customers.update.*
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.Affiliation
 
 import spock.lang.Specification
 
@@ -23,23 +24,49 @@ class UpdateCustomerInputSpec extends Specification {
       dataSource = Mock()
   }
 
-  def "given full information update the customer using a mocked data source"(){
+  def "given customer changes, update the customer using a mocked data source"(){
       given: "A new update customer use case instance"
       UpdateCustomer useCase = new UpdateCustomer(output, dataSource)
+      dataSource.getCustomer(42) >> new Customer.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).build()
 
       when: "The use case method is called"
       useCase.updateCustomer(customerId, customer)
 
       then: "The customer is updated using the data source"
       1 * dataSource.updateCustomer(customerId, customer)
+      0 * dataSource.updateCustomerAffiliations(_ as String, _ as List<Affiliation>)
 
       where:
-      customer = new Customer.Builder("Test", "user", "test").title(AcademicTitle.NONE).build()
-      customerId = new String("42")
+      customer = new Customer.Builder("Test", "user", "newmail").title(AcademicTitle.NONE).build()
+      customerId = "42"
   }
+  
+  def "given no customer changes, update the affiliations using a mocked data source"(){
+      given: "A new update customer use case instance"
+      UpdateCustomer useCase = new UpdateCustomer(output, dataSource)
 
+      dataSource.getCustomer(42) >> new Customer.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).affiliation(affiliation1).build()
+
+      when: "The use case method is called"
+      useCase.updateCustomer(customerId, customer)
+
+      then: "The customer affiliations are updated using the data source"
+      0 * dataSource.updateCustomer(_ as String, _ as Customer)
+      1 * dataSource.updateCustomerAffiliations(customerId, twoAffiliations)
+
+      where:
+      affiliation1 = new Affiliation.Builder(
+        "org", "street", "zip", "city").build()
+      twoAffiliations = new ArrayList<Affiliation>(Arrays.asList(new Affiliation.Builder(
+        "other org", "other street", "zip", "city").build(), affiliation1))
+      customer = new Customer.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).affiliations(twoAffiliations).build()
+      customerId = "42"
+
+  }
+  
   def "datasource throwing an exception leads to fail notification on output"() {
       given: "a data source that throws an exception"
+      dataSource.getCustomer(_ as Integer) >> new Customer.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).build()
       dataSource.updateCustomer(_ as String, _ as Customer) >> { throw new Exception("Something went wrong.") }
       UpdateCustomer useCase = new UpdateCustomer(output, dataSource)
 
@@ -48,10 +75,10 @@ class UpdateCustomerInputSpec extends Specification {
 
       then: "the output receives a failure notification"
       1 * output.failNotification(_ as String)
-      0 * output.successNotification(_ as String)
+      0 * output.customerUpdated(_ as Customer)
 
       where:
-      customer = new Customer.Builder("Test", "user", "test").title(AcademicTitle.NONE).build()
+      customer = new Customer.Builder("Test", "user", "newmail").title(AcademicTitle.NONE).build()
       customerId = new String("420")
   }
 }

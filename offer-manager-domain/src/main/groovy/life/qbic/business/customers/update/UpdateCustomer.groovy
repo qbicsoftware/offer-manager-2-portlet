@@ -33,9 +33,7 @@ class UpdateCustomer implements UpdateCustomerInput {
   @Override
   void updateCustomer(String customerId, Customer customer) {
     Customer existingCustomer = dataSource.getCustomer(Integer.parseInt(customerId))
-
-    boolean customerChanged = hasBasicCustomerDataChanged(Customer existingCustomer, Customer customer)
-
+    boolean customerChanged = hasBasicCustomerDataChanged(existingCustomer, customer)
     try {
       if(customerChanged) {
         dataSource.updateCustomer(customerId, customer)

@@ -1,6 +1,7 @@
 package life.qbic.business.customers.update
 
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.business.exceptions.DatabaseQueryException
 
 /**
@@ -23,5 +24,20 @@ interface UpdateCustomerDataSource {
      * @since 1.0.0
      */
     void updateCustomer(String customerId, Customer updatedCustomer) throws DatabaseQueryException
+    
+    /**
+     * Returns a customer given a customer specified by a customer ID
+     * 
+     * @param customerId to specify and existing customer
+     */
+    Customer getCustomer(int customerId)
+        
+    /**
+     * Updates affiliations of a customer specified by a customer ID.
+     * 
+     * @param customerId to specify the customer whose affiliations should be updated
+     * @param affiliations that the customer should be associated to
+     */
+    void updateCustomerAffiliations(String customerId, List<Affiliation> affiliations) throws DatabaseQueryException
 
 }
