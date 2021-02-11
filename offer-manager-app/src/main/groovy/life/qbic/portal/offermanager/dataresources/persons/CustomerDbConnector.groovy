@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
+import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory
@@ -711,13 +712,15 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       preparedStatement.setInt(1, personId)
       ResultSet resultSet = preparedStatement.executeQuery()
       while (resultSet.next()) {
-        def organization = resultSet.getString('organization')
-        def addressAddition = resultSet.getString('address_addition')
-        def street = resultSet.getString('street')
-        def postalCode = resultSet.getString('postal_code')
-        def city = resultSet.getString('city')
-        def country = resultSet.getString('country')
-        def category = determineAffiliationCategory(resultSet.getString('category'))
+        GroovyRowResult result = SqlExtensions.toRowResult(resultSet)
+        String organization = result.get('organization')
+        println organization
+        String addressAddition = result.get('address_addition')
+        String street = result.get('street')
+        String postalCode = result.get('postal_code')
+        String city = result.get('city')
+        String country = result.get('country')
+        def category = determineAffiliationCategory(result.get('category') as String)
         def affiliation = new Affiliation.Builder(organization, street, postalCode, city)
                 .addressAddition(addressAddition)
                 .country(country)

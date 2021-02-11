@@ -71,9 +71,11 @@ class CustomerDbConnectorSpec extends Specification{
         
         // we need to stub the static SqlExtensions.toRowResult method because we do not provide an implemented RowResult
         GroovyMock(SqlExtensions, global: true)
-        
-        SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(["id":id, "organization":organization, "address_addition":address_addition,"street":street,
-                                                                          "postal_code":postal_code, "city":city, "country":country])
+
+        SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(["id":id,
+                                                                          "organization": organization,
+                                                                          "address_addition":address_addition,"street":street,
+                                                                          "postal_code":postal_code, "city":city, "country":country, "category": "internal"])
         // our statement should only be able to fill the template with the correct values
         PreparedStatement preparedStatement = Mock (PreparedStatement, {
             it.setInt(1, Integer.parseInt(customerId)) >> _
@@ -92,7 +94,8 @@ class CustomerDbConnectorSpec extends Specification{
 //        dataSource.getAffiliationForPersonId(Integer.parseInt(customerId)) >> affiliations
         
         when: "update customer affiliations is called"
-        dataSource.updateCustomerAffiliations(customerId, affiliations)
+        dataSource.updateCustomerAffiliations(customerId, [new Affiliation.Builder(organization,
+                street, postal_code, city).addressAddition(address_addition).country(country).category(category).build()])
 
         then: "no affiliations are updated and a failNotification is thrown"
         0 * dataSource.storeAffiliation(_ as Connection, _ as String, _ as List<Affiliation>)
@@ -102,12 +105,8 @@ class CustomerDbConnectorSpec extends Specification{
         where:
         customerId = "42"
         id | organization | address_addition | street | postal_code | city | country | category
-        0 | "QBiC" | "Quantitative Biology Center" | "Auf der Morgenstelle 10" | "72076" | "Tübingen" | "Germany" | AffiliationCategory.INTERNAL
-        affiliations = new ArrayList<Affiliation>(Arrays.asList(new Affiliation.Builder(organization,street,postal_code,city)
-          .addressAddition(address_addition)
-          .category(category)
-          .country(country)
-          .build()))
+        0 | "QBiC" | "Quantitative Biology Center" | "Auf der Morgenstelle 10" | "72076" |
+                "Tübingen" | "Germany" | AffiliationCategory.INTERNAL
     }
 
     def "CustomerDbConnector shall return the id for a given affiliation"(){
