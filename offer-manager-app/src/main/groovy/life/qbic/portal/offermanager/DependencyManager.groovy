@@ -61,6 +61,7 @@ class DependencyManager {
     private CreateOfferViewModel createOfferViewModel
     private CreateOfferViewModel updateOfferViewModel
     private OfferOverviewModel offerOverviewModel
+    private SearchPersonViewModel searchPersonViewModel
 
     private AppPresenter presenter
     private CreatePersonPresenter createCustomerPresenter
@@ -85,6 +86,7 @@ class DependencyManager {
     private CreatePersonView createCustomerView
     private CreatePersonView createCustomerViewNewOffer
     private CreateAffiliationView createAffiliationView
+    private SearchPersonView searchPersonView
     private AppView portletView
     private ConfigurationManager configurationManager
 
@@ -209,6 +211,12 @@ class DependencyManager {
                     viewModel)
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
+        }
+
+        try{
+            this.searchPersonViewModel = new SearchPersonViewModel(customerResourceService)
+        }catch (Exception e) {
+            log.error("Unexpected excpetion during ${SearchPersonViewModel.getSimpleName()} view model setup.", e)
         }
     }
 
@@ -340,6 +348,14 @@ class DependencyManager {
             throw e
         }
 
+        SearchPersonView searchPersonView
+        try{
+            searchPersonView = new SearchPersonView(searchPersonViewModel)
+        } catch (Exception e) {
+            log.error("Could not create ${SearchPersonView.getSimpleName()} view.", e)
+            throw e
+        }
+
         AppView portletView
         try {
             CreatePersonView createCustomerView2 = new CreatePersonView(createCustomerController, this
@@ -347,14 +363,12 @@ class DependencyManager {
             CreateAffiliationView createAffiliationView2 = new CreateAffiliationView(this.viewModel,
                     createAffiliationViewModel, createAffiliationController)
 
-            SearchPersonViewModel searchPersonViewModel = new SearchPersonViewModel(customerResourceService)
-
             portletView = new AppView(this.viewModel, createCustomerView2,
                     createAffiliationView2,
                     createOfferView,
                     overviewView,
                     updateOfferView,
-                    new SearchPersonView(searchPersonViewModel)
+                    searchPersonView
             )
             this.portletView = portletView
         } catch (Exception e) {
