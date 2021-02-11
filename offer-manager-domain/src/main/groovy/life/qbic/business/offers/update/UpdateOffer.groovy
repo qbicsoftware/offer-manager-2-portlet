@@ -6,12 +6,9 @@ import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Offer
-import life.qbic.business.offers.create.CalculatePrice
-import life.qbic.business.offers.create.CreateOfferInput
+import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.identifier.OfferId
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.ProductItem
 
 /**
  * <h1>SRS - 4.2.2 Update Offer</h1>
@@ -22,110 +19,124 @@ import life.qbic.datamodel.dtos.business.ProductItem
  *
  * @since: 1.0.0
  */
-class UpdateOffer implements CreateOfferInput, CalculatePrice{
+class UpdateOffer{
 
-    private final UpdateOfferDataSource dataSource
+    private final CreateOfferDataSource dataSource
     private final CreateOfferOutput output
     private final Logging log = Logger.getLogger(this.class)
+    private Offer offerToUpdate
 
 
-    UpdateOffer(UpdateOfferDataSource dataSource, CreateOfferOutput output) {
+    UpdateOffer(CreateOfferDataSource dataSource, CreateOfferOutput output) {
         this.dataSource = dataSource
         this.output = output
     }
 
-    @Override
-    void createOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
-
-        OfferId oldId = Converter.buildOfferId(offerContent.identifier)
+    void updateOffer(life.qbic.datamodel.dtos.business.Offer offerContent) {
+        offerToUpdate = createBusinessOffer(offerContent)
         //fetch old offer by id
-        life.qbic.datamodel.dtos.business.Offer offer = dataSource.getOfferById(offerContent.identifier)
+        Offer existingOffer
+        try {
+            existingOffer = getOfferById(offerToUpdate.getIdentifier())
+        } catch (NullPointerException e) {
+            log.debug(e.stackTrace.join("\n"))
+            output.failNotification("No offer was found for the ID ${offerContent.identifier.toString()}")
+            return
+        } catch (Exception e) {
+            log.debug(e.message)
+            log.debug(e.stackTrace.join("\n"))
+            output.failNotification("An unexpected exception occurred during the offer update: " +
+                    "${offerContent.identifier.toString()}")
+            return
+        }
 
-        Offer oldOffer = new Offer.Builder(
+        if (theOfferHasChanged(existingOffer, offerToUpdate)) {
+            updateVersion()
+            storeOffer()
+        } else {
+            log.error "An unchanged offer cannot be updated"
+            output.failNotification("An unchanged offer cannot be updated")
+        }
+    }
+
+    private void storeOffer() {
+        try {
+            final offer = Converter.convertOfferToDTO(offerToUpdate)
+            dataSource.store(offer)
+            output.createdNewOffer(Converter.convertOfferToDTO(offerToUpdate))
+        } catch (Exception e) {
+            log.error(e.message)
+            log.error(e.stackTrace.join("\n"))
+            output.failNotification("An unexpected error during the saving of your offer " +
+                    "occurred. " +
+                    "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
+        }
+    }
+
+    private void updateVersion(){
+        // We get all available versions first
+        fetchAllAvailableVersions()
+        // Then we update the version
+        offerToUpdate.increaseVersion()
+    }
+
+    private void fetchAllAvailableVersions() {
+        def versions = dataSource.fetchAllVersionsForOfferId(Converter.convertIdToDTO(offerToUpdate
+                .identifier))
+        offerToUpdate.addAllAvailableVersions(
+                versions.stream()
+                        .map(version -> Converter.buildOfferId(version))
+                        .collect())
+    }
+
+    private static Offer createBusinessOffer(life.qbic.datamodel.dtos.business.Offer offer){
+        return new Offer.Builder(
                 offer.customer,
                 offer.projectManager,
                 offer.projectTitle,
                 offer.projectDescription,
                 offer.items,
                 offer.selectedCustomerAffiliation)
-                .identifier(oldId)
+                .identifier(Converter.buildOfferId(offer.identifier))
                 .build()
-
-        OfferId identifier = increaseOfferIdentifier(offerContent.identifier)
-
-        Offer finalizedOffer = new Offer.Builder(
-                offerContent.customer,
-                offerContent.projectManager,
-                offerContent.projectTitle,
-                offerContent.projectDescription,
-                offerContent.items,
-                offerContent.selectedCustomerAffiliation)
-                .identifier(identifier)
-                .build()
-
-        if(oldOffer.checksum() != finalizedOffer.checksum()){
-            storeOffer(finalizedOffer)
-        }else{
-            output.failNotification("An unchanged offer cannot be updated")
-        }
     }
 
-
-    private void storeOffer(Offer finalizedOffer) {
-        try {
-            final offer = Converter.convertOfferToDTO(finalizedOffer)
-            dataSource.store(offer)
-            output.createdNewOffer(offer)
-        } catch (DatabaseQueryException e) {
-            output.failNotification(e.message)
-        } catch (Exception unexpected) {
-            log.error unexpected.message
-            log.error unexpected.stackTrace.join("\n")
-            output.failNotification("An unexpected during the saving of your offer occurred. " +
-                    "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
-        }
+    private Offer getOfferById(offerId){
+        // Will throw a NullPointer Exception, when the offer is not present
+        def offerDTO = dataSource.getOffer(Converter.convertIdToDTO(offerId)).get()
+        return createBusinessOffer(offerDTO)
     }
 
-    private OfferId increaseOfferIdentifier(life.qbic.datamodel.dtos.business.OfferId oldOfferId){
-        OfferId convertedId = null
+    private OfferId createNewVersionTag(){
 
-        try{
-            //search for all ids in the database
-            List<life.qbic.datamodel.dtos.business.OfferId> allVersionIds = dataSource.fetchAllVersionsForOfferId(oldOfferId)
-            //take the latest one and increase it
-            life.qbic.datamodel.dtos.business.OfferId latestVersion = getLatestVersion(allVersionIds)
+        //search for all ids in the database
+        List<OfferId> allVersionIds = dataSource
+                .fetchAllVersionsForOfferId(Converter.convertIdToDTO(offerToUpdate.identifier))
+                .stream().map(offerId -> Converter.buildOfferId(offerId))
+                .collect()
 
-            convertedId = Converter.buildOfferId(latestVersion)
-            convertedId.increaseVersion()
-        }catch(DatabaseQueryException e){
-            output.failNotification(e.message)
-        }
+        offerToUpdate.addAllAvailableVersions(allVersionIds)
+
+        OfferId convertedId = offerToUpdate.getLatestVersion()
+        convertedId.increaseVersion()
 
         return convertedId
     }
 
-    private static life.qbic.datamodel.dtos.business.OfferId getLatestVersion(List<life.qbic.datamodel.dtos.business.OfferId> ids){
-        life.qbic.datamodel.dtos.business.OfferId maxID = null
-        int maxVersion = -1
-
-        ids.each {id ->
-            int currentVersion = Integer.parseInt(id.getVersion())
-            if ( currentVersion > maxVersion){
-                maxVersion = currentVersion
-                maxID = id
-            }
-        }
-        return maxID
+    private static boolean theOfferHasChanged(Offer oldOffer, Offer newOffer) {
+        return oldOffer.checksum() != newOffer.checksum()
     }
 
-    @Override
-    void calculatePrice(List<ProductItem> items, Affiliation affiliation) {
-        Offer offer = Converter.buildOfferForCostCalculation(items, affiliation)
-        output.calculatedPrice(
-                offer.getTotalNetPrice(),
-                offer.getTaxCosts(),
-                offer.getOverheadSum(),
-                offer.getTotalCosts())
+    private static Offer buildOffer(life.qbic.datamodel.dtos.business.Offer offer, OfferId identifier){
+        return new Offer.Builder(
+                        offer.customer,
+                        offer.projectManager,
+                        offer.projectTitle,
+                        offer.projectDescription,
+                        offer.items,
+                        offer.selectedCustomerAffiliation)
+                        .identifier(identifier)
+                        .build()
     }
 
 }

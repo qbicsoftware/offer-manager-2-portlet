@@ -1,6 +1,6 @@
 package life.qbic.portal.offermanager.components
 
-import life.qbic.business.customers.update.UpdateCustomerOutput
+import life.qbic.business.UseCaseFailure
 import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
@@ -11,10 +11,9 @@ import life.qbic.portal.offermanager.components.AppViewModel
  *  It converts the use case output into data that is stored in the {@link AppViewModel}.
  *
  * @since: 1.0.0
- * @author: Jennifer Bödker
  *
  */
-class AppPresenter implements UpdateCustomerOutput {
+class AppPresenter implements UseCaseFailure {
 
     private final AppViewModel viewModel
 
@@ -26,4 +25,5 @@ class AppPresenter implements UpdateCustomerOutput {
     void failNotification(String notification) {
         viewModel.failureNotifications.add(notification)
     }
+
 }
