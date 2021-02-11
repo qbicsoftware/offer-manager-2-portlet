@@ -40,11 +40,7 @@ class UpdateCustomer implements UpdateCustomerInput {
       } else {
         dataSource.updateCustomerAffiliations(customerId, customer.affiliations)
       }
-      try {
         output.customerUpdated(customer)
-      } catch (Exception ignored) {
-        //quiet output message failed
-      }
     } catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)
     } catch(Exception unexpected) {
