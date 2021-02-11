@@ -31,8 +31,7 @@ class SearchPersonViewModel {
 
     private void subscribeToResources() {
         this.customerService.subscribe((Customer customer) -> {
-            this.foundCustomers.clear()
-            this.foundCustomers.addAll(customerService.iterator())
+            this.foundCustomers.add(customer)
         })
     }
 

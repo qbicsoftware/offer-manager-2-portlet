@@ -57,9 +57,14 @@ class SearchPersonView extends FormLayout{
     }
 
     private void addListeners(){
+
         customerGrid.addSelectionListener({
-            fillPanel(it.firstSelectedItem.get())
-            selectedCustomerInformation.setVisible(true)
+            it.firstSelectedItem.ifPresentOrElse({overview ->
+                fillPanel(it.firstSelectedItem.get())
+                selectedCustomerInformation.setVisible(true)
+            }, {
+                selectedCustomerInformation.setVisible(false)
+            })
         })
     }
 
