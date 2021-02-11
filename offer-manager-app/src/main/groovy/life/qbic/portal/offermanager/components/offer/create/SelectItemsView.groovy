@@ -205,7 +205,7 @@ class SelectItemsView extends VerticalLayout{
         generateProductGrid(secondaryAnalyseGrid)
         generateProductGrid(storageGrid)
         generateProductGrid(projectManagementGrid)
-        generateProductGrid(overviewGrid)
+        generateProductGrid(overviewGrid, true)
 
         //make the overview over selected items grow dynamically
         overviewGrid.setHeightMode(HeightMode.UNDEFINED)
@@ -291,10 +291,12 @@ class SelectItemsView extends VerticalLayout{
      *
      * This Method is responsible for setting up the grid and setting the product information to the individual grid columns.
      */
-    private static void generateProductGrid(Grid<ProductItemViewModel> grid) {
+    private static void generateProductGrid(Grid<ProductItemViewModel> grid, boolean showQuantity = false) {
         try {
+            if(showQuantity){
             grid.addColumn({ productItem -> productItem.quantity })
                     .setCaption("Quantity").setId("Quantity")
+            }
             grid.addColumn({ productItem -> productItem.product.productId})
                     .setCaption("Product Id").setId("ProductId")
             grid.addColumn({ productItem -> productItem.product.productName })
