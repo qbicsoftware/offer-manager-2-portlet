@@ -205,6 +205,7 @@ class SelectItemsView extends VerticalLayout{
         generateProductGrid(secondaryAnalyseGrid)
         generateProductGrid(storageGrid)
         generateProductGrid(projectManagementGrid)
+        // This grid summarises product items selected for this specific offer, so we set quantity = true
         generateProductGrid(overviewGrid, true)
 
         //make the overview over selected items grow dynamically
@@ -491,4 +492,3 @@ class SelectItemsView extends VerticalLayout{
     }
 
 }
-
