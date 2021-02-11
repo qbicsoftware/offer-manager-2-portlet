@@ -306,7 +306,15 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     int customerId = Integer.parseInt(customerIdString)
     
     try {
-    List<Affiliation> existingAffiliations = getAffiliationForPersonId(customerId)
+      
+      List<Affiliation> existingAffiliations = getAffiliationForPersonId(customerId)
+      
+    } catch (Exception e) {
+      log.error(e)
+      log.error(e.stackTrace.join("\n"))
+      throw new DatabaseQueryException("The customer's affiliations could not be updated.")
+    }
+    
     List<Affiliation> newAffiliations = new ArrayList<>();
     
     // find added affiliations - could use set operations here, but we have lists...
@@ -314,6 +322,10 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       if(!existingAffiliations.contains(affiliation)) {
         newAffiliations.add(affiliation)
       }
+    }
+    
+    if(newAffiliations.isEmpty()) {
+      throw new DatabaseQueryException("Customer already has provided affiliation(s), no update was necessary.")
     }
 
     Connection connection = connectionProvider.connect()
@@ -332,12 +344,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
         throw new DatabaseQueryException("Could not update customer's affiliations.")
       }
     }
-  } catch (Exception e) {
-    log.error(e)
-    log.error(e.stackTrace.join("\n"))
-    throw new DatabaseQueryException("The customer's affiliations could not be updated.")
-  }
-    
   }
 
   private void changeCustomerActiveFlag(int customerId, boolean active) {
