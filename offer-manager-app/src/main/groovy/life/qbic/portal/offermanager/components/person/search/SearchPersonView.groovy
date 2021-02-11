@@ -19,11 +19,11 @@ import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
 
 /**
- * <class short description - One Line!>
+ * Constructs the UI for the SearchPerson use case
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * This class provides the view elements so that a user can search for a customer through the UI
  *
- * @since: <versiontag>
+ * @since: 1.0.0
  *
  */
 class SearchPersonView extends FormLayout{
@@ -32,7 +32,6 @@ class SearchPersonView extends FormLayout{
 
     Grid<Customer> customerGrid
     Panel selectedCustomerInformation
-    Button showDetails
     VerticalLayout buttonLayout
 
     SearchPersonView(SearchPersonViewModel searchPersonViewModel) {
@@ -49,11 +48,8 @@ class SearchPersonView extends FormLayout{
         customerGrid = new Grid<>()
         selectedCustomerInformation = new Panel()
 
-        showDetails = new Button("Show Details")
-        showDetails.setEnabled(false)
-
-        buttonLayout.addComponent(showDetails)
-        buttonLayout.setComponentAlignment(showDetails, Alignment.MIDDLE_RIGHT)
+        buttonLayout.addComponent(selectedCustomerInformation)
+        selectedCustomerInformation.setVisible(false)
         buttonLayout.setMargin(false)
 
         this.addComponents(customerGrid,buttonLayout)
@@ -62,13 +58,8 @@ class SearchPersonView extends FormLayout{
 
     private void addListeners(){
         customerGrid.addSelectionListener({
-            buttonLayout.removeComponent(selectedCustomerInformation)
             fillPanel(it.firstSelectedItem.get())
-            showDetails.setEnabled(true)
-        })
-        showDetails.addClickListener({
-            buttonLayout.addComponent(selectedCustomerInformation)
-            buttonLayout.setComponentAlignment(selectedCustomerInformation, Alignment.MIDDLE_LEFT)
+            selectedCustomerInformation.setVisible(true)
         })
     }
 
