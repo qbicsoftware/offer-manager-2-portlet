@@ -6,6 +6,8 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.business.customers.affiliation.create.CreateAffiliation
 import life.qbic.business.customers.create.CreateCustomer
 import life.qbic.business.offers.create.CreateOffer
+import life.qbic.portal.offermanager.components.person.search.SearchPersonView
+import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.CustomerDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -39,7 +41,6 @@ import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
 import life.qbic.portal.offermanager.components.AppView
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
-import org.apache.tools.ant.Project
 
 /**
  * Class that manages all the dependency injections and class instance creations
@@ -345,11 +346,15 @@ class DependencyManager {
                     .viewModel, createCustomerViewModel)
             CreateAffiliationView createAffiliationView2 = new CreateAffiliationView(this.viewModel,
                     createAffiliationViewModel, createAffiliationController)
+
+            SearchPersonViewModel searchPersonViewModel = new SearchPersonViewModel(customerResourceService)
+
             portletView = new AppView(this.viewModel, createCustomerView2,
                     createAffiliationView2,
                     createOfferView,
                     overviewView,
-                    updateOfferView
+                    updateOfferView,
+                    new SearchPersonView(searchPersonViewModel)
             )
             this.portletView = portletView
         } catch (Exception e) {

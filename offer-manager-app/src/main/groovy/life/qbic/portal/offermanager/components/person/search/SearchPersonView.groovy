@@ -1,11 +1,14 @@
 package life.qbic.portal.offermanager.components.person.search
 
 import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.shared.ui.ContentMode
 import com.vaadin.shared.ui.grid.HeightMode
+import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
+import com.vaadin.ui.Label
 import com.vaadin.ui.Panel
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
@@ -23,24 +26,21 @@ import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
  * @since: <versiontag>
  *
  */
-class SearchCustomerView extends FormLayout{
+class SearchPersonView extends FormLayout{
 
-    private final AppViewModel sharedViewModel
     private final SearchPersonViewModel viewModel
-    private final SearchPersonController controller
 
     Grid<Customer> customerGrid
     Panel selectedCustomerInformation
     Button showDetails
     VerticalLayout buttonLayout
 
-    SearchCustomerView(AppViewModel sharedViewModel, SearchPersonViewModel searchPersonViewModel, SearchPersonController controller) {
-        this.sharedViewModel = sharedViewModel
+    SearchPersonView(SearchPersonViewModel searchPersonViewModel) {
         this.viewModel = searchPersonViewModel
-        this.controller = controller
 
         initLayout()
         generateCustomerGrid()
+        addListeners()
     }
 
     private void initLayout(){
@@ -50,19 +50,53 @@ class SearchCustomerView extends FormLayout{
         selectedCustomerInformation = new Panel()
 
         showDetails = new Button("Show Details")
+        showDetails.setEnabled(false)
 
         buttonLayout.addComponent(showDetails)
+        buttonLayout.setComponentAlignment(showDetails, Alignment.MIDDLE_RIGHT)
+        buttonLayout.setMargin(false)
 
         this.addComponents(customerGrid,buttonLayout)
+        this.setMargin(false)
     }
 
     private void addListeners(){
         customerGrid.addSelectionListener({
-
+            buttonLayout.removeComponent(selectedCustomerInformation)
+            fillPanel(it.firstSelectedItem.get())
+            showDetails.setEnabled(true)
         })
         showDetails.addClickListener({
-
+            buttonLayout.addComponent(selectedCustomerInformation)
+            buttonLayout.setComponentAlignment(selectedCustomerInformation, Alignment.MIDDLE_LEFT)
         })
+    }
+
+    /**
+     * Fills the panel with the detailed customer information of the currently selected customer
+     * @param customer The customer which
+     */
+    private void fillPanel(Customer customer){
+        VerticalLayout content = new VerticalLayout()
+
+        content.addComponent(new Label("<strong>${customer.title == AcademicTitle.NONE ? "" : customer.title} ${customer.firstName} ${customer.lastName}</strong>", ContentMode.HTML))
+        content.addComponent(new Label("${customer.emailAddress}", ContentMode.HTML))
+
+
+        customer.affiliations.each { affiliation ->
+            content.addComponent(new Label("<strong>${affiliation.category.value}</strong>", ContentMode.HTML))
+            content.addComponent(new Label("${affiliation.organisation}"))
+            if (affiliation.addressAddition) {
+                content.addComponent(new Label("${affiliation.addressAddition}"))
+            }
+            content.addComponent(new Label("${affiliation.street}"))
+            content.addComponent(new Label("${affiliation.postalCode} ${affiliation.city} - ${affiliation.country}"))
+        }
+        content.setMargin(true)
+        content.setSpacing(false)
+
+        selectedCustomerInformation.setContent(content)
+        selectedCustomerInformation.setWidthUndefined()
     }
 
     /**
