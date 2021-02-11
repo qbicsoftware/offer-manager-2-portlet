@@ -38,4 +38,16 @@ class Version {
     void increaseVersion() {
         this.version += 1
     }
+
+    @Override
+    boolean equals(Object otherVersion) {
+        if (otherVersion.is(this)) {
+            return true
+        }
+        if (!(otherVersion instanceof Version)) {
+            return false
+        }
+        def comparedVersion = (Version) otherVersion
+        return this.getRawValue() == comparedVersion.getRawValue()
+    }
 }

@@ -1,7 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
 import groovy.util.logging.Log4j2
-import life.qbic.business.offers.update.UpdateOfferDataSource
+
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
@@ -9,7 +9,6 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.portal.offermanager.dataresources.persons.CustomerDbConnector
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
-import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 
 import java.sql.*
@@ -17,7 +16,7 @@ import java.sql.*
 /**
  * Handles the connection to the offer database
  *
- * Implements {@link CreateOfferDataSource} and {@link UpdateOfferDataSource}.
+ * Implements {@link CreateOfferDataSource}.
  * This connector is responsible for transferring data between the offer database and qOffer
  *
  * @since: 1.0.0
@@ -25,7 +24,7 @@ import java.sql.*
  *
  */
 @Log4j2
-class OfferDbConnector implements CreateOfferDataSource, UpdateOfferDataSource{
+class OfferDbConnector implements CreateOfferDataSource{
 
     ConnectionProvider connectionProvider
 
@@ -36,6 +35,9 @@ class OfferDbConnector implements CreateOfferDataSource, UpdateOfferDataSource{
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (offerId, " +
             "creationDate, expirationDate, customerId, projectManagerId, projectTitle, " +
             "projectDescription, totalPrice, customerAffiliationId, vat, netPrice, overheads)"
+
+    private static final String OFFER_SELECT_QUERY = "SELECT offerId, creationDate, expirationDate, customerId, projectManagerId, projectTitle," +
+                                                        "projectDescription, totalPrice, customerAffiliationId, vat, netPrice, overheads FROM offer"
 
 
     OfferDbConnector(ConnectionProvider connectionProvider, CustomerDbConnector customerDbConnector, ProductsDbConnector productsDbConnector){
@@ -71,7 +73,40 @@ class OfferDbConnector implements CreateOfferDataSource, UpdateOfferDataSource{
         }
     }
 
-    /**
+    @Override
+    List<OfferId> fetchAllVersionsForOfferId(OfferId id) {
+        String query = OFFER_SELECT_QUERY + " WHERE offerId LIKE ? AND offerId LIKE ?"
+        Connection connection = null
+        List<OfferId> ids = []
+
+        try{
+            connection = connectionProvider.connect()
+            connection.withCloseable {
+                PreparedStatement preparedStatement = it.prepareStatement(query)
+                preparedStatement.setString(1, "O_"+id.projectConservedPart+"_%")
+                preparedStatement.setString(2, "%_"+id.randomPart+"_%")
+                ResultSet resultSet = preparedStatement.executeQuery()
+
+                while (resultSet.next()) {
+                    String resultID = resultSet.getString(1)
+                    OfferId offerId = parseOfferId(resultID)
+                    ids.add(offerId)
+                }
+
+                ids.each { println it }
+
+                return ids
+            }
+        }catch(Exception e){
+            log.error(e.message)
+            log.error(e.stackTrace.join("\n"))
+            connection.rollback()
+            throw new DatabaseQueryException("Could fetch offer versions for id ${id.toString()}.")
+        }
+
+    }
+
+/**
      * The method stores the offer in the QBiC database
      *
      * @param offer with the information of the offer to be stored
@@ -153,6 +188,7 @@ class OfferDbConnector implements CreateOfferDataSource, UpdateOfferDataSource{
         return new OfferId(projectPart, randomPart, version)
     }
 
+    @Override
     Optional<Offer> getOffer(OfferId offerId) {
         Optional<Offer> offer = Optional.empty()
 

@@ -25,7 +25,7 @@ class CreateOfferController {
     private final CreateOfferInput input
     private final CalculatePrice calculatePrice
 
-    CreateOfferController(CreateOfferInput input,CalculatePrice calculatePrice){
+    CreateOfferController(CreateOfferInput input, CalculatePrice calculatePrice){
         this.input = input
         this.calculatePrice = calculatePrice
     }
@@ -49,6 +49,7 @@ class CreateOfferController {
             ProjectManager manager,
             List<ProductItem> items,
             Affiliation customerAffiliation){
+
         Offer offer = new Offer.Builder(
                     customer,
                     manager,
@@ -58,6 +59,7 @@ class CreateOfferController {
                     .items(items)
                     .identifier(offerId)
                     .build()
+
         this.input.createOffer(offer)
     }
 

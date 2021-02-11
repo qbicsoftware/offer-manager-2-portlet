@@ -5,9 +5,10 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.business.exceptions.DatabaseQueryException
 
 /**
- * <short description>
+ * Updates a customer in the database for the UpdateCustomer use case
  *
- * <detailed description>
+ * This interface should be used to allow the use case to forward data to a data source that implements this use case
+ * and still follow the correct dependency flow from infrastructure to the domain logic
  *
  * @since: 1.0.0
  */
@@ -23,6 +24,21 @@ interface UpdateCustomerDataSource {
      * @since 1.0.0
      */
     void updateCustomer(String customerId, Customer updatedCustomer) throws DatabaseQueryException
+    
+    /**
+     * Returns a customer given a customer specified by a customer ID
+     * 
+     * @param customerId to specify and existing customer
+     */
+    Customer getCustomer(int customerId)
+        
+    /**
+     * Updates affiliations of a customer specified by a customer ID.
+     * 
+     * @param customerId to specify the customer whose affiliations should be updated
+     * @param affiliations that the customer should be associated to
+     */
+    void updateCustomerAffiliations(String customerId, List<Affiliation> affiliations) throws DatabaseQueryException
 
     /**
      * Updates the affiliations of a given customer by removing or adding relations from/to the database
