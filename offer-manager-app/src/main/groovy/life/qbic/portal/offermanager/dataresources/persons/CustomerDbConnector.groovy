@@ -57,6 +57,11 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   }
 
   @Override
+  void updateCustomerAffiliations(String customerId, List<Affiliation> affiliations) {
+    throw new RuntimeException("Method not implemented.")
+  }
+  
+  @Override
   List<Customer> findCustomer(String firstName, String lastName) throws DatabaseQueryException {
     String sqlCondition = "WHERE first_name = ? AND last_name = ?"
     String queryTemplate = CUSTOMER_SELECT_QUERY + " " + sqlCondition
@@ -575,6 +580,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     return category
   }
 
+  @Override
   Customer getCustomer(int personPrimaryId) {
     String query = CUSTOMER_SELECT_QUERY + " " +"WHERE id=?"
     Connection connection = connectionProvider.connect()
