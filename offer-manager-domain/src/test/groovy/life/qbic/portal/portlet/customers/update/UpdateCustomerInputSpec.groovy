@@ -44,7 +44,6 @@ class UpdateCustomerInputSpec extends Specification {
   def "given no customer changes, update the affiliations using a mocked data source"(){
       given: "A new update customer use case instance"
       UpdateCustomer useCase = new UpdateCustomer(output, dataSource)
-
       dataSource.getCustomer(42) >> new Customer.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).affiliation(affiliation1).build()
 
       when: "The use case method is called"
@@ -61,7 +60,6 @@ class UpdateCustomerInputSpec extends Specification {
         "other org", "other street", "zip", "city").build(), affiliation1))
       customer = new Customer.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).affiliations(twoAffiliations).build()
       customerId = "42"
-
   }
   
   def "datasource throwing an exception leads to fail notification on output"() {

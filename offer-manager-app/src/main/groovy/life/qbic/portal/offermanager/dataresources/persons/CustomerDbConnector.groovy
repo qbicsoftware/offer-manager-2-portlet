@@ -304,10 +304,13 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   @Override
   void updateCustomerAffiliations(String customerIdString, List<Affiliation> updatedAffiliations) {
     int customerId = Integer.parseInt(customerIdString)
-    
+    println customerId
+    println updatedAffiliations
+    List<Affiliation> existingAffiliations = null
     try {
       
-      List<Affiliation> existingAffiliations = getAffiliationForPersonId(customerId)
+      existingAffiliations = getAffiliationForPersonId(customerId)
+      println existingAffiliations
       
     } catch (Exception e) {
       log.error(e)
@@ -323,7 +326,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
         newAffiliations.add(affiliation)
       }
     }
-    
+    println newAffiliations
     if(newAffiliations.isEmpty()) {
       throw new DatabaseQueryException("Customer already has provided affiliation(s), no update was necessary.")
     }
