@@ -72,8 +72,7 @@ class CustomerDbConnectorSpec extends Specification{
         // we need to stub the static SqlExtensions.toRowResult method because we do not provide an implemented RowResult
         GroovyMock(SqlExtensions, global: true)
 
-        SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(["id":id,
-                                                                          "organization": organization,
+        SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(["organization": organization,
                                                                           "address_addition":address_addition,"street":street,
                                                                           "postal_code":postal_code, "city":city, "country":country, "category": "internal"])
         // our statement should only be able to fill the template with the correct values
