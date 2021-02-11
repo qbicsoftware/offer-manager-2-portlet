@@ -40,14 +40,4 @@ interface UpdateCustomerDataSource {
      */
     void updateCustomerAffiliations(String customerId, List<Affiliation> affiliations) throws DatabaseQueryException
 
-    /**
-     * Updates the affiliations of a given customer by removing or adding relations from/to the database
-     *
-     * @param customerIdString to specify the customer to be updated
-     * @param updatedAffiliations a list of affiliations that should be associated with the customer after the update
-     * @throws DatabaseQueryException When a customer's affiliations could not been updated in the database
-     * @since 1.0.0
-     */
-    void updateCustomerAffiliations(String customerIdString, List<Affiliation> updatedAffiliations) throws DatabaseQueryException
-      
 }

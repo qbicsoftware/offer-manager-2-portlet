@@ -55,11 +55,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   CustomerDbConnector(ConnectionProvider connectionProvider) {
     this.connectionProvider = connectionProvider
   }
-
-  @Override
-  void updateCustomerAffiliations(String customerId, List<Affiliation> affiliations) {
-    throw new RuntimeException("Method not implemented.")
-  }
   
   @Override
   List<Customer> findCustomer(String firstName, String lastName) throws DatabaseQueryException {
