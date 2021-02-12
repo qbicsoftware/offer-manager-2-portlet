@@ -8,6 +8,7 @@ import life.qbic.portal.offermanager.components.affiliation.create.CreateAffilia
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
+import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 
 /**
  * Class which connects the view elements with the ViewModel and the Controller
@@ -28,6 +29,7 @@ class AppView extends VerticalLayout {
     private final CreateOfferView createOfferView
     private final List<Component> featureViews
     private final OfferOverviewView overviewView
+    private final SearchPersonView searchPersonView
 
     private final CreateOfferView updateOfferView
 
@@ -36,7 +38,8 @@ class AppView extends VerticalLayout {
             CreateAffiliationView createAffiliationView,
             CreateOfferView createOfferView,
             OfferOverviewView overviewView,
-            CreateOfferView updateOfferView) {
+            CreateOfferView updateOfferView,
+            SearchPersonView searchPersonView) {
         super()
         this.portletViewModel = portletViewModel
         this.createCustomerView = createCustomerView
@@ -45,6 +48,7 @@ class AppView extends VerticalLayout {
         this.featureViews = []
         this.overviewView = overviewView
         this.updateOfferView = updateOfferView
+        this.searchPersonView = searchPersonView
 
         initLayout()
         registerListeners()
@@ -64,7 +68,8 @@ class AppView extends VerticalLayout {
                 createAffiliationView,
                 createOfferView,
                 overviewView,
-                updateOfferView
+                updateOfferView,
+                searchPersonView
         ])
     }
 
@@ -90,6 +95,7 @@ class AppView extends VerticalLayout {
         verticalLayout.addComponents(this.createAffiliationView)
         verticalLayout.addComponent(this.overviewView)
         verticalLayout.addComponent(this.updateOfferView)
+        verticalLayout.addComponent(this.searchPersonView)
 
         this.setSizeFull()
         this.addComponent(verticalLayout)
@@ -136,16 +142,21 @@ class AppView extends VerticalLayout {
 
         Button overviewBtn
 
+        Button searchPersonBtn
+
         TomatoFeatures() {
             this.createOfferBtn = new Button("New Offer")
             this.createCustomerBtn = new Button("New Customer")
             this.createAffiliationBtn = new Button("New Affiliation")
-            this.overviewBtn = new Button("Offer overview")
+            this.overviewBtn = new Button("Offer Overview")
+            this.searchPersonBtn = new Button("Search Customer")
+
             this.addComponents(
                     overviewBtn,
                     createOfferBtn,
                     createCustomerBtn,
-                    createAffiliationBtn
+                    createAffiliationBtn,
+                    searchPersonBtn
             )
             setStyles()
             setupListeners()
@@ -162,6 +173,7 @@ class AppView extends VerticalLayout {
             createOfferBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
             createCustomerBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
             createAffiliationBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+            searchPersonBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
         }
 
         private void setIcons() {
@@ -169,6 +181,7 @@ class AppView extends VerticalLayout {
             createOfferBtn.setIcon(VaadinIcons.GRID_BIG_O)
             createCustomerBtn.setIcon(VaadinIcons.GRID_BIG_O)
             createAffiliationBtn.setIcon(VaadinIcons.GRID_BIG_O)
+            searchPersonBtn.setIcon(VaadinIcons.GRID_BIG_O)
         }
 
         private void setButtonActive(Button b) {
@@ -200,7 +213,12 @@ class AppView extends VerticalLayout {
                 createAffiliationView.setVisible(true)
                 setButtonActive(this.createAffiliationBtn)
             })
-
+            this.searchPersonBtn.addClickListener(listener -> {
+                hideAllFeatureViews()
+                setIcons()
+                searchPersonView.setVisible(true)
+                setButtonActive(this.searchPersonBtn)
+            })
         }
 
     }
