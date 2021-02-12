@@ -8,6 +8,7 @@ import life.qbic.business.customers.create.CreateCustomer
 import life.qbic.business.offers.create.CreateOffer
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
+import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.CustomerDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -15,6 +16,7 @@ import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceServi
 import life.qbic.portal.offermanager.dataresources.database.DatabaseSession
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
 import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
@@ -57,6 +59,7 @@ class DependencyManager {
 
     private AppViewModel viewModel
     private CreatePersonViewModel createCustomerViewModel
+    private UpdatePersonViewModel updatePersonViewModel
     private CreateAffiliationViewModel createAffiliationViewModel
     private CreateOfferViewModel createOfferViewModel
     private CreateOfferViewModel updateOfferViewModel
@@ -65,6 +68,7 @@ class DependencyManager {
 
     private AppPresenter presenter
     private CreatePersonPresenter createCustomerPresenter
+    private CreatePersonPresenter updateCustomerPresenter
     private CreateAffiliationPresenter createAffiliationPresenter
     private CreateOfferPresenter createOfferPresenter
     private CreateOfferPresenter updateOfferPresenter
@@ -74,16 +78,19 @@ class DependencyManager {
     private ProductsDbConnector productsDbConnector
 
     private CreateCustomer createCustomer
+    private CreateCustomer updateCustomer
     private CreateAffiliation createAffiliation
     private CreateOffer createOffer
     private CreateOffer updateOffer
 
     private CreatePersonController createCustomerController
+    private CreatePersonController updateCustomerController
     private CreateAffiliationController createAffiliationController
     private CreateOfferController createOfferController
     private CreateOfferController updateOfferController
 
     private CreatePersonView createCustomerView
+    private CreatePersonView updatePersonView
     private CreatePersonView createCustomerViewNewOffer
     private CreateAffiliationView createAffiliationView
     private SearchPersonView searchPersonView
@@ -97,6 +104,7 @@ class DependencyManager {
     private OfferResourcesService offerService
     private ProductsResourcesService productsResourcesService
     private ProjectManagerResourceService managerResourceService
+    private PersonUpdateService personUpdateService
 
     /**
      * Public constructor.
@@ -153,6 +161,7 @@ class DependencyManager {
         this.productsResourcesService = new ProductsResourcesService(productsDbConnector)
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
         this.customerResourceService = new CustomerResourceService(customerDbConnector)
+        this.personUpdateService = new PersonUpdateService()
     }
 
     private void setupViewModels() {
@@ -173,6 +182,19 @@ class DependencyManager {
 
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${CreatePersonViewModel.getSimpleName()} view model setup.", e)
+            throw e
+        }
+
+        try {
+            this.updatePersonViewModel = new UpdatePersonViewModel(
+                    customerResourceService,
+                    managerResourceService,
+                    affiliationService,
+                    personUpdateService)
+            updatePersonViewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
+
+        } catch (Exception e) {
+            log.error("Unexpected excpetion during ${UpdatePersonViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
@@ -236,6 +258,13 @@ class DependencyManager {
         }
 
         try {
+            this.updateCustomerPresenter = new CreatePersonPresenter(this.viewModel, this.updatePersonViewModel)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${CreatePersonPresenter.getSimpleName()} setup." , e)
+            throw e
+        }
+
+        try {
             this.createAffiliationPresenter = new CreateAffiliationPresenter(this.viewModel, this.createAffiliationViewModel)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateAffiliationPresenter.getSimpleName()} setup." , e)
@@ -262,11 +291,18 @@ class DependencyManager {
         this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbConnector)
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
         this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
+        this.updateCustomer = new CreateCustomer(updateCustomerPresenter, customerDbConnector)
     }
 
     private void setupControllers() {
         try {
             this.createCustomerController = new CreatePersonController(this.createCustomer)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${CreatePersonController.getSimpleName()} setup.", e)
+            throw e
+        }
+        try {
+            this.updateCustomerController = new CreatePersonController(this.createCustomer)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreatePersonController.getSimpleName()} setup.", e)
             throw e
@@ -293,6 +329,13 @@ class DependencyManager {
 
         try {
             this.createCustomerView = new CreatePersonView(this.createCustomerController, this.viewModel, this.createCustomerViewModel)
+        } catch (Exception e) {
+            log.error("Could not create ${CreatePersonView.getSimpleName()} view.", e)
+            throw e
+        }
+
+        try {
+            this.updatePersonView = new CreatePersonView(this.updateCustomerController, this.viewModel, this.updatePersonViewModel)
         } catch (Exception e) {
             log.error("Could not create ${CreatePersonView.getSimpleName()} view.", e)
             throw e
@@ -350,7 +393,7 @@ class DependencyManager {
 
         SearchPersonView searchPersonView
         try{
-            searchPersonView = new SearchPersonView(searchPersonViewModel)
+            searchPersonView = new SearchPersonView(searchPersonViewModel, personUpdateService, updatePersonView)
         } catch (Exception e) {
             log.error("Could not create ${SearchPersonView.getSimpleName()} view.", e)
             throw e
