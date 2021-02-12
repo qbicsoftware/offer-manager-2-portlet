@@ -325,6 +325,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       try {
        
     storeAffiliation(connection, customerId, newAffiliations)
+    connection.commit()
     
       } catch (Exception e) {
         log.error(e.message)
