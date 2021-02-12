@@ -2,6 +2,7 @@ package life.qbic.portal.qoffer2.database
 
 import groovy.sql.GroovyRowResult
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.offermanager.dataresources.persons.CustomerDbConnector
@@ -25,7 +26,7 @@ class CustomerDbConnectorSpec extends Specification{
         given:
         String query = "SELECT id FROM person WHERE first_name = ? AND last_name = ? AND email = ?"
 
-        and: "a connection returning the if of the person if it was found"
+        and: "a connection returning the id of the person if it was found"
         // we need to stub the static SqlExtensions.toRowResult method because we do not provide an implemented RowResult
         GroovyMock(SqlExtensions, global: true)
         SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(["id":id])
@@ -57,6 +58,54 @@ class CustomerDbConnectorSpec extends Specification{
         where: "customer information is as follows"
         id | firstName | lastName | academicTitle | emailAddress
         0 | "luke" | "skywalker" | "Dr." | "sith@jedicouncil.universe"
+    }
+    
+    def "CustomerDbConnector shall throw failNotification if updateCustomerAffiliations has nothing to update"() {
+        given: "an implementation of the UpdateCustomerDataSource with this connection provider"
+        String query = "SELECT *\n" +
+        "FROM \n" +
+        "    person_affiliation\n" +
+        "    LEFT JOIN affiliation\n" +
+        "    ON  person_affiliation.affiliation_id = affiliation.id\n" +
+        "    WHERE person_affiliation.person_id = ?"
+        
+        // we need to stub the static SqlExtensions.toRowResult method because we do not provide an implemented RowResult
+        GroovyMock(SqlExtensions, global: true)
+
+        SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(["organization": organization,
+                                                                          "address_addition":address_addition,"street":street,
+                                                                          "postal_code":postal_code, "city":city, "country":country, "category": "internal"])
+        // our statement should only be able to fill the template with the correct values
+        PreparedStatement preparedStatement = Mock (PreparedStatement, {
+            it.setInt(1, Integer.parseInt(customerId)) >> _
+            it.executeQuery() >> Stub(ResultSet,{it.next() >>> [true, false]})
+        })
+        // the connection must only provide precompiled statements for the expected query template
+        Connection connection = Stub( Connection, {
+            it.prepareStatement(query) >> preparedStatement
+        })
+
+        //and: "a ConnectionProvider providing the stubbed connection"
+        ConnectionProvider connectionProvider = Stub (ConnectionProvider, {it.connect() >> connection})
+
+        //and: "an implementation of the SearchCustomerDataSource with this connection provider"
+        CustomerDbConnector dataSource = new CustomerDbConnector(connectionProvider)
+//        dataSource.getAffiliationForPersonId(Integer.parseInt(customerId)) >> affiliations
+        
+        when: "update customer affiliations is called"
+        dataSource.updateCustomerAffiliations(customerId, [new Affiliation.Builder(organization,
+                street, postal_code, city).addressAddition(address_addition).country(country).category(category).build()])
+
+        then: "no affiliations are updated and a failNotification is thrown"
+        0 * dataSource.storeAffiliation(_ as Connection, _ as String, _ as List<Affiliation>)
+        Exception ex = thrown()
+        ex.message == "Customer already has provided affiliation(s), no update was necessary."
+        
+        where:
+        customerId = "42"
+        id | organization | address_addition | street | postal_code | city | country | category
+        0 | "QBiC" | "Quantitative Biology Center" | "Auf der Morgenstelle 10" | "72076" |
+                "Tübingen" | "Germany" | AffiliationCategory.INTERNAL
     }
 
     def "CustomerDbConnector shall return the id for a given affiliation"(){
