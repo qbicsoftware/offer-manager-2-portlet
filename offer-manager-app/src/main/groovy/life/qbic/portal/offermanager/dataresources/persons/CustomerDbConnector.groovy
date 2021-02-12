@@ -360,7 +360,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   void updateCustomer(String customerId, Customer updatedCustomer) {
 
         int oldCustomerId = Integer.parseInt(customerId)
-    try {
       if (getCustomer(oldCustomerId)==null) {
         throw new DatabaseQueryException("Customer is not in the database and can't be updated.")
       }
@@ -382,14 +381,9 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
           log.error(e.stackTrace.join("\n"))
           connection.rollback()
           connection.close()
-          throw new DatabaseQueryException("Could not update customer.")
+          throw new DatabaseQueryException("The customer could not be updated: ${customer.toString()}.")
         }
       }
-    } catch (Exception e) {
-      log.error(e)
-      log.error(e.stackTrace.join("\n"))
-      throw new DatabaseQueryException("The customer could not be updated: ${customer.toString()}")
-    }
   }
 
   /**
