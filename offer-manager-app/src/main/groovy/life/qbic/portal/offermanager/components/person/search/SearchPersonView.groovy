@@ -3,20 +3,16 @@ package life.qbic.portal.offermanager.components.person.search
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.shared.ui.grid.HeightMode
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Button
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
-import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.Panel
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
+import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.GridUtils
-import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
 
 /**
  * Constructs the UI for the SearchPerson use case
@@ -32,7 +28,7 @@ class SearchPersonView extends FormLayout{
 
     Grid<Customer> customerGrid
     Panel selectedCustomerInformation
-    VerticalLayout buttonLayout
+    VerticalLayout detailsLayout
 
     SearchPersonView(SearchPersonViewModel searchPersonViewModel) {
         this.viewModel = searchPersonViewModel
@@ -43,16 +39,23 @@ class SearchPersonView extends FormLayout{
     }
 
     private void initLayout(){
-        buttonLayout = new VerticalLayout()
+        Label gridLabel = new Label("Available Person Entries")
+        gridLabel.addStyleName(ValoTheme.LABEL_HUGE)
+
+
+        detailsLayout = new VerticalLayout()
 
         customerGrid = new Grid<>()
         selectedCustomerInformation = new Panel()
 
-        buttonLayout.addComponent(selectedCustomerInformation)
-        selectedCustomerInformation.setVisible(false)
-        buttonLayout.setMargin(false)
+        Label detailsLabel = new Label("Person Details: ")
+        detailsLayout.addComponent(detailsLabel)
 
-        this.addComponents(customerGrid,buttonLayout)
+        detailsLayout.addComponent(selectedCustomerInformation)
+        detailsLayout.setVisible(false)
+        detailsLayout.setMargin(false)
+
+        this.addComponents(gridLabel,customerGrid,detailsLayout)
         this.setMargin(false)
     }
 
@@ -61,9 +64,9 @@ class SearchPersonView extends FormLayout{
         customerGrid.addSelectionListener({
             it.firstSelectedItem.ifPresentOrElse({overview ->
                 fillPanel(it.firstSelectedItem.get())
-                selectedCustomerInformation.setVisible(true)
+                detailsLayout.setVisible(true)
             }, {
-                selectedCustomerInformation.setVisible(false)
+                detailsLayout.setVisible(false)
             })
         })
     }
