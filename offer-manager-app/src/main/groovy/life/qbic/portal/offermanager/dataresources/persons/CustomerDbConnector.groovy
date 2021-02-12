@@ -244,16 +244,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     return generatedKeys[0]
   }
   
-  private void removeCustomerAffiliations(Connection connection, int customerId, List<Integer> affiliationIds) {
-    String query = "DELETE FROM person_affiliation WHERE person_id = ? AND affiliation_id = ?"
-    
-    affiliationIds.each {affiliationId -> 
-      statement.setInt(1, customerId)
-      statement.setInt(2, affiliationId)
-      statement.execute()
-    }
-  }
-
   private void storeAffiliation(Connection connection, int customerId, List<Affiliation>
           affiliations) {
     String query = "INSERT INTO person_affiliation (person_id, affiliation_id) " +
