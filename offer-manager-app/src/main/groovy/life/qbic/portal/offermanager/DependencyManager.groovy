@@ -302,6 +302,7 @@ class DependencyManager {
             throw e
         }
         try {
+            //todo update here with the update customer use case!
             this.updateCustomerController = new CreatePersonController(this.createCustomer)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreatePersonController.getSimpleName()} setup.", e)
