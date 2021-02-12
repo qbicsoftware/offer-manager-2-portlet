@@ -6,6 +6,8 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.business.customers.affiliation.create.CreateAffiliation
 import life.qbic.business.customers.create.CreateCustomer
 import life.qbic.business.offers.create.CreateOffer
+import life.qbic.portal.offermanager.components.person.search.SearchPersonView
+import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.CustomerDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -59,6 +61,7 @@ class DependencyManager {
     private CreateOfferViewModel createOfferViewModel
     private CreateOfferViewModel updateOfferViewModel
     private OfferOverviewModel offerOverviewModel
+    private SearchPersonViewModel searchPersonViewModel
 
     private AppPresenter presenter
     private CreatePersonPresenter createCustomerPresenter
@@ -83,6 +86,7 @@ class DependencyManager {
     private CreatePersonView createCustomerView
     private CreatePersonView createCustomerViewNewOffer
     private CreateAffiliationView createAffiliationView
+    private SearchPersonView searchPersonView
     private AppView portletView
     private ConfigurationManager configurationManager
 
@@ -207,6 +211,12 @@ class DependencyManager {
                     viewModel)
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
+        }
+
+        try{
+            this.searchPersonViewModel = new SearchPersonViewModel(customerResourceService)
+        }catch (Exception e) {
+            log.error("Unexpected excpetion during ${SearchPersonViewModel.getSimpleName()} view model setup.", e)
         }
     }
 
@@ -338,17 +348,27 @@ class DependencyManager {
             throw e
         }
 
+        SearchPersonView searchPersonView
+        try{
+            searchPersonView = new SearchPersonView(searchPersonViewModel)
+        } catch (Exception e) {
+            log.error("Could not create ${SearchPersonView.getSimpleName()} view.", e)
+            throw e
+        }
+
         AppView portletView
         try {
             CreatePersonView createCustomerView2 = new CreatePersonView(createCustomerController, this
                     .viewModel, createCustomerViewModel)
             CreateAffiliationView createAffiliationView2 = new CreateAffiliationView(this.viewModel,
                     createAffiliationViewModel, createAffiliationController)
+
             portletView = new AppView(this.viewModel, createCustomerView2,
                     createAffiliationView2,
                     createOfferView,
                     overviewView,
-                    updateOfferView
+                    updateOfferView,
+                    searchPersonView
             )
             this.portletView = portletView
         } catch (Exception e) {

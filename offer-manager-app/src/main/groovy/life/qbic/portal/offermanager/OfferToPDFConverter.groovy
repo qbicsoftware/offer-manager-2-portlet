@@ -183,7 +183,7 @@ class OfferToPDFConverter implements OfferExporter {
     }
 
     void setQuotationDetails() {
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG)
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.US)
 
         htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
         htmlContent.getElementById("offer-expiry-date").text(offer.expirationDate.toLocalDate().toString())
