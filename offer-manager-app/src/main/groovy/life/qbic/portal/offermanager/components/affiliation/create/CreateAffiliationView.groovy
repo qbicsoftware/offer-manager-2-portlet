@@ -9,6 +9,7 @@ import com.vaadin.server.UserError
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
+import life.qbic.business.customers.Country
 import life.qbic.datamodel.dtos.business.Affiliation
 
 import java.util.stream.Collectors;
@@ -33,7 +34,8 @@ class CreateAffiliationView extends VerticalLayout {
     private TextField streetField
     private TextField postalCodeField
     private TextField cityField
-    private TextField countryField
+    //private TextField countryField
+    private ComboBox<String> countryBox
     private ComboBox<String> affiliationCategoryField
 
     Button abortButton
@@ -45,6 +47,7 @@ class CreateAffiliationView extends VerticalLayout {
         this.createAffiliationViewModel = createAffiliationViewModel
         this.controller = controller
         initLayout()
+        fillAffiliationBox()
         bindViewModel()
         setupFieldValidators()
         registerListeners()
@@ -52,34 +55,13 @@ class CreateAffiliationView extends VerticalLayout {
 
     private void initLayout() {
         this.organisationBox = new ComboBox<>("Organisation Name")
-
-        // we don't need the whole affiliation object, just the unique organization names.
-        List<String> organisationNames = createAffiliationViewModel
-                .affiliationService.iterator().toList()
-                .stream()
-                .map( affiliation -> (affiliation as Affiliation).organisation)
-                .distinct()
-                .collect(Collectors.toList())
-
-        println organisationNames
-        organisationBox.setItems(organisationNames)
-        organisationBox.setTextInputAllowed(true)
-        
-        // Check if the caption for new item already exists in the list of item
-        // captions before approving it as a new item.
-        ComboBox.NewItemProvider<String> itemHandler = newItemCaption -> {
-            boolean newItem = organisationNames.stream().noneMatch(data -> data.equalsIgnoreCase(newItemCaption))
-            if (newItem) {
-                // Adds new option
-                organisationNames.add(newItemCaption)
-                organisationBox.setItems(organisationNames)
-                organisationBox.setSelectedItem(newItemCaption)
-            }
-            return Optional.ofNullable(newItemCaption)
-        };
-        organisationBox.setNewItemProvider(itemHandler)
         organisationBox.setPlaceholder("Name of the organisation")
         organisationBox.setDescription("Select or enter new name of the organisation e.g. Universität Tübingen.")
+
+        countryBox = new ComboBox<>("Country")
+        countryBox.setPlaceholder("Select the country")
+        countryBox.setDescription("Select the name of the country e.g. Germany")
+        countryBox.setItems(Country.getISOCountries())
 
         this.addressAdditionField = new TextField("Address Addition")
         addressAdditionField.setPlaceholder("Department, Faculty, or other specification of affiliation name")
@@ -91,8 +73,8 @@ class CreateAffiliationView extends VerticalLayout {
         postalCodeField.setPlaceholder("Customer postal code")
         this.cityField = new TextField("City")
         cityField.setPlaceholder("Name of the city")
-        this.countryField = new TextField("Country")
-        countryField.setPlaceholder("Name of the country")
+        //this.countryField = new TextField("Country")
+        //countryField.setPlaceholder("Name of the country")
         this.affiliationCategoryField = generateAffiliationCategorySelect(createAffiliationViewModel.affiliationCategories)
 
         this.abortButton = new Button("Abort Affiliation Creation")
@@ -109,7 +91,7 @@ class CreateAffiliationView extends VerticalLayout {
         streetField.setRequiredIndicatorVisible(true)
         postalCodeField.setRequiredIndicatorVisible(true)
         cityField.setRequiredIndicatorVisible(true)
-        countryField.setRequiredIndicatorVisible(true)
+//        countryField.setRequiredIndicatorVisible(true)
         affiliationCategoryField.setRequiredIndicatorVisible(true)
 
         HorizontalLayout row1 = new HorizontalLayout(organisationBox, addressAdditionField)
@@ -120,7 +102,8 @@ class CreateAffiliationView extends VerticalLayout {
         row3.setSizeFull()
         row3.setExpandRatio(postalCodeField, 1)
         row3.setExpandRatio(cityField,3) // leads to it being 3/4 of the width
-        HorizontalLayout row4 = new HorizontalLayout(countryField)
+        HorizontalLayout row4 = new HorizontalLayout(countryBox)
+        //HorizontalLayout row4 = new HorizontalLayout(countryField)
         row4.setSizeFull()
 
         HorizontalLayout buttonLayout = new HorizontalLayout(abortButton, submitButton)
@@ -134,12 +117,40 @@ class CreateAffiliationView extends VerticalLayout {
         streetField.setSizeFull()
         postalCodeField.setSizeFull()
         cityField.setSizeFull()
-        countryField.setSizeFull()
+        //countryField.setSizeFull()
         affiliationCategoryField.setSizeFull()
 
         this.addComponents(row1, row2, row3, row4, row5)
         this.setSpacing(true)
         this.setMargin(false)
+    }
+
+    private void fillAffiliationBox(){
+        // we don't need the whole affiliation object, just the unique organization names.
+        List<String> organisationNames = createAffiliationViewModel
+                .affiliationService.iterator().toList()
+                .stream()
+                .map( affiliation -> (affiliation as Affiliation).organisation)
+                .distinct()
+                .collect(Collectors.toList())
+
+        organisationBox.setItems(organisationNames)
+        organisationBox.setTextInputAllowed(true)
+
+        // Check if the caption for new item already exists in the list of item
+        // captions before approving it as a new item.
+        ComboBox.NewItemProvider<String> itemHandler = newItemCaption -> {
+            //todo error: newItemCaption cannot be inferred --> duplicated entries are still possible
+            boolean newItem = organisationNames.stream().noneMatch(data -> data.equalsIgnoreCase(newItemCaption))
+            if (newItem) {
+                // Adds new option
+                organisationNames.add(newItemCaption)
+                organisationBox.setItems(organisationNames)
+                organisationBox.setSelectedItem(newItemCaption)
+            }
+            return Optional.ofNullable(newItemCaption)
+        }
+        organisationBox.setNewItemProvider(itemHandler)
     }
 
     private void bindViewModel() {
@@ -152,7 +163,8 @@ class CreateAffiliationView extends VerticalLayout {
         binder.forField(this.addressAdditionField).bind({ it.addressAddition }, { it, updatedValue -> it.setAddressAddition(updatedValue) })
         binder.forField(this.affiliationCategoryField).bind({ it.affiliationCategory }, { it, updatedValue -> it.setAffiliationCategory(updatedValue) })
         binder.forField(this.cityField).bind({ it.city }, { it, updatedValue -> it.setCity(updatedValue) })
-        binder.forField(this.countryField).bind({ it.country }, { it, updatedValue -> it.setCountry(updatedValue) })
+        //binder.forField(this.countryField).bind({ it.country }, { it, updatedValue -> it.setCountry(updatedValue) })
+        //binder.forField(this.countryField).bind({ it.country }, { it, updatedValue -> it.setCountry(updatedValue) })
         binder.forField(this.postalCodeField).bind({ it.postalCode }, { it, updatedValue -> it.setPostalCode(updatedValue) })
         binder.forField(this.streetField).bind({ it.street }, { it, updatedValue -> it.setStreet(updatedValue) })
 
@@ -180,10 +192,10 @@ class CreateAffiliationView extends VerticalLayout {
                     String newValue = it.newValue as String
                     cityField.value = newValue ?: cityField.emptyValue
                     break
-                case "country":
+                /**case "country":
                     String newValue = it.newValue as String
                     countryField.value = newValue ?: countryField.emptyValue
-                    break
+                    break*/
                 case "organisation":
                     String newValue = it.newValue as String
                     organisationBox.value = newValue ?: organisationBox.emptyValue
@@ -222,11 +234,11 @@ class CreateAffiliationView extends VerticalLayout {
                         cityField.componentError = null
                     }
                     break
-                case "countryValid":
+                /**case "countryValid":
                     if (it.newValue || it.newValue == null) {
                         countryField.componentError = null
                     }
-                    break
+                    break*/
                 case "organisationValid":
                     if (it.newValue || it.newValue == null) {
                         organisationBox.componentError = null
@@ -277,7 +289,7 @@ class CreateAffiliationView extends VerticalLayout {
                 createAffiliationViewModel.cityValid = true
             }
         })
-        this.countryField.addValueChangeListener({event ->
+        /**this.countryField.addValueChangeListener({event ->
             ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.countryField))
             if (result.isError()) {
                 createAffiliationViewModel.countryValid = false
@@ -286,7 +298,7 @@ class CreateAffiliationView extends VerticalLayout {
             } else {
                 createAffiliationViewModel.countryValid = true
             }
-        })
+        })**/
         this.organisationBox.addValueChangeListener({event ->
             ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.organisationBox))
             if (result.isError()) {
@@ -372,7 +384,7 @@ class CreateAffiliationView extends VerticalLayout {
         addressAdditionField.clear()
         affiliationCategoryField.clear()
         cityField.clear()
-        countryField.clear()
+        //countryField.clear()
         organisationBox.clear()
         postalCodeField.clear()
         streetField.clear()
