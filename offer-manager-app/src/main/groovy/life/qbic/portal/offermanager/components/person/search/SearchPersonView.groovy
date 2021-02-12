@@ -36,6 +36,7 @@ class SearchPersonView extends FormLayout{
     Panel selectedCustomerInformation
     Button updateCustomer
     VerticalLayout detailsLayout
+    VerticalLayout searchPersonLayout
 
     SearchPersonView(SearchPersonViewModel searchPersonViewModel, PersonUpdateService personUpdateService, CreatePersonView updatePersonView) {
         this.viewModel = searchPersonViewModel
@@ -72,7 +73,10 @@ class SearchPersonView extends FormLayout{
         detailsLayout.setVisible(false)
         detailsLayout.setMargin(false)
 
-        this.addComponents(gridLabel,customerGrid,detailsLayout,updatePersonView)
+        searchPersonLayout = new VerticalLayout(gridLabel,customerGrid,detailsLayout)
+        searchPersonLayout.setMargin(false)
+
+        this.addComponents(searchPersonLayout,updatePersonView)
         this.setMargin(false)
         updatePersonView.setVisible(false)
 
@@ -94,13 +98,19 @@ class SearchPersonView extends FormLayout{
 
         updateCustomer.addClickListener({
             personUpdateService.addToResource(viewModel.selectedPerson)
-            //turn off the other views
-            this.components.each {
-                it.setVisible(false)
-            }
-            //turn on update person view
+
+            searchPersonLayout.setVisible(false)
             updatePersonView.setVisible(true)
-            println "activate update person view"
+        })
+
+        updatePersonView.abortButton.addClickListener({
+            searchPersonLayout.setVisible(true)
+            updatePersonView.setVisible(false)
+        })
+
+        updatePersonView.submitButton.addClickListener({
+            searchPersonLayout.setVisible(true)
+            updatePersonView.setVisible(false)
         })
 
     }
