@@ -50,6 +50,8 @@ class SearchPersonView extends FormLayout{
 
         Label detailsLabel = new Label("Person Details: ")
         detailsLayout.addComponent(detailsLabel)
+        detailsLabel.addStyleName(ValoTheme.LABEL_LARGE)
+
 
         detailsLayout.addComponent(selectedCustomerInformation)
         detailsLayout.setVisible(false)
@@ -114,15 +116,15 @@ class SearchPersonView extends FormLayout{
      */
     private def generateCustomerGrid() {
         try {
-            this.customerGrid.addColumn({ customer ->
-                customer.title == AcademicTitle.NONE ? "" : customer.title})
-                    .setCaption("Title").setId("Title")
             this.customerGrid.addColumn({ customer -> customer.firstName })
                     .setCaption("First Name").setId("FirstName")
             this.customerGrid.addColumn({ customer -> customer.lastName })
                     .setCaption("Last Name").setId("LastName")
             this.customerGrid.addColumn({ customer -> customer.emailAddress })
                     .setCaption("Email Address").setId("EmailAddress")
+            this.customerGrid.addColumn({ customer ->
+                customer.title == AcademicTitle.NONE ? "" : customer.title})
+                    .setCaption("Title").setId("Title")
 
             //specify size of grid and layout
             customerGrid.setWidthFull()
