@@ -264,7 +264,7 @@ class DependencyManager {
         try {
             this.createAffiliationController = new CreateAffiliationController(this.createAffiliation)
         } catch (Exception e) {
-            log.error("Unexpected exception during ${CreatePersonController.getSimpleName()} setup.", e)
+            log.error("Unexpected exception during ${CreateAffiliationController.getSimpleName()} setup.", e)
             throw e
         }
         try {
