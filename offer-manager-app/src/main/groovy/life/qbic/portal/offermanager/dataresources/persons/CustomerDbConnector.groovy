@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
+import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory
@@ -55,13 +56,9 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   CustomerDbConnector(ConnectionProvider connectionProvider) {
     this.connectionProvider = connectionProvider
   }
-
-  @Override
-  void updateCustomerAffiliations(String customerId, List<Affiliation> affiliations) {
-    throw new RuntimeException("Method not implemented.")
-  }
   
   @Override
+  @Deprecated(since = "1.0.0", forRemoval=true)
   List<Customer> findCustomer(String firstName, String lastName) throws DatabaseQueryException {
     String sqlCondition = "WHERE first_name = ? AND last_name = ?"
     String queryTemplate = CUSTOMER_SELECT_QUERY + " " + sqlCondition
@@ -79,7 +76,26 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return customerList
   }
+  
+  @Override
+  List<Customer> findActiveCustomer(String firstName, String lastName) throws DatabaseQueryException {
+    String sqlCondition = "WHERE first_name = ? AND last_name = ? AND active = 1"
+    String queryTemplate = CUSTOMER_SELECT_QUERY + " " + sqlCondition
+    Connection connection = connectionProvider.connect()
+    List<Customer> customerList = new ArrayList<>()
+    connection.withCloseable {
+      PreparedStatement preparedStatement = it.prepareStatement(queryTemplate)
 
+      preparedStatement.setString(1, firstName)
+      preparedStatement.setString(2, lastName)
+      ResultSet resultSet = preparedStatement.executeQuery()
+      while (resultSet.next()) {
+        customerList.add(parseCustomerFromResultSet(resultSet))
+      }
+    }
+    return customerList
+  }
+  
   /*
     We want to fetch all affiliations for a given person id.
     As this is a n to m relationship, we need to look-up
@@ -206,10 +222,10 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return customerAlreadyInDb
   }
-
+  
   private static int createNewCustomer(Connection connection, Customer customer) {
-    String query = "INSERT INTO person (first_name, last_name, title, email) " +
-            "VALUES(?, ?, ?, ?)"
+    String query = "INSERT INTO person (first_name, last_name, title, email, active) " +
+            "VALUES(?, ?, ?, ?, ?)"
 
     List<Integer> generatedKeys = []
 
@@ -218,6 +234,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     statement.setString(2, customer.lastName)
     statement.setString(3, customer.title.value)
     statement.setString(4, customer.emailAddress )
+    //a new customer is always active
+    statement.setBoolean(5, true)
     statement.execute()
     def keys = statement.getGeneratedKeys()
     while (keys.next()){
@@ -226,7 +244,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
 
     return generatedKeys[0]
   }
-
+  
   private void storeAffiliation(Connection connection, int customerId, List<Affiliation>
           affiliations) {
     String query = "INSERT INTO person_affiliation (person_id, affiliation_id) " +
@@ -274,7 +292,65 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return affiliationIds[0]
   }
+  
+  @Override
+  void updateCustomerAffiliations(String customerIdString, List<Affiliation> updatedAffiliations) {
+    int customerId = Integer.parseInt(customerIdString)
+    List<Affiliation> existingAffiliations = null
+    try {
+      
+      existingAffiliations = getAffiliationForPersonId(customerId)
+      
+    } catch (Exception e) {
+      log.error(e)
+      log.error(e.stackTrace.join("\n"))
+      throw new DatabaseQueryException("The customer's affiliations could not be updated.")
+    }
+    
+    List<Affiliation> newAffiliations = new ArrayList<>();
+    
+    // find added affiliations - could use set operations here, but we have lists...
+    for(Affiliation affiliation : updatedAffiliations) {
+      if(!existingAffiliations.contains(affiliation)) {
+        newAffiliations.add(affiliation)
+      }
+    }
+    if(newAffiliations.isEmpty()) {
+      throw new DatabaseQueryException("Customer already has provided affiliation(s), no update was necessary.")
+    }
 
+    Connection connection = connectionProvider.connect()
+    connection.setAutoCommit(false)
+
+    connection.withCloseable {it ->
+      try {
+       
+    storeAffiliation(connection, customerId, newAffiliations)
+    connection.commit()
+    
+      } catch (Exception e) {
+        log.error(e.message)
+        log.error(e.stackTrace.join("\n"))
+        connection.rollback()
+        connection.close()
+        throw new DatabaseQueryException("Could not update customer's affiliations.")
+      }
+    }
+  }
+
+  private void changeCustomerActiveFlag(int customerId, boolean active) {
+    String query = "UPDATE person SET active = ? WHERE id = ?";
+    
+    Connection connection = connectionProvider.connect()
+
+    connection.withCloseable {
+      def statement = connection.prepareStatement(query)
+      statement.setBoolean(1, active)
+      statement.setInt(2, customerId)
+      statement.execute()
+    }
+  }
+  
   /**
    * @inheritDoc
    * @param customerId
@@ -282,8 +358,32 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
    */
   @Override
   void updateCustomer(String customerId, Customer updatedCustomer) {
-    //TODO implement
-    throw new RuntimeException("Method not implemented.")
+
+        int oldCustomerId = Integer.parseInt(customerId)
+      if (getCustomer(oldCustomerId)==null) {
+        throw new DatabaseQueryException("Customer is not in the database and can't be updated.")
+      }
+            
+      Connection connection = connectionProvider.connect()
+      connection.setAutoCommit(false)
+
+      connection.withCloseable {it ->
+        try {
+          int newCustomerId = createNewCustomer(it, updatedCustomer)
+          storeAffiliation(it, newCustomerId, updatedCustomer.affiliations)
+          connection.commit()
+          
+          // if our update is successful we set the old customer inactive
+          changeCustomerActiveFlag(oldCustomerId, false)
+          
+        } catch (Exception e) {
+          log.error(e.message)
+          log.error(e.stackTrace.join("\n"))
+          connection.rollback()
+          connection.close()
+          throw new DatabaseQueryException("The customer could not be updated: ${customer.toString()}.")
+        }
+      }
   }
 
   /**
@@ -456,7 +556,39 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return personId
   }
+  
+  /**
+   * Searches for a person and returns the matching ID from the person table if that person is set to active
+   *
+   * @param person The database entry is searched for a person
+   * @return the ID of the database entry matching the person
+   */
+  int getActivePersonId(Person person) {
+    String query = "SELECT id FROM person WHERE first_name = ? AND last_name = ? AND email = ? AND active = 1"
+    Connection connection = connectionProvider.connect()
 
+    int personId = -1
+
+    connection.withCloseable {
+      def statement = connection.prepareStatement(query)
+      statement.setString(1, person.firstName)
+      statement.setString(2, person.lastName)
+      statement.setString(3, person.emailAddress)
+
+      ResultSet result = statement.executeQuery()
+      while (result.next()){
+        personId = result.getInt(1)
+      }
+    }
+    if (personId == -1) {
+      def msg = "Could not find ${person.firstName} ${person.lastName} " +
+              "(${person.emailAddress}) in the list of active persons. They might be inactive."
+      log.error(msg)
+      throw new DatabaseQueryException(msg)
+    }
+    return personId
+  }
+  
   /**
    * List all available persons.
    * @return A list of persons
@@ -475,7 +607,26 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     }
     return customers
   }
-
+  
+  /**
+   * List all available persons that are set to active in the database.
+   * @return A list of active persons
+   */
+  List<Customer> fetchAllActiveCustomers() {
+    List<Customer> customers = []
+    String query = CUSTOMER_SELECT_QUERY + " WHERE active = 1"
+    Connection connection = connectionProvider.connect()
+    connection.withCloseable {
+      def preparedStatement = it.prepareStatement(query)
+      ResultSet resultSet = preparedStatement.executeQuery()
+      while(resultSet.next()) {
+        Customer customer = parseCustomerFromResultSet(resultSet)
+        customers.add(customer)
+      }
+    }
+    return customers
+  }
+  
   /**
    * List all available project managers.
    * @return A list of project managers
@@ -543,13 +694,14 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       preparedStatement.setInt(1, personId)
       ResultSet resultSet = preparedStatement.executeQuery()
       while (resultSet.next()) {
-        def organization = resultSet.getString('organization')
-        def addressAddition = resultSet.getString('address_addition')
-        def street = resultSet.getString('street')
-        def postalCode = resultSet.getString('postal_code')
-        def city = resultSet.getString('city')
-        def country = resultSet.getString('country')
-        def category = determineAffiliationCategory(resultSet.getString('category'))
+        GroovyRowResult result = SqlExtensions.toRowResult(resultSet)
+        String organization = result.get('organization')
+        String addressAddition = result.get('address_addition')
+        String street = result.get('street')
+        String postalCode = result.get('postal_code')
+        String city = result.get('city')
+        String country = result.get('country')
+        def category = determineAffiliationCategory(result.get('category') as String)
         def affiliation = new Affiliation.Builder(organization, street, postalCode, city)
                 .addressAddition(addressAddition)
                 .country(country)
