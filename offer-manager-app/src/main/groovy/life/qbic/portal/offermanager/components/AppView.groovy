@@ -106,7 +106,8 @@ class AppView extends VerticalLayout {
         this.portletViewModel.successNotifications.addPropertyChangeListener { evt ->
             if (evt instanceof ObservableList.ElementAddedEvent) {
                 // show notification
-                showNotification(evt.newValue.toString(), Notification.Type.HUMANIZED_MESSAGE)
+                showNotification("Success!", evt.newValue.toString(), Notification.Type
+                        .HUMANIZED_MESSAGE)
                 // remove displayed message
                 portletViewModel.successNotifications.remove(evt.newValue)
             }
@@ -115,7 +116,8 @@ class AppView extends VerticalLayout {
         this.portletViewModel.failureNotifications.addPropertyChangeListener { evt ->
             if (evt instanceof ObservableList.ElementAddedEvent) {
                 // show notification
-                showNotification(evt.newValue.toString(), Notification.Type.ERROR_MESSAGE)
+                showNotification("Something went wrong.", evt.newValue.toString(), Notification.Type
+                        .ERROR_MESSAGE)
                 // remove displayed message
                 portletViewModel.failureNotifications.remove(evt.newValue)
             }
@@ -129,6 +131,11 @@ class AppView extends VerticalLayout {
 
     private static def showNotification(String message, Notification.Type type) {
         StyledNotification notification = new StyledNotification(message, type)
+        notification.show(Page.getCurrent())
+    }
+
+    private static void showNotification(String title, String message, Notification.Type type) {
+        StyledNotification notification = new StyledNotification(title, message, type)
         notification.show(Page.getCurrent())
     }
 
