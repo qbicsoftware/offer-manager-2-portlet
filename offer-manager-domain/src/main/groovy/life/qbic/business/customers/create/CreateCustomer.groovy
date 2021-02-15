@@ -28,15 +28,12 @@ class CreateCustomer implements CreateCustomerInput {
   @Override
   void createCustomer(Customer customer) {
     try {
-      //todo make look nice
-      int oldCustomerId = dataSource.findCustomer(customer)
-      //create new customer
-      if(oldCustomerId == -1){
+      int customerId = dataSource.findCustomer(customer)
+
+      if(newCustomer(customerId)){
         dataSource.addCustomer(customer)
       }else{
-        //update the customer
-        println "updating the customer"
-        updateCustomer.updateCustomer(oldCustomerId.toString(),customer)
+        updateCustomer.updateCustomer(customerId.toString(),customer)
       }
       try {
         output.customerCreated("Successfully added new customer")
@@ -53,12 +50,14 @@ class CreateCustomer implements CreateCustomerInput {
       println unexpected.stackTrace.join("\n")
       output.failNotification("Could not create new customer")
     }
-
   }
 
-  @Override
-  void updateCustomer(String customerId, Customer customer) {
-    //todo check if customer dto to update already has the id, then do similar to update offer use case
-    updateCustomer.updateCustomer(customerId,customer)
+  /**
+   * A customer is already in the database if the customer id is -1
+   * @param customerId
+   * @return
+   */
+  private static boolean newCustomer(int customerId){
+    return customerId == -1
   }
 }

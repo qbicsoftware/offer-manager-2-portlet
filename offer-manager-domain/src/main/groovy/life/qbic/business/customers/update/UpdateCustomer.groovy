@@ -22,28 +22,22 @@ class UpdateCustomer{
     this.dataSource = dataSource
   }
   
-  // determines if customer properties other than affiliations have changed
-  private static boolean hasBasicCustomerDataChanged(Customer existingCustomer, Customer newCustomer) {
-    boolean noFundamentalChange = existingCustomer.firstName.equals(newCustomer.firstName)
-    && existingCustomer.lastName.equals(newCustomer.lastName)
-    && existingCustomer.emailAddress.equals(newCustomer.emailAddress)
-    && existingCustomer.title.equals(newCustomer.title)
-    
-    return !noFundamentalChange
-  }
 
   void updateCustomer(String customerId, Customer customer) {
     Customer existingCustomer = dataSource.getCustomer(Integer.parseInt(customerId))
     boolean customerChanged = hasBasicCustomerDataChanged(existingCustomer, customer)
     try {
       if(customerChanged) {
-        println "create new customer for given customer"
         dataSource.updateCustomer(customerId, customer)
       } else {
-        println "update customers affiliation list"
         dataSource.updateCustomerAffiliations(customerId, customer.affiliations)
       }
+      //this exception catching is important to avoid displaying a wrong failure notification
+      try {
         output.customerCreated(customer)
+      } catch (Exception ignored) {
+        //quiet output message failed
+      }
     } catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)
     } catch(Exception unexpected) {
@@ -53,5 +47,15 @@ class UpdateCustomer{
       println unexpected.stackTrace.join("\n")
       output.failNotification("Could not update customer")
     }
+  }
+
+  // determines if customer properties other than affiliations have changed
+  private static boolean hasBasicCustomerDataChanged(Customer existingCustomer, Customer newCustomer) {
+    boolean noFundamentalChange = existingCustomer.firstName.equals(newCustomer.firstName)
+    && existingCustomer.lastName.equals(newCustomer.lastName)
+    && existingCustomer.emailAddress.equals(newCustomer.emailAddress)
+    && existingCustomer.title.equals(newCustomer.title)
+    
+    return !noFundamentalChange
   }
 }
