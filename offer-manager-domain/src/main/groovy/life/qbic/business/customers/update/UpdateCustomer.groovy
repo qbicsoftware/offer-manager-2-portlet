@@ -1,5 +1,7 @@
 package life.qbic.business.customers.update
 
+import life.qbic.business.customers.create.CreateCustomerDataSource
+import life.qbic.business.customers.create.CreateCustomerOutput
 import life.qbic.datamodel.dtos.business.Customer
 
 import life.qbic.business.exceptions.DatabaseQueryException
@@ -10,18 +12,18 @@ import life.qbic.business.exceptions.DatabaseQueryException
  *
  * @since: 1.0.0
  */
-class UpdateCustomer implements UpdateCustomerInput {
+class UpdateCustomer{
 
-  private UpdateCustomerDataSource dataSource
-  private UpdateCustomerOutput output
+  private CreateCustomerDataSource dataSource
+  private CreateCustomerOutput output
 
-  UpdateCustomer(UpdateCustomerOutput output, UpdateCustomerDataSource dataSource){
+  UpdateCustomer(CreateCustomerOutput output, CreateCustomerDataSource dataSource){
     this.output = output
     this.dataSource = dataSource
   }
   
   // determines if customer properties other than affiliations have changed
-  private boolean hasBasicCustomerDataChanged(Customer existingCustomer, Customer newCustomer) {
+  private static boolean hasBasicCustomerDataChanged(Customer existingCustomer, Customer newCustomer) {
     boolean noFundamentalChange = existingCustomer.firstName.equals(newCustomer.firstName)
     && existingCustomer.lastName.equals(newCustomer.lastName)
     && existingCustomer.emailAddress.equals(newCustomer.emailAddress)
@@ -30,17 +32,18 @@ class UpdateCustomer implements UpdateCustomerInput {
     return !noFundamentalChange
   }
 
-  @Override
   void updateCustomer(String customerId, Customer customer) {
     Customer existingCustomer = dataSource.getCustomer(Integer.parseInt(customerId))
     boolean customerChanged = hasBasicCustomerDataChanged(existingCustomer, customer)
     try {
       if(customerChanged) {
+        println "create new customer for given customer"
         dataSource.updateCustomer(customerId, customer)
       } else {
+        println "update customers affiliation list"
         dataSource.updateCustomerAffiliations(customerId, customer.affiliations)
       }
-        output.customerUpdated(customer)
+        output.customerCreated(customer)
     } catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)
     } catch(Exception unexpected) {

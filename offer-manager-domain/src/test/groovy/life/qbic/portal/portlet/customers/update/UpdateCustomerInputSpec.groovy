@@ -1,5 +1,7 @@
 package life.qbic.portal.portlet.customers.update
 
+import life.qbic.business.customers.create.CreateCustomerDataSource
+import life.qbic.business.customers.create.CreateCustomerOutput
 import life.qbic.business.customers.update.*
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Customer
@@ -15,8 +17,8 @@ import spock.lang.Specification
  * @since: 1.0.0
  */
 class UpdateCustomerInputSpec extends Specification {
-  UpdateCustomerOutput output
-  UpdateCustomerDataSource dataSource
+  CreateCustomerOutput output
+    CreateCustomerDataSource dataSource
 
 
   def setup() {

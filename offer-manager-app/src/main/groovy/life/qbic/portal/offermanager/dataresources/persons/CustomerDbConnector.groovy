@@ -14,7 +14,7 @@ import life.qbic.business.customers.affiliation.create.CreateAffiliationDataSour
 import life.qbic.business.customers.affiliation.list.ListAffiliationsDataSource
 import life.qbic.business.customers.create.CreateCustomerDataSource
 import life.qbic.business.customers.search.SearchCustomerDataSource
-import life.qbic.business.customers.update.UpdateCustomerDataSource
+
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
@@ -34,7 +34,7 @@ import java.sql.Statement
  *
  */
 @Log4j2
-class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
+class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
   /**
    * A connection to the customer database used to create queries.
@@ -747,6 +747,17 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
      }
      return person
     }
+  }
+
+  @Override
+  int findCustomer(Customer customer) {
+    int customerID = -1
+
+    findActiveCustomer(customer.firstName, customer.lastName).each {foundCustomer ->
+      if(foundCustomer.emailAddress == customer.emailAddress) customerID = getActivePersonId(foundCustomer)
+    }
+
+    return customerID
   }
 
   ProjectManager getProjectManager(int personPrimaryId) {

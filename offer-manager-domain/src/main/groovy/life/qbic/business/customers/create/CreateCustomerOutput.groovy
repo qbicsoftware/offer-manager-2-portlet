@@ -25,4 +25,5 @@ interface CreateCustomerOutput extends UseCaseFailure {
      * @param person The newly created person resource
      */
     void customerCreated(Person person)
+
 }
