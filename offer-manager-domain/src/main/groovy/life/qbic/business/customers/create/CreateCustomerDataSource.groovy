@@ -32,7 +32,7 @@ interface CreateCustomerDataSource {
      * database
      * @since 1.0.0
      */
-    void updateCustomer(String customerId, Customer updatedCustomer) throws DatabaseQueryException
+    void updateCustomer(int customerId, Customer updatedCustomer) throws DatabaseQueryException
 
     /**
      * Returns a customer given a customer specified by a customer ID
@@ -55,5 +55,5 @@ interface CreateCustomerDataSource {
      * @param customerId to specify the customer whose affiliations should be updated
      * @param affiliations that the customer should be associated to
      */
-    void updateCustomerAffiliations(String customerId, List<Affiliation> affiliations) throws DatabaseQueryException
+    void updateCustomerAffiliations(int customerId, List<Affiliation> affiliations) throws DatabaseQueryException
 }

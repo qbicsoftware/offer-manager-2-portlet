@@ -294,8 +294,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
   }
   
   @Override
-  void updateCustomerAffiliations(String customerIdString, List<Affiliation> updatedAffiliations) {
-    int customerId = Integer.parseInt(customerIdString)
+  void updateCustomerAffiliations(int customerId, List<Affiliation> updatedAffiliations) {
     List<Affiliation> existingAffiliations = null
     try {
       
@@ -353,37 +352,35 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
   
   /**
    * @inheritDoc
-   * @param customerId
-   * @param updatedCustomer
    */
   @Override
-  void updateCustomer(String customerId, Customer updatedCustomer) {
+  void updateCustomer(int oldCustomerId, Customer updatedCustomer) {
 
-        int oldCustomerId = Integer.parseInt(customerId)
-      if (getCustomer(oldCustomerId)==null) {
-        throw new DatabaseQueryException("Customer is not in the database and can't be updated.")
-      }
+    if (getCustomer(oldCustomerId)) {
+      throw new DatabaseQueryException("Customer is not in the database and can't be updated.")
+    }
             
-      Connection connection = connectionProvider.connect()
-      connection.setAutoCommit(false)
+    Connection connection = connectionProvider.connect()
+    connection.setAutoCommit(false)
 
-      connection.withCloseable {it ->
-        try {
-          int newCustomerId = createNewCustomer(it, updatedCustomer)
-          storeAffiliation(it, newCustomerId, updatedCustomer.affiliations)
-          connection.commit()
+    connection.withCloseable {it ->
+      try {
+        int newCustomerId = createNewCustomer(it, updatedCustomer)
+        //todo also associate the affiliations of the old entry to the customer
+        storeAffiliation(it, newCustomerId, updatedCustomer.affiliations)
+        connection.commit()
           
-          // if our update is successful we set the old customer inactive
-          changeCustomerActiveFlag(oldCustomerId, false)
+        // if our update is successful we set the old customer inactive
+        changeCustomerActiveFlag(oldCustomerId, false)
           
-        } catch (Exception e) {
-          log.error(e.message)
-          log.error(e.stackTrace.join("\n"))
-          connection.rollback()
-          connection.close()
-          throw new DatabaseQueryException("The customer could not be updated: ${customer.toString()}.")
-        }
+      } catch (Exception e) {
+        log.error(e.message)
+        log.error(e.stackTrace.join("\n"))
+        connection.rollback()
+        connection.close()
+        throw new DatabaseQueryException("The customer could not be updated: ${updatedCustomer.toString()}.")
       }
+    }
   }
 
   /**

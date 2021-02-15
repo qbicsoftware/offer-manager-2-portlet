@@ -30,7 +30,7 @@ class CreateCustomer implements CreateCustomerInput {
     try {
       int customerId = dataSource.findCustomer(customer).get()
       if(customerId){
-        updateCustomer.updateCustomer(customerId.toString(),customer)
+        updateCustomer.updateCustomer(customerId,customer)
       }else{
         dataSource.addCustomer(customer)
       }

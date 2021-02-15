@@ -23,8 +23,8 @@ class UpdateCustomer{
   }
   
 
-  void updateCustomer(String customerId, Customer customer) {
-    Customer existingCustomer = dataSource.getCustomer(Integer.parseInt(customerId))
+  void updateCustomer(int customerId, Customer customer) {
+    Customer existingCustomer = dataSource.getCustomer(customerId)
     boolean customerChanged = hasBasicCustomerDataChanged(existingCustomer, customer)
     try {
       if(customerChanged) {
