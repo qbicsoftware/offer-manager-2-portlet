@@ -41,7 +41,9 @@ class StyledNotification extends Notification {
                         "${ValoTheme.NOTIFICATION_CLOSABLE}")
                 break
             default:
-                this.setStyleName("${ValoTheme.NOTIFICATION_BAR} ${ValoTheme.NOTIFICATION_SUCCESS}")
+                this.setStyleName("${ValoTheme.NOTIFICATION_BAR} " +
+                        "${ValoTheme.NOTIFICATION_SUCCESS} " +
+                        "${ValoTheme.NOTIFICATION_CLOSABLE}")
                 break
         }
         this.setDelayMsec(5000)
