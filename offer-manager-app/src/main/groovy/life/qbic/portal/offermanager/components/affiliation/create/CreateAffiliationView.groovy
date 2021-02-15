@@ -9,7 +9,7 @@ import com.vaadin.server.UserError
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
-import life.qbic.business.customers.Country
+import life.qbic.business.customers.affiliation.Country
 import life.qbic.datamodel.dtos.business.Affiliation
 
 import java.util.stream.Collectors;
