@@ -28,12 +28,11 @@ class CreateCustomer implements CreateCustomerInput {
   @Override
   void createCustomer(Customer customer) {
     try {
-      int customerId = dataSource.findCustomer(customer)
-
-      if(newCustomer(customerId)){
+      Optional<Integer> customerId = dataSource.findCustomer(customer)
+      if(customerId.get()){
         dataSource.addCustomer(customer)
       }else{
-        updateCustomer.updateCustomer(customerId.toString(),customer)
+        updateCustomer.updateCustomer(customerId.get().toString(),customer)
       }
       try {
         output.customerCreated("Successfully added new customer")
@@ -50,14 +49,5 @@ class CreateCustomer implements CreateCustomerInput {
       println unexpected.stackTrace.join("\n")
       output.failNotification("Could not create new customer")
     }
-  }
-
-  /**
-   * A customer is already in the database if the customer id is -1
-   * @param customerId
-   * @return
-   */
-  private static boolean newCustomer(int customerId){
-    return customerId == -1
   }
 }

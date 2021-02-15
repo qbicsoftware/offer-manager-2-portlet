@@ -750,14 +750,15 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
   }
 
   @Override
-  int findCustomer(Customer customer) {
-    int customerID = -1
+  Optional<Integer> findCustomer(Customer customer) {
+    int customerID
 
     findActiveCustomer(customer.firstName, customer.lastName).each {foundCustomer ->
+      //todo is the email address sufficient to compare customers for identity?
       if(foundCustomer.emailAddress == customer.emailAddress) customerID = getActivePersonId(foundCustomer)
     }
 
-    return customerID
+    return Optional.of(customerID)
   }
 
   ProjectManager getProjectManager(int personPrimaryId) {

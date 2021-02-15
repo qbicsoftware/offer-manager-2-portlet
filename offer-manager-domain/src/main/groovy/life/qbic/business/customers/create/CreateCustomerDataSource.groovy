@@ -47,7 +47,7 @@ interface CreateCustomerDataSource {
      * @param customer The customer that needs to be searched in the database
      * @return the customer id or -1 if not found
      */
-    int findCustomer(Customer customer)
+    Optional<Integer> findCustomer(Customer customer)
 
     /**
      * Updates affiliations of a customer specified by a customer ID.
