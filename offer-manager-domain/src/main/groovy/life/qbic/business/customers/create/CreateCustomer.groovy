@@ -28,11 +28,11 @@ class CreateCustomer implements CreateCustomerInput {
   @Override
   void createCustomer(Customer customer) {
     try {
-      Optional<Integer> customerId = dataSource.findCustomer(customer)
-      if(customerId.get()){
-        dataSource.addCustomer(customer)
+      int customerId = dataSource.findCustomer(customer).get()
+      if(customerId){
+        updateCustomer.updateCustomer(customerId.toString(),customer)
       }else{
-        updateCustomer.updateCustomer(customerId.get().toString(),customer)
+        dataSource.addCustomer(customer)
       }
       try {
         output.customerCreated("Successfully added new customer")
