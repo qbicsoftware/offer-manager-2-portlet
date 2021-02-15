@@ -9,6 +9,8 @@ import com.vaadin.server.UserError
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
+import groovy.util.logging.Log4j2
+import life.qbic.business.Constants
 import life.qbic.business.customers.affiliation.Country
 import life.qbic.datamodel.dtos.business.Affiliation
 
@@ -24,6 +26,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
  *
  * @since: 1.0.0
  */
+@Log4j2
 class CreateAffiliationView extends VerticalLayout {
     final public AppViewModel sharedViewModel
     final public CreateAffiliationViewModel createAffiliationViewModel
@@ -34,7 +37,6 @@ class CreateAffiliationView extends VerticalLayout {
     private TextField streetField
     private TextField postalCodeField
     private TextField cityField
-    //private TextField countryField
     private ComboBox<String> countryBox
     private ComboBox<String> affiliationCategoryField
 
@@ -58,23 +60,24 @@ class CreateAffiliationView extends VerticalLayout {
         organisationBox.setPlaceholder("Name of the organisation")
         organisationBox.setDescription("Select or enter new name of the organisation e.g. Universität Tübingen.")
 
-        countryBox = new ComboBox<>("Country")
-        countryBox.setPlaceholder("Select the country")
-        countryBox.setDescription("Select the name of the country e.g. Germany")
-        countryBox.setItems(Country.availableCountryNames())
-
         this.addressAdditionField = new TextField("Address Addition")
         addressAdditionField.setPlaceholder("Department, Faculty, or other specification of affiliation name")
         addressAdditionField.setDescription("In case the affiliation differs from the organisation you can further specify that here.")
         
         this.streetField = new TextField("Street")
         streetField.setPlaceholder("Street name and street number ")
+
         this.postalCodeField = new TextField("Postal Code")
         postalCodeField.setPlaceholder("Customer postal code")
+
         this.cityField = new TextField("City")
         cityField.setPlaceholder("Name of the city")
-        //this.countryField = new TextField("Country")
-        //countryField.setPlaceholder("Name of the country")
+
+        this.countryBox = new ComboBox<>("Country")
+        countryBox.setPlaceholder("Name of the country")
+        countryBox.setDescription("Select the name of the country e.g. Germany")
+        countryBox.setItems(Country.availableCountryNames())
+
         this.affiliationCategoryField = generateAffiliationCategorySelect(createAffiliationViewModel.affiliationCategories)
 
         this.abortButton = new Button("Abort Affiliation Creation")
@@ -91,7 +94,7 @@ class CreateAffiliationView extends VerticalLayout {
         streetField.setRequiredIndicatorVisible(true)
         postalCodeField.setRequiredIndicatorVisible(true)
         cityField.setRequiredIndicatorVisible(true)
-//        countryField.setRequiredIndicatorVisible(true)
+        countryBox.setRequiredIndicatorVisible(true)
         affiliationCategoryField.setRequiredIndicatorVisible(true)
 
         HorizontalLayout row1 = new HorizontalLayout(organisationBox, addressAdditionField)
@@ -103,7 +106,6 @@ class CreateAffiliationView extends VerticalLayout {
         row3.setExpandRatio(postalCodeField, 1)
         row3.setExpandRatio(cityField,3) // leads to it being 3/4 of the width
         HorizontalLayout row4 = new HorizontalLayout(countryBox)
-        //HorizontalLayout row4 = new HorizontalLayout(countryField)
         row4.setSizeFull()
 
         HorizontalLayout buttonLayout = new HorizontalLayout(abortButton, submitButton)
@@ -117,7 +119,7 @@ class CreateAffiliationView extends VerticalLayout {
         streetField.setSizeFull()
         postalCodeField.setSizeFull()
         cityField.setSizeFull()
-        //countryField.setSizeFull()
+        countryBox.setWidth(50, Unit.PERCENTAGE)
         affiliationCategoryField.setSizeFull()
 
         this.addComponents(row1, row2, row3, row4, row5)
@@ -154,63 +156,66 @@ class CreateAffiliationView extends VerticalLayout {
     }
 
     private void bindViewModel() {
-        Binder<CreateAffiliationViewModel> binder = new Binder<>()
 
-        // by binding the fields to the view model, the model is updated when the user input changed
-        binder.setBean(this.createAffiliationViewModel)
+        // bind addressAddition
+        createAffiliationViewModel.addPropertyChangeListener("addressAddition", {
+            String newValue = it.newValue as String
+            addressAdditionField.value = newValue ?: addressAdditionField.emptyValue
+        })
+        addressAdditionField.addValueChangeListener({
+            createAffiliationViewModel.setAddressAddition(it.value)
+        })
 
-        binder.forField(this.organisationBox).bind({ it.organisation }, { it, updatedValue -> it.setOrganisation(updatedValue) })
-        binder.forField(this.addressAdditionField).bind({ it.addressAddition }, { it, updatedValue -> it.setAddressAddition(updatedValue) })
-        binder.forField(this.affiliationCategoryField).bind({ it.affiliationCategory }, { it, updatedValue -> it.setAffiliationCategory(updatedValue) })
-        binder.forField(this.cityField).bind({ it.city }, { it, updatedValue -> it.setCity(updatedValue) })
-        //binder.forField(this.countryField).bind({ it.country }, { it, updatedValue -> it.setCountry(updatedValue) })
-        //binder.forField(this.countryField).bind({ it.country }, { it, updatedValue -> it.setCountry(updatedValue) })
-        binder.forField(this.postalCodeField).bind({ it.postalCode }, { it, updatedValue -> it.setPostalCode(updatedValue) })
-        binder.forField(this.streetField).bind({ it.street }, { it, updatedValue -> it.setStreet(updatedValue) })
+        // bind affiliationCategory
+        createAffiliationViewModel.addPropertyChangeListener("affiliationCategory", {
+            String newValue = it.newValue as String
+            affiliationCategoryField.selectedItem = newValue ?: affiliationCategoryField.emptyValue
+        })
+        affiliationCategoryField.addValueChangeListener({createAffiliationViewModel.setAffiliationCategory(it.value)})
 
-        /*
-        Here we setup a listener to the viewModel that hold displayed information.
-        The listener is needed since Vaadin bindings only work one-way
+        // bind city
+        createAffiliationViewModel.addPropertyChangeListener("city", {
+            String newValue = it.newValue as String
+            cityField.value = newValue ?: cityField.emptyValue
+        })
+        cityField.addValueChangeListener({
+            createAffiliationViewModel.setCity(it.value)
+        })
 
-        Please NOTE: we cannot use the binder.readBean(binder.getBean) refresh here since it would
-        overwrite all validators attached to the fields. We furthermore cannot use the
-        BinderBuilder#withValidator method since this would prevent the form from showing invalid
-        information that is stored within the viewModel. We want the view to reflect the view model
-        at all times!
-         */
-        createAffiliationViewModel.addPropertyChangeListener({
-            switch (it.propertyName) {
-                case "addressAddition":
-                    String newValue = it.newValue as String
-                    addressAdditionField.value = newValue ?: addressAdditionField.emptyValue
-                    break
-                case "affiliationCategory":
-                    String newValue = it.newValue as String
-                    affiliationCategoryField.selectedItem = newValue ?: affiliationCategoryField.emptyValue
-                    break
-                case "city":
-                    String newValue = it.newValue as String
-                    cityField.value = newValue ?: cityField.emptyValue
-                    break
-                /**case "country":
-                    String newValue = it.newValue as String
-                    countryField.value = newValue ?: countryField.emptyValue
-                    break*/
-                case "organisation":
-                    String newValue = it.newValue as String
-                    organisationBox.value = newValue ?: organisationBox.emptyValue
-                    break
-                case "postalCode":
-                    String newValue = it.newValue as String
-                    postalCodeField.value = newValue ?: postalCodeField.emptyValue
-                    break
-                case "street":
-                    String newValue = it.newValue as String
-                    streetField.value = newValue ?: streetField.emptyValue
-                    break
-                default:
-                    break
-            }
+        // bind country
+        createAffiliationViewModel.addPropertyChangeListener("country", {
+            String newValue = it.newValue as String
+            countryBox.value = newValue ?: countryBox.emptyValue
+        })
+        countryBox.addSelectionListener({
+            createAffiliationViewModel.setCountry(it.value)
+        })
+
+        // bind organisation
+        createAffiliationViewModel.addPropertyChangeListener("organisation", {
+            String newValue = it.newValue as String
+            organisationBox.value = newValue ?: organisationBox.emptyValue
+        })
+        organisationBox.addSelectionListener({
+            createAffiliationViewModel.setOrganisation(it.value)
+        })
+
+        // bind postalCode
+        createAffiliationViewModel.addPropertyChangeListener("postalCode", {
+            String newValue = it.newValue as String
+            postalCodeField.value = newValue ?: postalCodeField.emptyValue
+        })
+        postalCodeField.addValueChangeListener({
+            createAffiliationViewModel.setPostalCode(it.value)
+        })
+
+        // bind street
+        createAffiliationViewModel.addPropertyChangeListener("street", {
+            String newValue = it.newValue as String
+            streetField.value = newValue ?: streetField.emptyValue
+        })
+        streetField.addValueChangeListener({
+            createAffiliationViewModel.setStreet(it.value)
         })
 
         /*
@@ -234,11 +239,11 @@ class CreateAffiliationView extends VerticalLayout {
                         cityField.componentError = null
                     }
                     break
-                /**case "countryValid":
+                case "countryValid":
                     if (it.newValue || it.newValue == null) {
-                        countryField.componentError = null
+                        countryBox.componentError = null
                     }
-                    break*/
+                    break
                 case "organisationValid":
                     if (it.newValue || it.newValue == null) {
                         organisationBox.componentError = null
@@ -289,16 +294,16 @@ class CreateAffiliationView extends VerticalLayout {
                 createAffiliationViewModel.cityValid = true
             }
         })
-        /**this.countryField.addValueChangeListener({event ->
-            ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.countryField))
+        this.countryBox.addValueChangeListener({event ->
+            ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.countryBox))
             if (result.isError()) {
                 createAffiliationViewModel.countryValid = false
                 UserError error = new UserError(result.getErrorMessage())
-                countryField.setComponentError(error)
+                countryBox.setComponentError(error)
             } else {
                 createAffiliationViewModel.countryValid = true
             }
-        })**/
+        })
         this.organisationBox.addValueChangeListener({event ->
             ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.organisationBox))
             if (result.isError()) {
@@ -349,7 +354,6 @@ class CreateAffiliationView extends VerticalLayout {
             String organisation = createAffiliationViewModel.organisation
             String postalCode = createAffiliationViewModel.postalCode
             String street = createAffiliationViewModel.street
-
             this.controller.createAffiliation(organisation, addressAddition, street, postalCode, city, country, category)
         })
         this.abortButton.addClickListener({ event ->
@@ -384,7 +388,7 @@ class CreateAffiliationView extends VerticalLayout {
         addressAdditionField.clear()
         affiliationCategoryField.clear()
         cityField.clear()
-        //countryField.clear()
+        countryBox.clear()
         organisationBox.clear()
         postalCodeField.clear()
         streetField.clear()
