@@ -61,7 +61,7 @@ class CreateAffiliationView extends VerticalLayout {
         countryBox = new ComboBox<>("Country")
         countryBox.setPlaceholder("Select the country")
         countryBox.setDescription("Select the name of the country e.g. Germany")
-        countryBox.setItems(Country.getISOCountries())
+        countryBox.setItems(Country.availableCountryNames())
 
         this.addressAdditionField = new TextField("Address Addition")
         addressAdditionField.setPlaceholder("Department, Faculty, or other specification of affiliation name")

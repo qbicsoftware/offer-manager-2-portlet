@@ -15,7 +15,7 @@ class Country {
      * Provides a list of US English names of all known countries. This list contains unique entries and no empty Strings.
      * @return A list of unique country names
      */
-    static List<String> getISOCountries(){
+    static List<String> availableCountryNames(){
         List<String> countryNames = Locale.US.getAvailableLocales().collect {it.getDisplayCountry()}.unique()
         countryNames.removeAll{it.isEmpty()}
         return countryNames
