@@ -40,7 +40,7 @@ class UpdateCustomerInputSpec extends Specification {
 
       where:
       customer = new Customer.Builder("Test", "user", "newmail").title(AcademicTitle.NONE).build()
-      customerId = "42"
+      customerId = 42
   }
   
   def "given no customer changes, update the affiliations using a mocked data source"(){
@@ -61,13 +61,13 @@ class UpdateCustomerInputSpec extends Specification {
       twoAffiliations = new ArrayList<Affiliation>(Arrays.asList(new Affiliation.Builder(
         "other org", "other street", "zip", "city").build(), affiliation1))
       customer = new Customer.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).affiliations(twoAffiliations).build()
-      customerId = "42"
+      customerId = 42
   }
   
   def "datasource throwing an exception leads to fail notification on output"() {
       given: "a data source that throws an exception"
       dataSource.getCustomer(_ as Integer) >> new Customer.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).build()
-      dataSource.updateCustomer(_ as String, _ as Customer) >> { throw new Exception("Something went wrong.") }
+      dataSource.updateCustomer(_ as Integer, _ as Customer) >> { throw new Exception("Something went wrong.") }
       UpdateCustomer useCase = new UpdateCustomer(output, dataSource)
 
       when: "the use case is executed"
@@ -75,10 +75,10 @@ class UpdateCustomerInputSpec extends Specification {
 
       then: "the output receives a failure notification"
       1 * output.failNotification(_ as String)
-      0 * output.customerUpdated(_ as Customer)
+      0 * output.customerCreated(_ as Customer)
 
       where:
       customer = new Customer.Builder("Test", "user", "newmail").title(AcademicTitle.NONE).build()
-      customerId = new String("420")
+      customerId = 420
   }
 }
