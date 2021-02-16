@@ -45,7 +45,7 @@ interface CreateCustomerDataSource {
      * Searches for a customer in a database and returns its id
      *
      * @param customer The customer that needs to be searched in the database
-     * @return the customer id or -1 if not found
+     * @return an optional containing the customer if found
      */
     Optional<Integer> findCustomer(Customer customer)
 
