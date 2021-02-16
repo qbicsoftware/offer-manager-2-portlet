@@ -21,7 +21,6 @@ class UpdateCustomer{
     this.output = output
     this.dataSource = dataSource
   }
-  
 
   void updateCustomer(int customerId, Customer customer) {
     Customer existingCustomer = dataSource.getCustomer(customerId)

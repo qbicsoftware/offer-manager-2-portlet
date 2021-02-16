@@ -28,12 +28,7 @@ class CreateCustomer implements CreateCustomerInput {
   @Override
   void createCustomer(Customer customer) {
     try {
-      int customerId = dataSource.findCustomer(customer).get()
-      if(customerId){
-        updateCustomer.updateCustomer(customerId,customer)
-      }else{
-        dataSource.addCustomer(customer)
-      }
+      dataSource.addCustomer(customer)
       try {
         output.customerCreated("Successfully added new customer")
         output.customerCreated(customer)
@@ -50,4 +45,30 @@ class CreateCustomer implements CreateCustomerInput {
       output.failNotification("Could not create new customer")
     }
   }
+
+  @Override
+  void updateCustomer(Customer oldCustomer, Customer newCustomer) {
+    try {
+      int customerId = dataSource.findCustomer(oldCustomer).get()
+      updateCustomer.updateCustomer(customerId,newCustomer)
+
+      try {
+        output.customerCreated("Successfully updated new customer")
+        output.customerCreated(newCustomer)
+      } catch (Exception ignored) {
+        //quiet output message failed
+      }
+    } catch(DatabaseQueryException databaseQueryException){
+      output.failNotification(databaseQueryException.message)
+    } catch(Exception unexpected) {
+      println "-------------------------"
+      println "Unexpected Exception ...."
+      println unexpected.message
+      println unexpected.stackTrace.join("\n")
+      output.failNotification("Could not create new customer")
+    }
+  }
+
+
+
 }

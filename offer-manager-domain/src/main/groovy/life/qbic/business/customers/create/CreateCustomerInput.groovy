@@ -18,4 +18,12 @@ interface CreateCustomerInput {
    * @param customer which should be added to the database
    */
   void createCustomer(Customer customer)
+
+  /**
+   * Updates the entry of an customer. Fundamental changes of the customer like his email adress will lead to
+   * creating a new customer and deactivating the old entry
+   * @param oldCustomer The customer that needs to be updated
+   * @param newCustomer The customer with the updated information
+   */
+  void updateCustomer(Customer oldCustomer, Customer newCustomer)
 }

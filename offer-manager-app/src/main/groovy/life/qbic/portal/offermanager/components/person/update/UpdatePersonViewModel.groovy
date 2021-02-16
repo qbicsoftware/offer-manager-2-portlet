@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.components.person.update
 
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
@@ -32,6 +33,7 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
 
         this.customerUpdateService.subscribe((Person person) -> {
             loadData(person)
+            this.outdatedCustomer = (Customer) person
         })
     }
 

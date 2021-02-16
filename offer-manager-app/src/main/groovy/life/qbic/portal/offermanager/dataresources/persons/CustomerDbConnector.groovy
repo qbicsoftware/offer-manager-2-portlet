@@ -229,6 +229,9 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
 
     List<Integer> generatedKeys = []
 
+    println customer.title.value
+    println customer.toString()
+
     def statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
     statement.setString(1, customer.firstName )
     statement.setString(2, customer.lastName)
@@ -256,7 +259,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
       statement.setInt(1, customerId)
       statement.setInt(2, affiliationId)
       statement.execute()
-
     }
   }
   
@@ -356,7 +358,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
   @Override
   void updateCustomer(int oldCustomerId, Customer updatedCustomer) {
 
-    if (getCustomer(oldCustomerId)) {
+    if (!getCustomer(oldCustomerId)) {
       throw new DatabaseQueryException("Customer is not in the database and can't be updated.")
     }
             
@@ -367,12 +369,12 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
       try {
         int newCustomerId = createNewCustomer(it, updatedCustomer)
         //todo also associate the affiliations of the old entry to the customer
+        println updatedCustomer.affiliations
         storeAffiliation(it, newCustomerId, updatedCustomer.affiliations)
         connection.commit()
           
         // if our update is successful we set the old customer inactive
         changeCustomerActiveFlag(oldCustomerId, false)
-          
       } catch (Exception e) {
         log.error(e.message)
         log.error(e.stackTrace.join("\n"))
