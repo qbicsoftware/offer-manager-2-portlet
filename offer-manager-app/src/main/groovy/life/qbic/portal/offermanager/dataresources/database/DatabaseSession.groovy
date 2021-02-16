@@ -38,11 +38,16 @@ class DatabaseSession implements ConnectionProvider {
      * @param port the port on which the database is hosted
      * @param sqlDatabase the name of the database
      */
-    static void init(String user, String password, String host, String port, String sqlDatabase) {
+    static void init(String user,
+                     String password,
+                     String host,
+                     String port,
+                     String sqlDatabase) {
         if (INSTANCE == null) {
             INSTANCE = new DatabaseSession()
 
-            def url = "jdbc:mysql://" + host + ":" + port + "/" + sqlDatabase
+            Class.forName("com.mysql.jdbc.Driver")
+            String url = "jdbc:mysql://${host}:${port}/${sqlDatabase}"
 
             BasicDataSource basicDataSource = new BasicDataSource()
             basicDataSource.setUrl(url)
