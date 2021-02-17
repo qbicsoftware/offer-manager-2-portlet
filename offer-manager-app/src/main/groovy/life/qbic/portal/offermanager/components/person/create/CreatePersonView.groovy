@@ -248,7 +248,7 @@ class CreatePersonView extends VerticalLayout {
         Validator<String> emailValidator = new EmailValidator("Please provide a valid email address.")
         Validator<? extends Object> selectionValidator = Validator.from({o -> o != null}, "Please make a selection.")
 
-        //Add Listeners to all Fields in the Formlayout
+        //Add Listeners to all Fields in the Form layout
         this.firstNameField.addValueChangeListener({ event ->
             ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.firstNameField))
             if (result.isError()) {
@@ -343,7 +343,12 @@ class CreatePersonView extends VerticalLayout {
                 List<Affiliation> affiliations = new ArrayList()
                 affiliations.add(createCustomerViewModel.affiliation)
 
-                controller.createNewCustomer(firstName, lastName, title, email, affiliations)
+                if(createCustomerViewModel.outdatedCustomer){
+                    controller.updateCustomer(createCustomerViewModel.outdatedCustomer, firstName, lastName, title, email, affiliations)
+                }
+                else{
+                    controller.createNewCustomer(firstName, lastName, title, email, affiliations)
+                }
 
             } catch (IllegalArgumentException illegalArgumentException) {
                 log.error("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}")
@@ -368,6 +373,7 @@ class CreatePersonView extends VerticalLayout {
                 sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
             }
         })
+
     }
 
     private void updateAffiliationDetails(Affiliation affiliation) {
@@ -406,6 +412,7 @@ class CreatePersonView extends VerticalLayout {
         createCustomerViewModel.lastNameValid = null
         createCustomerViewModel.emailValid = null
         createCustomerViewModel.affiliationValid = null
+        createCustomerViewModel.outdatedCustomer = null
 
     }
 }

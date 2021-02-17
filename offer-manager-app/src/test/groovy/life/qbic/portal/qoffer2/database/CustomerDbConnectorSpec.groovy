@@ -77,7 +77,7 @@ class CustomerDbConnectorSpec extends Specification{
                                                                           "postal_code":postal_code, "city":city, "country":country, "category": "internal"])
         // our statement should only be able to fill the template with the correct values
         PreparedStatement preparedStatement = Mock (PreparedStatement, {
-            it.setInt(1, Integer.parseInt(customerId)) >> _
+            it.setInt(1, customerId) >> _
             it.executeQuery() >> Stub(ResultSet,{it.next() >>> [true, false]})
         })
         // the connection must only provide precompiled statements for the expected query template
@@ -85,24 +85,21 @@ class CustomerDbConnectorSpec extends Specification{
             it.prepareStatement(query) >> preparedStatement
         })
 
-        //and: "a ConnectionProvider providing the stubbed connection"
+        and: "a ConnectionProvider providing the stubbed connection"
         ConnectionProvider connectionProvider = Stub (ConnectionProvider, {it.connect() >> connection})
 
-        //and: "an implementation of the SearchCustomerDataSource with this connection provider"
+        and: "an implementation of the SearchCustomerDataSource with this connection provider"
         CustomerDbConnector dataSource = new CustomerDbConnector(connectionProvider)
-//        dataSource.getAffiliationForPersonId(Integer.parseInt(customerId)) >> affiliations
-        
+
         when: "update customer affiliations is called"
         dataSource.updateCustomerAffiliations(customerId, [new Affiliation.Builder(organization,
                 street, postal_code, city).addressAddition(address_addition).country(country).category(category).build()])
 
         then: "no affiliations are updated and a failNotification is thrown"
-        0 * dataSource.storeAffiliation(_ as Connection, _ as String, _ as List<Affiliation>)
-        Exception ex = thrown()
-        ex.message == "Customer already has provided affiliation(s), no update was necessary."
-        
+        thrown(Exception)
+
         where:
-        customerId = "42"
+        customerId = 42
         id | organization | address_addition | street | postal_code | city | country | category
         0 | "QBiC" | "Quantitative Biology Center" | "Auf der Morgenstelle 10" | "72076" |
                 "Tübingen" | "Germany" | AffiliationCategory.INTERNAL

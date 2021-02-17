@@ -3,6 +3,8 @@ package life.qbic.portal.offermanager.components.person.search
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.shared.ui.grid.HeightMode
+import com.vaadin.ui.Alignment
+import com.vaadin.ui.Button
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
 import com.vaadin.ui.Label
@@ -12,7 +14,11 @@ import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.GridUtils
+import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
+import life.qbic.portal.offermanager.components.person.create.CreatePersonView
+import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
 
 /**
  * Constructs the UI for the SearchPerson use case
@@ -25,13 +31,20 @@ import life.qbic.portal.offermanager.components.GridUtils
 class SearchPersonView extends FormLayout{
 
     private final SearchPersonViewModel viewModel
+    private final PersonUpdateService personUpdateService
+    private final CreatePersonView updatePersonView
 
-    Grid<Customer> customerGrid
+    Grid<Person> customerGrid
     Panel selectedCustomerInformation
+    Button updateCustomer
     VerticalLayout detailsLayout
+    VerticalLayout searchPersonLayout
 
-    SearchPersonView(SearchPersonViewModel searchPersonViewModel) {
+    SearchPersonView(SearchPersonViewModel searchPersonViewModel, PersonUpdateService personUpdateService, CreatePersonView updatePersonView) {
         this.viewModel = searchPersonViewModel
+        this.personUpdateService = personUpdateService
+        this.updatePersonView = updatePersonView
+
 
         initLayout()
         generateCustomerGrid()
@@ -43,7 +56,12 @@ class SearchPersonView extends FormLayout{
         gridLabel.addStyleName(ValoTheme.LABEL_HUGE)
 
 
+        updateCustomer = new Button("Update Customer")
+        updateCustomer.setEnabled(false)
+
         detailsLayout = new VerticalLayout()
+        detailsLayout.addComponent(updateCustomer)
+        detailsLayout.setComponentAlignment(updateCustomer, Alignment.MIDDLE_RIGHT)
 
         customerGrid = new Grid<>()
         selectedCustomerInformation = new Panel()
@@ -57,33 +75,58 @@ class SearchPersonView extends FormLayout{
         detailsLayout.setVisible(false)
         detailsLayout.setMargin(false)
 
-        this.addComponents(gridLabel,customerGrid,detailsLayout)
+        searchPersonLayout = new VerticalLayout(gridLabel,customerGrid,detailsLayout)
+        searchPersonLayout.setMargin(false)
+
+        this.addComponents(searchPersonLayout,updatePersonView)
         this.setMargin(false)
+        updatePersonView.setVisible(false)
+
     }
 
     private void addListeners(){
+
         customerGrid.addSelectionListener({
             if (it.firstSelectedItem.isPresent()) {
                 fillPanel(it.firstSelectedItem.get() as Customer)
                 detailsLayout.setVisible(true)
+                updateCustomer.setEnabled(true)
+                viewModel.selectedPerson = it.firstSelectedItem
             } else {
                 detailsLayout.setVisible(false)
             }
         })
+
+        updateCustomer.addClickListener({
+            personUpdateService.addToResource(viewModel.selectedPerson)
+            searchPersonLayout.setVisible(false)
+            updatePersonView.setVisible(true)
+        })
+
+        updatePersonView.abortButton.addClickListener({
+            searchPersonLayout.setVisible(true)
+            updatePersonView.setVisible(false)
+        })
+
+        updatePersonView.submitButton.addClickListener({
+            searchPersonLayout.setVisible(true)
+            updatePersonView.setVisible(false)
+        })
+
     }
 
     /**
      * Fills the panel with the detailed customer information of the currently selected customer
-     * @param customer The customer which
+     * @param person The customer which
      */
-    private void fillPanel(Customer customer){
+    private void fillPanel(Person person){
         VerticalLayout content = new VerticalLayout()
 
-        content.addComponent(new Label("<strong>${customer.title == AcademicTitle.NONE ? "" : customer.title} ${customer.firstName} ${customer.lastName}</strong>", ContentMode.HTML))
-        content.addComponent(new Label("${customer.emailAddress}", ContentMode.HTML))
+        content.addComponent(new Label("<strong>${person.title == AcademicTitle.NONE ? "" : person.title} ${person.firstName} ${person.lastName}</strong>", ContentMode.HTML))
+        content.addComponent(new Label("${person.emailAddress}", ContentMode.HTML))
 
 
-        customer.affiliations.each { affiliation ->
+        person.affiliations.each { affiliation ->
             content.addComponent(new Label("<strong>${affiliation.category.value}</strong>", ContentMode.HTML))
             content.addComponent(new Label("${affiliation.organisation}"))
             if (affiliation.addressAddition) {
