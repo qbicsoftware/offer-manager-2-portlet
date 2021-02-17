@@ -16,7 +16,6 @@ import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.GridUtils
-import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
 
@@ -49,6 +48,7 @@ class SearchPersonView extends FormLayout{
         initLayout()
         generateCustomerGrid()
         addListeners()
+        bindViewModel()
     }
 
     private void initLayout(){
@@ -81,7 +81,12 @@ class SearchPersonView extends FormLayout{
         this.addComponents(searchPersonLayout,updatePersonView)
         this.setMargin(false)
         updatePersonView.setVisible(false)
+    }
 
+    private void bindViewModel(){
+        this.viewModel.foundCustomers.addPropertyChangeListener({
+            customerGrid.getDataProvider().refreshAll()
+        })
     }
 
     private void addListeners(){
@@ -148,6 +153,7 @@ class SearchPersonView extends FormLayout{
     private ListDataProvider setupCustomerDataProvider() {
         def customerListDataProvider = new ListDataProvider<>(viewModel.getFoundCustomers())
         this.customerGrid.setDataProvider(customerListDataProvider)
+
         return customerListDataProvider
     }
 
