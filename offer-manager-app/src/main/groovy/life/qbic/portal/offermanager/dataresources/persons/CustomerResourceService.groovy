@@ -23,7 +23,7 @@ class CustomerResourceService implements ResourcesService<Customer>{
 
     CustomerResourceService(CustomerDbConnector dbConnector) {
         this.dbConnector = dbConnector
-        this.customerList = dbConnector.fetchAllCustomers()
+        this.customerList = dbConnector.fetchAllActiveCustomers()
         this.eventEmitter = new EventEmitter<>()
     }
 

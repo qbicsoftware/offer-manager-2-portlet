@@ -594,7 +594,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
    */
   List<Customer> fetchAllCustomers() {
     List<Customer> customers = []
-    String query = CUSTOMER_SELECT_QUERY + " WHERE active=1"
+    String query = CUSTOMER_SELECT_QUERY
     Connection connection = connectionProvider.connect()
     connection.withCloseable {
       def preparedStatement = it.prepareStatement(query)
