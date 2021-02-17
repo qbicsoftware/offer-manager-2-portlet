@@ -291,7 +291,6 @@ class DependencyManager {
         this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbConnector)
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
         this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
-        //todo create update customer here
         this.updateCustomer = new CreateCustomer(updateCustomerPresenter, customerDbConnector)
     }
 
