@@ -146,11 +146,11 @@ class OfferOverviewView extends FormLayout {
     private void setupListeners() {
         overviewGrid.addSelectionListener(
                 { selection ->
-                    selection.firstSelectedItem.ifPresentOrElse({overview ->
+                    selection.firstSelectedItem.ifPresent({overview ->
                         UI.getCurrent().setPollInterval(50)
                         downloadSpinner.setVisible(true)
                         new LoadOfferInfoThread(UI.getCurrent(), overview).start()
-                    }, {})
+                    })
                 })
         updateOfferBtn.addClickListener({
             offerUpdateService.addToResource(model.getSelectedOffer())

@@ -38,7 +38,7 @@ class ProductsResourcesService implements ResourcesService<Product> {
     }
 
     @Override
-    @Deprecated(since = "1.0.0", forRemoval = true)
+    @Deprecated
     void reloadResources() {
         this.products.clear()
         this.products.addAll(dbConnector.findAllAvailableProducts())
@@ -79,7 +79,7 @@ class ProductsResourcesService implements ResourcesService<Product> {
      */
     @Override
     Iterator<Product> iterator() {
-        return List.copyOf(this.products).iterator()
+        return new ArrayList<>(this.products).iterator()
     }
 
     /**
@@ -87,8 +87,8 @@ class ProductsResourcesService implements ResourcesService<Product> {
      * @return currently loaded available products
      * @deprecated please use {@link #iterator()} instead
      */
-    @Deprecated(since = "1.0.0", forRemoval = true)
+    @Deprecated
     List<Product> getProducts() {
-        return List.copyOf(this.products)
+        return new ArrayList<>(this.products)
     }
 }

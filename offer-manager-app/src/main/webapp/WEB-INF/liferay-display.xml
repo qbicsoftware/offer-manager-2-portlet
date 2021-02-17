@@ -3,6 +3,6 @@
 
 <display>
 	<category name="QBiC Portlets">
-		<portlet id="${project.artifactId}" />
+		<portlet id="${project.artifactId} ${project.version}" />
 	</category>
 </display>

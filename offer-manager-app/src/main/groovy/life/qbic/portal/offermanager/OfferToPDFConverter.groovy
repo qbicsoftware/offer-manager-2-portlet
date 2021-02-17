@@ -201,7 +201,7 @@ class OfferToPDFConverter implements OfferExporter {
 
         PdfPrinter(Path sourceFile) {
             this.sourceFile = sourceFile
-            this.chromeAlias = "chromium"
+            this.chromeAlias = "chromium-browser"
         }
 
         PdfPrinter(Path sourceFile, String alias) {

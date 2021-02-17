@@ -4,6 +4,7 @@ import com.vaadin.annotations.Theme
 import com.vaadin.server.Page
 import com.vaadin.server.VaadinRequest
 import com.vaadin.ui.Layout
+import com.vaadin.ui.Notification
 import com.vaadin.ui.VerticalLayout
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
@@ -51,7 +52,8 @@ class OfferManagerApp extends QBiCPortletUI {
             log.error(e)
             String errorCaption = "Application not available"
             String errorMessage = "We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com."
-            StyledNotification initializationErrorNotification = new StyledNotification(errorCaption, errorMessage)
+            StyledNotification initializationErrorNotification = new StyledNotification
+                    (errorCaption, errorMessage, Notification.Type.ERROR_MESSAGE)
             initializationErrorNotification.show(Page.getCurrent())
             layout = new VerticalLayout()
         }

@@ -13,8 +13,10 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.GridUtils
+import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
 
@@ -85,20 +87,18 @@ class SearchPersonView extends FormLayout{
     private void addListeners(){
 
         customerGrid.addSelectionListener({
-            it.firstSelectedItem.ifPresentOrElse({overview ->
-                fillPanel(it.firstSelectedItem.get())
-                viewModel.setSelectedPerson(it.firstSelectedItem)
+            if (it.firstSelectedItem.isPresent()) {
+                fillPanel(it.firstSelectedItem.get() as Customer)
                 detailsLayout.setVisible(true)
                 updateCustomer.setEnabled(true)
-            }, {
+                viewModel.selectedPerson = it.firstSelectedItem
+            } else {
                 detailsLayout.setVisible(false)
-
-            })
+            }
         })
 
         updateCustomer.addClickListener({
             personUpdateService.addToResource(viewModel.selectedPerson)
-
             searchPersonLayout.setVisible(false)
             updatePersonView.setVisible(true)
         })

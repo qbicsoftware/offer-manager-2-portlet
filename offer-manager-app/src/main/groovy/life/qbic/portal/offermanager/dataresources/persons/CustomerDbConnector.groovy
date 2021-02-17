@@ -58,7 +58,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
   }
   
   @Override
-  @Deprecated(since = "1.0.0", forRemoval=true)
+  @Deprecated
   List<Customer> findCustomer(String firstName, String lastName) throws DatabaseQueryException {
     String sqlCondition = "WHERE first_name = ? AND last_name = ?"
     String queryTemplate = CUSTOMER_SELECT_QUERY + " " + sqlCondition
