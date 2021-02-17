@@ -42,7 +42,7 @@ class SearchPersonViewModel {
         if(selectedPerson.isPresent()) {
             return selectedPerson.get()
         } else {
-            throw new RuntimeException("No offer is currently selected.")
+            throw new RuntimeException("No person is currently selected.")
         }
     }
 

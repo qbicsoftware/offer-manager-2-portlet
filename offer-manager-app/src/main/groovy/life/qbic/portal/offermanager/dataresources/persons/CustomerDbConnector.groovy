@@ -229,9 +229,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
 
     List<Integer> generatedKeys = []
 
-    println customer.title.value
-    println customer.toString()
-
     def statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
     statement.setString(1, customer.firstName )
     statement.setString(2, customer.lastName)
@@ -368,9 +365,9 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
     connection.withCloseable {it ->
       try {
         int newCustomerId = createNewCustomer(it, updatedCustomer)
-        //todo also associate the affiliations of the old entry to the customer
-        println updatedCustomer.affiliations
-        storeAffiliation(it, newCustomerId, updatedCustomer.affiliations)
+        List<Affiliation> allAffiliations = fetchAffiliationsForPerson(oldCustomerId)
+        allAffiliations.addAll(updatedCustomer.affiliations)
+        storeAffiliation(it, newCustomerId, allAffiliations)
         connection.commit()
           
         // if our update is successful we set the old customer inactive
