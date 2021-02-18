@@ -10,6 +10,7 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.ProductType
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.business.offers.identifier.OfferId
 
@@ -67,6 +68,22 @@ class Offer {
      * The affiliation of the customer selected for this offer
      */
     private Affiliation selectedCustomerAffiliation
+    /**
+     * A list of items for which an overhead cost is applicable
+     */
+    private List<ProductItem> itemsWithOverhead
+    /**
+     * A list of Items for which an overhead cost is not applicable
+     */
+    private List<ProductItem> itemsWithoutOverhead
+    /**
+     * The net price of all items for which an overhead cost is applicable, without overhead and taxes
+     */
+    private double itemsWithOverheadNetPrice
+    /**
+     * The net price of all items for which an overhead cost is not applicable, without overhead and taxes
+     */
+    private double itemsWithoutOverheadNetPrice
 
     /*
      * Holds the determined overhead derived from the
@@ -126,6 +143,7 @@ class Offer {
             return this
         }
 
+
         Offer build() {
             return new Offer(this)
         }
@@ -147,6 +165,10 @@ class Offer {
                 .stream()
                 .map(id -> new OfferId(id)).collect()
         this.availableVersions.add(this.identifier)
+        this.itemsWithOverhead = getOverheadItems()
+        this.itemsWithoutOverhead = getNoOverheadItems()
+        this.itemsWithOverheadNetPrice = getOverheadItemsNet()
+        this.itemsWithoutOverheadNetPrice = getNoOverheadItemsNet()
     }
 
     /**
@@ -189,6 +211,40 @@ class Offer {
         return overheadSum
     }
 
+
+    /**
+     * This method returns the net cost of all product items for which no overhead cost is calculated
+     *
+     * @return net cost of product items without overhead cost
+     */
+    double getNoOverheadItemsNet() {
+        double costNoOverheadItemsNet = 0
+        for (item in items) {
+            if (item.product instanceof DataStorage || item.product instanceof ProjectManagement) {
+                costNoOverheadItemsNet += item.quantity * item.product.unitPrice
+            }
+        }
+        return costNoOverheadItemsNet
+    }
+
+    /**
+     * This method returns the net cost of product items for which an overhead cost is calculated
+     *
+     * @return net cost of product items with overhead cost
+     */
+    double getOverheadItemsNet() {
+        double costOverheadItemsNet = 0
+        for (item in items) {
+            if (item.product instanceof DataStorage || item.product instanceof ProjectManagement) {
+                // No overheads are assigned for data storage and project management
+            }
+            else {
+                costOverheadItemsNet += item.quantity * item.product.unitPrice
+            }
+        }
+        return costOverheadItemsNet
+    }
+
     /**
      * The tax price on all items net price including overheads.
      *
@@ -201,6 +257,38 @@ class Offer {
             return 0
         }
         return (calculateNetPrice() + getOverheadSum()) * VAT
+    }
+
+    /**
+     * This method returns all ProductItems for which an Overhead cost is calculated
+     *
+     * @return ProductItem list containing all ProductItems with overhead cost
+     */
+    List<ProductItem> getOverheadItems() {
+        List<ProductItem> listOverheadProductItem = []
+        for (item in items) {
+            if (item.product instanceof DataStorage || item.product instanceof ProjectManagement) {
+                // No overheads are assigned for data storage and project management
+            } else {
+                listOverheadProductItem.add(item)
+            }
+        }
+        return listOverheadProductItem
+    }
+
+    /**
+     * This method returns all ProductItems for which no Overhead cost is calculated
+     *
+     * @return ProductItem list containing all ProductItems without overhead cost
+     */
+    List<ProductItem> getNoOverheadItems(){
+        List<ProductItem> listNoOverheadProductItem = []
+        for (item in items) {
+            if (item.product instanceof DataStorage || item.product instanceof ProjectManagement) {
+                 listNoOverheadProductItem.add(item)
+            }
+        }
+        return listNoOverheadProductItem
     }
 
     Date getModificationDate() {
