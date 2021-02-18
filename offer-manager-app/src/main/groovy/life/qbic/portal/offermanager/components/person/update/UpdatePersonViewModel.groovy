@@ -42,6 +42,6 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
         this.firstName = person.firstName
         this.lastName = person.lastName
         this.email = person.emailAddress
-        this.availableAffiliations = person.affiliations
+        this.affiliation = person.affiliations.first()
     }
 }
