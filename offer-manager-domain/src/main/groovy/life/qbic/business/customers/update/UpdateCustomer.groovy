@@ -34,6 +34,7 @@ class UpdateCustomer{
       //this exception catching is important to avoid displaying a wrong failure notification
       try {
         output.customerCreated(customer)
+        //todo here is the exception thrown
       } catch (Exception ignored) {
         //quiet output message failed
       }

@@ -46,6 +46,7 @@ class CreatePersonPresenter implements CreateCustomerOutput{
     }
 
     @Override
+    @Deprecated
     void customerCreated(String message) {
         try {
             viewModel.successNotifications.add(message)
@@ -74,12 +75,14 @@ class CreatePersonPresenter implements CreateCustomerOutput{
                 .title(person.title)
                 .affiliations(person.affiliations).build()
 
-        //todo check what content the customer
         //todo exception occurs here when adding to resource!
         createCustomerViewModel.customerService.addToResource(customer)
 
         if (createCustomerViewModel.outdatedCustomer) createCustomerViewModel.customerService.removeFromResource(createCustomerViewModel.outdatedCustomer)
 
         createCustomerViewModel.managerResourceService.addToResource(manager)
+
+        //reset the view model
+        clearCustomerData()
     }
 }

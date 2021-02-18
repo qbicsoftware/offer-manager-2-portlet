@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.person.update
 
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
+import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -31,17 +32,23 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
         super(customerService, managerResourceService, affiliationService)
         this.customerUpdateService = customerUpdateService
 
-        this.customerUpdateService.subscribe((Person person) -> {
-            loadData(person)
-            this.outdatedCustomer = (Customer) person
-        })
+        Subscription<Person> customerSubscription = new Subscription<Person>() {
+            @Override
+            void receive(Person person) {
+                loadData(person)
+                setOutdatedCustomer((Customer) person)
+                customerService.reloadResources()
+            }
+        }
+
+        this.customerUpdateService.subscribe(customerSubscription)
     }
 
     private void loadData(Person person) {
-        this.academicTitle = person.title
-        this.firstName = person.firstName
-        this.lastName = person.lastName
-        this.email = person.emailAddress
-        this.availableAffiliations = person.affiliations
+        super.academicTitle = person.title
+        super.firstName = person.firstName
+        super.lastName = person.lastName
+        super.email = person.emailAddress
+        super.availableAffiliations = person.affiliations
     }
 }

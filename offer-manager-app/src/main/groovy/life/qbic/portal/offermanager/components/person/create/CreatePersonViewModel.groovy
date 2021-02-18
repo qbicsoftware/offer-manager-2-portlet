@@ -46,6 +46,7 @@ class CreatePersonViewModel {
                           ProjectManagerResourceService managerResourceService,
                           AffiliationResourcesService affiliationService) {
         this.affiliationService = affiliationService
+        //todo this service is not correctly forwarded to update offer view model?
         this.customerService = customerService
         this.managerResourceService = managerResourceService
         availableAffiliations = new ObservableList(new ArrayList<Affiliation>(affiliationService.iterator().collect()))

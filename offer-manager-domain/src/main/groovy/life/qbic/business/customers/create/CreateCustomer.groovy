@@ -30,7 +30,6 @@ class CreateCustomer implements CreateCustomerInput {
     try {
       dataSource.addCustomer(customer)
       try {
-        output.customerCreated("Successfully added new customer")
         output.customerCreated(customer)
       } catch (Exception ignored) {
         //quiet output message failed
@@ -53,7 +52,6 @@ class CreateCustomer implements CreateCustomerInput {
       updateCustomer.updateCustomer(customerId,newCustomer)
 
       try {
-        output.customerCreated("Successfully updated new customer")
         output.customerCreated(newCustomer)
       } catch (Exception ignored) {
         //quiet output message failed
