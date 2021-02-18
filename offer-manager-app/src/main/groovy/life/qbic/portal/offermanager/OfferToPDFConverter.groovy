@@ -164,27 +164,13 @@ class OfferToPDFConverter implements OfferExporter {
         def itemPos = 1
         def currTableItems = 1
         // max number of table items per page
-        def maxTableItems = 10
+        def maxTableItems = 8
         //
         def tableNum = 1
         def elementId = "product-items" + "-" + tableNum
-        //Todo Find solution on how to include the sorted ProductItems in the database
-        //List<ProductItem> listOverheadItems = offer.itemsWithOverhead
-        //List<ProductItem> listNoOverheadItems = offer.itemsWithoutOverhead
 
-        //ToDo Delete this once the connection to the database works as intended
-        ProductItem primaryAnalysis = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                " example primary analysis", 1.0, ProductUnit.PER_SAMPLE, "1"))
-        ProductItem secondaryAnalysis = new ProductItem(1, new SecondaryAnalysis("Basic RNAsq", "Just an" +
-                " example secondary analysis", 2.0, ProductUnit.PER_SAMPLE, "1"))
-        ProductItem sequencing = new ProductItem(3, new Sequencing("Basic Sequencing", "Just an" +
-                "example sequencing", 3.0, ProductUnit.PER_SAMPLE, "1"))
-        ProductItem projectManagement = new ProductItem(1, new ProjectManagement("Basic Management",
-                "Just an example", 10.0, ProductUnit.PER_DATASET, "1"))
-        ProductItem dataStorage = new ProductItem(2, new DataStorage("Data Storage",
-                "Just an example", 20.0, ProductUnit.PER_DATASET, "1"))
-        List<ProductItem> listOverheadItems =  [primaryAnalysis,primaryAnalysis, primaryAnalysis, secondaryAnalysis, secondaryAnalysis, secondaryAnalysis, sequencing, sequencing, sequencing]
-        List<ProductItem> listNoOverheadItems = [projectManagement, projectManagement, projectManagement, projectManagement, dataStorage, dataStorage, dataStorage, dataStorage]
+        List<ProductItem> listOverheadItems = offer.itemsWithOverhead
+        List<ProductItem> listNoOverheadItems = offer.itemsWithoutOverhead
 
         // Create the items in html in the overview table
         if (listOverheadItems.size() > 0) {
@@ -202,9 +188,10 @@ class OfferToPDFConverter implements OfferExporter {
             }
             // Add subtotal Footer to ProductItem
             htmlContent.getElementById(elementId).append(ItemPrintout.subTotalFooter(true))
+            // Include spacing for Footer
+            currTableItems = currTableItems + 2
             // Reset ItemPosition
             itemPos = 1
-            currTableItems = 11
             //Update Pricing of Footer
             setIntermediatePrices(true)
         }
@@ -225,14 +212,19 @@ class OfferToPDFConverter implements OfferExporter {
             htmlContent.getElementById(elementId).append(ItemPrintout.subTotalFooter(false))
             // Reset ItemPosition
             itemPos = 1
+            // Include Spacing for Footer
             currTableItems = currTableItems + 2
             //Update Pricing of Footer
             setIntermediatePrices(false)
         }
-
-        //create the footer only for the last page containing a table
-        htmlContent.getElementById("item-table-grid")
-                .append(ItemPrintout.tableFooter())
+        if (currTableItems >= maxTableItems - 4) {
+            elementId = "product-items" + "-" + ++tableNum
+            htmlContent.getElementById("item-table-grid")
+                    .append(ItemPrintout.tableFooter())
+        } else {
+            htmlContent.getElementById("item-table-grid")
+                    .append(ItemPrintout.tableFooter())
+        }
     }
 
     void setTotalPrices() {
@@ -260,10 +252,8 @@ class OfferToPDFConverter implements OfferExporter {
         if (isOverhead) {
             String overheadStatus = "overhead"
 
-            //ToDo find solution on how to connect the values of the entity to converter
-            //double itemsWithOverheadNetPrice = offer.getItemsWithOverheadNetPrice()
+            double itemsWithOverheadNetPrice = offer.getItemsWithOverheadNetPrice()
             double overheadPrice = offer.getOverheads()
-            double itemsWithOverheadNetPrice = 1000
             double totalPrice = itemsWithOverheadNetPrice + overheadPrice
 
             final String formattedTotalPrice = Currency.getFormatterWithoutSymbol().format(totalPrice)
@@ -278,9 +268,7 @@ class OfferToPDFConverter implements OfferExporter {
 
             //No Overhead Prices are calculated for these items
             double overheadPrice = 0.00
-            //ToDo find solution on how to connect the values of the entity to converter
-            //double itemsWithoutOverheadNetPrice = offer.getItemsWithOverheadNetPrice()
-            double itemsWithoutOverheadNetPrice = 2000
+            double itemsWithoutOverheadNetPrice = offer.getItemsWithOverheadNetPrice()
             double totalPrice = itemsWithoutOverheadNetPrice
 
             final String formattedTotalPrice = Currency.getFormatterWithoutSymbol().format(totalPrice)
@@ -291,7 +279,9 @@ class OfferToPDFConverter implements OfferExporter {
             htmlContent.getElementById("${overheadStatus}-value-net").text(formattedItemsWithOverheadNetPrice)
             htmlContent.getElementById("${overheadStatus}-value-overhead").text(formattedOverheadPrice)
         }
+
     }
+
 
     /**
      * Small helper class to handle the HTML to PDF conversion.
@@ -410,8 +400,8 @@ class OfferToPDFConverter implements OfferExporter {
                                          <div class="col-10 cost-summary-field">Estimated total (VAT included):</div>
                                          <div class="col-2 price-value" id="final-cost-value">12,500.00</div>
                                      </div>
-                                 </div>"""
+                                 </div>
+                                 """
         }
-
-    }
+        }
 }

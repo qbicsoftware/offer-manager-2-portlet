@@ -15,6 +15,8 @@ the organisational roles project manager `Role.PROJECT_MANAGER` and offer admin 
 upcoming service product maintenance interface.
 
 * Introduce Offer retrieval via Fetch Offer Use Case
+* Introduce subtotals in Offer PDF ProductItem Table
+* Introduce distinction between ProductItems with and without Overhead cost in Offer PDF
 
 **Fixed**
 
