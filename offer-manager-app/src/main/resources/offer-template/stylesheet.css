@@ -167,7 +167,7 @@ body {
         padding-left: 20px;
         padding-right: 20px;
     }
-    
+
     #grid-table-footer{
         text-align: right;
         border-top: 1px solid #bbbbbb;
@@ -230,8 +230,17 @@ body {
     }
 
     .total-costs > td {
-        border-top: 1px solid #bbbbbb;
+        border-top: 2px solid #bbbbbb;
     }
+
+    .single-underscore {
+    border-bottom: 2px solid #bbbbbb;
+    }
+
+    .double-underscore {
+    border-bottom: 3px double #bbbbbb;
+    }
+
 
     /* Agreement Section */
 
