@@ -15,7 +15,7 @@ import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceServi
  */
 class SearchPersonViewModel {
 
-    List<Customer> foundCustomers = new ObservableList(new ArrayList<Customer>())
+    List<Customer> foundCustomers = new ObservableList(new ArrayList<Customer>(customerService.iterator().toList()))
 
     private final CustomerResourceService customerService
 

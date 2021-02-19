@@ -37,7 +37,7 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
             void receive(Person person) {
                 loadData(person)
                 setOutdatedCustomer((Customer) person)
-                customerService.reloadResources()
+                println "I am here?!"
             }
         }
 

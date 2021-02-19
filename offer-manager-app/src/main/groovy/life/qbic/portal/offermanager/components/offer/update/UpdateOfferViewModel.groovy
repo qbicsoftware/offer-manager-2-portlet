@@ -42,14 +42,14 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
     }
 
     private void loadData(Offer offer) {
-        this.offerId = offer.identifier
-        this.projectTitle = offer.projectTitle
-        this.projectDescription = offer.projectDescription
-        this.customer = offer.customer
-        this.customerAffiliation = offer.selectedCustomerAffiliation
-        this.projectManager = offer.projectManager
-        this.productItems.clear()
-        this.productItems.addAll(offer.items.collect {
+        super.offerId = offer.identifier
+        super.projectTitle = offer.projectTitle
+        super.projectDescription = offer.projectDescription
+        super.customer = offer.customer
+        super.customerAffiliation = offer.selectedCustomerAffiliation
+        super.projectManager = offer.projectManager
+        super.productItems.clear()
+        super.productItems.addAll(offer.items.collect {
             new ProductItemViewModel(it.quantity, it.product)})
     }
 }

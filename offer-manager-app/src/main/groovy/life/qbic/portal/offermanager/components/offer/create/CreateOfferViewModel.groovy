@@ -60,6 +60,7 @@ class CreateOfferViewModel {
         this.customerService = customerService
         this.productsResourcesService = productsResourcesService
         this.managerResourceService = managerResourceService
+
         fetchPersonData()
         fetchProductData()
         subscribeToResources()

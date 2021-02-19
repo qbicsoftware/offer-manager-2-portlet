@@ -44,6 +44,7 @@ class CustomerResourceService implements ResourcesService<Customer>{
 
     @Override
     void addToResource(Customer resourceItem) {
+        println "added customer"
         customerList.add(resourceItem)
         eventEmitter.emit(resourceItem)
     }

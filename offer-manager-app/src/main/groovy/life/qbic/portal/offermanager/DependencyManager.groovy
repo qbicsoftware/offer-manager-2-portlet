@@ -401,13 +401,13 @@ class DependencyManager {
 
         AppView portletView
         try {
-            CreatePersonView createCustomerView2 = new CreatePersonView(createCustomerController, this
+            /*CreatePersonView createCustomerView2 = new CreatePersonView(createCustomerController, this
                     .viewModel, createCustomerViewModel)
             CreateAffiliationView createAffiliationView2 = new CreateAffiliationView(this.viewModel,
-                    createAffiliationViewModel, createAffiliationController)
+                    createAffiliationViewModel, createAffiliationController)*/
 
-            portletView = new AppView(this.viewModel, createCustomerView2,
-                    createAffiliationView2,
+            portletView = new AppView(this.viewModel, createCustomerView,
+                    createAffiliationView,
                     createOfferView,
                     overviewView,
                     updateOfferView,

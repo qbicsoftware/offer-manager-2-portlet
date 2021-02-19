@@ -75,10 +75,21 @@ class CreatePersonPresenter implements CreateCustomerOutput{
                 .title(person.title)
                 .affiliations(person.affiliations).build()
 
+
+        println createCustomerViewModel.customerService.iterator().size()
+
+        try{
+            if (createCustomerViewModel.outdatedCustomer) createCustomerViewModel.customerService.removeFromResource(createCustomerViewModel.outdatedCustomer)
+            println createCustomerViewModel.customerService.iterator().size()
+        }catch(Exception e){
+            //fails here
+            //todo remove try catch
+            println "I failed here very hard, Tobi"
+        }
+
         //todo exception occurs here when adding to resource!
         createCustomerViewModel.customerService.addToResource(customer)
-
-        if (createCustomerViewModel.outdatedCustomer) createCustomerViewModel.customerService.removeFromResource(createCustomerViewModel.outdatedCustomer)
+        println createCustomerViewModel.customerService.iterator().size()
 
         createCustomerViewModel.managerResourceService.addToResource(manager)
 
