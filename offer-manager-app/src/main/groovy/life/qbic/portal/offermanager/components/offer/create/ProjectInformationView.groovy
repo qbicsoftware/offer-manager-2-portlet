@@ -9,7 +9,6 @@ import com.vaadin.ui.TextArea
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
-import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
 
 /**
  * This class generates a Layout in which the user
@@ -27,7 +26,7 @@ class ProjectInformationView extends VerticalLayout {
     private final CreateOfferViewModel createOfferViewModel
 
     TextField projectTitle
-    TextArea projectDescription
+    TextArea projectObjective
     Button next
 
     ProjectInformationView(CreateOfferViewModel createOfferViewModel) {
@@ -46,18 +45,18 @@ class ProjectInformationView extends VerticalLayout {
         projectTitle.setRequiredIndicatorVisible(true)
         projectTitle.setSizeFull()
 
-        this.projectDescription = new TextArea("Project Description")
-        projectDescription.setPlaceholder("Enter the project description here")
-        projectDescription.setRequiredIndicatorVisible(true)
-        projectDescription.setSizeFull()
+        this.projectObjective = new TextArea("Project Objective")
+        projectObjective.setPlaceholder("Enter the project objective here")
+        projectObjective.setRequiredIndicatorVisible(true)
+        projectObjective.setSizeFull()
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.addStyleName(ValoTheme.LABEL_LARGE)
         next.setEnabled(false)
 
-        VerticalLayout textLayout = new VerticalLayout(projectTitle, projectDescription)
+        VerticalLayout textLayout = new VerticalLayout(projectTitle, projectObjective)
         textLayout.setComponentAlignment(projectTitle, Alignment.TOP_CENTER)
-        textLayout.setComponentAlignment(projectDescription, Alignment.BOTTOM_CENTER)
+        textLayout.setComponentAlignment(projectObjective, Alignment.BOTTOM_CENTER)
         textLayout.setSizeFull()
         textLayout.setMargin(false)
 
@@ -81,8 +80,8 @@ class ProjectInformationView extends VerticalLayout {
 
         binder.forField(projectTitle)
                 .bind({ it.projectTitle }, { it, updatedValue -> it.setProjectTitle(updatedValue) })
-        binder.forField(projectDescription)
-                .bind({ it.projectDescription }, { it, updatedValue -> it.setProjectDescription(updatedValue) })
+        binder.forField(projectObjective)
+                .bind({ it.projectObjective }, { it, updatedValue -> it.setProjectObjective(updatedValue) })
 
 
         /*
@@ -101,9 +100,9 @@ class ProjectInformationView extends VerticalLayout {
                     String newValue = it.newValue as String
                     projectTitle.value = newValue ?: projectTitle.emptyValue
                     break
-                case "projectDescription":
+                case "projectObjective'":
                     String newValue = it.newValue as String
-                    projectDescription.value = newValue ?: projectDescription.emptyValue
+                    projectObjective.value = newValue ?: projectObjective.emptyValue
                     break
                 default:
                     break
@@ -121,9 +120,9 @@ class ProjectInformationView extends VerticalLayout {
                         projectTitle.componentError = null
                     }
                     break
-                case "projectDescription":
+                case "projectObjective":
                     if (it.newValue || it.newValue == null) {
-                        projectDescription.componentError = null
+                        projectObjective.componentError = null
                     }
                     break
                 default:

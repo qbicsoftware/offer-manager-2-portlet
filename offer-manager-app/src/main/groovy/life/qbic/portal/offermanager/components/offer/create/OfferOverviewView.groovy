@@ -21,8 +21,6 @@ import life.qbic.business.offers.Currency
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.OfferToPDFConverter
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
-import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
-import life.qbic.portal.offermanager.components.offer.create.ProductItemViewModel
 
 /**
  * This class generates a Layout in which the user
@@ -148,7 +146,7 @@ class OfferOverviewView extends VerticalLayout{
          */
         VerticalLayout projectInfo = new VerticalLayout()
         projectInfo.addComponent(new Label("${createOfferViewModel.projectTitle}"))
-        projectInfo.addComponent(new Label("${createOfferViewModel.projectDescription}"))
+        projectInfo.addComponent(new Label("${createOfferViewModel.projectObjective}"))
         projectInfo.addComponent(new Label("${createOfferViewModel.customer}"))
         projectInfo.addComponent(new Label("${createOfferViewModel.customerAffiliation}"))
         projectInfo.addComponent(new Label("${createOfferViewModel.projectManager}"))

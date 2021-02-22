@@ -155,7 +155,7 @@ class CreateOfferView extends FormLayout{
             controller.createOffer(
                     viewModel.offerId,
                     viewModel.projectTitle,
-                    viewModel.projectDescription,
+                    viewModel.projectObjective,
                     viewModel.customer,
                     viewModel.projectManager,
                     getProductItems(viewModel.productItems),
