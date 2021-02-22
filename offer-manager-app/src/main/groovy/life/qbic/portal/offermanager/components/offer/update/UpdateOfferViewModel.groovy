@@ -3,11 +3,10 @@ package life.qbic.portal.offermanager.components.offer.update
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
-import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
 import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
-import life.qbic.portal.offermanager.dataresources.offers.OfferUpdateService
+
 import life.qbic.portal.offermanager.components.offer.create.ProductItemViewModel
 
 
@@ -18,7 +17,7 @@ import life.qbic.portal.offermanager.components.offer.create.ProductItemViewMode
  * offer update event.
  *
  * With respect to its parent class, it contains an additional service and subscribes to an
- * instance of {@link OfferUpdateService}'s event emitter property.
+ * instance of {@link life.qbic.portal.offermanager.communication.EventEmitter}'s emitter property.
  *
  * Everytime such an event is emitted, it loads the event data into its properties.
  *

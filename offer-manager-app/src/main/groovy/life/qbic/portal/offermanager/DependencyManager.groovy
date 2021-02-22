@@ -23,7 +23,7 @@ import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
-import life.qbic.portal.offermanager.dataresources.offers.OfferUpdateService
+
 import life.qbic.portal.offermanager.dataresources.offers.OverviewService
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationController
 import life.qbic.portal.offermanager.components.person.create.CreatePersonController

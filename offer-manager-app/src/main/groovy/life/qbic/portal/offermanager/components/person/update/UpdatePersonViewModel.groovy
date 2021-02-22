@@ -16,7 +16,7 @@ import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourc
  * customer update event.
  *
  * With respect to its parent class, it contains an additional service and subscribes to an
- * instance of {@link life.qbic.portal.offermanager.dataresources.offers.OfferUpdateService}'s event emitter property.
+ * instance of {@link life.qbic.portal.offermanager.communication.EventEmitter}'s emitter property.
  *
  * Everytime such an event is emitted, it loads the event data into its properties.
  *

@@ -18,14 +18,12 @@ import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.portal.offermanager.dataresources.offers.OfferUpdateService
+
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 import life.qbic.business.offers.Currency
 import life.qbic.portal.offermanager.components.GridUtils
 
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 /**
  * A basic offer overview user interface.
