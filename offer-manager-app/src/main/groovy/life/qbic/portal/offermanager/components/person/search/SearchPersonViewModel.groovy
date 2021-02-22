@@ -26,7 +26,7 @@ class SearchPersonViewModel {
             EventEmitter<Person> personEvent) {
         this.personService = personService
         this.personEvent = personEvent
-        this.availablePersons = new ObservableList(new ArrayList())
+        this.availablePersons = new ObservableList(new ArrayList<Person>())
         fetchPersonData()
         subscribeToResources()
     }

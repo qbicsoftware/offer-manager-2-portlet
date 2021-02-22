@@ -17,7 +17,7 @@ import spock.lang.Specification
  * @since: 1.0.0
  */
 class UpdateCustomerInputSpec extends Specification {
-  CreateCustomerOutput output
+    UpdateCustomerOutput output
     CreateCustomerDataSource dataSource
 
 
@@ -75,7 +75,7 @@ class UpdateCustomerInputSpec extends Specification {
 
       then: "the output receives a failure notification"
       1 * output.failNotification(_ as String)
-      0 * output.customerCreated(_ as Customer)
+      0 * output.customerUpdated(_ as Customer)
 
       where:
       customer = new Customer.Builder("Test", "user", "newmail").title(AcademicTitle.NONE).build()
