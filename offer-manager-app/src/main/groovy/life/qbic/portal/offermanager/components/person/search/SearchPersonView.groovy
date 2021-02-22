@@ -83,7 +83,6 @@ class SearchPersonView extends FormLayout{
 
     private void bindViewModel(){
        this.viewModel.getAvailablePersons().addPropertyChangeListener({
-           println "list changed in search person view"
             if (it instanceof ObservableList.ElementEvent) customerGrid.getDataProvider().refreshAll()
         })
     }
