@@ -6,6 +6,8 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.business.customers.affiliation.create.CreateAffiliation
 import life.qbic.business.customers.create.CreateCustomer
 import life.qbic.business.offers.create.CreateOffer
+import life.qbic.datamodel.dtos.general.Person
+import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
@@ -16,7 +18,7 @@ import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceServi
 import life.qbic.portal.offermanager.dataresources.database.DatabaseSession
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
-import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
+
 import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
@@ -104,7 +106,7 @@ class DependencyManager {
     private OfferResourcesService offerService
     private ProductsResourcesService productsResourcesService
     private ProjectManagerResourceService managerResourceService
-    private PersonUpdateService personUpdateService
+    private EventEmitter<Person> personUpdateService
 
     /**
      * Public constructor.
@@ -161,7 +163,7 @@ class DependencyManager {
         this.productsResourcesService = new ProductsResourcesService(productsDbConnector)
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
         this.customerResourceService = new CustomerResourceService(customerDbConnector)
-        this.personUpdateService = new PersonUpdateService()
+        this.personUpdateService = new EventEmitter<Person>()
     }
 
     private void setupViewModels() {
@@ -236,7 +238,7 @@ class DependencyManager {
         }
 
         try{
-            this.searchPersonViewModel = new SearchPersonViewModel(customerResourceService)
+            this.searchPersonViewModel = new SearchPersonViewModel(customerResourceService, personUpdateService)
         }catch (Exception e) {
             log.error("Unexpected excpetion during ${SearchPersonViewModel.getSimpleName()} view model setup.", e)
         }
@@ -394,7 +396,7 @@ class DependencyManager {
 
         SearchPersonView searchPersonView
         try{
-            searchPersonView = new SearchPersonView(searchPersonViewModel, personUpdateService, updatePersonView)
+            searchPersonView = new SearchPersonView(searchPersonViewModel, updatePersonView)
         } catch (Exception e) {
             log.error("Could not create ${SearchPersonView.getSimpleName()} view.", e)
             throw e
