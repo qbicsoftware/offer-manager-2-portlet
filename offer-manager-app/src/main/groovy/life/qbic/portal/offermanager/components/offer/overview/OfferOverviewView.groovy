@@ -50,15 +50,13 @@ class OfferOverviewView extends FormLayout {
 
     private FileDownloader fileDownloader
 
-    final private OfferUpdateService offerUpdateService
 
-    OfferOverviewView(OfferOverviewModel model, OfferUpdateService offerUpdateService) {
+    OfferOverviewView(OfferOverviewModel model) {
         this.model = model
         this.overviewGrid = new Grid<>()
         this.downloadBtn = new Button(VaadinIcons.DOWNLOAD)
         this.updateOfferBtn = new Button(VaadinIcons.EDIT)
         this.downloadSpinner = new ProgressBar()
-        this.offerUpdateService = offerUpdateService
 
         initLayout()
         setupGrid()
@@ -153,7 +151,7 @@ class OfferOverviewView extends FormLayout {
                     })
                 })
         updateOfferBtn.addClickListener({
-            offerUpdateService.addToResource(model.getSelectedOffer())
+            model.offerEventEmitter.emit(model.getSelectedOffer())
         })
     }
 

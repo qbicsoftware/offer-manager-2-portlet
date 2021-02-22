@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.offer.overview
 
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
 import life.qbic.portal.offermanager.OfferToPDFConverter
@@ -43,9 +44,12 @@ class OfferOverviewModel {
 
     @Bindable boolean displaySpinner
 
+    EventEmitter offerEventEmitter
+
     OfferOverviewModel(OverviewService service,
                        OfferDbConnector connector,
-                       AppViewModel viewModel) {
+                       AppViewModel viewModel,
+                       EventEmitter<Offer> offerEventEmitter) {
         this.service = service
         this.connector = connector
         this.offerOverviewList = new ObservableList(new ArrayList(service.iterator().toList()))
@@ -53,6 +57,7 @@ class OfferOverviewModel {
         this.viewModel = viewModel
         this.downloadButtonActive = false
         this.displaySpinner = false
+        this.offerEventEmitter = offerEventEmitter
         subscribeToOverviewService()
     }
 
