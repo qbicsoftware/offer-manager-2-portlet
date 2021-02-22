@@ -86,5 +86,7 @@ class CreatePersonPresenter implements CreateCustomerOutput{
         createCustomerViewModel.personResourceService.addToResource(person)
         //reset the view model
         clearCustomerData()
+
+        viewModel.successNotifications.add("Successfully created/updated new person entry.")
     }
 }
