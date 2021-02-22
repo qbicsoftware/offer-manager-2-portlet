@@ -79,12 +79,10 @@ class CreateOfferViewModel {
 
     private void subscribeToResources() {
         this.customerService.subscribe((Customer customer) -> {
-            this.foundCustomers.clear()
-            this.foundCustomers.addAll(customerService.iterator())
+            this.foundCustomers.add(customer)
         })
-        this.managerResourceService.subscribe((List<ProjectManager> managerList) -> {
-            this.availableProjectManagers.clear()
-            this.availableProjectManagers.addAll(managerResourceService.iterator())
+        this.managerResourceService.subscribe((ProjectManager manager) -> {
+            this.availableProjectManagers.add(manager)
         })
 
         Subscription<Product> productSubscription = new Subscription<Product>() {

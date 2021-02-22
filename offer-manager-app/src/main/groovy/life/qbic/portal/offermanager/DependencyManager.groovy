@@ -16,6 +16,7 @@ import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceServi
 import life.qbic.portal.offermanager.dataresources.database.DatabaseSession
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
 import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
 import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
@@ -108,6 +109,7 @@ class DependencyManager {
     private ProductsResourcesService productsResourcesService
     private ProjectManagerResourceService managerResourceService
     private PersonUpdateService personUpdateService
+    private PersonResourceService personResourceService
 
     /**
      * Public constructor.
@@ -165,6 +167,7 @@ class DependencyManager {
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
         this.customerResourceService = new CustomerResourceService(customerDbConnector)
         this.personUpdateService = new PersonUpdateService()
+        this.personResourceService = new PersonResourceService(customerDbConnector)
     }
 
     private void setupViewModels() {
@@ -180,7 +183,7 @@ class DependencyManager {
             this.createCustomerViewModel = new CreatePersonViewModel(
                     customerResourceService,
                     managerResourceService,
-                    affiliationService)
+                    affiliationService, personResourceService)
             createCustomerViewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
 
         } catch (Exception e) {
@@ -192,7 +195,8 @@ class DependencyManager {
             this.createCustomerViewModelNewOffer = new CreatePersonViewModel(
                     customerResourceService,
                     managerResourceService,
-                    affiliationService)
+                    affiliationService,
+                    personResourceService)
             createCustomerViewModelNewOffer.academicTitles.addAll(AcademicTitle.values().collect {it.value})
 
         } catch (Exception e) {
@@ -205,7 +209,8 @@ class DependencyManager {
                     customerResourceService,
                     managerResourceService,
                     affiliationService,
-                    personUpdateService)
+                    personUpdateService,
+                    personResourceService)
             updatePersonViewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
 
         } catch (Exception e) {
@@ -251,7 +256,7 @@ class DependencyManager {
         }
 
         try{
-            this.searchPersonViewModel = new SearchPersonViewModel(customerResourceService)
+            this.searchPersonViewModel = new SearchPersonViewModel(personResourceService)
         }catch (Exception e) {
             log.error("Unexpected excpetion during ${SearchPersonViewModel.getSimpleName()} view model setup.", e)
         }

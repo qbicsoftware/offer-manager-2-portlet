@@ -6,6 +6,7 @@ import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
+import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
 import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
 import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 
@@ -27,21 +28,18 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
 
     final private PersonUpdateService customerUpdateService
 
-    UpdatePersonViewModel(CustomerResourceService customerService, ProjectManagerResourceService managerResourceService, AffiliationResourcesService affiliationService
-                          , PersonUpdateService customerUpdateService) {
-        super(customerService, managerResourceService, affiliationService)
+    UpdatePersonViewModel(CustomerResourceService customerService,
+                          ProjectManagerResourceService managerResourceService,
+                          AffiliationResourcesService affiliationService,
+                          PersonUpdateService customerUpdateService,
+                          PersonResourceService personResourceService) {
+        super(customerService, managerResourceService, affiliationService, personResourceService)
         this.customerUpdateService = customerUpdateService
 
-        Subscription<Person> customerSubscription = new Subscription<Person>() {
-            @Override
-            void receive(Person person) {
-                loadData(person)
-                setOutdatedCustomer((Customer) person)
-                println "I am here?!"
-            }
-        }
-
-        this.customerUpdateService.subscribe(customerSubscription)
+        this.customerUpdateService.subscribe((Person person) -> {
+            loadData(person)
+            setOutdatedCustomer((Customer) person)
+        })
     }
 
     private void loadData(Person person) {

@@ -84,7 +84,7 @@ class SearchPersonView extends FormLayout{
     }
 
     private void bindViewModel(){
-       this.viewModel.foundCustomers.addPropertyChangeListener({
+       this.viewModel.getAvailablePersons().addPropertyChangeListener({
            println "list changed in search person view"
             if (it instanceof ObservableList.ElementEvent) customerGrid.getDataProvider().refreshAll()
         })
@@ -152,7 +152,7 @@ class SearchPersonView extends FormLayout{
      * This method adds the retrieved Customer Information to the Customer grid
      */
     private ListDataProvider setupCustomerDataProvider() {
-        def customerListDataProvider = new ListDataProvider<>(viewModel.getFoundCustomers())
+        def customerListDataProvider = new ListDataProvider<>(viewModel.getAvailablePersons())
         this.customerGrid.setDataProvider(customerListDataProvider)
 
         return customerListDataProvider

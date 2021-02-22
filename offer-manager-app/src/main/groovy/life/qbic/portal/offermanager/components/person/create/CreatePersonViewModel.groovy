@@ -3,9 +3,10 @@ package life.qbic.portal.offermanager.components.person.create
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
-
+import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
 import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 
 /**
@@ -41,13 +42,16 @@ class CreatePersonViewModel {
     final CustomerResourceService customerService
     final ProjectManagerResourceService managerResourceService
     final AffiliationResourcesService affiliationService
+    final PersonResourceService personResourceService
 
     CreatePersonViewModel(CustomerResourceService customerService,
                           ProjectManagerResourceService managerResourceService,
-                          AffiliationResourcesService affiliationService) {
+                          AffiliationResourcesService affiliationService,
+                          PersonResourceService personResourceService) {
         this.affiliationService = affiliationService
         this.customerService = customerService
         this.managerResourceService = managerResourceService
+        this.personResourceService = personResourceService
         availableAffiliations = new ObservableList(new ArrayList<Affiliation>(affiliationService.iterator().collect()))
 
         this.affiliationService.subscribe({

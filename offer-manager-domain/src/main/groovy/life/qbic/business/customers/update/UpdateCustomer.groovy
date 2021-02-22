@@ -2,6 +2,8 @@ package life.qbic.business.customers.update
 
 import life.qbic.business.customers.create.CreateCustomerDataSource
 import life.qbic.business.customers.create.CreateCustomerOutput
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import life.qbic.datamodel.dtos.business.Customer
 
 import life.qbic.business.exceptions.DatabaseQueryException
@@ -12,12 +14,14 @@ import life.qbic.business.exceptions.DatabaseQueryException
  *
  * @since: 1.0.0
  */
-class UpdateCustomer{
+class UpdateCustomer {
+
+  private static final Logging log = Logger.getLogger(UpdateCustomer)
 
   private CreateCustomerDataSource dataSource
-  private CreateCustomerOutput output
+  private UpdateCustomerOutput output
 
-  UpdateCustomer(CreateCustomerOutput output, CreateCustomerDataSource dataSource){
+  UpdateCustomer(UpdateCustomerOutput output, CreateCustomerDataSource dataSource){
     this.output = output
     this.dataSource = dataSource
   }
@@ -33,19 +37,17 @@ class UpdateCustomer{
       }
       //this exception catching is important to avoid displaying a wrong failure notification
       try {
-        output.customerCreated(customer)
-        //todo here is the exception thrown
-      } catch (Exception ignored) {
-        //quiet output message failed
+        output.customerUpdated(customer)
+      } catch (Exception e) {
+        log.error(e.message)
+        log.error(e.stackTrace.join("\n"))
       }
     } catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)
     } catch(Exception unexpected) {
-      println "-------------------------"
-      println "Unexpected Exception ...."
-      println unexpected.message
-      println unexpected.stackTrace.join("\n")
-      output.failNotification("Could not update customer")
+      log.error(unexpected.message)
+      log.error(unexpected.stackTrace.join("\n"))
+      output.failNotification("Could not update customer.")
     }
   }
 

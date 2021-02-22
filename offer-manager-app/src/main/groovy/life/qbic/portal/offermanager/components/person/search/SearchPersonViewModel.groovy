@@ -1,9 +1,8 @@
 package life.qbic.portal.offermanager.components.person.search
 
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
+
 import life.qbic.datamodel.dtos.general.Person
-import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
+import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
 
 /**
  * View model of the SearchPerson use case
@@ -15,26 +14,27 @@ import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceServi
  */
 class SearchPersonViewModel {
 
-    List<Customer> foundCustomers = new ObservableList(new ArrayList<Customer>(customerService.iterator().toList()))
+    ObservableList availablePersons
 
-    private final CustomerResourceService customerService
+    private final PersonResourceService personService
 
     Optional<Person> selectedPerson
 
-    SearchPersonViewModel(CustomerResourceService customerService) {
-        this.customerService = customerService
+    SearchPersonViewModel(PersonResourceService personService) {
+        this.personService = personService
+        this.availablePersons = new ObservableList(new ArrayList<Person>())
         fetchPersonData()
         subscribeToResources()
     }
 
     private void fetchPersonData() {
-        this.foundCustomers.clear()
-        this.foundCustomers.addAll(customerService.iterator())
+        availablePersons.clear()
+        availablePersons.addAll(personService.iterator())
     }
 
     private void subscribeToResources() {
-        this.customerService.subscribe((Customer customer) -> {
-            this.foundCustomers.add(customer)
+        this.personService.subscribe((Person customer) -> {
+            this.fetchPersonData()
         })
     }
 
