@@ -366,7 +366,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
       try {
         int newCustomerId = createNewCustomer(it, updatedCustomer)
         List<Affiliation> allAffiliations = fetchAffiliationsForPerson(oldCustomerId)
-        allAffiliations.addAll(updatedCustomer.affiliations)
         storeAffiliation(it, newCustomerId, allAffiliations)
         connection.commit()
           
