@@ -308,11 +308,10 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
     List<Affiliation> newAffiliations = new ArrayList<>();
     
     // find added affiliations - could use set operations here, but we have lists...
-    for(Affiliation affiliation : updatedAffiliations) {
-      if(!existingAffiliations.contains(affiliation)) {
-        newAffiliations.add(affiliation)
-      }
+    updatedAffiliations.each {
+      if(!existingAffiliations.contains(it)) newAffiliations.add(it)
     }
+
     if(newAffiliations.isEmpty()) {
       throw new DatabaseQueryException("Customer already has provided affiliation(s), no update was necessary.")
     }
@@ -366,10 +365,9 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
       try {
         int newCustomerId = createNewCustomer(it, updatedCustomer)
         List<Affiliation> allAffiliations = fetchAffiliationsForPerson(oldCustomerId)
-        for(Affiliation affiliation : updatedCustomer.affiliations) {
-          if(!allAffiliations.contains(affiliation)) {
-            allAffiliations.add(affiliation)
-          }
+
+        updatedCustomer.affiliations.each {
+          if(!allAffiliations.contains(it)) allAffiliations.add(it)
         }
         storeAffiliation(it, newCustomerId, allAffiliations)
         connection.commit()
