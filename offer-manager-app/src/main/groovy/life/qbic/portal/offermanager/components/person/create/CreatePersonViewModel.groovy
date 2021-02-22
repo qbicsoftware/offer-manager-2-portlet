@@ -51,8 +51,7 @@ class CreatePersonViewModel {
         availableAffiliations = new ObservableList(new ArrayList<Affiliation>(affiliationService.iterator().collect()))
 
         this.affiliationService.subscribe({
-            this.availableAffiliations.clear()
-            this.availableAffiliations.addAll(affiliationService.iterator().collect())
+            this.availableAffiliations.add(it)
         })
     }
 }

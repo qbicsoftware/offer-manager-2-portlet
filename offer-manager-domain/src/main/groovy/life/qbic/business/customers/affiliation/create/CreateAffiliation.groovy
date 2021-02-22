@@ -39,7 +39,9 @@ class CreateAffiliation implements CreateAffiliationInput{
             log.info("Successfully added new affiliation " + affiliation.organisation)
         } catch (DatabaseQueryException queryException) {
             output.failNotification("Could not create affiliation [$affiliation].\n" + queryException.message)
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            log.error(e.message)
+            log.error(e.stackTrace.join("\n"))
             output.failNotification("Could not create new affiliation $affiliation")
         }
     }
