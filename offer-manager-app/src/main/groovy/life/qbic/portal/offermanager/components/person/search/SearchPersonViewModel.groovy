@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager.components.person.search
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.general.Person
+import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
 
 /**
@@ -20,9 +21,11 @@ class SearchPersonViewModel {
     private final CustomerResourceService customerService
 
     Optional<Person> selectedPerson
+    EventEmitter<Person> personEvent
 
-    SearchPersonViewModel(CustomerResourceService customerService) {
+    SearchPersonViewModel(CustomerResourceService customerService, EventEmitter<Person> personEvent) {
         this.customerService = customerService
+        this.personEvent = personEvent
         fetchPersonData()
         subscribeToResources()
     }

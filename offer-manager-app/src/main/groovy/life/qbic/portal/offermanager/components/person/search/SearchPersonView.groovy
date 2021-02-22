@@ -16,9 +16,8 @@ import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.GridUtils
-import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
+
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
-import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
 
 /**
  * Constructs the UI for the SearchPerson use case
@@ -31,7 +30,6 @@ import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
 class SearchPersonView extends FormLayout{
 
     private final SearchPersonViewModel viewModel
-    private final PersonUpdateService personUpdateService
     private final CreatePersonView updatePersonView
 
     Grid<Person> customerGrid
@@ -40,9 +38,8 @@ class SearchPersonView extends FormLayout{
     VerticalLayout detailsLayout
     VerticalLayout searchPersonLayout
 
-    SearchPersonView(SearchPersonViewModel searchPersonViewModel, PersonUpdateService personUpdateService, CreatePersonView updatePersonView) {
+    SearchPersonView(SearchPersonViewModel searchPersonViewModel, CreatePersonView updatePersonView) {
         this.viewModel = searchPersonViewModel
-        this.personUpdateService = personUpdateService
         this.updatePersonView = updatePersonView
 
 
@@ -98,7 +95,7 @@ class SearchPersonView extends FormLayout{
         })
 
         updateCustomer.addClickListener({
-            personUpdateService.addToResource(viewModel.selectedPerson)
+            viewModel.personEvent.emit(viewModel.selectedPerson)
             searchPersonLayout.setVisible(false)
             updatePersonView.setVisible(true)
         })

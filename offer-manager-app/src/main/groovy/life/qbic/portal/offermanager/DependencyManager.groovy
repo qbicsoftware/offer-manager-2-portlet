@@ -6,6 +6,9 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.business.customers.affiliation.create.CreateAffiliation
 import life.qbic.business.customers.create.CreateCustomer
 import life.qbic.business.offers.create.CreateOffer
+import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.general.Person
+import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
@@ -16,11 +19,11 @@ import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceServi
 import life.qbic.portal.offermanager.dataresources.database.DatabaseSession
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
-import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
+
 import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
-import life.qbic.portal.offermanager.dataresources.offers.OfferUpdateService
+
 import life.qbic.portal.offermanager.dataresources.offers.OverviewService
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationController
 import life.qbic.portal.offermanager.components.person.create.CreatePersonController
@@ -98,13 +101,13 @@ class DependencyManager {
     private ConfigurationManager configurationManager
 
     private OverviewService overviewService
-    private OfferUpdateService offerUpdateService
+    private EventEmitter<Offer> offerUpdateEvent
     private CustomerResourceService customerResourceService
     private AffiliationResourcesService affiliationService
     private OfferResourcesService offerService
     private ProductsResourcesService productsResourcesService
     private ProjectManagerResourceService managerResourceService
-    private PersonUpdateService personUpdateService
+    private EventEmitter<Person> personUpdateEvent
 
     /**
      * Public constructor.
@@ -121,6 +124,7 @@ class DependencyManager {
         // The ORDER in which the methods below are called MUST NOT CHANGE
         setupDbConnections()
         setupServices()
+        setupEventEmitter()
         setupViewModels()
         setupPresenters()
         setupUseCaseInteractors()
@@ -156,12 +160,15 @@ class DependencyManager {
     private void setupServices() {
         this.offerService = new OfferResourcesService()
         this.overviewService = new OverviewService(offerDbConnector, offerService)
-        this.offerUpdateService = new OfferUpdateService()
         this.managerResourceService = new ProjectManagerResourceService(customerDbConnector)
         this.productsResourcesService = new ProductsResourcesService(productsDbConnector)
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
         this.customerResourceService = new CustomerResourceService(customerDbConnector)
-        this.personUpdateService = new PersonUpdateService()
+    }
+
+    private void setupEventEmitter(){
+        this.offerUpdateEvent = new EventEmitter<Offer>()
+        this.personUpdateEvent = new EventEmitter<Person>()
     }
 
     private void setupViewModels() {
@@ -190,7 +197,7 @@ class DependencyManager {
                     customerResourceService,
                     managerResourceService,
                     affiliationService,
-                    personUpdateService)
+                    personUpdateEvent)
             updatePersonViewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
 
         } catch (Exception e) {
@@ -222,7 +229,7 @@ class DependencyManager {
                     customerResourceService,
                     managerResourceService,
                     productsResourcesService,
-                    offerUpdateService)
+                    offerUpdateEvent)
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
             throw e
@@ -230,13 +237,13 @@ class DependencyManager {
 
         try {
             this.offerOverviewModel = new OfferOverviewModel(overviewService, offerDbConnector,
-                    viewModel)
+                    viewModel, offerUpdateEvent)
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
         }
 
         try{
-            this.searchPersonViewModel = new SearchPersonViewModel(customerResourceService)
+            this.searchPersonViewModel = new SearchPersonViewModel(customerResourceService, personUpdateEvent)
         }catch (Exception e) {
             log.error("Unexpected excpetion during ${SearchPersonViewModel.getSimpleName()} view model setup.", e)
         }
@@ -386,7 +393,7 @@ class DependencyManager {
 
         OfferOverviewView overviewView
         try {
-            overviewView = new OfferOverviewView(offerOverviewModel, offerUpdateService)
+            overviewView = new OfferOverviewView(offerOverviewModel)
         } catch (Exception e) {
             log.error("Could not create ${OfferOverviewView.getSimpleName()} view.", e)
             throw e
@@ -394,7 +401,7 @@ class DependencyManager {
 
         SearchPersonView searchPersonView
         try{
-            searchPersonView = new SearchPersonView(searchPersonViewModel, personUpdateService, updatePersonView)
+            searchPersonView = new SearchPersonView(searchPersonViewModel, updatePersonView)
         } catch (Exception e) {
             log.error("Could not create ${SearchPersonView.getSimpleName()} view.", e)
             throw e
