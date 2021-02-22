@@ -124,6 +124,7 @@ class DependencyManager {
         // The ORDER in which the methods below are called MUST NOT CHANGE
         setupDbConnections()
         setupServices()
+        setupEventEmitter()
         setupViewModels()
         setupPresenters()
         setupUseCaseInteractors()
@@ -159,11 +160,14 @@ class DependencyManager {
     private void setupServices() {
         this.offerService = new OfferResourcesService()
         this.overviewService = new OverviewService(offerDbConnector, offerService)
-        this.offerUpdateEvent = new EventEmitter<Offer>()
         this.managerResourceService = new ProjectManagerResourceService(customerDbConnector)
         this.productsResourcesService = new ProductsResourcesService(productsDbConnector)
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
         this.customerResourceService = new CustomerResourceService(customerDbConnector)
+    }
+
+    private void setupEventEmitter(){
+        this.offerUpdateEvent = new EventEmitter<Offer>()
         this.personUpdateEvent = new EventEmitter<Person>()
     }
 
