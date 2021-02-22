@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager.components.person.search
 
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
+import life.qbic.portal.offermanager.communication.EventEmitter
 
 /**
  * View model of the SearchPerson use case
@@ -19,10 +20,12 @@ class SearchPersonViewModel {
     private final PersonResourceService personService
 
     Optional<Person> selectedPerson
+    EventEmitter<Person> personEvent
 
-    SearchPersonViewModel(PersonResourceService personService) {
+    SearchPersonViewModel(PersonResourceService personService,
+            EventEmitter<Person> personEvent) {
         this.personService = personService
-        this.availablePersons = new ObservableList(new ArrayList<Person>())
+        this.personEvent = personEvent
         fetchPersonData()
         subscribeToResources()
     }

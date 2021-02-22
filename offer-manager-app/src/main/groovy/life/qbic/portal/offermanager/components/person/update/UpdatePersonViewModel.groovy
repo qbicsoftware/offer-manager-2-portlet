@@ -2,12 +2,13 @@ package life.qbic.portal.offermanager.components.person.update
 
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
-import life.qbic.portal.offermanager.communication.Subscription
+
+import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
+import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
-import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
-import life.qbic.portal.offermanager.dataresources.persons.PersonUpdateService
+
 import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 
 /**
@@ -17,7 +18,7 @@ import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourc
  * customer update event.
  *
  * With respect to its parent class, it contains an additional service and subscribes to an
- * instance of {@link life.qbic.portal.offermanager.dataresources.offers.OfferUpdateService}'s event emitter property.
+ * instance of {@link life.qbic.portal.offermanager.communication.EventEmitter}'s emitter property.
  *
  * Everytime such an event is emitted, it loads the event data into its properties.
  *
@@ -26,17 +27,17 @@ import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourc
  */
 class UpdatePersonViewModel extends CreatePersonViewModel{
 
-    final private PersonUpdateService customerUpdateService
+    final private EventEmitter<Person> customerUpdate
 
     UpdatePersonViewModel(CustomerResourceService customerService,
-                          ProjectManagerResourceService managerResourceService,
-                          AffiliationResourcesService affiliationService,
-                          PersonUpdateService customerUpdateService,
-                          PersonResourceService personResourceService) {
+            ProjectManagerResourceService managerResourceService,
+            AffiliationResourcesService affiliationService,
+            EventEmitter<Person> customerUpdate,
+            PersonResourceService personResourceService) {
         super(customerService, managerResourceService, affiliationService, personResourceService)
-        this.customerUpdateService = customerUpdateService
+        this.customerUpdate = customerUpdate
 
-        this.customerUpdateService.subscribe((Person person) -> {
+        this.customerUpdate.register((Person person) -> {
             loadData(person)
             setOutdatedCustomer((Customer) person)
         })
