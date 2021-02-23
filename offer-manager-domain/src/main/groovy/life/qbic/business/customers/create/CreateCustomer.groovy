@@ -2,6 +2,8 @@ package life.qbic.business.customers.create
 
 import life.qbic.business.customers.update.UpdateCustomer
 import life.qbic.business.customers.update.UpdateCustomerOutput
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import life.qbic.datamodel.dtos.business.Customer
 
 import life.qbic.business.exceptions.DatabaseQueryException
@@ -20,6 +22,8 @@ class CreateCustomer implements CreateCustomerInput, UpdateCustomerOutput {
   private CreateCustomerOutput output
   private UpdateCustomer updateCustomer
 
+  private final Logging log = Logger.getLogger(CreateCustomer.class)
+
 
   CreateCustomer(CreateCustomerOutput output, CreateCustomerDataSource dataSource){
     this.output = output
@@ -34,7 +38,7 @@ class CreateCustomer implements CreateCustomerInput, UpdateCustomerOutput {
       try {
         output.customerCreated(customer)
       } catch (Exception ignored) {
-        //quiet output message failed
+        log.error(ignored.stackTrace.toString())
       }
     } catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)
@@ -60,6 +64,6 @@ class CreateCustomer implements CreateCustomerInput, UpdateCustomerOutput {
 
   @Override
   void failNotification(String notification) {
-    output.failNotification("Could not update customer")
+    output.failNotification(notification)
   }
 }
