@@ -22,12 +22,12 @@ import life.qbic.business.offers.identifier.OfferId
 class UpdateOffer{
 
     private final CreateOfferDataSource dataSource
-    private final CreateOfferOutput output
+    private final UpdateOfferOutput output
     private final Logging log = Logger.getLogger(this.class)
     private Offer offerToUpdate
 
 
-    UpdateOffer(CreateOfferDataSource dataSource, CreateOfferOutput output) {
+    UpdateOffer(CreateOfferDataSource dataSource, UpdateOfferOutput output) {
         this.dataSource = dataSource
         this.output = output
     }
@@ -63,7 +63,7 @@ class UpdateOffer{
         try {
             final offer = Converter.convertOfferToDTO(offerToUpdate)
             dataSource.store(offer)
-            output.createdNewOffer(Converter.convertOfferToDTO(offerToUpdate))
+            output.updatedNewOffer(Converter.convertOfferToDTO(offerToUpdate))
         } catch (Exception e) {
             log.error(e.message)
             log.error(e.stackTrace.join("\n"))

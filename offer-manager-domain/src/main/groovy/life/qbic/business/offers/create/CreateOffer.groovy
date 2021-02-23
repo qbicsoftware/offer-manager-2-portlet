@@ -6,6 +6,7 @@ import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
 import life.qbic.business.offers.identifier.Version
+import life.qbic.business.offers.update.UpdateOfferOutput
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
@@ -21,7 +22,7 @@ import life.qbic.business.exceptions.DatabaseQueryException
  * @since: 1.0.0
  * @author: Tobias Koch
  */
-class CreateOffer implements CreateOfferInput, CalculatePrice{
+class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput{
 
     private CreateOfferDataSource dataSource
     private CreateOfferOutput output
@@ -30,7 +31,7 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
     CreateOffer(CreateOfferDataSource dataSource, CreateOfferOutput output){
         this.dataSource = dataSource
         this.output = output
-        updateOffer = new UpdateOffer(dataSource,output)
+        updateOffer = new UpdateOffer(dataSource,this)
     }
 
     @Override
@@ -96,5 +97,15 @@ class CreateOffer implements CreateOfferInput, CalculatePrice{
                 offer.getTaxCosts(),
                 offer.getOverheadSum(),
                 offer.getTotalCosts())
+    }
+
+    @Override
+    void updatedNewOffer(Offer createdOffer) {
+        output.createdNewOffer(createdOffer)
+    }
+
+    @Override
+    void failNotification(String notification) {
+        output.failNotification(notification)
     }
 }
