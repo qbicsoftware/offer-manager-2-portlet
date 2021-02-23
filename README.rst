@@ -62,6 +62,17 @@ mvn clean jetty:run
 
 open the application through localhost:8080
 
+System setup
+------------
+
+In order to enable the offer manager app to convert an offer as PDF, you need to define a
+environment variable in the system's environment accessible by the application.
+
+The app will look for an environment variable `CHROMIUM_ALIAS`, so make sure to have set it.
+
+In the example of the local test environment, a simple `export CHROMIUM_EXECUTABLE=chromium` is
+sufficient.
+
 
 Credits
 -------

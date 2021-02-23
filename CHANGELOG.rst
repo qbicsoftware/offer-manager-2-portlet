@@ -39,6 +39,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Addressed `#282 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/282>`_
 * Addressed `#295 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/295>`_
 * Addressed `#309 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/309>`_
+* Added support to configure the chromium browser executable. An environment variable
+`CHROMIUM_ALIAS` has been introduced that can be set to define the chromium executable in the
+deployment system of the application. Addresses `#336 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/336>`_
 
 **Fixed**
 
