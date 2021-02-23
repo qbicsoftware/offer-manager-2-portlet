@@ -15,6 +15,7 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
+import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.business.offers.Currency
@@ -35,6 +36,7 @@ import life.qbic.portal.offermanager.components.offer.create.ProductItemViewMode
  * @since: 0.1.0
  *
  */
+@Log4j2
 class OfferOverviewView extends VerticalLayout{
 
     private final CreateOfferViewModel createOfferViewModel
@@ -53,7 +55,13 @@ class OfferOverviewView extends VerticalLayout{
         initLayout()
         setUpGrid()
         service.subscribe((Offer offer) -> {
-            addOfferResource(offer)
+            try {
+                addOfferResource(offer)
+            } catch (Exception e) {
+                log.error("Unable to create the offer PDF resource.")
+                log.error(e.message)
+                log.error(e.stackTrace.join("\n"))
+            }
         })
     }
 
@@ -198,9 +206,8 @@ class OfferOverviewView extends VerticalLayout{
          */
         removeExistingResources()
         // Then we create a new PDF resource ...
-        final def converter = new OfferToPDFConverter(offer)
-        StreamResource offerResource =
-                new StreamResource((StreamResource.StreamSource res) -> {
+        OfferToPDFConverter converter = new OfferToPDFConverter(offer)
+        StreamResource offerResource = new StreamResource((StreamResource.StreamSource res) -> {
                     return converter.getOfferAsPdf()
                 }, "${offer.identifier.toString()}.pdf")
         // ... and attach it to the download button
