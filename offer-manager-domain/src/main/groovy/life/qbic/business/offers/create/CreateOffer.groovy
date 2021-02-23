@@ -100,7 +100,7 @@ class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput
     }
 
     @Override
-    void updatedNewOffer(Offer createdOffer) {
+    void updatedOffer(Offer createdOffer) {
         output.createdNewOffer(createdOffer)
     }
 

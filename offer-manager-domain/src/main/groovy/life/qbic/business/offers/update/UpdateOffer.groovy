@@ -63,7 +63,7 @@ class UpdateOffer{
         try {
             final offer = Converter.convertOfferToDTO(offerToUpdate)
             dataSource.store(offer)
-            output.updatedNewOffer(Converter.convertOfferToDTO(offerToUpdate))
+            output.updatedOffer(offer)
         } catch (Exception e) {
             log.error(e.message)
             log.error(e.stackTrace.join("\n"))

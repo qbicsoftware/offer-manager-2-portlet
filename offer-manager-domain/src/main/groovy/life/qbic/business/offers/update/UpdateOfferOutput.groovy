@@ -20,5 +20,5 @@ interface UpdateOfferOutput extends UseCaseFailure{
      * @param createdOffer {@link life.qbic.datamodel.dtos.business.Offer}
      * @since 1.0.0
      */
-    void updatedNewOffer(Offer createdOffer)
+    void updatedOffer(Offer createdOffer)
 }
