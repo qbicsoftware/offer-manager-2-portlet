@@ -3,7 +3,7 @@ package life.qbic.portal.portlet.offers.update
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.update.UpdateOffer
-
+import life.qbic.business.offers.update.UpdateOfferOutput
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
@@ -55,7 +55,7 @@ class UpdateOfferSpec extends Specification {
 
     def "Updating an offer is successful"(){
         given:
-        CreateOfferOutput output = Mock(CreateOfferOutput.class)
+        UpdateOfferOutput output = Mock()
         CreateOfferDataSource ds = Stub(CreateOfferDataSource.class)
         UpdateOffer updateOffer = new UpdateOffer(ds,output)
 
@@ -84,12 +84,12 @@ class UpdateOfferSpec extends Specification {
         updateOffer.updateOffer(newOffer)
 
         then:
-        1* output.createdNewOffer(_)
+        1* output.updatedOffer(_)
     }
 
     def "Unchanged offer does not lead to a database entry"(){
         given:
-        CreateOfferOutput output = Mock(CreateOfferOutput.class)
+        UpdateOfferOutput output = Mock()
         CreateOfferDataSource ds = Stub(CreateOfferDataSource.class)
         UpdateOffer updateOffer = new UpdateOffer(ds,output)
 
@@ -116,13 +116,13 @@ class UpdateOfferSpec extends Specification {
         updateOffer.updateOffer(oldOffer)
 
         then:
-        0* output.createdNewOffer(_)
+        0* output.updatedOffer(_)
         1* output.failNotification("An unchanged offer cannot be updated")
     }
 
     def "Increase version the latest version of an offer"(){
         given:
-        CreateOfferOutput output = Mock(CreateOfferOutput)
+        UpdateOfferOutput output = Mock()
         CreateOfferDataSource ds = Mock(CreateOfferDataSource)
         UpdateOffer updateOffer = new UpdateOffer(ds,output)
 
@@ -150,7 +150,7 @@ class UpdateOfferSpec extends Specification {
         updateOffer.updateOffer(newOffer)
 
         then:
-        1* output.createdNewOffer(_) >> {arguments ->
+        1* output.updatedOffer(_) >> {arguments ->
             final Offer offer = arguments.get(0)
             assert offer.identifier.version.toString() == "4"
         }
