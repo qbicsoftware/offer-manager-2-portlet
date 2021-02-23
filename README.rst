@@ -70,7 +70,7 @@ environment variable in the system's environment accessible by the application.
 
 The app will look for an environment variable `CHROMIUM_ALIAS`, so make sure to have set it.
 
-In the example of the local test environment, a simple `export CHROMIUM_ALIAS=chromium` is
+In the example of the local test environment, a simple `export CHROMIUM_EXECUTABLE=chromium` is
 sufficient.
 
 
