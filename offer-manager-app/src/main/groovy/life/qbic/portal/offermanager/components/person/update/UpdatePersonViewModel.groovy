@@ -2,6 +2,8 @@ package life.qbic.portal.offermanager.components.person.update
 
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
+
+import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
@@ -27,22 +29,25 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
 
     final private EventEmitter<Person> customerUpdate
 
-    UpdatePersonViewModel(CustomerResourceService customerService, ProjectManagerResourceService managerResourceService, AffiliationResourcesService affiliationService
-                          , EventEmitter<Person> customerUpdate) {
-        super(customerService, managerResourceService, affiliationService)
+    UpdatePersonViewModel(CustomerResourceService customerService,
+            ProjectManagerResourceService managerResourceService,
+            AffiliationResourcesService affiliationService,
+            EventEmitter<Person> customerUpdate,
+            PersonResourceService personResourceService) {
+        super(customerService, managerResourceService, affiliationService, personResourceService)
         this.customerUpdate = customerUpdate
 
         this.customerUpdate.register((Person person) -> {
             loadData(person)
-            this.outdatedCustomer = (Customer) person
+            setOutdatedCustomer((Customer) person)
         })
     }
 
     private void loadData(Person person) {
-        this.academicTitle = person.title
-        this.firstName = person.firstName
-        this.lastName = person.lastName
-        this.email = person.emailAddress
+        super.academicTitle = person.title
+        super.firstName = person.firstName
+        super.lastName = person.lastName
+        super.email = person.emailAddress
         this.affiliation = person.affiliations.first()
     }
 }
