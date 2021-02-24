@@ -77,8 +77,8 @@ class CreatePersonPresenter implements CreateCustomerOutput{
         try{
             if (createCustomerViewModel.outdatedCustomer) createCustomerViewModel.personResourceService.removeFromResource(createCustomerViewModel.outdatedCustomer)
         }catch(Exception e){
-            println e.message
-            println e.stackTrace.join("\n")
+            log.error e.message
+            log.error e.stackTrace.join("\n")
         }
 
         createCustomerViewModel.customerService.addToResource(customer)
