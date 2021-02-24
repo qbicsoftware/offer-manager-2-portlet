@@ -236,7 +236,8 @@ class CreatePersonView extends VerticalLayout {
     private void refreshAddressAdditions() {
         ListDataProvider<Affiliation> dataProvider = this.addressAdditionComboBox.dataProvider as ListDataProvider<Affiliation>
         dataProvider.clearFilters()
-        dataProvider.addFilterByValue({it.organisation},createCustomerViewModel.affiliation.organisation)
+        dataProvider.addFilterByValue({it.organisation },
+                createCustomerViewModel.affiliation?.organisation)
         dataProvider.setSortOrder({it.addressAddition}, SortDirection.ASCENDING)
     }
     /**
