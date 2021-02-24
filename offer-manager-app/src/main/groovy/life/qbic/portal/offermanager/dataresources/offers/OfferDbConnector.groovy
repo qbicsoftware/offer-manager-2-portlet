@@ -34,10 +34,10 @@ class OfferDbConnector implements CreateOfferDataSource{
 
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (offerId, " +
             "creationDate, expirationDate, customerId, projectManagerId, projectTitle, " +
-            "projectDescription, totalPrice, customerAffiliationId, vat, netPrice, overheads)"
+            "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads)"
 
     private static final String OFFER_SELECT_QUERY = "SELECT offerId, creationDate, expirationDate, customerId, projectManagerId, projectTitle," +
-                                                        "projectDescription, totalPrice, customerAffiliationId, vat, netPrice, overheads FROM offer"
+                                                        "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads FROM offer"
 
 
     OfferDbConnector(ConnectionProvider connectionProvider, CustomerDbConnector customerDbConnector, ProductsDbConnector productsDbConnector){
@@ -127,7 +127,7 @@ class OfferDbConnector implements CreateOfferDataSource{
             preparedStatement.setInt(4, customerId)
             preparedStatement.setInt(5, projectManagerId)
             preparedStatement.setString(6, offer.projectTitle)
-            preparedStatement.setString(7, offer.projectDescription)
+            preparedStatement.setString(7, offer.projectObjective)
             preparedStatement.setDouble(8, offer.totalPrice)
             preparedStatement.setInt(9, affiliationId)
             preparedStatement.setDouble(10, offer.taxes)
@@ -218,7 +218,7 @@ class OfferDbConnector implements CreateOfferDataSource{
                 Load general offer info
                  */
                 def projectTitle = resultSet.getString("projectTitle")
-                def projectDescription = resultSet.getString("projectDescription")
+                def projectObjective = resultSet.getString("projectObjective")
                 def totalCosts = resultSet.getDouble("totalPrice")
                 def vat = resultSet.getDouble("vat")
                 def overheads = resultSet.getDouble("overheads")
@@ -233,7 +233,7 @@ class OfferDbConnector implements CreateOfferDataSource{
                         customer,
                         projectManager,
                         projectTitle,
-                        projectDescription,
+                        projectObjective,
                         selectedAffiliation)
                         .modificationDate(creationDate)
                         .expirationDate(expirationDate)
