@@ -8,7 +8,7 @@ import life.qbic.datamodel.dtos.business.Offer
  *
  * After updating an offer the use case can e.g. inform implementing classes about the event through the listed methods
  *
- * @since: 1.0.0
+ * @since 1.0.0
  *
  */
 interface UpdateOfferOutput extends UseCaseFailure{
