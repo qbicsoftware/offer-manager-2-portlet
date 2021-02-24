@@ -100,7 +100,7 @@ class ProjectInformationView extends VerticalLayout {
                     String newValue = it.newValue as String
                     projectTitle.value = newValue ?: projectTitle.emptyValue
                     break
-                case "projectObjective'":
+                case "projectObjective":
                     String newValue = it.newValue as String
                     projectObjective.value = newValue ?: projectObjective.emptyValue
                     break
