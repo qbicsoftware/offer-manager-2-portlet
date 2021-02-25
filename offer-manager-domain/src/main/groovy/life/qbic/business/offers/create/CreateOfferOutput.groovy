@@ -39,5 +39,6 @@ interface CreateOfferOutput extends UseCaseFailure {
    * @param totalPrice The total price for the requested services, includes taxes and overheads
    * @since 1.0.0
    */
+  //ToDo Deprecate this method once the FetchOffer Use Case is implemented
   void calculatedPrice(double netPrice, double taxes, double overheads, double totalPrice)
 }

@@ -90,6 +90,7 @@ class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput
     }
 
     @Override
+    //ToDo Deprecate this Method once the Fetch Offer Use Case is implemented
     void calculatePrice(List<ProductItem> items, Affiliation affiliation) {
         life.qbic.business.offers.Offer offer = Converter.buildOfferForCostCalculation(items, affiliation)
         output.calculatedPrice(
