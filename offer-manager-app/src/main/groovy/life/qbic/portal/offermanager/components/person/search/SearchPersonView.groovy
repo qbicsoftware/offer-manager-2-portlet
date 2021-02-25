@@ -78,7 +78,6 @@ class SearchPersonView extends FormLayout{
         this.addComponents(searchPersonLayout,updatePersonView)
         this.setMargin(false)
         updatePersonView.setVisible(false)
-
     }
 
     private void addListeners(){
@@ -143,8 +142,9 @@ class SearchPersonView extends FormLayout{
      * This method adds the retrieved Customer Information to the Customer grid
      */
     private ListDataProvider setupCustomerDataProvider() {
-        def customerListDataProvider = new ListDataProvider<>(viewModel.getFoundCustomers())
+        def customerListDataProvider = new ListDataProvider<>(viewModel.getAvailablePersons())
         this.customerGrid.setDataProvider(customerListDataProvider)
+
         return customerListDataProvider
     }
 
