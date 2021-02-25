@@ -4,6 +4,18 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.0.0-alpha3
+--------------
+
+**Added**
+
+**Fixed**
+
+* Update the agreement section of the offer (`#329 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/329>`_)
+
+**Dependencies**
+
+**Deprecated**
 
 1.0.0-SNAPSHOT (2020-11-09)
 ----------------------------------------------
