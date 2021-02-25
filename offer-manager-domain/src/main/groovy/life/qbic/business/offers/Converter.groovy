@@ -40,7 +40,7 @@ class Converter {
                 .expirationDate(offer.expirationDate)
                 .build()
     }
-
+    //ToDo Deprecate this method once the FetchOffer Use Case is Implemented
     static Offer buildOfferForCostCalculation(List<ProductItem> items,
                                               Affiliation affiliation) {
         final def dummyCustomer = new Customer.Builder("Nobody", "Nobody",
@@ -68,5 +68,19 @@ class Converter {
                 id.getProjectPart().value,
                 id.getRandomPart().value,
                 id.getVersion().value)
+    }
+
+    static life.qbic.business.offers.Offer convertDTOToOffer(life.qbic.datamodel.dtos.business.Offer offer) {
+        new Offer.Builder(
+                offer.customer,
+                offer.projectManager,
+                offer.projectTitle,
+                offer.projectDescription,
+                offer.items,
+                offer.selectedCustomerAffiliation)
+                .identifier(buildOfferId(offer.identifier))
+                //ToDo Is this the correct mapping?
+                .creationDate(offer.modificationDate)
+                .build()
     }
 }
