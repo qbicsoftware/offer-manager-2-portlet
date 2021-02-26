@@ -11,7 +11,7 @@ import life.qbic.datamodel.dtos.business.Offer
 interface FetchOfferOutput extends UseCaseFailure {
 
   /**
-   * Confirms the retrieval of the offer associated with the provided OfferId by providing
+   * Returns the offer associated with the provided OfferId 
    * the fetched Offer
    *
    * @param fetchedOffer {@link life.qbic.datamodel.dtos.business.Offer}
