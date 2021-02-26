@@ -209,7 +209,6 @@ class AppView extends VerticalLayout {
                 hideAllFeatureViews()
                 setIcons()
                 overviewView.setVisible(true)
-                overviewView.setEnabled(true)
                 setButtonActive(this.overviewBtn)
             })
             this.createOfferBtn.addClickListener(listener -> {
