@@ -9,6 +9,8 @@ import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
+import life.qbic.portal.offermanager.security.Role
+import life.qbic.portal.offermanager.security.RoleService
 
 /**
  * Class which connects the view elements with the ViewModel and the Controller
@@ -169,6 +171,13 @@ class AppView extends VerticalLayout {
             setupListeners()
             setIcons()
             setDefault()
+            enableFeatures()
+        }
+
+        private void enableFeatures() {
+            createOfferBtn.setEnabled(portletViewModel.createOfferFeatureEnabled)
+            createCustomerBtn.setEnabled(portletViewModel.createCustomerFeatureEnabled)
+            searchPersonBtn.setEnabled(portletViewModel.searchCustomerFeatureEnabled)
         }
 
         private void setDefault() {
@@ -200,6 +209,7 @@ class AppView extends VerticalLayout {
                 hideAllFeatureViews()
                 setIcons()
                 overviewView.setVisible(true)
+                overviewView.setEnabled(true)
                 setButtonActive(this.overviewBtn)
             })
             this.createOfferBtn.addClickListener(listener -> {

@@ -9,6 +9,10 @@ import com.vaadin.ui.VerticalLayout
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 import life.qbic.portal.offermanager.components.StyledNotification
+import life.qbic.portal.offermanager.security.Role
+import life.qbic.portal.offermanager.security.RoleService
+import life.qbic.portal.offermanager.security.local.LocalAdminRoleService
+import life.qbic.portal.offermanager.security.local.LocalManagerRoleService
 
 /**
  * Entry point for the application. This class derives from {@link life.qbic.portal.portlet.QBiCPortletUI}.
@@ -38,7 +42,17 @@ class OfferManagerApp extends QBiCPortletUI {
     }
 
     private void create() {
-        this.dependencyManager = new DependencyManager()
+        Role role = loadAppRole()
+        this.dependencyManager = new DependencyManager(role)
+    }
+
+    private static Role loadAppRole() {
+        RoleService roleService = new LocalAdminRoleService()
+        Optional<Role> userRole = roleService.getRoleForUser("test")
+        if (!userRole.isPresent()) {
+            throw new RuntimeException("Security issue: Can not determine user role.")
+        }
+        return userRole.get()
     }
 
     @Override

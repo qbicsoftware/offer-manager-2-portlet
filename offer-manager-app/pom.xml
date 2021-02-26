@@ -22,6 +22,13 @@
             <groupId>life.qbic</groupId>
             <artifactId>data-model-lib</artifactId>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.liferay.portal/portal-service -->
+        <dependency>
+            <groupId>com.liferay.portal</groupId>
+            <artifactId>portal-service</artifactId>
+            <version>6.2.5</version>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>life.qbic</groupId>
             <artifactId>portal-utils-lib</artifactId>
