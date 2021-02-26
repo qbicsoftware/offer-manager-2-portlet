@@ -2,7 +2,7 @@ package life.qbic.portal.offermanager.components.person.create
 
 import com.vaadin.event.ListenerMethod.MethodException
 import groovy.util.logging.Log4j2
-import life.qbic.business.customers.create.CreatePersonOutput
+import life.qbic.business.persons.create.CreatePersonOutput
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
@@ -45,9 +45,9 @@ class CreatePersonPresenter implements CreatePersonOutput{
         viewModel.failureNotifications.add(notification)
     }
 
-    @Override
+
     @Deprecated
-    void customerCreated(String message) {
+    void personCreated(String message) {
         try {
             viewModel.successNotifications.add(message)
             clearCustomerData()
@@ -62,8 +62,8 @@ class CreatePersonPresenter implements CreatePersonOutput{
         }
     }
 
-    @Override
-    void customerCreated(Person person) {
+
+    void personCreated(Person person) {
         Customer customer = new Customer.Builder(person.firstName,
                 person.lastName,
                 person.emailAddress)

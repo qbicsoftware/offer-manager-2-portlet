@@ -3,8 +3,8 @@ package life.qbic.portal.offermanager
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.business.customers.affiliation.create.CreateAffiliation
-import life.qbic.business.customers.create.CreatePerson
+import life.qbic.business.persons.affiliation.create.CreateAffiliation
+import life.qbic.business.persons.create.CreatePerson
 import life.qbic.business.offers.create.CreateOffer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.general.Person
