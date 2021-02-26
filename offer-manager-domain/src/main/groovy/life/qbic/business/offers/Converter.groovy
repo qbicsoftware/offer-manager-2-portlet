@@ -40,7 +40,6 @@ class Converter {
                 .expirationDate(offer.expirationDate)
                 .build()
     }
-    //ToDo Deprecate this method once the FetchOffer Use Case is Implemented
     static Offer buildOfferForCostCalculation(List<ProductItem> items,
                                               Affiliation affiliation) {
         final def dummyCustomer = new Customer.Builder("Nobody", "Nobody",
