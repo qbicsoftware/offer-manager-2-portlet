@@ -13,6 +13,7 @@ import life.qbic.datamodel.dtos.business.OfferId
  * This Use Case is responsible for correctly returning an Offer from the database.
  * It also triggers all the internal calculation methods associated with the offer entity
  * and returns the filled Offer DTO for further usage
+ *
  * @since: 1.0.0
  */
 class FetchOffer implements FetchOfferInput {
@@ -33,7 +34,7 @@ class FetchOffer implements FetchOfferInput {
             if (foundOffer.isEmpty()) {
                 output.failNotification("Could not find an Offer for the given OfferId $offerId")
             } else {
-                Offer finalOffer = getFilledOffer(foundOffer.get())
+                Offer finalOffer = generateOfferFromSource(foundOffer.get())
                 log.info("Successfully retrieved Offer with Id $offerId")
                 output.fetchedOffer(finalOffer)
             }

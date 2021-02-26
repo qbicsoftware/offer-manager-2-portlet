@@ -31,7 +31,7 @@ interface CreateOfferDataSource {
      */
     void store(Offer offer) throws DatabaseQueryException
 
-    @Deprecated
+
     /**
      * This method will be replaced with the one provided by{@link life.qbic.business.offers.fetch.FetchOfferDataSource}
      * Fetches all versions of one offer id that are stored in the database
@@ -40,7 +40,7 @@ interface CreateOfferDataSource {
      */
     List<OfferId> fetchAllVersionsForOfferId(OfferId id)
 
-    @Deprecated
+    //ToDo Deprecate this method once the FetchOffer Use Case is implemented
     /**
      * This method will be replaced with the one provided by{@link life.qbic.business.offers.fetch.FetchOfferDataSource}
      * Returns the offer content based on the given offer id

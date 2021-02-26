@@ -10,7 +10,7 @@ import life.qbic.datamodel.dtos.business.OfferId
 interface FetchOfferInput {
 
   /**
-   * Saves an offer in a (persistent) datasource.
+   * Retrieves an offer from a (persistent) datasource.
    *
    * Developers shall call this method to pass an OfferId
    * provided from the user in order to trigger the completion
@@ -20,6 +20,7 @@ interface FetchOfferInput {
    *
    * @param offerId {@link life.qbic.datamodel.dtos.business.OfferId}
    * @since 1.0.0
+   *
    */
   void fetchOffer(OfferId offerId)
 

@@ -69,7 +69,6 @@ class FetchOfferSpec extends Specification {
         FetchOfferDataSource ds = Stub(FetchOfferDataSource.class)
         FetchOffer fetchOffer = new FetchOffer(ds, output)
 
-        ds.fetchAllVersionsForOfferId(_ as OfferId) >> [new OfferId("Conserved", "abcd", "1")]
         ds.getOffer(_ as OfferId) >> Optional.of(new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(offerId)
                 .build())
@@ -103,12 +102,10 @@ class FetchOfferSpec extends Specification {
         FetchOfferDataSource ds = Stub(FetchOfferDataSource.class)
         FetchOffer fetchOffer = new FetchOffer(ds, output)
 
-        ds.fetchAllVersionsForOfferId(_ as OfferId) >> [new OfferId("Conserved", "abcd", "1")]
+        when:
         ds.getOffer(_ as OfferId) >> Optional.of(new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(offerId)
                 .build())
-
-        when:
         fetchOffer.fetchOffer(offerId)
 
         then:
