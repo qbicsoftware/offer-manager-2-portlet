@@ -48,7 +48,7 @@ class FetchOffer implements FetchOfferInput {
             output.failNotification("Unexpected error when searching for the Offer associated with the Id $offerId")
         }
     }
-    private static Offer getFilledOffer(Offer offer){
+    private static Offer generateOfferFromSource(Offer offer){
         life.qbic.business.offers.Offer filledOffer = Converter.convertDTOToOffer(offer)
         Offer filledOfferDTO = Converter.convertOfferToDTO(filledOffer)
         return filledOfferDTO
