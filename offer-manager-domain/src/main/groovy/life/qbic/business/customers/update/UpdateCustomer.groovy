@@ -1,7 +1,6 @@
 package life.qbic.business.customers.update
 
-import life.qbic.business.customers.create.CreateCustomerDataSource
-import life.qbic.business.customers.create.CreateCustomerOutput
+import life.qbic.business.customers.create.CreatePersonDataSource
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.datamodel.dtos.business.Customer
@@ -18,22 +17,22 @@ class UpdateCustomer {
 
   private static final Logging log = Logger.getLogger(UpdateCustomer)
 
-  private CreateCustomerDataSource dataSource
+  private CreatePersonDataSource dataSource
   private UpdateCustomerOutput output
 
-  UpdateCustomer(UpdateCustomerOutput output, CreateCustomerDataSource dataSource){
+  UpdateCustomer(UpdateCustomerOutput output, CreatePersonDataSource dataSource){
     this.output = output
     this.dataSource = dataSource
   }
 
   void updateCustomer(int customerId, Customer customer) {
-    Customer existingCustomer = dataSource.getCustomer(customerId)
+    Customer existingCustomer = dataSource.getPerson(customerId)
     boolean customerChanged = hasBasicCustomerDataChanged(existingCustomer, customer)
     try {
       if(customerChanged) {
-        dataSource.updateCustomer(customerId, customer)
+        dataSource.updatePerson(customerId, customer)
       } else {
-        dataSource.updateCustomerAffiliations(customerId, customer.affiliations)
+        dataSource.updatePersonAffiliations(customerId, customer.affiliations)
       }
       //this exception catching is important to avoid displaying a wrong failure notification
       try {

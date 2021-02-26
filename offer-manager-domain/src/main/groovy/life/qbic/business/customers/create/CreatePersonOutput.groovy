@@ -4,13 +4,13 @@ import life.qbic.business.UseCaseFailure
 import life.qbic.datamodel.dtos.general.Person
 
 /**
- * Output interface for the {@link CreateCustomer} use
+ * Output interface for the {@link CreatePerson} use
  * case
  *
  * @since: 1.0.0
  * @author: Tobias Koch
  */
-interface CreateCustomerOutput extends UseCaseFailure {
+interface CreatePersonOutput extends UseCaseFailure {
 
     /**
      * Is called by the use case, when a new customer has been created

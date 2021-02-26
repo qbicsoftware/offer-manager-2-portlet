@@ -4,7 +4,7 @@ import groovy.sql.GroovyRowResult
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.business.customers.search.SearchCustomerDataSource
-import life.qbic.portal.offermanager.dataresources.persons.CustomerDbConnector
+import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
 import spock.lang.Ignore
@@ -50,7 +50,7 @@ class SearchCustomerDataSourceSpec extends Specification{
         ConnectionProvider connectionProvider = Stub (ConnectionProvider, {it.connect() >> connection})
 
         //and: "an implementation of the SearchCustomerDataSource with this connection provider"
-        SearchCustomerDataSource dataSource = new CustomerDbConnector(connectionProvider)
+        SearchCustomerDataSource dataSource = new PersonDbConnector(connectionProvider)
 
         when: "the datasource is tasked with finding a customer with provided first and last name"
         List<Customer> foundCustomers = dataSource.findCustomer(firstName, lastName)

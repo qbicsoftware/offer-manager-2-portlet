@@ -5,7 +5,7 @@ import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.business.customers.create.CreateCustomerInput
+import life.qbic.business.customers.create.CreatePersonInput
 
 /**
  * Controller class adapter from view information into use case input interface
@@ -18,9 +18,9 @@ import life.qbic.business.customers.create.CreateCustomerInput
 @Log4j2
 class CreatePersonController {
 
-    private final CreateCustomerInput useCaseInput
+    private final CreatePersonInput useCaseInput
 
-    CreatePersonController(CreateCustomerInput useCaseInput) {
+    CreatePersonController(CreatePersonInput useCaseInput) {
         this.useCaseInput = useCaseInput
     }
 
@@ -47,7 +47,7 @@ class CreatePersonController {
 
         try {
             Customer customer = new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build()
-            this.useCaseInput.createCustomer(customer)
+            this.useCaseInput.createPerson(customer)
         } catch(Exception ignored) {
             throw new IllegalArgumentException("Could not create customer from provided arguments.")
         }
@@ -75,7 +75,7 @@ class CreatePersonController {
 
         try{
             Customer customer = new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build()
-            this.useCaseInput.updateCustomer(oldEntry,customer)
+            this.useCaseInput.updatePerson(oldEntry,customer)
         }catch(Exception ignored) {
             throw new IllegalArgumentException("Could not update customer from provided arguments.")
         }

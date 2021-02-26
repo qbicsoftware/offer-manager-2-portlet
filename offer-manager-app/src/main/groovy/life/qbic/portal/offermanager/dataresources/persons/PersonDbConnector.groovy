@@ -12,7 +12,7 @@ import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.business.customers.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.customers.affiliation.list.ListAffiliationsDataSource
-import life.qbic.business.customers.create.CreateCustomerDataSource
+import life.qbic.business.customers.create.CreatePersonDataSource
 import life.qbic.business.customers.search.SearchCustomerDataSource
 
 import life.qbic.business.exceptions.DatabaseQueryException
@@ -34,7 +34,7 @@ import java.sql.Statement
  *
  */
 @Log4j2
-class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
+class PersonDbConnector implements CreatePersonDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
   /**
    * A connection to the customer database used to create queries.
@@ -53,7 +53,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
    * @param connection a connection to the customer db
    * @see Connection
    */
-  CustomerDbConnector(ConnectionProvider connectionProvider) {
+  PersonDbConnector(ConnectionProvider connectionProvider) {
     this.connectionProvider = connectionProvider
   }
   
@@ -175,9 +175,9 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
    * @param customer
    */
   @Override
-  void addCustomer(Customer customer) throws DatabaseQueryException {
+  void addPerson(Person person) throws DatabaseQueryException {
     try {
-      if (customerExists(customer)) {
+      if (personExists(person)) {
         throw new DatabaseQueryException("Customer is already in the database.")
       }
       Connection connection = connectionProvider.connect()
@@ -185,8 +185,8 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
 
       connection.withCloseable {it ->
         try {
-          int customerId = createNewCustomer(it, customer)
-          storeAffiliation(it, customerId, customer.affiliations)
+          int customerId = createNewPerson(it, person)
+          storeAffiliation(it, customerId, person.affiliations)
           connection.commit()
         } catch (Exception e) {
           log.error(e.message)
@@ -197,43 +197,43 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
         }
       }
     } catch (DatabaseQueryException ignored) {
-      throw new DatabaseQueryException("The customer could not be created: ${customer.toString()}")
+      throw new DatabaseQueryException("The customer could not be created: ${person.toString()}")
     } catch (Exception e) {
       log.error(e)
       log.error(e.stackTrace.join("\n"))
-      throw new DatabaseQueryException("The customer could not be created: ${customer.toString()}")
+      throw new DatabaseQueryException("The customer could not be created: ${person.toString()}")
     }
   }
 
-  private boolean customerExists(Customer customer) {
+  private boolean personExists(Person person) {
     String query = "SELECT * FROM person WHERE first_name = ? AND last_name = ? AND email = ?"
     Connection connection = connectionProvider.connect()
 
-    def customerAlreadyInDb = false
+    def personAlreadyInDb = false
 
     connection.withCloseable {
       def statement = connection.prepareStatement(query)
-      statement.setString(1, customer.firstName)
-      statement.setString(2, customer.lastName)
-      statement.setString(3, customer.emailAddress)
+      statement.setString(1, person.firstName)
+      statement.setString(2, person.lastName)
+      statement.setString(3, person.emailAddress)
       statement.execute()
       def result = statement.getResultSet()
-      customerAlreadyInDb = result.next()
+      personAlreadyInDb = result.next()
     }
-    return customerAlreadyInDb
+    return personAlreadyInDb
   }
   
-  private static int createNewCustomer(Connection connection, Customer customer) {
+  private static int createNewPerson(Connection connection, Person person) {
     String query = "INSERT INTO person (first_name, last_name, title, email, active) " +
             "VALUES(?, ?, ?, ?, ?)"
 
     List<Integer> generatedKeys = []
 
     def statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
-    statement.setString(1, customer.firstName )
-    statement.setString(2, customer.lastName)
-    statement.setString(3, customer.title.value)
-    statement.setString(4, customer.emailAddress )
+    statement.setString(1, person.firstName )
+    statement.setString(2, person.lastName)
+    statement.setString(3, person.title.value)
+    statement.setString(4, person.emailAddress )
     //a new customer is always active
     statement.setBoolean(5, true)
     statement.execute()
@@ -245,7 +245,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
     return generatedKeys[0]
   }
   
-  private void storeAffiliation(Connection connection, int customerId, List<Affiliation>
+  private void storeAffiliation(Connection connection, int personId, List<Affiliation>
           affiliations) {
     String query = "INSERT INTO person_affiliation (person_id, affiliation_id) " +
             "VALUES(?, ?)"
@@ -253,7 +253,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
     affiliations.each {affiliation ->
       def affiliationId = getAffiliationId(affiliation)
       def statement = connection.prepareStatement(query)
-      statement.setInt(1, customerId)
+      statement.setInt(1, personId)
       statement.setInt(2, affiliationId)
       statement.execute()
     }
@@ -293,11 +293,11 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
   }
   
   @Override
-  void updateCustomerAffiliations(int customerId, List<Affiliation> updatedAffiliations) {
+  void updatePersonAffiliations(int personId, List<Affiliation> updatedAffiliations) {
     List<Affiliation> existingAffiliations = null
     try {
       
-      existingAffiliations = getAffiliationForPersonId(customerId)
+      existingAffiliations = getAffiliationForPersonId(personId)
       
     } catch (Exception e) {
       log.error(e)
@@ -322,7 +322,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
     connection.withCloseable {it ->
       try {
        
-    storeAffiliation(connection, customerId, newAffiliations)
+    storeAffiliation(connection, personId, newAffiliations)
     connection.commit()
     
       } catch (Exception e) {
@@ -335,7 +335,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
     }
   }
 
-  private void changeCustomerActiveFlag(int customerId, boolean active) {
+  private void changePersonActiveFlag(int customerId, boolean active) {
     String query = "UPDATE person SET active = ? WHERE id = ?";
     
     Connection connection = connectionProvider.connect()
@@ -352,9 +352,9 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
    * @inheritDoc
    */
   @Override
-  void updateCustomer(int oldCustomerId, Customer updatedCustomer) {
+  void updatePerson(int oldPersonId, Person updatedPerson) {
 
-    if (!getCustomer(oldCustomerId)) {
+    if (!getPerson(oldPersonId)) {
       throw new DatabaseQueryException("Customer is not in the database and can't be updated.")
     }
             
@@ -363,23 +363,23 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
 
     connection.withCloseable {it ->
       try {
-        int newCustomerId = createNewCustomer(it, updatedCustomer)
-        List<Affiliation> allAffiliations = fetchAffiliationsForPerson(oldCustomerId)
+        int newCustomerId = createNewPerson(it, updatedPerson)
+        List<Affiliation> allAffiliations = fetchAffiliationsForPerson(oldPersonId)
 
-        updatedCustomer.affiliations.each {
+        updatedPerson.affiliations.each {
           if(!allAffiliations.contains(it)) allAffiliations.add(it)
         }
         storeAffiliation(it, newCustomerId, allAffiliations)
         connection.commit()
           
         // if our update is successful we set the old customer inactive
-        changeCustomerActiveFlag(oldCustomerId, false)
+        changePersonActiveFlag(oldPersonId, false)
       } catch (Exception e) {
         log.error(e.message)
         log.error(e.stackTrace.join("\n"))
         connection.rollback()
         connection.close()
-        throw new DatabaseQueryException("The customer could not be updated: ${updatedCustomer.toString()}.")
+        throw new DatabaseQueryException("The customer could not be updated: ${updatedPerson.toString()}.")
       }
     }
   }
@@ -731,7 +731,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDat
   }
 
   @Override
-  Customer getCustomer(int personPrimaryId) {
+  Customer getPerson(int personPrimaryId) {
     String query = CUSTOMER_SELECT_QUERY + " " +"WHERE id=?"
     Connection connection = connectionProvider.connect()
 

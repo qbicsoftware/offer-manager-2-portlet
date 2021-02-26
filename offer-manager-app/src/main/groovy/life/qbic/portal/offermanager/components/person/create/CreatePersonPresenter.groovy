@@ -2,7 +2,7 @@ package life.qbic.portal.offermanager.components.person.create
 
 import com.vaadin.event.ListenerMethod.MethodException
 import groovy.util.logging.Log4j2
-import life.qbic.business.customers.create.CreateCustomerOutput
+import life.qbic.business.customers.create.CreatePersonOutput
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
@@ -17,7 +17,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
  * @since: 1.0.0
  */
 @Log4j2
-class CreatePersonPresenter implements CreateCustomerOutput{
+class CreatePersonPresenter implements CreatePersonOutput{
     private final AppViewModel viewModel
     private final CreatePersonViewModel createCustomerViewModel
 

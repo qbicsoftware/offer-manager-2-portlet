@@ -4,7 +4,7 @@ import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.business.customers.create.CreateCustomerInput
+import life.qbic.business.customers.create.CreatePersonInput
 import life.qbic.portal.offermanager.components.person.create.CreatePersonController
 import spock.lang.Specification
 
@@ -15,7 +15,7 @@ import spock.lang.Specification
  *
  * @since: 1.0.0
  */
-class CreateCustomerControllerSpec extends Specification {
+class CreatePersonControllerSpec extends Specification {
 
 
     def "CreateNewCustomer passes valid customer to use case"() {
@@ -26,12 +26,12 @@ class CreateCustomerControllerSpec extends Specification {
         Affiliation affiliation = new Affiliation.Builder("Aperture", "Destructive way", "007", "Underground").build()
         List<Affiliation> affiliations = [ affiliation ]
 
-        CreateCustomerInput createCustomerInput = Mock()
+        CreatePersonInput createCustomerInput = Mock()
         CreatePersonController controller = new CreatePersonController(createCustomerInput)
         when:
         controller.createNewCustomer(firstName, lastName, title, email, affiliations)
         then:
-        1 * createCustomerInput.createCustomer({Customer customer ->
+        1 * createCustomerInput.createPerson({ Customer customer ->
             customer.firstName == firstName && \
             customer.lastName == lastName && \
             customer.title == academicTitle && \

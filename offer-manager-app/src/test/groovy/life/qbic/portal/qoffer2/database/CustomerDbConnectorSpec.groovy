@@ -2,10 +2,9 @@ package life.qbic.portal.qoffer2.database
 
 import groovy.sql.GroovyRowResult
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.portal.offermanager.dataresources.persons.CustomerDbConnector
+import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
 import spock.lang.Specification
@@ -15,7 +14,7 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 
 /**
- * Adds tests for {@link CustomerDbConnector}
+ * Adds tests for {@link PersonDbConnector}
  *
  * @since: 0.1.0
  *
@@ -47,7 +46,7 @@ class CustomerDbConnectorSpec extends Specification{
         ConnectionProvider connectionProvider = Stub (ConnectionProvider, {it.connect() >> connection})
 
         //and: "an implementation of the SearchCustomerDataSource with this connection provider"
-        CustomerDbConnector dataSource = new CustomerDbConnector(connectionProvider)
+        PersonDbConnector dataSource = new PersonDbConnector(connectionProvider)
 
         when:
         int resultId = dataSource.getPersonId(new Customer.Builder(firstName,lastName,emailAddress).build())
@@ -89,10 +88,10 @@ class CustomerDbConnectorSpec extends Specification{
         ConnectionProvider connectionProvider = Stub (ConnectionProvider, {it.connect() >> connection})
 
         and: "an implementation of the SearchCustomerDataSource with this connection provider"
-        CustomerDbConnector dataSource = new CustomerDbConnector(connectionProvider)
+        PersonDbConnector dataSource = new PersonDbConnector(connectionProvider)
 
         when: "update customer affiliations is called"
-        dataSource.updateCustomerAffiliations(customerId, [new Affiliation.Builder(organization,
+        dataSource.updatePersonAffiliations(customerId, [new Affiliation.Builder(organization,
                 street, postal_code, city).addressAddition(address_addition).country(country).category(category).build()])
 
         then: "no affiliations are updated and a failNotification is thrown"
@@ -137,7 +136,7 @@ class CustomerDbConnectorSpec extends Specification{
         ConnectionProvider connectionProvider = Stub (ConnectionProvider, {it.connect() >> connection})
 
         //and: "an implementation of the SearchCustomerDataSource with this connection provider"
-        CustomerDbConnector dataSource = new CustomerDbConnector(connectionProvider)
+        PersonDbConnector dataSource = new PersonDbConnector(connectionProvider)
 
         when:
         int resultId = dataSource.getAffiliationId(new Affiliation.Builder(organization,street,postal_code,city)
