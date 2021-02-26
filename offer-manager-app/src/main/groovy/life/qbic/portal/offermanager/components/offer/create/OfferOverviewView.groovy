@@ -89,19 +89,19 @@ class OfferOverviewView extends VerticalLayout{
         this.previous = new Button(VaadinIcons.CHEVRON_CIRCLE_LEFT)
         previous.addStyleName(ValoTheme.LABEL_LARGE)
 
-        this.save = new Button(VaadinIcons.SAFE)
+        this.save = new Button("Save Offer", VaadinIcons.CHECK_SQUARE)
         save.addStyleName(ValoTheme.LABEL_LARGE)
 
-        this.downloadOffer = new Button(VaadinIcons.DOWNLOAD)
+        this.downloadOffer = new Button("Download Offer", VaadinIcons.DOWNLOAD)
         downloadOffer.addStyleName(ValoTheme.LABEL_LARGE)
         downloadOffer.setEnabled(false)
 
-
-        HorizontalLayout buttonLayout = new HorizontalLayout(previous,save, downloadOffer)
+        HorizontalLayout offerActionButtons = new HorizontalLayout(save, downloadOffer)
+        HorizontalLayout buttonLayout = new HorizontalLayout(previous, offerActionButtons)
         buttonLayout.setSizeFull()
+
         buttonLayout.setComponentAlignment(previous, Alignment.MIDDLE_LEFT)
-        buttonLayout.setComponentAlignment(save, Alignment.MIDDLE_RIGHT)
-        buttonLayout.setComponentAlignment(downloadOffer, Alignment.MIDDLE_RIGHT)
+        buttonLayout.setComponentAlignment(offerActionButtons, Alignment.MIDDLE_RIGHT)
 
         this.offerOverview = new Panel("Offer Details:")
 
