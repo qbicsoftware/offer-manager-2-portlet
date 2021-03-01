@@ -43,7 +43,7 @@ class LiferayRoleService implements RoleService{
         return determineLiferayRole(userGroupRoles)
     }
 
-    private static List<UserGroupRole> tryToGetLiferayUser(String userId) {
+    private static List<UserGroupRole> determineLiferayUser(String userId) {
         return UserGroupRoleLocalServiceUtil.getUserGroupRoles(Long.parseLong(userId))
     }
 
