@@ -33,7 +33,7 @@ class LiferayRoleService implements RoleService{
         Optional<Role> role = Optional.empty()
         List<UserGroupRole> userGroupRoles
         try {
-            userGroupRoles = tryToGetLiferayUser(userId)
+            userGroupRoles = determineLiferayUser(userId)
         } catch (PortalException e) {
             log.error(String.format("Could not find user with id %s.", userId))
             log.error(e.message)
