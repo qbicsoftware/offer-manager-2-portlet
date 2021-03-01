@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.components.offer.create
 
 import groovy.util.logging.Log4j2
+import life.qbic.business.offers.fetch.FetchOfferInput
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
@@ -24,10 +25,12 @@ class CreateOfferController {
 
     private final CreateOfferInput input
     private final CalculatePrice calculatePrice
+    private final FetchOfferInput fetchOfferInput
 
-    CreateOfferController(CreateOfferInput input, CalculatePrice calculatePrice){
+    CreateOfferController(CreateOfferInput input, FetchOfferInput fetchOfferInput ,CalculatePrice calculatePrice){
         this.input = input
         this.calculatePrice = calculatePrice
+        this.fetchOfferInput = fetchOfferInput
     }
 
     /**
@@ -76,6 +79,14 @@ class CreateOfferController {
             log.error(ignored.stackTrace.join("\n"))
             throw new IllegalArgumentException("Could not calculate price from provided arguments.")
         }
+    }
+    /**
+     * This method calls the Fetch Offer use case with the provided OfferId
+     *
+     * @param offerId The OfferId of the Offer to be retrieved
+     */
+    void fetchOffer(OfferId offerId) {
+        this.fetchOfferInput.fetchOffer(offerId)
     }
 
 }

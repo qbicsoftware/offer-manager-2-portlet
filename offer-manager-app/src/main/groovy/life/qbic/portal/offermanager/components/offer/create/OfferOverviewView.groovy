@@ -46,15 +46,17 @@ class OfferOverviewView extends VerticalLayout{
     Button previous
     Button save
     Button downloadOffer
+    CreateOfferController createOfferController
 
-
-    OfferOverviewView(CreateOfferViewModel viewModel, OfferResourcesService service){
+    OfferOverviewView(CreateOfferViewModel viewModel, CreateOfferController controller, OfferResourcesService service){
         this.createOfferViewModel = viewModel
+        this.createOfferController = controller
         initLayout()
         setUpGrid()
         service.subscribe((Offer offer) -> {
             try {
-                addOfferResource(offer)
+                createOfferController.fetchOffer(offer.identifier)
+                addOfferResource(createOfferViewModel.savedOffer.get())
             } catch (Exception e) {
                 log.error("Unable to create the offer PDF resource.")
                 log.error(e.message)
@@ -204,6 +206,7 @@ class OfferOverviewView extends VerticalLayout{
          */
         removeExistingResources()
         // Then we create a new PDF resource ...
+
         OfferToPDFConverter converter = new OfferToPDFConverter(offer)
         StreamResource offerResource = new StreamResource((StreamResource.StreamSource res) -> {
                     return converter.getOfferAsPdf()
