@@ -5,7 +5,7 @@
     <parent>
         <artifactId>offer-manager</artifactId>
         <groupId>life.qbic</groupId>
-        <version>1.0.0-SNAPSHOT</version>
+        <version>1.0.0-alpha.3-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
     <packaging>war</packaging>
@@ -15,12 +15,19 @@
         <dependency>
             <groupId>life.qbic</groupId>
             <artifactId>offer-manager-domain</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
+            <version>1.0.0-alpha.3-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>life.qbic</groupId>
             <artifactId>data-model-lib</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/com.liferay.portal/portal-service -->
+        <dependency>
+            <groupId>com.liferay.portal</groupId>
+            <artifactId>portal-service</artifactId>
+            <version>6.2.5</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>life.qbic</groupId>

@@ -9,6 +9,11 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Authorization based on user roles. Two new roles have been introduced that represent
+the organisational roles project manager `Role.PROJECT_MANAGER` and offer admin `Role
+.OFFER_ADMIN`. The administrator will provide access to additional app features, such as the
+upcoming service product maintenance interface.
+
 * Introduce Offer retrieval via Fetch Offer Use Case
 
 **Fixed**

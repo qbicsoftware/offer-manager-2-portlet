@@ -49,6 +49,7 @@ import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
 import life.qbic.portal.offermanager.components.AppView
+import life.qbic.portal.offermanager.security.Role
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
 
@@ -64,6 +65,8 @@ import life.qbic.portal.utils.ConfigurationManagerFactory
 
 @Log4j2
 class DependencyManager {
+
+    private final Role userRole
 
     private AppViewModel viewModel
     private CreatePersonViewModel createCustomerViewModel
@@ -129,8 +132,9 @@ class DependencyManager {
      * This constructor creates a dependency manager with all the instances of required classes.
      * It ensures that the {@link #portletView} field is set.
      */
-    DependencyManager() {
+    DependencyManager(Role userRole) {
         configurationManager = ConfigurationManagerFactory.getInstance()
+        this.userRole = userRole
         initializeDependencies()
     }
 
@@ -189,7 +193,7 @@ class DependencyManager {
     private void setupViewModels() {
         // setup view models
         try {
-            this.viewModel = new AppViewModel(affiliationService)
+            this.viewModel = new AppViewModel(affiliationService, this.userRole)
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${AppViewModel.getSimpleName()} view model setup.", e)
             throw e
