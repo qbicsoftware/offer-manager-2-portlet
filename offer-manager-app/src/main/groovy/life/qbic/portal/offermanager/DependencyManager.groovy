@@ -94,7 +94,8 @@ class DependencyManager {
     private CreateAffiliation createAffiliation
     private CreateOffer createOffer
     private CreateOffer updateOffer
-    private FetchOffer fetchOffer
+    private FetchOffer fetchOfferOfferOverview
+    private FetchOffer fetchOfferCreateOffer
 
     private CreatePersonController createCustomerController
     private CreatePersonController updateCustomerController
@@ -338,7 +339,8 @@ class DependencyManager {
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
         this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
         this.updateCustomer = new CreateCustomer(updateCustomerPresenter, customerDbConnector)
-        this.fetchOffer = new FetchOffer(offerDbConnector, offerOverviewPresenter)
+        this.fetchOfferOfferOverview = new FetchOffer(offerDbConnector, offerOverviewPresenter)
+        this.fetchOfferCreateOffer = new FetchOffer(offerDbConnector, createOfferPresenter)
     }
 
     private void setupControllers() {
@@ -367,17 +369,17 @@ class DependencyManager {
             throw e
         }
         try {
-            this.createOfferController = new CreateOfferController(this.createOffer,this.createOffer)
+            this.createOfferController = new CreateOfferController(this.createOffer, this.fetchOfferCreateOffer, this.createOffer)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
         }
         try {
-            this.updateOfferController = new CreateOfferController(this.updateOffer,this.updateOffer)
+            this.updateOfferController = new CreateOfferController(this.updateOffer, this.fetchOfferOfferOverview, this.updateOffer)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
         }
         try {
-            this.offerOverviewController = new OfferOverviewController(this.fetchOffer)
+            this.offerOverviewController = new OfferOverviewController(this.fetchOfferOfferOverview)
         } catch (Exception e) {
             log.error("Unexpected exception during ${OfferOverviewController.getSimpleName()} setup", e)
         }
