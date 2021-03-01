@@ -52,10 +52,8 @@ class CreatePerson implements CreatePersonInput, UpdateCustomerOutput {
 
   @Override
   void updatePerson(Person oldPerson, Person newPerson) {
-    //todo at which point do we distinguish between person and customer? we need to have a concreate instance at one point
-    // and person is abstract
-    int customerId = dataSource.findPerson((Customer) oldPerson).get()
-    updatePerson.updatePerson(customerId,newPerson)
+    int personId = dataSource.findPerson(oldPerson).get()
+    updatePerson.updatePerson(personId,newPerson)
   }
 
   @Override
