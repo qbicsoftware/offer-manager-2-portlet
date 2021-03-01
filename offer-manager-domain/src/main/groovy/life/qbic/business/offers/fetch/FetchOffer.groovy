@@ -32,10 +32,10 @@ class FetchOffer implements FetchOfferInput {
         try {
             Optional<Offer> foundOffer = dataSource.getOffer(offerId)
             if (foundOffer.isEmpty()) {
-                output.failNotification("Could not find an Offer for the given OfferId " + offerId.toString())
+                output.failNotification("Could not find an Offer for the given OfferId ${offerId.toString()}")
             } else {
                 Offer finalOffer = generateOfferFromSource(foundOffer.get())
-                log.info("Successfully retrieved Offer with Id" + offerId.toString())
+                log.info("Successfully retrieved Offer with Id ${offerId.toString()} ")
                 output.fetchedOffer(finalOffer)
             }
         }
@@ -46,7 +46,7 @@ class FetchOffer implements FetchOfferInput {
         catch (Exception e) {
             log.error(e.message)
             log.error(e.stackTrace.join("\n"))
-            output.failNotification("Unexpected error when searching for the Offer associated with the Id " + offerId.toString())
+            output.failNotification("Unexpected error when searching for the Offer associated with the Id ${offerId.toString()}")
         }
     }
     private static Offer generateOfferFromSource(Offer offer){
