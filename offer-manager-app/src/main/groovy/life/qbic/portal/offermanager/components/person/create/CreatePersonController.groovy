@@ -47,8 +47,8 @@ class CreatePersonController {
         }
 
         try {
-            Customer customer = new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build()
-            this.useCaseInput.createPerson(customer)
+            Person person = new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build()
+            this.useCaseInput.createPerson(person)
         } catch(Exception ignored) {
             throw new IllegalArgumentException("Could not create customer from provided arguments.")
         }
@@ -75,8 +75,8 @@ class CreatePersonController {
         }
 
         try{
-            Customer customer = new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build()
-            this.useCaseInput.updatePerson(oldEntry,customer)
+            Person person = new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build()
+            this.useCaseInput.updatePerson(oldEntry,person)
         }catch(Exception ignored) {
             throw new IllegalArgumentException("Could not update customer from provided arguments.")
         }
