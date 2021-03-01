@@ -77,4 +77,5 @@ class CreateOfferController {
             throw new IllegalArgumentException("Could not calculate price from provided arguments.")
         }
     }
+
 }
