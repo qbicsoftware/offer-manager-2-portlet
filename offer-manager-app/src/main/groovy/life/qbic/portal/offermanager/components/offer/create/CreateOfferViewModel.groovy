@@ -50,7 +50,7 @@ class CreateOfferViewModel {
     @Bindable double overheads = 0
     @Bindable double totalPrice = 0
 
-    Optional<Offer> savedOffer
+    Optional<Offer> savedOffer = Optional.empty()
 
     private final CustomerResourceService customerService
     private final ProductsResourcesService productsResourcesService
