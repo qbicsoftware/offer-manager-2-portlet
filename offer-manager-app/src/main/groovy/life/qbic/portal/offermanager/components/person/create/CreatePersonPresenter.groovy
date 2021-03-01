@@ -11,7 +11,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
 /**
  * AppPresenter for the CreatePersonView
  *
- * This presenter handles the output of the CreateCustomer use case and prepares it for the
+ * This presenter handles the output of the createPerson use case and prepares it for the
  * CreatePersonView.
  *
  * @since: 1.0.0
@@ -19,25 +19,25 @@ import life.qbic.portal.offermanager.components.AppViewModel
 @Log4j2
 class CreatePersonPresenter implements CreatePersonOutput{
     private final AppViewModel viewModel
-    private final CreatePersonViewModel createCustomerViewModel
+    private final CreatePersonViewModel createPersonViewModel
 
-    CreatePersonPresenter(AppViewModel viewModel, CreatePersonViewModel createCustomerViewModel) {
+    CreatePersonPresenter(AppViewModel viewModel, CreatePersonViewModel createPersonViewModel) {
         this.viewModel = viewModel
-        this.createCustomerViewModel = createCustomerViewModel
+        this.createPersonViewModel = createPersonViewModel
     }
 
     private void clearPersonData() {
-        createCustomerViewModel.academicTitle = null
-        createCustomerViewModel.firstName = null
-        createCustomerViewModel.lastName = null
-        createCustomerViewModel.email = null
-        createCustomerViewModel.affiliation = null
+        createPersonViewModel.academicTitle = null
+        createPersonViewModel.firstName = null
+        createPersonViewModel.lastName = null
+        createPersonViewModel.email = null
+        createPersonViewModel.affiliation = null
 
-        createCustomerViewModel.academicTitleValid = null
-        createCustomerViewModel.firstNameValid = null
-        createCustomerViewModel.lastNameValid = null
-        createCustomerViewModel.emailValid = null
-        createCustomerViewModel.affiliationValid = null
+        createPersonViewModel.academicTitleValid = null
+        createPersonViewModel.firstNameValid = null
+        createPersonViewModel.lastNameValid = null
+        createPersonViewModel.emailValid = null
+        createPersonViewModel.affiliationValid = null
     }
 
     @Override
@@ -75,15 +75,15 @@ class CreatePersonPresenter implements CreatePersonOutput{
                 .title(person.title)
                 .affiliations(person.affiliations).build()
         try{
-            if (createCustomerViewModel.outdatedPerson) createCustomerViewModel.personResourceService.removeFromResource(createCustomerViewModel.outdatedPerson)
+            if (createPersonViewModel.outdatedPerson) createPersonViewModel.personResourceService.removeFromResource(createPersonViewModel.outdatedPerson)
         }catch(Exception e){
             log.error e.message
             log.error e.stackTrace.join("\n")
         }
 
-        createCustomerViewModel.customerService.addToResource(customer)
-        createCustomerViewModel.managerResourceService.addToResource(manager)
-        createCustomerViewModel.personResourceService.addToResource(person)
+        createPersonViewModel.customerService.addToResource(customer)
+        createPersonViewModel.managerResourceService.addToResource(manager)
+        createPersonViewModel.personResourceService.addToResource(person)
         //reset the view model
         clearPersonData()
 

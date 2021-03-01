@@ -2,7 +2,6 @@ package life.qbic.portal.offermanager.components.person.create
 
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -23,7 +22,7 @@ import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourc
  */
 class CreatePersonViewModel {
     List<String> academicTitles = new ArrayList<>()
-    Customer outdatedPerson
+    Person outdatedPerson
 
     @Bindable String academicTitle
     @Bindable String firstName
