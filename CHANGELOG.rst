@@ -71,4 +71,6 @@ deployment system of the application. Addresses `#336 <https://github.com/qbicso
 
 **Dependencies**
 
+* Upgraded log4j to log4j-core 2.14.0
+
 **Deprecated**
