@@ -64,6 +64,21 @@ And open the application through localhost:8080. The system property `-Denvironm
 enable to application to run in test mode and does not require a successful user role
 determination to access all the features.
 
+Authorization and roles
+-----------------------
+
+The offer manager app currently distinguishes between two roles: `Role.PROJECT_MANAGER` and
+`Role.OFFER_ADMIN`. The admin role provides access to features such as the upcoming service
+product maintenance interface, and only dedicated users with the admin role will be able to
+access it.
+
+The current production implementation of the `RoleService` interface is used for deployment in an
+Liferay 6.2 GA6 environment and maps the Liferay **site-roles** "Project Manager" and "Offer
+Administration" to the internal app role representation.
+
+If an authenticated user has none of these roles, she will not be able to execute the application.
+
+
 System setup
 ------------
 
