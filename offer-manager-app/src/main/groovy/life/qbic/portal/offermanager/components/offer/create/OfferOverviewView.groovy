@@ -54,14 +54,14 @@ class OfferOverviewView extends VerticalLayout{
         initLayout()
         setUpGrid()
         service.subscribe((Offer offer) -> {
-            try {
-                createOfferController.fetchOffer(offer.identifier)
-                addOfferResource(createOfferViewModel.savedOffer.get())
-            } catch (Exception e) {
-                log.error("Unable to create the offer PDF resource.")
-                log.error(e.message)
-                log.error(e.stackTrace.join("\n"))
-            }
+                try {
+                    createOfferController.fetchOffer(offer.identifier)
+                    addOfferResource(offer)
+                } catch (Exception e) {
+                    log.error("Unable to create the offer PDF resource.")
+                    log.error(e.message)
+                    log.error(e.stackTrace.join("\n"))
+                }
         })
     }
 
@@ -204,17 +204,19 @@ class OfferOverviewView extends VerticalLayout{
         First, we make sure that no download resources are still attached to the download
         button.
          */
-        removeExistingResources()
-        // Then we create a new PDF resource ...
-
-        OfferToPDFConverter converter = new OfferToPDFConverter(offer)
-        StreamResource offerResource = new StreamResource((StreamResource.StreamSource res) -> {
-                    return converter.getOfferAsPdf()
-                }, "${offer.identifier.toString()}.pdf")
-        // ... and attach it to the download button
-        currentFileDownloader = new FileDownloader(offerResource)
-        currentFileDownloader.extend(downloadOffer)
-        downloadOffer.setEnabled(true)
+        //Check if an Offer has been saved.
+        if (createOfferViewModel.savedOffer) {
+            removeExistingResources()
+            // Then we create a new PDF resource ...
+            OfferToPDFConverter converter = new OfferToPDFConverter(createOfferViewModel.savedOffer.get())
+            StreamResource offerResource = new StreamResource((StreamResource.StreamSource res) -> {
+                return converter.getOfferAsPdf()
+            }, "${offer.identifier.toString()}.pdf")
+            // ... and attach it to the download button
+            currentFileDownloader = new FileDownloader(offerResource)
+            currentFileDownloader.extend(downloadOffer)
+            downloadOffer.setEnabled(true)
+        }
     }
 
     private void removeExistingResources() {
