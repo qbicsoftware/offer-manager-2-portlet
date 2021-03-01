@@ -83,7 +83,7 @@ class CreateOfferController {
     /**
      * Triggers the FetchOffer use case on execution
      *
-     * @param offerId The OfferId of the Offer to be retrieved
+     * @param offerId The identifier of the offer to be fetched
      */
     void fetchOffer(OfferId offerId) {
         this.fetchOfferInput.fetchOffer(offerId)
