@@ -9,7 +9,7 @@
 	<portlet>
 		<description>${project.description}</description>
 		<portlet-name>${project.artifactId}</portlet-name>
-		<display-name>${project.name}</display-name>
+		<display-name>${project.name} [${project.artifactId}]</display-name>
 
 		<portlet-class>com.vaadin.server.VaadinPortlet</portlet-class>
 
