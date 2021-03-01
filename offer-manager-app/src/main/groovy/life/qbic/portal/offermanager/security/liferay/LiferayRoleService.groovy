@@ -2,6 +2,8 @@ package life.qbic.portal.offermanager.security.liferay
 
 import com.liferay.portal.kernel.exception.PortalException
 import com.liferay.portal.model.User
+import com.liferay.portal.model.UserGroupRole
+import com.liferay.portal.service.UserGroupRoleLocalServiceUtil
 import com.liferay.portal.service.UserLocalServiceUtil
 import groovy.util.logging.Log4j2
 import life.qbic.portal.offermanager.security.Role
@@ -29,28 +31,27 @@ class LiferayRoleService implements RoleService{
     @Override
     Optional<Role> getRoleForUser(String userId) {
         Optional<Role> role = Optional.empty()
-        User user
+        List<UserGroupRole> userGroupRoles
         try {
-            user = tryToGetLiferayUser(userId)
+            userGroupRoles = tryToGetLiferayUser(userId)
         } catch (PortalException e) {
             log.error(String.format("Could not find user with id %s.", userId))
             log.error(e.message)
             log.error(e.stackTrace.join("\n"))
             return role
         }
-        return determineLiferayRole(user)
+        return determineLiferayRole(userGroupRoles)
     }
 
-    private static User tryToGetLiferayUser(String userId) {
-        return UserLocalServiceUtil.getUser(Long.parseLong(userId))
+    private static List<UserGroupRole> tryToGetLiferayUser(String userId) {
+        return UserGroupRoleLocalServiceUtil.getUserGroupRoles(Long.parseLong(userId))
     }
 
-    private static Optional<Role> determineLiferayRole(User user) {
-        List<com.liferay.portal.model.Role> liferayRoles = user.getRoles()
-        for (com.liferay.portal.model.Role role : liferayRoles) {
-            if (role.title.equals("Project Manager")) {
+    private static Optional<Role> determineLiferayRole(List<UserGroupRole> userGroupRoles) {
+        for (UserGroupRole role : userGroupRoles) {
+            if (role.getRole().getTitleCurrentValue().equals("Project Manager")) {
                 return Optional.of(Role.PROJECT_MANAGER)
-            } else if (role.title.equals("Offer Administrator")) {
+            } else if (role.getRole().getTitleCurrentValue().equals("Offer Administrator")) {
                 return Optional.of(Role.OFFER_ADMIN)
             }
         }
