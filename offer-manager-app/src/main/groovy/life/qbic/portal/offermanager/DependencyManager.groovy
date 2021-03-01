@@ -96,6 +96,7 @@ class DependencyManager {
     private CreateOffer updateOffer
     private FetchOffer fetchOfferOfferOverview
     private FetchOffer fetchOfferCreateOffer
+    private FetchOffer fetchOfferUpdateOffer
 
     private CreatePersonController createCustomerController
     private CreatePersonController updateCustomerController
@@ -341,6 +342,7 @@ class DependencyManager {
         this.updateCustomer = new CreateCustomer(updateCustomerPresenter, customerDbConnector)
         this.fetchOfferOfferOverview = new FetchOffer(offerDbConnector, offerOverviewPresenter)
         this.fetchOfferCreateOffer = new FetchOffer(offerDbConnector, createOfferPresenter)
+        this.fetchOfferUpdateOffer = new FetchOffer(offerDbConnector, updateOfferPresenter)
     }
 
     private void setupControllers() {
@@ -374,7 +376,7 @@ class DependencyManager {
             log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
         }
         try {
-            this.updateOfferController = new CreateOfferController(this.updateOffer, this.fetchOfferOfferOverview, this.updateOffer)
+            this.updateOfferController = new CreateOfferController(this.updateOffer, this.fetchOfferUpdateOffer, this.updateOffer)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
         }
