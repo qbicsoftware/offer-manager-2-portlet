@@ -1,8 +1,8 @@
 package life.qbic.portal.portlet.persons.search
 
-import life.qbic.business.customers.search.SearchCustomer
-import life.qbic.business.customers.search.SearchCustomerDataSource
-import life.qbic.business.customers.search.SearchCustomerOutput
+import life.qbic.business.persons.search.SearchCustomer
+import life.qbic.business.persons.search.SearchCustomerDataSource
+import life.qbic.business.persons.search.SearchCustomerOutput
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.business.exceptions.DatabaseQueryException
 import spock.lang.Specification

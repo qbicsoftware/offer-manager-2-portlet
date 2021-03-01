@@ -5,7 +5,7 @@ import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.business.customers.create.CreatePersonInput
+import life.qbic.business.persons.create.CreatePersonInput
 
 /**
  * Controller class adapter from view information into use case input interface

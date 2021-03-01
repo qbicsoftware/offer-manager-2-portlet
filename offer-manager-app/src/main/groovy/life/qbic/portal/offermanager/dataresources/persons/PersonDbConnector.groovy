@@ -10,10 +10,10 @@ import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
-import life.qbic.business.customers.affiliation.create.CreateAffiliationDataSource
-import life.qbic.business.customers.affiliation.list.ListAffiliationsDataSource
-import life.qbic.business.customers.create.CreatePersonDataSource
-import life.qbic.business.customers.search.SearchCustomerDataSource
+import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
+import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
+import life.qbic.business.persons.create.CreatePersonDataSource
+import life.qbic.business.persons.search.SearchCustomerDataSource
 
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
