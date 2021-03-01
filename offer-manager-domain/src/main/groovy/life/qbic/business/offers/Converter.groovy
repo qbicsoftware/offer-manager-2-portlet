@@ -28,7 +28,7 @@ class Converter {
                 offer.customer,
                 offer.projectManager,
                 offer.projectTitle,
-                offer.projectDescription,
+                offer.projectObjective,
                 offer.selectedCustomerAffiliation)
                 .identifier(convertIdToDTO(offer.identifier))
                 .items(offer.getItems())

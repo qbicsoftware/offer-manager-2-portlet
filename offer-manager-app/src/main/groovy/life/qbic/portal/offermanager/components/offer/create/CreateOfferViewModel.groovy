@@ -38,7 +38,7 @@ class CreateOfferViewModel {
 
     @Bindable OfferId offerId
     @Bindable String projectTitle
-    @Bindable String projectDescription
+    @Bindable String projectObjective
     @Bindable Customer customer
     @Bindable Affiliation customerAffiliation
     @Bindable ProjectManager projectManager

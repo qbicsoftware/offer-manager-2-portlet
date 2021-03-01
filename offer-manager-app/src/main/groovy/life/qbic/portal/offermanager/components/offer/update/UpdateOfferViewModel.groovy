@@ -45,7 +45,7 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
     private void loadData(Offer offer) {
         super.offerId = offer.identifier
         super.projectTitle = offer.projectTitle
-        super.projectDescription = offer.projectDescription
+        super.projectObjective = offer.projectObjective
         super.customer = offer.customer
         super.customerAffiliation = offer.selectedCustomerAffiliation
         super.projectManager = offer.projectManager
