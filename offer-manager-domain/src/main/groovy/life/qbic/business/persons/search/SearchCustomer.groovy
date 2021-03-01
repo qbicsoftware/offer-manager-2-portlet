@@ -22,7 +22,7 @@ class SearchCustomer implements SearchCustomerInput{
     @Override
     void searchCustomer(String firstName, String lastName) {
         try {
-            List<Customer> foundCustomer = dataSource.findCustomer(firstName, lastName)
+            List<Customer> foundCustomer = dataSource.findPerson(firstName, lastName)
             if (foundCustomer.isEmpty()) {
                 output.failNotification("Could not find a customer for $firstName $lastName")
             } else {

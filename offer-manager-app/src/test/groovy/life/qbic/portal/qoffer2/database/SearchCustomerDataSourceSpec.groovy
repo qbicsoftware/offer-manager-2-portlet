@@ -53,7 +53,7 @@ class SearchCustomerDataSourceSpec extends Specification{
         SearchCustomerDataSource dataSource = new PersonDbConnector(connectionProvider)
 
         when: "the datasource is tasked with finding a customer with provided first and last name"
-        List<Customer> foundCustomers = dataSource.findCustomer(firstName, lastName)
+        List<Customer> foundCustomers = dataSource.findPerson(firstName, lastName)
 
         then: "the returned customer information matches information provided by the ResultSet"
         foundCustomers.size() == 1

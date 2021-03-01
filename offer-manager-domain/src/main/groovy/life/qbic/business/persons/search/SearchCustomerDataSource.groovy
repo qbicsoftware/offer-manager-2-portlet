@@ -2,6 +2,7 @@ package life.qbic.business.persons.search
 
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.datamodel.dtos.general.Person
 
 /**
  * Retrieves data for the SearchCustomer use case
@@ -25,7 +26,7 @@ interface SearchCustomerDataSource {
      *
      * @since 1.0.0
      */
-    List<Customer> findCustomer(String firstName, String lastName) throws DatabaseQueryException
+    List<Person> findPerson(String firstName, String lastName) throws DatabaseQueryException
     
     
     /**
@@ -39,5 +40,5 @@ interface SearchCustomerDataSource {
      *
      * @since 1.0.0
      */
-    List<Customer> findActiveCustomer(String firstName, String lastName) throws DatabaseQueryException
+    List<Person> findActivePerson(String firstName, String lastName) throws DatabaseQueryException
 }

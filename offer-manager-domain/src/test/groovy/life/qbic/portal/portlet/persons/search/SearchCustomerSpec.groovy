@@ -27,7 +27,7 @@ class SearchCustomerSpec extends Specification{
 
         Customer luke = new Customer.Builder(firstName, lastName, "example@example.com").build()
 
-        ds.findCustomer(firstName, lastName) >> [luke]
+        ds.findPerson(firstName, lastName) >> [luke]
 
         when:
         searchCustomer.searchCustomer(firstName, lastName)
@@ -46,7 +46,7 @@ class SearchCustomerSpec extends Specification{
         SearchCustomerDataSource ds = Stub(SearchCustomerDataSource.class)
         SearchCustomer searchCustomer = new SearchCustomer(output,ds)
 
-        ds.findCustomer(firstName, lastName) >> {throw new DatabaseQueryException("Customer not found")}
+        ds.findPerson(firstName, lastName) >> {throw new DatabaseQueryException("Customer not found")}
 
         when:
         searchCustomer.searchCustomer(firstName, lastName)

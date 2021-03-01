@@ -24,7 +24,7 @@ class PersonResourceService implements ResourcesService<Person>{
     PersonResourceService(PersonDbConnector personDbConnector) {
         this.personDbConnector = Objects.requireNonNull(personDbConnector, "Database connector " +
                 "must not be null.")
-        this.availablePersonEntries = personDbConnector.fetchAllActiveCustomers()
+        this.availablePersonEntries = personDbConnector.fetchAllActivePersons()
         this.eventEmitter = new EventEmitter<>()
     }
 

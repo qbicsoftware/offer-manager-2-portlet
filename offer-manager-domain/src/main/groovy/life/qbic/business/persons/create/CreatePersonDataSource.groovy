@@ -3,6 +3,7 @@ package life.qbic.business.persons.create
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.datamodel.dtos.general.CommonPerson
 import life.qbic.datamodel.dtos.general.Person
 
 /**
@@ -40,15 +41,15 @@ interface CreatePersonDataSource {
      *
      * @param personId to specify and existing customer
      */
-    Customer getPerson(int personId)
+    CommonPerson getPerson(int personId)
 
     /**
-     * Searches for a customer in a database and returns its id
+     * Searches for a person in a database and returns its id
      *
-     * @param customer The customer that needs to be searched in the database
-     * @return an optional containing the customer if found
+     * @param person The person that needs to be searched in the database
+     * @return an optional containing the person if found
      */
-    Optional<Integer> findCustomer(Customer customer)
+    Optional<Integer> findPerson(Person person)
 
     /**
      * Updates affiliations of a person specified by a customer ID.
