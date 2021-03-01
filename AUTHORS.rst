@@ -10,4 +10,4 @@ Development Lead
 Contributors
 ------------
 
-None yet. Why not be the first?
+* Sven Fillinger, sven1103 <sven.fillinger@qbic.uni-tuebingen.de>
