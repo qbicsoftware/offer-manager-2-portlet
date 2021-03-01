@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager
 
 import groovy.util.logging.Log4j2
+import life.qbic.business.offers.fetch.FetchOffer
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.business.customers.affiliation.create.CreateAffiliation
@@ -9,6 +10,8 @@ import life.qbic.business.offers.create.CreateOffer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
+import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewController
+import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewPresenter
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
@@ -79,6 +82,7 @@ class DependencyManager {
     private CreateAffiliationPresenter createAffiliationPresenter
     private CreateOfferPresenter createOfferPresenter
     private CreateOfferPresenter updateOfferPresenter
+    private OfferOverviewPresenter offerOverviewPresenter
 
     private CustomerDbConnector customerDbConnector
     private OfferDbConnector offerDbConnector
@@ -90,6 +94,7 @@ class DependencyManager {
     private CreateAffiliation createAffiliation
     private CreateOffer createOffer
     private CreateOffer updateOffer
+    private FetchOffer fetchOffer
 
     private CreatePersonController createCustomerController
     private CreatePersonController updateCustomerController
@@ -97,6 +102,7 @@ class DependencyManager {
     private CreateAffiliationController createAffiliationController
     private CreateOfferController createOfferController
     private CreateOfferController updateOfferController
+    private OfferOverviewController offerOverviewController
 
     private CreatePersonView createCustomerView
     private CreatePersonView updatePersonView
@@ -257,8 +263,7 @@ class DependencyManager {
         }
 
         try {
-            this.offerOverviewModel = new OfferOverviewModel(overviewService, offerDbConnector,
-                    viewModel, offerUpdateEvent)
+            this.offerOverviewModel = new OfferOverviewModel(overviewService, viewModel, offerUpdateEvent)
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
         }
@@ -319,6 +324,11 @@ class DependencyManager {
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} setup", e)
         }
+        try {
+            this.offerOverviewPresenter = new OfferOverviewPresenter(this.viewModel, this.offerOverviewModel)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${OfferOverviewPresenter.getSimpleName()} setup", e)
+        }
     }
 
     private void setupUseCaseInteractors() {
@@ -328,6 +338,7 @@ class DependencyManager {
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
         this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
         this.updateCustomer = new CreateCustomer(updateCustomerPresenter, customerDbConnector)
+        this.fetchOffer = new FetchOffer(offerDbConnector, offerOverviewPresenter)
     }
 
     private void setupControllers() {
@@ -364,6 +375,11 @@ class DependencyManager {
             this.updateOfferController = new CreateOfferController(this.updateOffer,this.updateOffer)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
+        }
+        try {
+            this.offerOverviewController = new OfferOverviewController(this.fetchOffer)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${OfferOverviewController.getSimpleName()} setup", e)
         }
     }
 
@@ -427,7 +443,7 @@ class DependencyManager {
 
         OfferOverviewView overviewView
         try {
-            overviewView = new OfferOverviewView(offerOverviewModel)
+            overviewView = new OfferOverviewView(offerOverviewModel, offerOverviewController)
         } catch (Exception e) {
             log.error("Could not create ${OfferOverviewView.getSimpleName()} view.", e)
             throw e
