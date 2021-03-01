@@ -54,13 +54,13 @@ class OfferOverviewView extends VerticalLayout{
         initLayout()
         setUpGrid()
         service.subscribe((Offer offer) -> {
-                try {
-                    createOfferController.fetchOffer(offer.identifier)
-                    addOfferResource(offer)
+            try {
+                createOfferController.fetchOffer(offer.identifier)
+                addOfferResource(offer)
                 } catch (Exception e) {
-                    log.error("Unable to create the offer PDF resource.")
-                    log.error(e.message)
-                    log.error(e.stackTrace.join("\n"))
+                log.error("Unable to create the offer PDF resource.")
+                log.error(e.message)
+                log.error(e.stackTrace.join("\n"))
                 }
         })
     }
