@@ -55,12 +55,14 @@ You can do so via homebrew
 .. code-block: bash
 brew install --cask chromium
 
-Create the project with
+Run the project with
 
 .. code-block: bash
-mvn clean jetty:run
+mvn clean jetty:run -Denvironment=testing
 
-open the application through localhost:8080
+And open the application through localhost:8080. The system property `-Denvironment=testing` will
+enable to application to run in test mode and does not require a successful user role
+determination to access all the features.
 
 System setup
 ------------

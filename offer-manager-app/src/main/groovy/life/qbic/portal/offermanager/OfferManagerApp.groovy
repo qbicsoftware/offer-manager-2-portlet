@@ -54,6 +54,7 @@ class OfferManagerApp extends QBiCPortletUI {
         if(System.getProperty("environment") == "testing") {
             roleService = new LocalAdminRoleService()
             userId = "test"
+            log.info("Running test environment configuration.")
         } else {
             roleService = new LiferayRoleService()
             userId = VaadinService.getCurrentRequest().getRemoteUser()
