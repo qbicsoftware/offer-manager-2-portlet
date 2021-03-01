@@ -53,6 +53,6 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
 
     @Override
     void fetchedOffer(Offer fetchedOffer) {
-        this.createOfferViewModel.savedOffer = Optional.ofNullable(fetchedOffer)
+        this.createOfferViewModel.savedOffer = Optional.of(fetchedOffer)
     }
 }
