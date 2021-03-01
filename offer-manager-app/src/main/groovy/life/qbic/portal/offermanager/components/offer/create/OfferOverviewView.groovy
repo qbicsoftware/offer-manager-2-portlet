@@ -204,9 +204,10 @@ class OfferOverviewView extends VerticalLayout{
         First, we make sure that no download resources are still attached to the download
         button.
          */
-        //Check if an Offer has been saved.
         removeExistingResources()
+        //Check if an Offer has been saved.
         if (!createOfferViewModel.savedOffer.isPresent()) {
+            downloadOffer.setEnabled(false)
             return
         }
         // Then we create a new PDF resource ...
