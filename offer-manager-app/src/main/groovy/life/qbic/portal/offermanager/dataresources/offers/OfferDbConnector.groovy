@@ -1,7 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
 import groovy.util.logging.Log4j2
-
+import life.qbic.business.offers.fetch.FetchOfferDataSource
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
@@ -24,7 +24,7 @@ import java.sql.*
  *
  */
 @Log4j2
-class OfferDbConnector implements CreateOfferDataSource{
+class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
 
     ConnectionProvider connectionProvider
 

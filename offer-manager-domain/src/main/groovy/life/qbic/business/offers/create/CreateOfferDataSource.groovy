@@ -12,7 +12,6 @@ import life.qbic.datamodel.dtos.business.OfferId
  */
 interface CreateOfferDataSource {
 
-
     /**
      * Saves an offer in a persistent data-source.
      *
@@ -32,16 +31,18 @@ interface CreateOfferDataSource {
      */
     void store(Offer offer) throws DatabaseQueryException
 
+
     /**
+     * This method will be replaced with the one provided by{@link life.qbic.business.offers.fetch.FetchOfferDataSource}
      * Fetches all versions of one offer id that are stored in the database
-     *
      * @param id The id for which all versions should be found
      * @return a list of all different version identifiers of an id must be at least of size 1
      */
     List<OfferId> fetchAllVersionsForOfferId(OfferId id)
 
-
+    //ToDo Deprecate this method once the FetchOffer Use Case is implemented
     /**
+     * This method will be replaced with the one provided by{@link life.qbic.business.offers.fetch.FetchOfferDataSource}
      * Returns the offer content based on the given offer id
      * @param oldId specifying the offer for which the content shall be fetched
      * @return the offer content in form of the offer dto
