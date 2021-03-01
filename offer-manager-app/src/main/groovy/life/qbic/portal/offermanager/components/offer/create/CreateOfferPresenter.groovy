@@ -4,7 +4,7 @@ import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
 import life.qbic.portal.offermanager.components.AppViewModel
-
+import life.qbic.business.offers.fetch.FetchOfferOutput
 /**
  * AppPresenter for the CreateOffer
  *
@@ -12,7 +12,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
  *
  * @since: 1.0.0
  */
-class CreateOfferPresenter implements CreateOfferOutput {
+class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
 
     private final AppViewModel viewModel
     private final CreateOfferViewModel createOfferViewModel
@@ -29,6 +29,7 @@ class CreateOfferPresenter implements CreateOfferOutput {
     void createdNewOffer(Offer createdOffer) {
         this.viewModel.successNotifications.add("Created offer with title " +
                 "\'${createdOffer.projectTitle}\' successfully")
+
         this.offerService.addToResource(createdOffer)
     }
 
@@ -50,4 +51,8 @@ class CreateOfferPresenter implements CreateOfferOutput {
        this.viewModel.failureNotifications.add(notification)
     }
 
+    @Override
+    void fetchedOffer(Offer fetchedOffer) {
+        this.createOfferViewModel.savedOffer = Optional.ofNullable(fetchedOffer)
+    }
 }
