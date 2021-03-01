@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager
 import com.vaadin.annotations.Theme
 import com.vaadin.server.Page
 import com.vaadin.server.VaadinRequest
+import com.vaadin.server.VaadinService
 import com.vaadin.ui.Layout
 import com.vaadin.ui.Notification
 import com.vaadin.ui.VerticalLayout
@@ -11,6 +12,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.portal.offermanager.components.StyledNotification
 import life.qbic.portal.offermanager.security.Role
 import life.qbic.portal.offermanager.security.RoleService
+import life.qbic.portal.offermanager.security.liferay.LiferayRoleService
 import life.qbic.portal.offermanager.security.local.LocalAdminRoleService
 import life.qbic.portal.offermanager.security.local.LocalManagerRoleService
 
@@ -42,13 +44,25 @@ class OfferManagerApp extends QBiCPortletUI {
     }
 
     private void create() {
-        Role role = loadAppRole()
-        this.dependencyManager = new DependencyManager(role)
+        final Role userRole = determineUserRole()
+        this.dependencyManager = new DependencyManager(userRole)
     }
 
-    private static Role loadAppRole() {
-        RoleService roleService = new LocalAdminRoleService()
-        Optional<Role> userRole = roleService.getRoleForUser("test")
+    private static Role determineUserRole() {
+        RoleService roleService
+        String userId
+        if(System.getProperty("environment") == "testing") {
+            roleService = new LocalAdminRoleService()
+            userId = "test"
+        } else {
+            roleService = new LiferayRoleService()
+            userId = VaadinService.getCurrentRequest().getRemoteUser()
+        }
+        return loadAppRole(roleService, userId)
+    }
+
+    private static Role loadAppRole(RoleService roleService, String userId) {
+        Optional<Role> userRole = roleService.getRoleForUser(userId)
         if (!userRole.isPresent()) {
             throw new RuntimeException("Security issue: Can not determine user role.")
         }
