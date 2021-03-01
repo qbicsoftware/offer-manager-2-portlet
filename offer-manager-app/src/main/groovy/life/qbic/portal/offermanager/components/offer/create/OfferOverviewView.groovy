@@ -205,17 +205,19 @@ class OfferOverviewView extends VerticalLayout{
         button.
          */
         //Check if an Offer has been saved.
-        if (createOfferViewModel.savedOffer) {
-            removeExistingResources()
-            // Then we create a new PDF resource ...
-            OfferToPDFConverter converter = new OfferToPDFConverter(createOfferViewModel.savedOffer.get())
-            StreamResource offerResource = new StreamResource((StreamResource.StreamSource res) -> {
-                return converter.getOfferAsPdf()
-            }, "${offer.identifier.toString()}.pdf")
-            // ... and attach it to the download button
-            currentFileDownloader = new FileDownloader(offerResource)
-            currentFileDownloader.extend(downloadOffer)
-            downloadOffer.setEnabled(true)
+        removeExistingResources()
+        if (!createOfferViewModel.savedOffer.isPresent()) {
+            return
+        }
+        // Then we create a new PDF resource ...
+        OfferToPDFConverter converter = new OfferToPDFConverter(createOfferViewModel.savedOffer.get())
+        StreamResource offerResource = new StreamResource((StreamResource.StreamSource res) -> {
+            return converter.getOfferAsPdf()
+        }, "${offer.identifier.toString()}.pdf")
+        // ... and attach it to the download button
+        currentFileDownloader = new FileDownloader(offerResource)
+        currentFileDownloader.extend(downloadOffer)
+        downloadOffer.setEnabled(true)
         }
     }
 
