@@ -23,7 +23,7 @@ import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourc
  */
 class CreatePersonViewModel {
     List<String> academicTitles = new ArrayList<>()
-    Customer outdatedCustomer
+    Customer outdatedPerson
 
     @Bindable String academicTitle
     @Bindable String firstName

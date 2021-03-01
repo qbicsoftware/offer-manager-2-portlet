@@ -4,11 +4,9 @@ package life.qbic.portal.offermanager.components.person.create
 import com.vaadin.data.ValidationResult
 import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
-import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.icons.VaadinIcons
-import com.vaadin.server.SerializableBiFunction
 import com.vaadin.server.UserError
 import com.vaadin.shared.data.sort.SortDirection
 import com.vaadin.shared.ui.ContentMode
@@ -17,8 +15,6 @@ import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
-
-import javax.swing.event.ListDataEvent
 
 /**
  * This class generates a Form Layout in which the user
@@ -344,11 +340,11 @@ class CreatePersonView extends VerticalLayout {
                 List<Affiliation> affiliations = new ArrayList()
                 affiliations.add(createCustomerViewModel.affiliation)
 
-                if(createCustomerViewModel.outdatedCustomer){
-                    controller.updateCustomer(createCustomerViewModel.outdatedCustomer, firstName, lastName, title, email, affiliations)
+                if(createCustomerViewModel.outdatedPerson){
+                    controller.updatePerson(createCustomerViewModel.outdatedPerson, firstName, lastName, title, email, affiliations)
                 }
                 else{
-                    controller.createNewCustomer(firstName, lastName, title, email, affiliations)
+                    controller.createNewPerson(firstName, lastName, title, email, affiliations)
                 }
 
             } catch (IllegalArgumentException illegalArgumentException) {
@@ -413,7 +409,7 @@ class CreatePersonView extends VerticalLayout {
         createCustomerViewModel.lastNameValid = null
         createCustomerViewModel.emailValid = null
         createCustomerViewModel.affiliationValid = null
-        createCustomerViewModel.outdatedCustomer = null
+        createCustomerViewModel.outdatedPerson = null
 
     }
 }

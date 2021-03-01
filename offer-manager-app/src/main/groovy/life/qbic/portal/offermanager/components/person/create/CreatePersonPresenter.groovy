@@ -26,7 +26,7 @@ class CreatePersonPresenter implements CreatePersonOutput{
         this.createCustomerViewModel = createCustomerViewModel
     }
 
-    private void clearCustomerData() {
+    private void clearPersonData() {
         createCustomerViewModel.academicTitle = null
         createCustomerViewModel.firstName = null
         createCustomerViewModel.lastName = null
@@ -50,7 +50,7 @@ class CreatePersonPresenter implements CreatePersonOutput{
     void personCreated(String message) {
         try {
             viewModel.successNotifications.add(message)
-            clearCustomerData()
+            clearPersonData()
         } catch (MethodException listenerMethodException) {
             //fixme
             // Invocation of method selectionChange failed for `null`
@@ -75,7 +75,7 @@ class CreatePersonPresenter implements CreatePersonOutput{
                 .title(person.title)
                 .affiliations(person.affiliations).build()
         try{
-            if (createCustomerViewModel.outdatedCustomer) createCustomerViewModel.personResourceService.removeFromResource(createCustomerViewModel.outdatedCustomer)
+            if (createCustomerViewModel.outdatedPerson) createCustomerViewModel.personResourceService.removeFromResource(createCustomerViewModel.outdatedPerson)
         }catch(Exception e){
             log.error e.message
             log.error e.stackTrace.join("\n")
@@ -85,7 +85,7 @@ class CreatePersonPresenter implements CreatePersonOutput{
         createCustomerViewModel.managerResourceService.addToResource(manager)
         createCustomerViewModel.personResourceService.addToResource(person)
         //reset the view model
-        clearCustomerData()
+        clearPersonData()
 
         viewModel.successNotifications.add("Successfully created/updated new person entry.")
     }

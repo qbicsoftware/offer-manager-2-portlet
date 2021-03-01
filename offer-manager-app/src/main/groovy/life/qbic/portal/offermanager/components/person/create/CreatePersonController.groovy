@@ -6,6 +6,7 @@ import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.business.persons.create.CreatePersonInput
+import life.qbic.datamodel.dtos.general.Person
 
 /**
  * Controller class adapter from view information into use case input interface
@@ -25,18 +26,18 @@ class CreatePersonController {
     }
 
     /**
-     * This method starts the create customer use case based on information that is provided from the view
+     * This method starts the create person use case based on information that is provided from the view
      *
-     * @param firstName the first name of the customer
-     * @param lastName the last name of the customer
-     * @param title the title if any of the customer. The title has to match the value of a known AcademicTitle.
-     * @param email the email address of the customer
-     * @param affiliations the affiliations of the customer
+     * @param firstName the first name of the person
+     * @param lastName the last name of the person
+     * @param title the title if any of the person. The title has to match the value of a known AcademicTitle.
+     * @param email the email address of the person
+     * @param affiliations the affiliations of the person
      *
      * @see AcademicTitle
      * @since 1.0.0
      */
-    void createNewCustomer(String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations) {
+    void createNewPerson(String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations) {
         AcademicTitleFactory academicTitleFactory = new AcademicTitleFactory()
         AcademicTitle academicTitle
         if (!title || title?.isEmpty()) {
@@ -54,17 +55,17 @@ class CreatePersonController {
     }
 
     /**
-     * This method creates a new customer and triggers the create customer use case to update the old customer entry
+     * This method creates a new person and triggers the create customer use case to update the old customer entry
      *
-     * @param oldEntry The customer that needs to be updated
-     * @param firstName the first name of the customer
-     * @param lastName the last name of the customer
-     * @param title the title if any of the customer. The title has to match the value of a known AcademicTitle.
-     * @param email the email address of the customer
-     * @param affiliations the affiliations of the customer
+     * @param oldEntry The person that needs to be updated
+     * @param firstName the first name of the person
+     * @param lastName the last name of the person
+     * @param title the title if any of the person. The title has to match the value of a known AcademicTitle.
+     * @param email the email address of the person
+     * @param affiliations the affiliations of the person
      *
      */
-    void updateCustomer(Customer oldEntry, String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations){
+    void updatePerson(Person oldEntry, String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations){
         AcademicTitleFactory academicTitleFactory = new AcademicTitleFactory()
         AcademicTitle academicTitle
         if (!title || title?.isEmpty()) {

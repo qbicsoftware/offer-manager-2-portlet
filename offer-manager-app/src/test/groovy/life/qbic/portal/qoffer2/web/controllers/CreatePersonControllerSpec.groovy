@@ -29,7 +29,7 @@ class CreatePersonControllerSpec extends Specification {
         CreatePersonInput createCustomerInput = Mock()
         CreatePersonController controller = new CreatePersonController(createCustomerInput)
         when:
-        controller.createNewCustomer(firstName, lastName, title, email, affiliations)
+        controller.createNewPerson(firstName, lastName, title, email, affiliations)
         then:
         1 * createCustomerInput.createPerson({ Customer customer ->
             customer.firstName == firstName && \
