@@ -87,7 +87,7 @@ class FetchOfferSpec extends Specification {
         FetchOfferDataSource ds = Stub(FetchOfferDataSource.class)
         FetchOffer fetchOffer = new FetchOffer(ds, output)
 
-        ds.getOffer(offerId) >> { throw new DatabaseQueryException("Could not retrieve Offer with OfferId $offerId from the Database") }
+        ds.getOffer(offerId) >> { throw new DatabaseQueryException("Could not retrieve Offer with OfferId ${offerId.toString()} from the Database") }
 
         when:
         fetchOffer.fetchOffer(offerId)

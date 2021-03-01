@@ -57,11 +57,11 @@ class OfferOverviewView extends VerticalLayout{
             try {
                 createOfferController.fetchOffer(offer.identifier)
                 addOfferResource(offer)
-                } catch (Exception e) {
+            } catch (Exception e) {
                 log.error("Unable to create the offer PDF resource.")
                 log.error(e.message)
                 log.error(e.stackTrace.join("\n"))
-                }
+            }
         })
     }
 
@@ -219,7 +219,7 @@ class OfferOverviewView extends VerticalLayout{
         currentFileDownloader.extend(downloadOffer)
         downloadOffer.setEnabled(true)
         }
-    }
+
 
     private void removeExistingResources() {
         if (currentFileDownloader) {
