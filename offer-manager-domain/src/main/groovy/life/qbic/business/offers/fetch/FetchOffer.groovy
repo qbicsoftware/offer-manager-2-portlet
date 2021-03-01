@@ -41,7 +41,7 @@ class FetchOffer implements FetchOfferInput {
         }
         catch (DatabaseQueryException queryException) {
             log.error(queryException.message)
-            output.failNotification("Could not retrieve Offer with OfferId " + offerId.toString() + " from the Database")
+            output.failNotification("Could not retrieve Offer with OfferId ${offerId.toString()} from the Database")
         }
         catch (Exception e) {
             log.error(e.message)
