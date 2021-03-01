@@ -68,7 +68,7 @@ Authorization and roles
 -----------------------
 
 The offer manager app currently distinguishes between two roles: `Role.PROJECT_MANAGER` and
-`Role.OFFER_ADMIN`. The admin role provides access to features such as the upcoming service
+`Role.OFFER_ADMIN`. The admin role provides access to features such as the service
 product maintenance interface, and only dedicated users with the admin role will be able to
 access it.
 
