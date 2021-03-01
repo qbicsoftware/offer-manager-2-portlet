@@ -81,7 +81,7 @@ class CreateOfferController {
         }
     }
     /**
-     * This method calls the Fetch Offer use case with the provided OfferId
+     * Triggers the FetchOffer use case on execution
      *
      * @param offerId The OfferId of the Offer to be retrieved
      */
