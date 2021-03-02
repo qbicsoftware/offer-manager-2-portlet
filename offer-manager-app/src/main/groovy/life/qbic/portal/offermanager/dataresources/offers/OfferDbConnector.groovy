@@ -7,7 +7,7 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.create.CreateOfferDataSource
-import life.qbic.portal.offermanager.dataresources.persons.CustomerDbConnector
+import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 
@@ -28,7 +28,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
 
     ConnectionProvider connectionProvider
 
-    CustomerDbConnector customerGateway
+    PersonDbConnector customerGateway
     ProductsDbConnector productGateway
 
 
@@ -40,9 +40,9 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
                                                         "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads FROM offer"
 
 
-    OfferDbConnector(ConnectionProvider connectionProvider, CustomerDbConnector customerDbConnector, ProductsDbConnector productsDbConnector){
+    OfferDbConnector(ConnectionProvider connectionProvider, PersonDbConnector personDbConnector, ProductsDbConnector productsDbConnector){
         this.connectionProvider = connectionProvider
-        this.customerGateway = customerDbConnector
+        this.customerGateway = personDbConnector
         this.productGateway = productsDbConnector
     }
 

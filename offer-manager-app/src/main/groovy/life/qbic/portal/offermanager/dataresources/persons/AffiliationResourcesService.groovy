@@ -16,13 +16,13 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  */
 class AffiliationResourcesService implements ResourcesService<Affiliation> {
 
-    private final CustomerDbConnector dbConnector
+    private final PersonDbConnector dbConnector
 
     private final List<Affiliation> availableAffiliations
 
     private final EventEmitter<Affiliation> eventEmitter
 
-    AffiliationResourcesService(CustomerDbConnector dbConnector) {
+    AffiliationResourcesService(PersonDbConnector dbConnector) {
         this.dbConnector = dbConnector
         this.availableAffiliations = dbConnector.listAllAffiliations()
         this.eventEmitter = new EventEmitter<>()

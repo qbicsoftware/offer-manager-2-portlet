@@ -20,6 +20,7 @@ upcoming service product maintenance interface.
 
 * Update the agreement section of the offer (`#329 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/329>`_)
 * Make the offer controls more intuitive (`#341 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/341>`_)
+* Rename CreateCustomer and UpdateCustomer classes and methods (`#315 https://github.com/qbicsoftware/offer-manager-2-portlet/issues/315`_)
 
 **Dependencies**
 
