@@ -125,7 +125,7 @@ class CreateOfferSpec extends Specification {
         offerDto.projectManager == offerEntity.getProjectManager()
         offerDto.customer == offerEntity.getCustomer()
         offerDto.projectTitle == offerEntity.getProjectTitle()
-        offerDto.projectDescription == offerEntity.getProjectDescription()
+        offerDto.projectObjective == offerEntity.getProjectObjective()
         offerDto.selectedCustomerAffiliation == offerEntity.getSelectedCustomerAffiliation()
         offerDto.modificationDate == offerEntity.getModificationDate()
         offerDto.expirationDate == offerEntity.getExpirationDate()
