@@ -52,9 +52,9 @@ class Offer {
      */
     private String projectTitle
     /**
-     * A short description of the project
+     * A short objective of the project
      */
-    private String projectDescription
+    private String projectObjective
     /**
      * A list of items for which the customer will be charged
      */
@@ -91,17 +91,17 @@ class Offer {
         Customer customer
         ProjectManager projectManager
         String projectTitle
-        String projectDescription
+        String projectObjective
         List<ProductItem> items
         OfferId identifier
         Affiliation selectedCustomerAffiliation
         List<OfferId> availableVersions
 
-        Builder(Customer customer, ProjectManager projectManager, String projectTitle, String projectDescription, List<ProductItem> items, Affiliation selectedCustomerAffiliation) {
+        Builder(Customer customer, ProjectManager projectManager, String projectTitle, String projectObjective, List<ProductItem> items, Affiliation selectedCustomerAffiliation) {
             this.customer = Objects.requireNonNull(customer, "Customer must not be null")
             this.projectManager = Objects.requireNonNull(projectManager, "Project Manager must not be null")
             this.projectTitle = Objects.requireNonNull(projectTitle, "Project Title must not be null")
-            this.projectDescription = Objects.requireNonNull(projectDescription, "Project Description must not be null")
+            this.projectObjective = Objects.requireNonNull(projectObjective, "Project Objective must not be null")
             this.items = []
             this.availableVersions = []
             this.creationDate = new Date()
@@ -139,7 +139,7 @@ class Offer {
         this.expirationDate = calculateExpirationDate(builder.creationDate)
         this.creationDate = builder.creationDate
         this.projectManager = builder.projectManager
-        this.projectDescription = builder.projectDescription
+        this.projectObjective = builder.projectObjective
         this.projectTitle = builder.projectTitle
         this.selectedCustomerAffiliation = builder.selectedCustomerAffiliation
         this.overhead = determineOverhead()
@@ -223,8 +223,8 @@ class Offer {
         return projectTitle
     }
 
-    String getProjectDescription() {
-        return projectDescription
+    String getProjectObjective() {
+        return projectObjective
     }
 
     List<ProductItem> getItems() {
@@ -319,10 +319,10 @@ class Offer {
     * Returns the checksum of the current Offer Object
     */
     String checksum(){
-        //Use SHA-1 algorithm
+        //Use SHA-2 algorithm
         MessageDigest shaDigest = MessageDigest.getInstance("SHA-256")
 
-        //SHA-1 checksum
+        //SHA-2 checksum
         return getOfferChecksum(shaDigest, this)
     }
 
@@ -339,13 +339,16 @@ class Offer {
         digest.update(offer.projectTitle.getBytes(StandardCharsets.UTF_8))
 
         offer.items.each {item ->
-            digest.update(item.product.toString().getBytes(StandardCharsets.UTF_8))
+            digest.update(item.product.productName.getBytes(StandardCharsets.UTF_8))
             digest.update(item.quantity.toString().getBytes(StandardCharsets.UTF_8))
         }
-        digest.update(offer.customer.toString().getBytes(StandardCharsets.UTF_8))
-        digest.update(offer.projectManager.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(offer.customer.lastName.getBytes(StandardCharsets.UTF_8))
+        digest.update(offer.projectManager.lastName.getBytes(StandardCharsets.UTF_8))
 
-        digest.update(offer.selectedCustomerAffiliation.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(offer.selectedCustomerAffiliation.getOrganisation().toString().getBytes(StandardCharsets
+                .UTF_8))
+        digest.update(offer.selectedCustomerAffiliation.getStreet().toString().getBytes(StandardCharsets
+                .UTF_8))
 
         //Get the hash's bytes
         byte[] bytes = digest.digest()

@@ -5,6 +5,7 @@ import life.qbic.business.customers.create.CreateCustomerDataSource
 import life.qbic.business.customers.create.CreateCustomerOutput
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.general.Person
 import spock.lang.Specification
 
 /**
@@ -49,7 +50,7 @@ class CreateCustomerSpec extends Specification {
 
         then: "the output receives a failure notification"
         1 * output.failNotification(_ as String)
-        0 * output.successNotification(_ as String)
+        0 * output.customerCreated(_ as Person)
 
         where:
         customer = new Customer.Builder("Test", "user", "test").title(AcademicTitle.NONE).build()

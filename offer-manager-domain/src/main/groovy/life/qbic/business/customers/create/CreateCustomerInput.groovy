@@ -19,4 +19,11 @@ interface CreateCustomerInput {
    */
   void createCustomer(Customer customer)
 
+  /**
+   * Updates the entry of an customer. Fundamental changes of the customer like their email address will lead to
+   * creating a new customer and deactivating the old entry
+   * @param oldCustomer The customer that needs to be updated
+   * @param newCustomer The customer with the updated information
+   */
+  void updateCustomer(Customer oldCustomer, Customer newCustomer)
 }

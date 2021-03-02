@@ -30,6 +30,17 @@ import java.text.DateFormat
 @Log4j2
 class OfferToPDFConverter implements OfferExporter {
 
+    /**
+     * The environment variable that is resolved when
+     * the chromium browser needs to be executed
+     * for the PDF conversion.
+     *
+     * This variable's value must contain the chromium browser
+     * alias that can be executed from the system's command
+     * line.
+     */
+    final static CHROMIUM_EXECUTABLE = "CHROMIUM_EXECUTABLE"
+
     private final Offer offer
 
     private final Path tempDir
@@ -201,7 +212,8 @@ class OfferToPDFConverter implements OfferExporter {
 
         PdfPrinter(Path sourceFile) {
             this.sourceFile = sourceFile
-            this.chromeAlias = "chromium-browser"
+            this.chromeAlias = Objects.requireNonNull(System.getenv(CHROMIUM_EXECUTABLE),
+                    "CHROMIUM_EXECUTABLE environment was not set.")
         }
 
         PdfPrinter(Path sourceFile, String alias) {

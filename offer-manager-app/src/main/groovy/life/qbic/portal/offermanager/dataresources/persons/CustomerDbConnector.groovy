@@ -14,7 +14,7 @@ import life.qbic.business.customers.affiliation.create.CreateAffiliationDataSour
 import life.qbic.business.customers.affiliation.list.ListAffiliationsDataSource
 import life.qbic.business.customers.create.CreateCustomerDataSource
 import life.qbic.business.customers.search.SearchCustomerDataSource
-import life.qbic.business.customers.update.UpdateCustomerDataSource
+
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
@@ -34,7 +34,7 @@ import java.sql.Statement
  *
  */
 @Log4j2
-class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
+class CustomerDbConnector implements CreateCustomerDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
   /**
    * A connection to the customer database used to create queries.
@@ -256,7 +256,6 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
       statement.setInt(1, customerId)
       statement.setInt(2, affiliationId)
       statement.execute()
-
     }
   }
   
@@ -294,8 +293,7 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   }
   
   @Override
-  void updateCustomerAffiliations(String customerIdString, List<Affiliation> updatedAffiliations) {
-    int customerId = Integer.parseInt(customerIdString)
+  void updateCustomerAffiliations(int customerId, List<Affiliation> updatedAffiliations) {
     List<Affiliation> existingAffiliations = null
     try {
       
@@ -310,11 +308,10 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
     List<Affiliation> newAffiliations = new ArrayList<>();
     
     // find added affiliations - could use set operations here, but we have lists...
-    for(Affiliation affiliation : updatedAffiliations) {
-      if(!existingAffiliations.contains(affiliation)) {
-        newAffiliations.add(affiliation)
-      }
+    updatedAffiliations.each {
+      if(!existingAffiliations.contains(it)) newAffiliations.add(it)
     }
+
     if(newAffiliations.isEmpty()) {
       throw new DatabaseQueryException("Customer already has provided affiliation(s), no update was necessary.")
     }
@@ -353,37 +350,38 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
   
   /**
    * @inheritDoc
-   * @param customerId
-   * @param updatedCustomer
    */
   @Override
-  void updateCustomer(String customerId, Customer updatedCustomer) {
+  void updateCustomer(int oldCustomerId, Customer updatedCustomer) {
 
-        int oldCustomerId = Integer.parseInt(customerId)
-      if (getCustomer(oldCustomerId)==null) {
-        throw new DatabaseQueryException("Customer is not in the database and can't be updated.")
-      }
+    if (!getCustomer(oldCustomerId)) {
+      throw new DatabaseQueryException("Customer is not in the database and can't be updated.")
+    }
             
-      Connection connection = connectionProvider.connect()
-      connection.setAutoCommit(false)
+    Connection connection = connectionProvider.connect()
+    connection.setAutoCommit(false)
 
-      connection.withCloseable {it ->
-        try {
-          int newCustomerId = createNewCustomer(it, updatedCustomer)
-          storeAffiliation(it, newCustomerId, updatedCustomer.affiliations)
-          connection.commit()
-          
-          // if our update is successful we set the old customer inactive
-          changeCustomerActiveFlag(oldCustomerId, false)
-          
-        } catch (Exception e) {
-          log.error(e.message)
-          log.error(e.stackTrace.join("\n"))
-          connection.rollback()
-          connection.close()
-          throw new DatabaseQueryException("The customer could not be updated: ${customer.toString()}.")
+    connection.withCloseable {it ->
+      try {
+        int newCustomerId = createNewCustomer(it, updatedCustomer)
+        List<Affiliation> allAffiliations = fetchAffiliationsForPerson(oldCustomerId)
+
+        updatedCustomer.affiliations.each {
+          if(!allAffiliations.contains(it)) allAffiliations.add(it)
         }
+        storeAffiliation(it, newCustomerId, allAffiliations)
+        connection.commit()
+          
+        // if our update is successful we set the old customer inactive
+        changeCustomerActiveFlag(oldCustomerId, false)
+      } catch (Exception e) {
+        log.error(e.message)
+        log.error(e.stackTrace.join("\n"))
+        connection.rollback()
+        connection.close()
+        throw new DatabaseQueryException("The customer could not be updated: ${updatedCustomer.toString()}.")
       }
+    }
   }
 
   /**
@@ -747,6 +745,18 @@ class CustomerDbConnector implements CreateCustomerDataSource, UpdateCustomerDat
      }
      return person
     }
+  }
+
+  @Override
+  Optional<Integer> findCustomer(Customer customer) {
+    int customerID
+
+    findActiveCustomer(customer.firstName, customer.lastName).each {foundCustomer ->
+      //todo is the email address sufficient to compare customers for identity?
+      if(foundCustomer.emailAddress == customer.emailAddress) customerID = getActivePersonId(foundCustomer)
+    }
+
+    return Optional.of(customerID)
   }
 
   ProjectManager getProjectManager(int personPrimaryId) {

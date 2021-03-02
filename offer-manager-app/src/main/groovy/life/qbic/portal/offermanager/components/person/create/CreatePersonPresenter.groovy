@@ -46,6 +46,7 @@ class CreatePersonPresenter implements CreateCustomerOutput{
     }
 
     @Override
+    @Deprecated
     void customerCreated(String message) {
         try {
             viewModel.successNotifications.add(message)
@@ -73,7 +74,19 @@ class CreatePersonPresenter implements CreateCustomerOutput{
                 person.emailAddress)
                 .title(person.title)
                 .affiliations(person.affiliations).build()
+        try{
+            if (createCustomerViewModel.outdatedCustomer) createCustomerViewModel.personResourceService.removeFromResource(createCustomerViewModel.outdatedCustomer)
+        }catch(Exception e){
+            log.error e.message
+            log.error e.stackTrace.join("\n")
+        }
+
         createCustomerViewModel.customerService.addToResource(customer)
         createCustomerViewModel.managerResourceService.addToResource(manager)
+        createCustomerViewModel.personResourceService.addToResource(person)
+        //reset the view model
+        clearCustomerData()
+
+        viewModel.successNotifications.add("Successfully created/updated new person entry.")
     }
 }

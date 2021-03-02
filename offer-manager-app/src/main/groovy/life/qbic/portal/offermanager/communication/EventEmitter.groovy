@@ -24,7 +24,7 @@ class EventEmitter<T> {
     }
 
     /**
-     * Cancels an exising subscription from receiving future communication.
+     * Cancels an existing subscription from receiving future communication.
      * @param s The subscription to cancel
      */
     void unregister(Subscription s) {

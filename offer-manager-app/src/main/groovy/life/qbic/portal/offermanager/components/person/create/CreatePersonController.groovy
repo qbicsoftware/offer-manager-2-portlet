@@ -52,4 +52,32 @@ class CreatePersonController {
             throw new IllegalArgumentException("Could not create customer from provided arguments.")
         }
     }
+
+    /**
+     * This method creates a new customer and triggers the create customer use case to update the old customer entry
+     *
+     * @param oldEntry The customer that needs to be updated
+     * @param firstName the first name of the customer
+     * @param lastName the last name of the customer
+     * @param title the title if any of the customer. The title has to match the value of a known AcademicTitle.
+     * @param email the email address of the customer
+     * @param affiliations the affiliations of the customer
+     *
+     */
+    void updateCustomer(Customer oldEntry, String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations){
+        AcademicTitleFactory academicTitleFactory = new AcademicTitleFactory()
+        AcademicTitle academicTitle
+        if (!title || title?.isEmpty()) {
+            academicTitle = AcademicTitle.NONE
+        } else {
+            academicTitle = academicTitleFactory.getForString(title)
+        }
+
+        try{
+            Customer customer = new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build()
+            this.useCaseInput.updateCustomer(oldEntry,customer)
+        }catch(Exception ignored) {
+            throw new IllegalArgumentException("Could not update customer from provided arguments.")
+        }
+    }
 }

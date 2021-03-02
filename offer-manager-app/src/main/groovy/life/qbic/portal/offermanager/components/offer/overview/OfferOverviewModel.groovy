@@ -2,8 +2,8 @@ package life.qbic.portal.offermanager.components.offer.overview
 
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.AppViewModel
-import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
 import life.qbic.portal.offermanager.OfferToPDFConverter
 import life.qbic.portal.offermanager.dataresources.offers.OverviewService
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
@@ -31,11 +31,9 @@ class OfferOverviewModel {
      */
     Optional<OfferOverview> selectedOffer
 
-    private Optional<Offer> offer
+    Optional<Offer> offer
 
     private final OverviewService service
-
-    private final OfferDbConnector connector
 
     private final AppViewModel viewModel
 
@@ -43,16 +41,18 @@ class OfferOverviewModel {
 
     @Bindable boolean displaySpinner
 
+    EventEmitter offerEventEmitter
+
     OfferOverviewModel(OverviewService service,
-                       OfferDbConnector connector,
-                       AppViewModel viewModel) {
+                       AppViewModel viewModel,
+                       EventEmitter<Offer> offerEventEmitter) {
         this.service = service
-        this.connector = connector
         this.offerOverviewList = new ObservableList(new ArrayList(service.iterator().toList()))
         this.selectedOffer = Optional.empty()
         this.viewModel = viewModel
         this.downloadButtonActive = false
         this.displaySpinner = false
+        this.offerEventEmitter = offerEventEmitter
         subscribeToOverviewService()
     }
 
@@ -64,15 +64,8 @@ class OfferOverviewModel {
         })
     }
 
-    void setSelectedOffer(OfferOverview selectedOffer) {
-        this.selectedOffer = Optional.ofNullable(selectedOffer)
-        this.downloadButtonActive = false
-        if (this.selectedOffer.isPresent()) {
-            this.offer = loadOfferInfo()
-        }
-    }
-
     Offer getSelectedOffer() {
+        this.downloadButtonActive = false
         if(offer.isPresent()) {
             return offer.get()
         } else {
@@ -93,10 +86,4 @@ class OfferOverviewModel {
                 "convert.")})
     }
 
-    private Optional<Offer> loadOfferInfo() {
-        Optional<Offer> offer = selectedOffer
-                .map({ connector.getOffer(it.offerId) })
-                .orElse(Optional.empty())
-        return offer
-    }
 }

@@ -1,11 +1,12 @@
 package life.qbic.portal.offermanager.components.offer.update
 
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
 import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
-import life.qbic.portal.offermanager.dataresources.offers.OfferUpdateService
+
 import life.qbic.portal.offermanager.components.offer.create.ProductItemViewModel
 
 
@@ -16,7 +17,7 @@ import life.qbic.portal.offermanager.components.offer.create.ProductItemViewMode
  * offer update event.
  *
  * With respect to its parent class, it contains an additional service and subscribes to an
- * instance of {@link OfferUpdateService}'s event emitter property.
+ * instance of {@link life.qbic.portal.offermanager.communication.EventEmitter}'s emitter property.
  *
  * Everytime such an event is emitted, it loads the event data into its properties.
  *
@@ -27,29 +28,30 @@ import life.qbic.portal.offermanager.components.offer.create.ProductItemViewMode
 // this extension makes it difficult to debug imo (TK)
 class UpdateOfferViewModel extends CreateOfferViewModel{
 
-    final private OfferUpdateService offerUpdateService
+    final private EventEmitter<Offer> offerUpdate
 
     UpdateOfferViewModel(CustomerResourceService customerResourceService,
                          ProjectManagerResourceService managerResourceService,
                          ProductsResourcesService productsService,
-                         OfferUpdateService offerUpdateService) {
+                         EventEmitter<Offer> offerUpdateEvent) {
         super(customerResourceService, managerResourceService, productsService)
-        this.offerUpdateService = offerUpdateService
+        this.offerUpdate = offerUpdateEvent
 
-        this.offerUpdateService.subscribe((Offer offer) -> {
+        this.offerUpdate.register((Offer offer) -> {
             loadData(offer)
         })
     }
 
     private void loadData(Offer offer) {
-        this.offerId = offer.identifier
-        this.projectTitle = offer.projectTitle
-        this.projectDescription = offer.projectDescription
-        this.customer = offer.customer
-        this.customerAffiliation = offer.selectedCustomerAffiliation
-        this.projectManager = offer.projectManager
-        this.productItems.clear()
-        this.productItems.addAll(offer.items.collect {
+        super.offerId = offer.identifier
+        super.projectTitle = offer.projectTitle
+        super.projectObjective = offer.projectObjective
+        super.customer = offer.customer
+        super.customerAffiliation = offer.selectedCustomerAffiliation
+        super.projectManager = offer.projectManager
+        super.productItems.clear()
+        super.productItems.addAll(offer.items.collect {
             new ProductItemViewModel(it.quantity, it.product)})
+        super.savedOffer = Optional.of(offer)
     }
 }

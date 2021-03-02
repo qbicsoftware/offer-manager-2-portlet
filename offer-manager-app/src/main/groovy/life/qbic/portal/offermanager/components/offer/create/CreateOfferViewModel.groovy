@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager.components.offer.create
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.*
@@ -38,7 +39,7 @@ class CreateOfferViewModel {
 
     @Bindable OfferId offerId
     @Bindable String projectTitle
-    @Bindable String projectDescription
+    @Bindable String projectObjective
     @Bindable Customer customer
     @Bindable Affiliation customerAffiliation
     @Bindable ProjectManager projectManager
@@ -47,8 +48,9 @@ class CreateOfferViewModel {
     @Bindable double netPrice = 0
     @Bindable double taxes = 0
     @Bindable double overheads = 0
-    @Bindable
-    double totalPrice = 0
+    @Bindable double totalPrice = 0
+
+    Optional<Offer> savedOffer = Optional.empty()
 
     private final CustomerResourceService customerService
     private final ProductsResourcesService productsResourcesService
@@ -60,6 +62,7 @@ class CreateOfferViewModel {
         this.customerService = customerService
         this.productsResourcesService = productsResourcesService
         this.managerResourceService = managerResourceService
+
         fetchPersonData()
         fetchProductData()
         subscribeToResources()
@@ -78,12 +81,10 @@ class CreateOfferViewModel {
 
     private void subscribeToResources() {
         this.customerService.subscribe((Customer customer) -> {
-            this.foundCustomers.clear()
-            this.foundCustomers.addAll(customerService.iterator())
+            this.foundCustomers.add(customer)
         })
-        this.managerResourceService.subscribe((List<ProjectManager> managerList) -> {
-            this.availableProjectManagers.clear()
-            this.availableProjectManagers.addAll(managerResourceService.iterator())
+        this.managerResourceService.subscribe((ProjectManager manager) -> {
+            this.availableProjectManagers.add(manager)
         })
 
         Subscription<Product> productSubscription = new Subscription<Product>() {

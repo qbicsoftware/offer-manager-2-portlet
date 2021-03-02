@@ -1,5 +1,9 @@
 package life.qbic.business.customers.update
 
+import life.qbic.business.customers.create.CreateCustomerDataSource
+import life.qbic.business.customers.create.CreateCustomerOutput
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import life.qbic.datamodel.dtos.business.Customer
 
 import life.qbic.business.exceptions.DatabaseQueryException
@@ -10,29 +14,20 @@ import life.qbic.business.exceptions.DatabaseQueryException
  *
  * @since: 1.0.0
  */
-class UpdateCustomer implements UpdateCustomerInput {
+class UpdateCustomer {
 
-  private UpdateCustomerDataSource dataSource
+  private static final Logging log = Logger.getLogger(UpdateCustomer)
+
+  private CreateCustomerDataSource dataSource
   private UpdateCustomerOutput output
 
-  UpdateCustomer(UpdateCustomerOutput output, UpdateCustomerDataSource dataSource){
+  UpdateCustomer(UpdateCustomerOutput output, CreateCustomerDataSource dataSource){
     this.output = output
     this.dataSource = dataSource
   }
-  
-  // determines if customer properties other than affiliations have changed
-  private boolean hasBasicCustomerDataChanged(Customer existingCustomer, Customer newCustomer) {
-    boolean noFundamentalChange = existingCustomer.firstName.equals(newCustomer.firstName)
-    && existingCustomer.lastName.equals(newCustomer.lastName)
-    && existingCustomer.emailAddress.equals(newCustomer.emailAddress)
-    && existingCustomer.title.equals(newCustomer.title)
-    
-    return !noFundamentalChange
-  }
 
-  @Override
-  void updateCustomer(String customerId, Customer customer) {
-    Customer existingCustomer = dataSource.getCustomer(Integer.parseInt(customerId))
+  void updateCustomer(int customerId, Customer customer) {
+    Customer existingCustomer = dataSource.getCustomer(customerId)
     boolean customerChanged = hasBasicCustomerDataChanged(existingCustomer, customer)
     try {
       if(customerChanged) {
@@ -40,15 +35,29 @@ class UpdateCustomer implements UpdateCustomerInput {
       } else {
         dataSource.updateCustomerAffiliations(customerId, customer.affiliations)
       }
+      //this exception catching is important to avoid displaying a wrong failure notification
+      try {
         output.customerUpdated(customer)
+      } catch (Exception e) {
+        log.error(e.message)
+        log.error(e.stackTrace.join("\n"))
+      }
     } catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)
     } catch(Exception unexpected) {
-      println "-------------------------"
-      println "Unexpected Exception ...."
-      println unexpected.message
-      println unexpected.stackTrace.join("\n")
-      output.failNotification("Could not update customer")
+      log.error(unexpected.message)
+      log.error(unexpected.stackTrace.join("\n"))
+      output.failNotification("Could not update customer.")
     }
+  }
+
+  // determines if customer properties other than affiliations have changed
+  private static boolean hasBasicCustomerDataChanged(Customer existingCustomer, Customer newCustomer) {
+    boolean noFundamentalChange = existingCustomer.firstName.equals(newCustomer.firstName)
+    && existingCustomer.lastName.equals(newCustomer.lastName)
+    && existingCustomer.emailAddress.equals(newCustomer.emailAddress)
+    && existingCustomer.title.equals(newCustomer.title)
+    
+    return !noFundamentalChange
   }
 }

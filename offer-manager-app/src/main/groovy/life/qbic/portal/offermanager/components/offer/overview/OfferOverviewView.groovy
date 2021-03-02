@@ -18,14 +18,12 @@ import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.portal.offermanager.dataresources.offers.OfferUpdateService
+
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 import life.qbic.business.offers.Currency
 import life.qbic.portal.offermanager.components.GridUtils
 
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.ZoneId
 
 /**
  * A basic offer overview user interface.
@@ -40,6 +38,8 @@ class OfferOverviewView extends FormLayout {
 
     final private OfferOverviewModel model
 
+    final private OfferOverviewController offerOverviewController
+
     final private Grid<OfferOverview> overviewGrid
 
     final private Button downloadBtn
@@ -50,15 +50,14 @@ class OfferOverviewView extends FormLayout {
 
     private FileDownloader fileDownloader
 
-    final private OfferUpdateService offerUpdateService
 
-    OfferOverviewView(OfferOverviewModel model, OfferUpdateService offerUpdateService) {
+    OfferOverviewView(OfferOverviewModel model, OfferOverviewController offerOverviewController) {
         this.model = model
+        this.offerOverviewController = offerOverviewController
         this.overviewGrid = new Grid<>()
         this.downloadBtn = new Button(VaadinIcons.DOWNLOAD)
         this.updateOfferBtn = new Button(VaadinIcons.EDIT)
         this.downloadSpinner = new ProgressBar()
-        this.offerUpdateService = offerUpdateService
 
         initLayout()
         setupGrid()
@@ -153,12 +152,13 @@ class OfferOverviewView extends FormLayout {
                     })
                 })
         updateOfferBtn.addClickListener({
-            offerUpdateService.addToResource(model.getSelectedOffer())
+            model.offerEventEmitter.emit(model.getSelectedOffer())
         })
     }
 
     private void createResourceForDownload() {
         removeExistingResources()
+
         StreamResource offerResource =
                 new StreamResource((StreamResource.StreamSource res) -> {
                     return model.getOfferAsPdf()
@@ -192,17 +192,16 @@ class OfferOverviewView extends FormLayout {
                 downloadBtn.setEnabled(false)
                 updateOfferBtn.setEnabled(false)
             })
+                offerOverviewController.fetchOffer(offerOverview.offerId)
+                createResourceForDownload()
 
-            model.setSelectedOffer(offerOverview)
-            createResourceForDownload()
-
-            ui.access(() -> {
-                downloadSpinner.setVisible(false)
-                overviewGrid.setEnabled(true)
-                downloadBtn.setEnabled(true)
-                updateOfferBtn.setEnabled(true)
-                ui.setPollInterval(-1)
-            })
+                ui.access(() -> {
+                    downloadSpinner.setVisible(false)
+                    overviewGrid.setEnabled(true)
+                    downloadBtn.setEnabled(true)
+                    updateOfferBtn.setEnabled(true)
+                    ui.setPollInterval(-1)
+                })
         }
     }
 
