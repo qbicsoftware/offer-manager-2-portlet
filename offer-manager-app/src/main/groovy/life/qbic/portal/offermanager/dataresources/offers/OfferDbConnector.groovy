@@ -99,8 +99,6 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
                     ids.add(offerId)
                 }
 
-                ids.each { println it }
-
                 return ids
             }
         }catch(Exception e){
@@ -115,7 +113,6 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
     private boolean offerAlreadyInDataSource(Offer offer) {
         String query = "SELECT checksum FROM offer WHERE checksum=?"
         Connection connection = null
-        println offer.checksum
         boolean isAlreadyInDataSource = false
 
         try{
@@ -128,7 +125,6 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
                 while(resultSet.next()) {
                     numberOfRows++
                 }
-                println numberOfRows
                 if (numberOfRows > 0) {
                     isAlreadyInDataSource = true
                 }
@@ -286,7 +282,6 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
                         .build())
             }
         }
-        println "Fetched offer: ${offer.get().checksum}"
         return offer
     }
 }
