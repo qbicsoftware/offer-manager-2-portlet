@@ -38,6 +38,7 @@ class Converter {
                 .totalPrice(offer.getTotalCosts())
                 .modificationDate(offer.modificationDate)
                 .expirationDate(offer.expirationDate)
+                .checksum(offer.checksum())
                 .build()
     }
     static Offer buildOfferForCostCalculation(List<ProductItem> items,
