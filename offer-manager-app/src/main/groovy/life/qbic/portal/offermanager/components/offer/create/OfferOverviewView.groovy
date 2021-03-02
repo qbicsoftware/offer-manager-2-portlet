@@ -46,14 +46,16 @@ class OfferOverviewView extends VerticalLayout{
     Button previous
     Button save
     Button downloadOffer
+    CreateOfferController createOfferController
 
-
-    OfferOverviewView(CreateOfferViewModel viewModel, OfferResourcesService service){
+    OfferOverviewView(CreateOfferViewModel viewModel, CreateOfferController controller, OfferResourcesService service){
         this.createOfferViewModel = viewModel
+        this.createOfferController = controller
         initLayout()
         setUpGrid()
         service.subscribe((Offer offer) -> {
             try {
+                createOfferController.fetchOffer(offer.identifier)
                 addOfferResource(offer)
             } catch (Exception e) {
                 log.error("Unable to create the offer PDF resource.")
@@ -203,16 +205,22 @@ class OfferOverviewView extends VerticalLayout{
         button.
          */
         removeExistingResources()
+        //Check if an Offer has been saved.
+        if (!createOfferViewModel.savedOffer.isPresent()) {
+            downloadOffer.setEnabled(false)
+            return
+        }
         // Then we create a new PDF resource ...
-        OfferToPDFConverter converter = new OfferToPDFConverter(offer)
+        OfferToPDFConverter converter = new OfferToPDFConverter(createOfferViewModel.savedOffer.get())
         StreamResource offerResource = new StreamResource((StreamResource.StreamSource res) -> {
-                    return converter.getOfferAsPdf()
-                }, "${offer.identifier.toString()}.pdf")
+            return converter.getOfferAsPdf()
+        }, "${offer.identifier.toString()}.pdf")
         // ... and attach it to the download button
         currentFileDownloader = new FileDownloader(offerResource)
         currentFileDownloader.extend(downloadOffer)
         downloadOffer.setEnabled(true)
-    }
+        }
+
 
     private void removeExistingResources() {
         if (currentFileDownloader) {
