@@ -594,7 +594,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
    */
   List<Customer> fetchAllCustomers() {
     List<Customer> customers = []
-    String query = PERSON_SELECT_QUERY
+    String query = PERSON_SELECT_QUERY + " WHERE active = 1"
     Connection connection = connectionProvider.connect()
     connection.withCloseable {
       def preparedStatement = it.prepareStatement(query)
@@ -632,7 +632,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
    */
   List<ProjectManager> fetchAllProjectManagers() {
     List<ProjectManager> pms = []
-    String query = PM_SELECT_QUERY
+    String query = PM_SELECT_QUERY + " WHERE active = 1"
     Connection connection = connectionProvider.connect()
     connection.withCloseable {
       def preparedStatement = it.prepareStatement(query)

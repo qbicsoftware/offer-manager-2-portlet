@@ -19,7 +19,7 @@ import java.sql.ResultSet
  * @since: 0.1.0
  *
  */
-class CustomerDbConnectorSpec extends Specification{
+class PersonDbConnectorSpec extends Specification{
 
     def "CustomerDbConnector shall return the id for a given person"(){
         given:
