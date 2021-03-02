@@ -31,7 +31,7 @@ class FetchOffer implements FetchOfferInput {
     void fetchOffer(OfferId offerId) {
         try {
             Optional<Offer> foundOffer = dataSource.getOffer(offerId)
-            if (foundOffer.isEmpty()) {
+            if (!foundOffer.isPresent()) {
                 output.failNotification("Could not find an Offer for the given OfferId ${offerId.toString()}")
             } else {
                 Offer finalOffer = generateOfferFromSource(foundOffer.get())
