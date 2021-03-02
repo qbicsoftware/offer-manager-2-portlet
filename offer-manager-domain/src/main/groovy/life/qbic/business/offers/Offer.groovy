@@ -319,10 +319,10 @@ class Offer {
     * Returns the checksum of the current Offer Object
     */
     String checksum(){
-        //Use SHA-1 algorithm
+        //Use SHA-2 algorithm
         MessageDigest shaDigest = MessageDigest.getInstance("SHA-256")
 
-        //SHA-1 checksum
+        //SHA-2 checksum
         return getOfferChecksum(shaDigest, this)
     }
 
@@ -339,13 +339,16 @@ class Offer {
         digest.update(offer.projectTitle.getBytes(StandardCharsets.UTF_8))
 
         offer.items.each {item ->
-            digest.update(item.product.toString().getBytes(StandardCharsets.UTF_8))
+            digest.update(item.product.productName.getBytes(StandardCharsets.UTF_8))
             digest.update(item.quantity.toString().getBytes(StandardCharsets.UTF_8))
         }
-        digest.update(offer.customer.toString().getBytes(StandardCharsets.UTF_8))
-        digest.update(offer.projectManager.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(offer.customer.lastName.getBytes(StandardCharsets.UTF_8))
+        digest.update(offer.projectManager.lastName.getBytes(StandardCharsets.UTF_8))
 
-        digest.update(offer.selectedCustomerAffiliation.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(offer.selectedCustomerAffiliation.getOrganisation().toString().getBytes(StandardCharsets
+                .UTF_8))
+        digest.update(offer.selectedCustomerAffiliation.getStreet().toString().getBytes(StandardCharsets
+                .UTF_8))
 
         //Get the hash's bytes
         byte[] bytes = digest.digest()
