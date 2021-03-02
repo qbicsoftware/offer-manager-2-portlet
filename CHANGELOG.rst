@@ -13,8 +13,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Introduce Offer retrieval via Fetch Offer Use Case
 * Replace the project description with project objective (`#339 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/339>`_)
 * Added support to configure the chromium browser executable. An environment variable
-* A `CHROMIUM_ALIAS` has been introduced that can be set to define the chromium executable in the
-deployment system of the application. Addresses `#336 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/336>`_
+* A `CHROMIUM_ALIAS` has been introduced that can be set to define the chromium executable in the deployment system of the application. Addresses `#336 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/336>`_
 
 **Fixed**
 
