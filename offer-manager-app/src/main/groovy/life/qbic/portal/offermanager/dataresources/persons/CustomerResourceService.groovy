@@ -15,15 +15,15 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  */
 class CustomerResourceService implements ResourcesService<Customer>{
 
-    private final CustomerDbConnector dbConnector
+    private final PersonDbConnector dbConnector
 
     private final List<Customer> customerList
 
     private final EventEmitter<Customer> eventEmitter
 
-    CustomerResourceService(CustomerDbConnector dbConnector) {
+    CustomerResourceService(PersonDbConnector dbConnector) {
         this.dbConnector = dbConnector
-        this.customerList = dbConnector.fetchAllActiveCustomers()
+        this.customerList = dbConnector.fetchAllCustomers()
         this.eventEmitter = new EventEmitter<>()
     }
 

@@ -2,7 +2,7 @@ package life.qbic.portal.offermanager.components.affiliation.create
 
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.business.customers.affiliation.create.CreateAffiliationOutput
+import life.qbic.business.persons.affiliation.create.CreateAffiliationOutput
 import life.qbic.portal.offermanager.components.AppViewModel
 
 /**

@@ -13,7 +13,6 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.GridUtils
 
@@ -22,7 +21,7 @@ import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 /**
  * Constructs the UI for the SearchPerson use case
  *
- * This class provides the view elements so that a user can search for a customer through the UI
+ * This class provides the view elements so that a user can search for a person through the UI
  *
  * @since: 1.0.0
  *
@@ -32,9 +31,9 @@ class SearchPersonView extends FormLayout{
     private final SearchPersonViewModel viewModel
     private final CreatePersonView updatePersonView
 
-    Grid<Person> customerGrid
-    Panel selectedCustomerInformation
-    Button updateCustomer
+    Grid<Person> personGrid
+    Panel selectedPersonInformation
+    Button updatePerson
     VerticalLayout detailsLayout
     VerticalLayout searchPersonLayout
 
@@ -44,7 +43,7 @@ class SearchPersonView extends FormLayout{
 
 
         initLayout()
-        generateCustomerGrid()
+        generatePersonGrid()
         addListeners()
     }
 
@@ -53,26 +52,26 @@ class SearchPersonView extends FormLayout{
         gridLabel.addStyleName(ValoTheme.LABEL_HUGE)
 
 
-        updateCustomer = new Button("Update Customer")
-        updateCustomer.setEnabled(false)
+        updatePerson = new Button("Update Person")
+        updatePerson.setEnabled(false)
 
         detailsLayout = new VerticalLayout()
-        detailsLayout.addComponent(updateCustomer)
-        detailsLayout.setComponentAlignment(updateCustomer, Alignment.MIDDLE_RIGHT)
+        detailsLayout.addComponent(updatePerson)
+        detailsLayout.setComponentAlignment(updatePerson, Alignment.MIDDLE_RIGHT)
 
-        customerGrid = new Grid<>()
-        selectedCustomerInformation = new Panel()
+        personGrid = new Grid<>()
+        selectedPersonInformation = new Panel()
 
         Label detailsLabel = new Label("Person Details: ")
         detailsLayout.addComponent(detailsLabel)
         detailsLabel.addStyleName(ValoTheme.LABEL_LARGE)
 
 
-        detailsLayout.addComponent(selectedCustomerInformation)
+        detailsLayout.addComponent(selectedPersonInformation)
         detailsLayout.setVisible(false)
         detailsLayout.setMargin(false)
 
-        searchPersonLayout = new VerticalLayout(gridLabel,customerGrid,detailsLayout)
+        searchPersonLayout = new VerticalLayout(gridLabel,personGrid,detailsLayout)
         searchPersonLayout.setMargin(false)
 
         this.addComponents(searchPersonLayout,updatePersonView)
@@ -82,18 +81,18 @@ class SearchPersonView extends FormLayout{
 
     private void addListeners(){
 
-        customerGrid.addSelectionListener({
+        personGrid.addSelectionListener({
             if (it.firstSelectedItem.isPresent()) {
-                fillPanel(it.firstSelectedItem.get() as Customer)
+                fillPanel(it.firstSelectedItem.get())
                 detailsLayout.setVisible(true)
-                updateCustomer.setEnabled(true)
+                updatePerson.setEnabled(true)
                 viewModel.selectedPerson = it.firstSelectedItem
             } else {
                 detailsLayout.setVisible(false)
             }
         })
 
-        updateCustomer.addClickListener({
+        updatePerson.addClickListener({
             viewModel.personEvent.emit(viewModel.selectedPerson)
             searchPersonLayout.setVisible(false)
             updatePersonView.setVisible(true)
@@ -112,8 +111,8 @@ class SearchPersonView extends FormLayout{
     }
 
     /**
-     * Fills the panel with the detailed customer information of the currently selected customer
-     * @param person The customer which
+     * Fills the panel with the detailed information of the currently selected person
+     * @param person The person which
      */
     private void fillPanel(Person person){
         VerticalLayout content = new VerticalLayout()
@@ -134,66 +133,66 @@ class SearchPersonView extends FormLayout{
         content.setMargin(true)
         content.setSpacing(false)
 
-        selectedCustomerInformation.setContent(content)
-        selectedCustomerInformation.setWidthUndefined()
+        selectedPersonInformation.setContent(content)
+        selectedPersonInformation.setWidthUndefined()
     }
 
     /**
-     * This method adds the retrieved Customer Information to the Customer grid
+     * This method adds the retrieved person Information to the person grid
      */
-    private ListDataProvider setupCustomerDataProvider() {
-        def customerListDataProvider = new ListDataProvider<>(viewModel.getAvailablePersons())
-        this.customerGrid.setDataProvider(customerListDataProvider)
+    private ListDataProvider setupPersonDataProvider() {
+        def personListDataProvider = new ListDataProvider<>(viewModel.getAvailablePersons())
+        this.personGrid.setDataProvider(personListDataProvider)
 
-        return customerListDataProvider
+        return personListDataProvider
     }
 
     /**
-     * Method which generates the grid and populates the columns with the set Customer information from the setupDataProvider Method
+     * Method which generates the grid and populates the columns with the set person information from the setupDataProvider Method
      *
-     * This Method is responsible for setting up the grid and setting the customer information to the individual grid columns.
+     * This Method is responsible for setting up the grid and setting the person information to the individual grid columns.
      */
-    private def generateCustomerGrid() {
+    private def generatePersonGrid() {
         try {
-            this.customerGrid.addColumn({ customer -> customer.firstName })
+            this.personGrid.addColumn({ person -> person.firstName })
                     .setCaption("First Name").setId("FirstName")
-            this.customerGrid.addColumn({ customer -> customer.lastName })
+            this.personGrid.addColumn({ person -> person.lastName })
                     .setCaption("Last Name").setId("LastName")
-            this.customerGrid.addColumn({ customer -> customer.emailAddress })
+            this.personGrid.addColumn({ person -> person.emailAddress })
                     .setCaption("Email Address").setId("EmailAddress")
-            this.customerGrid.addColumn({ customer ->
-                customer.title == AcademicTitle.NONE ? "" : customer.title})
+            this.personGrid.addColumn({ person ->
+                person.title == AcademicTitle.NONE ? "" : person.title})
                     .setCaption("Title").setId("Title")
 
             //specify size of grid and layout
-            customerGrid.setWidthFull()
-            customerGrid.setHeightMode(HeightMode.ROW)
-            customerGrid.setHeightByRows(5)
+            personGrid.setWidthFull()
+            personGrid.setHeightMode(HeightMode.ROW)
+            personGrid.setHeightByRows(5)
 
         } catch (Exception e) {
-            new Exception("Unexpected exception in building the customer grid", e)
+            new Exception("Unexpected exception in building the person grid", e)
         }
         /*
         Let's not forget to setup the grid's data provider
          */
-        def customerDataProvider = setupCustomerDataProvider()
+        def personDataProvider = setupPersonDataProvider()
         /*
         Lastly, we add some content filters for the columns
          */
-        addFilters(customerDataProvider)
+        addFilters(personDataProvider)
     }
 
-    private void addFilters(ListDataProvider customerListDataProvider) {
-        HeaderRow customerFilterRow = customerGrid.appendHeaderRow()
-        GridUtils.setupColumnFilter(customerListDataProvider,
-                customerGrid.getColumn("FirstName"),
-                customerFilterRow)
-        GridUtils.setupColumnFilter(customerListDataProvider,
-                customerGrid.getColumn("LastName"),
-                customerFilterRow)
-        GridUtils.setupColumnFilter(customerListDataProvider,
-                customerGrid.getColumn("EmailAddress"),
-                customerFilterRow)
+    private void addFilters(ListDataProvider personListDataProvider) {
+        HeaderRow personFilterRow = personGrid.appendHeaderRow()
+        GridUtils.setupColumnFilter(personListDataProvider,
+                personGrid.getColumn("FirstName"),
+                personFilterRow)
+        GridUtils.setupColumnFilter(personListDataProvider,
+                personGrid.getColumn("LastName"),
+                personFilterRow)
+        GridUtils.setupColumnFilter(personListDataProvider,
+                personGrid.getColumn("EmailAddress"),
+                personFilterRow)
     }
 
 }
