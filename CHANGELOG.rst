@@ -14,9 +14,9 @@ the organisational roles project manager `Role.PROJECT_MANAGER` and offer admin 
 .OFFER_ADMIN`. The administrator will provide access to additional app features, such as the
 upcoming service product maintenance interface.
 
-* Introduce Offer retrieval via Fetch Offer Use Case
-* Introduce subtotals in Offer PDF ProductItem Table
-* Introduce distinction between ProductItems with and without Overhead cost in Offer PDF
+* Introduce Offer retrieval via Fetch Offer Use Case (`#334 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/344>`_)
+* Introduce subtotals in Offer PDF ProductItem Table(`#349 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/349>`_)
+* Introduce distinction between ProductItems with and without Overhead cost in Offer PDF(`#349 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/349>`_)
 
 **Fixed**
 
