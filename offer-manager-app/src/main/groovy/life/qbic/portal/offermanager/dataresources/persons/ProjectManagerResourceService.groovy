@@ -19,7 +19,7 @@ class ProjectManagerResourceService implements ResourcesService<ProjectManager>{
 
     private final EventEmitter<ProjectManager> resourceUpdateEvent
 
-    ProjectManagerResourceService(CustomerDbConnector dbConnector) {
+    ProjectManagerResourceService(PersonDbConnector dbConnector) {
         availableProjectManagers = dbConnector.fetchAllProjectManagers()
         resourceUpdateEvent = new EventEmitter<>()
     }

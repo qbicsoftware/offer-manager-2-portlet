@@ -4,8 +4,8 @@ import groovy.util.logging.Log4j2
 import life.qbic.business.offers.fetch.FetchOffer
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.business.customers.affiliation.create.CreateAffiliation
-import life.qbic.business.customers.create.CreateCustomer
+import life.qbic.business.persons.affiliation.create.CreateAffiliation
+import life.qbic.business.persons.create.CreatePerson
 import life.qbic.business.offers.create.CreateOffer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.general.Person
@@ -16,7 +16,7 @@ import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
-import life.qbic.portal.offermanager.dataresources.persons.CustomerDbConnector
+import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
 
 import life.qbic.portal.offermanager.dataresources.database.DatabaseSession
@@ -87,13 +87,13 @@ class DependencyManager {
     private CreateOfferPresenter updateOfferPresenter
     private OfferOverviewPresenter offerOverviewPresenter
 
-    private CustomerDbConnector customerDbConnector
+    private PersonDbConnector customerDbConnector
     private OfferDbConnector offerDbConnector
     private ProductsDbConnector productsDbConnector
 
-    private CreateCustomer createCustomer
-    private CreateCustomer createCustomerNewOffer
-    private CreateCustomer updateCustomer
+    private CreatePerson createCustomer
+    private CreatePerson createCustomerNewOffer
+    private CreatePerson updateCustomer
     private CreateAffiliation createAffiliation
     private CreateOffer createOffer
     private CreateOffer updateOffer
@@ -164,7 +164,7 @@ class DependencyManager {
             String sqlDatabase = Objects.requireNonNull(configurationManager.getMysqlDB(), "Mysql database name missing.")
 
             DatabaseSession.init(user, password, host, port, sqlDatabase)
-            customerDbConnector = new CustomerDbConnector(DatabaseSession.getInstance())
+            customerDbConnector = new PersonDbConnector(DatabaseSession.getInstance())
             productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
             offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(),
                     customerDbConnector, productsDbConnector)
@@ -338,12 +338,15 @@ class DependencyManager {
     }
 
     private void setupUseCaseInteractors() {
-        this.createCustomer = new CreateCustomer(createCustomerPresenter, customerDbConnector)
-        this.createCustomerNewOffer = new CreateCustomer(createCustomerPresenterNewOffer, customerDbConnector)
+        this.createCustomer = new CreatePerson(createCustomerPresenter, customerDbConnector)
+        this.createCustomerNewOffer = new CreatePerson(createCustomerPresenterNewOffer, customerDbConnector)
+
         this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbConnector)
+
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
         this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
-        this.updateCustomer = new CreateCustomer(updateCustomerPresenter, customerDbConnector)
+        this.updateCustomer = new CreatePerson(updateCustomerPresenter, customerDbConnector)
+
         this.fetchOfferOfferOverview = new FetchOffer(offerDbConnector, offerOverviewPresenter)
         this.fetchOfferCreateOffer = new FetchOffer(offerDbConnector, createOfferPresenter)
         this.fetchOfferUpdateOffer = new FetchOffer(offerDbConnector, updateOfferPresenter)
