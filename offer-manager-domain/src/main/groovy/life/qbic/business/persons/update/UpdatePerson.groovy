@@ -3,10 +3,7 @@ package life.qbic.business.persons.update
 import life.qbic.business.persons.create.CreatePersonDataSource
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.datamodel.dtos.business.Customer
-
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.datamodel.dtos.general.CommonPerson
 import life.qbic.datamodel.dtos.general.Person
 
 /**
@@ -20,9 +17,9 @@ class UpdatePerson {
   private static final Logging log = Logger.getLogger(UpdatePerson)
 
   private CreatePersonDataSource dataSource
-  private UpdateCustomerOutput output
+  private UpdatePersonOutput output
 
-  UpdatePerson(UpdateCustomerOutput output, CreatePersonDataSource dataSource){
+  UpdatePerson(UpdatePersonOutput output, CreatePersonDataSource dataSource){
     this.output = output
     this.dataSource = dataSource
   }

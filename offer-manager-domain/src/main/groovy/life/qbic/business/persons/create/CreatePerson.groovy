@@ -1,11 +1,10 @@
 package life.qbic.business.persons.create
 
 import life.qbic.business.persons.update.UpdatePerson
-import life.qbic.business.persons.update.UpdateCustomerOutput
+import life.qbic.business.persons.update.UpdatePersonOutput
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
 
 /**
@@ -15,7 +14,7 @@ import life.qbic.datamodel.dtos.general.Person
  *
  * @since: 1.0.0
  */
-class CreatePerson implements CreatePersonInput, UpdateCustomerOutput {
+class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
 
   private CreatePersonDataSource dataSource
   private CreatePersonOutput output

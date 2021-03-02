@@ -1,6 +1,5 @@
 package life.qbic.business.persons.search
 
-import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.datamodel.dtos.general.Person
 
@@ -13,13 +12,13 @@ import life.qbic.datamodel.dtos.general.Person
  * @since: 1.0.0
  *
  */
-interface SearchCustomerDataSource {
+interface SearchPersonDataSource {
 
     /**
      * This method returns a customer matching the given search criteria
      *
-     * @param firstName The customer's first name
-     * @param lastName The customer's last name
+     * @param firstName The person's first name
+     * @param lastName The person's last name
      * @return A list of matching customer entries with the given first and last name.
      * @throws DatabaseQueryException If the data source query fails for technical reasons, this
      * exception is thrown.
@@ -30,11 +29,11 @@ interface SearchCustomerDataSource {
     
     
     /**
-     * This method returns a customer matching the given search criteria only if it is set to active
+     * This method returns a person matching the given search criteria only if it is set to active
      *
-     * @param firstName The customer's first name
-     * @param lastName The customer's last name
-     * @return A list of matching customer entries with the given first and last name that are set to active
+     * @param firstName The person's first name
+     * @param lastName The person's last name
+     * @return A list of matching person entries with the given first and last name that are set to active
      * @throws DatabaseQueryException If the data source query fails for technical reasons, this
      * exception is thrown.
      *

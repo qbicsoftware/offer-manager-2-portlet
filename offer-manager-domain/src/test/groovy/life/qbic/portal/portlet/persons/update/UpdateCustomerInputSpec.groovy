@@ -17,7 +17,7 @@ import spock.lang.Specification
  * @since: 1.0.0
  */
 class UpdateCustomerInputSpec extends Specification {
-    UpdateCustomerOutput output
+    UpdatePersonOutput output
     CreatePersonDataSource dataSource
 
 

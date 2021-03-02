@@ -9,7 +9,7 @@ import life.qbic.datamodel.dtos.general.Person
  *
  * @since: 1.0.0
  */
-interface UpdateCustomerOutput extends UseCaseFailure {
+interface UpdatePersonOutput extends UseCaseFailure {
 
     /**
      * Is called by the use case, when a customer resource has been updated

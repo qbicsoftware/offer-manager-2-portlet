@@ -87,6 +87,6 @@ class CreatePersonPresenter implements CreatePersonOutput{
         //reset the view model
         clearPersonData()
 
-        viewModel.successNotifications.add("Successfully created/updated new person entry.")
+        viewModel.successNotifications.add("Successfully created new person entry.")
     }
 }

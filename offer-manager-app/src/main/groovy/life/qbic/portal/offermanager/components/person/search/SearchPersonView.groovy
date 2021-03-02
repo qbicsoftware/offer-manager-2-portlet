@@ -13,7 +13,6 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.GridUtils
 
@@ -60,7 +59,7 @@ class SearchPersonView extends FormLayout{
         detailsLayout.addComponent(updatePerson)
         detailsLayout.setComponentAlignment(updatePerson, Alignment.MIDDLE_RIGHT)
 
-        customerGrid = new Grid<>()
+        personGrid = new Grid<>()
         selectedPersonInformation = new Panel()
 
         Label detailsLabel = new Label("Person Details: ")
@@ -84,7 +83,7 @@ class SearchPersonView extends FormLayout{
 
         personGrid.addSelectionListener({
             if (it.firstSelectedItem.isPresent()) {
-                fillPanel(it.firstSelectedItem.get() as Customer)
+                fillPanel(it.firstSelectedItem.get())
                 detailsLayout.setVisible(true)
                 updatePerson.setEnabled(true)
                 viewModel.selectedPerson = it.firstSelectedItem
@@ -139,7 +138,7 @@ class SearchPersonView extends FormLayout{
     }
 
     /**
-     * This method adds the retrieved Customer Information to the Customer grid
+     * This method adds the retrieved person Information to the person grid
      */
     private ListDataProvider setupPersonDataProvider() {
         def personListDataProvider = new ListDataProvider<>(viewModel.getAvailablePersons())
@@ -149,9 +148,9 @@ class SearchPersonView extends FormLayout{
     }
 
     /**
-     * Method which generates the grid and populates the columns with the set Customer information from the setupDataProvider Method
+     * Method which generates the grid and populates the columns with the set person information from the setupDataProvider Method
      *
-     * This Method is responsible for setting up the grid and setting the customer information to the individual grid columns.
+     * This Method is responsible for setting up the grid and setting the person information to the individual grid columns.
      */
     private def generatePersonGrid() {
         try {
@@ -171,7 +170,7 @@ class SearchPersonView extends FormLayout{
             personGrid.setHeightByRows(5)
 
         } catch (Exception e) {
-            new Exception("Unexpected exception in building the customer grid", e)
+            new Exception("Unexpected exception in building the person grid", e)
         }
         /*
         Let's not forget to setup the grid's data provider

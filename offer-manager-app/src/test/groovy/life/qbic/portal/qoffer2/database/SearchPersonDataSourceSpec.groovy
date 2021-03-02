@@ -3,7 +3,7 @@ package life.qbic.portal.qoffer2.database
 import groovy.sql.GroovyRowResult
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.business.persons.search.SearchCustomerDataSource
+import life.qbic.business.persons.search.SearchPersonDataSource
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
@@ -21,7 +21,7 @@ import java.sql.ResultSet
  *
  * @since: 1.0.0
  */
-class SearchCustomerDataSourceSpec extends Specification{
+class SearchPersonDataSourceSpec extends Specification{
     AcademicTitleFactory factory = new AcademicTitleFactory()
 
     @Ignore
@@ -50,7 +50,7 @@ class SearchCustomerDataSourceSpec extends Specification{
         ConnectionProvider connectionProvider = Stub (ConnectionProvider, {it.connect() >> connection})
 
         //and: "an implementation of the SearchCustomerDataSource with this connection provider"
-        SearchCustomerDataSource dataSource = new PersonDbConnector(connectionProvider)
+        SearchPersonDataSource dataSource = new PersonDbConnector(connectionProvider)
 
         when: "the datasource is tasked with finding a customer with provided first and last name"
         List<Customer> foundCustomers = dataSource.findPerson(firstName, lastName)

@@ -14,7 +14,7 @@ import life.qbic.datamodel.dtos.general.Person
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
 import life.qbic.business.persons.create.CreatePersonDataSource
-import life.qbic.business.persons.search.SearchCustomerDataSource
+import life.qbic.business.persons.search.SearchPersonDataSource
 
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
@@ -35,7 +35,7 @@ import java.sql.Statement
  *
  */
 @Log4j2
-class PersonDbConnector implements CreatePersonDataSource, SearchCustomerDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
+class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
   /**
    * A connection to the customer database used to create queries.

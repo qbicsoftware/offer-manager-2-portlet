@@ -39,7 +39,7 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
 
         this.customerUpdate.register((Person person) -> {
             loadData(person)
-            setOutdatedPerson((Customer) person)
+            setOutdatedPerson(person)
         })
     }
 
