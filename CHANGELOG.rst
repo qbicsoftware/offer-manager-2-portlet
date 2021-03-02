@@ -10,17 +10,25 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 **Added**
 
 * Authorization based on user roles (`#346 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/346>`_). Two new roles have been introduced that represent the organisational roles project manager ``Role.PROJECT_MANAGER`` and offer admin ``Role.OFFER_ADMIN``. The administrator will provide access to additional app features, such as the upcoming service product maintenance interface.
-
 * Introduce Offer retrieval via Fetch Offer Use Case
+* Replace the project description with project objective (`#339 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/339>`_)
+* Added support to configure the chromium browser executable. An environment variable
+`CHROMIUM_ALIAS` has been introduced that can be set to define the chromium executable in the
+deployment system of the application. Addresses `#336 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/336>`_
 
 **Fixed**
 
 * Update the agreement section of the offer (`#329 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/329>`_)
 * Make the offer controls more intuitive (`#341 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/341>`_)
 * Update offers without changes is not possible anymore (`#222 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/222>`_)
-* Rename CreateCustomer and UpdateCustomer classes and methods (`#315 https://github.com/qbicsoftware/offer-manager-2-portlet/issues/315`_)
+* Rename CreateCustomer and UpdateCustomer classes and methods (`#315 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/315>`_)
+* Fixed (`#324 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/324>`_)
+* Create new affiliation does not show an error message anymore (`#320 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/320>`_)
+* Updating a person entry now refreshes the search view (`#325 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/325>`_)
 
 **Dependencies**
+
+* Upgraded log4j to log4j-core 2.14.0
 
 **Deprecated**
 
