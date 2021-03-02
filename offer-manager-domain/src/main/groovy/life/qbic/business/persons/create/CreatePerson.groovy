@@ -46,7 +46,7 @@ class CreatePerson implements CreatePersonInput, UpdateCustomerOutput {
       println "Unexpected Exception ...."
       println unexpected.message
       println unexpected.stackTrace.join("\n")
-      output.failNotification("Could not create new customer")
+      output.failNotification("Could not create new person")
     }
   }
 
