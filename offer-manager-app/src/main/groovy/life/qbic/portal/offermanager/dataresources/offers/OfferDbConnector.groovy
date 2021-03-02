@@ -34,7 +34,8 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
 
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (offerId, " +
             "creationDate, expirationDate, customerId, projectManagerId, projectTitle, " +
-            "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads)"
+            "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, " +
+            "checksum)"
 
     private static final String OFFER_SELECT_QUERY = "SELECT offerId, creationDate, expirationDate, customerId, projectManagerId, projectTitle," +
                                                         "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads FROM offer"
@@ -48,6 +49,11 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
 
     @Override
     void store(Offer offer) throws DatabaseQueryException {
+
+        if (offerAlreadyInDataSource(offer)) {
+            throw new DatabaseQueryException("Offer with equal content of ${offer.identifier.toString()} already exists.")
+        }
+
         Connection connection = connectionProvider.connect()
         connection.setAutoCommit(false)
 
@@ -93,8 +99,6 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
                     ids.add(offerId)
                 }
 
-                ids.each { println it }
-
                 return ids
             }
         }catch(Exception e){
@@ -106,14 +110,43 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
 
     }
 
-/**
+    private boolean offerAlreadyInDataSource(Offer offer) {
+        String query = "SELECT checksum FROM offer WHERE checksum=?"
+        Connection connection = null
+        boolean isAlreadyInDataSource = false
+
+        try{
+            connection = connectionProvider.connect()
+            connection.withCloseable {
+                PreparedStatement preparedStatement = it.prepareStatement(query)
+                preparedStatement.setString(1, "${offer.checksum}")
+                ResultSet resultSet = preparedStatement.executeQuery()
+                int numberOfRows = 0
+                while(resultSet.next()) {
+                    numberOfRows++
+                }
+                if (numberOfRows > 0) {
+                    isAlreadyInDataSource = true
+                }
+            }
+        }catch(Exception e){
+            log.error(e.message)
+            log.error(e.stackTrace.join("\n"))
+            connection.rollback()
+            throw new DatabaseQueryException("Could not check if offer ${offer.identifier} is " +
+                    "already in the database.")
+        }
+        return isAlreadyInDataSource
+    }
+
+    /**
      * The method stores the offer in the QBiC database
      *
      * @param offer with the information of the offer to be stored
      * @return the id of the stored offer in the database
      */
     private int storeOffer(Offer offer, int projectManagerId, int customerId, int affiliationId){
-        String sqlValues = "VALUE(?,?,?,?,?,?,?,?,?,?,?,?)"
+        String sqlValues = "VALUE(?,?,?,?,?,?,?,?,?,?,?,?,?)"
         String queryTemplate = OFFER_INSERT_QUERY + " " + sqlValues
         def identifier = offer.identifier
         List<Integer> generatedKeys = []
@@ -133,6 +166,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
             preparedStatement.setDouble(10, offer.taxes)
             preparedStatement.setDouble(11, offer.netPrice)
             preparedStatement.setDouble(12, offer.overheads)
+            preparedStatement.setString(13, offer.checksum)
 
 
             preparedStatement.execute()
@@ -228,6 +262,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
                 def selectedAffiliationId = resultSet.getInt("customerAffiliationId")
                 def selectedAffiliation = customerGateway.getAffiliation(selectedAffiliationId)
                 def items = productGateway.getItemsForOffer(offerPrimaryId)
+                def checksum = resultSet.getString("checksum")
 
                 offer = Optional.of(new Offer.Builder(
                         customer,
@@ -243,6 +278,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
                         .taxes(vat)
                         .overheads(overheads)
                         .netPrice(net)
+                        .checksum(checksum)
                         .build())
             }
         }
