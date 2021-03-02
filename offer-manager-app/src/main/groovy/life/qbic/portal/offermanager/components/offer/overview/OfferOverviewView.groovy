@@ -38,6 +38,8 @@ class OfferOverviewView extends FormLayout {
 
     final private OfferOverviewModel model
 
+    final private OfferOverviewController offerOverviewController
+
     final private Grid<OfferOverview> overviewGrid
 
     final private Button downloadBtn
@@ -49,8 +51,9 @@ class OfferOverviewView extends FormLayout {
     private FileDownloader fileDownloader
 
 
-    OfferOverviewView(OfferOverviewModel model) {
+    OfferOverviewView(OfferOverviewModel model, OfferOverviewController offerOverviewController) {
         this.model = model
+        this.offerOverviewController = offerOverviewController
         this.overviewGrid = new Grid<>()
         this.downloadBtn = new Button(VaadinIcons.DOWNLOAD)
         this.updateOfferBtn = new Button(VaadinIcons.EDIT)
@@ -155,6 +158,7 @@ class OfferOverviewView extends FormLayout {
 
     private void createResourceForDownload() {
         removeExistingResources()
+
         StreamResource offerResource =
                 new StreamResource((StreamResource.StreamSource res) -> {
                     return model.getOfferAsPdf()
@@ -188,17 +192,16 @@ class OfferOverviewView extends FormLayout {
                 downloadBtn.setEnabled(false)
                 updateOfferBtn.setEnabled(false)
             })
+                offerOverviewController.fetchOffer(offerOverview.offerId)
+                createResourceForDownload()
 
-            model.setSelectedOffer(offerOverview)
-            createResourceForDownload()
-
-            ui.access(() -> {
-                downloadSpinner.setVisible(false)
-                overviewGrid.setEnabled(true)
-                downloadBtn.setEnabled(true)
-                updateOfferBtn.setEnabled(true)
-                ui.setPollInterval(-1)
-            })
+                ui.access(() -> {
+                    downloadSpinner.setVisible(false)
+                    overviewGrid.setEnabled(true)
+                    downloadBtn.setEnabled(true)
+                    updateOfferBtn.setEnabled(true)
+                    ui.setPollInterval(-1)
+                })
         }
     }
 
