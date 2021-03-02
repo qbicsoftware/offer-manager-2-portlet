@@ -212,7 +212,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
                  */
                 def customerId =  resultSet.getInt("customerId")
                 def projectManagerId = resultSet.getInt("projectManagerId")
-                def customer = customerGateway.getPerson(customerId)
+                def customer = customerGateway.getCustomer(customerId)
                 def projectManager = customerGateway.getProjectManager(projectManagerId)
                 /*
                 Load general offer info

@@ -269,8 +269,7 @@ class DependencyManager {
         }
 
         try {
-            this.offerOverviewModel = new OfferOverviewModel(overviewService, offerDbConnector,
-                    viewModel, offerUpdateEvent)
+            this.offerOverviewModel = new OfferOverviewModel(overviewService, viewModel, offerUpdateEvent)
         } catch (Exception e) {
             log.error("Unexpected excpetion during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
         }

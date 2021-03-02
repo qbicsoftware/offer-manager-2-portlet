@@ -765,6 +765,22 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     }
   }
 
+  Customer getCustomer(int personPrimaryId) {
+    String query = PERSON_SELECT_QUERY + " " +"WHERE id=?"
+    Connection connection = connectionProvider.connect()
+
+    connection.withCloseable {
+      PreparedStatement statement = it.prepareStatement(query)
+      statement.setInt(1, personPrimaryId)
+      ResultSet result = statement.executeQuery()
+      Customer person = null
+      while (result.next()) {
+        person = parseCustomerFromResultSet(result)
+      }
+      return person
+    }
+  }
+
   @Override
   Optional<Integer> findPerson(Person person) {
     int personID
