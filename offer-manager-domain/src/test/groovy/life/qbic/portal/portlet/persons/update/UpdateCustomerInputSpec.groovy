@@ -5,7 +5,8 @@ import life.qbic.business.persons.update.*
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Affiliation
-
+import life.qbic.datamodel.dtos.general.CommonPerson
+import life.qbic.datamodel.dtos.general.Person
 import spock.lang.Specification
 
 /**
@@ -28,7 +29,7 @@ class UpdateCustomerInputSpec extends Specification {
   def "given customer changes, update the customer using a mocked data source"(){
       given: "A new update customer use case instance"
       UpdatePerson useCase = new UpdatePerson(output, dataSource)
-      dataSource.getPerson(42) >> new Customer.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).build()
+      dataSource.getPerson(42) >> new CommonPerson.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).build()
 
       when: "The use case method is called"
       useCase.updatePerson(customerId, customer)
@@ -38,14 +39,14 @@ class UpdateCustomerInputSpec extends Specification {
       0 * dataSource.updatePersonAffiliations(_ as String, _ as List<Affiliation>)
 
       where:
-      customer = new Customer.Builder("Test", "user", "newmail").title(AcademicTitle.NONE).build()
+      customer = new CommonPerson.Builder("Test", "user", "newmail").title(AcademicTitle.NONE).build()
       customerId = 42
   }
   
   def "given no customer changes, update the affiliations using a mocked data source"(){
       given: "A new update customer use case instance"
       UpdatePerson useCase = new UpdatePerson(output, dataSource)
-      dataSource.getPerson(42) >> new Customer.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).affiliation(affiliation1).build()
+      dataSource.getPerson(42) >> new CommonPerson.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).affiliation(affiliation1).build()
 
       when: "The use case method is called"
       useCase.updatePerson(customerId, customer)
@@ -59,14 +60,14 @@ class UpdateCustomerInputSpec extends Specification {
         "org", "street", "zip", "city").build()
       twoAffiliations = new ArrayList<Affiliation>(Arrays.asList(new Affiliation.Builder(
         "other org", "other street", "zip", "city").build(), affiliation1))
-      customer = new Customer.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).affiliations(twoAffiliations).build()
+      customer = new CommonPerson.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).affiliations(twoAffiliations).build()
       customerId = 42
   }
   
   def "datasource throwing an exception leads to fail notification on output"() {
       given: "a data source that throws an exception"
-      dataSource.getPerson(_ as Integer) >> new Customer.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).build()
-      dataSource.updatePerson(_ as Integer, _ as Customer) >> { throw new Exception("Something went wrong.") }
+      dataSource.getPerson(_ as Integer) >> new CommonPerson.Builder("Test", "user", "oldmail").title(AcademicTitle.NONE).build()
+      dataSource.updatePerson(_ as Integer, _ as Person) >> { throw new Exception("Something went wrong.") }
       UpdatePerson useCase = new UpdatePerson(output, dataSource)
 
       when: "the use case is executed"
@@ -74,10 +75,10 @@ class UpdateCustomerInputSpec extends Specification {
 
       then: "the output receives a failure notification"
       1 * output.failNotification(_ as String)
-      0 * output.personUpdated(_ as Customer)
+      0 * output.personUpdated(_ as Person)
 
       where:
-      customer = new Customer.Builder("Test", "user", "newmail").title(AcademicTitle.NONE).build()
+      customer = new CommonPerson.Builder("Test", "user", "newmail").title(AcademicTitle.NONE).build()
       customerId = 420
   }
 }

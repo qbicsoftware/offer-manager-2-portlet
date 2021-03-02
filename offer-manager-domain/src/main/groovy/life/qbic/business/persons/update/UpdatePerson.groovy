@@ -6,6 +6,7 @@ import life.qbic.business.logging.Logging
 import life.qbic.datamodel.dtos.business.Customer
 
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.datamodel.dtos.general.CommonPerson
 import life.qbic.datamodel.dtos.general.Person
 
 /**
@@ -27,7 +28,7 @@ class UpdatePerson {
   }
 
   void updatePerson(int personId, Person person) {
-    Customer existingCustomer = dataSource.getPerson(personId)
+    Person existingCustomer = dataSource.getPerson(personId)
     boolean customerChanged = hasBasicPersonDataChanged(existingCustomer, person)
     try {
       if(customerChanged) {
@@ -47,7 +48,7 @@ class UpdatePerson {
     } catch(Exception unexpected) {
       log.error(unexpected.message)
       log.error(unexpected.stackTrace.join("\n"))
-      output.failNotification("Could not update customer.")
+      output.failNotification("Could not update person.")
     }
   }
 
