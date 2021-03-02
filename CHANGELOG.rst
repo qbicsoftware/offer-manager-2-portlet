@@ -19,7 +19,6 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Make the offer controls more intuitive (`#341 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/341>`_)
 * Update offers without changes is not possible anymore (`#222 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/222>`_)
 * Rename CreateCustomer and UpdateCustomer classes and methods (`#315 https://github.com/qbicsoftware/offer-manager-2-portlet/issues/315`_)
-* Fix checksum calculation for offer comparison (`#350 https://github.com/qbicsoftware/offer-manager-2-portlet/issues/350`_)
 
 **Dependencies**
 
