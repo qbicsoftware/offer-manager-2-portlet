@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager.components.offer.create
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.*
@@ -47,8 +48,9 @@ class CreateOfferViewModel {
     @Bindable double netPrice = 0
     @Bindable double taxes = 0
     @Bindable double overheads = 0
-    @Bindable
-    double totalPrice = 0
+    @Bindable double totalPrice = 0
+
+    Optional<Offer> savedOffer = Optional.empty()
 
     private final CustomerResourceService customerService
     private final ProductsResourcesService productsResourcesService

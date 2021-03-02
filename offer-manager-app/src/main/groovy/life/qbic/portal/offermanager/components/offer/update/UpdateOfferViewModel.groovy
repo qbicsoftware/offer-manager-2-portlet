@@ -52,5 +52,6 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
         super.productItems.clear()
         super.productItems.addAll(offer.items.collect {
             new ProductItemViewModel(it.quantity, it.product)})
+        super.savedOffer = Optional.of(offer)
     }
 }
