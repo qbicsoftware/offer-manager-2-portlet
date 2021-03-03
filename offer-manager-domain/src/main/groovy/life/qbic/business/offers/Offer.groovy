@@ -73,7 +73,7 @@ class Offer {
      */
     private List<ProductItem> itemsWithOverhead
     /**
-     * A list of Items for which an overhead cost is not applicable
+     * A list of items for which an overhead cost is not applicable
      */
     private List<ProductItem> itemsWithoutOverhead
     /**
