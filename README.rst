@@ -1,20 +1,7 @@
 TOMATO - The Offer MAnager Tool
 -----------------------------------
 
-.. image:: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Build%20Maven%20Package/badge.svg
-    :target: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Build%20Maven%20Package/badge.svg
-    :alt: Github Workflow Build Maven Package Status
-.. image:: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Run%20Maven%20Tests/badge.svg
-    :target: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Run%20Maven%20Tests/badge.svg
-    :alt: Github Workflow Tests Status
-.. image:: https://img.shields.io/github/v/release/qbicsoftware/offer-manager-2-portlet.svg
-    :target: (https://github.com/qbicsoftware/offer-manager-2-portlet/release
-    :alt: Github Workflow Tests Status
-.. image:: https://img.shields.io/badge/language-java-blue.svg
-    :alt: Github Workflow Tests Status
-.. image:: https://img.shields.io/badge/language-groovy-blue.svg
-    :alt: Github Workflow Tests Status
-
+|maven-build| |maven-test| |release| |java| |groovy|
 
 Tomato assists in managing and creating offers
 
@@ -90,3 +77,22 @@ Credits
 This project was created with qube_.
 
 .. _qube: https://github.com/qbicsoftware/qube
+
+.. |maven-build| image:: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Build%20Maven%20Package/badge.svg
+    :target: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Build%20Maven%20Package/badge.svg
+    :alt: Github Workflow Build Maven Package Status
+
+.. |maven-test| image:: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Run%20Maven%20Tests/badge.svg
+    :target: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Run%20Maven%20Tests/badge.svg
+    :alt: Github Workflow Tests Status  
+
+.. |release| image:: https://img.shields.io/github/v/release/qbicsoftware/offer-manager-2-portlet.svg
+    :target: https://github.com/qbicsoftware/offer-manager-2-portlet/release
+    :alt: Release status 
+
+.. |java| image:: https://img.shields.io/badge/language-java-blue.svg
+    :alt: Written in Java
+
+.. |groovy| image:: https://img.shields.io/badge/language-groovy-blue.svg
+    :alt: Written in Groovy
+    
