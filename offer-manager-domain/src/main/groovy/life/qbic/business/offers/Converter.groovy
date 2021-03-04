@@ -38,6 +38,7 @@ class Converter {
                 .totalPrice(offer.getTotalCosts())
                 .modificationDate(offer.modificationDate)
                 .expirationDate(offer.expirationDate)
+                .checksum(offer.checksum())
                 .itemsWithOverhead(offer.overheadItems)
                 .itemsWithoutOverhead(offer.noOverheadItems)
                 .itemsWithOverheadNet(offer.overheadItemsNet)

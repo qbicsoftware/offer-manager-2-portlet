@@ -1,6 +1,5 @@
 package life.qbic.portal.offermanager.components.affiliation.create
 
-import com.vaadin.data.Binder
 import com.vaadin.data.ValidationResult
 import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
@@ -10,8 +9,7 @@ import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
-import life.qbic.business.Constants
-import life.qbic.business.customers.affiliation.Country
+import life.qbic.business.persons.affiliation.Country
 import life.qbic.datamodel.dtos.business.Affiliation
 
 import java.util.stream.Collectors;
