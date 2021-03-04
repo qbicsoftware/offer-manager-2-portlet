@@ -10,9 +10,11 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.ProductType
+import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.business.offers.identifier.OfferId
+import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
+import life.qbic.datamodel.dtos.business.services.Sequencing
 
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -201,11 +203,10 @@ class Offer {
      */
     double getOverheadSum() {
         double overheadSum = 0
-        for (ProductItem item : items) {
-            if (item.product instanceof DataStorage || item.product instanceof ProjectManagement) {
-                // No overheads are assigned for data storage and project management
-            } else {
-                overheadSum += item.quantity * item.product.unitPrice * this.overhead
+        items.forEach() {
+            // No overheads are assigned for data storage and project management
+            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
+                overheadSum += it.quantity * it.product.unitPrice * this.overhead
             }
         }
         return overheadSum
@@ -219,9 +220,10 @@ class Offer {
      */
     double getNoOverheadItemsNet() {
         double costNoOverheadItemsNet = 0
-        for (item in items) {
-            if (item.product instanceof DataStorage || item.product instanceof ProjectManagement) {
-                costNoOverheadItemsNet += item.quantity * item.product.unitPrice
+        items.forEach() {
+            // No overheads are assigned for data storage and project management
+            if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
+                costNoOverheadItemsNet += it.quantity * it.product.unitPrice
             }
         }
         return costNoOverheadItemsNet
@@ -234,12 +236,9 @@ class Offer {
      */
     double getOverheadItemsNet() {
         double costOverheadItemsNet = 0
-        for (item in items) {
-            if (item.product instanceof DataStorage || item.product instanceof ProjectManagement) {
-                // No overheads are assigned for data storage and project management
-            }
-            else {
-                costOverheadItemsNet += item.quantity * item.product.unitPrice
+        items.forEach() {
+            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
+                costOverheadItemsNet += it.quantity * it.product.unitPrice
             }
         }
         return costOverheadItemsNet
@@ -266,11 +265,9 @@ class Offer {
      */
     List<ProductItem> getOverheadItems() {
         List<ProductItem> listOverheadProductItem = []
-        for (item in items) {
-            if (item.product instanceof DataStorage || item.product instanceof ProjectManagement) {
-                // No overheads are assigned for data storage and project management
-            } else {
-                listOverheadProductItem.add(item)
+        items.forEach() {
+            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
+                listOverheadProductItem.add(it)
             }
         }
         return listOverheadProductItem
@@ -283,9 +280,9 @@ class Offer {
      */
     List<ProductItem> getNoOverheadItems(){
         List<ProductItem> listNoOverheadProductItem = []
-        for (item in items) {
-            if (item.product instanceof DataStorage || item.product instanceof ProjectManagement) {
-                 listNoOverheadProductItem.add(item)
+        items.forEach() {
+            if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
+                 listNoOverheadProductItem.add(it)
             }
         }
         return listNoOverheadProductItem
