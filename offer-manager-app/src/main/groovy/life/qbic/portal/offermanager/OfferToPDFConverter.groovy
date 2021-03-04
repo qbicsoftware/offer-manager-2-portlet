@@ -45,18 +45,19 @@ class OfferToPDFConverter implements OfferExporter {
      * Stores the label used in the html document for sections associated with overhead cost
      * If the String value is changed here it also has to be adapted in the html document
      */
-    static final String OVERHEAD = "overhead"
+    static final OVERHEAD = "overhead"
 
     /**
      * Stores the label used in the html document for sections associated without an overhead cost
      * If the String value is changed here, it also has to be adapted in the html document
      */
-    static final String NO_OVERHEAD = "no-overhead"
+    static final NO_OVERHEAD = "no-overhead"
 
     /**
-     * Variable used to count the number of productItems in a productTable
+     * Number of maximal items per table
      */
-    private static int tableItemsCount
+    private final int maxTableItems = 8
+
 
     /**
      * Variable used to count the number of generated productTables in the Offer PDF
@@ -184,11 +185,10 @@ class OfferToPDFConverter implements OfferExporter {
         tableCount = 1
 
         //Initialize Count of ProductItems in table
-        tableItemsCount = 1
-        int maxTableItems = 8
+        int tableItemsCount = 1
         //Generate ProductTable for Overhead and Non-Overhead Product Items
-        generateProductTable(OVERHEAD, listOverheadItems, maxTableItems)
-        generateProductTable(NO_OVERHEAD, listNoOverheadItems, maxTableItems)
+        generateProductTable(OVERHEAD, listOverheadItems, tableItemsCount)
+        generateProductTable(NO_OVERHEAD, listNoOverheadItems, tableItemsCount)
 
         //Append total cost footer
         if (tableItemsCount >= maxTableItems) {
@@ -253,7 +253,7 @@ class OfferToPDFConverter implements OfferExporter {
             htmlContent.getElementById("${overheadStatus}-value-overhead").text(formattedOverheadPrice)
         }
 
-    void generateProductTable(String overheadStatus, List<ProductItem> productItems, int maxTableItems){
+    void generateProductTable(String overheadStatus, List<ProductItem> productItems, int tableItemsCount){
         // Create the items in html in the overview table
         if (!productItems.isEmpty()) {
         // set initial product item position in table
