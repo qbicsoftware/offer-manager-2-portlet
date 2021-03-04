@@ -220,7 +220,7 @@ class Offer {
      */
     double getNoOverheadItemsNet() {
         double costNoOverheadItemsNet = 0
-        items.forEach() {
+        items.each {
             // No overheads are assigned for data storage and project management
             if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
                 costNoOverheadItemsNet += it.quantity * it.product.unitPrice
