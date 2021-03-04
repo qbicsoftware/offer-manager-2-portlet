@@ -1,5 +1,6 @@
 package life.qbic.business.projects.create
 
+import life.qbic.business.exceptions.ApplicationDeniedException
 import life.qbic.business.exceptions.DatabaseQueryException
 
 /**

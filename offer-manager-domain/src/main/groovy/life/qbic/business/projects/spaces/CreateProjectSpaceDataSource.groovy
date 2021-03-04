@@ -1,12 +1,26 @@
 package life.qbic.business.projects.spaces
 
+import life.qbic.business.exceptions.ApplicationDeniedException
+import life.qbic.business.exceptions.DatabaseQueryException
+
 /**
- * <interface short description - 1 Line!>
+ * Provides access to the project management datasource
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * This interface collects methods to interact with the project management
+ * datasource in the context of the Create Project Space use case.
  *
- * @since <versiontag>
+ * @since 1.0.0
  */
 interface CreateProjectSpaceDataSource {
+
+    /**
+     * Creates a new space with the given name in QBiC's data management system
+     *
+     * @param spaceName
+     * @throws ApplicationDeniedException If the project space name already exists
+     * @throws DatabaseQueryException If a technical issue occurs during the data source interaction
+     */
+    void createProjectSpace(String spaceName) throws ApplicationDeniedException,
+            DatabaseQueryException
 
 }

@@ -1,11 +1,13 @@
 package life.qbic.business.projects.create
 
+import life.qbic.business.UseCaseFailure
+
 /**
  * Output interface for the <span>Create Project</span> use case.
  *
  * @since 1.0.0
  */
-interface CreateProjectOutput {
+interface CreateProjectOutput extends UseCaseFailure {
 
     /**
      * Called when a project has been successfully created.

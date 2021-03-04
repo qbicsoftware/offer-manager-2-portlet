@@ -1,11 +1,20 @@
 package life.qbic.business.projects.spaces
 
 /**
- * <class short description - 1 Line!>
+ * Input interface for the Create Project Space use case.
  *
- * <More detailed description - When to use, what it solves, etc.>
- *
- * @since <versiontag>
+ * @since 1.0.0
  */
 interface CreateProjectSpaceInput {
+
+    /**
+     * Creates a new project space in QBiCs data management platform.
+     *
+     * A space is a logical grouping of projects that have the same context. The context is
+     * defined by the project manager and is not a rule set in stone.
+     *
+     * @param spaceName
+     */
+    void createProjectSpace(String spaceName)
+
 }

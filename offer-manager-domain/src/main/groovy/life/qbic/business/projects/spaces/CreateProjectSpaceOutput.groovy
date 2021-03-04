@@ -1,11 +1,21 @@
 package life.qbic.business.projects.spaces
 
+import life.qbic.business.UseCaseFailure
+
 /**
- * <class short description - 1 Line!>
+ * Describes the output interface of the <span>Create Project Space</span> use case.
  *
- * <More detailed description - When to use, what it solves, etc.>
- *
- * @since <versiontag>
+ * @since 1.0.0
  */
-interface CreateProjectSpaceOutput {
+interface CreateProjectSpaceOutput extends UseCaseFailure {
+
+    /**
+     * This method is called from the use case, after
+     * successful project space creation in QBiC's data management
+     * platform.
+     *
+     * @param projectSpace Information about the created project space
+     */
+    void projectSpaceCreated(String projectSpace)
+
 }
