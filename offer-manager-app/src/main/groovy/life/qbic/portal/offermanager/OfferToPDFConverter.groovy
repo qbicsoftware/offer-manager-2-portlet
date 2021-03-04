@@ -41,12 +41,26 @@ class OfferToPDFConverter implements OfferExporter {
      */
     static final CHROMIUM_EXECUTABLE = "CHROMIUM_EXECUTABLE"
 
+    /**
+     * Stores the label used in the html document for sections associated with overhead cost
+     * If the String value is changed here it also has to be adapted in the html document
+     */
     static final String OVERHEAD = "overhead"
 
+    /**
+     * Stores the label used in the html document for sections associated without an overhead cost
+     * If the String value is changed here, it also has to be adapted in the html document
+     */
     static final String NO_OVERHEAD = "no-overhead"
 
+    /**
+     * Variable used to count the number of productItems in a productTable
+     */
     private static int tableItemsCount
 
+    /**
+     * Variable used to count the number of generated productTables in the Offer PDF
+     */
     private static int tableCount
 
     private final Offer offer
