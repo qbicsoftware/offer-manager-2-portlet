@@ -203,7 +203,7 @@ class Offer {
      */
     double getOverheadSum() {
         double overheadSum = 0
-        items.forEach() {
+        items.each {
             // No overheads are assigned for data storage and project management
             if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
                 overheadSum += it.quantity * it.product.unitPrice * this.overhead
@@ -236,7 +236,7 @@ class Offer {
      */
     double getOverheadItemsNet() {
         double costOverheadItemsNet = 0
-        items.forEach() {
+        items.each {
             if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
                 costOverheadItemsNet += it.quantity * it.product.unitPrice
             }
@@ -265,7 +265,7 @@ class Offer {
      */
     List<ProductItem> getOverheadItems() {
         List<ProductItem> listOverheadProductItem = []
-        items.forEach() {
+        items.each {
             if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
                 listOverheadProductItem.add(it)
             }
@@ -280,7 +280,7 @@ class Offer {
      */
     List<ProductItem> getNoOverheadItems(){
         List<ProductItem> listNoOverheadProductItem = []
-        items.forEach() {
+        items.each {
             if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
                  listNoOverheadProductItem.add(it)
             }

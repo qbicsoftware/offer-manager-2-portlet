@@ -39,11 +39,11 @@ class OfferToPDFConverter implements OfferExporter {
      * alias that can be executed from the system's command
      * line.
      */
-    final static CHROMIUM_EXECUTABLE = "CHROMIUM_EXECUTABLE"
+    static final CHROMIUM_EXECUTABLE = "CHROMIUM_EXECUTABLE"
 
-    final static String OVERHEAD = "overhead"
+    static final String OVERHEAD = "overhead"
 
-    final static String NO_OVERHEAD = "no-overhead"
+    static final String NO_OVERHEAD = "no-overhead"
 
     private static int tableItemsCount
 
@@ -173,8 +173,8 @@ class OfferToPDFConverter implements OfferExporter {
         tableItemsCount = 1
         int maxTableItems = 8
         //Generate ProductTable for Overhead and Non-Overhead Product Items
-        generateProductTable(OVERHEAD_, listOverheadItems, maxTableItems)
-        generateProductTable(NO_OVERHEAD_, listNoOverheadItems, maxTableItems)
+        generateProductTable(OVERHEAD, listOverheadItems, maxTableItems)
+        generateProductTable(NO_OVERHEAD, listNoOverheadItems, maxTableItems)
 
         //Append total cost footer
         if (tableItemsCount >= maxTableItems) {
