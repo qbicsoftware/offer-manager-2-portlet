@@ -48,7 +48,7 @@ class OfferToPDFConverter implements OfferExporter {
     static final OVERHEAD = "overhead"
 
     /**
-     * Stores the label used in the html document for sections associated without an overhead cost
+     * Is the preceding part of the element id used in the html document for sections associated without an overhead cost
      * If the String value is changed here, it also has to be adapted in the html document
      */
     static final NO_OVERHEAD = "no-overhead"
