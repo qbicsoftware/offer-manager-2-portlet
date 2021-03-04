@@ -45,19 +45,18 @@ class OfferToPDFConverter implements OfferExporter {
      * Is the preceding part of the element id used in the html document for sections associated with overhead cost
      * If the String value is changed here it also has to be adapted in the html document
      */
-    static final OVERHEAD = "overhead"
+    static final String OVERHEAD = "overhead"
 
     /**
      * Is the preceding part of the element id used in the html document for sections associated without an overhead cost
      * If the String value is changed here, it also has to be adapted in the html document
      */
-    static final NO_OVERHEAD = "no-overhead"
+    static final String NO_OVERHEAD = "no-overhead"
 
     /**
-     * Number of maximal items per table
+     * Variable used to count the number of productItems in a productTable
      */
-    private final int maxTableItems = 8
-
+    private static int tableItemsCount
 
     /**
      * Variable used to count the number of generated productTables in the Offer PDF
@@ -185,10 +184,11 @@ class OfferToPDFConverter implements OfferExporter {
         tableCount = 1
 
         //Initialize Count of ProductItems in table
-        int tableItemsCount = 1
+        tableItemsCount = 1
+        int maxTableItems = 8
         //Generate ProductTable for Overhead and Non-Overhead Product Items
-        generateProductTable(OVERHEAD, listOverheadItems, tableItemsCount)
-        generateProductTable(NO_OVERHEAD, listNoOverheadItems, tableItemsCount)
+        generateProductTable(OVERHEAD, listOverheadItems, maxTableItems)
+        generateProductTable(NO_OVERHEAD, listNoOverheadItems, maxTableItems)
 
         //Append total cost footer
         if (tableItemsCount >= maxTableItems) {
@@ -253,7 +253,7 @@ class OfferToPDFConverter implements OfferExporter {
             htmlContent.getElementById("${overheadStatus}-value-overhead").text(formattedOverheadPrice)
         }
 
-    void generateProductTable(String overheadStatus, List<ProductItem> productItems, int tableItemsCount){
+    void generateProductTable(String overheadStatus, List<ProductItem> productItems, int maxTableItems){
         // Create the items in html in the overview table
         if (!productItems.isEmpty()) {
         // set initial product item position in table
