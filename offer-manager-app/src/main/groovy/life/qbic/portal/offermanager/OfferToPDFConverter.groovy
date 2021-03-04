@@ -42,7 +42,7 @@ class OfferToPDFConverter implements OfferExporter {
     static final CHROMIUM_EXECUTABLE = "CHROMIUM_EXECUTABLE"
 
     /**
-     * Stores the label used in the html document for sections associated with overhead cost
+     * Is the preceding part of the element id used in the html document for sections associated with overhead cost
      * If the String value is changed here it also has to be adapted in the html document
      */
     static final OVERHEAD = "overhead"
