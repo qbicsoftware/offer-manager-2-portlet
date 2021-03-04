@@ -41,7 +41,7 @@ class OfferToPDFConverter implements OfferExporter {
      */
     final static CHROMIUM_EXECUTABLE = "CHROMIUM_EXECUTABLE"
 
-    final static String OVERHEAD_ = "overhead"
+    final static String OVERHEAD = "overhead"
 
     final static String NO_OVERHEAD_ = "no-overhead"
 
