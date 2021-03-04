@@ -39,6 +39,10 @@ class Converter {
                 .modificationDate(offer.modificationDate)
                 .expirationDate(offer.expirationDate)
                 .checksum(offer.checksum())
+                .itemsWithOverhead(offer.overheadItems)
+                .itemsWithoutOverhead(offer.noOverheadItems)
+                .itemsWithOverheadNet(offer.overheadItemsNet)
+                .itemsWithoutOverheadNet(offer.noOverheadItemsNet)
                 .build()
     }
     static Offer buildOfferForCostCalculation(List<ProductItem> items,

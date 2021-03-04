@@ -10,8 +10,11 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.business.offers.identifier.OfferId
+import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
+import life.qbic.datamodel.dtos.business.services.Sequencing
 
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -67,6 +70,22 @@ class Offer {
      * The affiliation of the customer selected for this offer
      */
     private Affiliation selectedCustomerAffiliation
+    /**
+     * A list of items for which an overhead cost is applicable
+     */
+    private List<ProductItem> itemsWithOverhead
+    /**
+     * A list of items for which an overhead cost is not applicable
+     */
+    private List<ProductItem> itemsWithoutOverhead
+    /**
+     * The net price of all items for which an overhead cost is applicable, without overhead and taxes
+     */
+    private double itemsWithOverheadNetPrice
+    /**
+     * The net price of all items for which an overhead cost is not applicable, without overhead and taxes
+     */
+    private double itemsWithoutOverheadNetPrice
 
     /*
      * Holds the determined overhead derived from the
@@ -126,6 +145,7 @@ class Offer {
             return this
         }
 
+
         Offer build() {
             return new Offer(this)
         }
@@ -147,6 +167,10 @@ class Offer {
                 .stream()
                 .map(id -> new OfferId(id)).collect()
         this.availableVersions.add(this.identifier)
+        this.itemsWithOverhead = getOverheadItems()
+        this.itemsWithoutOverhead = getNoOverheadItems()
+        this.itemsWithOverheadNetPrice = getOverheadItemsNet()
+        this.itemsWithoutOverheadNetPrice = getNoOverheadItemsNet()
     }
 
     /**
@@ -179,14 +203,45 @@ class Offer {
      */
     double getOverheadSum() {
         double overheadSum = 0
-        for (ProductItem item : items) {
-            if (item.product instanceof DataStorage || item.product instanceof ProjectManagement) {
-                // No overheads are assigned for data storage and project management
-            } else {
-                overheadSum += item.quantity * item.product.unitPrice * this.overhead
+        items.each {
+            // No overheads are assigned for data storage and project management
+            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
+                overheadSum += it.quantity * it.product.unitPrice * this.overhead
             }
         }
         return overheadSum
+    }
+
+
+    /**
+     * This method returns the net cost of all product items for which no overhead cost is calculated
+     *
+     * @return net cost of product items without overhead cost
+     */
+    double getNoOverheadItemsNet() {
+        double costNoOverheadItemsNet = 0
+        items.each {
+            // No overheads are assigned for data storage and project management
+            if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
+                costNoOverheadItemsNet += it.quantity * it.product.unitPrice
+            }
+        }
+        return costNoOverheadItemsNet
+    }
+
+    /**
+     * This method returns the net cost of product items for which an overhead cost is calculated
+     *
+     * @return net cost of product items with overhead cost
+     */
+    double getOverheadItemsNet() {
+        double costOverheadItemsNet = 0
+        items.each {
+            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
+                costOverheadItemsNet += it.quantity * it.product.unitPrice
+            }
+        }
+        return costOverheadItemsNet
     }
 
     /**
@@ -201,6 +256,36 @@ class Offer {
             return 0
         }
         return (calculateNetPrice() + getOverheadSum()) * VAT
+    }
+
+    /**
+     * This method returns all ProductItems for which an Overhead cost is calculated
+     *
+     * @return ProductItem list containing all ProductItems with overhead cost
+     */
+    List<ProductItem> getOverheadItems() {
+        List<ProductItem> listOverheadProductItem = []
+        items.each {
+            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
+                listOverheadProductItem.add(it)
+            }
+        }
+        return listOverheadProductItem
+    }
+
+    /**
+     * This method returns all ProductItems for which no Overhead cost is calculated
+     *
+     * @return ProductItem list containing all ProductItems without overhead cost
+     */
+    List<ProductItem> getNoOverheadItems(){
+        List<ProductItem> listNoOverheadProductItem = []
+        items.each {
+            if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
+                 listNoOverheadProductItem.add(it)
+            }
+        }
+        return listNoOverheadProductItem
     }
 
     Date getModificationDate() {
