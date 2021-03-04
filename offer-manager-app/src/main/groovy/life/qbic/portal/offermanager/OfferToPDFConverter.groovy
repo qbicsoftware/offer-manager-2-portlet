@@ -43,7 +43,7 @@ class OfferToPDFConverter implements OfferExporter {
 
     final static String OVERHEAD = "overhead"
 
-    final static String NO_OVERHEAD_ = "no-overhead"
+    final static String NO_OVERHEAD = "no-overhead"
 
     private static int tableItemsCount
 
