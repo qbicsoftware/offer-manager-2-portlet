@@ -2,6 +2,7 @@ package life.qbic.business.projects.spaces
 
 import life.qbic.business.exceptions.ApplicationDeniedException
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 
 /**
  * Provides access to the project management datasource

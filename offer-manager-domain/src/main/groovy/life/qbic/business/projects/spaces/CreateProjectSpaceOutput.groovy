@@ -1,6 +1,7 @@
 package life.qbic.business.projects.spaces
 
 import life.qbic.business.UseCaseFailure
+import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 
 /**
  * Describes the output interface of the <span>Create Project Space</span> use case.

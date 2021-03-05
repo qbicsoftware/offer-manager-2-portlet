@@ -1,5 +1,7 @@
 package life.qbic.business.projects.spaces
 
+import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
+
 /**
  * Input interface for the Create Project Space use case.
  *

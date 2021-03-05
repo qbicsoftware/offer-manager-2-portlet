@@ -1,6 +1,7 @@
 package life.qbic.business.projects.create
 
 import life.qbic.business.UseCaseFailure
+import life.qbic.datamodel.dtos.projectmanagement.Project
 
 /**
  * Output interface for the <span>Create Project</span> use case.
