@@ -12,7 +12,7 @@ import life.qbic.datamodel.dtos.business.services.Product
 interface CopyProductOutput extends UseCaseFailure {
 
     /**
-     * A copy of a product has been created
+     * A copy of a product has been created. This method is called after the copied product has been stored in the database.
      * @param product The product that has been copied
      * @since 1.0.0
      */
