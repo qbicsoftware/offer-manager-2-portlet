@@ -8,5 +8,5 @@ package life.qbic.business.products.create
  * @since: <versiontag>
  *
  */
-class CreateProduct {
+class CreateProduct implements CreateProductInput {
 }

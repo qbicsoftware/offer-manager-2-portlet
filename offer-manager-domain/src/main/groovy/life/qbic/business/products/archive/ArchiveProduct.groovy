@@ -9,5 +9,5 @@ package life.qbic.business.products.archive
  * @since: 1.0.0
  *
  */
-class ArchiveProduct {
+class ArchiveProduct implements ArchiveProductInput {
 }

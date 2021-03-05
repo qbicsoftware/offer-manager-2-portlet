@@ -8,5 +8,5 @@ package life.qbic.business.products.copy
  * @since: <versiontag>
  *
  */
-class CopyProduct {
+class CopyProduct implements CopyProductInput {
 }
