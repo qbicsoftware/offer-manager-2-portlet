@@ -12,7 +12,8 @@ interface ArchiveProductInput {
 
     /**
      * A product defined by its product id should be archived
-     * @param productId The product id for the product that needs to be archived
+     * @param productId the product id for the product that will be archived
+     * @since 1.0.0
      */
     void archive(ProductId productId)
 
