@@ -11,4 +11,12 @@ package life.qbic.portal.offermanager.components.product
  *
  */
 class MaintainProductsView {
+
+    private final MaintainProductsController controller
+    private final MaintainProductsViewModel viewModel
+
+    MaintainProductsView(MaintainProductsController controller, MaintainProductsViewModel viewModel){
+        this.controller = controller
+        this.viewModel = viewModel
+    }
 }

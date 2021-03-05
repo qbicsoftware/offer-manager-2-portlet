@@ -1,5 +1,8 @@
 package life.qbic.portal.offermanager.components.product
 
+import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
+
+
 /**
  * <h1>A ViewModel holding data that is presented in a
  * {@link life.qbic.portal.offermanager.components.product.MaintainProductsView}</h1>
@@ -14,4 +17,10 @@ package life.qbic.portal.offermanager.components.product
  *
  */
 class MaintainProductsViewModel {
+
+    private final ProductsResourcesService productsResourcesService
+
+    MaintainProductsViewModel(ProductsResourcesService productsResourcesService) {
+        this.productsResourcesService = productsResourcesService
+    }
 }

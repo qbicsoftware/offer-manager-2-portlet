@@ -1,5 +1,10 @@
 package life.qbic.portal.offermanager.components.product
 
+import life.qbic.business.products.archive.ArchiveProductOutput
+import life.qbic.business.products.copy.CopyProductOutput
+import life.qbic.business.products.create.CreateProductOutput
+import life.qbic.datamodel.dtos.business.services.Product
+
 /**
  * <h1>AppPresenter for the {@link MaintainProductsView}</h1>
  * <br>
@@ -9,5 +14,36 @@ package life.qbic.portal.offermanager.components.product
  * @since 1.0.0
  *
  */
-class MaintainProductsPresenter {
+class MaintainProductsPresenter implements CreateProductOutput, CopyProductOutput, ArchiveProductOutput{
+
+    private final MaintainProductsViewModel viewModel
+
+    MaintainProductsPresenter(MaintainProductsViewModel viewModel){
+        this.viewModel = viewModel
+    }
+
+    @Override
+    void archived(Product product) {
+
+    }
+
+    @Override
+    void copied(Product product) {
+
+    }
+
+    @Override
+    void created(Product product) {
+
+    }
+
+    @Override
+    void foundDuplicate(Product product) {
+
+    }
+
+    @Override
+    void failNotification(String notification) {
+
+    }
 }

@@ -25,9 +25,9 @@ import life.qbic.datamodel.dtos.business.services.Sequencing
  */
 class MaintainProductsController {
 
-    CopyProductInput copyProductInput
-    CreateProductInput createProductInput
-    ArchiveProductInput archiveProductInput
+    private final CopyProductInput copyProductInput
+    private final CreateProductInput createProductInput
+    private final ArchiveProductInput archiveProductInput
 
     MaintainProductsController(CopyProductInput copyProductInput,
                                CreateProductInput createProductInput,
