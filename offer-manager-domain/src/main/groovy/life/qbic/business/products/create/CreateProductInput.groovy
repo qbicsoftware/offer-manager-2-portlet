@@ -13,6 +13,7 @@ interface CreateProductInput {
     /**
      * A product is created in the database
      * @param product The product that is added to the database
+     * @since 1.0.0
      */
     void create(Product product)
 
@@ -20,6 +21,7 @@ interface CreateProductInput {
      * Even though a duplicate product in the database exist a new product should be added.
      * The duplicate product is required to have a different product id!
      * @param product The product that should be added
+     * @since 1.0.0
      */
     void createDuplicate(Product product)
 }

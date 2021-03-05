@@ -14,6 +14,7 @@ interface CopyProductOutput extends UseCaseFailure{
     /**
      * A copy of a product has been created
      * @param product The product that has been copied
+     * @since 1.0.0
      */
     void copied(Product product)
 }

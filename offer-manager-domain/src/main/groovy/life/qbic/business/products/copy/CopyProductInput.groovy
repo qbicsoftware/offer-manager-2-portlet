@@ -13,6 +13,7 @@ interface CopyProductInput {
     /**
      * The content of a product is going to be copied
      * @param productId The id of the product that should be copied
+     * @since 1.0.0
      */
     void copy(ProductId productId)
 }
