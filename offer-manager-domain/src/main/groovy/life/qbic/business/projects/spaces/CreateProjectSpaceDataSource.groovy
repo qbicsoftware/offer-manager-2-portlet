@@ -21,7 +21,7 @@ interface CreateProjectSpaceDataSource {
      * @throws ApplicationDeniedException If the project space name already exists
      * @throws DatabaseQueryException If a technical issue occurs during the data source interaction
      */
-    void createProjectSpace(String spaceName) throws ApplicationDeniedException,
+    void createProjectSpace(ProjectSpace projectSpace) throws ApplicationDeniedException,
             DatabaseQueryException
 
 }

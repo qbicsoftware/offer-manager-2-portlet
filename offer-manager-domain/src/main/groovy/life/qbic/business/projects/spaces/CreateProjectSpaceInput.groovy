@@ -13,8 +13,8 @@ interface CreateProjectSpaceInput {
      * A space is a logical grouping of projects that have the same context. The context is
      * defined by the project manager and is not a rule set in stone.
      *
-     * @param spaceName
+     * @param The desired project space to be created
      */
-    void createProjectSpace(String spaceName)
+    void createProjectSpace(ProjectSpace projectSpace)
 
 }

@@ -14,9 +14,9 @@ interface CreateProjectSpaceOutput extends UseCaseFailure {
      * successful project space creation in QBiC's data management
      * platform.
      *
-     * @param projectSpace Information about the created project space
+     * @param projectSpace The created project space
      * @since 1.0.0
      */
-    void projectSpaceCreated(String projectSpace)
+    void projectSpaceCreated(ProjectSpace projectSpace)
 
 }
