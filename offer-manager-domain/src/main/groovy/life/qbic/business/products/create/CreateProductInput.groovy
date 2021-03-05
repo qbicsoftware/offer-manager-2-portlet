@@ -19,7 +19,7 @@ interface CreateProductInput {
 
     /**
      * Even though a duplicate product in the database exist a new product should be added.
-     * The duplicate product is required to have a different product id!
+     * The new product will receive a new id that allows to differentiate it from the old product. The old id will be ignored.
      * @param product The product that should be added
      * @since 1.0.0
      */
