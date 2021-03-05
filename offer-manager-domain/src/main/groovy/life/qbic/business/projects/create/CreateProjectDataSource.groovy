@@ -21,6 +21,7 @@ interface CreateProjectDataSource {
      *
      * @return Information about the created project
      *
+     * @since 1.0.0
      * @throws ApplicationDeniedException If the application was denied. Reasons for denial are
      * currently:
      *  1. A project with the same project title already exists

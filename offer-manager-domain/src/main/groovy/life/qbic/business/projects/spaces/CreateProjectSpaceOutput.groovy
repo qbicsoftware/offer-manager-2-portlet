@@ -15,6 +15,7 @@ interface CreateProjectSpaceOutput extends UseCaseFailure {
      * platform.
      *
      * @param projectSpace Information about the created project space
+     * @since 1.0.0
      */
     void projectSpaceCreated(String projectSpace)
 

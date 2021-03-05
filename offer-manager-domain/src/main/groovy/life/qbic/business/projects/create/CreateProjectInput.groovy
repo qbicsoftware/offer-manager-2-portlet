@@ -16,6 +16,7 @@ interface CreateProjectInput {
      * The output will be returned via the {@link CreateProjectOutput} interface.
      *
      * @param offer The offer with information about the planned project.
+     * @since 1.0.0
      */
     void createProject(Offer offer)
 
