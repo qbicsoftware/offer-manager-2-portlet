@@ -1,5 +1,7 @@
 package life.qbic.business.products.copy
 
+import life.qbic.datamodel.dtos.business.ProductId
+
 /**
  * <class short description - One Line!>
  *
@@ -9,4 +11,8 @@ package life.qbic.business.products.copy
  *
  */
 class CopyProduct implements CopyProductInput {
+    @Override
+    void copy(ProductId productId) {
+
+    }
 }

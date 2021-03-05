@@ -1,5 +1,7 @@
 package life.qbic.business.products.create
 
+import life.qbic.datamodel.dtos.business.services.Product
+
 /**
  * <class short description - One Line!>
  *
@@ -9,4 +11,13 @@ package life.qbic.business.products.create
  *
  */
 class CreateProduct implements CreateProductInput {
+    @Override
+    void create(Product product) {
+
+    }
+
+    @Override
+    void createDuplicate(Product product) {
+
+    }
 }
