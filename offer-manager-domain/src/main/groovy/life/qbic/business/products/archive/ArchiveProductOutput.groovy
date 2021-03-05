@@ -9,7 +9,7 @@ import life.qbic.datamodel.dtos.business.services.Product
  * @since: 1.0.0
  *
  */
-interface ArchiveProductOutput extends UseCaseFailure{
+interface ArchiveProductOutput extends UseCaseFailure {
 
     /**
      * A product has been archived in the database

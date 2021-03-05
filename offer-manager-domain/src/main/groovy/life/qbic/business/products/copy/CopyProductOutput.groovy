@@ -9,7 +9,7 @@ import life.qbic.datamodel.dtos.business.services.Product
  * @since: 1.0.0
  *
  */
-interface CopyProductOutput extends UseCaseFailure{
+interface CopyProductOutput extends UseCaseFailure {
 
     /**
      * A copy of a product has been created
