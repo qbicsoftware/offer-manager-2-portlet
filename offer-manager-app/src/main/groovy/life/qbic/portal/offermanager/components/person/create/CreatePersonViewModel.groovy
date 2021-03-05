@@ -18,7 +18,7 @@ import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourc
  *
  * This class can contain JavaBean objects to enable views to listen to changes in the values.
  *
- * @since: 1.0.0
+ * @since 1.0.0
  */
 class CreatePersonViewModel {
     List<String> academicTitles = new ArrayList<>()

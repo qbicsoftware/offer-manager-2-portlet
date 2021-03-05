@@ -13,8 +13,7 @@ import life.qbic.datamodel.dtos.general.Person
  *
  * This class translates the information that was received from the view into method calls to the use case
  *
- * @since: 1.0.0
- * @author: Jennifer Bödker
+ * @since 1.0.0
  */
 @Log4j2
 class CreatePersonController {

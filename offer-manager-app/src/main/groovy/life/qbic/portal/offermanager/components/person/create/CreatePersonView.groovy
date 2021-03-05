@@ -23,7 +23,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
  * CreatePersonViewModel will be integrated into the qOffer 2.0 Portlet and provides an User Interface
  * with the intention of enabling a user the creation of a new person in the QBiC Database
  *
- * @since: 1.0.0
+ * @since 1.0.0
  */
 
 @Log4j2

@@ -14,7 +14,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
  * This presenter handles the output of the createPerson use case and prepares it for the
  * CreatePersonView.
  *
- * @since: 1.0.0
+ * @since 1.0.0
  */
 @Log4j2
 class CreatePersonPresenter implements CreatePersonOutput{

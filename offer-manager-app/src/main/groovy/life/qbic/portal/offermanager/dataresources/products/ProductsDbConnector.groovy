@@ -245,7 +245,6 @@ class ProductsDbConnector implements ProductDataSource {
 
     @Override
     void archive(Product product) throws DatabaseQueryException {
-
     }
 /**
  * Class that encapsulates the available SQL queries.
@@ -258,7 +257,7 @@ class ProductsDbConnector implements ProductDataSource {
         final static String SELECT_ALL_PRODUCTS = "SELECT * FROM product"
 
         /**
-         * Query for all available products.
+         * Query for inserting a product.
          */
         final static String INSERT_PRODUCT = "INSERT INTO product (category, description, productName, unitPrice, unit, productId) VALUE(?,?,?,?,?,?)"
 
