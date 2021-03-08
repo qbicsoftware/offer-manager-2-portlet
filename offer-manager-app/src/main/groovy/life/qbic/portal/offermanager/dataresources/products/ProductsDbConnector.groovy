@@ -77,6 +77,7 @@ class ProductsDbConnector implements ProductDataSource {
     }
 
     private static Product rowResultToProduct(GroovyRowResult row) {
+        println "here"
         def productCategory = row.category
         String productId = row.productId
         Product product
@@ -230,8 +231,8 @@ class ProductsDbConnector implements ProductDataSource {
         connection.withCloseable {
             PreparedStatement preparedStatement = it.prepareStatement(query)
             preparedStatement.setString(1, productId.identifier)
-
             ResultSet result = preparedStatement.executeQuery()
+
             while (result.next()) {
                 product = Optional.of(rowResultToProduct(SqlExtensions.toRowResult(result)))
             }
@@ -250,7 +251,7 @@ class ProductsDbConnector implements ProductDataSource {
             preparedStatement.setString(3, product.productName)
             preparedStatement.setDouble(4, product.unitPrice)
             preparedStatement.setString(5, product.unit.value)
-            preparedStatement.setString(6, product.productId.identifier)
+            preparedStatement.setString(6, product.productId.toString())
 
             preparedStatement.execute()
         }
@@ -262,7 +263,7 @@ class ProductsDbConnector implements ProductDataSource {
 
         connection.withCloseable {
             def statement = connection.prepareStatement(Queries.ARCHIVE_PRODUCT)
-            statement.setString(1, product.productId.identifier)
+            statement.setString(1, product.productId.toString())
             statement.execute()
         }
     }
