@@ -77,7 +77,6 @@ class ProductsDbConnector implements ProductDataSource {
     }
 
     private static Product rowResultToProduct(GroovyRowResult row) {
-        println "here"
         def productCategory = row.category
         String productId = row.productId
         Product product
@@ -225,12 +224,12 @@ class ProductsDbConnector implements ProductDataSource {
     @Override
     Optional<Product> fetch(ProductId productId) throws DatabaseQueryException {
         Connection connection = provider.connect()
-        String query = Queries.INSERT_PRODUCT + " WHERE productId=?"
+        String query = Queries.SELECT_ALL_PRODUCTS + " WHERE productId=?"
         Optional<Product> product = Optional.empty()
 
         connection.withCloseable {
             PreparedStatement preparedStatement = it.prepareStatement(query)
-            preparedStatement.setString(1, productId.identifier)
+            preparedStatement.setString(1, productId.identifier.toString())
             ResultSet result = preparedStatement.executeQuery()
 
             while (result.next()) {
@@ -268,9 +267,9 @@ class ProductsDbConnector implements ProductDataSource {
         }
     }
 
-/**
- * Class that encapsulates the available SQL queries.
- */
+    /**
+     * Class that encapsulates the available SQL queries.
+     */
     private static class Queries {
 
         /**
