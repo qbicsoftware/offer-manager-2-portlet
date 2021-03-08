@@ -203,11 +203,11 @@ class OfferToPDFConverter implements OfferExporter {
             String elementId = "product-items" + "-" + tableCount
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter(offer.overheadRatio))
+                    .append(ItemPrintout.tableFooter())
         } else {
             //otherwise add total pricing to table
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter(offer.overheadRatio))
+                    .append(ItemPrintout.tableFooter())
         }
         }
 
@@ -349,6 +349,7 @@ class OfferToPDFConverter implements OfferExporter {
                                          <div class="col-6"></div>
                                          <div class="col-4 cost-summary-field">Estimated total (net):</div>
                                          <div class="col-2 price-value" id="total-cost-value-net">12,500.00</div>
+                                         </div>
                                      <div class="row total-costs" id = "offer-vat">
                                          <div class="col-10 cost-summary-field">VAT (19%):</div>
                                          <div class="col-2 price-value" id="vat-cost-value">0.00</div>
