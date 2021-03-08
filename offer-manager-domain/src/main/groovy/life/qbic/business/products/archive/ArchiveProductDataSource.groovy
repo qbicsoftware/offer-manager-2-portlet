@@ -29,6 +29,6 @@ interface ArchiveProductDataSource {
      * @since 1.0.0
      * @throws life.qbic.business.exceptions.DatabaseQueryException is thrown when any technical interaction with the data source fails
      */
-    Optional<Product> fetch(ProductId productId) throws DatabaseQueryException, ProductExistsException
+    Optional<Product> fetch(ProductId productId) throws DatabaseQueryException
 
 }
