@@ -22,6 +22,8 @@ Unassigned
 
 * Introduce subtotals in Offer PDF ProductItem Table(`#349 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/349>`_)
 * Introduce distinction between ProductItems with and without Overhead cost in Offer PDF(`#349 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/349>`_)
+* Add percentage showing the applied overhead markup in the pricing footer of the Offer PDF(`#362 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/362>`_)
+* Add overheadRatio property storing the overhead markup percentage to ``life.qbic.business.offers.Offer``(`#362 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/362>`_)
 
 **Fixed**
 
