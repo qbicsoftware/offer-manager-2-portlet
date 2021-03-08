@@ -1,5 +1,7 @@
 package life.qbic.portal.offermanager.components.product
 
+import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
 
 
@@ -18,9 +20,23 @@ import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesSer
  */
 class MaintainProductsViewModel {
 
+    ObservableList products = new ObservableList(new ArrayList<Product>())
+
     private final ProductsResourcesService productsResourcesService
 
     MaintainProductsViewModel(ProductsResourcesService productsResourcesService) {
         this.productsResourcesService = productsResourcesService
+        fetchProducts()
+        subscribe()
+    }
+
+    private void fetchProducts(){
+        products.addAll(productsResourcesService.iterator())
+    }
+
+    private void subscribe(){
+        productsResourcesService.subscribe({ product ->
+            products << product
+        })
     }
 }

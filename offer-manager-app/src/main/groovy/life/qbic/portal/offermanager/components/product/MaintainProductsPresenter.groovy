@@ -4,6 +4,7 @@ import life.qbic.business.products.archive.ArchiveProductOutput
 import life.qbic.business.products.copy.CopyProductOutput
 import life.qbic.business.products.create.CreateProductOutput
 import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
  * <h1>AppPresenter for the {@link MaintainProductsView}</h1>
@@ -16,10 +17,12 @@ import life.qbic.datamodel.dtos.business.services.Product
  */
 class MaintainProductsPresenter implements CreateProductOutput, CopyProductOutput, ArchiveProductOutput{
 
-    private final MaintainProductsViewModel viewModel
+    private final MaintainProductsViewModel productsViewModel
+    private final AppViewModel mainViewModel
 
-    MaintainProductsPresenter(MaintainProductsViewModel viewModel){
-        this.viewModel = viewModel
+    MaintainProductsPresenter(MaintainProductsViewModel productsViewModel, AppViewModel mainViewModel){
+        this.productsViewModel = productsViewModel
+        this.mainViewModel = mainViewModel
     }
 
     @Override
@@ -34,16 +37,17 @@ class MaintainProductsPresenter implements CreateProductOutput, CopyProductOutpu
 
     @Override
     void created(Product product) {
-
+        mainViewModel.successNotifications << "Successfully added new product $product.productId - $product.productName."
     }
 
     @Override
     void foundDuplicate(Product product) {
-
+        mainViewModel.successNotifications << "Found duplicate product for $product.productId - $product.productName."
+        //todo triggers smth in the view-model to ask the user if he still wants to create the duplicate
     }
 
     @Override
     void failNotification(String notification) {
-
+        mainViewModel.failureNotifications << notification
     }
 }
