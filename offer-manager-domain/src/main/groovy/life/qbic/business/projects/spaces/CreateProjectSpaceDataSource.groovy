@@ -1,6 +1,5 @@
 package life.qbic.business.projects.spaces
 
-import life.qbic.business.projects.create.ApplicationDeniedException
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 
@@ -19,10 +18,10 @@ interface CreateProjectSpaceDataSource {
      *
      * @param projectSpace The projectspace that should be created
      * @since 1.0.0
-     * @throws ApplicationDeniedException If the project space name already exists
+     * @throws ProjectSpaceExistsException If the project space name already exists
      * @throws DatabaseQueryException If a technical issue occurs during the data source interaction
      */
-    void createProjectSpace(ProjectSpace projectSpace) throws ApplicationDeniedException,
+    void createProjectSpace(ProjectSpace projectSpace) throws ProjectSpaceExistsException,
             DatabaseQueryException
 
 }
