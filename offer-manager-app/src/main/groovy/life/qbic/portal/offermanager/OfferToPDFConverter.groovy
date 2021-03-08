@@ -9,6 +9,7 @@ import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.business.offers.Currency
 import life.qbic.business.offers.OfferExporter
+import life.qbic.datamodel.dtos.business.services.Sequencing
 import org.jsoup.nodes.Document
 import org.jsoup.parser.Parser
 
@@ -40,18 +41,6 @@ class OfferToPDFConverter implements OfferExporter {
      * line.
      */
     static final CHROMIUM_EXECUTABLE = "CHROMIUM_EXECUTABLE"
-
-    /**
-     * Is the preceding part of the element id used in the html document for sections associated with overhead cost
-     * If the String value is changed here it also has to be adapted in the html document
-     */
-    static final String OVERHEAD = "overhead"
-
-    /**
-     * Is the preceding part of the element id used in the html document for sections associated without an overhead cost
-     * If the String value is changed here, it also has to be adapted in the html document
-     */
-    static final String NO_OVERHEAD = "no-overhead"
 
     /**
      * Variable used to count the number of productItems in a productTable
@@ -180,6 +169,22 @@ class OfferToPDFConverter implements OfferExporter {
         List<ProductItem> listOverheadItems = offer.itemsWithOverhead
         List<ProductItem> listNoOverheadItems = offer.itemsWithoutOverhead
 
+        List<ProductItem> listDataGenerationItems = []
+        List<ProductItem> listDataAnalysisItems = []
+        // Sort ProductItems into DataGeneration and Data Analysis
+        listOverheadItems.each {
+            if (it.product instanceof Sequencing) {
+                listDataGenerationItems.add(it)
+            }
+            else {
+                listDataAnalysisItems.add(it)
+            }
+        }
+        //Sort Lists by ProductName
+        listDataAnalysisItems = listDataAnalysisItems.sort{it.product.productName}
+        listNoOverheadItems = listNoOverheadItems.sort{it.product.productName}
+        listDataGenerationItems = listDataGenerationItems.sort{it.product.productName}
+
         //Initialize Number of table
         tableCount = 1
 
@@ -187,8 +192,9 @@ class OfferToPDFConverter implements OfferExporter {
         tableItemsCount = 1
         int maxTableItems = 8
         //Generate ProductTable for Overhead and Non-Overhead Product Items
-        generateProductTable(OVERHEAD, listOverheadItems, maxTableItems)
-        generateProductTable(NO_OVERHEAD, listNoOverheadItems, maxTableItems)
+        generateProductTable("Data Generation", listDataGenerationItems, maxTableItems)
+        generateProductTable("Data Analysis", listDataAnalysisItems, maxTableItems)
+        generateProductTable("Project Management and Data Storage", listNoOverheadItems, maxTableItems)
 
         //Append total cost footer
         if (tableItemsCount >= maxTableItems) {
@@ -197,11 +203,11 @@ class OfferToPDFConverter implements OfferExporter {
             String elementId = "product-items" + "-" + tableCount
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter())
+                    .append(ItemPrintout.tableFooter(offer.overheadRatio))
         } else {
             //otherwise add total pricing to table
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter())
+                    .append(ItemPrintout.tableFooter(offer.overheadRatio))
         }
         }
 
@@ -226,34 +232,7 @@ class OfferToPDFConverter implements OfferExporter {
         htmlContent.getElementById("offer-date").text(dateFormat.format(offer.modificationDate))
     }
 
-    void setIntermediatePrices(String overheadStatus) {
-
-        double itemsNetPrice
-        double overheadPrice
-        double totalPrice
-
-        if (overheadStatus == "overhead") {
-            itemsNetPrice = offer.getItemsWithOverheadNetPrice()
-            overheadPrice = offer.getOverheads()
-            totalPrice = itemsNetPrice + overheadPrice
-        }
-        else {
-            //No Overhead Prices are calculated for these items
-            overheadPrice = 0.00
-            itemsNetPrice = offer.getItemsWithOverheadNetPrice()
-            totalPrice = itemsNetPrice
-        }
-
-            final String formattedTotalPrice = Currency.getFormatterWithoutSymbol().format(totalPrice)
-            final String formattedItemsWithOverheadNetPrice = Currency.getFormatterWithoutSymbol().format(itemsNetPrice)
-            final String formattedOverheadPrice = Currency.getFormatterWithoutSymbol().format(overheadPrice)
-
-            htmlContent.getElementById("${overheadStatus}-value-total").text(formattedTotalPrice)
-            htmlContent.getElementById("${overheadStatus}-value-net").text(formattedItemsWithOverheadNetPrice)
-            htmlContent.getElementById("${overheadStatus}-value-overhead").text(formattedOverheadPrice)
-        }
-
-    void generateProductTable(String overheadStatus, List<ProductItem> productItems, int maxTableItems){
+    void generateProductTable(String tableTitle, List<ProductItem> productItems, int maxTableItems){
         // Create the items in html in the overview table
         if (!productItems.isEmpty()) {
         // set initial product item position in table
@@ -261,7 +240,7 @@ class OfferToPDFConverter implements OfferExporter {
         // max number of table items per page
         def elementId = "product-items" + "-" + tableCount
             //Append Table Title
-            htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(overheadStatus))
+            htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(tableTitle))
             productItems.each { productItem ->
                 //start (next) table and add Product to it
                 if (tableItemsCount >= maxTableItems)
@@ -275,11 +254,6 @@ class OfferToPDFConverter implements OfferExporter {
                 htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemPos++, productItem))
                 tableItemsCount++
             }
-            // Add subtotal Footer to ProductItem
-            htmlContent.getElementById(elementId).append(ItemPrintout.subTotalFooter(overheadStatus))
-            tableItemsCount++
-            //Update Pricing of Footer
-            setIntermediatePrices(overheadStatus)
         }
     }
 
@@ -345,26 +319,6 @@ class OfferToPDFConverter implements OfferExporter {
 
         }
 
-        static String subTotalFooter(String overheadStatus) {
-
-            return """
-            <div class="row total-costs double-underscore" id = "${overheadStatus}-total">
-            <div class="col-6"></div>
-                    <div class="col-4 cost-summary-field">Total Cost:</div>
-            <div class="col-2 price-value" id="${overheadStatus}-value-total">4000</div>
-                    </div>
-            <div class="row total-costs" id = "${overheadStatus}-net">
-            <div class="col-10 cost-summary-field">Net Cost</div>
-                    <div class="col-2 price-value" id="${overheadStatus}-value-net">3000</div>
-            </div>
-                    <div class="row total-costs" id ="${overheadStatus}-overhead">
-                    <div class="col-10 cost-summary-field">Overhead Cost:</div>
-            <div class="col-2 price-value" id="${overheadStatus}-value-overhead">1000</div>
-            </div>
-            <div class ="small-spacer"> </div> 
-            """
-        }
-
         static String tableHeader(String elementId) {
             //1. add pagebreak
             //2. create empty table for elementId
@@ -381,26 +335,20 @@ class OfferToPDFConverter implements OfferExporter {
                              """
         }
 
-        static String tableTitle(String overheadStatus){
-            String tableTitle
-            if (overheadStatus == "overhead"){
-                tableTitle = "Products with Overhead"
-            }
-            else {
-                tableTitle = "Products without Overheads"
-            }
+        static String tableTitle(String tableTitle){
+
             return """<div class = "small-spacer"</div>
                     <h3>${tableTitle}</h3>
                    """
         }
 
         static String tableFooter(){
+
             return """<div id="grid-table-footer">
                                      <div class="row total-costs" id = "offer-net">
                                          <div class="col-6"></div>
                                          <div class="col-4 cost-summary-field">Estimated total (net):</div>
                                          <div class="col-2 price-value" id="total-cost-value-net">12,500.00</div>
-                                     </div>
                                      <div class="row total-costs" id = "offer-vat">
                                          <div class="col-10 cost-summary-field">VAT (19%):</div>
                                          <div class="col-2 price-value" id="vat-cost-value">0.00</div>
