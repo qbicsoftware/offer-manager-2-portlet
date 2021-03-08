@@ -27,12 +27,12 @@ class MaintainProductsPresenter implements CreateProductOutput, CopyProductOutpu
 
     @Override
     void archived(Product product) {
-
+        mainViewModel.successNotifications << "Successfully archived product $product.productId - $product.productName."
     }
 
     @Override
     void copied(Product product) {
-
+        mainViewModel.successNotifications << "Successfully copied product $product.productId - $product.productName."
     }
 
     @Override
