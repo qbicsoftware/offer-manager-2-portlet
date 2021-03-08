@@ -87,13 +87,19 @@ class Offer {
      */
     private double itemsWithoutOverheadNetPrice
 
-    /*
-     * Holds the determined overhead derived from the
+    /**
+     * Holds the determined overhead total derived from the
      * customer's affiliation.
      */
     private double overhead
 
-    /*
+    /**
+    * Holds the determined overhead ratio derived from the
+    * customer's affiliation.
+    */
+    private double overheadRatio
+
+    /**
      * Holds the current VAT rate
      */
     private static final double VAT = 0.19
@@ -115,6 +121,7 @@ class Offer {
         OfferId identifier
         Affiliation selectedCustomerAffiliation
         List<OfferId> availableVersions
+        double overheadRatio
 
         Builder(Customer customer, ProjectManager projectManager, String projectTitle, String projectObjective, List<ProductItem> items, Affiliation selectedCustomerAffiliation) {
             this.customer = Objects.requireNonNull(customer, "Customer must not be null")
@@ -145,6 +152,11 @@ class Offer {
             return this
         }
 
+        Builder overheadRatio(double overheadRatio){
+            this.overheadRatio = overheadRatio
+            return this
+        }
+
 
         Offer build() {
             return new Offer(this)
@@ -171,6 +183,8 @@ class Offer {
         this.itemsWithoutOverhead = getNoOverheadItems()
         this.itemsWithOverheadNetPrice = getOverheadItemsNet()
         this.itemsWithoutOverheadNetPrice = getNoOverheadItemsNet()
+        this.overheadRatio = determineOverhead()
+
     }
 
     /**
@@ -322,6 +336,10 @@ class Offer {
 
     Affiliation getSelectedCustomerAffiliation() {
         return selectedCustomerAffiliation
+    }
+
+    double getOverheadRatio() {
+        return overheadRatio
     }
 
     /**

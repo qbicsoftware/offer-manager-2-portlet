@@ -17,6 +17,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.text.DateFormat
+import java.text.DecimalFormat
 
 /**
  * Handles the conversion of offers to pdf files
@@ -197,11 +198,11 @@ class OfferToPDFConverter implements OfferExporter {
             String elementId = "product-items" + "-" + tableCount
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter())
+                    .append(ItemPrintout.tableFooter(offer.overheadRatio))
         } else {
             //otherwise add total pricing to table
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter())
+                    .append(ItemPrintout.tableFooter(offer.overheadRatio))
         }
         }
 
@@ -394,12 +395,21 @@ class OfferToPDFConverter implements OfferExporter {
                    """
         }
 
-        static String tableFooter(){
+        static String tableFooter(double offerOverhead){
+
+            //Convert offerOverhead Ratio into Percentage Format
+            DecimalFormat decimalFormat = new DecimalFormat("#%")
+            String overheadPercentage = decimalFormat.format(offerOverhead)
+
             return """<div id="grid-table-footer">
                                      <div class="row total-costs" id = "offer-net">
                                          <div class="col-6"></div>
                                          <div class="col-4 cost-summary-field">Estimated total (net):</div>
                                          <div class="col-2 price-value" id="total-cost-value-net">12,500.00</div>
+                                     </div>
+                                       <div class="row total-costs" id = "offer-overhead">
+                                         <div class="col-10 cost-summary-field">Overhead Cost (${overheadPercentage}):</div>
+                                         <div class="col-2 price-value" id="overhead-cost-value">12345</div>
                                      </div>
                                      <div class="row total-costs" id = "offer-vat">
                                          <div class="col-10 cost-summary-field">VAT (19%):</div>
