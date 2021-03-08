@@ -16,6 +16,7 @@ interface CreateProjectSpaceInput {
      * defined by the project manager and is not a rule set in stone.
      *
      * @param The desired project space to be created
+     * @since 1.0.0
      */
     void createProjectSpace(ProjectSpace projectSpace)
 

@@ -14,6 +14,7 @@ interface CreateProjectOutput extends UseCaseFailure {
      * Called when a project has been successfully created.
      *
      * @param project The project that has been created in QBiC's data management system.
+     * @since 1.0.0
      */
     void projectCreated(Project project)
 
