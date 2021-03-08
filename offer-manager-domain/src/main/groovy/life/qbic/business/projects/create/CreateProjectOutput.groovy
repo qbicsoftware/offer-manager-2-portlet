@@ -10,8 +10,6 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
  *
  * Provides output methods that are called by the use case <code>Create Project</code>.
  *
- *
- *
  * @since 1.0.0
  */
 interface CreateProjectOutput extends UseCaseFailure {
@@ -21,7 +19,7 @@ interface CreateProjectOutput extends UseCaseFailure {
      * <br>
      * <p>This output represents the <strong>ideal use case</strong> scenario.</p>
      *
-     * @param project The project that has been created in QBiC's data management system.
+     * @param project The project that has been created iqn QBiC's data management system.
      * @since 1.0.0
      */
     void projectCreated(Project project)
