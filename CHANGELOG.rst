@@ -20,8 +20,8 @@ Unassigned
 
 **Added**
 
-* Introduce subtotals in Offer PDF ProductItem Table(`#349 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/349>`_)
-* Introduce distinction between ProductItems with and without Overhead cost in Offer PDF(`#349 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/349>`_)
+* Introduce distinction of products in Offer PDF according to the associated service
+  (Data generation, Data analysis and Project Management)
 
 **Fixed**
 
