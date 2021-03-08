@@ -1,5 +1,14 @@
 package life.qbic.portal.offermanager.components.projectcreation
 
+import com.vaadin.ui.ComboBox
+import com.vaadin.ui.HorizontalLayout
+import com.vaadin.ui.Label
+import com.vaadin.ui.RadioButtonGroup
+import com.vaadin.ui.TextField
+import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.themes.ValoTheme
+import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
+
 /**
  * <h1>Enables a user to create a project based on an existing offer</h1>
  *
@@ -10,5 +19,110 @@ package life.qbic.portal.offermanager.components.projectcreation
  *
  * @since 1.0.0
  */
-class CreateProjectView {
+class CreateProjectView extends VerticalLayout{
+
+    private RadioButtonGroup<CreateProjectModel.SPACE_SELECTION> projectSpaceSelection
+
+    static final EnumMap<CreateProjectModel.SPACE_SELECTION, String> spaceSelectionText =
+            new EnumMap(CreateProjectModel.SPACE_SELECTION.class)
+
+    static {
+        spaceSelectionText.put(
+                CreateProjectModel.SPACE_SELECTION.EXISTING_SPACE,
+                "an existing project space")
+        spaceSelectionText.put(
+                CreateProjectModel.SPACE_SELECTION.NEW_SPACE,
+                "a new project space")
+    }
+
+    private final CreateProjectModel model
+
+    private TextField desiredSpaceName
+
+    private TextField resultingSpaceName
+
+    private HorizontalLayout customSpaceLayout
+
+    private HorizontalLayout existingSpaceLayout
+
+    private ComboBox<ProjectSpace> availableSpacesBox
+
+    private VerticalLayout projectCodeLayout
+
+    private TextField desiredProjectCode
+
+    private TextField resultingProjectCode
+
+    private HorizontalLayout projectAvailability
+
+    CreateProjectView(CreateProjectModel createProjectModel) {
+        this.model = createProjectModel
+        setupVaadinComponents()
+        configureListeners()
+        bindData()
+    }
+
+    private void setupVaadinComponents() {
+        projectSpaceSelection = new RadioButtonGroup<>("Create project in",
+                model.spaceSelectionDataProvider)
+        projectSpaceSelection.setItemCaptionGenerator(item -> spaceSelectionText.get(item))
+        this.addComponent(projectSpaceSelection)
+
+        customSpaceLayout = new HorizontalLayout()
+        desiredSpaceName = new TextField("Desired space name")
+        resultingSpaceName = new TextField("Resulting name")
+        resultingSpaceName.setEnabled(false)
+        customSpaceLayout.addComponents(desiredSpaceName, resultingSpaceName)
+        customSpaceLayout.setVisible(false)
+        this.addComponent(customSpaceLayout)
+
+        existingSpaceLayout = new HorizontalLayout()
+        availableSpacesBox = new ComboBox<>("Available project spaces")
+        existingSpaceLayout.addComponent(availableSpacesBox)
+        existingSpaceLayout.setVisible(false)
+        this.addComponent(existingSpaceLayout)
+
+        projectCodeLayout = new VerticalLayout()
+        def container = new HorizontalLayout()
+        desiredProjectCode = new TextField("Desired project code")
+        resultingProjectCode = new TextField("Resulting project code")
+        resultingProjectCode.setEnabled(false)
+        container.addComponents(desiredProjectCode, resultingProjectCode)
+        projectCodeLayout.addComponent(container)
+        projectAvailability = new HorizontalLayout()
+        projectCodeLayout.addComponent(projectAvailability)
+        this.addComponent(projectCodeLayout)
+    }
+
+    private void configureListeners() {
+        this.desiredSpaceName.addValueChangeListener({model.desiredSpaceName = it.value})
+        this.model.addPropertyChangeListener("resultingSpaceName", {this.resultingSpaceName
+                .setValue(model.resultingSpaceName)})
+        this.projectSpaceSelection.addValueChangeListener({
+            if (it.value == CreateProjectModel.SPACE_SELECTION.NEW_SPACE) {
+                existingSpaceLayout.setVisible(false)
+                customSpaceLayout.setVisible(true)
+            } else {
+                existingSpaceLayout.setVisible(true)
+                customSpaceLayout.setVisible(false)
+            }
+        })
+        this.desiredProjectCode.addValueChangeListener({model.desiredProjectCode = it.value})
+        this.model.addPropertyChangeListener("projectCodeValidationResult", {
+            this.projectAvailability.removeAllComponents()
+            if (model.codeIsValid) {
+                def label = new Label(model.projectCodeValidationResult)
+                label.setStyleName(ValoTheme.LABEL_SUCCESS)
+                this.projectAvailability.addComponent(label)
+            } else {
+                def label = new Label(model.projectCodeValidationResult)
+                label.setStyleName(ValoTheme.LABEL_FAILURE)
+                this.projectAvailability.addComponent(label)
+            }
+        })
+    }
+
+    private void bindData() {
+        availableSpacesBox.setDataProvider(model.availableSpaces)
+    }
 }

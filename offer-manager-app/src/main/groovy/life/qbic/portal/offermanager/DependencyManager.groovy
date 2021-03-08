@@ -15,6 +15,8 @@ import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewPres
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
+import life.qbic.portal.offermanager.components.projectcreation.CreateProjectModel
+import life.qbic.portal.offermanager.components.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -77,6 +79,7 @@ class DependencyManager {
     private OfferOverviewModel offerOverviewModel
     private SearchPersonViewModel searchPersonViewModel
     private CreatePersonViewModel createCustomerViewModelNewOffer
+    private CreateProjectModel createProjectModel
 
     private AppPresenter presenter
     private CreatePersonPresenter createCustomerPresenter
@@ -115,6 +118,7 @@ class DependencyManager {
     private CreateAffiliationView createAffiliationView
     private AppView portletView
     private ConfigurationManager configurationManager
+    private CreateProjectView createProjectView
 
     private OverviewService overviewService
     private EventEmitter<Offer> offerUpdateEvent
@@ -278,6 +282,13 @@ class DependencyManager {
             this.searchPersonViewModel = new SearchPersonViewModel(personResourceService, personUpdateEvent)
         }catch (Exception e) {
             log.error("Unexpected excpetion during ${SearchPersonViewModel.getSimpleName()} view model setup.", e)
+        }
+
+        try {
+            this.createProjectModel = new CreateProjectModel()
+        }catch (Exception e) {
+            log.error("Unexpected excpetion during ${CreateProjectModel.getSimpleName()} view model" +
+                    " setup.", e)
         }
     }
 
@@ -468,6 +479,14 @@ class DependencyManager {
             throw e
         }
 
+        CreateProjectView createProjectView
+        try{
+            createProjectView = new CreateProjectView(createProjectModel)
+        } catch (Exception e) {
+            log.error("Could not create ${CreateProjectView.getSimpleName()} view.", e)
+            throw e
+        }
+
         AppView portletView
         try {
             CreatePersonView createCustomerView2 = new CreatePersonView(createCustomerController, this
@@ -480,7 +499,8 @@ class DependencyManager {
                     createOfferView,
                     overviewView,
                     updateOfferView,
-                    searchPersonView
+                    searchPersonView,
+                    createProjectView
             )
             this.portletView = portletView
         } catch (Exception e) {
