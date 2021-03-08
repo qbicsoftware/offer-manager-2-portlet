@@ -4,10 +4,10 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 
 /**
- * Provides access to the project management datasource
+ * <h1>Access to the project management datasource</h1>
  *
- * This interface collects methods to interact with the project management
- * datasource in the context of the Create Project Space use case.
+ * <p>This interface collects methods to interact with the project management
+ * datasource in the context of the Create Project Space use case.</p>
  *
  * @since 1.0.0
  */

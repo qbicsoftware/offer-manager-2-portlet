@@ -6,10 +6,10 @@ import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.datamodel.dtos.projectmanagement.ProjectApplication
 
 /**
- * Provides access to the project management datasource
+ * <h1>Access to the project management datasource</h1>
  *
- * This interface collects methods to interact with the project management
- * datasource in the context of the Create Project use case.
+ * <p>This interface collects methods to interact with the project management
+ * datasource in the context of the Create Project use case.</p>
  *
  * @since 1.0.0
  */
