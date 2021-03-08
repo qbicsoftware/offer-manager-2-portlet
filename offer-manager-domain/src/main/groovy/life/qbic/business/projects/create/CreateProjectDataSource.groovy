@@ -24,11 +24,11 @@ interface CreateProjectDataSource {
      * @return Information about the created project
      *
      * @since 1.0.0
-     * @throws ApplicationDeniedException If the application was denied. Reasons for denial are
+     * @throws ProjectExistsException If the application was denied. Reasons for denial are
      * currently:
      *  1. A project with the same project title already exists
      * @throws DatabaseQueryException If any technical interaction with the data source fails
      */
     Project createProject(ProjectApplication projectApplication)
-            throws ApplicationDeniedException, DatabaseQueryException
+            throws ProjectExistsException, DatabaseQueryException
 }
