@@ -258,7 +258,15 @@ class ProductsDbConnector implements ProductDataSource {
 
     @Override
     void archive(Product product) throws DatabaseQueryException {
+        Connection connection = provider.connect()
+
+        connection.withCloseable {
+            def statement = connection.prepareStatement(Queries.ARCHIVE_PRODUCT)
+            statement.setString(1, product.productId.identifier)
+            statement.execute()
+        }
     }
+
 /**
  * Class that encapsulates the available SQL queries.
  */
@@ -273,6 +281,11 @@ class ProductsDbConnector implements ProductDataSource {
          * Query for inserting a product.
          */
         final static String INSERT_PRODUCT = "INSERT INTO product (category, description, productName, unitPrice, unit, productId) VALUE(?,?,?,?,?,?)"
+
+        /**
+         * Inactivate a product
+         */
+        final static String ARCHIVE_PRODUCT = "UPDATE product SET active = 0 WHERE productId = ?"
 
         /**
          * Query for all items of an offer.
