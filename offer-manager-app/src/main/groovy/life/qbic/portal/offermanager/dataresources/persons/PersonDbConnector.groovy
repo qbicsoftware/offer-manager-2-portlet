@@ -783,6 +783,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
   @Override
   Optional<Integer> findPerson(Person person) {
+    //Todo fix me: initialize as Optional and set Optional.empty() (see OfferDbConnector: getOffer(OfferId offerId) line 226)
     int personID
 
     findActivePerson(person.firstName, person.lastName).each { foundCustomer ->

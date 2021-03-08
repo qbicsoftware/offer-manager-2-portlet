@@ -223,7 +223,20 @@ class ProductsDbConnector implements ProductDataSource {
 
     @Override
     Optional<Product> fetch(ProductId productId) throws DatabaseQueryException {
-        return null
+        Connection connection = provider.connect()
+        String query = Queries.INSERT_PRODUCT + " WHERE productId=?"
+        Optional<Product> product = Optional.empty()
+
+        connection.withCloseable {
+            PreparedStatement preparedStatement = it.prepareStatement(query)
+            preparedStatement.setString(1, productId.identifier)
+
+            ResultSet result = preparedStatement.executeQuery()
+            while (result.next()) {
+                product = Optional.of(rowResultToProduct(SqlExtensions.toRowResult(result)))
+            }
+        }
+        return product
     }
 
     @Override
