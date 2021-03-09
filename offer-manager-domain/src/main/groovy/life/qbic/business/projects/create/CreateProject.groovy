@@ -1,5 +1,6 @@
 package life.qbic.business.projects.create
 
+import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
@@ -12,17 +13,16 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
  * <br>
  * <p><detailed description></p>
  *
- * @since 1.0.0
- *
+ * @since 1.0.0*
  */
-class CreateProject implements CreateProjectInput{
+class CreateProject implements CreateProjectInput {
 
     private final CreateProjectOutput output
     private final CreateProjectDataSource dataSource
 
     private final Logging log = Logger.getLogger(CreateProject.class)
 
-    CreateProject(CreateProjectOutput output, CreateProjectDataSource dataSource){
+    CreateProject(CreateProjectOutput output, CreateProjectDataSource dataSource) {
         this.output = output
         this.dataSource = dataSource
     }
@@ -30,21 +30,21 @@ class CreateProject implements CreateProjectInput{
 
     @Override
     void createProject(ProjectApplication projectApplication) {
-        //create project code is valid
-        //check for project space if new or already existing
-        try{
+
+        try {
             Project createdProject = dataSource.createProject(projectApplication)
-            //todo create project here or in DB?
             output.projectCreated(createdProject)
-        }catch(ProjectExistsException projectExistsException){
+        } catch (ProjectExistsException projectExistsException) {
             log.error projectExistsException.stackTrace.toString()
-            output.projectAlreadyExists(new ProjectIdentifier(projectApplication.projectSpace,projectApplication.projectCode), projectApplication.linkedOffer)
-        }catch(DatabaseQueryException e){
+            output.projectAlreadyExists(new ProjectIdentifier(projectApplication.projectSpace, projectApplication.projectCode), projectApplication.linkedOffer)
+        } catch (DatabaseQueryException e) {
             log.error e.stackTrace.toString()
-            output.failNotification("The project application was not successful. It could not be stored in the database")
-        }catch(Exception exception){
+            output.failNotification("The project application was not successful. It could not be stored in the database.")
+        } catch (Exception exception) {
             log.error exception.stackTrace.toString()
-            output.failNotification("An error occurred. Please contact ...")
+            output.failNotification("An unexpected during the project creation occurred. " +
+                    "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
+
     }
 }
