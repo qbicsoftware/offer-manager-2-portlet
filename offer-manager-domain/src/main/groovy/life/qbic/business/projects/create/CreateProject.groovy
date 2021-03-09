@@ -35,13 +35,13 @@ class CreateProject implements CreateProjectInput {
             Project createdProject = dataSource.createProject(projectApplication)
             output.projectCreated(createdProject)
         } catch (ProjectExistsException projectExistsException) {
-            log.error projectExistsException.stackTrace.toString()
+            log.error("The project ${projectApplication.projectCode} already exists in the database.",projectExistsException)
             output.projectAlreadyExists(new ProjectIdentifier(projectApplication.projectSpace, projectApplication.projectCode), projectApplication.linkedOffer)
         } catch (DatabaseQueryException e) {
-            log.error e.stackTrace.toString()
-            output.failNotification("The project application was not successful. It could not be stored in the database.")
+            log.error("An error occurred in the database while creating the project ${projectApplication.projectCode}.",e)
+            output.failNotification("The project application for ${projectApplication.projectCode} was not successful. The project can not be stored in the database.")
         } catch (Exception exception) {
-            log.error exception.stackTrace.toString()
+            log.error("An unexpected error occurred during the project creation of project ${projectApplication.projectCode}",exception)
             output.failNotification("An unexpected during the project creation occurred. " +
                     "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
