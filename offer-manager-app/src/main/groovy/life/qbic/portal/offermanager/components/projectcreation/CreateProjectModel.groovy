@@ -34,9 +34,9 @@ class CreateProjectModel {
 
     List<ProjectCode> existingProjects
 
-    @Bindable String projectCodeValidationResult
+    @Bindable String projectCodeValidationMessage
 
-    @Bindable Boolean codeIsValid
+    @Bindable Boolean projectCodeIsValid
 
     CreateProjectModel() {
         spaceSelectionDataProvider = new ListDataProvider<>([SPACE_SELECTION.NEW_SPACE,
@@ -45,8 +45,8 @@ class CreateProjectModel {
         desiredSpaceName = ""
         desiredProjectCode = ""
         resultingProjectCode = ""
-        projectCodeValidationResult = ""
-        codeIsValid = false
+        projectCodeValidationMessage = ""
+        projectCodeIsValid = false
         availableSpaces = new ListDataProvider([new ProjectSpace("Example Space One"),
                            new ProjectSpace("Example Space Two")])
         existingProjects = [
@@ -60,34 +60,31 @@ class CreateProjectModel {
     private void setupListeners() {
         this.addPropertyChangeListener("desiredSpaceName", {
             ProjectSpace space = new ProjectSpace(desiredSpaceName)
-            resultingSpaceName = space.name
+            // you have to use the setter. Otherwise the bindable String with its listeners is
+            // overwritten and no events are fired
+            this.setResultingSpaceName(space.name)
         })
+
         this.addPropertyChangeListener("desiredProjectCode", {
-            try {
-                ProjectCode code = new ProjectCode(desiredProjectCode.toUpperCase())
-                resultingProjectCode = code.code
-                if (code in existingProjects) {
-                    codeIsValid = false
-                    projectCodeValidationResult = "Project with code $resultingProjectCode " +
-                            "already exists."
-                } else {
-                    codeIsValid = true
-                    projectCodeValidationResult = "Project code is valid."
-                }
-            } catch (IllegalArgumentException e) {
-                codeIsValid = false
-                projectCodeValidationResult = "${desiredProjectCode} is not a valid QBiC project " +
-                        "code."
-            }
+            evaluateProjectCode()
             evaluateProjectCreation()
         })
     }
 
+    private void evaluateProjectCode() {
+        try {
+            ProjectCode projectCode = new ProjectCode(desiredProjectCode.toUpperCase())
+            this.setProjectCodeIsValid(existingProjects.every {it.code != projectCode.code})
+            this.setProjectCodeValidationMessage(projectCodeIsValid ? "Project code is valid." : "Project with code ${desiredProjectCode.toUpperCase()} already exists.")
+            this.setResultingProjectCode(projectCode.code)
+        } catch (IllegalArgumentException ignored) {
+            this.setProjectCodeIsValid(false)
+            this.setProjectCodeValidationMessage("${desiredProjectCode} is not a valid QBiC project code.")
+        }
+    }
+
     private void evaluateProjectCreation() {
-        println codeIsValid
-        println resultingSpaceName
-        createProjectEnabled = codeIsValid && resultingSpaceName
-        println createProjectEnabled
+        createProjectEnabled = projectCodeIsValid && resultingSpaceName
     }
 
 }
