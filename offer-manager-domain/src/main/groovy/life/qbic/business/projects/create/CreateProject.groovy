@@ -9,11 +9,12 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectApplication
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 /**
- * <h1>A new project is created in the database. </h1>
+ * <h1>A new project is created and linked to an offer</h1>
  * <br>
- * <p><detailed description></p>
+ * <p>A new project is created and stored in the database.
+ * If a project with the respective project code already exists the database throws an {@link life.qbic.business.projects.create.ProjectExistsException}</p>
  *
- * @since 1.0.0*
+ * @since 1.0.0
  */
 class CreateProject implements CreateProjectInput {
 
