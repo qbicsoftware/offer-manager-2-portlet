@@ -1,6 +1,7 @@
 package life.qbic.business.products.copy
 
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.products.create.CreateProductOutput
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.Product
 
@@ -14,7 +15,7 @@ import life.qbic.datamodel.dtos.business.services.Product
  * @since: 1.0.0
  *
  */
-class CopyProduct implements CopyProductInput {
+class CopyProduct implements CopyProductInput, CreateProductOutput {
 
     private final CopyProductDataSource dataSource
     private final CopyProductOutput output
@@ -36,5 +37,36 @@ class CopyProduct implements CopyProductInput {
         } catch (DatabaseQueryException ignored) {
             output.failNotification("Could not copy product $productId")
         }
+    }
+/**
+ * Sends failure notifications that have been
+ * recorded during the use case.
+ * @param notification containing a failure message
+ * @since 1.0.0
+ */
+
+    @Override
+    void failNotification(String notification) {
+
+    }
+
+    /**
+     * A product has been created in the database
+     * @param product The product that has been created
+     * @since 1.0.0
+     */
+    @Override
+    void created(Product product) {
+        output.copied(product)
+    }
+
+    /**
+     * The product is already stored in the database
+     * @param product The product for which a duplicate has been found
+     * @since 1.0.0
+     */
+    @Override
+    void foundDuplicate(Product product) {
+        //todo change product id and create
     }
 }

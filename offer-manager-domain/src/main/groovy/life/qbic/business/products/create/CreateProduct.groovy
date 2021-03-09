@@ -1,6 +1,8 @@
 package life.qbic.business.products.create
 
-
+import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import life.qbic.datamodel.dtos.business.services.Product
 
 /**
@@ -16,6 +18,7 @@ import life.qbic.datamodel.dtos.business.services.Product
 class CreateProduct implements CreateProductInput {
     private final CreateProductDataSource dataSource
     private final CreateProductOutput output
+    private static final Logging log = Logger.getLogger(this.class)
 
     CreateProduct(CreateProductDataSource dataSource, CreateProductOutput output) {
         this.dataSource = dataSource
@@ -24,12 +27,12 @@ class CreateProduct implements CreateProductInput {
 
     @Override
     void create(Product product) {
-        dataSource.store(product)
+        try {
+            dataSource.store(product)
+        } catch(DatabaseQueryException databaseQueryException) {
+            log.error("Product creation failed. \n" + databaseQueryException.getStackTrace().join("\n"))
+            return
+        }
         output.created(product)
-    }
-
-    @Override
-    void createDuplicate(Product product) {
-
     }
 }
