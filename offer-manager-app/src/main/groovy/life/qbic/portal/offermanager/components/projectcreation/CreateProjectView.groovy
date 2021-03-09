@@ -1,15 +1,8 @@
 package life.qbic.portal.offermanager.components.projectcreation
 
 import com.vaadin.icons.VaadinIcons
-import com.vaadin.ui.Button
-import com.vaadin.ui.ComboBox
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Label
-import com.vaadin.ui.RadioButtonGroup
-import com.vaadin.ui.TextField
-import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
-import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 
 /**
@@ -22,7 +15,6 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
  *
  * @since 1.0.0
  */
-@Log4j2
 class CreateProjectView extends VerticalLayout{
 
     private RadioButtonGroup<CreateProjectModel.SPACE_SELECTION> projectSpaceSelection
@@ -154,7 +146,6 @@ class CreateProjectView extends VerticalLayout{
         // bind resulting space name
         this.model.addPropertyChangeListener("resultingSpaceName", {
             this.resultingSpaceName.setValue(model.resultingSpaceName)
-            log.error("Received new resulting space name $it.newValue")
         })
 
         // bind desired project code
