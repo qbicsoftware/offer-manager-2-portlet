@@ -24,7 +24,8 @@ class CreateProduct implements CreateProductInput {
 
     @Override
     void create(Product product) {
-
+        dataSource.store(product)
+        output.created(product)
     }
 
     @Override
