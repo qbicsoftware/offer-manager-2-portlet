@@ -104,7 +104,7 @@ class CreateProjectSpec extends Specification{
 
         then: "a project is successfully created"
         0 * output.projectCreated(_)
-        1 * output.failNotification("The project application was not successful. It could not be stored in the database.")
+        1 * output.failNotification("The project application for ${projectApplication.projectCode} was not successful. The project can not be stored in the database.")
         0 * output.projectAlreadyExists(_,_)
     }
 }
