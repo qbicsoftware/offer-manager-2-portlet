@@ -7,8 +7,6 @@ import life.qbic.datamodel.dtos.business.services.Product
 /**
  * <h1>Data souce interface for {@link life.qbic.business.products.archive.ArchiveProduct}</h1>
  *
- * <p><detailed description></p>
- *
  * @since 1.0.0
  */
 interface ArchiveProductDataSource {
