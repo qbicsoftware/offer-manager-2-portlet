@@ -5,6 +5,7 @@ import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
+import org.apache.tools.ant.taskdefs.Copy
 import spock.lang.Specification
 
 /**
@@ -44,15 +45,25 @@ class CopyProductSpec extends Specification {
 
     def "Copy sends a fail notification if there is no product with the provided id"() {
         given: "a data source that returns no entries for the given id"
+        dataSource.fetch(productId) >> Optional.empty()
         and: "a use case instance"
+        CopyProduct copyProduct = new CopyProduct(dataSource, output)
         when: "the copy method is called"
+        copyProduct.copy(productId)
         then: "the use case sends a failure notification"
+        1 * output.failNotification(_ as String)
+        0 * output.copied(_)
     }
 
     def "Copy sends a fail notification if the database fails for technical reasons"(){
         given: "a data source that throws a $DatabaseQueryException"
+        dataSource.fetch(productId) >> {throw new DatabaseQueryException("This is a test")}
         and: "a use case instance"
+        CopyProduct copyProduct = new CopyProduct(dataSource, output)
         when: "the copy method is called"
+        copyProduct.copy(productId)
         then: "the use case sends a failure notification"
+        1 * output.failNotification(_ as String)
+        0 * output.copied(_)
     }
 }
