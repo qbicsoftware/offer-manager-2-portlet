@@ -22,7 +22,7 @@ Unassigned
 
 * Introduce subtotals in Offer PDF ProductItem Table(`#349 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/349>`_)
 * Introduce distinction between ProductItems with and without Overhead cost in Offer PDF(`#349 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/349>`_)
-
+* Add logging with throwable cause (`#371 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/371>`_)
 **Fixed**
 
 **Dependencies**
