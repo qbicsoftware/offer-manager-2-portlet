@@ -21,7 +21,7 @@ class CreateProductSpec extends Specification {
     Product product
 
     def setup() {
-        dataSource = Stub(CreateProductDataSource)
+        dataSource = Mock(CreateProductDataSource)
         output = Mock(CreateProductOutput)
         productId = new ProductId("Test", "ABCD1234")
         product = new AtomicProduct("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, productId)
