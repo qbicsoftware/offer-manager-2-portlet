@@ -1,10 +1,6 @@
 package life.qbic.portal.portlet.projects
 
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.business.offers.create.CreateOffer
-import life.qbic.business.offers.identifier.ProjectPart
-import life.qbic.business.offers.identifier.RandomPart
-import life.qbic.business.offers.identifier.Version
 import life.qbic.business.projects.create.CreateProject
 import life.qbic.business.projects.create.CreateProjectDataSource
 import life.qbic.business.projects.create.CreateProjectOutput
@@ -12,8 +8,6 @@ import life.qbic.business.projects.create.ProjectExistsException
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.general.Person
 import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.datamodel.dtos.projectmanagement.ProjectApplication
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
@@ -22,11 +16,9 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 import spock.lang.Specification
 
 /**
- * <h1><short description></h1>
- * <br>
- * <p><detailed description></p>
+ * <h1>Adds tests for the {@link life.qbic.business.projects.create.CreateProject} use case</h1>
  *
- * @since <versiontag>
+ * @since 1.0.0
  *
 */
 
