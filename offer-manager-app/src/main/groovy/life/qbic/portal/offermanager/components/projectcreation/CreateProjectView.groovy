@@ -1,5 +1,7 @@
 package life.qbic.portal.offermanager.components.projectcreation
 
+import com.vaadin.icons.VaadinIcons
+import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
@@ -55,6 +57,8 @@ class CreateProjectView extends VerticalLayout{
 
     private HorizontalLayout projectAvailability
 
+    private Button createProjectButton
+
     CreateProjectView(CreateProjectModel createProjectModel) {
         this.model = createProjectModel
         setupVaadinComponents()
@@ -82,7 +86,12 @@ class CreateProjectView extends VerticalLayout{
         existingSpaceLayout.setVisible(false)
         this.addComponent(existingSpaceLayout)
 
+        Label label = new Label("Please set a project code")
+
+        this.addComponent(label)
+
         projectCodeLayout = new VerticalLayout()
+        projectCodeLayout.setMargin(false)
         def container = new HorizontalLayout()
         desiredProjectCode = new TextField("Desired project code")
         resultingProjectCode = new TextField("Resulting project code")
@@ -92,6 +101,11 @@ class CreateProjectView extends VerticalLayout{
         projectAvailability = new HorizontalLayout()
         projectCodeLayout.addComponent(projectAvailability)
         this.addComponent(projectCodeLayout)
+
+        createProjectButton = new Button("Create Project", VaadinIcons.CHECK_SQUARE)
+        createProjectButton.setStyleName(ValoTheme.BUTTON_LARGE)
+        this.addComponent(createProjectButton)
+        createProjectButton.setEnabled(model.createProjectEnabled)
     }
 
     private void configureListeners() {
@@ -110,6 +124,7 @@ class CreateProjectView extends VerticalLayout{
         this.desiredProjectCode.addValueChangeListener({model.desiredProjectCode = it.value})
         this.model.addPropertyChangeListener("projectCodeValidationResult", {
             this.projectAvailability.removeAllComponents()
+            this.resultingProjectCode.setValue(model.resultingProjectCode)
             if (model.codeIsValid) {
                 def label = new Label(model.projectCodeValidationResult)
                 label.setStyleName(ValoTheme.LABEL_SUCCESS)
@@ -119,6 +134,9 @@ class CreateProjectView extends VerticalLayout{
                 label.setStyleName(ValoTheme.LABEL_FAILURE)
                 this.projectAvailability.addComponent(label)
             }
+        })
+        this.model.addPropertyChangeListener("createProjectEnabled", {
+            this.createProjectButton.setEnabled(model.createProjectEnabled)
         })
     }
 

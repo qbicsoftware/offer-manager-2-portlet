@@ -15,6 +15,8 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
  */
 class CreateProjectModel {
 
+    @Bindable Boolean createProjectEnabled
+
     enum SPACE_SELECTION {
         NEW_SPACE, EXISTING_SPACE
     }
@@ -28,13 +30,13 @@ class CreateProjectModel {
 
     @Bindable String desiredProjectCode
 
-    String resultingProjectCode
+    @Bindable String resultingProjectCode
 
     List<ProjectCode> existingProjects
 
-    String projectCodeValidationResult
+    @Bindable String projectCodeValidationResult
 
-    boolean codeIsValid
+    @Bindable Boolean codeIsValid
 
     CreateProjectModel() {
         spaceSelectionDataProvider = new ListDataProvider<>([SPACE_SELECTION.NEW_SPACE,
@@ -51,6 +53,7 @@ class CreateProjectModel {
                 new ProjectCode("QABCD"),
                 new ProjectCode("QTEST")
         ]
+        createProjectEnabled = false
         setupListeners()
     }
 
@@ -76,7 +79,15 @@ class CreateProjectModel {
                 projectCodeValidationResult = "${desiredProjectCode} is not a valid QBiC project " +
                         "code."
             }
+            evaluateProjectCreation()
         })
+    }
+
+    private void evaluateProjectCreation() {
+        println codeIsValid
+        println resultingSpaceName
+        createProjectEnabled = codeIsValid && resultingSpaceName
+        println createProjectEnabled
     }
 
 }
