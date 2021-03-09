@@ -1,6 +1,6 @@
 package life.qbic.business.offers.create
 
-import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.projectmanagement.ProjectApplication
 
 
 /**
@@ -25,9 +25,9 @@ interface CreateOfferInput {
    *
    * If the identifier is passed with the content, it will be ignored.
    *
-   * @param offer {@link life.qbic.datamodel.dtos.business.Offer}
+   * @param projectApplication {@link life.qbic.datamodel.dtos.projectmanagement.ProjectApplication}
    * @since 1.0.0
    */
-  void createOffer(Offer offerContent)
+  void createOffer(ProjectApplication projectApplication)
 
 }
