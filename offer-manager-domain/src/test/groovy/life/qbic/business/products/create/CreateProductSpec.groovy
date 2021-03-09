@@ -36,7 +36,9 @@ class CreateProductSpec extends Specification {
         when: "the create method is called"
         createProduct.create(product)
 
-        then: "the output is informed and no failure notification is send"
+        then: "the database is tasked to store the product"
+        1 * dataSource.store(product)
+        and: "the output is informed and no failure notification is send"
         1 * output.created(product)
         0 * output.failNotification(_)
     }
@@ -50,7 +52,9 @@ class CreateProductSpec extends Specification {
         when: "the create method is called"
         createProduct.create(product)
 
-        then: "the output is informed and no failure notification is send"
+        then: "the database is tasked to store the product"
+        1 * dataSource.store(product)
+        and: "the output is informed and no failure notification is send"
         1 * output.foundDuplicate(product)
         0 * output.failNotification(_)
     }
@@ -64,9 +68,11 @@ class CreateProductSpec extends Specification {
         when: "the create method is called"
         createProduct.create(product)
 
-        then: "the output is send a failure notification"
+        then: "the database is tasked to store the product"
+        1 * dataSource.store(product)
+        and: "the output is send a failure notification"
         0 * output.created(product)
-        0 * output.failNotification(_ as String)
+        1 * output.failNotification(_ as String)
     }
 
     def "CreateDuplicate stores the provided product in the data source if no duplicate was found"() {
