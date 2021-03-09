@@ -40,6 +40,7 @@ class CreateProductSpec extends Specification {
         1 * dataSource.store(product)
         and: "the output is informed and no failure notification is send"
         1 * output.created(product)
+        0 * output.foundDuplicate(_)
         0 * output.failNotification(_)
     }
 
@@ -55,6 +56,7 @@ class CreateProductSpec extends Specification {
         then: "the database is tasked to store the product"
         1 * dataSource.store(product)
         and: "the output is informed and no failure notification is send"
+        0 * output.created(_)
         1 * output.foundDuplicate(product)
         0 * output.failNotification(_)
     }
@@ -71,7 +73,8 @@ class CreateProductSpec extends Specification {
         then: "the database is tasked to store the product"
         1 * dataSource.store(product)
         and: "the output is send a failure notification"
-        0 * output.created(product)
+        0 * output.created(_)
+        0 * output.foundDuplicate(_)
         1 * output.failNotification(_ as String)
     }
 
