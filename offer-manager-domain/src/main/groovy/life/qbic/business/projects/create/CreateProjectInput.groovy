@@ -15,9 +15,9 @@ interface CreateProjectInput {
      * <p>Calling this method executes the <span>Create Project</span> use case.
      * The output will be returned via the {@link CreateProjectOutput} interface.
      * </p>
-     * @param application The project application with information about the planned project.
+     * @param projectApplication The project application with information about the planned project.
      * @since 1.0.0
      */
-    void createProject(ProjectApplication application)
+    void createProject(ProjectApplication projectApplication)
 
 }

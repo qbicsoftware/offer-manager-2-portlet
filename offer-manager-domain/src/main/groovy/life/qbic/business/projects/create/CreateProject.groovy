@@ -38,7 +38,7 @@ class CreateProject implements CreateProjectInput{
             output.projectCreated(createdProject)
         }catch(ProjectExistsException projectExistsException){
             log.error projectExistsException.stackTrace.toString()
-            output.projectAlreadyExists(new ProjectIdentifier(projectApplication.projectSpace,projectApplication.projectCode.get()), projectApplication.linkedOffer)
+            output.projectAlreadyExists(new ProjectIdentifier(projectApplication.projectSpace,projectApplication.projectCode), projectApplication.linkedOffer)
         }catch(DatabaseQueryException e){
             log.error e.stackTrace.toString()
             output.failNotification("The project application was not successful. It could not be stored in the database")
