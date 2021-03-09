@@ -25,14 +25,14 @@ class CreateProjectView extends VerticalLayout{
 
     private RadioButtonGroup<CreateProjectModel.SPACE_SELECTION> projectSpaceSelection
 
-    static final EnumMap<CreateProjectModel.SPACE_SELECTION, String> spaceSelectionText =
+    static final EnumMap<CreateProjectModel.SPACE_SELECTION, String> spaceSelectionActionText =
             new EnumMap(CreateProjectModel.SPACE_SELECTION.class)
 
     static {
-        spaceSelectionText.put(
+        spaceSelectionActionText.put(
                 CreateProjectModel.SPACE_SELECTION.EXISTING_SPACE,
                 "an existing project space")
-        spaceSelectionText.put(
+        spaceSelectionActionText.put(
                 CreateProjectModel.SPACE_SELECTION.NEW_SPACE,
                 "a new project space")
     }
@@ -67,51 +67,77 @@ class CreateProjectView extends VerticalLayout{
     }
 
     private void setupVaadinComponents() {
+        createProjectSpaceElements()
+        createProjectCodeElements()
+        setupVisibility()
+        setupActivity()
+    }
+
+    private void setupVisibility() {
+        customSpaceLayout.setVisible(false)
+        existingSpaceLayout.setVisible(false)
+    }
+
+    private void setupActivity() {
+        resultingSpaceName.setEnabled(false)
+        resultingProjectCode.setEnabled(false)
+        createProjectButton.setEnabled(model.createProjectEnabled)
+    }
+
+    private void createProjectSpaceElements() {
+        /* The user needs to choose between creating a new project space
+         or select an existing one */
+        // First we create a ratio group with the choices available
         projectSpaceSelection = new RadioButtonGroup<>("Create project in",
                 model.spaceSelectionDataProvider)
-        projectSpaceSelection.setItemCaptionGenerator(item -> spaceSelectionText.get(item))
+        projectSpaceSelection.setItemCaptionGenerator(item -> spaceSelectionActionText.get(item))
         this.addComponent(projectSpaceSelection)
 
+        // Case A: A new space needs to be created
         customSpaceLayout = new HorizontalLayout()
         desiredSpaceName = new TextField("Desired space name")
         resultingSpaceName = new TextField("Resulting name")
-        resultingSpaceName.setEnabled(false)
         customSpaceLayout.addComponents(desiredSpaceName, resultingSpaceName)
-        customSpaceLayout.setVisible(false)
         this.addComponent(customSpaceLayout)
 
+        // Case B: An existing space is selected
         existingSpaceLayout = new HorizontalLayout()
         availableSpacesBox = new ComboBox<>("Available project spaces")
         existingSpaceLayout.addComponent(availableSpacesBox)
-        existingSpaceLayout.setVisible(false)
         this.addComponent(existingSpaceLayout)
+    }
 
+    private void createProjectCodeElements() {
+        // Set a nice header
         Label label = new Label("Please set a project code")
-
         this.addComponent(label)
 
+        // then a input field for the code
         projectCodeLayout = new VerticalLayout()
         projectCodeLayout.setMargin(false)
         def container = new HorizontalLayout()
         desiredProjectCode = new TextField("Desired project code")
         resultingProjectCode = new TextField("Resulting project code")
-        resultingProjectCode.setEnabled(false)
         container.addComponents(desiredProjectCode, resultingProjectCode)
+        // We also define some dynamic validation place holder
         projectCodeLayout.addComponent(container)
         projectAvailability = new HorizontalLayout()
         projectCodeLayout.addComponent(projectAvailability)
         this.addComponent(projectCodeLayout)
 
+        // Last but not least, the project creation button
         createProjectButton = new Button("Create Project", VaadinIcons.CHECK_SQUARE)
         createProjectButton.setStyleName(ValoTheme.BUTTON_LARGE)
         this.addComponent(createProjectButton)
-        createProjectButton.setEnabled(model.createProjectEnabled)
     }
 
     private void configureListeners() {
+        // We update the model with the desired space name content
         this.desiredSpaceName.addValueChangeListener({model.desiredSpaceName = it.value})
-        this.model.addPropertyChangeListener("resultingSpaceName", {this.resultingSpaceName
-                .setValue(model.resultingSpaceName)})
+        // We update the model with the desired project code
+        this.desiredProjectCode.addValueChangeListener({model.desiredProjectCode = it.value})
+        // We toggle between the two cases, weather a new space needs to be created
+        // or an existing space needs to be selected
         this.projectSpaceSelection.addValueChangeListener({
             if (it.value == CreateProjectModel.SPACE_SELECTION.NEW_SPACE) {
                 existingSpaceLayout.setVisible(false)
@@ -121,20 +147,26 @@ class CreateProjectView extends VerticalLayout{
                 customSpaceLayout.setVisible(false)
             }
         })
-        this.desiredProjectCode.addValueChangeListener({model.desiredProjectCode = it.value})
+        // Whenever the resulting space name is updated, we update the view
+        this.model.addPropertyChangeListener("resultingSpaceName", {this.resultingSpaceName
+                .setValue(model.resultingSpaceName)})
+        // Whenever new project code validation messages are available, we update the view
         this.model.addPropertyChangeListener("projectCodeValidationResult", {
             this.projectAvailability.removeAllComponents()
             this.resultingProjectCode.setValue(model.resultingProjectCode)
             if (model.codeIsValid) {
+                // If the project code is valid, we display some nice success label
                 def label = new Label(model.projectCodeValidationResult)
                 label.setStyleName(ValoTheme.LABEL_SUCCESS)
                 this.projectAvailability.addComponent(label)
             } else {
+                // otherwise we inform the user with a formatted failure label
                 def label = new Label(model.projectCodeValidationResult)
                 label.setStyleName(ValoTheme.LABEL_FAILURE)
                 this.projectAvailability.addComponent(label)
             }
         })
+        // Whenever all validation is fine, we enable the button to create a project
         this.model.addPropertyChangeListener("createProjectEnabled", {
             this.createProjectButton.setEnabled(model.createProjectEnabled)
         })
