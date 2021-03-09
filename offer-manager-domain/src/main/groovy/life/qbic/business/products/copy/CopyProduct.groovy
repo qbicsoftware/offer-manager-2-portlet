@@ -28,6 +28,8 @@ class CopyProduct implements CopyProductInput {
         Optional<Product> searchResult = dataSource.fetch(productId)
         if (searchResult.isPresent()) {
             output.copied(searchResult.get())
+        } else {
+            output.failNotification("Could not find any product for $productId")
         }
         //TODO
         //1. fetch product
