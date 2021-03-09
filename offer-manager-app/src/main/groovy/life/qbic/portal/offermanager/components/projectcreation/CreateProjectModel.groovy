@@ -68,6 +68,9 @@ class CreateProjectModel {
             validateProjectCode()
             evaluateProjectCreation()
         })
+        this.addPropertyChangeListener("resultingSpaceName",  {
+            evaluateProjectCreation()
+        })
     }
 
     private void validateProjectCode() {
@@ -84,8 +87,8 @@ class CreateProjectModel {
             }
         } catch (IllegalArgumentException e) {
             this.setCodeIsValid(false)
-            projectCodeValidationResult = "${desiredProjectCode} is not a valid QBiC project " +
-                    "code."
+            this.setProjectCodeValidationResult("${desiredProjectCode} is not a valid QBiC " +
+                    "project code.")
         }
     }
 

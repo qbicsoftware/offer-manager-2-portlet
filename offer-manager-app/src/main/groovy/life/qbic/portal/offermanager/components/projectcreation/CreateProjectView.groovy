@@ -67,10 +67,17 @@ class CreateProjectView extends VerticalLayout{
     }
 
     private void setupVaadinComponents() {
+        createTitle()
         createProjectSpaceElements()
         createProjectCodeElements()
         setupVisibility()
         setupActivity()
+    }
+
+    private void createTitle() {
+        Label label = new Label("Project Creation")
+        label.setStyleName(ValoTheme.LABEL_HUGE)
+        this.addComponent(label)
     }
 
     private void setupVisibility() {
@@ -85,6 +92,11 @@ class CreateProjectView extends VerticalLayout{
     }
 
     private void createProjectSpaceElements() {
+        // Set a nice header
+        Label label = new Label("1. Please select/create a project space first")
+        label.setStyleName(ValoTheme.LABEL_H3)
+        this.addComponent(label)
+
         /* The user needs to choose between creating a new project space
          or select an existing one */
         // First we create a ratio group with the choices available
@@ -96,7 +108,7 @@ class CreateProjectView extends VerticalLayout{
         // Case A: A new space needs to be created
         customSpaceLayout = new HorizontalLayout()
         desiredSpaceName = new TextField("Desired space name")
-        resultingSpaceName = new TextField("Resulting name")
+        resultingSpaceName = new TextField("Resulting space name")
         customSpaceLayout.addComponents(desiredSpaceName, resultingSpaceName)
         this.addComponent(customSpaceLayout)
 
@@ -109,7 +121,8 @@ class CreateProjectView extends VerticalLayout{
 
     private void createProjectCodeElements() {
         // Set a nice header
-        Label label = new Label("Please set a project code")
+        Label label = new Label("2. Please set a project code")
+        label.setStyleName(ValoTheme.LABEL_H3)
         this.addComponent(label)
 
         // then a input field for the code
