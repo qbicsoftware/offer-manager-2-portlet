@@ -1,5 +1,6 @@
 package life.qbic.business.products.copy
 
+import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.Product
 
@@ -25,18 +26,15 @@ class CopyProduct implements CopyProductInput {
 
     @Override
     void copy(ProductId productId) {
-        Optional<Product> searchResult = dataSource.fetch(productId)
-        if (searchResult.isPresent()) {
-            output.copied(searchResult.get())
-        } else {
-            output.failNotification("Could not find any product for $productId")
+        try {
+            Optional<Product> searchResult = dataSource.fetch(productId)
+            if (searchResult.isPresent()) {
+                output.copied(searchResult.get())
+            } else {
+                output.failNotification("Could not find any product for $productId")
+            }
+        } catch (DatabaseQueryException ignored) {
+            output.failNotification("Could not copy product $productId")
         }
-        //TODO
-        //1. fetch product
-        //2. copy information
-        //3. find new product id
-        //4. package new product
-        //5. store product
-        //6. inform about success
     }
 }
