@@ -1,6 +1,6 @@
 package life.qbic.business.projects.create
 
-import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.projectmanagement.ProjectApplication
 
 /**
  * <h1>Input interface for the <span>Create Project</span> use case.</h1>
@@ -15,9 +15,9 @@ interface CreateProjectInput {
      * <p>Calling this method executes the <span>Create Project</span> use case.
      * The output will be returned via the {@link CreateProjectOutput} interface.
      * </p>
-     * @param offer The offer with information about the planned project.
+     * @param application The project application with information about the planned project.
      * @since 1.0.0
      */
-    void createProject(Offer offer)
+    void createProject(ProjectApplication application)
 
 }
