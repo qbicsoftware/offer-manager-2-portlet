@@ -15,6 +15,12 @@ import life.qbic.datamodel.dtos.business.ProductId
 class CopyProduct implements CopyProductInput {
     @Override
     void copy(ProductId productId) {
-
+        //TODO
+        //1. fetch product
+        //2. copy information
+        //3. find new product id
+        //4. package new product
+        //5. store product
+        //6. inform about success
     }
 }
