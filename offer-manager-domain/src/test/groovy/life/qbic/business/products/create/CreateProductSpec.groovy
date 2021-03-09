@@ -1,8 +1,10 @@
 package life.qbic.business.products.create
 
+import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.datamodel.dtos.business.services.ProductUnit
 import spock.lang.Specification
 
 /**
@@ -22,16 +24,49 @@ class CreateProductSpec extends Specification {
         dataSource = Stub(CreateProductDataSource)
         output = Mock(CreateProductOutput)
         productId = new ProductId("Test", "ABCD1234")
-        product = new AtomicProduct("Test atomic item", "This is a test item", 0.5, ProductUnit.PER_SAMPLE, productId)
+        product = new AtomicProduct("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, productId)
     }
 
     def "Create stores the provided product in the data source"() {
+        given: "a data source that stores a product"
+        dataSource.store(product) >> void
+        and: "an instance of the use case"
+        CreateProduct createProduct = new CreateProduct(dataSource, output)
+
+        when: "the create method is called"
+        createProduct.create(product)
+
+        then: "the output is informed and no failure notification is send"
+        1 * output.created(product)
+        0 * output.failNotification(_)
     }
 
     def "Create informs the output that an entry matching the provided product already exists"() {
+        given: "a data source that detects a duplicate entry"
+        dataSource.store(product) >> {throw new ProductExistsException(productId)}
+        and: "an instance of the use case"
+        CreateProduct createProduct = new CreateProduct(dataSource, output)
+
+        when: "the create method is called"
+        createProduct.create(product)
+
+        then: "the output is informed and no failure notification is send"
+        1 * output.foundDuplicate(product)
+        0 * output.failNotification(_)
     }
 
     def "Create sends a failure notification in case technical errors occur at the data source"() {
+        given: "a data source that stores a product"
+        dataSource.store(product) >> {throw new DatabaseQueryException("This is a test")}
+        and: "an instance of the use case"
+        CreateProduct createProduct = new CreateProduct(dataSource, output)
+
+        when: "the create method is called"
+        createProduct.create(product)
+
+        then: "the output is send a failure notification"
+        0 * output.created(product)
+        0 * output.failNotification(_ as String)
     }
 
     def "CreateDuplicate stores the provided product in the data source if no duplicate was found"() {
