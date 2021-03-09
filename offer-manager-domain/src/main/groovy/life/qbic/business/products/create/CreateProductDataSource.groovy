@@ -16,7 +16,7 @@ interface CreateProductDataSource {
      * @param productId The product id of the product to be fetched
      * @return returns an optional that contains the product if it has been found
      * @since 1.0.0
-     * @throws life.qbic.business.exceptions.DatabaseQueryException
+     * @throws life.qbic.business.exceptions.DatabaseQueryException if any technical interaction with the data source fails
      */
     Optional<Product> fetch(ProductId productId) throws DatabaseQueryException
 

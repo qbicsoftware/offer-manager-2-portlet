@@ -1,5 +1,6 @@
 package life.qbic.business.products.create
 
+
 import life.qbic.datamodel.dtos.business.services.Product
 
 /**
@@ -13,6 +14,14 @@ import life.qbic.datamodel.dtos.business.services.Product
  *
  */
 class CreateProduct implements CreateProductInput {
+    private final CreateProductDataSource dataSource
+    private final CreateProductOutput output
+
+    CreateProduct(CreateProductDataSource dataSource, CreateProductOutput output) {
+        this.dataSource = dataSource
+        this.output = output
+    }
+
     @Override
     void create(Product product) {
 
