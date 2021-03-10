@@ -398,26 +398,6 @@ class OfferToPDFConverter implements OfferExporter {
                                  </div>
                                  """
         }
-        static String subTotalFooter(double netCost, double overheadCost) {
 
-            double subtotalCost = netCost + overheadCost
-
-            return """
-            <div class="row sub-total-costs double-underscore" id = "sub-total">
-            <div class="col-6"></div>
-                    <div class="col-4 cost-summary-field">Total Cost:</div>
-            <div class="col-2 price-value" id="subtotal-value-total">${subtotalCost}</div>
-                    </div>
-            <div class="row total-costs" id = "subtotal-net">
-            <div class="col-10 cost-summary-field">Net Cost</div>
-                    <div class="col-2 price-value" id="subtotal-value-net">${netCost}</div>
-            </div>
-                    <div class="row total-costs" id ="subtotal-overhead">
-                    <div class="col-10 cost-summary-field">Overhead Cost:</div>
-            <div class="col-2 price-value" id="subtotal-value-overhead">${overheadCost}</div>
-            </div>
-            <div class ="small-spacer"> </div> 
-            """
-        }
         }
 }
