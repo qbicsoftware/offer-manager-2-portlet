@@ -172,39 +172,18 @@ class OfferToPDFConverter implements OfferExporter {
 
         List<ProductItem> productItems = offer.items
 
-        List<ProductItem> dataGenerationItems = []
-        List<ProductItem> dataAnalysisItems = []
-        //Project Management and Data Storage are grouped in the same category in the final Offer PDF
-        List<ProductItem> dataManagementItems = []
-
-        // Sort ProductItems into "DataGeneration", "Data Analysis" and "Project & Data Management"
-        productItems.each {
-            if (it.product instanceof Sequencing) {
-                dataGenerationItems.add(it)
-            }
-            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis) {
-                dataAnalysisItems.add(it)
-            }
-            if (it.product instanceof DataStorage || it.product instanceof ProjectManagement){
-                dataManagementItems.add(it)
-            }
-        }
-
-        //Sort Lists by ProductName
-        dataGenerationItems = dataGenerationItems.sort{it.product.productName}
-        dataAnalysisItems = dataAnalysisItems.sort{it.product.productName}
-        dataManagementItems = dataManagementItems.sort{it.product.productName}
-
         //Initialize Number of table
         tableCount = 1
 
         //Initialize Count of ProductItems in table
         tableItemsCount = 1
         int maxTableItems = 8
-        //Generate ProductTable for "DataGeneration", "Data Analysis" and "Project & Data Management"  Product Items
-        generateProductTable("Data Generation", dataGenerationItems, maxTableItems)
-        generateProductTable("Data Analysis", dataAnalysisItems, maxTableItems)
-        generateProductTable("Project Management and Data Storage", dataManagementItems, maxTableItems)
+
+        //Group ProductItems into Data Generation Data Analysis and Data & Project Management Categories
+        Map productItemsMap = groupItems(productItems)
+
+        //Generate Product Table for each Category
+        generateProductTable(productItemsMap, maxTableItems)
 
         //Append total cost footer
         if (tableItemsCount >= maxTableItems) {
@@ -242,27 +221,63 @@ class OfferToPDFConverter implements OfferExporter {
         htmlContent.getElementById("offer-date").text(dateFormat.format(offer.modificationDate))
     }
 
-    void generateProductTable(String tableTitle, List<ProductItem> productItems, int maxTableItems){
+    Map groupItems(List<ProductItem> productItems) {
+
+        def productItemsMap = [:]
+
+        List<ProductItem> dataGenerationItems = []
+        List<ProductItem> dataAnalysisItems = []
+        //Project Management and Data Storage are grouped in the same category in the final Offer PDF
+        List<ProductItem> dataManagementItems = []
+
+        // Sort ProductItems into "DataGeneration", "Data Analysis" and "Project & Data Management"
+        productItems.each {
+            if (it.product instanceof Sequencing) {
+                dataGenerationItems.add(it)
+            }
+            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis) {
+                dataAnalysisItems.add(it)
+            }
+            if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
+                dataManagementItems.add(it)
+            }
+        }
+            //Sort Lists by ProductName
+            dataGenerationItems = dataGenerationItems.sort{it.product.productName}
+            dataAnalysisItems = dataAnalysisItems.sort{it.product.productName}
+            dataManagementItems = dataManagementItems.sort{it.product.productName}
+
+            //Map Lists to the "DataGeneration", "DataAnalysis" and "Project and Data Management"
+            productItemsMap.dataGeneration = dataGenerationItems
+            productItemsMap.dataAnalysis = dataAnalysisItems
+            productItemsMap.dataManagement= dataManagementItems
+
+            return productItemsMap
+        }
+
+    void generateProductTable(Map productItemsMap, int maxTableItems) {
         // Create the items in html in the overview table
-        if (!productItems.isEmpty()) {
-        // set initial product item position in table
-        def itemPos = 1
-        // max number of table items per page
-        def elementId = "product-items" + "-" + tableCount
-            //Append Table Title
-            htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(tableTitle))
-            productItems.each { productItem ->
-                //start (next) table and add Product to it
-                if (tableItemsCount >= maxTableItems)
-                {
-                    ++tableCount
-                    elementId = "product-items" + "-" + tableCount
-                    htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
-                    tableItemsCount = 1
+        productItemsMap.each {key, value ->
+            //Check if there are ProductItems stored in map entry
+            if (value) {
+                // set initial product item position in table
+                def itemPos = 1
+                // max number of table items per page
+                def elementId = "product-items" + "-" + tableCount
+                //Append Table Title
+                htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(key.toString()))
+                value.each {productItem ->
+                    //start (next) table and add Product to it
+                    if (tableItemsCount >= maxTableItems) {
+                        ++tableCount
+                        elementId = "product-items" + "-" + tableCount
+                        htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
+                        tableItemsCount = 1
+                    }
+                    //add product to current table
+                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemPos++, productItem as ProductItem))
+                    tableItemsCount++
                 }
-                //add product to current table
-                htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemPos++, productItem))
-                tableItemsCount++
             }
         }
     }
@@ -345,7 +360,19 @@ class OfferToPDFConverter implements OfferExporter {
                              """
         }
 
-        static String tableTitle(String tableTitle){
+        static String tableTitle(String productGroup){
+
+            String tableTitle = ""
+
+            if (productGroup == "dataGeneration"){
+                tableTitle = "Data Generation"
+            }
+            if (productGroup == "dataAnalysis"){
+                tableTitle = "Data Analysis"
+            }
+            if (productGroup == "dataManagement"){
+                tableTitle = "Data Management"
+            }
 
             return """<div class = "small-spacer"</div>
                     <h3>${tableTitle}</h3>
@@ -370,6 +397,27 @@ class OfferToPDFConverter implements OfferExporter {
                                      </div>
                                  </div>
                                  """
+        }
+        static String subTotalFooter(double netCost, double overheadCost) {
+
+            double subtotalCost = netCost + overheadCost
+
+            return """
+            <div class="row sub-total-costs double-underscore" id = "sub-total">
+            <div class="col-6"></div>
+                    <div class="col-4 cost-summary-field">Total Cost:</div>
+            <div class="col-2 price-value" id="subtotal-value-total">${subtotalCost}</div>
+                    </div>
+            <div class="row total-costs" id = "subtotal-net">
+            <div class="col-10 cost-summary-field">Net Cost</div>
+                    <div class="col-2 price-value" id="subtotal-value-net">${netCost}</div>
+            </div>
+                    <div class="row total-costs" id ="subtotal-overhead">
+                    <div class="col-10 cost-summary-field">Overhead Cost:</div>
+            <div class="col-2 price-value" id="subtotal-value-overhead">${overheadCost}</div>
+            </div>
+            <div class ="small-spacer"> </div> 
+            """
         }
         }
 }
