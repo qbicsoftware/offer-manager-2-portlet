@@ -20,7 +20,7 @@ Unassigned
 
 **Added**
 
-* Introduce distinction of products in Offer PDF according to the associated service
+* Introduce distinction of products in the offer PDF according to the associated service
   Data generation, Data analysis and Project Management(`#364 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/364>`_)
 
 
