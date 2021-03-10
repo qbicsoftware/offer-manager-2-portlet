@@ -77,13 +77,4 @@ class CreateProductSpec extends Specification {
         0 * output.foundDuplicate(_)
         1 * output.failNotification(_ as String)
     }
-
-    def "CreateDuplicate stores the provided product in the data source if no duplicate was found"() {
-    }
-
-    def "CreateDuplicate stores the provided product in the data source using a new product identifier"() {
-    }
-
-    def "CreateDuplicate sends a failure notification in case technical errors occur at the data source"() {
-    }
 }
