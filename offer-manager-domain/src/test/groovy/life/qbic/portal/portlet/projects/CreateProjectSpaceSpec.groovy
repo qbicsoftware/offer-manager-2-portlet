@@ -13,16 +13,15 @@ import spock.lang.Specification
  *
  * @since 1.0.0
  */
-
 class CreateProjectSpaceSpec extends Specification{
 
-    CreateProjectSpace createProjectSpace
-    CreateProjectSpaceOutput output
-    CreateProjectSpaceDataSource dataSource
+    @Shared CreateProjectSpace createProjectSpace
+    @Shared CreateProjectSpaceOutput output
+    @Shared CreateProjectSpaceDataSource dataSource
 
     ProjectSpace space
 
-    def setup(){
+    def setupSpec(){
         output = Mock(CreateProjectSpaceOutput)
         dataSource = Stub(CreateProjectSpaceDataSource)
         createProjectSpace = new CreateProjectSpace(output,dataSource)

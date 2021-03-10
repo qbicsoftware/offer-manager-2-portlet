@@ -14,7 +14,6 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
  *
  * @since 1.0.0
  */
-
 class CreateProjectSpace implements CreateProjectSpaceInput{
 
     private final CreateProjectSpaceOutput output
@@ -28,6 +27,7 @@ class CreateProjectSpace implements CreateProjectSpaceInput{
         this.dataSource = dataSource
     }
 
+    {@inheritDoc}
     @Override
     void createProjectSpace(ProjectSpace projectSpace) {
         try{
