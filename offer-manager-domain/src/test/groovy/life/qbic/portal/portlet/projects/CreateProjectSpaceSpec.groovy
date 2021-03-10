@@ -6,6 +6,7 @@ import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
 import life.qbic.business.projects.spaces.CreateProjectSpaceOutput
 import life.qbic.business.projects.spaces.ProjectSpaceExistsException
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
+import spock.lang.Shared
 import spock.lang.Specification
 
 /**
