@@ -15,11 +15,13 @@ import spock.lang.Specification
  * @since 1.0.0
  */
 class CreateProductSpec extends Specification {
+    CreateProductDataSource dataSource
     CreateProductOutput output
     ProductId productId
     Product product
 
     def setup() {
+        dataSource = Stub(CreateProductDataSource)
         output = Mock(CreateProductOutput)
         productId = new ProductId("Test", "ABCD1234")
         product = new AtomicProduct("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, productId)
@@ -27,7 +29,6 @@ class CreateProductSpec extends Specification {
 
     def "Create stores the provided product in the data source"() {
         given: "a data source that stores a product"
-        CreateProductDataSource dataSource = Stub(CreateProductDataSource)
         String dataStatus = ""
         dataSource.store(product) >> { dataStatus = "stored" }
         and: "an instance of the use case"
@@ -46,7 +47,6 @@ class CreateProductSpec extends Specification {
 
     def "Create informs the output that an entry matching the provided product already exists"() {
         given: "a data source that detects a duplicate entry"
-        CreateProductDataSource dataSource = Stub(CreateProductDataSource)
         String dataStatus = ""
         dataSource.store(product) >> {
             dataStatus = "not stored"
@@ -69,7 +69,6 @@ class CreateProductSpec extends Specification {
 
     def "Create sends a failure notification in case technical errors occur at the data source"() {
         given: "a data source that stores a product"
-        CreateProductDataSource dataSource = Stub(CreateProductDataSource)
         String dataStatus = ""
         dataSource.store(product) >> {
             dataStatus = "not stored"
