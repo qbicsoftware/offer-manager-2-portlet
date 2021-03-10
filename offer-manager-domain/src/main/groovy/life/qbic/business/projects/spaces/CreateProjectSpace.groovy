@@ -4,7 +4,6 @@ import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 
 /**
@@ -27,7 +26,9 @@ class CreateProjectSpace implements CreateProjectSpaceInput{
         this.dataSource = dataSource
     }
 
-    {@inheritDoc}
+    /**
+     * {@inheritDoc}
+     */
     @Override
     void createProjectSpace(ProjectSpace projectSpace) {
         try{

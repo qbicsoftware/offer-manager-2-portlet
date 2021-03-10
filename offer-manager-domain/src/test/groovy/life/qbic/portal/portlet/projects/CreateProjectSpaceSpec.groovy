@@ -20,9 +20,9 @@ class CreateProjectSpaceSpec extends Specification{
     @Shared CreateProjectSpaceOutput output
     @Shared CreateProjectSpaceDataSource dataSource
 
-    ProjectSpace space
+    @Shared ProjectSpace space
 
-    def setupSpec(){
+    def setup(){
         output = Mock(CreateProjectSpaceOutput)
         dataSource = Stub(CreateProjectSpaceDataSource)
         createProjectSpace = new CreateProjectSpace(output,dataSource)
