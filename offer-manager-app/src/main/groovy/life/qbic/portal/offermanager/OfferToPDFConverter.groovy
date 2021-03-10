@@ -169,8 +169,8 @@ class OfferToPDFConverter implements OfferExporter {
         List<ProductItem> listOverheadItems = offer.itemsWithOverhead
         List<ProductItem> listNoOverheadItems = offer.itemsWithoutOverhead
 
-        List<ProductItem> listDataGenerationItems = []
-        List<ProductItem> listDataAnalysisItems = []
+        List<ProductItem> dataGenerationItems = []
+        List<ProductItem> dataAnalysisItems = []
         // Sort ProductItems into DataGeneration and Data Analysis
         listOverheadItems.each {
             if (it.product instanceof Sequencing) {
