@@ -21,7 +21,7 @@ class CreateProductSpec extends Specification {
     Product product
 
     def setup() {
-        dataSource = Mock(CreateProductDataSource)
+        dataSource = Stub(CreateProductDataSource)
         output = Mock(CreateProductOutput)
         productId = new ProductId("Test", "ABCD1234")
         product = new AtomicProduct("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, productId)
@@ -35,9 +35,7 @@ class CreateProductSpec extends Specification {
         when: "the create method is called"
         createProduct.create(product)
 
-        then: "the database is tasked to store the product"
-        1 * dataSource.store(product)
-        and: "the output is informed and no failure notification is send"
+        then: "the output is informed and no failure notification is send"
         1 * output.created(product)
         0 * output.foundDuplicate(_)
         0 * output.failNotification(_)
@@ -45,33 +43,29 @@ class CreateProductSpec extends Specification {
 
     def "Create informs the output that an entry matching the provided product already exists"() {
         given: "a data source that detects a duplicate entry"
-        dataSource.store(product) >>  new ProductExistsException(productId)
+        dataSource.store(product) >> {throw new ProductExistsException(productId)}
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 
         when: "the create method is called"
         createProduct.create(product)
 
-        then: "the database is tasked to store the product"
-        1 * dataSource.store(product)
-        and: "the output is informed and no failure notification is send"
-        0 * output.created(_)
+        then: "the output is informed and no failure notification is send"
         1 * output.foundDuplicate(product)
+        0 * output.created(_)
         0 * output.failNotification(_)
     }
 
     def "Create sends a failure notification in case technical errors occur at the data source"() {
         given: "a data source that stores a product"
-        dataSource.store(product) >> { Product product -> throw new DatabaseQueryException("This is a test") }
+        dataSource.store(product) >> { throw new DatabaseQueryException("This is a test") }
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 
         when: "the create method is called"
         createProduct.create(product)
 
-        then: "the database is tasked to store the product"
-        1 * dataSource.store(product)
-        and: "the output is send a failure notification"
+        then: "the output is send a failure notification"
         0 * output.created(_)
         0 * output.foundDuplicate(_)
         1 * output.failNotification(_ as String)

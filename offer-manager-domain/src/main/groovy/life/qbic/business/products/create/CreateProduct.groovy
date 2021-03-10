@@ -29,11 +29,10 @@ class CreateProduct implements CreateProductInput {
     void create(Product product) {
         try {
             dataSource.store(product)
+            output.created(product)
         } catch(DatabaseQueryException databaseQueryException) {
             log.error("Product creation failed", databaseQueryException)
             output.failNotification("Could not create product $product.productName with id $product.productId")
-            return
         }
-        output.created(product)
     }
 }
