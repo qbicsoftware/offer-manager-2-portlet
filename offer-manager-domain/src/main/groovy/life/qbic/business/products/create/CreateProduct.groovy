@@ -33,6 +33,9 @@ class CreateProduct implements CreateProductInput {
         } catch(DatabaseQueryException databaseQueryException) {
             log.error("Product creation failed", databaseQueryException)
             output.failNotification("Could not create product $product.productName with id $product.productId")
+        } catch(ProductExistsException productExistsException) {
+            log.warn("Product \"$product.productName\" already existed.", productExistsException)
+            output.foundDuplicate(product)
         }
     }
 }

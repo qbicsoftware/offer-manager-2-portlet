@@ -15,13 +15,11 @@ import spock.lang.Specification
  * @since 1.0.0
  */
 class CreateProductSpec extends Specification {
-    CreateProductDataSource dataSource
     CreateProductOutput output
     ProductId productId
     Product product
 
     def setup() {
-        dataSource = Stub(CreateProductDataSource)
         output = Mock(CreateProductOutput)
         productId = new ProductId("Test", "ABCD1234")
         product = new AtomicProduct("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, productId)
@@ -29,6 +27,9 @@ class CreateProductSpec extends Specification {
 
     def "Create stores the provided product in the data source"() {
         given: "a data source that stores a product"
+        CreateProductDataSource dataSource = Stub(CreateProductDataSource)
+        String dataStored = ""
+        dataSource.store(product) >> { dataStored = "stored" }
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 
@@ -39,11 +40,19 @@ class CreateProductSpec extends Specification {
         1 * output.created(product)
         0 * output.foundDuplicate(_)
         0 * output.failNotification(_)
+        and: "the data was stored in the database"
+        dataStored == "stored"
     }
 
     def "Create informs the output that an entry matching the provided product already exists"() {
         given: "a data source that detects a duplicate entry"
-        dataSource.store(product) >> {throw new ProductExistsException(productId)}
+        CreateProductDataSource dataSource = Stub(CreateProductDataSource)
+        String dataStored = ""
+        dataSource.store(product) >> {
+            dataStored = "not stored"
+            println(dataStored)
+            throw new ProductExistsException(productId)
+        }
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 
@@ -54,11 +63,18 @@ class CreateProductSpec extends Specification {
         1 * output.foundDuplicate(product)
         0 * output.created(_)
         0 * output.failNotification(_)
+        and: "the data was not stored in the database"
+        dataStored == "not stored"
+
     }
 
     def "Create sends a failure notification in case technical errors occur at the data source"() {
         given: "a data source that stores a product"
-        dataSource.store(product) >> { throw new DatabaseQueryException("This is a test") }
+        CreateProductDataSource dataSource = Stub(CreateProductDataSource)
+        String dataStored = ""
+        dataSource.store(product) >> {
+            dataStored = "not stored"
+            throw new DatabaseQueryException("This is a test") }
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 
@@ -69,5 +85,7 @@ class CreateProductSpec extends Specification {
         0 * output.created(_)
         0 * output.foundDuplicate(_)
         1 * output.failNotification(_ as String)
+        and: "the data was stored"
+        dataStored == "not stored"
     }
 }
