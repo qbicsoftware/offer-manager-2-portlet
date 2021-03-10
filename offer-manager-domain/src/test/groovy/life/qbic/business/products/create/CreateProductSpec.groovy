@@ -29,7 +29,6 @@ class CreateProductSpec extends Specification {
 
     def "Create stores the provided product in the data source"() {
         given: "a data source that stores a product"
-        dataSource.store(product) >> void
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 
@@ -46,7 +45,7 @@ class CreateProductSpec extends Specification {
 
     def "Create informs the output that an entry matching the provided product already exists"() {
         given: "a data source that detects a duplicate entry"
-        dataSource.store(product) >> {throw new ProductExistsException(productId)}
+        dataSource.store(product) >>  new ProductExistsException(productId)
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 
@@ -63,7 +62,7 @@ class CreateProductSpec extends Specification {
 
     def "Create sends a failure notification in case technical errors occur at the data source"() {
         given: "a data source that stores a product"
-        dataSource.store(product) >> {throw new DatabaseQueryException("This is a test")}
+        dataSource.store(product) >> { Product product -> throw new DatabaseQueryException("This is a test") }
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 

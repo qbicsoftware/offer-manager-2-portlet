@@ -30,7 +30,8 @@ class CreateProduct implements CreateProductInput {
         try {
             dataSource.store(product)
         } catch(DatabaseQueryException databaseQueryException) {
-            log.error("Product creation failed. \n" + databaseQueryException.getStackTrace().join("\n"))
+            log.error("Product creation failed", databaseQueryException)
+            output.failNotification("Could not create product $product.productName with id $product.productId")
             return
         }
         output.created(product)
