@@ -53,7 +53,7 @@ class CreateProjectSpec extends Specification{
 
     def "A valid project application creates a new project"(){
         given: "a project application is provided"
-        projectApplication = new ProjectApplication.Builder(offerId,"Title","objective","exp. design",projectManager,space, customer, projectCode).build()
+        projectApplication = new ProjectApplication(offerId,"Title","objective","exp. design",projectManager,space, customer, projectCode)
         Project project = new Project(projectIdentifier,projectApplication.projectTitle,offerId)
 
         and: "the data source is able to create the project"
@@ -70,7 +70,7 @@ class CreateProjectSpec extends Specification{
 
     def "An a project with duplicate project codes cannot be created"(){
         given: "a project application is provided"
-        projectApplication = new ProjectApplication.Builder(offerId,"Title","objective","exp. design",projectManager,space, customer, projectCode).build()
+        projectApplication = new ProjectApplication(offerId,"Title","objective","exp. design",projectManager,space, customer, projectCode)
 
         and: "the data source is able to create the project"
         dataSource.createProject(projectApplication) >> {throw new ProjectExistsException("The project already exists in the database")}
@@ -86,7 +86,7 @@ class CreateProjectSpec extends Specification{
 
     def "Create sends a fail notification to the output if the database fails"(){
         given: "a project application is provided"
-        projectApplication = new ProjectApplication.Builder(offerId,"Title","objective","exp. design",projectManager,space, customer, projectCode).build()
+        projectApplication = new ProjectApplication(offerId,"Title","objective","exp. design",projectManager,space, customer, projectCode)
 
         and: "the data source is able to create the project"
         dataSource.createProject(projectApplication) >> {throw new DatabaseQueryException("An exception occurred.")}
@@ -96,7 +96,7 @@ class CreateProjectSpec extends Specification{
 
         then: "a project is successfully created"
         0 * output.projectCreated(_)
-        1 * output.failNotification("The project application was not successful. It could not be stored in the database.")
+        1 * output.failNotification("The project application for ${projectApplication.projectCode} was not successful. The project can not be stored in the database.")
         0 * output.projectAlreadyExists(_,_)
     }
 }
