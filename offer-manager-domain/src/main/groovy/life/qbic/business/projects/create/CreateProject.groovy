@@ -4,9 +4,13 @@ import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
+import life.qbic.business.projects.spaces.CreateProjectSpace
+import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
+import life.qbic.business.projects.spaces.CreateProjectSpaceOutput
 import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.datamodel.dtos.projectmanagement.ProjectApplication
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
+import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 
 /**
  * <h1>A new project is created and linked to an offer</h1>
@@ -16,22 +20,26 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
  *
  * @since 1.0.0
  */
-class CreateProject implements CreateProjectInput {
+class CreateProject implements CreateProjectInput, CreateProjectSpaceOutput {
 
     private final CreateProjectOutput output
     private final CreateProjectDataSource dataSource
 
+    private final CreateProjectSpace createProjectSpace
+    private ProjectApplication projectApplication
+
     private final Logging log = Logger.getLogger(CreateProject.class)
 
-    CreateProject(CreateProjectOutput output, CreateProjectDataSource dataSource) {
+    CreateProject(CreateProjectOutput output, CreateProjectDataSource dataSource, CreateProjectSpaceDataSource createProjectSpaceDataSource) {
         this.output = output
         this.dataSource = dataSource
+
+        this.createProjectSpace = new CreateProjectSpace(this, createProjectSpaceDataSource)
     }
 
 
     @Override
     void createProject(ProjectApplication projectApplication) {
-
         try {
             Project createdProject = dataSource.createProject(projectApplication)
             output.projectCreated(createdProject)
@@ -46,6 +54,27 @@ class CreateProject implements CreateProjectInput {
             output.failNotification("An unexpected during the project creation occurred. " +
                     "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
+    }
 
+    @Override
+    void createProjectWithSpace(ProjectApplication projectApplication) {
+        this.projectApplication = projectApplication
+        createProjectSpace.createProjectSpace(projectApplication.projectSpace)
+    }
+
+    @Override
+    void projectSpaceCreated(ProjectSpace projectSpace) {
+        log.info "successfully created the project space ${projectSpace}"
+        createProject(projectApplication)
+    }
+
+    @Override
+    void projectSpaceAlreadyExists(ProjectSpace projectSpace) {
+        output.failNotification("Project space ${projectSpace} already existed")
+    }
+
+    @Override
+    void failNotification(String notification) {
+        output.failNotification(notification)
     }
 }
