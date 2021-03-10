@@ -9,6 +9,10 @@ import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.business.offers.Currency
 import life.qbic.business.offers.OfferExporter
+import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
+import life.qbic.datamodel.dtos.business.services.ProjectManagement
+import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Sequencing
 import org.jsoup.nodes.Document
 import org.jsoup.parser.Parser
@@ -166,24 +170,30 @@ class OfferToPDFConverter implements OfferExporter {
         //and remove the footer on the first page
         //htmlContent.getElementById("grid-table-footer").remove()
 
-        List<ProductItem> listOverheadItems = offer.itemsWithOverhead
-        List<ProductItem> listNoOverheadItems = offer.itemsWithoutOverhead
+        List<ProductItem> productItems = offer.items
 
         List<ProductItem> dataGenerationItems = []
         List<ProductItem> dataAnalysisItems = []
-        // Sort ProductItems into DataGeneration and Data Analysis
-        listOverheadItems.each {
+        //Project Management and Data Storage are grouped in the same category in the final Offer PDF
+        List<ProductItem> dataManagementItems = []
+
+        // Sort ProductItems into "DataGeneration", "Data Analysis" and "Project & Data Management"
+        productItems.each {
             if (it.product instanceof Sequencing) {
-                listDataGenerationItems.add(it)
+                dataGenerationItems.add(it)
             }
-            else {
-                listDataAnalysisItems.add(it)
+            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis) {
+                dataAnalysisItems.add(it)
+            }
+            if (it.product instanceof DataStorage || it.product instanceof ProjectManagement){
+                dataManagementItems.add(it)
             }
         }
+
         //Sort Lists by ProductName
-        listDataAnalysisItems = listDataAnalysisItems.sort{it.product.productName}
-        listNoOverheadItems = listNoOverheadItems.sort{it.product.productName}
-        listDataGenerationItems = listDataGenerationItems.sort{it.product.productName}
+        dataGenerationItems = dataGenerationItems.sort{it.product.productName}
+        dataAnalysisItems = dataAnalysisItems.sort{it.product.productName}
+        dataManagementItems = dataManagementItems.sort{it.product.productName}
 
         //Initialize Number of table
         tableCount = 1
@@ -191,10 +201,10 @@ class OfferToPDFConverter implements OfferExporter {
         //Initialize Count of ProductItems in table
         tableItemsCount = 1
         int maxTableItems = 8
-        //Generate ProductTable for Overhead and Non-Overhead Product Items
-        generateProductTable("Data Generation", listDataGenerationItems, maxTableItems)
-        generateProductTable("Data Analysis", listDataAnalysisItems, maxTableItems)
-        generateProductTable("Project Management and Data Storage", listNoOverheadItems, maxTableItems)
+        //Generate ProductTable for "DataGeneration", "Data Analysis" and "Project & Data Management"  Product Items
+        generateProductTable("Data Generation", dataGenerationItems, maxTableItems)
+        generateProductTable("Data Analysis", dataAnalysisItems, maxTableItems)
+        generateProductTable("Project Management and Data Storage", dataManagementItems, maxTableItems)
 
         //Append total cost footer
         if (tableItemsCount >= maxTableItems) {
