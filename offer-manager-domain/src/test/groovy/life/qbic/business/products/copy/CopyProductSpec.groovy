@@ -1,6 +1,8 @@
 package life.qbic.business.products.copy
 
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.products.create.CreateProduct
+import life.qbic.business.products.create.CreateProductInput
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.Product
@@ -20,23 +22,22 @@ class CopyProductSpec extends Specification {
     CopyProductOutput output
     ProductId productId
     Product product
+    CreateProductInput createProduct
 
     def setup() {
         dataSource = Stub(CopyProductDataSource)
         output = Mock(CopyProductOutput)
         productId = new ProductId("Test", "ABCD1234")
         product = new AtomicProduct("Test atomic item", "This is a test item", 0.5, ProductUnit.PER_SAMPLE, productId)
+        createProduct = Mock(CreateProductInput)
     }
 
-    def "Copy forwards a duplicate of the product to the output"() {
-        given: "a data source that provides a product for the given id"
-        dataSource.fetch(productId) >> Optional.of(product)
-
-        and: "a use case instance"
+    def "CopyModified forwards a modified of the product to the output"() {
+        given: "a use case instance"
         CopyProduct copyProduct = new CopyProduct(dataSource, output)
 
         when: "the copy method is called"
-        copyProduct.copy(productId)
+        copyProduct.copyModified(productId)
 
         then: "the output receives the provided product and no fails"
         1 * output.copied(product)
