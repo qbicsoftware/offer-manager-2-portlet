@@ -28,8 +28,8 @@ class CreateProductSpec extends Specification {
     def "Create stores the provided product in the data source"() {
         given: "a data source that stores a product"
         CreateProductDataSource dataSource = Stub(CreateProductDataSource)
-        String dataStored = ""
-        dataSource.store(product) >> { dataStored = "stored" }
+        String dataStatus = ""
+        dataSource.store(product) >> { dataStatus = "stored" }
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 
@@ -41,16 +41,16 @@ class CreateProductSpec extends Specification {
         0 * output.foundDuplicate(_)
         0 * output.failNotification(_)
         and: "the data was stored in the database"
-        dataStored == "stored"
+        dataStatus == "stored"
     }
 
     def "Create informs the output that an entry matching the provided product already exists"() {
         given: "a data source that detects a duplicate entry"
         CreateProductDataSource dataSource = Stub(CreateProductDataSource)
-        String dataStored = ""
+        String dataStatus = ""
         dataSource.store(product) >> {
-            dataStored = "not stored"
-            println(dataStored)
+            dataStatus = "not stored"
+            println(dataStatus)
             throw new ProductExistsException(productId)
         }
         and: "an instance of the use case"
@@ -64,16 +64,15 @@ class CreateProductSpec extends Specification {
         0 * output.created(_)
         0 * output.failNotification(_)
         and: "the data was not stored in the database"
-        dataStored == "not stored"
-
+        dataStatus == "not stored"
     }
 
     def "Create sends a failure notification in case technical errors occur at the data source"() {
         given: "a data source that stores a product"
         CreateProductDataSource dataSource = Stub(CreateProductDataSource)
-        String dataStored = ""
+        String dataStatus = ""
         dataSource.store(product) >> {
-            dataStored = "not stored"
+            dataStatus = "not stored"
             throw new DatabaseQueryException("This is a test") }
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
@@ -86,6 +85,6 @@ class CreateProductSpec extends Specification {
         0 * output.foundDuplicate(_)
         1 * output.failNotification(_ as String)
         and: "the data was stored"
-        dataStored == "not stored"
+        dataStatus == "not stored"
     }
 }
