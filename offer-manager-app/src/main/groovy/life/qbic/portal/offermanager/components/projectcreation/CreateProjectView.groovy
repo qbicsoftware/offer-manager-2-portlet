@@ -49,7 +49,7 @@ class CreateProjectView extends VerticalLayout{
 
     private ComboBox<ProjectSpace> availableSpacesBox
 
-    private VerticalLayout projectCodeLayout
+    private HorizontalLayout projectCodeLayout
 
     private TextField desiredProjectCode
 
@@ -70,6 +70,7 @@ class CreateProjectView extends VerticalLayout{
         createTitle()
         createProjectSpaceElements()
         createProjectCodeElements()
+        createProjectIdOverview()
         setupVisibility()
         setupActivity()
     }
@@ -107,15 +108,17 @@ class CreateProjectView extends VerticalLayout{
 
         // Case A: A new space needs to be created
         customSpaceLayout = new HorizontalLayout()
-        desiredSpaceName = new TextField("Desired space name")
-        resultingSpaceName = new TextField("Resulting space name")
-        customSpaceLayout.addComponents(desiredSpaceName, resultingSpaceName)
+        desiredSpaceName = new TextField("New space name")
+        desiredSpaceName.setPlaceholder("Your space name")
+        desiredSpaceName.setWidth(300, Unit.PIXELS)
+        customSpaceLayout.addComponents(desiredSpaceName)
         this.addComponent(customSpaceLayout)
 
         // Case B: An existing space is selected
         existingSpaceLayout = new HorizontalLayout()
         availableSpacesBox = new ComboBox<>("Available project spaces")
         existingSpaceLayout.addComponent(availableSpacesBox)
+        availableSpacesBox.setWidth(300, Unit.PIXELS)
         this.addComponent(existingSpaceLayout)
     }
 
@@ -126,22 +129,36 @@ class CreateProjectView extends VerticalLayout{
         this.addComponent(label)
 
         // then a input field for the code
-        projectCodeLayout = new VerticalLayout()
+        projectCodeLayout = new HorizontalLayout()
         projectCodeLayout.setMargin(false)
         def container = new HorizontalLayout()
-        desiredProjectCode = new TextField("Desired project code")
-        resultingProjectCode = new TextField("Resulting project code")
-        container.addComponents(desiredProjectCode, resultingProjectCode)
+        desiredProjectCode = new TextField()
+        desiredProjectCode.setPlaceholder("Your desired code")
+        container.addComponents(desiredProjectCode)
         // We also define some dynamic validation place holder
         projectCodeLayout.addComponent(container)
         projectAvailability = new HorizontalLayout()
         projectCodeLayout.addComponent(projectAvailability)
         this.addComponent(projectCodeLayout)
+    }
 
+    private void createProjectIdOverview() {
+        def projectIdContainer = new HorizontalLayout()
+        def caption = new Label("Resulting project identifier")
+        caption.setStyleName(ValoTheme.LABEL_H3)
+        resultingSpaceName = new TextField()
+        resultingSpaceName.setWidth(300, Unit.PIXELS)
+        resultingProjectCode = new TextField()
+        projectIdContainer.addComponents(
+                resultingSpaceName,
+                new Label("/"),
+                resultingProjectCode)
         // Last but not least, the project creation button
         createProjectButton = new Button("Create Project", VaadinIcons.CHECK_SQUARE)
-        createProjectButton.setStyleName(ValoTheme.BUTTON_LARGE)
-        this.addComponent(createProjectButton)
+        projectIdContainer.addComponent(createProjectButton)
+        // Add the ui elements to the parent layout
+        this.addComponent(caption)
+        this.addComponent(projectIdContainer)
     }
 
     private void configureListeners() {
@@ -158,6 +175,13 @@ class CreateProjectView extends VerticalLayout{
             } else {
                 existingSpaceLayout.setVisible(true)
                 customSpaceLayout.setVisible(false)
+            }
+        })
+        this.availableSpacesBox.addValueChangeListener({
+            if (it.value) {
+                model.desiredSpaceName = it.value
+            } else {
+                model.desiredSpaceName = ""
             }
         })
         // Whenever the resulting space name is updated, we update the view
