@@ -15,7 +15,7 @@ import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewPres
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
-import life.qbic.portal.offermanager.components.projectcreation.CreateProjectModel
+import life.qbic.portal.offermanager.components.projectcreation.CreateProjectViewModel
 import life.qbic.portal.offermanager.components.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
@@ -79,7 +79,7 @@ class DependencyManager {
     private OfferOverviewModel offerOverviewModel
     private SearchPersonViewModel searchPersonViewModel
     private CreatePersonViewModel createCustomerViewModelNewOffer
-    private CreateProjectModel createProjectModel
+    private CreateProjectViewModel createProjectModel
 
     private AppPresenter presenter
     private CreatePersonPresenter createCustomerPresenter
@@ -285,9 +285,9 @@ class DependencyManager {
         }
 
         try {
-            this.createProjectModel = new CreateProjectModel()
+            this.createProjectModel = new CreateProjectViewModel()
         }catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreateProjectModel.getSimpleName()} view model" +
+            log.error("Unexpected excpetion during ${CreateProjectViewModel.getSimpleName()} view model" +
                     " setup.", e)
         }
     }

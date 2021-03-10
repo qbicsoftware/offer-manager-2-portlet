@@ -7,13 +7,13 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 
 /**
- * <class short description - 1 Line!>
+ * <h1>Holds the create project state information and logic</h1>
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * <p>View model for the {@link CreateProjectView}.</p>
  *
- * @since <versiontag>
+ * @since 1.0.0
  */
-class CreateProjectModel {
+class CreateProjectViewModel {
 
     @Bindable Boolean createProjectEnabled
 
@@ -38,7 +38,7 @@ class CreateProjectModel {
 
     @Bindable Boolean codeIsValid
 
-    CreateProjectModel() {
+    CreateProjectViewModel() {
         spaceSelectionDataProvider = new ListDataProvider<>([SPACE_SELECTION.NEW_SPACE,
                                                              SPACE_SELECTION.EXISTING_SPACE])
         resultingSpaceName = ""

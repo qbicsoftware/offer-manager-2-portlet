@@ -23,21 +23,21 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
  */
 class CreateProjectView extends VerticalLayout{
 
-    private RadioButtonGroup<CreateProjectModel.SPACE_SELECTION> projectSpaceSelection
+    private RadioButtonGroup<CreateProjectViewModel.SPACE_SELECTION> projectSpaceSelection
 
-    static final EnumMap<CreateProjectModel.SPACE_SELECTION, String> spaceSelectionActionText =
-            new EnumMap(CreateProjectModel.SPACE_SELECTION.class)
+    static final EnumMap<CreateProjectViewModel.SPACE_SELECTION, String> spaceSelectionActionText =
+            new EnumMap(CreateProjectViewModel.SPACE_SELECTION.class)
 
     static {
         spaceSelectionActionText.put(
-                CreateProjectModel.SPACE_SELECTION.EXISTING_SPACE,
+                CreateProjectViewModel.SPACE_SELECTION.EXISTING_SPACE,
                 "an existing project space")
         spaceSelectionActionText.put(
-                CreateProjectModel.SPACE_SELECTION.NEW_SPACE,
+                CreateProjectViewModel.SPACE_SELECTION.NEW_SPACE,
                 "a new project space")
     }
 
-    private final CreateProjectModel model
+    private final CreateProjectViewModel model
 
     private TextField desiredSpaceName
 
@@ -59,7 +59,7 @@ class CreateProjectView extends VerticalLayout{
 
     private Button createProjectButton
 
-    CreateProjectView(CreateProjectModel createProjectModel) {
+    CreateProjectView(CreateProjectViewModel createProjectModel) {
         this.model = createProjectModel
         setupVaadinComponents()
         configureListeners()
@@ -169,7 +169,7 @@ class CreateProjectView extends VerticalLayout{
         // We toggle between the two cases, weather a new space needs to be created
         // or an existing space needs to be selected
         this.projectSpaceSelection.addValueChangeListener({
-            if (it.value == CreateProjectModel.SPACE_SELECTION.NEW_SPACE) {
+            if (it.value == CreateProjectViewModel.SPACE_SELECTION.NEW_SPACE) {
                 existingSpaceLayout.setVisible(false)
                 customSpaceLayout.setVisible(true)
             } else {
