@@ -1,6 +1,7 @@
 package life.qbic.business.products.copy
 
-
+import life.qbic.business.products.create.CreateProduct
+import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.CreateProductInput
 import life.qbic.business.products.create.CreateProductOutput
 import life.qbic.datamodel.dtos.business.services.Product
@@ -15,11 +16,11 @@ import life.qbic.datamodel.dtos.business.services.Product
  * @since: 1.0.0
  *
  */
-class CopyProduct implements CopyProductInput {
+class CopyProduct implements CopyProductInput, CreateProductOutput {
 
     private final CopyProductDataSource dataSource
     private final CopyProductOutput output
-    private final CreateProductInput createProductInput
+    private final CreateProductInput createProduct
 
     /**
      * The only constructor for this use case
@@ -27,10 +28,10 @@ class CopyProduct implements CopyProductInput {
      * @param output - an output that provides mandatory functionality
      * @param createProductInput - a CreateProduct use case that is used to create the product
      */
-    CopyProduct(CopyProductDataSource dataSource, CopyProductOutput output, CreateProductInput createProductInput) {
+    CopyProduct(CopyProductDataSource dataSource, CopyProductOutput output, CreateProductDataSource createProductDataSource) {
         this.dataSource = dataSource
         this.output = output
-        this.createProductInput = createProductInput
+        this.createProduct = new CreateProduct(createProductDataSource, this)
     }
 
     /**
