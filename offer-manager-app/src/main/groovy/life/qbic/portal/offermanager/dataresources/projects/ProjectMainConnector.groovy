@@ -4,6 +4,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
+
 import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
 import life.qbic.business.projects.spaces.ProjectSpaceExistsException
 import life.qbic.business.projects.create.CreateProjectDataSource
@@ -57,9 +58,9 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     this.openbisClient = openbisClient
   }
   
-  List<ProjectSpace> listSpaces() {
+  public List<ProjectSpace> listSpaces() {
     List<ProjectSpace> res = new ArrayList<>()
-    for(String spaceName : openbisClient.listSpaces() {
+    for(String spaceName : openbisClient.listSpaces()) {
       res.add(new ProjectSpace(spaceName))
     }
     return res

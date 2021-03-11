@@ -1,6 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
-import life.qbic.datamodel.dtos.general.Person
+import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
@@ -24,7 +24,7 @@ class ProjectSpaceResourceService implements ResourcesService<ProjectSpace>{
     ProjectSpaceResourceService(ProjectMainConnector projectMainConnector) {
         this.projectMainConnector = Objects.requireNonNull(projectMainConnector, "Connector " +
                 "must not be null.")
-        this.availablePersonEntries = projectMainConnector.listSpaces()
+        this.availableSpaces = projectMainConnector.listSpaces()
         this.eventEmitter = new EventEmitter<>()
     }
 
@@ -56,7 +56,7 @@ class ProjectSpaceResourceService implements ResourcesService<ProjectSpace>{
     }
 
     @Override
-    Iterator<Person> iterator() {
+    Iterator<ProjectSpace> iterator() {
         return new ArrayList<>(this.availableSpaces).iterator()
     }
 }
