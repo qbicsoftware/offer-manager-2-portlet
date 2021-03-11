@@ -56,6 +56,10 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     this.projectDbConnector = projectDbConnector
     this.openbisClient = openbisClient
   }
+  
+  List<ProjectSpace> listSpaces() {
+    
+  }
 
   @Override
   void createProjectSpace(ProjectSpace projectSpace) throws ProjectSpaceExistsException, DatabaseQueryException {
