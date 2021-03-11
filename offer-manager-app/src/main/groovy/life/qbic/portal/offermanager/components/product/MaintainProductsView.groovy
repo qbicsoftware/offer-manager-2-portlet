@@ -1,14 +1,23 @@
 package life.qbic.portal.offermanager.components.product
 
+import com.vaadin.data.provider.DataProvider
+import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.shared.data.sort.SortDirection
 import com.vaadin.ui.Button
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
+import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
+import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
+import life.qbic.business.offers.Currency
 import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.product.archive.ArchiveProductView
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
+import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
 /**
  *
@@ -24,8 +33,9 @@ class MaintainProductsView extends FormLayout{
 
     private final MaintainProductsViewModel viewModel
 
+    VerticalLayout overviewLayout
     Grid<Product> productGrid
-
+    HorizontalLayout buttonLayout
     Button addProduct
     Button copyProduct
     Button archiveProduct
@@ -42,11 +52,16 @@ class MaintainProductsView extends FormLayout{
         this.copyProductView = copyProductView
         this.archiveProductView = archiveProductView
 
-        setUpTitle()
+        setupTitle()
         createButtons()
+        setupOverviewLayout()
+        setupGrid()
+        setupDataProvider()
+        addSubViews()
+        setupListeners()
     }
 
-    private void setUpTitle(){
+    private void setupTitle(){
         Label label = new Label("Service Product Maintenance")
         label.setStyleName(ValoTheme.LABEL_HUGE)
         this.addComponent(label)
@@ -56,11 +71,72 @@ class MaintainProductsView extends FormLayout{
         addProduct = new Button("Add Product", VaadinIcons.PLUS)
         copyProduct = new Button ("Copy Product", VaadinIcons.COPY)
         archiveProduct = new Button("Archive Product", VaadinIcons.ARCHIVE)
+        buttonLayout = new HorizontalLayout()
+
+        buttonLayout.addComponents(addProduct,copyProduct,archiveProduct)
     }
 
-    private void setUpListeners(){
-        addProduct.addClickListener({
+    private void setupOverviewLayout(){
+        overviewLayout = new VerticalLayout()
+        overviewLayout.addComponents(productGrid,buttonLayout)
+    }
 
+    private void setupGrid(){
+        productGrid.addColumn({ product -> product.productId.toString() })
+                .setCaption("Product Id").setId("ProductId")
+        productGrid.addColumn({ product -> product.productName })
+                .setCaption("Name").setId("ProductName")
+        productGrid.addColumn({ product -> product.description })
+                .setCaption("Description").setId("ProductDescription")
+        productGrid.addColumn({ product -> Currency.getFormatterWithSymbol().format(product.unitPrice) })
+                .setCaption("Price").setId("UnitPrice")
+        productGrid.addColumn({ product -> product.unit.value})
+                .setCaption("Unit").setId("ProductUnit")
+
+        productGrid.setWidthFull()
+
+        def productsDataProvider = setupDataProvider()
+        setupFilters(productsDataProvider)
+    }
+
+    private ListDataProvider setupDataProvider(){
+        def dataProvider = new ListDataProvider(viewModel.products)
+
+        productGrid.setDataProvider(dataProvider)
+        return dataProvider
+    }
+
+    private void setupFilters(ListDataProvider<OfferOverview> dataProvider){
+        HeaderRow productsFilterRow = productGrid.appendHeaderRow()
+        GridUtils.setupColumnFilter(dataProvider,
+                productGrid.getColumn("ProductId"),
+                productsFilterRow)
+        GridUtils.setupColumnFilter(dataProvider,
+                productGrid.getColumn("ProductName"),
+                productsFilterRow)
+    }
+
+    private void addSubViews(){
+        this.addComponents(createProductView,copyProductView,archiveProductView)
+        createProductView.setVisible(false)
+        copyProduct.setVisible(false)
+        archiveProduct.setVisible(false)
+    }
+
+    private void setupListeners(){
+        addProduct.addClickListener({
+            overviewLayout.setVisible(false)
+            createProductView.setVisible(true)
+        })
+
+        copyProduct.addClickListener({
+            overviewLayout.setVisible(false)
+            copyProduct.setVisible(true)
+        })
+
+        archiveProduct.addClickListener({
+            overviewLayout.setVisible(false)
+            archiveProductView.setVisible(true)
         })
     }
 

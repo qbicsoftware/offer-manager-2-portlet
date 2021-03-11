@@ -1,5 +1,7 @@
 package life.qbic.portal.offermanager.components.product.create
 
+import com.vaadin.ui.HorizontalLayout
+
 /**
  * <h1><short description></h1>
  * <br>
@@ -8,5 +10,5 @@ package life.qbic.portal.offermanager.components.product.create
  * @since <versiontag>
  *
 */
-class CreateProductView {
+class CreateProductView extends HorizontalLayout{
 }

@@ -1,5 +1,7 @@
 package life.qbic.portal.offermanager.components.product.archive
 
+import com.vaadin.ui.HorizontalLayout
+
 /**
  * <h1><short description></h1>
  * <br>
@@ -8,5 +10,5 @@ package life.qbic.portal.offermanager.components.product.archive
  * @since <versiontag>
  *
 */
-class ArchiveProductView {
+class ArchiveProductView extends HorizontalLayout{
 }
