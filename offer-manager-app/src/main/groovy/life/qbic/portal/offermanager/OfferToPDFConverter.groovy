@@ -242,10 +242,6 @@ class OfferToPDFConverter implements OfferExporter {
                 dataManagementItems.add(it)
             }
         }
-            //Sort Lists by ProductName
-            dataGenerationItems = dataGenerationItems.sort{it.product.productName}
-            dataAnalysisItems = dataAnalysisItems.sort{it.product.productName}
-            dataManagementItems = dataManagementItems.sort{it.product.productName}
 
             //Map Lists to the "DataGeneration", "DataAnalysis" and "Project and Data Management"
             productItemsMap.dataGeneration = dataGenerationItems
