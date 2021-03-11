@@ -257,16 +257,13 @@ class OfferToPDFConverter implements OfferExporter {
 
     void generateProductTable(Map productItemsMap, int maxTableItems) {
         // Create the items in html in the overview table
-        productItemsMap.each {productGroup, items ->
+        productItemsMap.each { productGroup, items ->
             //Check if there are ProductItems stored in map entry
-            if (value) {
-                // set initial product item position in table
-                def itemPos = 1
-                // max number of table items per page
+            if(items){
                 def elementId = "product-items" + "-" + tableCount
                 //Append Table Title
-                htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(key.toString()))
-                value.each {productItem ->
+                htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup.toString()))
+                items.eachWithIndex { item, itemPos ->
                     //start (next) table and add Product to it
                     if (tableItemsCount >= maxTableItems) {
                         ++tableCount
@@ -275,13 +272,12 @@ class OfferToPDFConverter implements OfferExporter {
                         tableItemsCount = 1
                     }
                     //add product to current table
-                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemPos++, productItem as ProductItem))
+                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemPos, item as ProductItem))
                     tableItemsCount++
                 }
             }
         }
     }
-
     /**
      * Small helper class to handle the HTML to PDF conversion.
      */
