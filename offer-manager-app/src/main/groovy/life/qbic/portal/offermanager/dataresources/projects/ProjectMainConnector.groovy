@@ -58,7 +58,11 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
   }
   
   List<ProjectSpace> listSpaces() {
-    
+    List<ProjectSpace> res = new ArrayList<>()
+    for(String spaceName : openbisClient.listSpaces() {
+      res.add(new ProjectSpace(spaceName))
+    }
+    return res
   }
 
   @Override
