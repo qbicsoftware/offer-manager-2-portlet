@@ -257,7 +257,7 @@ class OfferToPDFConverter implements OfferExporter {
 
     void generateProductTable(Map productItemsMap, int maxTableItems) {
         // Create the items in html in the overview table
-        productItemsMap.each {key, value ->
+        productItemsMap.each {productGroup, items ->
             //Check if there are ProductItems stored in map entry
             if (value) {
                 // set initial product item position in table
