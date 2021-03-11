@@ -83,6 +83,12 @@ class OfferToPDFConverter implements OfferExporter {
                     .getResource("offer-template/stylesheet.css")
                     .toURI())
 
+    /**
+     * Possible product groups
+     *
+     * This enum describes the product groups into which the products of an offer are listed.
+     *
+     */
     enum ProductGroups {
         DATA_GENERATION("Data generation"),
         DATA_ANALYSIS("Data analysis"),
