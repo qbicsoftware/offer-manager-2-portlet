@@ -37,7 +37,7 @@ class CreateProjectView extends VerticalLayout{
                 "a new project space")
     }
 
-    private final CreateProjectViewModel model
+    final CreateProjectViewModel model
 
     private TextField desiredSpaceName
 
@@ -85,9 +85,9 @@ class CreateProjectView extends VerticalLayout{
     }
 
     private void createSiteNavigation() {
-        Button button = new Button("Go Back", VaadinIcons.ARROW_CIRCLE_LEFT)
-        button.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
-        this.addComponent(button)
+        navigateBack = new Button("Go Back", VaadinIcons.ARROW_CIRCLE_LEFT)
+        navigateBack.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+        this.addComponent(navigateBack)
     }
 
     private void createTitle() {
@@ -181,6 +181,13 @@ class CreateProjectView extends VerticalLayout{
         this.desiredSpaceName.addValueChangeListener({model.desiredSpaceName = it.value})
         // We update the model with the desired project code
         this.desiredProjectCode.addValueChangeListener({model.desiredProjectCode = it.value})
+        // Enable back navigation
+        this.navigateBack.addClickListener({
+            this.setVisible(false)
+            if (model.startedFromView.isPresent()) {
+                model.startedFromView.get().setVisible(true)
+            }
+        })
         // We toggle between the two cases, weather a new space needs to be created
         // or an existing space needs to be selected
         this.projectSpaceSelection.addValueChangeListener({

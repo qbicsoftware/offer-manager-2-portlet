@@ -161,6 +161,11 @@ class OfferOverviewView extends FormLayout {
         updateOfferBtn.addClickListener({
             model.offerEventEmitter.emit(model.getSelectedOffer())
         })
+        createProjectButton.addClickListener({
+            this.setVisible(false)
+            createProjectView.setVisible(true)
+            createProjectView.model.startedFromView = Optional.of(this)
+        })
     }
 
     private void setupGridListeners() {

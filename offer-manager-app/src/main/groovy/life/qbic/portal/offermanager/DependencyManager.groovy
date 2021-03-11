@@ -463,6 +463,14 @@ class DependencyManager {
             throw e
         }
 
+        CreateProjectView createProjectView
+        try{
+            createProjectView = new CreateProjectView(createProjectModel)
+        } catch (Exception e) {
+            log.error("Could not create ${CreateProjectView.getSimpleName()} view.", e)
+            throw e
+        }
+
         OfferOverviewView overviewView
         try {
             overviewView = new OfferOverviewView(offerOverviewModel, offerOverviewController, createProjectView)
@@ -476,14 +484,6 @@ class DependencyManager {
             searchPersonView = new SearchPersonView(searchPersonViewModel, updatePersonView)
         } catch (Exception e) {
             log.error("Could not create ${SearchPersonView.getSimpleName()} view.", e)
-            throw e
-        }
-
-        CreateProjectView createProjectView
-        try{
-            createProjectView = new CreateProjectView(createProjectModel)
-        } catch (Exception e) {
-            log.error("Could not create ${CreateProjectView.getSimpleName()} view.", e)
             throw e
         }
 

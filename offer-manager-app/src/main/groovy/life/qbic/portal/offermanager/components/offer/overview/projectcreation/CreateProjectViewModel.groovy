@@ -2,6 +2,8 @@ package life.qbic.portal.offermanager.components.offer.overview.projectcreation
 
 import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.ui.HorizontalLayout
+import com.vaadin.ui.Layout
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
@@ -14,6 +16,13 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
  * @since 1.0.0
  */
 class CreateProjectViewModel {
+
+    /**
+     * Saves the layout from which the create project component
+     * has been initiated.
+     * This view is set to visible again, if the user decides to navigate back.
+     */
+    Optional<Layout> startedFromView
 
     @Bindable Boolean createProjectEnabled
 
@@ -47,6 +56,7 @@ class CreateProjectViewModel {
         resultingProjectCode = ""
         projectCodeValidationResult = ""
         codeIsValid = false
+        startedFromView = Optional.empty()
         // TODO use space resource service once available
         availableSpaces = new ListDataProvider([new ProjectSpace("Example Space One"),
                            new ProjectSpace("Example Space Two")])
