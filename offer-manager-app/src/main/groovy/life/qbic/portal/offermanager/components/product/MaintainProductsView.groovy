@@ -30,11 +30,10 @@ import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
  * @since 1.0.0
  *
  */
-class MaintainProductsView extends FormLayout{
+class MaintainProductsView extends VerticalLayout{
 
     private final MaintainProductsViewModel viewModel
 
-    VerticalLayout overviewLayout
     Grid<Product> productGrid
     HorizontalLayout buttonLayout
     Button addProduct
@@ -72,19 +71,17 @@ class MaintainProductsView extends FormLayout{
         addProduct = new Button("Add Product", VaadinIcons.PLUS)
         copyProduct = new Button ("Copy Product", VaadinIcons.COPY)
         archiveProduct = new Button("Archive Product", VaadinIcons.ARCHIVE)
-        buttonLayout = new HorizontalLayout()
 
-        buttonLayout.addComponents(addProduct,copyProduct,archiveProduct)
-        buttonLayout.setComponentAlignment(addProduct, Alignment.MIDDLE_RIGHT)
-        buttonLayout.setComponentAlignment(copyProduct, Alignment.MIDDLE_RIGHT)
-        buttonLayout.setComponentAlignment(archiveProduct, Alignment.MIDDLE_RIGHT)
-
+        buttonLayout = new HorizontalLayout(addProduct,copyProduct,archiveProduct)
+        buttonLayout.setMargin(false)
     }
 
     private void setupOverviewLayout(){
-        overviewLayout = new VerticalLayout()
-        overviewLayout.addComponents(productGrid,buttonLayout)
-        this.addComponents(overviewLayout)
+        this.setSizeFull()
+        this.setMargin(false)
+        this.addComponents(productGrid,buttonLayout)
+
+        this.setComponentAlignment(buttonLayout,Alignment.BOTTOM_RIGHT)
     }
 
     private void setupGrid(){
@@ -94,8 +91,6 @@ class MaintainProductsView extends FormLayout{
                 .setCaption("Product Id").setId("ProductId")
         productGrid.addColumn({ product -> product.productName })
                 .setCaption("Name").setId("ProductName")
-        productGrid.addColumn({ product -> product.description })
-                .setCaption("Description").setId("ProductDescription")
         productGrid.addColumn({ product -> Currency.getFormatterWithSymbol().format(product.unitPrice) })
                 .setCaption("Price").setId("UnitPrice")
         productGrid.addColumn({ product -> product.unit.value})
@@ -133,17 +128,17 @@ class MaintainProductsView extends FormLayout{
 
     private void setupListeners(){
         addProduct.addClickListener({
-            overviewLayout.setVisible(false)
+            this.setVisible(false)
             createProductView.setVisible(true)
         })
 
         copyProduct.addClickListener({
-            overviewLayout.setVisible(false)
+            this.setVisible(false)
             copyProduct.setVisible(true)
         })
 
         archiveProduct.addClickListener({
-            overviewLayout.setVisible(false)
+            this.setVisible(false)
             archiveProductView.setVisible(true)
         })
     }
