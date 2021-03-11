@@ -21,9 +21,15 @@ Unassigned
 **Added**
 
 * Introduce subtotals in Offer PDF ProductItem Table(`#349 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/349>`_)
-* Introduce distinction between ProductItems with and without Overhead cost in Offer PDF(`#349 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/349>`_)
+* Add logging with throwable cause (`#371 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/371>`_)
+* Introduce distinction of products in the offer PDF according to the associated service
+  data generation, data analysis and project management (`#364 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/364>`_)
 
 **Fixed**
+
+* User cannot select other offers from the overview anymore, during the offer details are loaded
+after a selection. Selection is enabled again after the resource has been loaded. This solves a
+not yet reported issue that can be observed when dealing with a significant network delay.
 
 **Dependencies**
 
