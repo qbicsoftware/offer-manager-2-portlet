@@ -159,23 +159,19 @@ class AppView extends VerticalLayout {
 
         Button searchPersonBtn
 
-        Button createProjectBtn
-
         TomatoFeatures() {
             this.createOfferBtn = new Button("New Offer")
             this.createCustomerBtn = new Button("New Customer")
             this.createAffiliationBtn = new Button("New Affiliation")
             this.overviewBtn = new Button("Offer Overview")
             this.searchPersonBtn = new Button("Search Customer")
-            this.createProjectBtn = new Button("Create Project")
 
             this.addComponents(
                     overviewBtn,
                     createOfferBtn,
                     createCustomerBtn,
                     createAffiliationBtn,
-                    searchPersonBtn,
-                    createProjectBtn
+                    searchPersonBtn
             )
             setStyles()
             setupListeners()
@@ -200,7 +196,6 @@ class AppView extends VerticalLayout {
             createCustomerBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
             createAffiliationBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
             searchPersonBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
-            createProjectBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
         }
 
         private void setIcons() {
@@ -209,7 +204,6 @@ class AppView extends VerticalLayout {
             createCustomerBtn.setIcon(VaadinIcons.GRID_BIG_O)
             createAffiliationBtn.setIcon(VaadinIcons.GRID_BIG_O)
             searchPersonBtn.setIcon(VaadinIcons.GRID_BIG_O)
-            createProjectBtn.setIcon(VaadinIcons.GRID_BIG_O)
         }
 
         private void setButtonActive(Button b) {
@@ -246,12 +240,6 @@ class AppView extends VerticalLayout {
                 setIcons()
                 searchPersonView.setVisible(true)
                 setButtonActive(this.searchPersonBtn)
-            })
-            this.createProjectBtn.addClickListener(listener -> {
-                hideAllFeatureViews()
-                setIcons()
-                createProjectView.setVisible(true)
-                setButtonActive(this.createProjectBtn)
             })
         }
 
