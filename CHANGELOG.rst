@@ -25,6 +25,10 @@ Unassigned
 * Add logging with throwable cause (`#371 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/371>`_)
 **Fixed**
 
+* User cannot select other offers from the overview anymore, during the offer details are loaded
+after a selection. Selection is enabled again after the resource has been loaded. This solves a
+not yet reported issue that can be observed when dealing with a significant network delay.
+
 **Dependencies**
 
 **Deprecated**
