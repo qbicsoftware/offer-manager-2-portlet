@@ -1,5 +1,7 @@
 package life.qbic.business.products.copy
 
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import life.qbic.business.products.create.CreateProduct
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.CreateProductInput
@@ -17,6 +19,8 @@ import life.qbic.datamodel.dtos.business.services.Product
  *
  */
 class CopyProduct implements CopyProductInput, CreateProductOutput {
+
+    private static final Logging log = Logger.getLogger(this.class)
 
     private final CopyProductDataSource dataSource
     private final CopyProductOutput output
@@ -38,11 +42,9 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      * creates a copy of an existing product
      * @param product The modified product information
      * @since 1.0.0
-     * @throws IllegalArgumentException no existent product with the product id is known
      */
     @Override
     void copyModified(Product product) {
-        throw new RuntimeException("Not implemented")
         //TODO
         //1. retrieve product from db
         //2. construct new product with missing information filled from the db
@@ -80,5 +82,8 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
     void foundDuplicate(Product product) {
         //this should never happen because we create a new id before calling the use case
         // -> pre-condition of a product that already exists
+        Exception unexpected = new RuntimeException("Unexpected product duplicate detected for ${product.toString()}.")
+        log.error("Unexpected application state", unexpected)
+        throw unexpected
     }
 }

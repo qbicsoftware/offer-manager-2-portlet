@@ -26,8 +26,7 @@ class CopyProductSpec extends Specification {
     @Shared CreateProductDataSource createProductDataSource = Stub(CreateProductDataSource)
     @Shared CopyProductDataSource dataSource = Stub(CopyProductDataSource)
     @Shared CopyProductOutput output = Mock(CopyProductOutput)
-    @Shared ProductId productId = new ProductId("Test", "ABCD1234")
-    @Shared Product product = new AtomicProduct("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, productId)
+    @Shared Product product = new AtomicProduct("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, new ProductId("Test", "ABCD1234"))
 
     def "FailNotification forwards received messages to the output"() {
         given: "a CreateProductDataSource that throws a DatabaseQueryException"
@@ -43,12 +42,11 @@ class CopyProductSpec extends Specification {
         and: "no output is registered"
         0 * output.copied(_)
         noExceptionThrown()
-
     }
 
     def "a duplicated entry leads to fail notification"() {
         given: "a CreateProductDataSource that throws a ProductExistsException"
-        createProductDataSource.store(product) >> {throw new ProductExistsException(productId, "Test exception")}
+        createProductDataSource.store(product) >> {throw new ProductExistsException(product.getProductId(), "Test exception")}
         and: "a copy use case with this datasource"
         CopyProduct copyProduct = new CopyProduct(dataSource, output, createProductDataSource)
 
@@ -64,21 +62,37 @@ class CopyProductSpec extends Specification {
 
     def "CopyModified rejects non existent products"() {
         given: "A product that is not in the database"
-        dataSource.fetch(product.getProductId()) >> {throw new DatabaseQueryException("Pretending nothing was found")}
+        dataSource.fetch(product.getProductId()) >> Optional<Product>.empty()
         and: "a copy use case"
         CopyProduct copyProduct = new CopyProduct(dataSource, output, createProductDataSource)
 
         when: "copyModified is called with the unknown product"
         copyProduct.copyModified(product)
 
-        then: "an IllegalArgumentException is thrown"
-        thrown(IllegalArgumentException)
+        then: "fail notification is created"
+        1 * output.failNotification(_ as String)
         and: "no other output is registered"
-        0 * output.failNotification(_)
         0 * output.copied(_)
+        noExceptionThrown()
     }
 
     def "CopyModified creates a new product with the provided information and a new identifier"() {
+        given: "a data source that finds the product"
+        dataSource.fetch(product.getProductId()) >> product
+        and: "a CreateProductDataSource that stores all products except the found one"
+        createProductDataSource.store(product) >> {throw new ProductExistsException(product.getProductId(), "Tried to store exact copy")}
+        and: "a copy use case"
+        CopyProduct copyProduct = new CopyProduct(dataSource, output, createProductDataSource)
+
+        when: "copyModified is called with the product"
+        copyProduct.copyModified(product)
+
+        then: "the product is copied with a new id"
+        1 * output.copied(_ as Product)
+        //todo how to verify that the information is correct?
+        and: "no other output method is called"
+        0 * output.failNotification(_)
+        noExceptionThrown()
     }
 
 
