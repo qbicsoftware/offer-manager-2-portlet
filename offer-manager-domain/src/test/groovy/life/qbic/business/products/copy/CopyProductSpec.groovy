@@ -4,6 +4,7 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.products.create.CreateProduct
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.CreateProductInput
+import life.qbic.business.products.create.ProductExistsException
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.Product
@@ -29,15 +30,15 @@ class CopyProductSpec extends Specification {
     @Shared Product product = new AtomicProduct("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, productId)
 
     def "FailNotification forwards received messages to the output"() {
-        given: "a CreateProductDataSource that throws and exception"
-        createProductDataSource.store(_ as Product) >> {throw new DatabaseQueryException("Test exception")}
+        given: "a CreateProductDataSource that throws a DatabaseQueryException"
+        createProductDataSource.store(product) >> {throw new DatabaseQueryException("Test exception")}
         and: "a copy use case with this datasource"
-        CopyProduct useCase = new CopyProduct(dataSource, output, createProductDataSource)
+        CopyProduct copyProduct = new CopyProduct(dataSource, output, createProductDataSource)
 
-        when: "a modified product is copied"
-        useCase.copyModified(product)
+        when: "copyModified is called"
+        copyProduct.copyModified(product)
 
-        then: "a fail notification is received"
+        then: "a fail notification is received in the output"
         1 * output.failNotification(_ as String)
         and: "no output is registered"
         0 * output.copied(_)
@@ -45,13 +46,36 @@ class CopyProductSpec extends Specification {
 
     }
 
-    def "Created notification leads to Copied call"() {
-    }
+    def "a duplicated entry leads to fail notification"() {
+        given: "a CreateProductDataSource that throws a ProductExistsException"
+        createProductDataSource.store(product) >> {throw new ProductExistsException(productId, "Test exception")}
+        and: "a copy use case with this datasource"
+        CopyProduct copyProduct = new CopyProduct(dataSource, output, createProductDataSource)
 
-    def "FoundDuplicate is ignored and does not cause any action in the output"() {
+        when: "copyModified is called"
+        copyProduct.copyModified(product)
+
+        then: "a fail notification is recieved in the output"
+        1 * output.failNotification(_ as String)
+        and: "no other output is registered"
+        0 * output.copied(_)
+        noExceptionThrown()
     }
 
     def "CopyModified rejects non existent products"() {
+        given: "A product that is not in the database"
+        dataSource.fetch(product.getProductId()) >> {throw new DatabaseQueryException("Pretending nothing was found")}
+        and: "a copy use case"
+        CopyProduct copyProduct = new CopyProduct(dataSource, output, createProductDataSource)
+
+        when: "copyModified is called with the unknown product"
+        copyProduct.copyModified(product)
+
+        then: "an IllegalArgumentException is thrown"
+        thrown(IllegalArgumentException)
+        and: "no other output is registered"
+        0 * output.failNotification(_)
+        0 * output.copied(_)
     }
 
     def "CopyModified creates a new product with the provided information and a new identifier"() {

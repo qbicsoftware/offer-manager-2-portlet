@@ -38,6 +38,7 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      * creates a copy of an existing product
      * @param product The modified product information
      * @since 1.0.0
+     * @throws IllegalArgumentException no existent product with the product id is known
      */
     @Override
     void copyModified(Product product) {
