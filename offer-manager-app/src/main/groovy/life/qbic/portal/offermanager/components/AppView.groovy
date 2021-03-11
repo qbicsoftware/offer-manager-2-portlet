@@ -9,6 +9,7 @@ import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
+import life.qbic.portal.offermanager.components.product.MaintainProductsView
 import life.qbic.portal.offermanager.security.Role
 import life.qbic.portal.offermanager.security.RoleService
 
@@ -32,6 +33,7 @@ class AppView extends VerticalLayout {
     private final List<Component> featureViews
     private final OfferOverviewView overviewView
     private final SearchPersonView searchPersonView
+    private final MaintainProductsView maintainProductsView
 
     private final CreateOfferView updateOfferView
 
@@ -41,7 +43,8 @@ class AppView extends VerticalLayout {
             CreateOfferView createOfferView,
             OfferOverviewView overviewView,
             CreateOfferView updateOfferView,
-            SearchPersonView searchPersonView) {
+            SearchPersonView searchPersonView,
+            MaintainProductsView maintainProductsView) {
         super()
         this.portletViewModel = portletViewModel
         this.createCustomerView = createCustomerView
@@ -51,6 +54,7 @@ class AppView extends VerticalLayout {
         this.overviewView = overviewView
         this.updateOfferView = updateOfferView
         this.searchPersonView = searchPersonView
+        this.maintainProductsView = maintainProductsView
 
         initLayout()
         registerListeners()
@@ -71,7 +75,8 @@ class AppView extends VerticalLayout {
                 createOfferView,
                 overviewView,
                 updateOfferView,
-                searchPersonView
+                searchPersonView,
+                maintainProductsView
         ])
     }
 
@@ -98,6 +103,8 @@ class AppView extends VerticalLayout {
         verticalLayout.addComponent(this.overviewView)
         verticalLayout.addComponent(this.updateOfferView)
         verticalLayout.addComponent(this.searchPersonView)
+        verticalLayout.addComponent(this.maintainProductsView)
+
 
         this.setSizeFull()
         this.addComponent(verticalLayout)
@@ -153,19 +160,25 @@ class AppView extends VerticalLayout {
 
         Button searchPersonBtn
 
+        Button maintainProductBtn
+
+
         TomatoFeatures() {
             this.createOfferBtn = new Button("New Offer")
             this.createCustomerBtn = new Button("New Customer")
             this.createAffiliationBtn = new Button("New Affiliation")
             this.overviewBtn = new Button("Offer Overview")
             this.searchPersonBtn = new Button("Search Customer")
+            this.maintainProductBtn = new Button("Maintain Products")
+
 
             this.addComponents(
                     overviewBtn,
                     createOfferBtn,
                     createCustomerBtn,
                     createAffiliationBtn,
-                    searchPersonBtn
+                    searchPersonBtn,
+                    maintainProductBtn
             )
             setStyles()
             setupListeners()
@@ -178,6 +191,7 @@ class AppView extends VerticalLayout {
             createOfferBtn.setEnabled(portletViewModel.createOfferFeatureEnabled)
             createCustomerBtn.setEnabled(portletViewModel.createCustomerFeatureEnabled)
             searchPersonBtn.setEnabled(portletViewModel.searchCustomerFeatureEnabled)
+            maintainProductBtn.setEnabled(portletViewModel.maintainProductsFeatureEnabled)
         }
 
         private void setDefault() {
@@ -190,6 +204,7 @@ class AppView extends VerticalLayout {
             createCustomerBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
             createAffiliationBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
             searchPersonBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+            maintainProductBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
         }
 
         private void setIcons() {
@@ -198,6 +213,7 @@ class AppView extends VerticalLayout {
             createCustomerBtn.setIcon(VaadinIcons.GRID_BIG_O)
             createAffiliationBtn.setIcon(VaadinIcons.GRID_BIG_O)
             searchPersonBtn.setIcon(VaadinIcons.GRID_BIG_O)
+            maintainProductBtn.setIcon(VaadinIcons.GRID_BIG_O)
         }
 
         private void setButtonActive(Button b) {
@@ -234,6 +250,12 @@ class AppView extends VerticalLayout {
                 setIcons()
                 searchPersonView.setVisible(true)
                 setButtonActive(this.searchPersonBtn)
+            })
+            this.maintainProductBtn.addClickListener({
+                hideAllFeatureViews()
+                setIcons()
+                maintainProductsView.setVisible(true)
+                setButtonActive(this.maintainProductBtn)
             })
         }
 

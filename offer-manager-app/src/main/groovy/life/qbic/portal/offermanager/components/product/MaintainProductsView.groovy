@@ -4,6 +4,7 @@ import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.data.sort.SortDirection
+import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
@@ -54,9 +55,9 @@ class MaintainProductsView extends FormLayout{
 
         setupTitle()
         createButtons()
-        setupOverviewLayout()
         setupGrid()
         setupDataProvider()
+        setupOverviewLayout()
         addSubViews()
         setupListeners()
     }
@@ -74,14 +75,21 @@ class MaintainProductsView extends FormLayout{
         buttonLayout = new HorizontalLayout()
 
         buttonLayout.addComponents(addProduct,copyProduct,archiveProduct)
+        buttonLayout.setComponentAlignment(addProduct, Alignment.MIDDLE_RIGHT)
+        buttonLayout.setComponentAlignment(copyProduct, Alignment.MIDDLE_RIGHT)
+        buttonLayout.setComponentAlignment(archiveProduct, Alignment.MIDDLE_RIGHT)
+
     }
 
     private void setupOverviewLayout(){
         overviewLayout = new VerticalLayout()
         overviewLayout.addComponents(productGrid,buttonLayout)
+        this.addComponents(overviewLayout)
     }
 
     private void setupGrid(){
+        productGrid = new Grid<>()
+
         productGrid.addColumn({ product -> product.productId.toString() })
                 .setCaption("Product Id").setId("ProductId")
         productGrid.addColumn({ product -> product.productName })
@@ -119,8 +127,8 @@ class MaintainProductsView extends FormLayout{
     private void addSubViews(){
         this.addComponents(createProductView,copyProductView,archiveProductView)
         createProductView.setVisible(false)
-        copyProduct.setVisible(false)
-        archiveProduct.setVisible(false)
+        copyProductView.setVisible(false)
+        archiveProductView.setVisible(false)
     }
 
     private void setupListeners(){

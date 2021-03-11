@@ -15,6 +15,10 @@ import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewPres
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
+import life.qbic.portal.offermanager.components.product.MaintainProductsView
+import life.qbic.portal.offermanager.components.product.MaintainProductsViewModel
+import life.qbic.portal.offermanager.components.product.archive.ArchiveProductView
+import life.qbic.portal.offermanager.components.product.create.CreateProductView
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -77,6 +81,7 @@ class DependencyManager {
     private OfferOverviewModel offerOverviewModel
     private SearchPersonViewModel searchPersonViewModel
     private CreatePersonViewModel createCustomerViewModelNewOffer
+    private MaintainProductsViewModel maintainProductsViewModel
 
     private AppPresenter presenter
     private CreatePersonPresenter createCustomerPresenter
@@ -279,6 +284,12 @@ class DependencyManager {
         }catch (Exception e) {
             log.error("Unexpected excpetion during ${SearchPersonViewModel.getSimpleName()} view model setup.", e)
         }
+
+        try {
+            this.maintainProductsViewModel = new MaintainProductsViewModel(productsResourcesService)
+        }catch (Exception e) {
+            log.error("Unexpected excpetion during ${MaintainProductsViewModel.getSimpleName()} view model setup.", e)
+        }
     }
 
     private void setupPresenters() {
@@ -468,6 +479,38 @@ class DependencyManager {
             throw e
         }
 
+        CreateProductView createProductView
+        try{
+            createProductView = new CreateProductView()
+        }catch(Exception e){
+            log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
+            throw e
+        }
+
+        CreateProductView copyProductView
+        try{
+            copyProductView = new CreateProductView()
+        }catch(Exception e){
+            log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
+            throw e
+        }
+
+        ArchiveProductView archiveProductView
+        try{
+            archiveProductView = new ArchiveProductView()
+        }catch(Exception e){
+            log.error("Could not create ${ArchiveProductView.getSimpleName()} view.", e)
+            throw e
+        }
+
+        MaintainProductsView maintainProductsView
+        try{
+            maintainProductsView = new MaintainProductsView(maintainProductsViewModel,createProductView,archiveProductView,copyProductView)
+        }catch (Exception e) {
+            log.error("Could not create ${MaintainProductsView.getSimpleName()} view.", e)
+            throw e
+        }
+
         AppView portletView
         try {
             CreatePersonView createCustomerView2 = new CreatePersonView(createCustomerController, this
@@ -480,7 +523,8 @@ class DependencyManager {
                     createOfferView,
                     overviewView,
                     updateOfferView,
-                    searchPersonView
+                    searchPersonView,
+                    maintainProductsView
             )
             this.portletView = portletView
         } catch (Exception e) {
