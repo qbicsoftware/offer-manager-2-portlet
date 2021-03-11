@@ -41,7 +41,6 @@ class CopyProductSpec extends Specification {
     def "FoundDuplicate is ignored and does not cause any action in the output"() {
     }
 
-
     def "CopyModified rejects non existent products"() {
     }
 

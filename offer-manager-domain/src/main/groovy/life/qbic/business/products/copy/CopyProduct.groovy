@@ -15,7 +15,7 @@ import life.qbic.datamodel.dtos.business.services.Product
  * @since: 1.0.0
  *
  */
-class CopyProduct implements CopyProductInput, CreateProductOutput {
+class CopyProduct implements CopyProductInput {
 
     private final CopyProductDataSource dataSource
     private final CopyProductOutput output
