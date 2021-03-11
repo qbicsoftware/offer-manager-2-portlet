@@ -10,7 +10,7 @@ import spock.lang.Specification
 /**
  * <h1>Tests for the {@link CreateProduct} use case</h1>
  *
- * <p>This specification contains tests for all steps of the create product use case</p>
+ * <p>This specification contains tests for all steps of the {@link CreateProduct} use case</p>
  *
  * @since 1.0.0
  */
