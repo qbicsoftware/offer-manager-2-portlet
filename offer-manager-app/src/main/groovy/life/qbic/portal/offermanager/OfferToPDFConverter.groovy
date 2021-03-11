@@ -271,6 +271,9 @@ class OfferToPDFConverter implements OfferExporter {
                     htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemPos, item as ProductItem))
                     tableItemsCount++
                 }
+                //add subtotal footer to table
+                htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup.toString()))
+                tableItemsCount++
             }
         }
     }
@@ -369,6 +372,38 @@ class OfferToPDFConverter implements OfferExporter {
             return """<div class = "small-spacer"</div>
                     <h3>${tableTitle}</h3>
                    """
+        }
+
+        static String subTableFooter(String productGroup){
+
+            String footerTitle = ""
+
+            if (productGroup == "dataGeneration"){
+                footerTitle = "Data Generation"
+            }
+            if (productGroup == "dataAnalysis"){
+                footerTitle = "Data Analysis"
+            }
+            if (productGroup == "dataManagement"){
+                footerTitle = "Data Management"
+            }
+
+            return """<div id="grid-sub-total-footer">
+                                     <div class="row sub-total-costs" id = "offer-sub-total">
+                                         <div class="col-6"></div> 
+                                         <div class="col-10 cost-summary-field">Estimated total (${footerTitle}):</div>
+                                         <div class="col-2 price-value" id="sub-total-costs-value">12345</div>
+                                         </div>
+                                     <div class="row sub-total-costs" id = "offer-sub-net">
+                                         <div class="col-10 cost-summary-field">Estimated net (${footerTitle}):</div>
+                                         <div class="col-2 price-value" id="sub-net-costs-value">12345</div>
+                                     </div>
+                                     <div class="row sub-total-costs" id ="offer-sub-overhead">
+                                         <div class="col-10 cost-summary-field">Estimated overhead (${footerTitle}):</div>
+                                         <div class="col-2 price-value" id="sub-overhead-costs-value">12345</div>
+                                     </div>
+                                 </div>
+                                 """
         }
 
         static String tableFooter(){
