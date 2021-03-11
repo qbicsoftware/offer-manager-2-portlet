@@ -45,8 +45,13 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      */
     @Override
     void copyModified(Product product) {
-        //TODO
         //1. retrieve product from db
+        Optional<Product> searchResult = dataSource.fetch(product.getProductId())
+        if (! searchResult.isPresent()) {
+            output.failNotification("The provided product was not found. Please create a new one instead.")
+            return
+        }
+        Product existingProduct = searchResult.get()
         //2. construct new product with missing information filled from the db
         //3. change product identifier
         //4. call the CreateProduct use case

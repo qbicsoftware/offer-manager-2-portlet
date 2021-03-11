@@ -10,6 +10,7 @@ import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import org.apache.tools.ant.taskdefs.Copy
+import spock.lang.IgnoreRest
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -60,6 +61,7 @@ class CopyProductSpec extends Specification {
         noExceptionThrown()
     }
 
+    @IgnoreRest
     def "CopyModified rejects non existent products"() {
         given: "A product that is not in the database"
         dataSource.fetch(product.getProductId()) >> Optional<Product>.empty()
