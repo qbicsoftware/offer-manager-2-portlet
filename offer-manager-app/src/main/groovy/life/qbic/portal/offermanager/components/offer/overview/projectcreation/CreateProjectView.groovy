@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.projectcreation
+package life.qbic.portal.offermanager.components.offer.overview.projectcreation
 
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Button
@@ -59,6 +59,14 @@ class CreateProjectView extends VerticalLayout{
 
     private Button createProjectButton
 
+    /**
+     * This button enables the user to leave the create project view
+     * and navigate back to the previous view.
+     * This means that a click listener must be attached by the parent
+     * component that displayed this view in the first place.
+     */
+    Button navigateBack
+
     CreateProjectView(CreateProjectViewModel createProjectModel) {
         this.model = createProjectModel
         setupVaadinComponents()
@@ -67,12 +75,19 @@ class CreateProjectView extends VerticalLayout{
     }
 
     private void setupVaadinComponents() {
+        createSiteNavigation()
         createTitle()
         createProjectSpaceElements()
         createProjectCodeElements()
         createProjectIdOverview()
         setupVisibility()
         setupActivity()
+    }
+
+    private void createSiteNavigation() {
+        Button button = new Button("Go Back", VaadinIcons.ARROW_CIRCLE_LEFT)
+        button.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+        this.addComponent(button)
     }
 
     private void createTitle() {

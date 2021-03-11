@@ -12,11 +12,11 @@ import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewController
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewPresenter
+import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
+import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectViewModel
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
-import life.qbic.portal.offermanager.components.projectcreation.CreateProjectViewModel
-import life.qbic.portal.offermanager.components.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -465,7 +465,7 @@ class DependencyManager {
 
         OfferOverviewView overviewView
         try {
-            overviewView = new OfferOverviewView(offerOverviewModel, offerOverviewController)
+            overviewView = new OfferOverviewView(offerOverviewModel, offerOverviewController, createProjectView)
         } catch (Exception e) {
             log.error("Could not create ${OfferOverviewView.getSimpleName()} view.", e)
             throw e

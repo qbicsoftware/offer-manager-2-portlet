@@ -18,7 +18,7 @@ import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Offer
-
+import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 import life.qbic.business.offers.Currency
 import life.qbic.portal.offermanager.components.GridUtils
@@ -50,14 +50,21 @@ class OfferOverviewView extends FormLayout {
 
     private FileDownloader fileDownloader
 
+    private CreateProjectView createProjectView
 
-    OfferOverviewView(OfferOverviewModel model, OfferOverviewController offerOverviewController) {
+    private Button createProjectButton
+
+    OfferOverviewView(OfferOverviewModel model,
+                      OfferOverviewController offerOverviewController,
+                      CreateProjectView createProjectView) {
         this.model = model
         this.offerOverviewController = offerOverviewController
         this.overviewGrid = new Grid<>()
         this.downloadBtn = new Button(VaadinIcons.DOWNLOAD)
         this.updateOfferBtn = new Button(VaadinIcons.EDIT)
+        this.createProjectButton =  new Button("Create Project", VaadinIcons.PLUS_CIRCLE)
         this.downloadSpinner = new ProgressBar()
+        this.createProjectView = createProjectView
 
         initLayout()
         setupGrid()
@@ -89,10 +96,17 @@ class OfferOverviewView extends FormLayout {
         updateOfferBtn.setStyleName(ValoTheme.BUTTON_LARGE)
         updateOfferBtn.setEnabled(false)
         updateOfferBtn.setDescription("Update offer")
+        createProjectButton.setEnabled(false)
+        createProjectButton.setStyleName(ValoTheme.BUTTON_LARGE)
         // Makes the progress bar a spinner
         downloadSpinner.setIndeterminate(true)
         downloadSpinner.setVisible(false)
-        activityContainer.addComponents(downloadBtn, updateOfferBtn, downloadSpinner)
+        // Add a button to create a project from an offer
+        activityContainer.addComponents(
+                downloadBtn,
+                updateOfferBtn,
+                createProjectButton,
+                downloadSpinner)
 
         activityContainer.setMargin(false)
         headerRow.addComponents(activityContainer,overviewGrid)
@@ -143,6 +157,13 @@ class OfferOverviewView extends FormLayout {
     }
 
     private void setupListeners() {
+        setupGridListeners()
+        updateOfferBtn.addClickListener({
+            model.offerEventEmitter.emit(model.getSelectedOffer())
+        })
+    }
+
+    private void setupGridListeners() {
         overviewGrid.addSelectionListener(
                 { selection ->
                     selection.firstSelectedItem.ifPresent({overview ->
@@ -151,9 +172,6 @@ class OfferOverviewView extends FormLayout {
                         new LoadOfferInfoThread(UI.getCurrent(), overview).start()
                     })
                 })
-        updateOfferBtn.addClickListener({
-            model.offerEventEmitter.emit(model.getSelectedOffer())
-        })
     }
 
     private void createResourceForDownload() {
@@ -186,20 +204,34 @@ class OfferOverviewView extends FormLayout {
 
         @Override
         void run() {
+
+            Optional<OfferOverview> selectedOffer = Optional.empty()
             ui.access(() -> {
                 downloadSpinner.setVisible(true)
                 overviewGrid.setEnabled(false)
+                selectedOffer = overviewGrid.getSelectionModel().getFirstSelectedItem()
+                println selectedOffer.get().toString()
+                overviewGrid.setSelectionMode(Grid.SelectionMode.NONE)
                 downloadBtn.setEnabled(false)
                 updateOfferBtn.setEnabled(false)
+                createProjectButton.setEnabled(false)
             })
                 offerOverviewController.fetchOffer(offerOverview.offerId)
                 createResourceForDownload()
 
                 ui.access(() -> {
                     downloadSpinner.setVisible(false)
+                    overviewGrid.setSelectionMode(Grid.SelectionMode.SINGLE)
+                    // After we have set the single mode to NONE, the listeners seem to be gone
+                    // So we set them again
+                    // IMPORTANT: the selection must be set before we attach the listener,
+                    // otherwise the selection listener gets triggered (LOOP!)
+                    overviewGrid.select(selectedOffer.get())
+                    setupGridListeners()
                     overviewGrid.setEnabled(true)
                     downloadBtn.setEnabled(true)
                     updateOfferBtn.setEnabled(true)
+                    createProjectButton.setEnabled(true)
                     ui.setPollInterval(-1)
                 })
         }
