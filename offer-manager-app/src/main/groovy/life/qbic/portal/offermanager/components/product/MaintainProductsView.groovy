@@ -4,12 +4,14 @@ import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.data.sort.SortDirection
+import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
+import com.vaadin.ui.Panel
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
@@ -39,6 +41,7 @@ class MaintainProductsView extends VerticalLayout{
     Button addProduct
     Button copyProduct
     Button archiveProduct
+    Panel productDescription
 
     CreateProductView createProductView
     ArchiveProductView archiveProductView
@@ -53,6 +56,7 @@ class MaintainProductsView extends VerticalLayout{
         this.archiveProductView = archiveProductView
 
         setupTitle()
+        setupPanel()
         createButtons()
         setupGrid()
         setupDataProvider()
@@ -72,16 +76,8 @@ class MaintainProductsView extends VerticalLayout{
         copyProduct = new Button ("Copy Product", VaadinIcons.COPY)
         archiveProduct = new Button("Archive Product", VaadinIcons.ARCHIVE)
 
-        buttonLayout = new HorizontalLayout(addProduct,copyProduct,archiveProduct)
+        buttonLayout = new HorizontalLayout(productDescription, addProduct,copyProduct,archiveProduct)
         buttonLayout.setMargin(false)
-    }
-
-    private void setupOverviewLayout(){
-        this.setSizeFull()
-        this.setMargin(false)
-        this.addComponents(productGrid,buttonLayout)
-
-        this.setComponentAlignment(buttonLayout,Alignment.BOTTOM_RIGHT)
     }
 
     private void setupGrid(){
@@ -104,7 +100,6 @@ class MaintainProductsView extends VerticalLayout{
 
     private ListDataProvider setupDataProvider(){
         def dataProvider = new ListDataProvider(viewModel.products)
-
         productGrid.setDataProvider(dataProvider)
         return dataProvider
     }
@@ -119,6 +114,18 @@ class MaintainProductsView extends VerticalLayout{
                 productsFilterRow)
     }
 
+    private void setupPanel(){
+        productDescription = new Panel("Product Description")
+    }
+
+    private void setupOverviewLayout(){
+        this.setSizeFull()
+        this.setMargin(false)
+        this.addComponents(productGrid,buttonLayout)
+
+        this.setComponentAlignment(buttonLayout,Alignment.TOP_RIGHT)
+    }
+
     private void addSubViews(){
         this.addComponents(createProductView,copyProductView,archiveProductView)
         createProductView.setVisible(false)
@@ -126,7 +133,24 @@ class MaintainProductsView extends VerticalLayout{
         archiveProductView.setVisible(false)
     }
 
+    private void updateProductDescription(Product product){
+        VerticalLayout content = new VerticalLayout()
+        //todo get product category
+        //content.addComponent(new Label("<strong>${product}</strong>", ContentMode.HTML))
+        content.addComponent(new Label("${product.description}"))
+        content.setMargin(true)
+        content.setSpacing(false)
+        this.productDescription.setContent(content)
+    }
+
     private void setupListeners(){
+
+        productGrid.addSelectionListener({
+            if(it.firstSelectedItem.isPresent()){
+                updateProductDescription(it.firstSelectedItem.get())
+            }
+        })
+
         addProduct.addClickListener({
             this.setVisible(false)
             createProductView.setVisible(true)
