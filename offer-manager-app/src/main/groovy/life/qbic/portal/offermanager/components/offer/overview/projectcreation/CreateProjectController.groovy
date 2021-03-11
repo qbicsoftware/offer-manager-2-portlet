@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.offer.overview.projectcreation
 
 import life.qbic.business.projects.create.CreateProjectInput
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.projectmanagement.ProjectApplication
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
@@ -9,7 +10,7 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 /**
  * <h1>Starts the use case 'Create Project'</h1>
  *
- * <p>Connects the create project component with the use case {@link CreateProject}.</p>
+ * <p>Connects the create project component with the use case <code>Create Projects</code>.</p>
  *
  * @since 1.0.0
  */
@@ -28,7 +29,9 @@ class CreateProjectController {
      */
     void createProject(Offer offer,
                        ProjectIdentifier projectIdentifier) {
-
+        ProjectApplication application = createApplication(offer, projectIdentifier.projectSpace,
+                projectIdentifier.projectCode)
+        createProjectInput.createProject(application)
     }
 
     /**
@@ -40,7 +43,23 @@ class CreateProjectController {
     void createProjectAndSpace(Offer offer,
                                ProjectSpace projectSpace,
                                ProjectCode projectCode) {
+        ProjectApplication application = createApplication(offer, projectSpace, projectCode)
+        createProjectInput.createProjectWithSpace(application)
+    }
 
+    private static ProjectApplication createApplication(Offer offer,
+                                                 ProjectSpace projectSpace,
+                                                 ProjectCode projectCode) {
+        return new ProjectApplication(
+                offer.identifier,
+                offer.projectTitle,
+                offer.projectObjective,
+                "",
+                offer.projectManager,
+                projectSpace,
+                offer.customer,
+                projectCode
+        )
     }
 
 }
