@@ -9,6 +9,7 @@ import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import org.apache.tools.ant.taskdefs.Copy
+import spock.lang.Shared
 import spock.lang.Specification
 
 /**
@@ -20,19 +21,28 @@ import spock.lang.Specification
  */
 class CopyProductSpec extends Specification {
 
-    CreateProductInput createProductInput
-    CopyProductDataSource dataSource
-    CopyProductOutput output
-    CopyProduct useCase
 
-    void setup() {
-        createProductInput = Stub(CreateProductInput)
-        dataSource = Stub(CopyProductDataSource)
-        output = Mock(CopyProductOutput)
-        useCase = new CopyProduct(dataSource, output, createProductInput)
-    }
+    @Shared CreateProductDataSource createProductDataSource = Stub(CreateProductDataSource)
+    @Shared CopyProductDataSource dataSource = Stub(CopyProductDataSource)
+    @Shared CopyProductOutput output = Mock(CopyProductOutput)
+    @Shared ProductId productId = new ProductId("Test", "ABCD1234")
+    @Shared Product product = new AtomicProduct("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, productId)
 
     def "FailNotification forwards received messages to the output"() {
+        given: "a CreateProductDataSource that throws and exception"
+        createProductDataSource.store(_ as Product) >> {throw new DatabaseQueryException("Test exception")}
+        and: "a copy use case with this datasource"
+        CopyProduct useCase = new CopyProduct(dataSource, output, createProductDataSource)
+
+        when: "a modified product is copied"
+        useCase.copyModified(product)
+
+        then: "a fail notification is received"
+        1 * output.failNotification(_ as String)
+        and: "no output is registered"
+        0 * output.copied(_)
+        noExceptionThrown()
+
     }
 
     def "Created notification leads to Copied call"() {
