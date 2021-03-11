@@ -18,6 +18,10 @@ class CreateProjectController {
 
     private final CreateProjectInput createProjectInput
 
+    /**
+     * Constructor with an create project use case input instance.
+     * @param createProjectInput The create project use case input.
+     */
     CreateProjectController(CreateProjectInput createProjectInput) {
         this.createProjectInput = createProjectInput
     }
@@ -61,5 +65,4 @@ class CreateProjectController {
                 projectCode
         )
     }
-
 }
