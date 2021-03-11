@@ -70,7 +70,7 @@ class CreateProject implements CreateProjectInput, CreateProjectSpaceOutput {
 
     @Override
     void projectSpaceAlreadyExists(ProjectSpace projectSpace) {
-        output.failNotification("Project space ${projectSpace} already existed")
+        output.failNotification("Project space ${projectSpace} already exists.")
     }
 
     @Override
