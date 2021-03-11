@@ -83,6 +83,38 @@ class OfferToPDFConverter implements OfferExporter {
                     .getResource("offer-template/stylesheet.css")
                     .toURI())
 
+    enum ProductGroups {
+        DATA_GENERATION("Data generation"),
+        DATA_ANALYSIS("Data analysis"),
+        DATA_MANAGEMENT("Project management and data storage")
+
+        private String name
+
+        private static final Map<String,String> ENUM_MAP
+
+        ProductGroups(String name) {
+            this.name = name;
+        }
+
+        String getName() {
+            return this.name;
+        }
+
+
+        // Build an immutable map storing the enum and its associated value
+        static {
+            HashMap<String, String> map = new HashMap<String, String>()
+            for (ProductGroups instance : ProductGroups.values()) {
+                map.put(instance.toString().toLowerCase(), instance.getName())
+            }
+            ENUM_MAP = Collections.unmodifiableMap(map)
+        }
+
+        static String get (String name) {
+            return ENUM_MAP.get(name.toLowerCase())
+        }
+    }
+
     OfferToPDFConverter(Offer offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.tempDir = Files.createTempDirectory("offer")
@@ -244,9 +276,9 @@ class OfferToPDFConverter implements OfferExporter {
         }
 
             //Map Lists to the "DataGeneration", "DataAnalysis" and "Project and Data Management"
-            productItemsMap.dataGeneration = dataGenerationItems
-            productItemsMap.dataAnalysis = dataAnalysisItems
-            productItemsMap.dataManagement= dataManagementItems
+            productItemsMap[ProductGroups.DATA_GENERATION.toString()] = dataGenerationItems
+            productItemsMap[ProductGroups.DATA_ANALYSIS.toString()] = dataAnalysisItems
+            productItemsMap[ProductGroups.DATA_MANAGEMENT.toString()] = dataManagementItems
 
             return productItemsMap
         }
@@ -357,17 +389,9 @@ class OfferToPDFConverter implements OfferExporter {
 
         static String tableTitle(String productGroup){
 
-            String tableTitle = ""
+            String tableTitle
+            tableTitle = ProductGroups.get(productGroup)
 
-            if (productGroup == "dataGeneration"){
-                tableTitle = "Data Generation"
-            }
-            if (productGroup == "dataAnalysis"){
-                tableTitle = "Data Analysis"
-            }
-            if (productGroup == "dataManagement"){
-                tableTitle = "Data Management"
-            }
 
             return """<div class = "small-spacer"</div>
                     <h3>${tableTitle}</h3>
@@ -376,17 +400,8 @@ class OfferToPDFConverter implements OfferExporter {
 
         static String subTableFooter(String productGroup){
 
-            String footerTitle = ""
-
-            if (productGroup == "dataGeneration"){
-                footerTitle = "Data Generation"
-            }
-            if (productGroup == "dataAnalysis"){
-                footerTitle = "Data Analysis"
-            }
-            if (productGroup == "dataManagement"){
-                footerTitle = "Data Management"
-            }
+            String footerTitle
+            footerTitle = ProductGroups.get(productGroup)
 
             return """<div id="grid-sub-total-footer">
                                      <div class="row sub-total-costs" id = "offer-sub-total">
