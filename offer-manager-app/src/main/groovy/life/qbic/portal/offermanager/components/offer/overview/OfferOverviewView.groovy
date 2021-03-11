@@ -215,7 +215,6 @@ class OfferOverviewView extends FormLayout {
                 downloadSpinner.setVisible(true)
                 overviewGrid.setEnabled(false)
                 selectedOffer = overviewGrid.getSelectionModel().getFirstSelectedItem()
-                println selectedOffer.get().toString()
                 overviewGrid.setSelectionMode(Grid.SelectionMode.NONE)
                 downloadBtn.setEnabled(false)
                 updateOfferBtn.setEnabled(false)
