@@ -8,7 +8,7 @@ import life.qbic.datamodel.dtos.business.services.ProductUnit
 import spock.lang.Specification
 
 /**
- * <h1>Tests for the CreateProduct use case</h1>
+ * <h1>Tests for the {@link CreateProduct} use case</h1>
  *
  * <p>This specification contains tests for all steps of the create product use case</p>
  *
