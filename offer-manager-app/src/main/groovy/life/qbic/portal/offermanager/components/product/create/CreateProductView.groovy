@@ -1,14 +1,26 @@
 package life.qbic.portal.offermanager.components.product.create
 
 import com.vaadin.ui.HorizontalLayout
+import com.vaadin.ui.TextField
 
 /**
- * <h1><short description></h1>
+ * <h1>This view serves the user to create a new service product</h1>
  * <br>
- * <p><detailed description></p>
+ * <p>The view contains several text input fields and combo boxes in order to fully describe the new service products</p>
  *
- * @since <versiontag>
+ * @since 1.0.0
  *
 */
 class CreateProductView extends HorizontalLayout{
+
+
+    TextField productName
+    TextField productDescription
+    TextField productUnitPrice
+
+    CreateProductView(){
+
+    }
+
+
 }
