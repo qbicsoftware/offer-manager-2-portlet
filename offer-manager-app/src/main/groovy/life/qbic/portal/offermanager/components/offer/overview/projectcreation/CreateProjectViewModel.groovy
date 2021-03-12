@@ -2,9 +2,9 @@ package life.qbic.portal.offermanager.components.offer.overview.projectcreation
 
 import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
-import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Layout
 import groovy.beans.Bindable
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 
@@ -28,6 +28,12 @@ class CreateProjectViewModel {
      * This view is set to visible again, if the user decides to navigate back.
      */
     Optional<Layout> startedFromView
+
+    /**
+     * The selected offer that holds the information
+     * for the projected to be created by the user.
+     */
+    @Bindable Optional<Offer> selectedOffer
 
     @Bindable Boolean createProjectEnabled
 
@@ -94,6 +100,8 @@ class CreateProjectViewModel {
         startedFromView = Optional.empty()
         createProjectEnabled = false
         projectCreated = false
+        selectedOffer = Optional.empty()
+
     }
 
     private void resetModel() {
