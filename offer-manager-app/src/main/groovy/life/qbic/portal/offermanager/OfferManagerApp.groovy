@@ -59,6 +59,7 @@ class OfferManagerApp extends QBiCPortletUI {
             roleService = new LiferayRoleService()
             userId = VaadinService.getCurrentRequest().getRemoteUser()
         }
+        //fixme empty userId might lead to NullPointer if no ' environment' is set
         return loadAppRole(roleService, userId)
     }
 
