@@ -83,7 +83,7 @@ class ProjectDbConnector {
  }
 
   private int isProjectInDB(String projectIdentifier) {
-    log.info("Looking for project " + projectIdentifier + " in the DB");
+    log.debug("Looking for project " + projectIdentifier + " in the DB");
     String sql = "SELECT * from projects WHERE openbis_project_identifier = ?";
     int res = -1;
     Connection connection = connectionProvider.connect()
@@ -101,7 +101,7 @@ class ProjectDbConnector {
   private int addProjectToDB(Connection connection, String projectIdentifier, String projectName) {
     int exists = isProjectInDB(projectIdentifier);
     if (exists < 0) {
-      log.info("Trying to add project " + projectIdentifier + " to the person DB");
+      log.debug("Trying to add project " + projectIdentifier + " to the person DB");
       String sql = "INSERT INTO projects (openbis_project_identifier, short_title) VALUES(?, ?)";
       try (PreparedStatement statement =
       connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -111,7 +111,7 @@ class ProjectDbConnector {
         ResultSet rs = statement.getGeneratedKeys();
         if (rs.next()) {
           logout(conn);
-          log.info("Successful.");
+          log.debug("Successful.");
           return rs.getInt(1);
         }
       } catch (Exception e) {
@@ -125,7 +125,7 @@ class ProjectDbConnector {
 
   private void addPersonToProject(Connection connection, int projectID, int personID, String role) {
     if (!hasPersonRoleInProject(personID, projectID, role)) {
-      log.info("Trying to add person with role " + role + " to a project.");
+      log.debug("Trying to add person with role " + role + " to a project.");
       String sql =
       "INSERT INTO projects_persons (project_id, person_id, project_role) VALUES(?, ?, ?)";
       try (PreparedStatement statement =
@@ -134,7 +134,7 @@ class ProjectDbConnector {
         statement.setInt(2, personID);
         statement.setString(3, role);
         statement.execute();
-        log.info("Successful.");
+        log.debug("Successful.");
       } catch (Exception e) {
         log.error("SQL operation unsuccessful: " + e.getMessage());
         e.printStackTrace();
