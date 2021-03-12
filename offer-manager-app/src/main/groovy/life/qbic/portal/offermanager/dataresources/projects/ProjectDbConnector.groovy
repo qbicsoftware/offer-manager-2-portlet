@@ -110,7 +110,7 @@ class ProjectDbConnector {
         }
       } catch (Exception e) {
         log.error("SQL operation unsuccessful: " + e.getMessage());
-        e.printStackTrace();
+        log.error(e.getStackTrace().join("\n"));
       }
       return -1;
     }
