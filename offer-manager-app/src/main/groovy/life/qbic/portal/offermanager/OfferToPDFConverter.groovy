@@ -96,28 +96,12 @@ class OfferToPDFConverter implements OfferExporter {
 
         private String name
 
-        private static final Map<String,String> ENUM_MAP
-
         ProductGroups(String name) {
             this.name = name;
         }
 
         String getName() {
             return this.name;
-        }
-
-
-        // Build an immutable map storing the enum and its associated value
-        static {
-            HashMap<String, String> map = new HashMap<String, String>()
-            for (ProductGroups instance : ProductGroups.values()) {
-                map.put(instance.toString().toLowerCase(), instance.getName())
-            }
-            ENUM_MAP = Collections.unmodifiableMap(map)
-        }
-
-        static String get (String name) {
-            return ENUM_MAP.get(name.toLowerCase())
         }
     }
 
@@ -261,7 +245,7 @@ class OfferToPDFConverter implements OfferExporter {
 
     Map groupItems(List<ProductItem> productItems) {
 
-        def productItemsMap = [:]
+        Map<ProductGroups, List<ProductItem>> productItemsMap = [:]
 
         List<ProductItem> dataGenerationItems = []
         List<ProductItem> dataAnalysisItems = []
@@ -282,21 +266,21 @@ class OfferToPDFConverter implements OfferExporter {
         }
 
             //Map Lists to the "DataGeneration", "DataAnalysis" and "Project and Data Management"
-            productItemsMap[ProductGroups.DATA_GENERATION.toString()] = dataGenerationItems
-            productItemsMap[ProductGroups.DATA_ANALYSIS.toString()] = dataAnalysisItems
-            productItemsMap[ProductGroups.DATA_MANAGEMENT.toString()] = dataManagementItems
+            productItemsMap[ProductGroups.DATA_GENERATION] = dataGenerationItems
+            productItemsMap[ProductGroups.DATA_ANALYSIS] = dataAnalysisItems
+            productItemsMap[ProductGroups.DATA_MANAGEMENT] = dataManagementItems
 
             return productItemsMap
         }
 
     void generateProductTable(Map productItemsMap, int maxTableItems) {
         // Create the items in html in the overview table
-        productItemsMap.each { productGroup, items ->
+        productItemsMap.each {productGroup, items ->
             //Check if there are ProductItems stored in map entry
             if(items){
                 def elementId = "product-items" + "-" + tableCount
                 //Append Table Title
-                htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup.toString()))
+                htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup as ProductGroups))
                 items.eachWithIndex { item, itemPos ->
                     //start (next) table and add Product to it
                     if (tableItemsCount >= maxTableItems) {
@@ -310,7 +294,7 @@ class OfferToPDFConverter implements OfferExporter {
                     tableItemsCount++
                 }
                 //add subtotal footer to table
-                htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup.toString()))
+                htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup as ProductGroups))
                 tableItemsCount++
             }
         }
@@ -393,10 +377,10 @@ class OfferToPDFConverter implements OfferExporter {
                              """
         }
 
-        static String tableTitle(String productGroup){
+        static String tableTitle(ProductGroups productGroup){
 
             String tableTitle
-            tableTitle = ProductGroups.get(productGroup)
+            tableTitle = productGroup.getName()
 
 
             return """<div class = "small-spacer"</div>
@@ -404,10 +388,10 @@ class OfferToPDFConverter implements OfferExporter {
                    """
         }
 
-        static String subTableFooter(String productGroup){
+        static String subTableFooter(ProductGroups productGroup){
 
             String footerTitle
-            footerTitle = ProductGroups.get(productGroup)
+            footerTitle = productGroup.getName()
 
             return """<div id="grid-sub-total-footer">
                                      <div class="row sub-total-costs" id = "offer-sub-total">
