@@ -9,6 +9,7 @@ import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.Panel
 import com.vaadin.ui.RadioButtonGroup
+import com.vaadin.ui.TextArea
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
@@ -111,8 +112,8 @@ class CreateProjectView extends VerticalLayout{
 
     private void createOfferInfo() {
         VerticalLayout container = new VerticalLayout()
-        selectedOfferInformation = new Panel("Offer Info")
-        selectedOfferInformation.setContent(new Label("Yes, it finally worked"))
+        selectedOfferInformation = new Panel("Selected Offer")
+        selectedOfferInformation.setContent(new Label("Offer Info Placeholder"))
         container.addComponent(selectedOfferInformation)
         viewContainerGrid.addComponent(container, 1, 0)
     }
@@ -279,8 +280,17 @@ class CreateProjectView extends VerticalLayout{
 
     private void loadOfferData(Offer offer) {
         VerticalLayout content = new VerticalLayout()
-        content.addComponent(new Label("<strong>Selected offer</strong>", ContentMode.HTML))
+        content.addComponent(new Label("<strong>Offer ID</strong>", ContentMode.HTML))
         content.addComponent(new Label("${offer.identifier}"))
+        content.addComponent(new Label("<strong>Customer</strong>", ContentMode.HTML))
+        content.addComponent(new Label("${offer.customer.firstName} ${offer.customer.lastName}"))
+        content.addComponent(new Label("<strong>Title</strong>", ContentMode.HTML))
+        TextArea title = new TextArea()
+        title.setWidth("100%")
+        title.setRows(3)
+        title.setEnabled(false)
+        title.setValue(offer.projectTitle)
+        content.addComponent(title)
         content.setSpacing(false)
         selectedOfferInformation.setContent(content)
     }
