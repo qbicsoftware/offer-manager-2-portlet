@@ -116,7 +116,7 @@ class ProjectDbConnector {
         }
       } catch (Exception e) {
         log.error("Project could not be added to the database: " + e.getMessage());
-        e.printStackTrace();
+        log.error(e.getStackTrace().join("\n"));
       }
       return -1;
     }
