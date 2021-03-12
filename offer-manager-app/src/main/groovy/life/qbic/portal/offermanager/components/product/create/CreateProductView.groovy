@@ -68,8 +68,8 @@ class CreateProductView extends HorizontalLayout{
         productDescription.setPlaceholder("Product Description")
         productDescription.setRequiredIndicatorVisible(true)
 
-        productUnitPrice = new TextField("00.00")
-        productDescription.setPlaceholder("Product Unit Price")
+        productUnitPrice = new TextField("Product Unit Price")
+        productDescription.setPlaceholder("00.00")
         productDescription.setRequiredIndicatorVisible(true)
     }
 
