@@ -44,6 +44,13 @@ class ProjectDbConnector {
     this.personDbConnector = personDbConnector
   }
   
+  /**
+   * Add project to the user database to connect additional metadata that is not stored in openBIS
+   * The project is uniquely recognizable by its openBIS project identifier, containing space and
+   * project code
+   * @param projectIdentifier a project identifier object denoting the openBIS identifier
+   * @param projectApplication a project application object used to add additional metadata
+   */
   public Project addProjectAndConnectPersonsInUserDB(projectIdentifier, projectApplication) {
     //collect infos needed for database
     String projectTitle = projectApplication.getProjectTitle()
@@ -69,7 +76,6 @@ class ProjectDbConnector {
         log.error(e.message)
         log.error(e.stackTrace.join("\n"))
         it.rollback()
-        it.close() //is this needed?
         throw new DatabaseQueryException("Could not add person and project data to user database.")
       }
     }
@@ -92,7 +98,7 @@ class ProjectDbConnector {
     return res;
   }
 
-  public int addProjectToDB(Connection connection, String projectIdentifier, String projectName) {
+  private int addProjectToDB(Connection connection, String projectIdentifier, String projectName) {
     int exists = isProjectInDB(projectIdentifier);
     if (exists < 0) {
       log.info("Trying to add project " + projectIdentifier + " to the person DB");
@@ -109,7 +115,7 @@ class ProjectDbConnector {
           return rs.getInt(1);
         }
       } catch (Exception e) {
-        log.error("SQL operation unsuccessful: " + e.getMessage());
+        log.error("Project could not be added to the database: " + e.getMessage());
         e.printStackTrace();
       }
       return -1;
@@ -117,7 +123,7 @@ class ProjectDbConnector {
     return exists;
   }
 
-  public void addPersonToProject(Connection connection, int projectID, int personID, String role) {
+  private void addPersonToProject(Connection connection, int projectID, int personID, String role) {
     if (!hasPersonRoleInProject(personID, projectID, role)) {
       log.info("Trying to add person with role " + role + " to a project.");
       String sql =
@@ -136,7 +142,7 @@ class ProjectDbConnector {
     }
   }
 
-  public boolean hasPersonRoleInProject(int personID, int projectID, String role) {
+  private boolean hasPersonRoleInProject(int personID, int projectID, String role) {
     logger.info("Checking if person already has this role in the project.");
     String sql =
         "SELECT * from projects_persons WHERE person_id = ? AND project_id = ? and project_role = ?";

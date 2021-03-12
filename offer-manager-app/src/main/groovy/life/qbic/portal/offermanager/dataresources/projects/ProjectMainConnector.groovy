@@ -75,8 +75,8 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
   }
 
   private void createOpenbisSpace(String spaceName, String description) {
-    // TODO this is not how the api should be used, I reckon
     IApplicationServerApi api = openbisClient.getV3()
+    
     SpaceCreation space = new SpaceCreation()
     space.setCode(spaceName)
 
@@ -87,7 +87,6 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
   }
 
   private void createOpenbisProject(ProjectSpace space, ProjectCode projectCode, String description) {
-    // TODO this is not how the api should be used, I reckon
     IApplicationServerApi api = openbisClient.getV3()
 
     ProjectCreation project = new ProjectCreation();
