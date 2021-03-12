@@ -82,45 +82,40 @@ class ProjectDbConnector {
   return new Project(projectIdentifier, projectTitle, projectApplication.getLinkedOffer())
  }
 
-  private int isProjectInDB(String projectIdentifier) {
+  private boolean isProjectInDB(String projectIdentifier) {
     log.debug("Looking for project " + projectIdentifier + " in the DB");
     String sql = "SELECT * from projects WHERE openbis_project_identifier = ?";
-    int res = -1;
     Connection connection = connectionProvider.connect()
     connection.withCloseable { it ->
       PreparedStatement statement = it.prepareStatement(sql);
       statement.setString(1, projectIdentifier);
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
-        res = rs.getInt("id");
+        return true
       }
     }
-    return res;
+    return false;
   }
 
   private int addProjectToDB(Connection connection, String projectIdentifier, String projectName) {
-    int exists = isProjectInDB(projectIdentifier);
-    if (exists < 0) {
-      log.debug("Trying to add project " + projectIdentifier + " to the person DB");
-      String sql = "INSERT INTO projects (openbis_project_identifier, short_title) VALUES(?, ?)";
-      try (PreparedStatement statement =
-      connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-        statement.setString(1, projectIdentifier);
-        statement.setString(2, projectName);
-        statement.execute();
-        ResultSet rs = statement.getGeneratedKeys();
-        if (rs.next()) {
-          logout(conn);
-          log.debug("Successful.");
-          return rs.getInt(1);
-        }
-      } catch (Exception e) {
-        log.error("Project could not be added to the database: " + e.getMessage());
-        log.error(e.getStackTrace().join("\n"));
-      }
-      return -1;
+    if(isProjectInDB(projectIdentifier)) {
+      throw new ProjectExistsException("Project "+projectIdentifier+" is already in the user database")
     }
-    return exists;
+    log.debug("Trying to add project " + projectIdentifier + " to the person DB");
+    String sql = "INSERT INTO projects (openbis_project_identifier, short_title) VALUES(?, ?)";
+    try (PreparedStatement statement =
+    connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+      statement.setString(1, projectIdentifier);
+      statement.setString(2, projectName);
+      statement.execute();
+      ResultSet rs = statement.getGeneratedKeys();
+      if (rs.next()) {
+        logout(conn);
+        log.debug("Successful.");
+        return rs.getInt(1);
+      }
+    }
+    return -1
   }
 
   private void addPersonToProject(Connection connection, int projectID, int personID, String role) {
