@@ -1,12 +1,13 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.ProjectManager
+
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 
+import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.projectmanagement.*
+import life.qbic.business.projects.create.ProjectExistsException
 
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
