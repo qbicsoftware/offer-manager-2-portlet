@@ -32,7 +32,7 @@ import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
  * @since 1.0.0
  *
  */
-class MaintainProductsView extends VerticalLayout{
+class MaintainProductsView extends FormLayout{
 
     private final MaintainProductsViewModel viewModel
 
@@ -42,6 +42,7 @@ class MaintainProductsView extends VerticalLayout{
     Button copyProduct
     Button archiveProduct
     Panel productDescription
+    VerticalLayout maintenanceLayout
 
     CreateProductView createProductView
     ArchiveProductView archiveProductView
@@ -55,12 +56,12 @@ class MaintainProductsView extends VerticalLayout{
         this.copyProductView = copyProductView
         this.archiveProductView = archiveProductView
 
-        setupTitle()
         setupPanel()
         createButtons()
         setupGrid()
         setupDataProvider()
         setupOverviewLayout()
+        setupTitle()
         addSubViews()
         setupListeners()
     }
@@ -68,7 +69,7 @@ class MaintainProductsView extends VerticalLayout{
     private void setupTitle(){
         Label label = new Label("Service Product Maintenance")
         label.setStyleName(ValoTheme.LABEL_HUGE)
-        this.addComponent(label)
+        maintenanceLayout.addComponent(label)
     }
 
     private void createButtons(){
@@ -119,11 +120,13 @@ class MaintainProductsView extends VerticalLayout{
     }
 
     private void setupOverviewLayout(){
-        this.setSizeFull()
-        this.setMargin(false)
-        this.addComponents(productGrid,buttonLayout)
+        maintenanceLayout = new VerticalLayout(productGrid,buttonLayout)
+        maintenanceLayout.setSizeFull()
+        maintenanceLayout.setMargin(false)
+        maintenanceLayout.addComponents()
 
-        this.setComponentAlignment(buttonLayout,Alignment.TOP_RIGHT)
+        maintenanceLayout.setComponentAlignment(buttonLayout,Alignment.TOP_RIGHT)
+        this.addComponents(maintenanceLayout)
     }
 
     private void addSubViews(){
@@ -152,17 +155,17 @@ class MaintainProductsView extends VerticalLayout{
         })
 
         addProduct.addClickListener({
-            this.setVisible(false)
+            maintenanceLayout.setVisible(false)
             createProductView.setVisible(true)
         })
 
         copyProduct.addClickListener({
-            this.setVisible(false)
+            maintenanceLayout.setVisible(false)
             copyProduct.setVisible(true)
         })
 
         archiveProduct.addClickListener({
-            this.setVisible(false)
+            maintenanceLayout.setVisible(false)
             archiveProductView.setVisible(true)
         })
     }

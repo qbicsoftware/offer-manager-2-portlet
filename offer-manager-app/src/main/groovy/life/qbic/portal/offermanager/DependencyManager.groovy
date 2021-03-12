@@ -481,7 +481,7 @@ class DependencyManager {
 
         CreateProductView createProductView
         try{
-            createProductView = new CreateProductView()
+            createProductView = new CreateProductView(maintainProductsViewModel)
         }catch(Exception e){
             log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
             throw e
