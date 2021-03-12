@@ -2,7 +2,7 @@ package life.qbic.portal.offermanager.components.offer.overview.projectcreation
 
 import life.qbic.business.projects.create.CreateProjectInput
 import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.projectmanagement.ProjectApplication
+import life.qbic.datamodel.dtos.business.ProjectApplication
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
