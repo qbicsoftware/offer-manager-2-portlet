@@ -18,6 +18,11 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 class CreateProjectViewModel {
 
     /**
+     * Flag that indicates when a project has been created
+     */
+    @Bindable Boolean projectCreated
+
+    /**
      * Saves the layout from which the create project component
      * has been initiated.
      * This view is set to visible again, if the user decides to navigate back.
@@ -50,13 +55,6 @@ class CreateProjectViewModel {
     CreateProjectViewModel() {
         spaceSelectionDataProvider = new ListDataProvider<>([SPACE_SELECTION.NEW_SPACE,
                                                              SPACE_SELECTION.EXISTING_SPACE])
-        resultingSpaceName = ""
-        desiredSpaceName = ""
-        desiredProjectCode = ""
-        resultingProjectCode = ""
-        projectCodeValidationResult = ""
-        codeIsValid = false
-        startedFromView = Optional.empty()
         // TODO use space resource service once available
         availableSpaces = new ListDataProvider([new ProjectSpace("Example Space One"),
                            new ProjectSpace("Example Space Two")])
@@ -65,7 +63,7 @@ class CreateProjectViewModel {
                 new ProjectCode("QABCD"),
                 new ProjectCode("QTEST")
         ]
-        createProjectEnabled = false
+        initFields()
         setupListeners()
     }
 
@@ -81,6 +79,25 @@ class CreateProjectViewModel {
         this.addPropertyChangeListener("resultingSpaceName",  {
             evaluateProjectCreation()
         })
+        this.addPropertyChangeListener("projectCreated", {
+            resetModel()
+        })
+    }
+
+    private void initFields() {
+        resultingSpaceName = ""
+        desiredSpaceName = ""
+        desiredProjectCode = ""
+        resultingProjectCode = ""
+        projectCodeValidationResult = ""
+        codeIsValid = false
+        startedFromView = Optional.empty()
+        createProjectEnabled = false
+        projectCreated = false
+    }
+
+    private void resetModel() {
+        initFields()
     }
 
     private void validateProjectCode() {
