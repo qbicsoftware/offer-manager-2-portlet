@@ -58,7 +58,9 @@ class CreateProjectSpec extends Specification{
     def "A valid project application creates a new project"(){
         given: "a project application is provided"
         projectApplication = new ProjectApplication(offerId,"Title","objective","exp. design",projectManager,space, customer, projectCode)
-        Project project = new Project(projectIdentifier,projectApplication.projectTitle,offerId)
+        Project.Builder projectBuilder = new Project.Builder(projectIdentifier, projectApplication.projectTitle)
+        projectBuilder.linkedOfferId(offerId)
+        Project project = projectBuilder.build()
 
         and: "the data source is able to create the project"
         dataSource.createProject(projectApplication) >> project
@@ -107,7 +109,9 @@ class CreateProjectSpec extends Specification{
     def "If a new space is provided it shall be created before the project is created"(){
         given: "a project application is provided"
         projectApplication = new ProjectApplication(offerId,"Title","objective","exp. design",projectManager,space, customer, projectCode)
-        Project project = new Project(projectIdentifier,projectApplication.projectTitle,offerId)
+        Project.Builder projectBuilder = new Project.Builder(projectIdentifier, projectApplication.projectTitle)
+        projectBuilder.linkedOfferId(offerId)
+        Project project = projectBuilder.build()
 
         and: "the data source is able to create the project"
         dataSource.createProject(projectApplication) >> project
