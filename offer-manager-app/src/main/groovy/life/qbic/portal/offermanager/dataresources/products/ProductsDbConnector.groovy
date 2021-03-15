@@ -281,7 +281,6 @@ class ProductsDbConnector implements ProductDataSource {
          * Query for inserting a product.
          */
         final static String INSERT_PRODUCT = "INSERT INTO product (category, description, productName, unitPrice, unit, productId) VALUES (?, ?, ?, ?, ?, ?)"
-        As far as I know it should be `VALUES` and not `VALUE`
 
         /**
          * Inactivate a product
