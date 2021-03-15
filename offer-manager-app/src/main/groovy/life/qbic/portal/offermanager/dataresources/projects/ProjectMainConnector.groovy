@@ -1,8 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.ProjectManager
+
 import life.qbic.datamodel.dtos.general.Person
 
 import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
@@ -10,6 +9,7 @@ import life.qbic.business.projects.spaces.ProjectSpaceExistsException
 import life.qbic.business.projects.create.CreateProjectDataSource
 import life.qbic.business.projects.create.ProjectExistsException
 
+import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.projectmanagement.*
 
 import life.qbic.business.exceptions.DatabaseQueryException
@@ -33,25 +33,25 @@ import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi;
 /**
  * Provides operations on QBiC project data
  *
- * This class implements the data sources of the different use cases and is responsible for transferring data to the customer db and openBIS
+ * This class implements the data sources of the different use cases and is responsible for transferring data to the project/customer db and openBIS
  *
- * @since: 1.0.0
+ * @since 1.0.0
  *
  */
 @Log4j2
 class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpaceDataSource {
 
   /**
-   * A connection to the customer database used to create queries.
+   * A connection to the project (and customer) database used to create queries.
    */
   private final ProjectDbConnector projectDbConnector
   private final OpenBisClient openbisClient
 
   /**
-   * Constructor for a ProjectOpenBisAndDBConnector
-   * @param connection a connection to the customer db
-   * 
-   * @see Connection
+
+   * Constructor for a ProjectMainConnector
+   * @param projectDbConnector a connector enabling interaction with the project database
+   * @param openbisClient an openBIS client API object
    */
   ProjectMainConnector(ProjectDbConnector projectDbConnector, OpenBisClient openbisClient) {
     this.projectDbConnector = projectDbConnector
@@ -84,8 +84,8 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
   }
 
   private void createOpenbisSpace(String spaceName, String description) {
-    // TODO this is not how the api should be used, I reckon
     IApplicationServerApi api = openbisClient.getV3()
+
     SpaceCreation space = new SpaceCreation()
     space.setCode(spaceName)
 
@@ -96,7 +96,6 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
   }
 
   private void createOpenbisProject(ProjectSpace space, ProjectCode projectCode, String description) {
-    // TODO this is not how the api should be used, I reckon
     IApplicationServerApi api = openbisClient.getV3()
 
     ProjectCreation project = new ProjectCreation();
