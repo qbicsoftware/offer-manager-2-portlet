@@ -43,6 +43,7 @@ class Converter {
                 .itemsWithoutOverhead(offer.noOverheadItems)
                 .itemsWithOverheadNet(offer.overheadItemsNet)
                 .itemsWithoutOverheadNet(offer.noOverheadItemsNet)
+                .overheadRatio(offer.overheadRatio)
                 .build()
     }
     static Offer buildOfferForCostCalculation(List<ProductItem> items,
