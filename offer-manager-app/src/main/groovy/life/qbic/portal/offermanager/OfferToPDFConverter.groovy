@@ -325,7 +325,8 @@ class OfferToPDFConverter implements OfferExporter {
                         tableItemsCount = 1
                     }
                     //add product to current table
-                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemPos, item))
+                    int productNumber = itemPos + 1
+                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(productNumber, item))
                     tableItemsCount++
                 }
                 //add subtotal footer to table
