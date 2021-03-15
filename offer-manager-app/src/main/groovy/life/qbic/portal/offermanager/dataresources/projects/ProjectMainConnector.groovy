@@ -38,10 +38,11 @@ import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpaceDataSource {
 
   /**
-     * A connection to the project (and customer) database used to create queries.
-     */
-    private final ProjectDbConnector projectDbConnector
+   * A connection to the project (and customer) database used to create queries.
+   */
+  private final ProjectDbConnector projectDbConnector
   private final OpenBisClient openbisClient
+  private List<ProjectIdentifier> openbisProjects
 
   /**
      * Constructor for a ProjectMainConnector
@@ -51,22 +52,26 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     ProjectMainConnector(ProjectDbConnector projectDbConnector, OpenBisClient openbisClient) {
       this.projectDbConnector = projectDbConnector
       this.openbisClient = openbisClient
+      fetchExistingProjects()
     }
 
-  /**
-     * Fetches a list of existing projects
-     */
-    public List<ProjectIdentifier> fetchProjects() {
+    private void fetchExistingProjects() {
       //projectDbConnector.fetchProjects() might be used at some point to fetch more metadata
       
-      List<ProjectIdentifier> projects = []
+      openbisProjects = []
       for(Project openbisProject : openbisClient.listProjects()) {
         String space = openbisProject.getSpace().getCode()
         String code = openbisProject.getCode()
-        projects.add(new ProjectIdentifier(space, code))
+        openbisProjects.add(new ProjectIdentifier(space, code))
       }
-      return projects
     }
+    
+  /**
+   * Returns a copied list of existing projects fetched upon creation of this class
+   */
+   public List<ProjectIdentifier> fetchProjects() {
+     return new ArrayList<ProjectIdentifier>(openbisProjects);
+   }
 
   @Override
     void createProjectSpace(ProjectSpace projectSpace) throws ProjectSpaceExistsException, DatabaseQueryException {
