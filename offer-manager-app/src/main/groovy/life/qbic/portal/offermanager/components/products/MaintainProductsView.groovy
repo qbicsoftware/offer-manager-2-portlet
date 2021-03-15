@@ -1,5 +1,7 @@
 package life.qbic.portal.offermanager.components.products
 
+import com.vaadin.ui.FormLayout
+
 /**
  *
  * <h1>This class generates a Form Layout in which the user can maintain the service products</h1>
@@ -10,7 +12,7 @@ package life.qbic.portal.offermanager.components.products
  * @since 1.0.0
  *
  */
-class MaintainProductsView {
+class MaintainProductsView extends FormLayout{
 
     private final MaintainProductsController controller
     private final MaintainProductsViewModel viewModel
