@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager.components.product.create
 import com.vaadin.data.ValidationResult
 import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
+import com.vaadin.data.validator.RegexpValidator
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
 import com.vaadin.ui.Button
@@ -25,28 +26,27 @@ import life.qbic.datamodel.dtos.business.services.ProductUnit
 */
 class CreateProductView extends HorizontalLayout{
 
-    private final CreateProductViewModel viewModel
+    private final CreateProductViewModel createProductViewModel
 
-    TextField productName
-    TextField productDescription
-    TextField productUnitPrice
+    TextField productNameField
+    TextField productDescriptionField
+    TextField productUnitPriceField
 
-    ComboBox<String> productUnit
-    ComboBox<String> productCategories
+    ComboBox<String> productUnitComboBox
+    ComboBox<String> productCategoriesComboBox
 
-    Button createProduct
-    Button abort
+    Button createProductButton
+    Button abortButton
 
-    CreateProductView(CreateProductViewModel viewModel){
+    CreateProductView(CreateProductViewModel createProductViewModel){
 
-        this.viewModel = viewModel
-
+        this.createProductViewModel = createProductViewModel
         initTextFields()
         initComboBoxes()
         initButtons()
         initLayout()
-        //bindViewModel()
-        //setupFieldValidator()
+        bindViewModel()
+        setupFieldValidators()
     }
 
     private void initLayout(){
@@ -55,9 +55,9 @@ class CreateProductView extends HorizontalLayout{
         this.addComponent(label)
 
         //add textfields and boxes
-        HorizontalLayout sharedLayout = new HorizontalLayout(productUnitPrice,productUnit)
-        HorizontalLayout buttons = new HorizontalLayout(abort,createProduct)
-        VerticalLayout sideLayout = new VerticalLayout(label,productName,productDescription,sharedLayout,productCategories,buttons)
+        HorizontalLayout sharedLayout = new HorizontalLayout(productUnitPriceField,productUnitComboBox)
+        HorizontalLayout buttons = new HorizontalLayout(abortButton,createProductButton)
+        VerticalLayout sideLayout = new VerticalLayout(label,productNameField,productDescriptionField,sharedLayout,productCategoriesComboBox,buttons)
 
         sideLayout.setSizeFull()
 
@@ -65,91 +65,199 @@ class CreateProductView extends HorizontalLayout{
     }
 
     private void initTextFields(){
-        productName = new TextField("Product Name")
-        productName.setPlaceholder("Product Name")
-        productName.setRequiredIndicatorVisible(true)
-        productName.setWidthFull()
+        productNameField = new TextField("Product Name")
+        productNameField.setPlaceholder("Product Name")
+        productNameField.setRequiredIndicatorVisible(true)
+        productNameField.setWidthFull()
 
-        productDescription = new TextField("Product Description")
-        productDescription.setPlaceholder("Product Description")
-        productDescription.setRequiredIndicatorVisible(true)
-        productDescription.setWidthFull()
+        productDescriptionField = new TextField("Product Description")
+        productDescriptionField.setPlaceholder("Product Description")
+        productDescriptionField.setRequiredIndicatorVisible(true)
+        productDescriptionField.setWidthFull()
 
-        productUnitPrice = new TextField("Product Unit Price")
-        productUnitPrice.setPlaceholder("00.00")
-        productUnitPrice.setRequiredIndicatorVisible(true)
+        productUnitPriceField = new TextField("Product Unit Price")
+        productUnitPriceField.setPlaceholder("00.00")
+        productUnitPriceField.setRequiredIndicatorVisible(true)
     }
 
     private void initComboBoxes(){
-        productUnit = new ComboBox<>("Product Unit")
-        productUnit.setRequiredIndicatorVisible(true)
-        productUnit.setPlaceholder("Select Product Unit")
-        productUnit.setEmptySelectionAllowed(false)
-        productUnit.setItems(Arrays.asList(ProductUnit.values()) as List<String>)
+        productUnitComboBox = new ComboBox<>("Product Unit")
+        productUnitComboBox.setRequiredIndicatorVisible(true)
+        productUnitComboBox.setPlaceholder("Select Product Unit")
+        productUnitComboBox.setEmptySelectionAllowed(false)
+        productUnitComboBox.setItems(Arrays.asList(ProductUnit.values()) as List<String>)
 
-        productCategories = new ComboBox<>("Product Category")
-        productCategories.setRequiredIndicatorVisible(true)
-        productCategories.setPlaceholder("Select Product Category")
-        productCategories.setEmptySelectionAllowed(false)
-        productCategories.setItems(Arrays.asList(ProductCategory.values()) as List<String>)
+        productCategoriesComboBox = new ComboBox<>("Product Category")
+        productCategoriesComboBox.setRequiredIndicatorVisible(true)
+        productCategoriesComboBox.setPlaceholder("Select Product Category")
+        productCategoriesComboBox.setEmptySelectionAllowed(false)
+        productCategoriesComboBox.setItems(Arrays.asList(ProductCategory.values()) as List<String>)
     }
 
     private void initButtons(){
-        abort = new Button("Abort", VaadinIcons.CLOSE)
-        createProduct = new Button("Create", VaadinIcons.CHECK)
+        abortButton = new Button("Abort", VaadinIcons.CLOSE)
+        createProductButton = new Button("Create", VaadinIcons.CHECK)
+        createProductButton.setEnabled(allValuesValid())
     }
 
     private void bindViewModel(){
         //bind all textfields
-        this.productName.addValueChangeListener({this.viewModel.productName = it.value })
+        this.productNameField.addValueChangeListener({this.createProductViewModel.productName = it.value })
 
-        viewModel.addPropertyChangeListener("productName", {
+        createProductViewModel.addPropertyChangeListener("productName", {
             String newValue = it.newValue as String
-            productName.value = newValue ?: productName.emptyValue
+            productNameField.value = newValue ?: productNameField.emptyValue
         })
 
-        this.productDescription.addValueChangeListener({this.viewModel.productDescription = it.value })
+        this.productDescriptionField.addValueChangeListener({this.createProductViewModel.productDescription = it.value })
 
-        viewModel.addPropertyChangeListener("productDescription", {
+        createProductViewModel.addPropertyChangeListener("productDescription", {
             String newValue = it.newValue as String
-            productDescription.value = newValue ?: productDescription.emptyValue
+            productDescriptionField.value = newValue ?: productDescriptionField.emptyValue
         })
 
-        this.productUnitPrice.addValueChangeListener({
-            if(it.value.isNumber()){
-                this.viewModel.productUnitPrice = Double.parseDouble(it.value)
-            }
-            else{
-                def label = new Label("Please enter a number")
-                label.setStyleName(ValoTheme.LABEL_FAILURE)
-                this.addComponent(label)
-            }
-        })
+        this.productUnitPriceField.addValueChangeListener({this.createProductViewModel.productUnitPrice = it.value})
 
-        viewModel.addPropertyChangeListener("productUnitPrice", {
+        createProductViewModel.addPropertyChangeListener("productUnitPrice", {
             String newValue = it.newValue as String
-            productUnitPrice.value = newValue ?: productUnitPrice.emptyValue
+            productUnitPriceField.value = newValue ?: productUnitPriceField.emptyValue
         })
 
         //bind combo boxes
-        viewModel.addPropertyChangeListener("productUnit", {
+        createProductViewModel.addPropertyChangeListener("productUnit", {
             ProductUnit newValue = it.newValue as ProductUnit
             if (newValue) {
-                productUnit.value = newValue
+                productUnitComboBox.value = newValue
             } else {
-                productUnit.value = productUnit.emptyValue
+                productUnitComboBox.value = productUnitComboBox.emptyValue
             }
         })
+        productUnitComboBox.addSelectionListener({
+            createProductViewModel.setProductUnit(it.value as ProductUnit)
+        })
 
-        viewModel.addPropertyChangeListener("productCategories", {
+        createProductViewModel.addPropertyChangeListener("productCategories", {
             ProductCategory newValue = it.newValue as ProductCategory
             if (newValue) {
-                productCategories.value = newValue
+                productCategoriesComboBox.value = newValue
             } else {
-                productCategories.value = productCategories.emptyValue
+                productCategoriesComboBox.value = productCategoriesComboBox.emptyValue
             }
         })
+        productCategoriesComboBox.addSelectionListener({
+            createProductViewModel.setProductCategories(it.value as ProductCategory)
+        })
 
+        /*
+       we listen to the valid properties. whenever the presenter resets values in the viewmodel
+       and resets the valid properties the component error on the respective component is removed
+       */
+        createProductViewModel.addPropertyChangeListener({
+            switch (it.propertyName) {
+                case "productNameValid":
+                    if (it.newValue || it.newValue == null) {
+                        productNameField.componentError = null
+                    }
+                    break
+                case "productDescriptionValid":
+                    if (it.newValue || it.newValue == null) {
+                        productDescriptionField.componentError = null
+                    }
+                    break
+                case "productUnitPriceValid":
+                    if (it.newValue || it.newValue == null) {
+                        productUnitPriceField.componentError = null
+                    }
+                    break
+                case "productUnitValid":
+                    if (it.newValue || it.newValue == null) {
+                        productUnitComboBox.componentError = null
+                    }
+                    break
+                case "productCategoryValid":
+                    if (it.newValue || it.newValue == null) {
+                        productCategoriesComboBox.componentError = null
+                    }
+                    break
+                default:
+                    break
+            }
+            createProductButton.enabled = allValuesValid()
+        })
+    }
+
+    /**
+     * This method adds validation to the fields of this view
+     */
+    private void setupFieldValidators() {
+
+        Validator<String> nameValidator =  Validator.from({String value -> (value && !value.trim().empty)}, "Please provide a valid name.")
+        Validator<String> numberValidator = new RegexpValidator("This is not a number!", "[-]?[0-9]*\\.?,?[0-9]+")
+        Validator<? extends Object> selectionValidator = Validator.from({o -> o != null}, "Please make a selection.")
+
+        //Add Listeners to all Fields in the Form layout
+        this.productNameField.addValueChangeListener({ event ->
+            ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.productNameField))
+            if (result.isError()) {
+                createProductViewModel.productNameValid = false
+                UserError error = new UserError(result.getErrorMessage())
+                productNameField.setComponentError(error)
+            } else {
+                createProductViewModel.productNameValid = true
+            }
+        })
+        this.productDescriptionField.addValueChangeListener({ event ->
+            ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.productDescriptionField))
+            if (result.isError()) {
+                createProductViewModel.productDescriptionValid = false
+                UserError error = new UserError(result.getErrorMessage())
+                productDescriptionField.setComponentError(error)
+            } else {
+                createProductViewModel.productDescriptionValid = true
+            }
+        })
+        this.productUnitPriceField.addValueChangeListener({ event ->
+            ValidationResult result = numberValidator.apply(event.getValue(), new ValueContext(this.productUnitPriceField))
+            if (result.isError()) {
+                createProductViewModel.productUnitPriceValid = false
+                UserError error = new UserError(result.getErrorMessage())
+                productUnitPriceField.setComponentError(error)
+            } else {
+                createProductViewModel.productUnitPriceValid = true
+            }
+        })
+        this.productUnitComboBox.addSelectionListener({selection ->
+            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.productUnitComboBox))
+            if (result.isError()) {
+                createProductViewModel.productUnitValid = false
+                UserError error = new UserError(result.getErrorMessage())
+                productUnitComboBox.setComponentError(error)
+            } else {
+                createProductViewModel.productUnitValid = true
+            }
+        })
+        this.productCategoriesComboBox.addSelectionListener({selection ->
+            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.productCategoriesComboBox))
+            if (result.isError()) {
+                createProductViewModel.productCategoriesValid = false
+                UserError error = new UserError(result.getErrorMessage())
+                productCategoriesComboBox.setComponentError(error)
+            } else {
+                createProductViewModel.productCategoriesValid = true
+            }
+        })
+    }
+    /**
+     * This is used to indicate whether all fields of this view are filled correctly.
+     * It relies on the separate fields for validation.
+     * @return
+     */
+    private boolean allValuesValid() {
+        return createProductViewModel.productNameValid \
+            && createProductViewModel.productDescriptionValid \
+            && createProductViewModel.productUnitValid \
+            && createProductViewModel.productUnitPriceValid \
+            && createProductViewModel.productCategoriesValid
     }
 
 }

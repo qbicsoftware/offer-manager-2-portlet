@@ -1,6 +1,8 @@
 package life.qbic.portal.offermanager.components.product.create
 
 import groovy.beans.Bindable
+import life.qbic.datamodel.dtos.business.ProductCategory
+import life.qbic.datamodel.dtos.business.services.ProductUnit
 
 
 /**
@@ -10,15 +12,16 @@ import groovy.beans.Bindable
  *
 */
 class CreateProductViewModel {
+
     @Bindable String productName
     @Bindable Boolean productNameValid
     @Bindable String productDescription
     @Bindable Boolean productDescriptionValid
-    @Bindable Double productUnitPrice
+    @Bindable String productUnitPrice
     @Bindable Boolean productUnitPriceValid
-    @Bindable String productUnit
+    @Bindable ProductUnit productUnit
     @Bindable Boolean productUnitValid
-    @Bindable String productCategories
+    @Bindable ProductCategory productCategories
     @Bindable Boolean productCategoriesValid
 
 }

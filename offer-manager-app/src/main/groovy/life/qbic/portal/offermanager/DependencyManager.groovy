@@ -86,6 +86,7 @@ class DependencyManager {
     private CreatePersonViewModel createCustomerViewModelNewOffer
     private MaintainProductsViewModel maintainProductsViewModel
     private CreateProductViewModel createProductViewModel
+    private CreateProductViewModel copyProductViewModel
     private CreateProjectViewModel createProjectModel
 
     private AppPresenter presenter
@@ -303,6 +304,12 @@ class DependencyManager {
             log.error("Unexpected excpetion during ${CreateProductViewModel.getSimpleName()} view model setup.", e)
         }
 
+        try {
+            this.copyProductViewModel = new CreateProductViewModel()
+        }catch (Exception e) {
+            log.error("Unexpected excpetion during ${CreateProductViewModel.getSimpleName()} view model setup.", e)
+        }
+
         try{
             this.createProjectModel = new CreateProjectViewModel()
         }catch (Exception e) {
@@ -516,7 +523,7 @@ class DependencyManager {
 
         CreateProductView copyProductView
         try{
-            copyProductView = new CreateProductView()
+            copyProductView = new CreateProductView(copyProductViewModel)
         }catch(Exception e){
             log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
             throw e
