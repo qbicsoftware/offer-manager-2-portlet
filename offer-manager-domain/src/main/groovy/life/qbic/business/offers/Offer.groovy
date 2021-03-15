@@ -88,13 +88,15 @@ class Offer {
     private double itemsWithoutOverheadNetPrice
 
     /**
-     * The calulated total overhead costs based on the {@link #overheadRatio}
+     * Holds the determined overhead total derived from the
+     * customer's affiliation.
      */
     private double overhead
 
     /**
     * The overhead ratio that is applied to calculate the total offer price. The ratio is chosen
     * based on the customer's affiliation.
+     *  e.g. 0.4 or a 40% markup for external customers
     */
     private double overheadRatio
 

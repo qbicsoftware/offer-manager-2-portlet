@@ -24,8 +24,8 @@ Unassigned
 * Add logging with throwable cause (`#371 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/371>`_)
 * Introduce distinction of products in the offer PDF according to the associated service
   data generation, data analysis and project management (`#364 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/364>`_)
-* Add percentage showing the applied overhead markup in the pricing footer of the Offer PDF(`#362 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/362>`_)
-* Add overheadRatio property storing the overhead markup percentage to ``life.qbic.business.offers.Offer``(`#362 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/362>`_)
+* Introduce overheadRatio property to life.qbic.business.offers.Offer
+  used to show the applied overhead markup in the pricing footer of the Offer PDF(`#362 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/362>`_)
 
 **Fixed**
 
