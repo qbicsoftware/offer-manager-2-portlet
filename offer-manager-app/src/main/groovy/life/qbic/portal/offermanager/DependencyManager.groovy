@@ -12,6 +12,8 @@ import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewController
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewPresenter
+import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
+import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectViewModel
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
@@ -22,6 +24,10 @@ import life.qbic.portal.offermanager.components.product.create.CreateProductView
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
+import life.qbic.portal.offermanager.dataresources.projects.ProjectMainConnector
+import life.qbic.portal.offermanager.dataresources.projects.ProjectDbConnector
+
+import life.qbic.openbis.openbisclient.OpenBisClient
 
 import life.qbic.portal.offermanager.dataresources.database.DatabaseSession
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
@@ -82,6 +88,7 @@ class DependencyManager {
     private SearchPersonViewModel searchPersonViewModel
     private CreatePersonViewModel createCustomerViewModelNewOffer
     private MaintainProductsViewModel maintainProductsViewModel
+    private CreateProjectViewModel createProjectModel
 
     private AppPresenter presenter
     private CreatePersonPresenter createCustomerPresenter
@@ -95,6 +102,9 @@ class DependencyManager {
     private PersonDbConnector customerDbConnector
     private OfferDbConnector offerDbConnector
     private ProductsDbConnector productsDbConnector
+    private ProjectMainConnector projectMainConnector
+    private ProjectDbConnector projectDbConnector
+    private OpenBisClient openbisClient
 
     private CreatePerson createCustomer
     private CreatePerson createCustomerNewOffer
@@ -120,6 +130,7 @@ class DependencyManager {
     private CreateAffiliationView createAffiliationView
     private AppView portletView
     private ConfigurationManager configurationManager
+    private CreateProjectView createProjectView
 
     private OverviewService overviewService
     private EventEmitter<Offer> offerUpdateEvent
@@ -173,6 +184,14 @@ class DependencyManager {
             productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
             offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(),
                     customerDbConnector, productsDbConnector)
+            projectDbConnector = new ProjectDbConnector(DatabaseSession.getInstance(), customerDbConnector)
+            
+            
+            final String openbisURL = configurationManager.getDataSourceUrl() + "/openbis/openbis";
+            openbisClient = new OpenBisClient(configurationManager.getDataSourceUser(), configurationManager.getDataSourcePassword(), openbisURL)
+            openbisClient.login();
+            
+            projectMainConnector = new ProjectMainConnector(projectDbConnector, openbisClient)
 
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
@@ -289,6 +308,13 @@ class DependencyManager {
             this.maintainProductsViewModel = new MaintainProductsViewModel(productsResourcesService)
         }catch (Exception e) {
             log.error("Unexpected excpetion during ${MaintainProductsViewModel.getSimpleName()} view model setup.", e)
+        }
+
+        try {
+                this.createProjectModel = new CreateProjectViewModel()
+        }catch (Exception e) {
+            log.error("Unexpected excpetion during ${CreateProjectViewModel.getSimpleName()} view model" +
+                    " setup.", e)
         }
     }
 
@@ -463,9 +489,17 @@ class DependencyManager {
             throw e
         }
 
+        CreateProjectView createProjectView
+        try{
+            createProjectView = new CreateProjectView(createProjectModel)
+        } catch (Exception e) {
+            log.error("Could not create ${CreateProjectView.getSimpleName()} view.", e)
+            throw e
+        }
+
         OfferOverviewView overviewView
         try {
-            overviewView = new OfferOverviewView(offerOverviewModel, offerOverviewController)
+            overviewView = new OfferOverviewView(offerOverviewModel, offerOverviewController, createProjectView)
         } catch (Exception e) {
             log.error("Could not create ${OfferOverviewView.getSimpleName()} view.", e)
             throw e
@@ -524,7 +558,8 @@ class DependencyManager {
                     overviewView,
                     updateOfferView,
                     searchPersonView,
-                    maintainProductsView
+                    maintainProductsView,
+                    createProjectView
             )
             this.portletView = portletView
         } catch (Exception e) {
