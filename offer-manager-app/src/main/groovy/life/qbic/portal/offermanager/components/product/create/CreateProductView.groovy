@@ -6,6 +6,7 @@ import com.vaadin.data.ValueContext
 import com.vaadin.data.validator.RegexpValidator
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
+import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.HorizontalLayout
@@ -56,10 +57,16 @@ class CreateProductView extends HorizontalLayout{
 
         //add textfields and boxes
         HorizontalLayout sharedLayout = new HorizontalLayout(productUnitPriceField,productUnitComboBox)
+        sharedLayout.setWidthFull()
         HorizontalLayout buttons = new HorizontalLayout(abortButton,createProductButton)
-        VerticalLayout sideLayout = new VerticalLayout(label,productNameField,productDescriptionField,sharedLayout,productCategoriesComboBox,buttons)
 
+        VerticalLayout sideLayout = new VerticalLayout(label,productNameField,productDescriptionField,sharedLayout,productCategoriesComboBox,buttons)
         sideLayout.setSizeFull()
+        sideLayout.setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT)
+
+        this.setMargin(false)
+        this.setSpacing(false)
+        this.setSizeFull()
 
         this.addComponents(sideLayout)
     }
@@ -78,6 +85,7 @@ class CreateProductView extends HorizontalLayout{
         productUnitPriceField = new TextField("Product Unit Price")
         productUnitPriceField.setPlaceholder("00.00")
         productUnitPriceField.setRequiredIndicatorVisible(true)
+        productUnitPriceField.setWidthFull()
     }
 
     private void initComboBoxes(){
@@ -86,12 +94,14 @@ class CreateProductView extends HorizontalLayout{
         productUnitComboBox.setPlaceholder("Select Product Unit")
         productUnitComboBox.setEmptySelectionAllowed(false)
         productUnitComboBox.setItems(Arrays.asList(ProductUnit.values()) as List<String>)
+        productUnitComboBox.setWidthFull()
 
         productCategoriesComboBox = new ComboBox<>("Product Category")
         productCategoriesComboBox.setRequiredIndicatorVisible(true)
         productCategoriesComboBox.setPlaceholder("Select Product Category")
         productCategoriesComboBox.setEmptySelectionAllowed(false)
         productCategoriesComboBox.setItems(Arrays.asList(ProductCategory.values()) as List<String>)
+        productCategoriesComboBox.setWidthFull()
     }
 
     private void initButtons(){
