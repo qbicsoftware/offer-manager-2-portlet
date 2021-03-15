@@ -47,10 +47,11 @@ class MaintainProductsController {
      * @param unit The unit in which the product is measured
      */
     void createNewProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit){
-        try{
+        try {
             Product product = ProductConverter.createProduct(category, description, name, unitPrice, unit)
             createProductInput.create(product)
-        }catch(Exception ignored){
+        } catch (Exception unexpected) {
+            log.error("unexpected exception at call of create product", unexpected)
             throw new IllegalArgumentException("Could not create product from provided arguments.")
         }
     }
