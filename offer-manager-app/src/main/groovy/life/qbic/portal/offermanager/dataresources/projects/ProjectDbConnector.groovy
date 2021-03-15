@@ -2,12 +2,17 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 
+package life.qbic.portal.offermanager.dataresources.projects
+
+import groovy.util.logging.Log4j2
+
+import life.qbic.datamodel.dtos.general.Person
+
+import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.projectmanagement.*
+import life.qbic.business.projects.create.ProjectExistsException
 
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
@@ -72,16 +77,23 @@ class ProjectDbConnector {
     return projects
   }
 
+  /**
+   * Add project to the user database to connect additional metadata that is not stored in openBIS
+   * The project is uniquely recognizable by its openBIS project identifier, containing space and
+   * project code
+   * @param projectIdentifier a project identifier object denoting the openBIS identifier
+   * @param projectApplication a project application object used to add additional metadata
+   */
   public Project addProjectAndConnectPersonsInUserDB(projectIdentifier, projectApplication) {
     //collect infos needed for database
     String projectTitle = projectApplication.getProjectTitle()
     Customer customer = projectApplication.getCustomer()
     ProjectManager projectManager = projectApplication.getProjectManager()
-
+    
     //fetch needed person ids from database
     int customerID = personDBConnector.getPersonId(customer)
     int managerID = personDBConnector.getPersonId(projectManager)
-
+  
     Connection connection = connectionProvider.connect()
     connection.setAutoCommit(false)
 
@@ -97,57 +109,52 @@ class ProjectDbConnector {
         log.error(e.message)
         log.error(e.stackTrace.join("\n"))
         it.rollback()
-        it.close() //is this needed?
+
         throw new DatabaseQueryException("Could not add person and project data to user database.")
       }
     }
   return new Project(projectIdentifier, projectTitle, projectApplication.getLinkedOffer())
  }
 
-  private int isProjectInDB(String projectIdentifier) {
-    log.info("Looking for project " + projectIdentifier + " in the DB");
+  private boolean isProjectInDB(String projectIdentifier) {
+    log.debug("Looking for project " + projectIdentifier + " in the DB");
     String sql = "SELECT * from projects WHERE openbis_project_identifier = ?";
-    int res = -1;
     Connection connection = connectionProvider.connect()
     connection.withCloseable { it ->
       PreparedStatement statement = it.prepareStatement(sql);
       statement.setString(1, projectIdentifier);
       ResultSet rs = statement.executeQuery();
       if (rs.next()) {
-        res = rs.getInt("id");
+        return true
       }
     }
-    return res;
+    return false;
   }
 
-  public int addProjectToDB(Connection connection, String projectIdentifier, String projectName) {
-    int exists = isProjectInDB(projectIdentifier);
-    if (exists < 0) {
-      log.info("Trying to add project " + projectIdentifier + " to the person DB");
-      String sql = "INSERT INTO projects (openbis_project_identifier, short_title) VALUES(?, ?)";
-      try (PreparedStatement statement =
-      connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-        statement.setString(1, projectIdentifier);
-        statement.setString(2, projectName);
-        statement.execute();
-        ResultSet rs = statement.getGeneratedKeys();
-        if (rs.next()) {
-          logout(conn);
-          log.info("Successful.");
-          return rs.getInt(1);
-        }
-      } catch (Exception e) {
-        log.error("SQL operation unsuccessful: " + e.getMessage());
-        e.printStackTrace();
-      }
-      return -1;
+  private int addProjectToDB(Connection connection, String projectIdentifier, String projectName) {
+    if(isProjectInDB(projectIdentifier)) {
+      throw new ProjectExistsException("Project "+projectIdentifier+" is already in the user database")
     }
-    return exists;
+    log.debug("Trying to add project " + projectIdentifier + " to the person DB");
+    String sql = "INSERT INTO projects (openbis_project_identifier, short_title) VALUES(?, ?)";
+    try (PreparedStatement statement =
+    connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+      statement.setString(1, projectIdentifier);
+      statement.setString(2, projectName);
+      statement.execute();
+      ResultSet rs = statement.getGeneratedKeys();
+      if (rs.next()) {
+        logout(conn);
+        log.debug("Successful.");
+        return rs.getInt(1);
+      }
+    }
+    return -1
   }
 
-  public void addPersonToProject(Connection connection, int projectID, int personID, String role) {
+  private void addPersonToProject(Connection connection, int projectID, int personID, String role) {
     if (!hasPersonRoleInProject(personID, projectID, role)) {
-      log.info("Trying to add person with role " + role + " to a project.");
+      log.debug("Trying to add person with role " + role + " to a project.");
       String sql =
       "INSERT INTO projects_persons (project_id, person_id, project_role) VALUES(?, ?, ?)";
       try (PreparedStatement statement =
@@ -156,7 +163,7 @@ class ProjectDbConnector {
         statement.setInt(2, personID);
         statement.setString(3, role);
         statement.execute();
-        log.info("Successful.");
+        log.debug("Successful.");
       } catch (Exception e) {
         log.error("SQL operation unsuccessful: " + e.getMessage());
         e.printStackTrace();
@@ -164,7 +171,7 @@ class ProjectDbConnector {
     }
   }
 
-  public boolean hasPersonRoleInProject(int personID, int projectID, String role) {
+  private boolean hasPersonRoleInProject(int personID, int projectID, String role) {
     logger.info("Checking if person already has this role in the project.");
     String sql =
         "SELECT * from projects_persons WHERE person_id = ? AND project_id = ? and project_role = ?";
