@@ -46,6 +46,7 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
    */
   private final ProjectDbConnector projectDbConnector
   private final OpenBisClient openbisClient
+  private List<ProjectSpace> openbisSpaces
 
   /**
 
@@ -56,14 +57,21 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
   ProjectMainConnector(ProjectDbConnector projectDbConnector, OpenBisClient openbisClient) {
     this.projectDbConnector = projectDbConnector
     this.openbisClient = openbisClient
+    fetchExistingSpaces()
   }
   
-  public List<ProjectSpace> listSpaces() {
-    List<ProjectSpace> res = new ArrayList<>()
+  private void fetchExistingSpaces() {
+    this.openbisSpaces = new ArrayList<>()
     for(String spaceName : openbisClient.listSpaces()) {
-      res.add(new ProjectSpace(spaceName))
+      this.openbisSpaces.add(new ProjectSpace(spaceName))
     }
-    return res
+  }
+  
+  /**
+   * Returns a copy of the list of available project spaces that has been fetched from openBIS upon creation of this class instance
+   */
+  public List<ProjectSpace> listSpaces() {
+    return new ArrayList<ProjectSpace>(openbisSpaces);
   }
 
   @Override
