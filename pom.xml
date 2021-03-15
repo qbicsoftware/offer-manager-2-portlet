@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -23,7 +22,7 @@
 		<groovy.version>3.0.7</groovy.version>
 
 		<vaadin.version>8.12.0</vaadin.version>
-		<vaadin.plugin.version>8.12.0</vaadin.plugin.version>
+		<vaadin.plugin.version>19.0.1</vaadin.plugin.version>
 	</properties>
 	<pluginRepositories>
 		<pluginRepository>
@@ -61,7 +60,8 @@
 			<url>localhost:8080</url>
 		</site>
 	</distributionManagement>
-	<!-- we only need to tell maven where to find our parent pom and other QBiC dependencies -->
+	<!-- we only need to tell maven where to find our parent pom and other QBiC 
+		dependencies -->
 	<repositories>
 		<repository>
 			<releases>
@@ -111,6 +111,11 @@
 	</repositories>
 	<dependencyManagement>
 		<dependencies>
+			<dependency>
+				<groupId>life.qbic</groupId>
+				<artifactId>openbis-client-lib</artifactId>
+				<version>1.5.0</version>
+			</dependency>
 			<dependency>
 				<groupId>life.qbic</groupId>
 				<artifactId>data-model-lib</artifactId>
@@ -243,20 +248,12 @@
 						<artifactId>jetty-maven-plugin</artifactId>
 						<version>9.4.32.v20200930</version>
 						<configuration>
-							<!-- Jetty's hot deploy enabled has been enabled by default!
-
-                 If you want to disable jetty's hot deploy feature, activate the 'jetty-cold-deploy' profile
-                 via the command line:
-
-                 mvn -P jetty-cold-deploy
-
-                  Or, alternatively, you can change your settings.xml to permanently activate this profile.
-
-                  For more information on how to permanently activate a property,
-                  see: https://maven.apache.org/settings.html#Profiles
-
-                  For more information about the origin of this long comment, see:
-                  https://github.com/qbicsoftware/parent-poms/issues/4 -->
+							<!-- Jetty's hot deploy enabled has been enabled by default! If you 
+								want to disable jetty's hot deploy feature, activate the 'jetty-cold-deploy' 
+								profile via the command line: mvn -P jetty-cold-deploy Or, alternatively, 
+								you can change your settings.xml to permanently activate this profile. For 
+								more information on how to permanently activate a property, see: https://maven.apache.org/settings.html#Profiles 
+								For more information about the origin of this long comment, see: https://github.com/qbicsoftware/parent-poms/issues/4 -->
 							<scanIntervalSeconds>2</scanIntervalSeconds>
 							<useProvidedScope>true</useProvidedScope>
 							<stopPort>8005</stopPort>
@@ -286,8 +283,7 @@
 			</build>
 		</profile>
 		<profile>
-			<!-- For more information about the origin of this profile, see:
-         https://github.com/qbicsoftware/parent-poms/issues/4 -->
+			<!-- For more information about the origin of this profile, see: https://github.com/qbicsoftware/parent-poms/issues/4 -->
 			<id>jetty-cold-deploy</id>
 			<properties>
 				<jetty.scanIntervalSeconds>0</jetty.scanIntervalSeconds>
