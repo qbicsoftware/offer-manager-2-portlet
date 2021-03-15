@@ -389,8 +389,7 @@ class OfferToPDFConverter implements OfferExporter {
 
         static String subTableFooter(ProductGroups productGroup){
 
-            String footerTitle
-            footerTitle = productGroup.getName()
+            String footerTitle = productGroup.getName()
 
             return """<div id="grid-sub-total-footer">
                                      <div class="row sub-total-costs" id = "offer-sub-total">
