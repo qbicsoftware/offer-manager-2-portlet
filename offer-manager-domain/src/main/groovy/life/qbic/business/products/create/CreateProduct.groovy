@@ -1,5 +1,8 @@
 package life.qbic.business.products.create
 
+import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import life.qbic.datamodel.dtos.business.services.Product
 
 /**
@@ -13,13 +16,26 @@ import life.qbic.datamodel.dtos.business.services.Product
  *
  */
 class CreateProduct implements CreateProductInput {
-    @Override
-    void create(Product product) {
+    private final CreateProductDataSource dataSource
+    private final CreateProductOutput output
+    private static final Logging log = Logger.getLogger(this.class)
 
+    CreateProduct(CreateProductDataSource dataSource, CreateProductOutput output) {
+        this.dataSource = dataSource
+        this.output = output
     }
 
     @Override
-    void createDuplicate(Product product) {
-
+    void create(Product product) {
+        try {
+            dataSource.store(product)
+            output.created(product)
+        } catch(DatabaseQueryException databaseQueryException) {
+            log.error("Product creation failed", databaseQueryException)
+            output.failNotification("Could not create product $product.productName with id $product.productId")
+        } catch(ProductExistsException productExistsException) {
+            log.warn("Product \"$product.productName\" already existed.", productExistsException)
+            output.foundDuplicate(product)
+        }
     }
 }
