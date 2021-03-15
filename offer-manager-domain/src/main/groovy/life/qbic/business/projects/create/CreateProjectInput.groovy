@@ -1,6 +1,7 @@
 package life.qbic.business.projects.create
 
 import life.qbic.datamodel.dtos.business.ProjectApplication
+
 /**
  * <h1>Input interface for the <span>Create Project</span> use case.</h1>
  *
