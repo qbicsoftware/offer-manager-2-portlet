@@ -38,8 +38,18 @@ class Logger {
         }
 
         @Override
+        void info(String message, Throwable cause) {
+            this.logger.info(message, cause)
+        }
+
+        @Override
         void warn(String message) {
             this.logger.warn(message)
+        }
+
+        @Override
+        void warn(String message, Throwable cause) {
+            this.logger.warn(message, cause)
         }
 
         @Override
@@ -48,8 +58,18 @@ class Logger {
         }
 
         @Override
+        void error(String message, Throwable cause) {
+            this.logger.error(message, cause)
+        }
+
+        @Override
         void debug(String message) {
             this.logger.debug(message)
+        }
+
+        @Override
+        void debug(String message, Throwable cause) {
+            this.logger.debug(message, cause)
         }
     }
 
