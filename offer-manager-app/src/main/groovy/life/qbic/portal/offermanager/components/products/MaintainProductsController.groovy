@@ -27,6 +27,7 @@ class MaintainProductsController {
 
     private final CreateProductInput createProductInput
     private final ArchiveProductInput archiveProductInput
+    private static final Logging log = Logger.getLogger(this.class)
 
     MaintainProductsController(CreateProductInput createProductInput,
                                ArchiveProductInput archiveProductInput){
@@ -47,7 +48,8 @@ class MaintainProductsController {
         try {
             Product product = ProductConverter.createProduct(category, description, name, unitPrice, unit)
             createProductInput.create(product)
-        } catch (Exception ignored) {
+        } catch (Exception unexpected) {
+            log.error("unexpected exception during create product call", unexpected)
             throw new IllegalArgumentException("Could not create products from provided arguments.")
         }
     }
@@ -59,7 +61,8 @@ class MaintainProductsController {
     void archiveProduct(ProductId productId){
         try{
             archiveProductInput.archive(productId)
-        }catch(Exception ignored){
+        }catch(Exception unexpected){
+            log.error("unexpected exception at archive product call", unexpected)
             throw new IllegalArgumentException("Could not create products from provided arguments.")
         }
     }
