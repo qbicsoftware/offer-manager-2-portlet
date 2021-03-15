@@ -379,8 +379,7 @@ class OfferToPDFConverter implements OfferExporter {
 
         static String tableTitle(ProductGroups productGroup){
 
-            String tableTitle
-            tableTitle = productGroup.getName()
+            String tableTitle= productGroup.getName()
 
 
             return """<div class = "small-spacer"</div>
