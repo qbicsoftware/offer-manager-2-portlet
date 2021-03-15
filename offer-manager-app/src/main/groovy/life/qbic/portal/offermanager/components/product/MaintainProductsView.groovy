@@ -69,7 +69,7 @@ class MaintainProductsView extends FormLayout{
     private void setupTitle(){
         Label label = new Label("Service Product Maintenance")
         label.setStyleName(ValoTheme.LABEL_HUGE)
-        maintenanceLayout.addComponent(label)
+        maintenanceLayout.addComponent(label,0)
     }
 
     private void createButtons(){
