@@ -228,13 +228,14 @@ class OfferToPDFConverter implements OfferExporter {
         double overheadSum = calculateOverheadSum(productItems)
         double totalSum = netSum + overheadSum
 
-        final totalPrice = Currency.getFormatterWithoutSymbol().format(totalSum)
-        final overheadPrice = Currency.getFormatterWithoutSymbol().format(overheadSum)
         final netPrice = Currency.getFormatterWithoutSymbol().format(netSum)
+        final overheadPrice = Currency.getFormatterWithoutSymbol().format(overheadSum)
+        final totalPrice = Currency.getFormatterWithoutSymbol().format(totalSum)
 
-        htmlContent.getElementById("${productGroup}-total-costs-value").text(totalPrice)
         htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
         htmlContent.getElementById("${productGroup}-overhead-costs-value").text(overheadPrice)
+        htmlContent.getElementById("${productGroup}-total-costs-value").text(totalPrice)
+
     }
 
     void setTotalPrices() {
@@ -428,11 +429,7 @@ class OfferToPDFConverter implements OfferExporter {
             String footerTitle = productGroup.getName()
 
             return """<div id="grid-sub-total-footer">
-                                     <div class="row sub-total-costs" id = "${productGroup}-sub-total">
-                                         <div class="col-6"></div> 
-                                         <div class="col-10 cost-summary-field">Estimated total (${footerTitle}):</div>
-                                         <div class="col-2 price-value" id="${productGroup}-total-costs-value">12345</div>
-                                         </div>
+                                      <div class="col-6"></div> 
                                      <div class="row sub-total-costs" id = "${productGroup}-sub-net">
                                          <div class="col-10 cost-summary-field">Estimated net (${footerTitle}):</div>
                                          <div class="col-2 price-value" id="${productGroup}-net-costs-value">12345</div>
@@ -441,6 +438,10 @@ class OfferToPDFConverter implements OfferExporter {
                                          <div class="col-10 cost-summary-field">Estimated overhead (${footerTitle}):</div>
                                          <div class="col-2 price-value" id="${productGroup}-overhead-costs-value">12345</div>
                                      </div>
+                                          <div class="row sub-total-costs" id = "${productGroup}-sub-total">
+                                          <div class="col-10 cost-summary-field">Estimated total (${footerTitle}):</div>
+                                         <div class="col-2 price-value" id="${productGroup}-total-costs-value">12345</div>
+                                         </div>
                                  </div>
                                  """
         }
