@@ -6,9 +6,11 @@ import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
+import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
+
 import life.qbic.portal.offermanager.security.Role
 import life.qbic.portal.offermanager.security.RoleService
 
@@ -32,7 +34,7 @@ class AppView extends VerticalLayout {
     private final List<Component> featureViews
     private final OfferOverviewView overviewView
     private final SearchPersonView searchPersonView
-
+    private final CreateProjectView createProjectView
     private final CreateOfferView updateOfferView
 
     AppView(AppViewModel portletViewModel,
@@ -41,7 +43,8 @@ class AppView extends VerticalLayout {
             CreateOfferView createOfferView,
             OfferOverviewView overviewView,
             CreateOfferView updateOfferView,
-            SearchPersonView searchPersonView) {
+            SearchPersonView searchPersonView,
+            CreateProjectView createProjectView) {
         super()
         this.portletViewModel = portletViewModel
         this.createCustomerView = createCustomerView
@@ -51,6 +54,7 @@ class AppView extends VerticalLayout {
         this.overviewView = overviewView
         this.updateOfferView = updateOfferView
         this.searchPersonView = searchPersonView
+        this.createProjectView = createProjectView
 
         initLayout()
         registerListeners()
@@ -71,7 +75,8 @@ class AppView extends VerticalLayout {
                 createOfferView,
                 overviewView,
                 updateOfferView,
-                searchPersonView
+                searchPersonView,
+                createProjectView
         ])
     }
 
@@ -98,6 +103,7 @@ class AppView extends VerticalLayout {
         verticalLayout.addComponent(this.overviewView)
         verticalLayout.addComponent(this.updateOfferView)
         verticalLayout.addComponent(this.searchPersonView)
+        verticalLayout.addComponent(this.createProjectView)
 
         this.setSizeFull()
         this.addComponent(verticalLayout)
