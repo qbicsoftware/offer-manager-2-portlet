@@ -31,7 +31,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi;
 /**
  * Provides operations on QBiC project data
  *
- * This class implements the data sources of the different use cases and is responsible for transferring data to the customer db and openBIS
+ * This class implements the data sources of the different use cases and is responsible for transferring data to the project/customer db and openBIS
  *
  * @since: 1.0.0
  *
@@ -40,14 +40,15 @@ import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi;
 class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpaceDataSource {
 
   /**
-   * A connection to the customer database used to create queries.
+   * A connection to the project (and customer) database used to create queries.
    */
   private final ProjectDbConnector projectDbConnector
   private final OpenBisClient openbisClient
 
   /**
-   * Constructor for a ProjectOpenBisAndDBConnector
-   * @param connection a connection to the customer db
+   * Constructor for a ProjectMainConnector
+   * @param projectDbConnector a connector enabling interaction with the project database
+   * @param openbisClient an openBIS client API object
    * 
    * @see Connection
    */
