@@ -83,6 +83,28 @@ class OfferToPDFConverter implements OfferExporter {
                     .getResource("offer-template/stylesheet.css")
                     .toURI())
 
+    /**
+     * Possible product groups
+     *
+     * This enum describes the product groups into which the products of an offer are listed.
+     *
+     */
+    enum ProductGroups {
+        DATA_GENERATION("Data generation"),
+        DATA_ANALYSIS("Data analysis"),
+        DATA_MANAGEMENT("Project management and data storage")
+
+        private String name
+
+        ProductGroups(String name) {
+            this.name = name;
+        }
+
+        String getName() {
+            return this.name;
+        }
+    }
+
     OfferToPDFConverter(Offer offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.tempDir = Files.createTempDirectory("offer")
@@ -223,7 +245,7 @@ class OfferToPDFConverter implements OfferExporter {
 
     Map groupItems(List<ProductItem> productItems) {
 
-        def productItemsMap = [:]
+        Map<ProductGroups, List<ProductItem>> productItemsMap = [:]
 
         List<ProductItem> dataGenerationItems = []
         List<ProductItem> dataAnalysisItems = []
@@ -244,22 +266,22 @@ class OfferToPDFConverter implements OfferExporter {
         }
 
             //Map Lists to the "DataGeneration", "DataAnalysis" and "Project and Data Management"
-            productItemsMap.dataGeneration = dataGenerationItems
-            productItemsMap.dataAnalysis = dataAnalysisItems
-            productItemsMap.dataManagement= dataManagementItems
+            productItemsMap[ProductGroups.DATA_GENERATION] = dataGenerationItems
+            productItemsMap[ProductGroups.DATA_ANALYSIS] = dataAnalysisItems
+            productItemsMap[ProductGroups.DATA_MANAGEMENT] = dataManagementItems
 
             return productItemsMap
         }
 
     void generateProductTable(Map productItemsMap, int maxTableItems) {
         // Create the items in html in the overview table
-        productItemsMap.each { productGroup, items ->
+        productItemsMap.each {ProductGroups productGroup, List<ProductItem> items ->
             //Check if there are ProductItems stored in map entry
             if(items){
                 def elementId = "product-items" + "-" + tableCount
                 //Append Table Title
-                htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup.toString()))
-                items.eachWithIndex { item, itemPos ->
+                htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
+                items.eachWithIndex {ProductItem item, int itemPos ->
                     //start (next) table and add Product to it
                     if (tableItemsCount >= maxTableItems) {
                         ++tableCount
@@ -268,9 +290,12 @@ class OfferToPDFConverter implements OfferExporter {
                         tableItemsCount = 1
                     }
                     //add product to current table
-                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemPos, item as ProductItem))
+                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemPos, item))
                     tableItemsCount++
                 }
+                //add subtotal footer to table
+                htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
+                tableItemsCount++
             }
         }
     }
@@ -352,23 +377,36 @@ class OfferToPDFConverter implements OfferExporter {
                              """
         }
 
-        static String tableTitle(String productGroup){
+        static String tableTitle(ProductGroups productGroup){
 
-            String tableTitle = ""
+            String tableTitle= productGroup.getName()
 
-            if (productGroup == "dataGeneration"){
-                tableTitle = "Data Generation"
-            }
-            if (productGroup == "dataAnalysis"){
-                tableTitle = "Data Analysis"
-            }
-            if (productGroup == "dataManagement"){
-                tableTitle = "Data Management"
-            }
 
             return """<div class = "small-spacer"</div>
                     <h3>${tableTitle}</h3>
                    """
+        }
+
+        static String subTableFooter(ProductGroups productGroup){
+
+            String footerTitle = productGroup.getName()
+
+            return """<div id="grid-sub-total-footer">
+                                     <div class="row sub-total-costs" id = "offer-sub-total">
+                                         <div class="col-6"></div> 
+                                         <div class="col-10 cost-summary-field">Estimated total (${footerTitle}):</div>
+                                         <div class="col-2 price-value" id="sub-total-costs-value">12345</div>
+                                         </div>
+                                     <div class="row sub-total-costs" id = "offer-sub-net">
+                                         <div class="col-10 cost-summary-field">Estimated net (${footerTitle}):</div>
+                                         <div class="col-2 price-value" id="sub-net-costs-value">12345</div>
+                                     </div>
+                                     <div class="row sub-total-costs" id ="offer-sub-overhead">
+                                         <div class="col-10 cost-summary-field">Estimated overhead (${footerTitle}):</div>
+                                         <div class="col-2 price-value" id="sub-overhead-costs-value">12345</div>
+                                     </div>
+                                 </div>
+                                 """
         }
 
         static String tableFooter(){
