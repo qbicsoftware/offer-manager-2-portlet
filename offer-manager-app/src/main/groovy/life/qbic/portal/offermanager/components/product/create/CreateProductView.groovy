@@ -48,6 +48,7 @@ class CreateProductView extends HorizontalLayout{
         initLayout()
         bindViewModel()
         setupFieldValidators()
+        setupListeners()
     }
 
     private void initLayout(){
@@ -268,6 +269,28 @@ class CreateProductView extends HorizontalLayout{
             && createProductViewModel.productUnitValid \
             && createProductViewModel.productUnitPriceValid \
             && createProductViewModel.productCategoriesValid
+    }
+
+    private void setupListeners(){
+        abortButton.addClickListener({ clearAllFields() })
+    }
+
+    /**
+     *  Clears User Input from all fields in the Create Products View and reset validation status of all Fields
+     */
+    private void clearAllFields() {
+
+        productNameField.clear()
+        productDescriptionField.clear()
+        productUnitPriceField.clear()
+        productCategoriesComboBox.selectedItem = productCategoriesComboBox.clear()
+        productUnitComboBox.selectedItem = productUnitComboBox.clear()
+
+        createProductViewModel.productNameValid = null
+        createProductViewModel.productDescriptionValid = null
+        createProductViewModel.productUnitPriceValid = null
+        createProductViewModel.productCategoriesValid = null
+        createProductViewModel.productUnitValid = null
     }
 
 }
