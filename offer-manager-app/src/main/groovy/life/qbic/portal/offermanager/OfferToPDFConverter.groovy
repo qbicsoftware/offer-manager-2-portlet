@@ -415,8 +415,7 @@ class OfferToPDFConverter implements OfferExporter {
 
         static String tableTitle(ProductGroups productGroup){
 
-            String tableTitle
-            tableTitle = productGroup.getName()
+            String tableTitle= productGroup.getName()
 
 
             return """<div class = "small-spacer"</div>
@@ -426,8 +425,7 @@ class OfferToPDFConverter implements OfferExporter {
 
         static String subTableFooter(ProductGroups productGroup){
 
-            String footerTitle
-            footerTitle = productGroup.getName()
+            String footerTitle = productGroup.getName()
 
             return """<div id="grid-sub-total-footer">
                                      <div class="row sub-total-costs" id = "${productGroup}-sub-total">
@@ -456,7 +454,7 @@ class OfferToPDFConverter implements OfferExporter {
                                      <div class="row total-costs" id = "offer-net">
                                          <div class="col-6"></div>
                                          <div class="col-4 cost-summary-field">Estimated total (net):</div>
-                                         <div class="col-2 price-value" id="total-cost-value-net">3</div>
+                                         <div class="col-2 price-value" id="total-cost-value-net">12,500.00</div>
                                          </div>
                                       <div class="row total-costs" id = "offer-overhead">
                                          <div class="col-10 cost-summary-field">Overhead total (${overheadPercentage}):</div>
