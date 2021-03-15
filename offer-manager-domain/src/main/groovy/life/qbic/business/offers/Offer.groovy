@@ -94,8 +94,8 @@ class Offer {
     private double overhead
 
     /**
-    * Holds the determined overhead ratio derived from the
-    * customer's affiliation.
+    * The overhead ratio that is applied to calculate the total offer price. The ratio is chosen
+    * based on the customer's affiliation.
     */
     private double overheadRatio
 
