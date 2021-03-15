@@ -159,6 +159,11 @@ class MaintainProductsView extends FormLayout{
             createProductView.setVisible(true)
         })
 
+        createProductView.abortButton.addClickListener({
+            maintenanceLayout.setVisible(true)
+            createProductView.setVisible(false)
+        })
+
         copyProduct.addClickListener({
             maintenanceLayout.setVisible(false)
             copyProduct.setVisible(true)

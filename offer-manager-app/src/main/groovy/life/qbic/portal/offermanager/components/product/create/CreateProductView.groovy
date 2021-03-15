@@ -159,7 +159,7 @@ class CreateProductView extends HorizontalLayout{
         })
 
         /*
-       we listen to the valid properties. whenever the presenter resets values in the viewmodel
+       We listen to the valid properties. whenever the presenter resets values in the viewmodel
        and resets the valid properties the component error on the respective component is removed
        */
         createProductViewModel.addPropertyChangeListener({
