@@ -30,7 +30,7 @@ class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOu
 
     @Override
     void created(Product product) {
-        mainViewModel.successNotifications << "Successfully added new products $product.productId - $product.productName."
+        mainViewModel.successNotifications << "Successfully added new product $product.productId - $product.productName."
     }
 
     @Override
