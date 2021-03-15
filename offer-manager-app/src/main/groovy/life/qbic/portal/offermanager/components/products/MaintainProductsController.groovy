@@ -73,7 +73,7 @@ class MaintainProductsController {
          * Creates a product DTO based on its products category
          *
          * @param category The products category which determines what kind of products is created
-         * @param description The description of the products
+         * @param description The description of the product
          * @param name The name of the products
          * @param unitPrice The unit price of the products
          * @param unit The unit in which the products is measured
