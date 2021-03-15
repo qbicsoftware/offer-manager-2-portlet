@@ -21,6 +21,7 @@ import life.qbic.portal.offermanager.components.product.MaintainProductsView
 import life.qbic.portal.offermanager.components.product.MaintainProductsViewModel
 import life.qbic.portal.offermanager.components.product.archive.ArchiveProductView
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
+import life.qbic.portal.offermanager.components.product.create.CreateProductViewModel
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -84,6 +85,7 @@ class DependencyManager {
     private SearchPersonViewModel searchPersonViewModel
     private CreatePersonViewModel createCustomerViewModelNewOffer
     private MaintainProductsViewModel maintainProductsViewModel
+    private CreateProductViewModel createProductViewModel
     private CreateProjectViewModel createProjectModel
 
     private AppPresenter presenter
@@ -294,6 +296,13 @@ class DependencyManager {
         }catch (Exception e) {
             log.error("Unexpected excpetion during ${MaintainProductsViewModel.getSimpleName()} view model setup.", e)
         }
+
+        try {
+            this.createProductViewModel = new CreateProductViewModel()
+        }catch (Exception e) {
+            log.error("Unexpected excpetion during ${CreateProductViewModel.getSimpleName()} view model setup.", e)
+        }
+
         try{
             this.createProjectModel = new CreateProjectViewModel()
         }catch (Exception e) {
@@ -499,7 +508,7 @@ class DependencyManager {
 
         CreateProductView createProductView
         try{
-            createProductView = new CreateProductView(maintainProductsViewModel)
+            createProductView = new CreateProductView(createProductViewModel)
         }catch(Exception e){
             log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
             throw e

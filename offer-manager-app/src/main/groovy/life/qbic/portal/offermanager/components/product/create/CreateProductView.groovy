@@ -1,6 +1,10 @@
 package life.qbic.portal.offermanager.components.product.create
 
+import com.vaadin.data.ValidationResult
+import com.vaadin.data.Validator
+import com.vaadin.data.ValueContext
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.server.UserError
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.HorizontalLayout
@@ -10,7 +14,6 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.portal.offermanager.components.product.MaintainProductsViewModel
 
 /**
  * <h1>This view serves the user to create a new service product</h1>
@@ -22,7 +25,7 @@ import life.qbic.portal.offermanager.components.product.MaintainProductsViewMode
 */
 class CreateProductView extends HorizontalLayout{
 
-    private final MaintainProductsViewModel viewModel
+    private final CreateProductViewModel viewModel
 
     TextField productName
     TextField productDescription
@@ -34,7 +37,7 @@ class CreateProductView extends HorizontalLayout{
     Button createProduct
     Button abort
 
-    CreateProductView(MaintainProductsViewModel viewModel){
+    CreateProductView(CreateProductViewModel viewModel){
 
         this.viewModel = viewModel
 
@@ -42,8 +45,8 @@ class CreateProductView extends HorizontalLayout{
         initComboBoxes()
         initButtons()
         initLayout()
-        addListeners()
-        setupFieldValidator()
+        //bindViewModel()
+        //setupFieldValidator()
     }
 
     private void initLayout(){
@@ -55,6 +58,8 @@ class CreateProductView extends HorizontalLayout{
         HorizontalLayout sharedLayout = new HorizontalLayout(productUnitPrice,productUnit)
         HorizontalLayout buttons = new HorizontalLayout(abort,createProduct)
         VerticalLayout sideLayout = new VerticalLayout(label,productName,productDescription,sharedLayout,productCategories,buttons)
+
+        sideLayout.setSizeFull()
 
         this.addComponents(sideLayout)
     }
@@ -68,11 +73,11 @@ class CreateProductView extends HorizontalLayout{
         productDescription = new TextField("Product Description")
         productDescription.setPlaceholder("Product Description")
         productDescription.setRequiredIndicatorVisible(true)
-        productName.setWidthFull()
+        productDescription.setWidthFull()
 
         productUnitPrice = new TextField("Product Unit Price")
-        productDescription.setPlaceholder("00.00")
-        productDescription.setRequiredIndicatorVisible(true)
+        productUnitPrice.setPlaceholder("00.00")
+        productUnitPrice.setRequiredIndicatorVisible(true)
     }
 
     private void initComboBoxes(){
@@ -95,78 +100,55 @@ class CreateProductView extends HorizontalLayout{
     }
 
     private void bindViewModel(){
-        /**this.titleField.addValueChangeListener({this.createPersonViewModel.academicTitle = it.value })
-        createPersonViewModel.addPropertyChangeListener("academicTitle", {
+        //bind all textfields
+        this.productName.addValueChangeListener({this.viewModel.productName = it.value })
+
+        viewModel.addPropertyChangeListener("productName", {
             String newValue = it.newValue as String
-            titleField.value = newValue ?: titleField.emptyValue
+            productName.value = newValue ?: productName.emptyValue
         })
 
-        createPersonViewModel.addPropertyChangeListener("affiliation", {
-            Affiliation newValue = it.newValue as Affiliation
+        this.productDescription.addValueChangeListener({this.viewModel.productDescription = it.value })
+
+        viewModel.addPropertyChangeListener("productDescription", {
+            String newValue = it.newValue as String
+            productDescription.value = newValue ?: productDescription.emptyValue
+        })
+
+        this.productUnitPrice.addValueChangeListener({
+            if(it.value.isNumber()){
+                this.viewModel.productUnitPrice = Double.parseDouble(it.value)
+            }
+            else{
+                def label = new Label("Please enter a number")
+                label.setStyleName(ValoTheme.LABEL_FAILURE)
+                this.addComponent(label)
+            }
+        })
+
+        viewModel.addPropertyChangeListener("productUnitPrice", {
+            String newValue = it.newValue as String
+            productUnitPrice.value = newValue ?: productUnitPrice.emptyValue
+        })
+
+        //bind combo boxes
+        viewModel.addPropertyChangeListener("productUnit", {
+            ProductUnit newValue = it.newValue as ProductUnit
             if (newValue) {
-                affiliationComboBox.value = newValue
-                refreshAddressAdditions()
-                addressAdditionComboBox.value = newValue
+                productUnit.value = newValue
             } else {
-                affiliationComboBox.value = affiliationComboBox.emptyValue
-                addressAdditionComboBox.value = addressAdditionComboBox.emptyValue
+                productUnit.value = productUnit.emptyValue
             }
         })
-        /*
-        we listen to the valid properties. whenever the presenter resets values in the viewmodel
-        and resets the valid properties the component error on the respective component is removed
-        */
-        /**
-        createPersonViewModel.addPropertyChangeListener({it ->
-            switch (it.propertyName) {
-                case "academicTitleValid":
-                    if (it.newValue || it.newValue == null) {
-                        titleField.componentError = null
-                    }
-                    break
-                case "firstNameValid":
-                    if (it.newValue || it.newValue == null) {
-                        firstNameField.componentError = null
-                    }
-                    break
-                case "lastNameValid":
-                    if (it.newValue || it.newValue == null) {
-                        lastNameField.componentError = null
-                    }
-                    break
-                case "emailValid":
-                    if (it.newValue || it.newValue == null) {
-                        emailField.componentError = null
-                    }
-                    break
-                case "affiliationValid":
-                    if (it.newValue || it.newValue == null) {
-                        affiliationComboBox.componentError = null
-                        addressAdditionComboBox.componentError = null
-                    }
-                    break
-                default:
-                    break
-            }
-            submitButton.enabled = allValuesValid()
-            addressAdditionComboBox.enabled = !Objects.isNull(createPersonViewModel.affiliation)
-        })**/
-    }
 
-    private void setupFieldValidator(){
-        /**this.emailField.addValueChangeListener({ event ->
-            ValidationResult result = emailValidator.apply(event.getValue(), new ValueContext(this.emailField))
-            if (result.isError()) {
-                createPersonViewModel.emailValid = false
-                UserError error = new UserError(result.getErrorMessage())
-                emailField.setComponentError(error)
+        viewModel.addPropertyChangeListener("productCategories", {
+            ProductCategory newValue = it.newValue as ProductCategory
+            if (newValue) {
+                productCategories.value = newValue
             } else {
-                createPersonViewModel.emailValid = true
+                productCategories.value = productCategories.emptyValue
             }
-        })**/
-    }
-
-    private void addListeners(){
+        })
 
     }
 
