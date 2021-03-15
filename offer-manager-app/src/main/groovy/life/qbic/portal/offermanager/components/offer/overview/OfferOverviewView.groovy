@@ -165,6 +165,7 @@ class OfferOverviewView extends FormLayout {
             this.setVisible(false)
             createProjectView.setVisible(true)
             createProjectView.model.startedFromView = Optional.of(this)
+            createProjectView.model.selectedOffer = Optional.of(model.selectedOffer)
         })
     }
 
