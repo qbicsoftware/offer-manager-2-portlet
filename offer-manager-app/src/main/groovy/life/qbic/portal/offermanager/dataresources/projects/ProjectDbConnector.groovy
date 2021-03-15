@@ -46,7 +46,7 @@ class ProjectDbConnector {
   }
   
   /**
-   * Add project to the user database to connect additional metadata that is not stored in openBIS
+   * Add a project to the user database to connect additional metadata that is not stored in openBIS
    * The project is uniquely recognizable by its openBIS project identifier, containing space and
    * project code
    * @param projectIdentifier a project identifier object denoting the openBIS identifier
