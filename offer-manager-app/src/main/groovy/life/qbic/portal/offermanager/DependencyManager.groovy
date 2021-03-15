@@ -20,6 +20,10 @@ import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewMo
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
+import life.qbic.portal.offermanager.dataresources.projects.ProjectMainConnector
+import life.qbic.portal.offermanager.dataresources.projects.ProjectDbConnector
+
+import life.qbic.openbis.openbisclient.OpenBisClient
 
 import life.qbic.portal.offermanager.dataresources.database.DatabaseSession
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
@@ -93,6 +97,9 @@ class DependencyManager {
     private PersonDbConnector customerDbConnector
     private OfferDbConnector offerDbConnector
     private ProductsDbConnector productsDbConnector
+    private ProjectMainConnector projectMainConnector
+    private ProjectDbConnector projectDbConnector
+    private OpenBisClient openbisClient
 
     private CreatePerson createCustomer
     private CreatePerson createCustomerNewOffer
@@ -172,6 +179,14 @@ class DependencyManager {
             productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
             offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(),
                     customerDbConnector, productsDbConnector)
+            projectDbConnector = new ProjectDbConnector(DatabaseSession.getInstance(), customerDbConnector)
+            
+            
+            final String openbisURL = configurationManager.getDataSourceUrl() + "/openbis/openbis";
+            openbisClient = new OpenBisClient(configurationManager.getDataSourceUser(), configurationManager.getDataSourcePassword(), openbisURL)
+            openbisClient.login();
+            
+            projectMainConnector = new ProjectMainConnector(projectDbConnector, openbisClient)
 
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
