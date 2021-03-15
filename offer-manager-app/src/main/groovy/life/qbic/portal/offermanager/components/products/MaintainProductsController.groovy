@@ -1,10 +1,12 @@
 package life.qbic.portal.offermanager.components.products
 
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import life.qbic.business.products.archive.ArchiveProductInput
 import life.qbic.business.products.create.CreateProductInput
 
 import life.qbic.datamodel.dtos.business.ProductCategory
-
+import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
@@ -45,12 +47,22 @@ class MaintainProductsController {
         try {
             Product product = ProductConverter.createProduct(category, description, name, unitPrice, unit)
             createProductInput.create(product)
-        } catch (Exception unexpected) {
-            log.error("unexpected exception at call of create products", unexpected)
+        } catch (Exception ignored) {
             throw new IllegalArgumentException("Could not create products from provided arguments.")
         }
     }
 
+    /**
+     * Triggers the archiving of a product
+     * @param productId The ProductId of the product that should be archived
+     */
+    void archiveProduct(ProductId productId){
+        try{
+            archiveProductInput.archive(productId)
+        }catch(Exception ignored){
+            throw new IllegalArgumentException("Could not create products from provided arguments.")
+        }
+    }
 
     private static class ProductConverter{
 
