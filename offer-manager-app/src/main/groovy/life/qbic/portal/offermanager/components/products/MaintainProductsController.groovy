@@ -40,7 +40,7 @@ class MaintainProductsController {
      *
      * @param category The products category which determines what kind of product is created
      * @param description The description of the product
-     * @param name The name of the products
+     * @param name The name of the product
      * @param unitPrice The unit price of the products
      * @param unit The unit in which the products is measured
      */
