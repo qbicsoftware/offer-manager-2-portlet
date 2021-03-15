@@ -8,7 +8,8 @@ import life.qbic.business.projects.spaces.CreateProjectSpace
 import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
 import life.qbic.business.projects.spaces.CreateProjectSpaceOutput
 import life.qbic.datamodel.dtos.projectmanagement.Project
-import life.qbic.datamodel.dtos.projectmanagement.ProjectApplication
+import life.qbic.datamodel.dtos.business.ProjectApplication
+import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 
