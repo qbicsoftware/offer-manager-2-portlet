@@ -70,7 +70,7 @@ class MaintainProductsController {
     private static class ProductConverter{
 
         /**
-         * Creates a products DTO based on its products category
+         * Creates a product DTO based on its products category
          *
          * @param category The products category which determines what kind of products is created
          * @param description The description of the products
