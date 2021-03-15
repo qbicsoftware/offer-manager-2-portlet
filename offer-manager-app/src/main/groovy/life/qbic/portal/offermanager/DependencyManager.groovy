@@ -55,6 +55,7 @@ import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
 import life.qbic.portal.offermanager.components.AppView
+import life.qbic.portal.offermanager.dataresources.projects.ProjectSpaceResourceService
 import life.qbic.portal.offermanager.security.Role
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
@@ -135,6 +136,7 @@ class DependencyManager {
     private ProductsResourcesService productsResourcesService
     private ProjectManagerResourceService managerResourceService
     private PersonResourceService personResourceService
+    private ProjectSpaceResourceService projectSpaceResourceService
     private EventEmitter<Person> personUpdateEvent
 
     /**
@@ -202,6 +204,7 @@ class DependencyManager {
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
         this.customerResourceService = new CustomerResourceService(customerDbConnector)
         this.personResourceService = new PersonResourceService(customerDbConnector)
+        this.projectSpaceResourceService = new ProjectSpaceResourceService(projectMainConnector)
     }
 
     private void setupEventEmitter(){
@@ -300,7 +303,7 @@ class DependencyManager {
         }
 
         try {
-            this.createProjectModel = new CreateProjectViewModel()
+            this.createProjectModel = new CreateProjectViewModel(projectSpaceResourceService)
         }catch (Exception e) {
             log.error("Unexpected excpetion during ${CreateProjectViewModel.getSimpleName()} view model" +
                     " setup.", e)

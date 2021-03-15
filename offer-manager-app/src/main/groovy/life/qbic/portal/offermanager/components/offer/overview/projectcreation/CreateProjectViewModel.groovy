@@ -7,6 +7,7 @@ import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
+import life.qbic.portal.offermanager.dataresources.projects.ProjectSpaceResourceService
 
 /**
  * <h1>Holds the create project state information and logic</h1>
@@ -58,12 +59,13 @@ class CreateProjectViewModel {
 
     @Bindable Boolean codeIsValid
 
-    CreateProjectViewModel() {
+    private final ProjectSpaceResourceService projectSpaceResourceService
+
+    CreateProjectViewModel(ProjectSpaceResourceService projectSpaceResourceService) {
+        this.projectSpaceResourceService = projectSpaceResourceService
         spaceSelectionDataProvider = new ListDataProvider<>([SPACE_SELECTION.NEW_SPACE,
                                                              SPACE_SELECTION.EXISTING_SPACE])
-        // TODO use space resource service once available
-        availableSpaces = new ListDataProvider([new ProjectSpace("Example Space One"),
-                           new ProjectSpace("Example Space Two")])
+        availableSpaces = new ListDataProvider(projectSpaceResourceService.iterator().toList())
         // TODO use project resource service once available
         existingProjects = [
                 new ProjectCode("QABCD"),
