@@ -25,7 +25,7 @@ class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOu
 
     @Override
     void archived(Product product) {
-        mainViewModel.successNotifications << "Successfully archived products $product.productId - $product.productName."
+        mainViewModel.successNotifications << "Successfully archived product $product.productId - $product.productName."
     }
 
     @Override
