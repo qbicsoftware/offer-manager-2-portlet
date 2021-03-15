@@ -5,6 +5,9 @@ import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 
+import life.qbic.datamodel.dtos.general.Person
+import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
+
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.projectmanagement.*
 import life.qbic.business.projects.create.ProjectExistsException
@@ -20,7 +23,7 @@ import java.sql.Statement
 /**
  * Provides operations on QBiC project data
  *
- * This class is responsible for transferring project data to the customer db
+ * This class is responsible for transferring project data to the project/customer db
  *
  * @since 1.0.0
  *
@@ -28,6 +31,9 @@ import java.sql.Statement
 @Log4j2
 class ProjectDbConnector {
 
+  /**
+   * A connection to the project/customer database used to create queries.
+   */
   private final ConnectionProvider connectionProvider
   /**
    * A connector to the customer database used to create queries.
@@ -77,6 +83,7 @@ class ProjectDbConnector {
         log.error(e.message)
         log.error(e.stackTrace.join("\n"))
         it.rollback()
+
         throw new DatabaseQueryException("Could not add person and project data to user database.")
       }
     }
