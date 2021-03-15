@@ -42,7 +42,7 @@ class MaintainProductsController {
      * @param description The description of the product
      * @param name The name of the product
      * @param unitPrice The unit price of the product
-     * @param unit The unit in which the products is measured
+     * @param unit The unit in which the product is measured
      */
     void createNewProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit){
         try {
