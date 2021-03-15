@@ -88,8 +88,7 @@ class Offer {
     private double itemsWithoutOverheadNetPrice
 
     /**
-     * Holds the determined overhead total derived from the
-     * customer's affiliation.
+     * The calulated total overhead costs based on the {@link #overheadRatio}
      */
     private double overhead
 
