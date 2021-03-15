@@ -35,8 +35,8 @@ class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOu
 
     @Override
     void foundDuplicate(Product product) {
-        mainViewModel.failureNotification << "Found duplicate products for $product.productId - $product.productName."
-        //todo triggers smth in the view-model to ask the user if he still wants to create the duplicate
+        mainViewModel.failureNotifications << "Found duplicate products for $product.productId - $product.productName."
+        //todo triggers sth in the view-model to ask the user if he still wants to create the duplicate
     }
 
     @Override
