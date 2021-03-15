@@ -36,7 +36,7 @@ class MaintainProductsController {
     }
 
     /**
-     * Triggers the creation of a products in the database
+     * Triggers the creation of a product in the database
      *
      * @param category The products category which determines what kind of products is created
      * @param description The description of the products
