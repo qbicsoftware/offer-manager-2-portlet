@@ -22,7 +22,7 @@ import java.sql.Statement
  *
  * This class is responsible for transferring project data to the customer db
  *
- * @since: 1.0.0
+ * @since 1.0.0
  *
  */
 @Log4j2
