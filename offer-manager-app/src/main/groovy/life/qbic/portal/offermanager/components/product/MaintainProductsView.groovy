@@ -1,13 +1,9 @@
 package life.qbic.portal.offermanager.components.product
 
-import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
-import com.vaadin.shared.data.sort.SortDirection
-import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
-import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
@@ -18,13 +14,12 @@ import com.vaadin.ui.themes.ValoTheme
 import life.qbic.business.offers.Currency
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.GridUtils
-import life.qbic.portal.offermanager.components.product.archive.ArchiveProductView
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
 /**
  *
- * <h1>This class generates a Form Layout in which the user can maintain the service products</h1>
+ * <h1>This class generates a VerticalLayout in which the user can maintain the service products</h1>
  *
  * <p>{@link MaintainProductsViewModel} will be integrated into the qOffer 2.0 Portlet and provides an User Interface
  * with the intention of enabling an {@value life.qbic.portal.offermanager.security.Role#OFFER_ADMIN} to create, archive and copy products.</p>
@@ -32,7 +27,7 @@ import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
  * @since 1.0.0
  *
  */
-class MaintainProductsView extends FormLayout{
+class MaintainProductsView extends VerticalLayout{
 
     private final MaintainProductsViewModel viewModel
 
@@ -45,16 +40,14 @@ class MaintainProductsView extends FormLayout{
     VerticalLayout maintenanceLayout
 
     CreateProductView createProductView
-    ArchiveProductView archiveProductView
     CreateProductView copyProductView
 
     MaintainProductsView(MaintainProductsViewModel viewModel, CreateProductView createProductView
-                         , ArchiveProductView archiveProductView, CreateProductView copyProductView){
+                         , CreateProductView copyProductView){
         //todo add the controller
         this.viewModel = viewModel
         this.createProductView = createProductView
         this.copyProductView = copyProductView
-        this.archiveProductView = archiveProductView
 
         setupPanel()
         createButtons()
@@ -130,10 +123,9 @@ class MaintainProductsView extends FormLayout{
     }
 
     private void addSubViews(){
-        this.addComponents(createProductView,copyProductView,archiveProductView)
+        this.addComponents(createProductView,copyProductView)
         createProductView.setVisible(false)
         copyProductView.setVisible(false)
-        archiveProductView.setVisible(false)
     }
 
     private void updateProductDescription(Product product){
@@ -170,9 +162,9 @@ class MaintainProductsView extends FormLayout{
         })
 
         archiveProduct.addClickListener({
-            maintenanceLayout.setVisible(false)
-            archiveProductView.setVisible(true)
+            //todo use the controller to trigger the use case
         })
+
     }
 
 }
