@@ -105,8 +105,9 @@ class ProjectDbConnector {
   
           throw new DatabaseQueryException("Could not add person and project data to user database.")
         }
-    return new Project(projectIdentifier, projectTitle, projectApplication.getLinkedOffer())
-   }
+      }
+      return new Project(projectIdentifier, projectTitle, projectApplication.getLinkedOffer())
+    }
 
   private boolean isProjectInDB(String projectIdentifier) {
       log.debug("Looking for project " + projectIdentifier + " in the DB");

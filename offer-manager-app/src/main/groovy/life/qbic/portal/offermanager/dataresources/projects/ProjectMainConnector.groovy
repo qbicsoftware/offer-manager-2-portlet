@@ -58,6 +58,7 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
       this.openbisClient = openbisClient
       fetchExistingSpaces()
       fetchExistingProjects()
+  }
   
   private void fetchExistingSpaces() {
     this.openbisSpaces = new ArrayList<>()
