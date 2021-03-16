@@ -153,6 +153,10 @@ class MaintainProductsView extends VerticalLayout{
             copyProduct.setVisible(true)
         })
 
+        archiveProduct.addClickListener({
+            //todo use the controller to trigger the use case
+        })
+
     }
 
 }
