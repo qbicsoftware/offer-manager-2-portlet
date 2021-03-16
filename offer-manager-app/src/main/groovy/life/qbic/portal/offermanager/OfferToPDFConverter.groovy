@@ -331,7 +331,11 @@ class OfferToPDFConverter implements OfferExporter {
                 }
                 //add subtotal footer to table
                 htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
-                tableItemsCount = tableItemsCount + 2
+                /* This variable indicates that the space which is normally reserved for 2 products,
+                 should be accounted for the subtotal Footer */
+                int productSpaceCount = 2
+
+                tableItemsCount = tableItemsCount + productSpaceCount
                 // Update Footer Prices
                 setSubTotalPrices(productGroup, items)
             }
