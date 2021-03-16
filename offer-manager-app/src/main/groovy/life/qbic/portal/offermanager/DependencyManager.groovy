@@ -19,7 +19,6 @@ import life.qbic.portal.offermanager.components.person.search.SearchPersonViewMo
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
 import life.qbic.portal.offermanager.components.product.MaintainProductsView
 import life.qbic.portal.offermanager.components.product.MaintainProductsViewModel
-import life.qbic.portal.offermanager.components.product.archive.ArchiveProductView
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
