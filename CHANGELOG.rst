@@ -4,17 +4,6 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-Unassigned
-----------
-
-**Added**
-
-**Fixed**
-
-**Dependencies**
-
-**Deprecated**
-
 1.0.0-alpha.4
 --------------
 
