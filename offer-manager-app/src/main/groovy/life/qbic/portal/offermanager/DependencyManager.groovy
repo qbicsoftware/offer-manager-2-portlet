@@ -20,6 +20,10 @@ import life.qbic.portal.offermanager.components.offer.overview.projectcreation.C
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
+import life.qbic.portal.offermanager.components.product.MaintainProductsView
+import life.qbic.portal.offermanager.components.product.MaintainProductsViewModel
+import life.qbic.portal.offermanager.components.product.create.CreateProductView
+import life.qbic.portal.offermanager.components.product.create.CreateProductViewModel
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -87,6 +91,9 @@ class DependencyManager {
     private OfferOverviewModel offerOverviewModel
     private SearchPersonViewModel searchPersonViewModel
     private CreatePersonViewModel createCustomerViewModelNewOffer
+    private MaintainProductsViewModel maintainProductsViewModel
+    private CreateProductViewModel createProductViewModel
+    private CreateProductViewModel copyProductViewModel
     private CreateProjectViewModel createProjectModel
 
     private AppPresenter presenter
@@ -189,9 +196,9 @@ class DependencyManager {
             projectDbConnector = new ProjectDbConnector(DatabaseSession.getInstance(), customerDbConnector)
             
             
-            final String openbisURL = configurationManager.getDataSourceUrl() + "/openbis/openbis";
+            final String openbisURL = configurationManager.getDataSourceUrl() + "/openbis/openbis"
             openbisClient = new OpenBisClient(configurationManager.getDataSourceUser(), configurationManager.getDataSourcePassword(), openbisURL)
-            openbisClient.login();
+            openbisClient.login()
             
             projectMainConnector = new ProjectMainConnector(projectDbConnector, openbisClient)
 
@@ -312,6 +319,24 @@ class DependencyManager {
         }catch (Exception e) {
             log.error("Unexpected excpetion during ${CreateProjectViewModel.getSimpleName()} view model" +
                     " setup.", e)
+        }
+
+        try {
+            this.maintainProductsViewModel = new MaintainProductsViewModel(productsResourcesService)
+        }catch (Exception e) {
+            log.error("Unexpected exception during ${MaintainProductsViewModel.getSimpleName()} view model setup.", e)
+        }
+
+        try {
+            this.createProductViewModel = new CreateProductViewModel()
+        }catch (Exception e) {
+            log.error("Unexpected exception during ${CreateProductViewModel.getSimpleName()} view model setup.", e)
+        }
+
+        try {
+            this.copyProductViewModel = new CreateProductViewModel()
+        }catch (Exception e) {
+            log.error("Unexpected exception during ${CreateProductViewModel.getSimpleName()} view model setup.", e)
         }
     }
 
@@ -522,6 +547,30 @@ class DependencyManager {
             throw e
         }
 
+        CreateProductView createProductView
+        try{
+            createProductView = new CreateProductView(createProductViewModel)
+        }catch(Exception e){
+            log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
+            throw e
+        }
+
+        CreateProductView copyProductView
+        try{
+            copyProductView = new CreateProductView(copyProductViewModel)
+        }catch(Exception e){
+            log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
+            throw e
+        }
+
+        MaintainProductsView maintainProductsView
+        try{
+            maintainProductsView = new MaintainProductsView(maintainProductsViewModel,createProductView,copyProductView)
+        }catch (Exception e) {
+            log.error("Could not create ${MaintainProductsView.getSimpleName()} view.", e)
+            throw e
+        }
+
         AppView portletView
         try {
             CreatePersonView createCustomerView2 = new CreatePersonView(createCustomerController, this
@@ -535,6 +584,7 @@ class DependencyManager {
                     overviewView,
                     updateOfferView,
                     searchPersonView,
+                    maintainProductsView,
                     createProjectView
             )
             this.portletView = portletView
