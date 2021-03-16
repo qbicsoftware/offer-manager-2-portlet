@@ -47,6 +47,7 @@ class MaintainProductsController {
     void createNewProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit){
         try {
             Product product = ProductConverter.createProduct(category, description, name, unitPrice, unit)
+            //todo add product to list
             createProductInput.create(product)
         } catch (Exception unexpected) {
             log.error("unexpected exception during create product call", unexpected)
@@ -61,6 +62,7 @@ class MaintainProductsController {
     void archiveProduct(ProductId productId){
         try{
             archiveProductInput.archive(productId)
+            //todo remove the product from the list
         }catch(Exception unexpected){
             log.error("unexpected exception at archive product call", unexpected)
             throw new IllegalArgumentException("Could not create products from provided arguments.")
