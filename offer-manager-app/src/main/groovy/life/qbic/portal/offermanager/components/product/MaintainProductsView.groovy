@@ -12,6 +12,7 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.business.offers.Currency
+import life.qbic.business.products.archive.ArchiveProduct
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
@@ -30,6 +31,7 @@ import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 class MaintainProductsView extends VerticalLayout{
 
     private final MaintainProductsViewModel viewModel
+    private final MaintainProductsController controller
 
     Grid<Product> productGrid
     HorizontalLayout buttonLayout
@@ -40,14 +42,12 @@ class MaintainProductsView extends VerticalLayout{
     VerticalLayout maintenanceLayout
 
     CreateProductView createProductView
-    CreateProductView copyProductView
 
-    MaintainProductsView(MaintainProductsViewModel viewModel, CreateProductView createProductView
-                         , CreateProductView copyProductView){
-        //todo add the controller
+    MaintainProductsView(MaintainProductsViewModel viewModel, CreateProductView createProductView,
+                         MaintainProductsController controller){
+        this.controller = controller
         this.viewModel = viewModel
         this.createProductView = createProductView
-        this.copyProductView = copyProductView
 
         setupPanel()
         createButtons()
@@ -123,9 +123,9 @@ class MaintainProductsView extends VerticalLayout{
     }
 
     private void addSubViews(){
-        this.addComponents(createProductView,copyProductView)
+        this.addComponents(createProductView, this.archiveProduct)
         createProductView.setVisible(false)
-        copyProductView.setVisible(false)
+        this.archiveProduct.setVisible(false)
     }
 
     private void updateProductDescription(Product product){
@@ -143,6 +143,7 @@ class MaintainProductsView extends VerticalLayout{
         productGrid.addSelectionListener({
             if(it.firstSelectedItem.isPresent()){
                 updateProductDescription(it.firstSelectedItem.get())
+                viewModel.selectedProduct = it.firstSelectedItem.get()
             }
         })
 
@@ -156,13 +157,8 @@ class MaintainProductsView extends VerticalLayout{
             createProductView.setVisible(false)
         })
 
-        copyProduct.addClickListener({
-            maintenanceLayout.setVisible(false)
-            copyProduct.setVisible(true)
-        })
-
         archiveProduct.addClickListener({
-            //todo use the controller to trigger the use case
+            controller.archiveProduct(viewModel.selectedProduct.productId)
         })
 
     }

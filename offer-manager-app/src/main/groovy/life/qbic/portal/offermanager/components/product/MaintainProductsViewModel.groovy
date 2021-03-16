@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.components.product
 
+import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
 
@@ -21,7 +22,7 @@ class MaintainProductsViewModel {
 
     ObservableList products = new ObservableList(new ArrayList<Product>())
 
-    Product selectedProduct
+    @Bindable Product selectedProduct
 
     private final ProductsResourcesService productsResourcesService
 
