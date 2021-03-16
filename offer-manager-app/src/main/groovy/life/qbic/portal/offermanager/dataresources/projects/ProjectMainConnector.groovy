@@ -17,6 +17,7 @@ import life.qbic.business.exceptions.DatabaseQueryException
 
 import life.qbic.openbis.openbisclient.OpenBisClient
 
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.SynchronousOperationExecutionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.CreateProjectsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.ProjectCreation
@@ -88,27 +89,23 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
   }
 
   private void createOpenbisSpace(String spaceName, String description) {
-    IApplicationServerApi api = openbisClient.getV3()
-
     SpaceCreation space = new SpaceCreation()
     space.setCode(spaceName)
 
     space.setDescription(description);
 
     IOperation operation = new CreateSpacesOperation(space)
-    api.handleOperations(operation)
+    handleOperations(operation)
   }
 
   private void createOpenbisProject(ProjectSpace space, ProjectCode projectCode, String description) {
-    IApplicationServerApi api = openbisClient.getV3()
-
     ProjectCreation project = new ProjectCreation();
     project.setCode(projectCode.toString());
     project.setSpaceId(new SpacePermId(space.toString()));
     project.setDescription(description);
 
     IOperation operation = new CreateProjectsOperation(project);
-    api.handleOperations(operation);
+    handleOperations(operation);
   }
 
   @Override
@@ -143,4 +140,16 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     return projectDbConnector.addProjectAndConnectPersonsInUserDB(projectIdentifier, projectApplication)
   }
   
+  private void handleOperations(IOperation operation) {
+    IApplicationServerApi api = openbisClient.getV3()
+    
+    SynchronousOperationExecutionOptions options = new SynchronousOperationExecutionOptions()
+    List<IOperation> ops = Arrays.asList(operation)
+    try {
+      api.executeOperations(adminToken, ops, options)
+    } catch (Exception e) {
+        log.error("Unexpected exception during openBIS operation.", e)
+        throw e
+    }
+  }
 }
