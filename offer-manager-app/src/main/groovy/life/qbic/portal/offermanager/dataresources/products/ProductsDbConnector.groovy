@@ -256,7 +256,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
 
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(query)
-      preparedStatement.setString(1, productId.identifier.toString())
+      preparedStatement.setString(1, productId.toString())
       ResultSet result = preparedStatement.executeQuery()
 
       while (result.next()) {
