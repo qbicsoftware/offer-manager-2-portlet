@@ -250,11 +250,11 @@ class CreateProductView extends HorizontalLayout{
         this.productCategoriesComboBox.addSelectionListener({selection ->
             ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.productCategoriesComboBox))
             if (result.isError()) {
-                createProductViewModel.productCategoriesValid = false
+                createProductViewModel.productCategoryValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 productCategoriesComboBox.setComponentError(error)
             } else {
-                createProductViewModel.productCategoriesValid = true
+                createProductViewModel.productCategoryValid = true
             }
         })
     }
@@ -268,7 +268,7 @@ class CreateProductView extends HorizontalLayout{
             && createProductViewModel.productDescriptionValid \
             && createProductViewModel.productUnitValid \
             && createProductViewModel.productUnitPriceValid \
-            && createProductViewModel.productCategoriesValid
+            && createProductViewModel.productCategoryValid
     }
 
     private void setupListeners(){
@@ -289,7 +289,7 @@ class CreateProductView extends HorizontalLayout{
         createProductViewModel.productNameValid = null
         createProductViewModel.productDescriptionValid = null
         createProductViewModel.productUnitPriceValid = null
-        createProductViewModel.productCategoriesValid = null
+        createProductViewModel.productCategoryValid = null
         createProductViewModel.productUnitValid = null
     }
 
