@@ -20,6 +20,7 @@ import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewMo
 import life.qbic.portal.offermanager.components.product.MaintainProductsView
 import life.qbic.portal.offermanager.components.product.MaintainProductsViewModel
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
+import life.qbic.portal.offermanager.components.product.create.CreateProductViewModel
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -87,6 +88,8 @@ class DependencyManager {
     private SearchPersonViewModel searchPersonViewModel
     private CreatePersonViewModel createCustomerViewModelNewOffer
     private MaintainProductsViewModel maintainProductsViewModel
+    private CreateProductViewModel createProductViewModel
+    private CreateProductViewModel copyProductViewModel
     private CreateProjectViewModel createProjectModel
 
     private AppPresenter presenter
@@ -310,7 +313,19 @@ class DependencyManager {
         }
 
         try {
-                this.createProjectModel = new CreateProjectViewModel()
+            this.createProductViewModel = new CreateProductViewModel()
+        }catch (Exception e) {
+            log.error("Unexpected exception during ${CreateProductViewModel.getSimpleName()} view model setup.", e)
+        }
+
+        try {
+            this.copyProductViewModel = new CreateProductViewModel()
+        }catch (Exception e) {
+            log.error("Unexpected exception during ${CreateProductViewModel.getSimpleName()} view model setup.", e)
+        }
+
+        try{
+            this.createProjectModel = new CreateProjectViewModel()
         }catch (Exception e) {
             log.error("Unexpected excpetion during ${CreateProjectViewModel.getSimpleName()} view model" +
                     " setup.", e)
@@ -514,7 +529,7 @@ class DependencyManager {
 
         CreateProductView createProductView
         try{
-            createProductView = new CreateProductView()
+            createProductView = new CreateProductView(createProductViewModel)
         }catch(Exception e){
             log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
             throw e
@@ -522,7 +537,7 @@ class DependencyManager {
 
         CreateProductView copyProductView
         try{
-            copyProductView = new CreateProductView()
+            copyProductView = new CreateProductView(copyProductViewModel)
         }catch(Exception e){
             log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
             throw e

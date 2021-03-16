@@ -37,6 +37,7 @@ class MaintainProductsView extends VerticalLayout{
     Button copyProduct
     Button archiveProduct
     Panel productDescription
+    VerticalLayout maintenanceLayout
 
     CreateProductView createProductView
     CreateProductView copyProductView
@@ -48,12 +49,12 @@ class MaintainProductsView extends VerticalLayout{
         this.createProductView = createProductView
         this.copyProductView = copyProductView
 
-        setupTitle()
         setupPanel()
         createButtons()
         setupGrid()
         setupDataProvider()
         setupOverviewLayout()
+        setupTitle()
         addSubViews()
         setupListeners()
     }
@@ -61,7 +62,7 @@ class MaintainProductsView extends VerticalLayout{
     private void setupTitle(){
         Label label = new Label("Service Product Maintenance")
         label.setStyleName(ValoTheme.LABEL_HUGE)
-        this.addComponent(label)
+        maintenanceLayout.addComponent(label,0)
     }
 
     private void createButtons(){
@@ -112,11 +113,13 @@ class MaintainProductsView extends VerticalLayout{
     }
 
     private void setupOverviewLayout(){
-        this.setSizeFull()
-        this.setMargin(false)
-        this.addComponents(productGrid,buttonLayout)
+        maintenanceLayout = new VerticalLayout(productGrid,buttonLayout)
+        maintenanceLayout.setSizeFull()
+        maintenanceLayout.setMargin(false)
+        maintenanceLayout.addComponents()
 
-        this.setComponentAlignment(buttonLayout,Alignment.TOP_RIGHT)
+        maintenanceLayout.setComponentAlignment(buttonLayout,Alignment.TOP_RIGHT)
+        this.addComponents(maintenanceLayout)
     }
 
     private void addSubViews(){
@@ -144,12 +147,17 @@ class MaintainProductsView extends VerticalLayout{
         })
 
         addProduct.addClickListener({
-            this.setVisible(false)
+            maintenanceLayout.setVisible(false)
             createProductView.setVisible(true)
         })
 
+        createProductView.abortButton.addClickListener({
+            maintenanceLayout.setVisible(true)
+            createProductView.setVisible(false)
+        })
+
         copyProduct.addClickListener({
-            this.setVisible(false)
+            maintenanceLayout.setVisible(false)
             copyProduct.setVisible(true)
         })
 
