@@ -316,7 +316,7 @@ class DependencyManager {
         try {
             this.createProductViewModel = new CreateProductViewModel()
         }catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreateProductViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${CreateProductViewModel.getSimpleName()} view model setup.", e)
         }
 
         try {
