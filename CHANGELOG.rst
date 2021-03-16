@@ -26,6 +26,8 @@ Unassigned
   data generation, data analysis and project management (`#364 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/364>`_)
 * Introduce overheadRatio property to life.qbic.business.offers.Offer
   used to show the applied overhead markup in the pricing footer of the Offer PDF(`#362 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/362>`_)
+* Introduce first draft for OpenBis based project space and project creation (`#396 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/396>`_)
+* Introduce first draft for product maintenance and creation (`#392 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/392>`_)
 
 **Fixed**
 
