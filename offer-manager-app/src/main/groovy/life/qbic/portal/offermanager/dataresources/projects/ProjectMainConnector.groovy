@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
 import groovy.util.logging.Log4j2
+
 import life.qbic.datamodel.dtos.general.Person
 
 import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
@@ -17,6 +18,7 @@ import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Statement
 import life.qbic.openbis.openbisclient.OpenBisClient
+
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.CreateProjectsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.ProjectCreation
@@ -43,6 +45,7 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
    */
   private final ProjectDbConnector projectDbConnector
   private final OpenBisClient openbisClient
+  private List<ProjectSpace> openbisSpaces
   private List<ProjectIdentifier> openbisProjects
 
   /**
@@ -53,20 +56,34 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     ProjectMainConnector(ProjectDbConnector projectDbConnector, OpenBisClient openbisClient) {
       this.projectDbConnector = projectDbConnector
       this.openbisClient = openbisClient
+      fetchExistingSpaces()
       fetchExistingProjects()
+  
+  private void fetchExistingSpaces() {
+    this.openbisSpaces = new ArrayList<>()
+    for(String spaceName : openbisClient.listSpaces()) {
+      this.openbisSpaces.add(new ProjectSpace(spaceName))
     }
+  }
+  
+  /**
+   * Returns a copy of the list of available project spaces that has been fetched from openBIS upon creation of this class instance
+   */
+  public List<ProjectSpace> listSpaces() {
+    return new ArrayList<ProjectSpace>(openbisSpaces);
+  }
 
-    private void fetchExistingProjects() {
-      //projectDbConnector.fetchProjects() might be used at some point to fetch more metadata
+  private void fetchExistingProjects() {
+    //projectDbConnector.fetchProjects() might be used at some point to fetch more metadata
       
-      openbisProjects = []
-      for(Project openbisProject : openbisClient.listProjects()) {
-        String space = openbisProject.getSpace().getCode()
-        String code = openbisProject.getCode()
-        openbisProjects.add(new ProjectIdentifier(space, code))
-      }
+    openbisProjects = []
+    for(Project openbisProject : openbisClient.listProjects()) {
+      String space = openbisProject.getSpace().getCode()
+      String code = openbisProject.getCode()
+      openbisProjects.add(new ProjectIdentifier(space, code))
     }
-    
+  }
+
   /**
    * Returns a copied list of existing projects fetched upon creation of this class
    */

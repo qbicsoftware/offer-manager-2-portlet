@@ -3,8 +3,7 @@ package life.qbic.portal.offermanager.dataresources.projects
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
-import life.qbic.datamodel.dtos.general.Person
-import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
+
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.projectmanagement.*
 import life.qbic.business.projects.create.ProjectExistsException
@@ -96,7 +95,7 @@ class ProjectDbConnector {
           int projectID = addProjectToDB(it, projectIdentifier, projectTitle)
           addPersonToProject(it, projectID, managerID, "Manager")
           addPersonToProject(it, projectID, customerID, "PI")
-        
+
           it.commit()
           
         } catch (Exception e) {
@@ -106,7 +105,6 @@ class ProjectDbConnector {
   
           throw new DatabaseQueryException("Could not add person and project data to user database.")
         }
-      }
     return new Project(projectIdentifier, projectTitle, projectApplication.getLinkedOffer())
    }
 
