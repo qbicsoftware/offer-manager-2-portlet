@@ -307,7 +307,7 @@ class DependencyManager {
         try {
             this.maintainProductsViewModel = new MaintainProductsViewModel(productsResourcesService)
         }catch (Exception e) {
-            log.error("Unexpected excpetion during ${MaintainProductsViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${MaintainProductsViewModel.getSimpleName()} view model setup.", e)
         }
 
         try {

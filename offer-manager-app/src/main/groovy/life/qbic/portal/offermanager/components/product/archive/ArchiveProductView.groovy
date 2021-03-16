@@ -7,7 +7,7 @@ import com.vaadin.ui.HorizontalLayout
  * <br>
  * <p><detailed description></p>
  *
- * @since <versiontag>
+ * @since 1.0.0
  *
 */
 class ArchiveProductView extends HorizontalLayout{
