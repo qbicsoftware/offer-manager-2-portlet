@@ -529,17 +529,9 @@ class DependencyManager {
             throw e
         }
 
-        ArchiveProductView archiveProductView
-        try{
-            archiveProductView = new ArchiveProductView()
-        }catch(Exception e){
-            log.error("Could not create ${ArchiveProductView.getSimpleName()} view.", e)
-            throw e
-        }
-
         MaintainProductsView maintainProductsView
         try{
-            maintainProductsView = new MaintainProductsView(maintainProductsViewModel,createProductView,archiveProductView,copyProductView)
+            maintainProductsView = new MaintainProductsView(maintainProductsViewModel,createProductView,copyProductView)
         }catch (Exception e) {
             log.error("Could not create ${MaintainProductsView.getSimpleName()} view.", e)
             throw e

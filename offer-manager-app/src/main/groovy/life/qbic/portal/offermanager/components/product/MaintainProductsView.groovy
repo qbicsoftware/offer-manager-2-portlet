@@ -14,7 +14,6 @@ import com.vaadin.ui.themes.ValoTheme
 import life.qbic.business.offers.Currency
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.GridUtils
-import life.qbic.portal.offermanager.components.product.archive.ArchiveProductView
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
@@ -40,16 +39,14 @@ class MaintainProductsView extends VerticalLayout{
     Panel productDescription
 
     CreateProductView createProductView
-    ArchiveProductView archiveProductView
     CreateProductView copyProductView
 
     MaintainProductsView(MaintainProductsViewModel viewModel, CreateProductView createProductView
-                         , ArchiveProductView archiveProductView, CreateProductView copyProductView){
+                         , CreateProductView copyProductView){
         //todo add the controller
         this.viewModel = viewModel
         this.createProductView = createProductView
         this.copyProductView = copyProductView
-        this.archiveProductView = archiveProductView
 
         setupTitle()
         setupPanel()
@@ -123,10 +120,9 @@ class MaintainProductsView extends VerticalLayout{
     }
 
     private void addSubViews(){
-        this.addComponents(createProductView,copyProductView,archiveProductView)
+        this.addComponents(createProductView,copyProductView)
         createProductView.setVisible(false)
         copyProductView.setVisible(false)
-        archiveProductView.setVisible(false)
     }
 
     private void updateProductDescription(Product product){
@@ -157,10 +153,6 @@ class MaintainProductsView extends VerticalLayout{
             copyProduct.setVisible(true)
         })
 
-        archiveProduct.addClickListener({
-            this.setVisible(false)
-            archiveProductView.setVisible(true)
-        })
     }
 
 }
