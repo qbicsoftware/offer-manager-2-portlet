@@ -81,19 +81,10 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     //projectDbConnector.fetchProjects() might be used at some point to fetch more metadata
       
     openbisProjects = []
-    for(Project openbisProject : openbisClient.listProjects()) {
-      String space = openbisProject.getSpace().getCode()
-      String code = openbisProject.getCode()
+    for(ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project openbisProject : openbisClient.listProjects()) {
+      ProjectSpace space = new ProjectSpace(openbisProject.getSpace().getCode())
+      ProjectCode code = new ProjectCode(openbisProject.getCode())
       openbisProjects.add(new ProjectIdentifier(space, code))
-    }
-    try {
-      //we don't provide a description in our data model for now, but it's optional anyway
-      createOpenbisSpace(spaceName, "")
-
-    } catch (Exception e) {
-      log.error(e.message)
-      log.error(e.stackTrace.join("\n"))
-      throw new DatabaseQueryException("Could not create project space.")
     }
   }
 
@@ -141,30 +132,6 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
       }
     }
 
-  private void createOpenbisSpace(String spaceName, String description) {
-      IApplicationServerApi api = openbisClient.getV3()
-  
-      SpaceCreation space = new SpaceCreation()
-      space.setCode(spaceName)
-  
-      space.setDescription(description);
-  
-      IOperation operation = new CreateSpacesOperation(space)
-      api.handleOperations(operation)
-    }
-
-  private void createOpenbisProject(ProjectSpace space, ProjectCode projectCode, String description) {
-      IApplicationServerApi api = openbisClient.getV3()
-  
-      ProjectCreation project = new ProjectCreation();
-      project.setCode(projectCode.toString());
-      project.setSpaceId(new SpacePermId(space.toString()));
-      project.setDescription(description);
-  
-      IOperation operation = new CreateProjectsOperation(project);
-      api.handleOperations(operation);
-    }
-
   @Override
     Project createProject(ProjectApplication projectApplication) throws ProjectExistsException, DatabaseQueryException {
       //collect infos needed for openBIS
@@ -203,7 +170,7 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     SynchronousOperationExecutionOptions options = new SynchronousOperationExecutionOptions()
     List<IOperation> ops = Arrays.asList(operation)
     try {
-      api.executeOperations(adminToken, ops, options)
+      api.executeOperations(openbisClient.getSessionToken(), ops, options)
     } catch (Exception e) {
         log.error("Unexpected exception during openBIS operation.", e)
         throw e
