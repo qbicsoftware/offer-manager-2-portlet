@@ -21,7 +21,7 @@ class CreateProductViewModel {
     @Bindable Boolean productUnitPriceValid
     @Bindable ProductUnit productUnit
     @Bindable Boolean productUnitValid
-    @Bindable ProductCategory productCategories
+    @Bindable ProductCategory productCategory
     @Bindable Boolean productCategoryValid
 
 }

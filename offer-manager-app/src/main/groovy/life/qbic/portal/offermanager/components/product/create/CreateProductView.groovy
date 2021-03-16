@@ -147,7 +147,7 @@ class CreateProductView extends HorizontalLayout{
             createProductViewModel.setProductUnit(it.value as ProductUnit)
         })
 
-        createProductViewModel.addPropertyChangeListener("productCategories", {
+        createProductViewModel.addPropertyChangeListener("productCategory", {
             ProductCategory newValue = it.newValue as ProductCategory
             if (newValue) {
                 productCategoryComboBox.value = newValue
@@ -156,7 +156,7 @@ class CreateProductView extends HorizontalLayout{
             }
         })
         productCategoryComboBox.addSelectionListener({
-            createProductViewModel.setProductCategories(it.value as ProductCategory)
+            createProductViewModel.setProductCategory(it.value as ProductCategory)
         })
 
         /*
