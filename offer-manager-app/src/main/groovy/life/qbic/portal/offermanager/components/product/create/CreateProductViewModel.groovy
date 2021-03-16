@@ -17,7 +17,7 @@ class CreateProductViewModel {
     @Bindable Boolean productNameValid
     @Bindable String productDescription
     @Bindable Boolean productDescriptionValid
-    @Bindable String productUnitPrice
+    @Bindable String productUnitPrice //todo make sure to cast the string to a double in the use case
     @Bindable Boolean productUnitPriceValid
     @Bindable ProductUnit productUnit
     @Bindable Boolean productUnitValid
