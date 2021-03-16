@@ -232,7 +232,7 @@ class DependencyManager {
         try {
             this.viewModel = new AppViewModel(affiliationService, this.userRole)
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${AppViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${AppViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
@@ -244,7 +244,7 @@ class DependencyManager {
             createCustomerViewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
 
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreatePersonViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${CreatePersonViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
@@ -257,7 +257,7 @@ class DependencyManager {
             createCustomerViewModelNewOffer.academicTitles.addAll(AcademicTitle.values().collect {it.value})
 
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreatePersonViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${CreatePersonViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
@@ -271,7 +271,7 @@ class DependencyManager {
             updatePersonViewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
 
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${UpdatePersonViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${UpdatePersonViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
@@ -279,7 +279,7 @@ class DependencyManager {
             this.createAffiliationViewModel = new CreateAffiliationViewModel(affiliationService)
             createAffiliationViewModel.affiliationCategories.addAll(AffiliationCategory.values().collect{it.value})
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreateAffiliationViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${CreateAffiliationViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
@@ -301,26 +301,26 @@ class DependencyManager {
                     productsResourcesService,
                     offerUpdateEvent)
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
         try {
             this.offerOverviewModel = new OfferOverviewModel(overviewService, viewModel, offerUpdateEvent)
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
         }
 
         try {
             this.searchPersonViewModel = new SearchPersonViewModel(personResourceService, personUpdateEvent)
         }catch (Exception e) {
-            log.error("Unexpected excpetion during ${SearchPersonViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${SearchPersonViewModel.getSimpleName()} view model setup.", e)
         }
 
         try {
             this.createProjectModel = new CreateProjectViewModel(projectSpaceResourceService, projectResourceService)
         }catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreateProjectViewModel.getSimpleName()} view model" +
+            log.error("Unexpected exception during ${CreateProjectViewModel.getSimpleName()} view model" +
                     " setup.", e)
         }
 
