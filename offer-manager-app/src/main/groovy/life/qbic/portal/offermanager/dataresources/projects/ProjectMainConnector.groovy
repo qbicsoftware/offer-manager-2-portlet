@@ -39,7 +39,6 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
  *
  */
 @Log4j2
-@CompileStatic
 class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpaceDataSource {
 
   /**
@@ -72,7 +71,7 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
   /**
    * Returns a copy of the list of available project spaces that has been fetched from openBIS upon creation of this class instance
    */
-  public List<ProjectSpace> listSpaces() {
+  List<ProjectSpace> listSpaces() {
     return new ArrayList<ProjectSpace>(openbisSpaces);
   }
 
@@ -80,17 +79,24 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     //projectDbConnector.fetchProjects() might be used at some point to fetch more metadata
       
     openbisProjects = []
-    for(Project openbisProject : openbisClient.listProjects()) {
+    for(ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project openbisProject :
+            openbisClient.listProjects()) {
       String space = openbisProject.getSpace().getCode()
       String code = openbisProject.getCode()
-      openbisProjects.add(new ProjectIdentifier(space, code))
+      try {
+        openbisProjects.add(new ProjectIdentifier(
+                new ProjectSpace(space),
+                new ProjectCode(code)))
+      } catch (Exception e) {
+        log.error(e.message)
+      }
     }
   }
 
   /**
    * Returns a copied list of existing projects fetched upon creation of this class
    */
-   public List<ProjectIdentifier> fetchProjects() {
+   List<ProjectIdentifier> fetchProjects() {
      return new ArrayList<ProjectIdentifier>(openbisProjects);
    }
 
