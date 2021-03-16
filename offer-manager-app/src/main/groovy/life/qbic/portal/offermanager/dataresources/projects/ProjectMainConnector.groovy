@@ -82,9 +82,13 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
       
     openbisProjects = []
     for(ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project openbisProject : openbisClient.listProjects()) {
-      ProjectSpace space = new ProjectSpace(openbisProject.getSpace().getCode())
-      ProjectCode code = new ProjectCode(openbisProject.getCode())
-      openbisProjects.add(new ProjectIdentifier(space, code))
+      try {
+        ProjectSpace space = new ProjectSpace(openbisProject.getSpace().getCode())
+        ProjectCode code = new ProjectCode(openbisProject.getCode())
+        openbisProjects.add(new ProjectIdentifier(space, code))
+      } catch (Exception e) {
+        log.error(e.message)
+      }
     }
   }
 
@@ -92,7 +96,7 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     SpaceCreation space = new SpaceCreation()
     space.setCode(spaceName)
 
-    space.setDescription(description);
+    space.setDescription(description)
 
     IOperation operation = new CreateSpacesOperation(space)
     handleOperations(operation)
