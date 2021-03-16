@@ -7,6 +7,7 @@ import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
 import life.qbic.business.projects.spaces.ProjectSpaceExistsException
 import life.qbic.business.projects.create.CreateProjectDataSource
 import life.qbic.business.projects.create.ProjectExistsException
+import life.qbic.business.projects.create.SpaceNonExistingException
 
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.projectmanagement.*
@@ -130,7 +131,7 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
       
       //if the space does not exist, an error shall be thrown
       if (!openbisClient.spaceExists(space.toString())) {
-        throw new DatabaseQueryException("Could not create project because of non-existent space: "+space.toString())
+        throw new SpaceNonExistingException("Could not create project because of non-existent space: "+space.toString())
       }
       if (openbisClient.projectExists(space.toString(), projectCode.toString())) {
         throw new ProjectExistsException("Project "+projectIdentifier.toString()+" could not be created, as it exists in openBIS already!")
