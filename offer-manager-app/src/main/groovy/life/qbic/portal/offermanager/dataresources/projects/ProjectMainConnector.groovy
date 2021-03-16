@@ -1,8 +1,8 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
+import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
+import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
-
-import life.qbic.datamodel.dtos.general.Person
 
 import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
 import life.qbic.business.projects.spaces.ProjectSpaceExistsException
@@ -13,20 +13,22 @@ import life.qbic.business.projects.create.SpaceNonExistingException
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.projectmanagement.*
 import life.qbic.business.exceptions.DatabaseQueryException
+
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.Statement
+
 import life.qbic.openbis.openbisclient.OpenBisClient
 
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.SynchronousOperationExecutionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.CreateProjectsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.ProjectCreation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.CreateSpacesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.SpaceCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
+
 
 /**
  * Provides operations on QBiC project data
@@ -38,6 +40,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
  *
  */
 @Log4j2
+@CompileStatic
 class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpaceDataSource {
 
   /**
@@ -78,11 +81,35 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     //projectDbConnector.fetchProjects() might be used at some point to fetch more metadata
       
     openbisProjects = []
-    for(Project openbisProject : openbisClient.listProjects()) {
-      String space = openbisProject.getSpace().getCode()
-      String code = openbisProject.getCode()
-      openbisProjects.add(new ProjectIdentifier(space, code))
+    for(ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project openbisProject : openbisClient.listProjects()) {
+      try {
+        ProjectSpace space = new ProjectSpace(openbisProject.getSpace().getCode())
+        ProjectCode code = new ProjectCode(openbisProject.getCode())
+        openbisProjects.add(new ProjectIdentifier(space, code))
+      } catch (Exception e) {
+        log.error(e.message)
+      }
     }
+  }
+
+  private void createOpenbisSpace(String spaceName, String description) {
+    SpaceCreation space = new SpaceCreation()
+    space.setCode(spaceName)
+
+    space.setDescription(description)
+
+    IOperation operation = new CreateSpacesOperation(space)
+    handleOperations(operation)
+  }
+
+  private void createOpenbisProject(ProjectSpace space, ProjectCode projectCode, String description) {
+    ProjectCreation project = new ProjectCreation();
+    project.setCode(projectCode.toString());
+    project.setSpaceId(new SpacePermId(space.toString()));
+    project.setDescription(description);
+
+    IOperation operation = new CreateProjectsOperation(project);
+    handleOperations(operation);
   }
 
   /**
@@ -107,30 +134,6 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
         log.error(e.stackTrace.join("\n"))
         throw new DatabaseQueryException("Could not create project space.")
       }
-    }
-
-  private void createOpenbisSpace(String spaceName, String description) {
-      IApplicationServerApi api = openbisClient.getV3()
-  
-      SpaceCreation space = new SpaceCreation()
-      space.setCode(spaceName)
-  
-      space.setDescription(description);
-  
-      IOperation operation = new CreateSpacesOperation(space)
-      api.handleOperations(operation)
-    }
-
-  private void createOpenbisProject(ProjectSpace space, ProjectCode projectCode, String description) {
-      IApplicationServerApi api = openbisClient.getV3()
-  
-      ProjectCreation project = new ProjectCreation();
-      project.setCode(projectCode.toString());
-      project.setSpaceId(new SpacePermId(space.toString()));
-      project.setDescription(description);
-  
-      IOperation operation = new CreateProjectsOperation(project);
-      api.handleOperations(operation);
     }
 
   @Override
@@ -163,7 +166,18 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
       }
   
       return projectDbConnector.addProjectAndConnectPersonsInUserDB(projectIdentifier, projectApplication)
-  
-      return new Project(projectIdentifier, projectTitle, projectApplication.getLinkedOffer())
     }
+    
+  private void handleOperations(IOperation operation) {
+    IApplicationServerApi api = openbisClient.getV3()
+    
+    SynchronousOperationExecutionOptions executionOptions = new SynchronousOperationExecutionOptions()
+    List<IOperation> operationOptions = Arrays.asList(operation)
+    try {
+      api.executeOperations(openbisClient.getSessionToken(), operationOptions, executionOptions)
+    } catch (Exception e) {
+        log.error("Unexpected exception during openBIS operation.", e)
+        throw e
+    }
+  }
 }
