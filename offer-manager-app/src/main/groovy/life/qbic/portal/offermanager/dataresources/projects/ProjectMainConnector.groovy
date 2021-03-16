@@ -14,17 +14,12 @@ import life.qbic.datamodel.dtos.projectmanagement.*
 
 import life.qbic.business.exceptions.DatabaseQueryException
 
-import java.sql.Connection
-import java.sql.PreparedStatement
-import java.sql.ResultSet
-import java.sql.Statement
 
 import life.qbic.openbis.openbisclient.OpenBisClient
 
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.CreateProjectsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.ProjectCreation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.CreateSpacesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.SpaceCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId

@@ -14,6 +14,8 @@ import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
+import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 
 
@@ -72,6 +74,8 @@ class CreateProjectView extends VerticalLayout{
 
     private VerticalLayout inputFields
 
+    private CreateProjectController createProjectController
+
     /**
      * This button enables the user to leave the create project view
      * and navigate back to the previous view.
@@ -80,8 +84,9 @@ class CreateProjectView extends VerticalLayout{
      */
     Button navigateBack
 
-    CreateProjectView(CreateProjectViewModel createProjectModel) {
+    CreateProjectView(CreateProjectViewModel createProjectModel, CreateProjectController createProjectController) {
         this.model = createProjectModel
+        this.createProjectController = createProjectController
         setupVaadinComponents()
         configureListeners()
         bindData()
@@ -265,6 +270,12 @@ class CreateProjectView extends VerticalLayout{
         })
         this.model.addPropertyChangeListener("selectedOffer", {
             displaySelectedOfferInfo()
+        })
+        this.createProjectButton.addClickListener({
+            createProjectController.createProject(model.selectedOffer.get(),
+                    new ProjectIdentifier(
+                            new ProjectSpace(model.resultingSpaceName),
+                            new ProjectCode(model.resultingProjectCode)))
         })
     }
 
