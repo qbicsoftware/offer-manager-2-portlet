@@ -1,8 +1,8 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
+import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
+import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
-
-import life.qbic.datamodel.dtos.general.Person
 
 import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
 import life.qbic.business.projects.spaces.ProjectSpaceExistsException
@@ -23,7 +23,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.ProjectCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.CreateSpacesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.SpaceCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
-import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
+
 
 /**
  * Provides operations on QBiC project data
@@ -34,6 +34,7 @@ import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
  *
  */
 @Log4j2
+@CompileStatic
 class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpaceDataSource {
 
   /**
@@ -140,8 +141,6 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     }
 
     return projectDbConnector.addProjectAndConnectPersonsInUserDB(projectIdentifier, projectApplication)
-
-    return new Project(projectIdentifier, projectTitle, projectApplication.getLinkedOffer())
   }
   
 }
