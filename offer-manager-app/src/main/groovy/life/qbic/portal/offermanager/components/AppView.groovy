@@ -11,8 +11,6 @@ import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 
-import life.qbic.portal.offermanager.security.Role
-import life.qbic.portal.offermanager.security.RoleService
 
 /**
  * Class which connects the view elements with the ViewModel and the Controller
@@ -20,8 +18,7 @@ import life.qbic.portal.offermanager.security.RoleService
  * This class provides the initial listeners
  * and layout upon which the views are presented
  *
- * @since: 1.0.0
- * @author: Jennifer Bödker
+ * @since 1.0.0
  *
  */
 class AppView extends VerticalLayout {

@@ -47,6 +47,8 @@ class CreateProjectViewModel {
 
     @Bindable String desiredSpaceName
 
+    @Bindable SPACE_SELECTION spaceSelection
+
     DataProvider availableSpaces
 
     @Bindable String desiredProjectCode

@@ -233,9 +233,11 @@ class CreateProjectView extends VerticalLayout{
             if (it.value == CreateProjectViewModel.SPACE_SELECTION.NEW_SPACE) {
                 existingSpaceLayout.setVisible(false)
                 customSpaceLayout.setVisible(true)
+                model.spaceSelection = CreateProjectViewModel.SPACE_SELECTION.NEW_SPACE
             } else {
                 existingSpaceLayout.setVisible(true)
                 customSpaceLayout.setVisible(false)
+                model.spaceSelection = CreateProjectViewModel.SPACE_SELECTION.EXISTING_SPACE
             }
         })
         this.availableSpacesBox.addValueChangeListener({
@@ -272,10 +274,15 @@ class CreateProjectView extends VerticalLayout{
             displaySelectedOfferInfo()
         })
         this.createProjectButton.addClickListener({
-            createProjectController.createProject(model.selectedOffer.get(),
-                    new ProjectIdentifier(
-                            new ProjectSpace(model.resultingSpaceName),
-                            new ProjectCode(model.resultingProjectCode)))
+            if(model.spaceSelection == CreateProjectViewModel.SPACE_SELECTION.NEW_SPACE){
+                createProjectController.createProjectAndSpace(model.selectedOffer.get(), new ProjectSpace(model.resultingSpaceName),
+                                new ProjectCode(model.resultingProjectCode))
+            }else{
+                createProjectController.createProject(model.selectedOffer.get(),
+                        new ProjectIdentifier(
+                                new ProjectSpace(model.resultingSpaceName),
+                                new ProjectCode(model.resultingProjectCode)))
+            }
         })
     }
 
