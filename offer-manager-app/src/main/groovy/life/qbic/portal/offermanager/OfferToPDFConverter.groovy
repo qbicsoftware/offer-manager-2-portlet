@@ -22,6 +22,7 @@ import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.text.DateFormat
+import java.text.DecimalFormat
 
 /**
  * Handles the conversion of offers to pdf files
@@ -208,28 +209,44 @@ class OfferToPDFConverter implements OfferExporter {
         generateProductTable(productItemsMap, maxTableItems)
 
         //Append total cost footer
-        if (tableItemsCount >= maxTableItems) {
+        if (tableItemsCount > maxTableItems) {
             //If currentTable is filled with Items generate new one and add total pricing there
             ++tableCount
             String elementId = "product-items" + "-" + tableCount
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter())
+                    .append(ItemPrintout.tableFooter(offer.overheadRatio))
         } else {
             //otherwise add total pricing to table
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter())
+                    .append(ItemPrintout.tableFooter(offer.overheadRatio))
         }
-        }
+    }
 
+    void setSubTotalPrices(ProductGroups productGroup, List<ProductItem> productItems) {
+        double netSum = calculateNetSum(productItems)
+        double overheadSum = calculateOverheadSum(productItems)
+        double totalSum = netSum + overheadSum
+
+        final netPrice = Currency.getFormatterWithoutSymbol().format(netSum)
+        final overheadPrice = Currency.getFormatterWithoutSymbol().format(overheadSum)
+        final totalPrice = Currency.getFormatterWithoutSymbol().format(totalSum)
+
+        htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
+        htmlContent.getElementById("${productGroup}-overhead-costs-value").text(overheadPrice)
+        htmlContent.getElementById("${productGroup}-total-costs-value").text(totalPrice)
+
+    }
 
     void setTotalPrices() {
         final totalPrice = Currency.getFormatterWithoutSymbol().format(offer.totalPrice)
         final taxes = Currency.getFormatterWithoutSymbol().format(offer.taxes)
         final netPrice = Currency.getFormatterWithoutSymbol().format(offer.netPrice)
         final netPrice_withSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
+        final overheadPrice = Currency.getFormatterWithoutSymbol().format(offer.overheads)
 
         htmlContent.getElementById("total-costs-net").text(netPrice_withSymbol)
+        htmlContent.getElementById("overhead-cost-value").text(overheadPrice)
         htmlContent.getElementById("total-cost-value-net").text(netPrice)
         htmlContent.getElementById("vat-cost-value").text(taxes)
         htmlContent.getElementById("final-cost-value").text(totalPrice)
@@ -241,6 +258,24 @@ class OfferToPDFConverter implements OfferExporter {
         htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
         htmlContent.getElementById("offer-expiry-date").text(offer.expirationDate.toLocalDate().toString())
         htmlContent.getElementById("offer-date").text(dateFormat.format(offer.modificationDate))
+    }
+
+    double calculateNetSum(List<ProductItem> productItems){
+        double netSum = 0
+        productItems.each {
+                netSum += it.quantity * it.product.unitPrice
+        }
+        return netSum
+    }
+
+    double calculateOverheadSum(List<ProductItem> productItems) {
+        double overheadSum = 0
+        productItems.each {
+            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
+                overheadSum += it.quantity * it.product.unitPrice * offer.overheadRatio
+        }
+        }
+        return overheadSum
     }
 
     Map groupItems(List<ProductItem> productItems) {
@@ -290,12 +325,19 @@ class OfferToPDFConverter implements OfferExporter {
                         tableItemsCount = 1
                     }
                     //add product to current table
-                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemPos, item))
+                    int productNumber = itemPos + 1
+                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(productNumber, item))
                     tableItemsCount++
                 }
                 //add subtotal footer to table
                 htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
-                tableItemsCount++
+                /* This variable indicates that the space which is normally reserved for 2 products,
+                 should be accounted for the subtotal Footer */
+                int productSpaceCount = 2
+
+                tableItemsCount = tableItemsCount + productSpaceCount
+                // Update Footer Prices
+                setSubTotalPrices(productGroup, items)
             }
         }
     }
@@ -392,24 +434,27 @@ class OfferToPDFConverter implements OfferExporter {
             String footerTitle = productGroup.getName()
 
             return """<div id="grid-sub-total-footer">
-                                     <div class="row sub-total-costs" id = "offer-sub-total">
-                                         <div class="col-6"></div> 
-                                         <div class="col-10 cost-summary-field">Estimated total (${footerTitle}):</div>
-                                         <div class="col-2 price-value" id="sub-total-costs-value">12345</div>
-                                         </div>
-                                     <div class="row sub-total-costs" id = "offer-sub-net">
+                                      <div class="col-6"></div> 
+                                     <div class="row sub-total-costs" id = "${productGroup}-sub-net">
                                          <div class="col-10 cost-summary-field">Estimated net (${footerTitle}):</div>
-                                         <div class="col-2 price-value" id="sub-net-costs-value">12345</div>
+                                         <div class="col-2 price-value" id="${productGroup}-net-costs-value">12345</div>
                                      </div>
-                                     <div class="row sub-total-costs" id ="offer-sub-overhead">
+                                     <div class="row sub-total-costs" id ="${productGroup}-sub-overhead">
                                          <div class="col-10 cost-summary-field">Estimated overhead (${footerTitle}):</div>
-                                         <div class="col-2 price-value" id="sub-overhead-costs-value">12345</div>
+                                         <div class="col-2 price-value" id="${productGroup}-overhead-costs-value">12345</div>
                                      </div>
+                                          <div class="row sub-total-costs" id = "${productGroup}-sub-total">
+                                          <div class="col-10 cost-summary-field">Estimated total (${footerTitle}):</div>
+                                         <div class="col-2 price-value" id="${productGroup}-total-costs-value">12345</div>
+                                         </div>
                                  </div>
                                  """
         }
 
-        static String tableFooter(){
+        static String tableFooter(double overheadRatio){
+
+            DecimalFormat decimalFormat = new DecimalFormat("#%")
+            String overheadPercentage = decimalFormat.format(overheadRatio)
 
             return """<div id="grid-table-footer">
                                      <div class="row total-costs" id = "offer-net">
@@ -417,6 +462,10 @@ class OfferToPDFConverter implements OfferExporter {
                                          <div class="col-4 cost-summary-field">Estimated total (net):</div>
                                          <div class="col-2 price-value" id="total-cost-value-net">12,500.00</div>
                                          </div>
+                                      <div class="row total-costs" id = "offer-overhead">
+                                         <div class="col-10 cost-summary-field">Overhead total (${overheadPercentage}):</div>
+                                         <div class="col-2 price-value" id="overhead-cost-value"></div>
+                                     </div>
                                      <div class="row total-costs" id = "offer-vat">
                                          <div class="col-10 cost-summary-field">VAT (19%):</div>
                                          <div class="col-2 price-value" id="vat-cost-value">0.00</div>

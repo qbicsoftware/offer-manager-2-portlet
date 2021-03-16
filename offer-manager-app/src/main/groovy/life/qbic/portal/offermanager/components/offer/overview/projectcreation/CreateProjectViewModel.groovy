@@ -2,11 +2,13 @@ package life.qbic.portal.offermanager.components.offer.overview.projectcreation
 
 import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
-import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Layout
 import groovy.beans.Bindable
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
+import life.qbic.portal.offermanager.dataresources.projects.ProjectResourceService
+import life.qbic.portal.offermanager.dataresources.projects.ProjectSpaceResourceService
 
 /**
  * <h1>Holds the create project state information and logic</h1>
@@ -18,11 +20,22 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 class CreateProjectViewModel {
 
     /**
+     * Flag that indicates when a project has been created
+     */
+    @Bindable Boolean projectCreated
+
+    /**
      * Saves the layout from which the create project component
      * has been initiated.
      * This view is set to visible again, if the user decides to navigate back.
      */
     Optional<Layout> startedFromView
+
+    /**
+     * The selected offer that holds the information
+     * for the projected to be created by the user.
+     */
+    @Bindable Optional<Offer> selectedOffer
 
     @Bindable Boolean createProjectEnabled
 
@@ -34,6 +47,8 @@ class CreateProjectViewModel {
     @Bindable String resultingSpaceName
 
     @Bindable String desiredSpaceName
+
+    @Bindable SPACE_SELECTION spaceSelection
 
     DataProvider availableSpaces
 
@@ -47,25 +62,21 @@ class CreateProjectViewModel {
 
     @Bindable Boolean codeIsValid
 
-    CreateProjectViewModel() {
+    private final ProjectSpaceResourceService projectSpaceResourceService
+
+    private final ProjectResourceService projectResourceService
+
+    CreateProjectViewModel(ProjectSpaceResourceService projectSpaceResourceService,
+                           ProjectResourceService projectResourceService) {
+        this.projectSpaceResourceService = projectSpaceResourceService
+        this.projectResourceService = projectResourceService
+
         spaceSelectionDataProvider = new ListDataProvider<>([SPACE_SELECTION.NEW_SPACE,
                                                              SPACE_SELECTION.EXISTING_SPACE])
-        resultingSpaceName = ""
-        desiredSpaceName = ""
-        desiredProjectCode = ""
-        resultingProjectCode = ""
-        projectCodeValidationResult = ""
-        codeIsValid = false
-        startedFromView = Optional.empty()
-        // TODO use space resource service once available
-        availableSpaces = new ListDataProvider([new ProjectSpace("Example Space One"),
-                           new ProjectSpace("Example Space Two")])
-        // TODO use project resource service once available
-        existingProjects = [
-                new ProjectCode("QABCD"),
-                new ProjectCode("QTEST")
-        ]
-        createProjectEnabled = false
+
+        availableSpaces = new ListDataProvider(projectSpaceResourceService.iterator().toList())
+        existingProjects = projectResourceService.iterator().collect {it.projectCode}
+        initFields()
         setupListeners()
     }
 
@@ -81,6 +92,27 @@ class CreateProjectViewModel {
         this.addPropertyChangeListener("resultingSpaceName",  {
             evaluateProjectCreation()
         })
+        this.addPropertyChangeListener("projectCreated", {
+            resetModel()
+        })
+    }
+
+    private void initFields() {
+        resultingSpaceName = ""
+        desiredSpaceName = ""
+        desiredProjectCode = ""
+        resultingProjectCode = ""
+        projectCodeValidationResult = ""
+        codeIsValid = false
+        startedFromView = Optional.empty()
+        createProjectEnabled = false
+        projectCreated = false
+        selectedOffer = Optional.empty()
+
+    }
+
+    private void resetModel() {
+        initFields()
     }
 
     private void validateProjectCode() {

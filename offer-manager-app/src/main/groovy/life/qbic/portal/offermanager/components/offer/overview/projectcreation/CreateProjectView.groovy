@@ -1,15 +1,24 @@
 package life.qbic.portal.offermanager.components.offer.overview.projectcreation
 
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
+import com.vaadin.ui.GridLayout
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
+import com.vaadin.ui.Panel
 import com.vaadin.ui.RadioButtonGroup
+import com.vaadin.ui.TextArea
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
+import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
+import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
+
+
 
 /**
  * <h1>Enables a user to create a project based on an existing offer</h1>
@@ -59,6 +68,14 @@ class CreateProjectView extends VerticalLayout{
 
     private Button createProjectButton
 
+    private Panel selectedOfferInformation
+
+    private GridLayout viewContainerGrid
+
+    private VerticalLayout inputFields
+
+    private CreateProjectController createProjectController
+
     /**
      * This button enables the user to leave the create project view
      * and navigate back to the previous view.
@@ -67,21 +84,43 @@ class CreateProjectView extends VerticalLayout{
      */
     Button navigateBack
 
-    CreateProjectView(CreateProjectViewModel createProjectModel) {
+    CreateProjectView(CreateProjectViewModel createProjectModel, CreateProjectController createProjectController) {
         this.model = createProjectModel
+        this.createProjectController = createProjectController
         setupVaadinComponents()
         configureListeners()
         bindData()
     }
 
     private void setupVaadinComponents() {
+        createGridAndContainers()
         createSiteNavigation()
         createTitle()
+        createOfferInfo()
         createProjectSpaceElements()
         createProjectCodeElements()
         createProjectIdOverview()
         setupVisibility()
         setupActivity()
+        this.addComponent(viewContainerGrid)
+    }
+
+    private void createGridAndContainers() {
+        viewContainerGrid = new GridLayout(2,3)
+        viewContainerGrid.setWidth("100%")
+        viewContainerGrid.setColumnExpandRatio(0, 0.6f)
+        viewContainerGrid.setColumnExpandRatio(1, 0.4f)
+        inputFields = new VerticalLayout()
+        inputFields.setMargin(false)
+        viewContainerGrid.addComponent(inputFields, 0,0)
+    }
+
+    private void createOfferInfo() {
+        VerticalLayout container = new VerticalLayout()
+        selectedOfferInformation = new Panel("Selected Offer")
+        selectedOfferInformation.setContent(new Label("Offer Info Placeholder"))
+        container.addComponent(selectedOfferInformation)
+        viewContainerGrid.addComponent(container, 1, 0)
     }
 
     private void createSiteNavigation() {
@@ -111,7 +150,7 @@ class CreateProjectView extends VerticalLayout{
         // Set a nice header
         Label label = new Label("1. Please select/create a project space first")
         label.setStyleName(ValoTheme.LABEL_H3)
-        this.addComponent(label)
+        this.inputFields.addComponent(label)
 
         /* The user needs to choose between creating a new project space
          or select an existing one */
@@ -119,7 +158,7 @@ class CreateProjectView extends VerticalLayout{
         projectSpaceSelection = new RadioButtonGroup<>("Create project in",
                 model.spaceSelectionDataProvider)
         projectSpaceSelection.setItemCaptionGenerator(item -> spaceSelectionActionText.get(item))
-        this.addComponent(projectSpaceSelection)
+        this.inputFields.addComponent(projectSpaceSelection)
 
         // Case A: A new space needs to be created
         customSpaceLayout = new HorizontalLayout()
@@ -127,21 +166,21 @@ class CreateProjectView extends VerticalLayout{
         desiredSpaceName.setPlaceholder("Your space name")
         desiredSpaceName.setWidth(300, Unit.PIXELS)
         customSpaceLayout.addComponents(desiredSpaceName)
-        this.addComponent(customSpaceLayout)
+        this.inputFields.addComponent(customSpaceLayout)
 
         // Case B: An existing space is selected
         existingSpaceLayout = new HorizontalLayout()
         availableSpacesBox = new ComboBox<>("Available project spaces")
         existingSpaceLayout.addComponent(availableSpacesBox)
         availableSpacesBox.setWidth(300, Unit.PIXELS)
-        this.addComponent(existingSpaceLayout)
+        this.inputFields.addComponent(existingSpaceLayout)
     }
 
     private void createProjectCodeElements() {
         // Set a nice header
         Label label = new Label("2. Please set a project code")
         label.setStyleName(ValoTheme.LABEL_H3)
-        this.addComponent(label)
+        this.inputFields.addComponent(label)
 
         // then a input field for the code
         projectCodeLayout = new HorizontalLayout()
@@ -154,7 +193,7 @@ class CreateProjectView extends VerticalLayout{
         projectCodeLayout.addComponent(container)
         projectAvailability = new HorizontalLayout()
         projectCodeLayout.addComponent(projectAvailability)
-        this.addComponent(projectCodeLayout)
+        this.inputFields.addComponent(projectCodeLayout)
     }
 
     private void createProjectIdOverview() {
@@ -172,8 +211,8 @@ class CreateProjectView extends VerticalLayout{
         createProjectButton = new Button("Create Project", VaadinIcons.CHECK_SQUARE)
         projectIdContainer.addComponent(createProjectButton)
         // Add the ui elements to the parent layout
-        this.addComponent(caption)
-        this.addComponent(projectIdContainer)
+        this.inputFields.addComponent(caption)
+        this.inputFields.addComponent(projectIdContainer)
     }
 
     private void configureListeners() {
@@ -194,9 +233,11 @@ class CreateProjectView extends VerticalLayout{
             if (it.value == CreateProjectViewModel.SPACE_SELECTION.NEW_SPACE) {
                 existingSpaceLayout.setVisible(false)
                 customSpaceLayout.setVisible(true)
+                model.spaceSelection = CreateProjectViewModel.SPACE_SELECTION.NEW_SPACE
             } else {
                 existingSpaceLayout.setVisible(true)
                 customSpaceLayout.setVisible(false)
+                model.spaceSelection = CreateProjectViewModel.SPACE_SELECTION.EXISTING_SPACE
             }
         })
         this.availableSpacesBox.addValueChangeListener({
@@ -229,9 +270,46 @@ class CreateProjectView extends VerticalLayout{
         this.model.addPropertyChangeListener("createProjectEnabled", {
             this.createProjectButton.setEnabled(model.createProjectEnabled)
         })
+        this.model.addPropertyChangeListener("selectedOffer", {
+            displaySelectedOfferInfo()
+        })
+        this.createProjectButton.addClickListener({
+            if(model.spaceSelection == CreateProjectViewModel.SPACE_SELECTION.NEW_SPACE){
+                createProjectController.createProjectAndSpace(model.selectedOffer.get(), new ProjectSpace(model.resultingSpaceName),
+                                new ProjectCode(model.resultingProjectCode))
+            }else{
+                createProjectController.createProject(model.selectedOffer.get(),
+                        new ProjectIdentifier(
+                                new ProjectSpace(model.resultingSpaceName),
+                                new ProjectCode(model.resultingProjectCode)))
+            }
+        })
     }
 
     private void bindData() {
         availableSpacesBox.setDataProvider(model.availableSpaces)
+    }
+
+    private void displaySelectedOfferInfo() {
+        if (model.selectedOffer.isPresent()) {
+          loadOfferData(model.selectedOffer.get())
+        }
+    }
+
+    private void loadOfferData(Offer offer) {
+        VerticalLayout content = new VerticalLayout()
+        content.addComponent(new Label("<strong>Offer ID</strong>", ContentMode.HTML))
+        content.addComponent(new Label("${offer.identifier}"))
+        content.addComponent(new Label("<strong>Customer</strong>", ContentMode.HTML))
+        content.addComponent(new Label("${offer.customer.firstName} ${offer.customer.lastName}"))
+        content.addComponent(new Label("<strong>Title</strong>", ContentMode.HTML))
+        TextArea title = new TextArea()
+        title.setWidth("100%")
+        title.setRows(3)
+        title.setEnabled(false)
+        title.setValue(offer.projectTitle)
+        content.addComponent(title)
+        content.setSpacing(false)
+        selectedOfferInformation.setContent(content)
     }
 }
