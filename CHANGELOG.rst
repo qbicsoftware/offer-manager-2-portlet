@@ -28,8 +28,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Deprecated**
 
-1.0.0-alpha.3
---------------
+1.0.0-alpha.3 (2021-03-02)
+--------------------------
 
 **Added**
 
