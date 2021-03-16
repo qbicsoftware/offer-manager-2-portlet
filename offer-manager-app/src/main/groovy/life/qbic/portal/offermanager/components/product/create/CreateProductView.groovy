@@ -203,7 +203,7 @@ class CreateProductView extends HorizontalLayout{
     private void setupFieldValidators() {
 
         Validator<String> nameValidator =  Validator.from({String value -> (value && !value.trim().empty)}, "Please provide a valid name.")
-        Validator<String> numberValidator = new RegexpValidator("This is not a number!", "[-]?[0-9]*\\.?,?[0-9]+")
+        Validator<String> numberValidator = new RegexpValidator("This is not a number!", "[-]?[0-9]*\\.?[0-9]+")
         Validator<? extends Object> selectionValidator = Validator.from({o -> o != null}, "Please make a selection.")
 
         //Add Listeners to all Fields in the Form layout
