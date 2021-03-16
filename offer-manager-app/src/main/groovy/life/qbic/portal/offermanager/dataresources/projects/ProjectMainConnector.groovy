@@ -171,8 +171,8 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
   private void handleOperations(IOperation operation) {
     IApplicationServerApi api = openbisClient.getV3()
     
-    SynchronousOperationExecutionOptions options = new SynchronousOperationExecutionOptions()
-    List<IOperation> ops = Arrays.asList(operation)
+    SynchronousOperationExecutionOptions execitionOptions = new SynchronousOperationExecutionOptions()
+    List<IOperation> operationOptions = Arrays.asList(operation)
     try {
       api.executeOperations(openbisClient.getSessionToken(), ops, options)
     } catch (Exception e) {
