@@ -34,7 +34,7 @@ class CreateProductView extends HorizontalLayout{
     TextField productUnitPriceField
 
     ComboBox<String> productUnitComboBox
-    ComboBox<String> productCategoriesComboBox
+    ComboBox<String> productCategoryComboBox
 
     Button createProductButton
     Button abortButton
@@ -61,7 +61,7 @@ class CreateProductView extends HorizontalLayout{
         sharedLayout.setWidthFull()
         HorizontalLayout buttons = new HorizontalLayout(abortButton,createProductButton)
 
-        VerticalLayout sideLayout = new VerticalLayout(label,productNameField,productDescriptionField,sharedLayout,productCategoriesComboBox,buttons)
+        VerticalLayout sideLayout = new VerticalLayout(label,productNameField,productDescriptionField,sharedLayout,productCategoryComboBox,buttons)
         sideLayout.setSizeFull()
         sideLayout.setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT)
 
@@ -97,12 +97,12 @@ class CreateProductView extends HorizontalLayout{
         productUnitComboBox.setItems(Arrays.asList(ProductUnit.values()) as List<String>)
         productUnitComboBox.setWidthFull()
 
-        productCategoriesComboBox = new ComboBox<>("Product Category")
-        productCategoriesComboBox.setRequiredIndicatorVisible(true)
-        productCategoriesComboBox.setPlaceholder("Select Product Category")
-        productCategoriesComboBox.setEmptySelectionAllowed(false)
-        productCategoriesComboBox.setItems(Arrays.asList(ProductCategory.values()) as List<String>)
-        productCategoriesComboBox.setWidthFull()
+        productCategoryComboBox = new ComboBox<>("Product Category")
+        productCategoryComboBox.setRequiredIndicatorVisible(true)
+        productCategoryComboBox.setPlaceholder("Select Product Category")
+        productCategoryComboBox.setEmptySelectionAllowed(false)
+        productCategoryComboBox.setItems(Arrays.asList(ProductCategory.values()) as List<String>)
+        productCategoryComboBox.setWidthFull()
     }
 
     private void initButtons(){
@@ -150,12 +150,12 @@ class CreateProductView extends HorizontalLayout{
         createProductViewModel.addPropertyChangeListener("productCategories", {
             ProductCategory newValue = it.newValue as ProductCategory
             if (newValue) {
-                productCategoriesComboBox.value = newValue
+                productCategoryComboBox.value = newValue
             } else {
-                productCategoriesComboBox.value = productCategoriesComboBox.emptyValue
+                productCategoryComboBox.value = productCategoryComboBox.emptyValue
             }
         })
-        productCategoriesComboBox.addSelectionListener({
+        productCategoryComboBox.addSelectionListener({
             createProductViewModel.setProductCategories(it.value as ProductCategory)
         })
 
@@ -187,7 +187,7 @@ class CreateProductView extends HorizontalLayout{
                     break
                 case "productCategoryValid":
                     if (it.newValue || it.newValue == null) {
-                        productCategoriesComboBox.componentError = null
+                        productCategoryComboBox.componentError = null
                     }
                     break
                 default:
@@ -247,12 +247,12 @@ class CreateProductView extends HorizontalLayout{
                 createProductViewModel.productUnitValid = true
             }
         })
-        this.productCategoriesComboBox.addSelectionListener({selection ->
-            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.productCategoriesComboBox))
+        this.productCategoryComboBox.addSelectionListener({ selection ->
+            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.productCategoryComboBox))
             if (result.isError()) {
                 createProductViewModel.productCategoryValid = false
                 UserError error = new UserError(result.getErrorMessage())
-                productCategoriesComboBox.setComponentError(error)
+                productCategoryComboBox.setComponentError(error)
             } else {
                 createProductViewModel.productCategoryValid = true
             }
@@ -283,7 +283,7 @@ class CreateProductView extends HorizontalLayout{
         productNameField.clear()
         productDescriptionField.clear()
         productUnitPriceField.clear()
-        productCategoriesComboBox.selectedItem = productCategoriesComboBox.clear()
+        productCategoryComboBox.selectedItem = productCategoryComboBox.clear()
         productUnitComboBox.selectedItem = productUnitComboBox.clear()
 
         createProductViewModel.productNameValid = null
