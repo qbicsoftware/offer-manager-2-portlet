@@ -82,20 +82,20 @@ class MaintainProductsController {
         static Product createProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit){
             Product product
             switch (category) {
-                case "Data Storage":
+                case "DATA_STORAGE":
                     //todo do we want to set the id manually to null or update the DTO constructor?
                     product = new DataStorage(name, description, unitPrice,unit, null)
                     break
-                case "Primary Bioinformatics":
+                case "PRIMARY_BIOINFO":
                     product = new PrimaryAnalysis(name, description, unitPrice,unit, null)
                     break
-                case "Project Management":
+                case "PROJECT_MANAGEMENT":
                     product = new ProjectManagement(name, description, unitPrice,unit, null)
                     break
-                case "Secondary Bioinformatics":
+                case "SECONDARY_BIOINFO":
                     product = new SecondaryAnalysis(name, description, unitPrice,unit, null)
                     break
-                case "Sequencing":
+                case "SEQUENCING":
                     product = new Sequencing(name, description, unitPrice,unit, null)
                     break
             }
