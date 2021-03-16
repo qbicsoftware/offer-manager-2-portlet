@@ -84,19 +84,19 @@ class MaintainProductsController {
             switch (category) {
                 case "DATA_STORAGE":
                     //todo do we want to set the id manually to null or update the DTO constructor?
-                    product = new DataStorage(name, description, unitPrice,unit, null)
+                    product = new DataStorage(name, description, unitPrice,unit, "0")
                     break
                 case "PRIMARY_BIOINFO":
-                    product = new PrimaryAnalysis(name, description, unitPrice,unit, null)
+                    product = new PrimaryAnalysis(name, description, unitPrice,unit, "0")
                     break
                 case "PROJECT_MANAGEMENT":
-                    product = new ProjectManagement(name, description, unitPrice,unit, null)
+                    product = new ProjectManagement(name, description, unitPrice,unit, "0")
                     break
                 case "SECONDARY_BIOINFO":
-                    product = new SecondaryAnalysis(name, description, unitPrice,unit, null)
+                    product = new SecondaryAnalysis(name, description, unitPrice,unit, "0")
                     break
                 case "SEQUENCING":
-                    product = new Sequencing(name, description, unitPrice,unit, null)
+                    product = new Sequencing(name, description, unitPrice,unit, "0")
                     break
             }
             if(!product) throw new IllegalArgumentException("Cannot parse products")

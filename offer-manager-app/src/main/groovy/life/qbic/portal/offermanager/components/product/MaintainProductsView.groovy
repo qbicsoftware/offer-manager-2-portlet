@@ -123,9 +123,8 @@ class MaintainProductsView extends VerticalLayout{
     }
 
     private void addSubViews(){
-        this.addComponents(createProductView, this.archiveProduct)
+        this.addComponents(createProductView) //todo add the copy product use case view here
         createProductView.setVisible(false)
-        this.archiveProduct.setVisible(false)
     }
 
     private void updateProductDescription(Product product){
