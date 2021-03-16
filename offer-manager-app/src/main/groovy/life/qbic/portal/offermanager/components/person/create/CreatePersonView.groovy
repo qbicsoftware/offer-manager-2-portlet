@@ -4,11 +4,9 @@ package life.qbic.portal.offermanager.components.person.create
 import com.vaadin.data.ValidationResult
 import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
-import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.icons.VaadinIcons
-import com.vaadin.server.SerializableBiFunction
 import com.vaadin.server.UserError
 import com.vaadin.shared.data.sort.SortDirection
 import com.vaadin.shared.ui.ContentMode
@@ -18,14 +16,12 @@ import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
 
-import javax.swing.event.ListDataEvent
-
 /**
  * This class generates a Form Layout in which the user
- * can input the necessary information for the creation of a new customer
+ * can input the necessary information for the creation of a new person
  *
  * CreatePersonViewModel will be integrated into the qOffer 2.0 Portlet and provides an User Interface
- * with the intention of enabling a user the creation of a new Customer in the QBiC Database
+ * with the intention of enabling a user the creation of a new person in the QBiC Database
  *
  * @since: 1.0.0
  */
@@ -33,7 +29,7 @@ import javax.swing.event.ListDataEvent
 @Log4j2
 class CreatePersonView extends VerticalLayout {
     private final AppViewModel sharedViewModel
-    private final CreatePersonViewModel createCustomerViewModel
+    private final CreatePersonViewModel createPersonViewModel
     final CreatePersonController controller
 
     ComboBox<String> titleField
@@ -46,11 +42,11 @@ class CreatePersonView extends VerticalLayout {
     Button abortButton
     Panel affiliationDetails
 
-    CreatePersonView(CreatePersonController controller, AppViewModel sharedViewModel, CreatePersonViewModel createCustomerViewModel) {
+    CreatePersonView(CreatePersonController controller, AppViewModel sharedViewModel, CreatePersonViewModel createPersonViewModel) {
         super()
         this.controller = controller
         this.sharedViewModel = sharedViewModel
-        this.createCustomerViewModel = createCustomerViewModel
+        this.createPersonViewModel = createPersonViewModel
         initLayout()
         bindViewModel()
         setupFieldValidators()
@@ -59,39 +55,39 @@ class CreatePersonView extends VerticalLayout {
 
     /**
      * Generates a vaadin Form Layout as an UserInterface consisting of vaadin components
-     * to enable user input for Customer creation
+     * to enable user input for person creation
      */
     private def initLayout() {
 
-        this.titleField = generateTitleSelector(createCustomerViewModel.academicTitles)
+        this.titleField = generateTitleSelector(createPersonViewModel.academicTitles)
 
         this.firstNameField = new TextField("First Name")
-        firstNameField.setPlaceholder("Customer first name")
+        firstNameField.setPlaceholder("First name")
         firstNameField.setRequiredIndicatorVisible(true)
 
         this.lastNameField = new TextField("Last Name")
-        lastNameField.setPlaceholder("Customer last name")
+        lastNameField.setPlaceholder("Last name")
         lastNameField.setRequiredIndicatorVisible(true)
 
         this.emailField = new TextField("Email Address")
-        emailField.setPlaceholder("Customer email address")
+        emailField.setPlaceholder("Email address")
         emailField.setRequiredIndicatorVisible(true)
 
-        this.affiliationComboBox = generateAffiliationSelector(createCustomerViewModel.availableAffiliations)
+        this.affiliationComboBox = generateAffiliationSelector(createPersonViewModel.availableAffiliations)
         affiliationComboBox.setRequiredIndicatorVisible(true)
 
-        this.addressAdditionComboBox = generateAffiliationSelector(createCustomerViewModel.availableAffiliations)
+        this.addressAdditionComboBox = generateAffiliationSelector(createPersonViewModel.availableAffiliations)
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
         addressAdditionComboBox.setItemCaptionGenerator({it.addressAddition})
         addressAdditionComboBox.setCaption("Address Addition")
         addressAdditionComboBox.enabled = false
 
-        this.submitButton = new Button("Create Customer")
+        this.submitButton = new Button("Create Person")
         submitButton.setIcon(VaadinIcons.USER_CHECK)
         submitButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
         submitButton.enabled = allValuesValid()
 
-        this.abortButton = new Button("Abort Customer Creation")
+        this.abortButton = new Button("Abort Person Creation")
         abortButton.setIcon(VaadinIcons.CLOSE_CIRCLE)
         abortButton.addStyleName(ValoTheme.BUTTON_DANGER)
 
@@ -142,37 +138,37 @@ class CreatePersonView extends VerticalLayout {
      */
     private void bindViewModel() {
 
-        this.titleField.addValueChangeListener({this.createCustomerViewModel.academicTitle = it.value })
-        createCustomerViewModel.addPropertyChangeListener("academicTitle", {
+        this.titleField.addValueChangeListener({this.createPersonViewModel.academicTitle = it.value })
+        createPersonViewModel.addPropertyChangeListener("academicTitle", {
             String newValue = it.newValue as String
             titleField.value = newValue ?: titleField.emptyValue
         })
 
-        this.firstNameField.addValueChangeListener({this.createCustomerViewModel.firstName = it.value })
-        createCustomerViewModel.addPropertyChangeListener("firstName", {
+        this.firstNameField.addValueChangeListener({this.createPersonViewModel.firstName = it.value })
+        createPersonViewModel.addPropertyChangeListener("firstName", {
             String newValue = it.newValue as String
             firstNameField.value = newValue ?: firstNameField.emptyValue
         })
 
-        this.lastNameField.addValueChangeListener({this.createCustomerViewModel.lastName = it.value })
-        createCustomerViewModel.addPropertyChangeListener("lastName", {
+        this.lastNameField.addValueChangeListener({this.createPersonViewModel.lastName = it.value })
+        createPersonViewModel.addPropertyChangeListener("lastName", {
             String newValue = it.newValue as String
             lastNameField.value = newValue ?: lastNameField.emptyValue
         })
 
-        this.emailField.addValueChangeListener({this.createCustomerViewModel.email = it.value })
-        createCustomerViewModel.addPropertyChangeListener("email", {
+        this.emailField.addValueChangeListener({this.createPersonViewModel.email = it.value })
+        createPersonViewModel.addPropertyChangeListener("email", {
             String newValue = it.newValue as String
             emailField.value = newValue ?: emailField.emptyValue
         })
         this.affiliationComboBox.addValueChangeListener({
-            this.createCustomerViewModel.setAffiliation(it.value)
+            this.createPersonViewModel.setAffiliation(it.value)
         })
         this.addressAdditionComboBox.addValueChangeListener({
-            this.createCustomerViewModel.setAffiliation(it.value)
+            this.createPersonViewModel.setAffiliation(it.value)
         })
 
-        createCustomerViewModel.addPropertyChangeListener("affiliation", {
+        createPersonViewModel.addPropertyChangeListener("affiliation", {
             Affiliation newValue = it.newValue as Affiliation
             if (newValue) {
                 affiliationComboBox.value = newValue
@@ -187,7 +183,7 @@ class CreatePersonView extends VerticalLayout {
         we listen to the valid properties. whenever the presenter resets values in the viewmodel
         and resets the valid properties the component error on the respective component is removed
         */
-        createCustomerViewModel.addPropertyChangeListener({it ->
+        createPersonViewModel.addPropertyChangeListener({it ->
             switch (it.propertyName) {
                 case "academicTitleValid":
                     if (it.newValue || it.newValue == null) {
@@ -219,12 +215,12 @@ class CreatePersonView extends VerticalLayout {
                     break
             }
             submitButton.enabled = allValuesValid()
-            addressAdditionComboBox.enabled = !Objects.isNull(createCustomerViewModel.affiliation)
+            addressAdditionComboBox.enabled = !Objects.isNull(createPersonViewModel.affiliation)
         })
 
         /* refresh affiliation list and set added item as selected item. This is needed to keep this
         field up to date and select an affiliation after it was created */
-        createCustomerViewModel.availableAffiliations.addPropertyChangeListener({
+        createPersonViewModel.availableAffiliations.addPropertyChangeListener({
             affiliationComboBox.getDataProvider().refreshAll()
             refreshAddressAdditions()
             if (it instanceof ObservableList.ElementAddedEvent) {
@@ -237,7 +233,7 @@ class CreatePersonView extends VerticalLayout {
         ListDataProvider<Affiliation> dataProvider = this.addressAdditionComboBox.dataProvider as ListDataProvider<Affiliation>
         dataProvider.clearFilters()
         dataProvider.addFilterByValue({it.organisation },
-                createCustomerViewModel.affiliation?.organisation)
+                createPersonViewModel.affiliation?.organisation)
         dataProvider.setSortOrder({it.addressAddition}, SortDirection.ASCENDING)
     }
     /**
@@ -253,41 +249,41 @@ class CreatePersonView extends VerticalLayout {
         this.firstNameField.addValueChangeListener({ event ->
             ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.firstNameField))
             if (result.isError()) {
-                createCustomerViewModel.firstNameValid = false
+                createPersonViewModel.firstNameValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 firstNameField.setComponentError(error)
             } else {
-                createCustomerViewModel.firstNameValid = true
+                createPersonViewModel.firstNameValid = true
             }
         })
         this.lastNameField.addValueChangeListener({ event ->
             ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.lastNameField))
             if (result.isError()) {
-                createCustomerViewModel.lastNameValid = false
+                createPersonViewModel.lastNameValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 lastNameField.setComponentError(error)
             } else {
-                createCustomerViewModel.lastNameValid = true
+                createPersonViewModel.lastNameValid = true
             }
         })
         this.emailField.addValueChangeListener({ event ->
             ValidationResult result = emailValidator.apply(event.getValue(), new ValueContext(this.emailField))
             if (result.isError()) {
-                createCustomerViewModel.emailValid = false
+                createPersonViewModel.emailValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 emailField.setComponentError(error)
             } else {
-                createCustomerViewModel.emailValid = true
+                createPersonViewModel.emailValid = true
             }
         })
         this.affiliationComboBox.addSelectionListener({selection ->
             ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.affiliationComboBox))
             if (result.isError()) {
-                createCustomerViewModel.affiliationValid = false
+                createPersonViewModel.affiliationValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 affiliationComboBox.setComponentError(error)
             } else {
-                createCustomerViewModel.affiliationValid = true
+                createPersonViewModel.affiliationValid = true
             }
         })
     }
@@ -300,7 +296,7 @@ class CreatePersonView extends VerticalLayout {
     private static ComboBox<Affiliation> generateAffiliationSelector(List<Affiliation> affiliationList) {
         ComboBox<Affiliation> affiliationComboBox =
                 new ComboBox<>("Affiliation")
-        affiliationComboBox.setPlaceholder("Select customer affiliation")
+        affiliationComboBox.setPlaceholder("Select person affiliation")
         ListDataProvider<Affiliation> dataProvider = new ListDataProvider<>(affiliationList)
         affiliationComboBox.setDataProvider(dataProvider)
         affiliationComboBox.setEmptySelectionAllowed(false)
@@ -309,7 +305,7 @@ class CreatePersonView extends VerticalLayout {
     }
 
     /**
-     * Generates a Combobox, which can be used for AcademicTitle selection for a customer
+     * Generates a Combobox, which can be used for AcademicTitle selection for a person
      * @return Vaadin Combobox component
      */
     private static ComboBox<String> generateTitleSelector(List<String> academicTitles) {
@@ -327,36 +323,36 @@ class CreatePersonView extends VerticalLayout {
      * @return
      */
     private boolean allValuesValid() {
-        return createCustomerViewModel.firstNameValid \
-            && createCustomerViewModel.lastNameValid \
-            && createCustomerViewModel.emailValid \
-            && createCustomerViewModel.affiliationValid
+        return createPersonViewModel.firstNameValid \
+            && createPersonViewModel.lastNameValid \
+            && createPersonViewModel.emailValid \
+            && createPersonViewModel.affiliationValid
     }
 
     private void registerListeners() {
         this.submitButton.addClickListener({ event ->
             try {
                 // we assume that the view model and the view always contain the same information
-                String title = createCustomerViewModel.academicTitle
-                String firstName = createCustomerViewModel.firstName
-                String lastName = createCustomerViewModel.lastName
-                String email = createCustomerViewModel.email
+                String title = createPersonViewModel.academicTitle
+                String firstName = createPersonViewModel.firstName
+                String lastName = createPersonViewModel.lastName
+                String email = createPersonViewModel.email
                 List<Affiliation> affiliations = new ArrayList()
-                affiliations.add(createCustomerViewModel.affiliation)
+                affiliations.add(createPersonViewModel.affiliation)
 
-                if(createCustomerViewModel.outdatedCustomer){
-                    controller.updateCustomer(createCustomerViewModel.outdatedCustomer, firstName, lastName, title, email, affiliations)
+                if(createPersonViewModel.outdatedPerson){
+                    controller.updatePerson(createPersonViewModel.outdatedPerson, firstName, lastName, title, email, affiliations)
                 }
                 else{
-                    controller.createNewCustomer(firstName, lastName, title, email, affiliations)
+                    controller.createNewPerson(firstName, lastName, title, email, affiliations)
                 }
 
             } catch (IllegalArgumentException illegalArgumentException) {
-                log.error("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}")
-                log.debug("Illegal arguments for customer creation. ${illegalArgumentException.getMessage()}", illegalArgumentException)
-                sharedViewModel.failureNotifications.add("Could not create the customer. Please verify that your input is correct and try again.")
+                log.error("Illegal arguments for person creation. ${illegalArgumentException.getMessage()}")
+                log.debug("Illegal arguments for person creation. ${illegalArgumentException.getMessage()}", illegalArgumentException)
+                sharedViewModel.failureNotifications.add("Could not create the person. Please verify that your input is correct and try again.")
             } catch (Exception e) {
-                log.error("Unexpected error after customer creation form submission.", e)
+                log.error("Unexpected error after person creation form submission.", e)
                 sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
             }
         })
@@ -370,7 +366,7 @@ class CreatePersonView extends VerticalLayout {
                 clearAllFields()
             }
             catch (Exception e) {
-                log.error("Unexpected error aborting the customer creation.", e)
+                log.error("Unexpected error aborting the person creation.", e)
                 sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
             }
         })
@@ -396,7 +392,7 @@ class CreatePersonView extends VerticalLayout {
     }
 
     /**
-     *  Clears User Input from all fields in the Create Customer View and reset validation status of all Fields
+     *  Clears User Input from all fields in the Create Person View and reset validation status of all Fields
      */
     private void clearAllFields() {
 
@@ -408,12 +404,12 @@ class CreatePersonView extends VerticalLayout {
         addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
         affiliationDetails.setContent(null)
 
-        createCustomerViewModel.academicTitleValid = null
-        createCustomerViewModel.firstNameValid = null
-        createCustomerViewModel.lastNameValid = null
-        createCustomerViewModel.emailValid = null
-        createCustomerViewModel.affiliationValid = null
-        createCustomerViewModel.outdatedCustomer = null
+        createPersonViewModel.academicTitleValid = null
+        createPersonViewModel.firstNameValid = null
+        createPersonViewModel.lastNameValid = null
+        createPersonViewModel.emailValid = null
+        createPersonViewModel.affiliationValid = null
+        createPersonViewModel.outdatedPerson = null
 
     }
 }

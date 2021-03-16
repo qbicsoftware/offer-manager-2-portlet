@@ -30,6 +30,8 @@ class AppViewModel {
 
     boolean searchCustomerFeatureEnabled
 
+    boolean maintainProductsFeatureEnabled
+
     AppViewModel(AffiliationResourcesService service,
                  Role role) {
         this(new ArrayList<Affiliation>(),
@@ -63,10 +65,11 @@ class AppViewModel {
     private void setBasicFeatures() {
         createCustomerFeatureEnabled = true
         createOfferFeatureEnabled = true
-        searchCustomerFeatureEnabled = false
+        searchCustomerFeatureEnabled = true
+        maintainProductsFeatureEnabled = false
     }
 
     private void setAdminFeatures() {
-        searchCustomerFeatureEnabled = true
+        maintainProductsFeatureEnabled = true
     }
 }
