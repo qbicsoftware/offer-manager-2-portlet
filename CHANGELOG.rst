@@ -28,8 +28,8 @@ Unassigned
 **Fixed**
 
 * User cannot select other offers from the overview anymore, during the offer details are loaded
-after a selection. Selection is enabled again after the resource has been loaded. This solves a
-not yet reported issue that can be observed when dealing with a significant network delay.
+  after a selection. Selection is enabled again after the resource has been loaded. This solves a
+  not yet reported issue that can be observed when dealing with a significant network delay.
 
 **Dependencies**
 
@@ -41,9 +41,9 @@ not yet reported issue that can be observed when dealing with a significant netw
 **Added**
 
 * Authorization based on user roles. Two new roles have been introduced that represent
-the organisational roles project manager `Role.PROJECT_MANAGER` and offer admin `Role
-.OFFER_ADMIN`. The administrator will provide access to additional app features, such as the
-upcoming service product maintenance interface.
+  the organisational roles project manager `Role.PROJECT_MANAGER` and offer admin `Role
+  .OFFER_ADMIN`. The administrator will provide access to additional app features, such as the
+  upcoming service product maintenance interface.
 
 * Introduce Offer retrieval via Fetch Offer Use Case (`#344 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/344>`_)
 
@@ -96,8 +96,8 @@ upcoming service product maintenance interface.
 * Addressed `#309 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/309>`_
 * Replace the project description with project objective (`#339 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/339>`_)
 * Added support to configure the chromium browser executable. An environment variable
-`CHROMIUM_ALIAS` has been introduced that can be set to define the chromium executable in the
-deployment system of the application. Addresses `#336 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/336>`_
+  `CHROMIUM_ALIAS` has been introduced that can be set to define the chromium executable in the
+  deployment system of the application. Addresses `#336 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/336>`_
 
 
 **Fixed**
