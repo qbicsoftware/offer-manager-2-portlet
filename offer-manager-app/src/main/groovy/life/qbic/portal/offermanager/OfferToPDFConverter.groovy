@@ -209,7 +209,7 @@ class OfferToPDFConverter implements OfferExporter {
         generateProductTable(productItemsMap, maxTableItems)
 
         //Append total cost footer
-        if (tableItemsCount >= maxTableItems) {
+        if (tableItemsCount > maxTableItems) {
             //If currentTable is filled with Items generate new one and add total pricing there
             ++tableCount
             String elementId = "product-items" + "-" + tableCount
@@ -331,10 +331,14 @@ class OfferToPDFConverter implements OfferExporter {
                 }
                 //add subtotal footer to table
                 htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
-                tableItemsCount++
+                /* This variable indicates that the space which is normally reserved for 2 products,
+                 should be accounted for the subtotal Footer */
+                int productSpaceCount = 2
+
+                tableItemsCount = tableItemsCount + productSpaceCount
+                // Update Footer Prices
+                setSubTotalPrices(productGroup, items)
             }
-            // Update Footer Prices
-            setSubTotalPrices(productGroup, items)
         }
     }
     /**
