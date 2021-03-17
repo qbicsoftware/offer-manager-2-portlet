@@ -7,6 +7,7 @@ import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.CreateProductInput
 import life.qbic.business.products.create.CreateProductOutput
 import life.qbic.datamodel.dtos.business.services.Product
+import org.aspectj.bridge.IMessage
 
 /**
  * <h1>4.3.2 Copy Service Product</h1>
@@ -21,10 +22,13 @@ import life.qbic.datamodel.dtos.business.services.Product
 class CopyProduct implements CopyProductInput, CreateProductOutput {
 
     private static final Logging log = Logger.getLogger(this.class)
+    private static final int MAX_ATTEMPTS = 1
 
     private final CopyProductDataSource dataSource
     private final CopyProductOutput output
     private final CreateProductInput createProduct
+
+    private int copyAttempt = 0
 
     /**
      * The only constructor for this use case
@@ -45,10 +49,11 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      */
     @Override
     void copyModified(Product product) {
+        copyAttempt++
         //1. retrieve product from db
         Optional<Product> searchResult = dataSource.fetch(product.getProductId())
         if (! searchResult.isPresent()) {
-            output.failNotification("The provided product was not found. Please create a new one instead.")
+            failed("The provided product was not found. Please create a new one instead.")
             return
         }
         Product existingProduct = searchResult.get()
@@ -59,13 +64,13 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
 
     /**
      * Sends failure notifications that have been
-     * recorded during the use case.
+     * recorded during the create use case.
      * @param notification containing a failure message
      * @since 1.0.0
      */
     @Override
     void failNotification(String notification) {
-        output.failNotification(notification)
+        failed(notification)
     }
 
     /**
@@ -75,7 +80,7 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      */
     @Override
     void created(Product product) {
-        output.copied(product)
+        succeeded(product)
     }
 
     /**
@@ -85,10 +90,23 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      */
     @Override
     void foundDuplicate(Product product) {
-        //this should never happen because we create a new id before calling the use case
-        // -> pre-condition of a product that already exists
-        Exception unexpected = new RuntimeException("Unexpected product duplicate detected for ${product.toString()}.")
-        log.error("Unexpected application state", unexpected)
-        throw unexpected
+        // we end up here when the id we creates already is present in the database upon creation
+        // this should happen only in the case that someone else beat us in creating the product.
+        // since this should be very rare we log a warning here
+        log.warn("The generated product id \"$product.productId\" already exists.")
+        if (copyAttempt < MAX_ATTEMPTS) {
+            log.warn("Trying to copy the product again. Attempt no.$copyAttempt")
+            copyModified(product)
+        }
+    }
+
+    private void failed(String message) {
+        copyAttempt = 0
+        output.failNotification(message)
+    }
+
+    private void succeeded(Product product) {
+        copyAttempt = 0
+        output.copied(product)
     }
 }
