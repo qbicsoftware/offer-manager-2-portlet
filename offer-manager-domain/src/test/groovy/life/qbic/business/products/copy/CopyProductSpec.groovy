@@ -24,10 +24,10 @@ import spock.lang.Specification
 class CopyProductSpec extends Specification {
 
 
-    @Shared CreateProductDataSource createProductDataSource = Stub(CreateProductDataSource)
-    @Shared CopyProductDataSource dataSource = Stub(CopyProductDataSource)
-    @Shared CopyProductOutput output = Mock(CopyProductOutput)
-    @Shared Product product = new AtomicProduct("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, new ProductId("Test", "ABCD1234"))
+    CreateProductDataSource createProductDataSource = Stub(CreateProductDataSource)
+    CopyProductDataSource dataSource = Stub(CopyProductDataSource)
+    CopyProductOutput output = Mock(CopyProductOutput)
+    Product product = new AtomicProduct("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, new ProductId("Test", "1234"))
 
     def "FailNotification forwards received messages to the output"() {
         given: "a CreateProductDataSource that throws a DatabaseQueryException"
