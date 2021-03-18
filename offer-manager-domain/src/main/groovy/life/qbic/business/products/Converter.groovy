@@ -72,7 +72,6 @@ class Converter {
             case "METABOLOMIC":
                 product = new MetabolomicAnalysis(name, description, unitPrice,unit, runningNumber)
                 break
-        //todo add the  new product types here
         }
         if(!product) throw new IllegalArgumentException("Cannot parse products")
         return product

@@ -103,7 +103,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
         break
     }
 
-    if(productCategory == null) {
+    if(!productCategory) {
       log.error("Product could not be parsed from database query.")
       log.error(row)
       throw new DatabaseQueryException("Cannot parse product")
