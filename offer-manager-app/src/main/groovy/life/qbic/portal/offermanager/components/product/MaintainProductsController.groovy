@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.products
+package life.qbic.portal.offermanager.components.product
 
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging

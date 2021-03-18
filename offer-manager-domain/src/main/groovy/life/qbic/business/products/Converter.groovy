@@ -2,10 +2,12 @@ package life.qbic.business.products
 
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
+import life.qbic.datamodel.dtos.business.services.ProteomicAnalysis
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Sequencing
 
@@ -21,7 +23,7 @@ import life.qbic.datamodel.dtos.business.services.Sequencing
 class Converter {
 
     /**
-     * Creates a product DTO based on its products category
+     * Creates a product DTO based on its products category without a version
      *
      * @param category The products category which determines what kind of products is created
      * @param description The description of the product
@@ -31,41 +33,22 @@ class Converter {
      * @return
      */
     static Product createProduct(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit){
-        Product product
-        switch (category) {
-            case "DATA_STORAGE":
-                //todo do we want to set the id manually to null or update the DTO constructor?
-                product = new DataStorage(name, description, unitPrice,unit, "0")
-                break
-            case "PRIMARY_BIOINFO":
-                product = new PrimaryAnalysis(name, description, unitPrice,unit, "0")
-                break
-            case "PROJECT_MANAGEMENT":
-                product = new ProjectManagement(name, description, unitPrice,unit, "0")
-                break
-            case "SECONDARY_BIOINFO":
-                product = new SecondaryAnalysis(name, description, unitPrice,unit, "0")
-                break
-            case "SEQUENCING":
-                product = new Sequencing(name, description, unitPrice,unit, "0")
-                break
-            //todo add the  new product types here
-        }
-        if(!product) throw new IllegalArgumentException("Cannot parse products")
-        return product
+        String runningNumber = "0"
+        return createProductWithVersion(category,name,description,unitPrice,unit,runningNumber)
     }
 
     /**
-     * Creates a product DTO based on its products category
+     * Creates a product DTO based on its products category with a version
      *
      * @param category The products category which determines what kind of products is created
      * @param description The description of the product
      * @param name The name of the product
      * @param unitPrice The unit price of the product
      * @param unit The unit in which the product is measured
+     * @param runningNumber The running version number of the product
      * @return
      */
-    static Product createProduct(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit, String runningNumber){
+    static Product createProductWithVersion(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit, String runningNumber){
         Product product
         switch (category) {
             case "DATA_STORAGE":
@@ -82,6 +65,12 @@ class Converter {
                 break
             case "SEQUENCING":
                 product = new Sequencing(name, description, unitPrice,unit, runningNumber)
+                break
+            case "PROTEOMIC":
+                product = new ProteomicAnalysis(name, description, unitPrice,unit, runningNumber)
+                break
+            case "METABOLOMIC":
+                product = new MetabolomicAnalysis(name, description, unitPrice,unit, runningNumber)
                 break
         //todo add the  new product types here
         }

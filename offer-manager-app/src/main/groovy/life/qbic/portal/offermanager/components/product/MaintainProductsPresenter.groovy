@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.products
+package life.qbic.portal.offermanager.components.product
 
 import life.qbic.business.products.archive.ArchiveProductOutput
 import life.qbic.business.products.create.CreateProductOutput

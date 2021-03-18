@@ -108,7 +108,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       log.error(row)
       throw new DatabaseQueryException("Cannot parse product")
     } else {
-      return Converter.createProduct(productCategory,row.productName as String,
+      return Converter.createProductWithVersion(productCategory,row.productName as String,
               row.description as String,
               row.unitPrice as Double,
               new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
