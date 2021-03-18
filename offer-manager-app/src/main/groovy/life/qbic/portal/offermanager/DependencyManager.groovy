@@ -134,8 +134,6 @@ class DependencyManager {
     private CreateOfferController createOfferController
     private CreateOfferController updateOfferController
     private OfferOverviewController offerOverviewController
-    private MaintainProductsController createProductController
-    private MaintainProductsController copyProductController
     private MaintainProductsController maintainProductController
 
 
