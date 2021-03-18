@@ -14,7 +14,6 @@ import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 
-import javax.swing.text.html.Option
 import java.sql.*
 
 /**
