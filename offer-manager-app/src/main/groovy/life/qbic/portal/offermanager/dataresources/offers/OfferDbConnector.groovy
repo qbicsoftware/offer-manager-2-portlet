@@ -332,7 +332,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             PreparedStatement statement = it.prepareStatement(query)
             statement.setString(1, projectIdentifier.toString())
             statement.setString(2, offerId.toString())
-            statement.executeQuery()
+            statement.executeUpdate()
         }
     }
 }
