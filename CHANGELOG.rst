@@ -4,10 +4,14 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-Unassigned
-----------
+1.0.0-alpha.5-SNAPSHOT (2021-03-17)
+--------------------------
 
 **Added**
+
+* Link offers to project now. The ``life.qbic.business.offers.Offer`` and ``life.qbic.portal
+.offermanager.dataresources.offers`` have been extended with a new property to associate it with
+an existing project by its project identifier.
 
 **Fixed**
 
@@ -15,8 +19,8 @@ Unassigned
 
 **Deprecated**
 
-1.0.0-alpha.4
---------------
+1.0.0-alpha.4 (2021-03-16)
+--------------------------
 
 **Added**
 
@@ -26,26 +30,28 @@ Unassigned
   data generation, data analysis and project management (`#364 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/364>`_)
 * Introduce overheadRatio property to life.qbic.business.offers.Offer
   used to show the applied overhead markup in the pricing footer of the Offer PDF(`#362 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/362>`_)
+* Introduce first draft for OpenBis based project space and project creation (`#396 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/396>`_)
+* Introduce first draft for product maintenance and creation (`#392 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/392>`_)
 
 **Fixed**
 
 * User cannot select other offers from the overview anymore, during the offer details are loaded
-after a selection. Selection is enabled again after the resource has been loaded. This solves a
-not yet reported issue that can be observed when dealing with a significant network delay.
+  after a selection. Selection is enabled again after the resource has been loaded. This solves a
+  not yet reported issue that can be observed when dealing with a significant network delay.
 
 **Dependencies**
 
 **Deprecated**
 
-1.0.0-alpha.3
---------------
+1.0.0-alpha.3 (2021-03-02)
+--------------------------
 
 **Added**
 
 * Authorization based on user roles. Two new roles have been introduced that represent
-the organisational roles project manager `Role.PROJECT_MANAGER` and offer admin `Role
-.OFFER_ADMIN`. The administrator will provide access to additional app features, such as the
-upcoming service product maintenance interface.
+  the organisational roles project manager `Role.PROJECT_MANAGER` and offer admin `Role
+  .OFFER_ADMIN`. The administrator will provide access to additional app features, such as the
+  upcoming service product maintenance interface.
 
 * Introduce Offer retrieval via Fetch Offer Use Case (`#344 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/344>`_)
 
@@ -98,8 +104,8 @@ upcoming service product maintenance interface.
 * Addressed `#309 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/309>`_
 * Replace the project description with project objective (`#339 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/339>`_)
 * Added support to configure the chromium browser executable. An environment variable
-`CHROMIUM_ALIAS` has been introduced that can be set to define the chromium executable in the
-deployment system of the application. Addresses `#336 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/336>`_
+  `CHROMIUM_ALIAS` has been introduced that can be set to define the chromium executable in the
+  deployment system of the application. Addresses `#336 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/336>`_
 
 
 **Fixed**
