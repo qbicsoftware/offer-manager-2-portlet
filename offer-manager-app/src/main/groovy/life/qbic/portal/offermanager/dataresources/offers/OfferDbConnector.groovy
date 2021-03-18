@@ -7,10 +7,14 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.create.CreateOfferDataSource
+import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
+import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
+import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 
+import javax.swing.text.html.Option
 import java.sql.*
 
 /**
@@ -24,13 +28,12 @@ import java.sql.*
  *
  */
 @Log4j2
-class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
+class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant{
 
     ConnectionProvider connectionProvider
 
     PersonDbConnector customerGateway
     ProductsDbConnector productGateway
-
 
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (offerId, " +
             "creationDate, expirationDate, customerId, projectManagerId, projectTitle, " +
@@ -184,7 +187,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
         List<OfferOverview> offerOverviewList = []
 
         String query = "SELECT offerId, creationDate, projectTitle, " +
-                "totalPrice, first_name, last_name, email\n" +
+                "totalPrice, first_name, last_name, email, associatedProject\n" +
                 "FROM offer \n" +
                 "LEFT JOIN person \n" +
                 "ON offer.customerId = person.id"
@@ -204,9 +207,19 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
                 def creationDate = resultSet.getDate("creationDate")
                 def customerName = "${customer.getFirstName()} ${customer.getLastName()}"
                 def offerId = parseOfferId(resultSet.getString("offerId"))
-                OfferOverview offerOverview = new OfferOverview(offerId,
-                        creationDate,projectTitle, "-",
-                        customerName, totalCosts)
+                Optional<ProjectIdentifier> projectIdentifier = parseProjectIdentifier(
+                        resultSet.getString("associatedProject"))
+
+                OfferOverview offerOverview
+                if (projectIdentifier.isPresent()) {
+                    offerOverview = new OfferOverview(offerId,
+                            creationDate,projectTitle,
+                            customerName, totalCosts, projectIdentifier.get())
+                } else {
+                    offerOverview = new OfferOverview(offerId,
+                            creationDate,projectTitle, "",
+                            customerName, totalCosts)
+                }
                 offerOverviewList.add(offerOverview)
             }
         }
@@ -263,8 +276,9 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
                 def selectedAffiliation = customerGateway.getAffiliation(selectedAffiliationId)
                 def items = productGateway.getItemsForOffer(offerPrimaryId)
                 def checksum = resultSet.getString("checksum")
+                def associatedProject = resultSet.getString("associatedProject")
 
-                offer = Optional.of(new Offer.Builder(
+                def offerBuilder = new Offer.Builder(
                         customer,
                         projectManager,
                         projectTitle,
@@ -279,9 +293,47 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource{
                         .overheads(overheads)
                         .netPrice(net)
                         .checksum(checksum)
-                        .build())
+                Optional<ProjectIdentifier> projectIdentifier = associatedProject ?
+                    parseProjectIdentifier(associatedProject) : Optional.empty() as Optional<ProjectIdentifier>
+                if (projectIdentifier.isPresent()) {
+                    offerBuilder.associatedProject(projectIdentifier.get())
+                }
+                offer = Optional.of(offerBuilder.build())
             }
         }
         return offer
+    }
+
+    private static Optional<ProjectIdentifier> parseProjectIdentifier(String projectIdentifier) {
+        Optional<ProjectIdentifier> identifier = Optional.empty()
+        if (!projectIdentifier) {
+            return identifier
+        }
+        try {
+            def splittedIdentifier = projectIdentifier.split("/")
+            def space = new ProjectSpace(splittedIdentifier[0])
+            def code = new ProjectCode(splittedIdentifier[1])
+            identifier = Optional.of(new ProjectIdentifier(space, code))
+        } catch (Exception e) {
+            log.error(e.message)
+            log.error(e.stackTrace.join("\n"))
+        }
+        return identifier
+    }
+
+    /**
+     * {@inheritDocs}
+     */
+    @Override
+    void linkOfferWithProject(OfferId offerId, ProjectIdentifier projectIdentifier) {
+        String query = "UPDATE offer SET associatedProject = ? WHERE offerId = ?"
+
+        Connection connection = connectionProvider.connect()
+        connection.withCloseable {
+            PreparedStatement statement = it.prepareStatement(query)
+            statement.setString(1, projectIdentifier.toString())
+            statement.setString(2, offerId.toString())
+            statement.executeQuery()
+        }
     }
 }
