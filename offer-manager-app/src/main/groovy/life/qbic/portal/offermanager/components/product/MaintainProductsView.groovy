@@ -161,6 +161,10 @@ class MaintainProductsView extends VerticalLayout{
             controller.archiveProduct(viewModel.selectedProduct.productId)
         })
 
+        viewModel.products.addPropertyChangeListener({
+            productGrid.dataProvider.refreshAll()
+        })
+
     }
 
 }
