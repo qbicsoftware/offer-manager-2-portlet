@@ -15,6 +15,7 @@ import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Sequencing
+import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -105,6 +106,11 @@ class Offer {
      */
     private static final double VAT = 0.19
 
+    /**
+     * A project that has been created from this offer (optional)
+     */
+    private Optional<ProjectIdentifier> associatedProject
+
     private static Date calculateExpirationDate(Date date) {
         use (TimeCategory) {
             return date + 90.days
@@ -123,6 +129,7 @@ class Offer {
         Affiliation selectedCustomerAffiliation
         List<OfferId> availableVersions
         double overheadRatio
+        Optional<ProjectIdentifier> associatedProject
 
         Builder(Customer customer, ProjectManager projectManager, String projectTitle, String projectObjective, List<ProductItem> items, Affiliation selectedCustomerAffiliation) {
             this.customer = Objects.requireNonNull(customer, "Customer must not be null")
@@ -136,6 +143,7 @@ class Offer {
             // copy all immutable items to out internal list
             items.each {this.items.add(it)}
             this.selectedCustomerAffiliation = Objects.requireNonNull(selectedCustomerAffiliation, "Customer Affiliation must not be null")
+            this.associatedProject = Optional.empty()
         }
 
         Builder creationDate(Date creationDate) {
@@ -155,6 +163,11 @@ class Offer {
 
         Builder overheadRatio(double overheadRatio){
             this.overheadRatio = overheadRatio
+            return this
+        }
+
+        Builder associatedProject(ProjectIdentifier associatedProject) {
+            this.associatedProject = Optional.of(associatedProject)
             return this
         }
 
@@ -185,7 +198,11 @@ class Offer {
         this.itemsWithOverheadNetPrice = getOverheadItemsNet()
         this.itemsWithoutOverheadNetPrice = getNoOverheadItemsNet()
         this.overheadRatio = determineOverhead()
-
+        if (builder.associatedProject.isPresent()) {
+            this.associatedProject = Optional.of(builder.associatedProject.get())
+        } else {
+            this.associatedProject = Optional.empty()
+        }
     }
 
     /**
@@ -341,6 +358,10 @@ class Offer {
 
     double getOverheadRatio() {
         return overheadRatio
+    }
+
+    Optional<ProjectIdentifier> getAssociatedProject() {
+        return associatedProject
     }
 
     /**
