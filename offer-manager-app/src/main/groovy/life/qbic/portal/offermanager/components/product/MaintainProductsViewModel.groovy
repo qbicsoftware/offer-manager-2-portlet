@@ -24,7 +24,7 @@ class MaintainProductsViewModel {
 
     @Bindable Product selectedProduct
 
-    private final ProductsResourcesService productsResourcesService
+    final ProductsResourcesService productsResourcesService
 
     MaintainProductsViewModel(ProductsResourcesService productsResourcesService) {
         this.productsResourcesService = productsResourcesService

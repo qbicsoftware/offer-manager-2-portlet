@@ -68,6 +68,7 @@ class MaintainProductsView extends VerticalLayout{
     private void createButtons(){
         addProduct = new Button("Add Product", VaadinIcons.PLUS)
         copyProduct = new Button ("Copy Product", VaadinIcons.COPY)
+        copyProduct.setEnabled(false)
         archiveProduct = new Button("Archive Product", VaadinIcons.ARCHIVE)
 
         buttonLayout = new HorizontalLayout(productDescription, addProduct,copyProduct,archiveProduct)
