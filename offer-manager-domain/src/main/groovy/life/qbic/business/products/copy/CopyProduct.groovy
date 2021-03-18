@@ -56,10 +56,10 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
             failed("The provided product was not found. Please create a new one instead.")
             return
         }
-        Product existingProduct = searchResult.get()
         //2. construct new product with missing information filled from the db
-        //3. change product identifier
-        //4. call the CreateProduct use case
+        Product existingProduct = searchResult.get()
+        //3. call the CreateProduct use case (new id is created here)
+        createProduct.create(existingProduct)
     }
 
     /**

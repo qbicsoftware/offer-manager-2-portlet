@@ -3,6 +3,9 @@ package life.qbic.business.products.create
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
+import life.qbic.datamodel.dtos.business.ProductCategory
+import life.qbic.datamodel.dtos.business.ProductId
+import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
 
 /**
@@ -28,7 +31,10 @@ class CreateProduct implements CreateProductInput {
     @Override
     void create(Product product) {
         try {
-            dataSource.store(product)
+            //todo create new identifier
+            ProductId id = createNewProductId()
+            Product productWithID = null //todo use converter here
+            dataSource.store(productWithID)
             output.created(product)
         } catch(DatabaseQueryException databaseQueryException) {
             log.error("Product creation failed", databaseQueryException)
@@ -38,4 +44,17 @@ class CreateProduct implements CreateProductInput {
             output.foundDuplicate(product)
         }
     }
+
+    private ProductId createNewProductId(){
+        ProductCategory category = ProductCategory.SEQUENCING//todo use the converter here
+        Optional<ProductId> id = dataSource.fetchLatestProductIdentifierVersion(category)
+
+        if(id.isPresent()){
+            long newVersion = id.get().uniqueId + 1
+            return new ProductId.Builder(id.get().type,newVersion).build()
+        }else{
+            throw new IllegalArgumentException("The provided Product has no Identifier in the Database")
+        }
+    }
+
 }

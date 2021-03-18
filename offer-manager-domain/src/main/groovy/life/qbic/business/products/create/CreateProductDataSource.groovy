@@ -1,6 +1,7 @@
 package life.qbic.business.products.create
 
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.Product
 
@@ -19,4 +20,12 @@ interface CreateProductDataSource {
      * @throws ProductExistsException if the product already exists in the data source
      */
     void store(Product product) throws DatabaseQueryException, ProductExistsException
+
+    /**
+     * Fetches the latest version of a product identifier for a product category
+     * @param productCategory
+     * @return
+     * @throws DatabaseQueryException
+     */
+    Optional<ProductId> fetchLatestProductIdentifierVersion(ProductCategory productCategory) throws DatabaseQueryException
 }
