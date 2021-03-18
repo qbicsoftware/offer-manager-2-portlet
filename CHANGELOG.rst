@@ -4,6 +4,15 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.0.0-alpha.5-SNAPSHOT
+----------------------
+
+**Added**
+
+* Link offers to project now. The ``life.qbic.business.offers.Offer`` and ``life.qbic.portal
+.offermanager.dataresources.offers`` have been extended with a new property to associate it with
+an existing project by its project identifier.
+
 1.0.0-alpha.4 (2021-03-16)
 --------------------------
 
