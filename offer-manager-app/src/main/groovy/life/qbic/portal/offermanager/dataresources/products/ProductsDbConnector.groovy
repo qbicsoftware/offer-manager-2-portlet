@@ -63,9 +63,10 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
 
   private List<Product> fetchAllProductsFromDb() {
     List<Product> products = []
+    String query = Queries.SELECT_ALL_PRODUCTS + "WHERE active = 1"
     provider.connect().withCloseable {
-      final PreparedStatement query = it.prepareStatement(Queries.SELECT_ALL_PRODUCTS)
-      final ResultSet resultSet = query.executeQuery()
+      final PreparedStatement statement = it.prepareStatement(query)
+      final ResultSet resultSet = statement.executeQuery()
       products.addAll(convertResultSet(resultSet))
     }
     return products
@@ -251,7 +252,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   @Override
   Optional<Product> fetch(ProductId productId) throws DatabaseQueryException {
     Connection connection = provider.connect()
-    String query = Queries.SELECT_ALL_PRODUCTS + " WHERE productId=?"
+    String query = Queries.SELECT_ALL_PRODUCTS + "WHERE active = 1 AND productId=?"
     Optional<Product> product = Optional.empty()
 
     connection.withCloseable {
@@ -308,7 +309,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     /**
      * Query for all available products.
      */
-    final static String SELECT_ALL_PRODUCTS = "SELECT * FROM product WHERE active = 1"
+    final static String SELECT_ALL_PRODUCTS = "SELECT * FROM product "
 
     /**
      * Query for all items of an offer.

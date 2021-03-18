@@ -38,7 +38,12 @@ class MaintainProductsViewModel {
 
     private void subscribe(){
         productsResourcesService.subscribe({ product ->
-            products << product
+            refreshList()
         })
+    }
+
+    private void refreshList(){
+        products.clear()
+        products.addAll(productsResourcesService.iterator().toList())
     }
 }
