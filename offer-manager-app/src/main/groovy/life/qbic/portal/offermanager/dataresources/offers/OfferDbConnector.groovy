@@ -292,8 +292,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
                         .overheads(overheads)
                         .netPrice(net)
                         .checksum(checksum)
-                Optional<ProjectIdentifier> projectIdentifier = associatedProject ?
-                    parseProjectIdentifier(associatedProject) : Optional.empty() as Optional<ProjectIdentifier>
+                Optional<ProjectIdentifier> projectIdentifier = parseProjectIdentifier(associatedProject)
                 if (projectIdentifier.isPresent()) {
                     offerBuilder.associatedProject(projectIdentifier.get())
                 }
