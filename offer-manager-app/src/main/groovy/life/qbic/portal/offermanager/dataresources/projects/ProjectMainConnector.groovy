@@ -32,7 +32,7 @@ import life.qbic.portal.offermanager.dataresources.offers.ProjectAssistant
  * This class implements the data sources of the different use cases and is responsible for
  * transferring data to the project/customer db and openBIS
  *
- * @since 1.0.0*
+ * @since 1.0.0
  */
 @Log4j2
 @CompileStatic
