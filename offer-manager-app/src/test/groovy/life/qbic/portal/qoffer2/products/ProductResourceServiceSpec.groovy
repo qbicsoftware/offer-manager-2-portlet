@@ -42,8 +42,6 @@ class ProductResourceServiceSpec extends Specification{
         resourcesService.addToResource(primaryAnalysis)
         resourcesService.removeFromResource(primaryAnalysisCopy)
 
-        println primaryAnalysisCopy == primaryAnalysis
-
         then: "the list does not longer contain the removed product"
         resourcesService.iterator().toList().size() == 1
     }

@@ -308,7 +308,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     /**
      * Query for all available products.
      */
-    final static String SELECT_ALL_PRODUCTS = "SELECT * FROM product"
+    final static String SELECT_ALL_PRODUCTS = "SELECT * FROM product WHERE active = 1"
 
     /**
      * Query for all items of an offer.
