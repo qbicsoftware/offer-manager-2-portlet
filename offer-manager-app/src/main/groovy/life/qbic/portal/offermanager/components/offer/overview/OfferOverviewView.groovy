@@ -183,6 +183,14 @@ class OfferOverviewView extends FormLayout {
                 })
     }
 
+    private void checkProjectCreationAllowed(OfferOverview overview) {
+        if (overview.associatedProject.isPresent()) {
+            createProjectButton.setEnabled(false)
+        } else {
+            createProjectButton.setEnabled(true)
+        }
+    }
+
     private void createResourceForDownload() {
         removeExistingResources()
 
@@ -239,7 +247,7 @@ class OfferOverviewView extends FormLayout {
                     overviewGrid.setEnabled(true)
                     downloadBtn.setEnabled(true)
                     updateOfferBtn.setEnabled(true)
-                    createProjectButton.setEnabled(true)
+                    checkProjectCreationAllowed(offerOverview)
                     ui.setPollInterval(-1)
                 })
         }
