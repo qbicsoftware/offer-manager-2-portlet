@@ -12,6 +12,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Link offers to project now. The ``life.qbic.business.offers.Offer`` and ``life.qbic.portal
 .offermanager.dataresources.offers`` have been extended with a new property to associate it with
 an existing project by its project identifier.
+* Proteomic and Metabolomic Products are now included in the Offer PDF
 
 **Fixed**
 
