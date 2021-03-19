@@ -3,7 +3,6 @@ package life.qbic.business.products.create
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
-import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.Sequencing
@@ -18,6 +17,7 @@ import spock.lang.Specification
  */
 class CreateProductSpec extends Specification {
     CreateProductOutput output = Mock(CreateProductOutput)
+    ProductId productId = new ProductId("SE","1")
     Product product = new Sequencing("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, "1234") //todo use long when ProductId builder is fixed
 
 
@@ -26,7 +26,7 @@ class CreateProductSpec extends Specification {
         CreateProductDataSource dataSource = Stub(CreateProductDataSource)
         String dataStatus = ""
         dataSource.store(product) >> { dataStatus = "stored" }
-        dataSource.fetchLatestProductIdentifierVersion(ProductCategory.SEQUENCING) >> new ProductId("SE","1")
+        dataSource.fetchLatestProductIdentifierVersion(ProductCategory.SEQUENCING) >> Optional.of(productId)
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 
@@ -47,9 +47,10 @@ class CreateProductSpec extends Specification {
         String dataStatus = ""
         dataSource.store(product) >> {
             dataStatus = "not stored"
-            println(dataStatus)
             throw new ProductExistsException(productId)
         }
+        dataSource.fetchLatestProductIdentifierVersion(ProductCategory.SEQUENCING) >> Optional.of(productId)
+
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 
@@ -71,6 +72,8 @@ class CreateProductSpec extends Specification {
         dataSource.store(product) >> {
             dataStatus = "not stored"
             throw new DatabaseQueryException("This is a test") }
+        dataSource.fetchLatestProductIdentifierVersion(ProductCategory.SEQUENCING) >> Optional.of(productId)
+
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 
