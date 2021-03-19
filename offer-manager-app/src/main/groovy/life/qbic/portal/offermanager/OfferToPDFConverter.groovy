@@ -107,7 +107,7 @@ class OfferToPDFConverter implements OfferExporter {
             return this.name;
         }
     }
-    private final Map productGroupClasses
+    private final Map productGroupClasses = [:]
 
     OfferToPDFConverter(Offer offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
@@ -307,10 +307,10 @@ class OfferToPDFConverter implements OfferExporter {
             if (it.product.class in productGroupClasses[ProductGroups.DATA_GENERATION]) {
                 dataGenerationItems.add(it)
             }
-            if (it.product in productGroupClasses[ProductGroups.DATA_ANALYSIS]) {
+            if (it.product.class in productGroupClasses[ProductGroups.DATA_ANALYSIS]) {
                 dataAnalysisItems.add(it)
             }
-            if (it.product in productGroupClasses[ProductGroups.DATA_MANAGEMENT]) {
+            if (it.product.class in productGroupClasses[ProductGroups.DATA_MANAGEMENT]) {
                 dataManagementItems.add(it)
             }
         }
