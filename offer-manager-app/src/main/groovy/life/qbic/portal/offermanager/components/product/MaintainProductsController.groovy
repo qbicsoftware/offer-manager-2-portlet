@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.product
 
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
+import life.qbic.business.products.Converter
 import life.qbic.business.products.archive.ArchiveProductInput
 import life.qbic.business.products.create.CreateProductInput
 
@@ -80,28 +81,7 @@ class MaintainProductsController {
          * @return
          */
         static Product createProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit){
-            Product product
-            switch (category) {
-                case "DATA_STORAGE":
-                    //todo do we want to set the id manually to null or update the DTO constructor?
-                    product = new DataStorage(name, description, unitPrice,unit, "0")
-                    break
-                case "PRIMARY_BIOINFO":
-                    product = new PrimaryAnalysis(name, description, unitPrice,unit, "0")
-                    break
-                case "PROJECT_MANAGEMENT":
-                    product = new ProjectManagement(name, description, unitPrice,unit, "0")
-                    break
-                case "SECONDARY_BIOINFO":
-                    product = new SecondaryAnalysis(name, description, unitPrice,unit, "0")
-                    break
-                case "SEQUENCING":
-                    product = new Sequencing(name, description, unitPrice,unit, "0")
-                    break
-            }
-            if(!product) throw new IllegalArgumentException("Cannot parse products")
-
-            return product
+            return Converter.createProduct(category,name, description, unitPrice,unit)
         }
 
     }
