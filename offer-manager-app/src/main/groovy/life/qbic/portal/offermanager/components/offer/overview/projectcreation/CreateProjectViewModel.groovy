@@ -7,6 +7,8 @@ import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
+import life.qbic.portal.offermanager.dataresources.projects.ProjectResourceService
+import life.qbic.portal.offermanager.dataresources.projects.ProjectSpaceResourceService
 
 /**
  * <h1>Holds the create project state information and logic</h1>
@@ -46,6 +48,8 @@ class CreateProjectViewModel {
 
     @Bindable String desiredSpaceName
 
+    @Bindable SPACE_SELECTION spaceSelection
+
     DataProvider availableSpaces
 
     @Bindable String desiredProjectCode
@@ -58,17 +62,21 @@ class CreateProjectViewModel {
 
     @Bindable Boolean codeIsValid
 
-    CreateProjectViewModel() {
+    private final ProjectSpaceResourceService projectSpaceResourceService
+
+    private final ProjectResourceService projectResourceService
+
+    CreateProjectViewModel(ProjectSpaceResourceService projectSpaceResourceService,
+                           ProjectResourceService projectResourceService) {
+        this.projectSpaceResourceService = projectSpaceResourceService
+        this.projectResourceService = projectResourceService
+
         spaceSelectionDataProvider = new ListDataProvider<>([SPACE_SELECTION.NEW_SPACE,
                                                              SPACE_SELECTION.EXISTING_SPACE])
-        // TODO use space resource service once available
-        availableSpaces = new ListDataProvider([new ProjectSpace("Example Space One"),
-                           new ProjectSpace("Example Space Two")])
-        // TODO use project resource service once available
-        existingProjects = [
-                new ProjectCode("QABCD"),
-                new ProjectCode("QTEST")
-        ]
+
+        availableSpaces = new ListDataProvider(projectSpaceResourceService.iterator().toList())
+        existingProjects = projectResourceService.iterator().collect {it.projectCode}
+        startedFromView = Optional.empty()
         initFields()
         setupListeners()
     }
@@ -97,11 +105,9 @@ class CreateProjectViewModel {
         resultingProjectCode = ""
         projectCodeValidationResult = ""
         codeIsValid = false
-        startedFromView = Optional.empty()
         createProjectEnabled = false
         projectCreated = false
         selectedOffer = Optional.empty()
-
     }
 
     private void resetModel() {

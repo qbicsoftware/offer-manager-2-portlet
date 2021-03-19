@@ -24,7 +24,7 @@ import life.qbic.datamodel.dtos.business.ProjectManager
  */
 class Converter {
     static life.qbic.datamodel.dtos.business.Offer convertOfferToDTO(Offer offer) {
-        new life.qbic.datamodel.dtos.business.Offer.Builder(
+        def builder =  new life.qbic.datamodel.dtos.business.Offer.Builder(
                 offer.customer,
                 offer.projectManager,
                 offer.projectTitle,
@@ -44,7 +44,12 @@ class Converter {
                 .itemsWithOverheadNet(offer.overheadItemsNet)
                 .itemsWithoutOverheadNet(offer.noOverheadItemsNet)
                 .overheadRatio(offer.overheadRatio)
-                .build()
+        // Add the project identifier, if one is present
+        if (offer.associatedProject.isPresent()) {
+            builder.associatedProject(offer.associatedProject.get())
+        }
+
+        return builder.build()
     }
     static Offer buildOfferForCostCalculation(List<ProductItem> items,
                                               Affiliation affiliation) {
@@ -76,7 +81,7 @@ class Converter {
     }
 
     static life.qbic.business.offers.Offer convertDTOToOffer(life.qbic.datamodel.dtos.business.Offer offer) {
-        new Offer.Builder(
+        def builder = new Offer.Builder(
                 offer.customer,
                 offer.projectManager,
                 offer.projectTitle,
@@ -86,6 +91,12 @@ class Converter {
                 .identifier(buildOfferId(offer.identifier))
                 //ToDo Is this the correct mapping?
                 .creationDate(offer.modificationDate)
-                .build()
+
+        // We optionally add the associated project, if present
+        if (offer.associatedProject.isPresent()) {
+            builder.associatedProject(offer.associatedProject.get())
+        }
+
+        return builder.build()
     }
 }

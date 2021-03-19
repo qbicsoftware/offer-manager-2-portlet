@@ -2,6 +2,12 @@ package life.qbic.portal.offermanager.dataresources.products
 
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
+import life.qbic.business.products.Converter
+import life.qbic.business.products.archive.ArchiveProductDataSource
+import life.qbic.business.products.create.CreateProductDataSource
+import life.qbic.business.products.create.ProductExistsException
+import life.qbic.datamodel.dtos.business.ProductCategory
+import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.business.exceptions.DatabaseQueryException
@@ -20,7 +26,7 @@ import java.sql.SQLException
  * @since 1.0.0
  */
 @Log4j2
-class ProductsDbConnector {
+class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource {
 
   private final ConnectionProvider provider
 
@@ -76,47 +82,36 @@ class ProductsDbConnector {
   }
 
   private static Product rowResultToProduct(GroovyRowResult row) {
-    def productCategory = row.category
+    def dbProductCategory = row.category
     String productId = row.productId
-    Product product
-    switch(productCategory) {
+    ProductCategory productCategory
+    switch(dbProductCategory) {
       case "Data Storage":
-        product = new DataStorage(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.DATA_STORAGE
         break
       case "Primary Bioinformatics":
-        product = new PrimaryAnalysis(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.PRIMARY_BIOINFO
         break
       case "Project Management":
-        product = new ProjectManagement(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.PROJECT_MANAGEMENT
         break
       case "Secondary Bioinformatics":
-        product = new SecondaryAnalysis(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.SECONDARY_BIOINFO
         break
       case "Sequencing":
-        product = new Sequencing(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.SEQUENCING
         break
     }
-    if(product == null) {
+
+    if(!productCategory) {
       log.error("Product could not be parsed from database query.")
       log.error(row)
       throw new DatabaseQueryException("Cannot parse product")
     } else {
-      return product
+      return Converter.createProductWithVersion(productCategory,row.productName as String,
+              row.description as String,
+              row.unitPrice as Double,
+              new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
     }
   }
 
@@ -221,9 +216,85 @@ class ProductsDbConnector {
   }
 
   /**
+   * A product is archived by setting it inactive
+   * @param product The product that needs to be archived
+   * @since 1.0.0
+   * @throws life.qbic.business.exceptions.DatabaseQueryException
+   */
+  @Override
+  void archive(Product product) throws DatabaseQueryException {
+    Connection connection = provider.connect()
+
+    connection.withCloseable {
+      def statement = connection.prepareStatement(Queries.ARCHIVE_PRODUCT)
+      statement.setString(1, product.productId.toString())
+      statement.execute()
+    }
+  }
+
+  /**
+   * Fetches a product from the database
+   * @param productId The product id of the product to be fetched
+   * @return returns an optional that contains the product if it has been found
+   * @since 1.0.0
+   * @throws life.qbic.business.exceptions.DatabaseQueryException is thrown when any technical interaction with the data source fails
+   */
+  @Override
+  Optional<Product> fetch(ProductId productId) throws DatabaseQueryException {
+    Connection connection = provider.connect()
+    String query = Queries.SELECT_ALL_PRODUCTS + " WHERE productId=?"
+    Optional<Product> product = Optional.empty()
+
+    connection.withCloseable {
+      PreparedStatement preparedStatement = it.prepareStatement(query)
+      preparedStatement.setString(1, productId.identifier.toString())
+      ResultSet result = preparedStatement.executeQuery()
+
+      while (result.next()) {
+        product = Optional.of(rowResultToProduct(SqlExtensions.toRowResult(result)))
+      }
+    }
+    return product
+  }
+
+  /**
+   * Stores a product in the database
+   * @param product The product that needs to be stored
+   * @since 1.0.0
+   * @throws DatabaseQueryException if any technical interaction with the data source fails
+   * @throws ProductExistsException if the product already exists in the data source
+   */
+  @Override
+  void store(Product product) throws DatabaseQueryException, ProductExistsException {
+    Connection connection = provider.connect()
+
+    connection.withCloseable {
+      PreparedStatement preparedStatement = it.prepareStatement(Queries.INSERT_PRODUCT)
+      preparedStatement.setString(1, getProductType(product))
+      preparedStatement.setString(2, product.description)
+      preparedStatement.setString(3, product.productName)
+      preparedStatement.setDouble(4, product.unitPrice)
+      preparedStatement.setString(5, product.unit.value)
+      preparedStatement.setString(6, product.productId.toString())
+
+      preparedStatement.execute()
+    }
+  }
+
+  /**
    * Class that encapsulates the available SQL queries.
    */
   private static class Queries {
+
+    /**
+     * Query for inserting a product.
+     */
+    final static String INSERT_PRODUCT = "INSERT INTO product (category, description, productName, unitPrice, unit, productId) VALUES (?, ?, ?, ?, ?, ?)"
+
+    /**
+     * Inactivate a product
+     */
+    final static String ARCHIVE_PRODUCT = "UPDATE product SET active = 0 WHERE productId = ?"
 
     /**
      * Query for all available products.

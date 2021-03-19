@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager
 
 import groovy.util.logging.Log4j2
 import life.qbic.business.offers.fetch.FetchOffer
+import life.qbic.business.projects.create.CreateProject
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.business.persons.affiliation.create.CreateAffiliation
@@ -12,11 +13,17 @@ import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewController
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewPresenter
+import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectController
+import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectPresenter
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectViewModel
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
+import life.qbic.portal.offermanager.components.product.MaintainProductsView
+import life.qbic.portal.offermanager.components.product.MaintainProductsViewModel
+import life.qbic.portal.offermanager.components.product.create.CreateProductView
+import life.qbic.portal.offermanager.components.product.create.CreateProductViewModel
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -55,6 +62,8 @@ import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
 import life.qbic.portal.offermanager.components.AppView
+import life.qbic.portal.offermanager.dataresources.projects.ProjectResourceService
+import life.qbic.portal.offermanager.dataresources.projects.ProjectSpaceResourceService
 import life.qbic.portal.offermanager.security.Role
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
@@ -83,6 +92,9 @@ class DependencyManager {
     private OfferOverviewModel offerOverviewModel
     private SearchPersonViewModel searchPersonViewModel
     private CreatePersonViewModel createCustomerViewModelNewOffer
+    private MaintainProductsViewModel maintainProductsViewModel
+    private CreateProductViewModel createProductViewModel
+    private CreateProductViewModel copyProductViewModel
     private CreateProjectViewModel createProjectModel
 
     private AppPresenter presenter
@@ -93,6 +105,7 @@ class DependencyManager {
     private CreateOfferPresenter createOfferPresenter
     private CreateOfferPresenter updateOfferPresenter
     private OfferOverviewPresenter offerOverviewPresenter
+    private CreateProjectPresenter createProjectPresenter
 
     private PersonDbConnector customerDbConnector
     private OfferDbConnector offerDbConnector
@@ -107,6 +120,7 @@ class DependencyManager {
     private CreateAffiliation createAffiliation
     private CreateOffer createOffer
     private CreateOffer updateOffer
+    private CreateProject createProject
     private FetchOffer fetchOfferOfferOverview
     private FetchOffer fetchOfferCreateOffer
     private FetchOffer fetchOfferUpdateOffer
@@ -118,6 +132,7 @@ class DependencyManager {
     private CreateOfferController createOfferController
     private CreateOfferController updateOfferController
     private OfferOverviewController offerOverviewController
+    private CreateProjectController createProjectController
 
     private CreatePersonView createCustomerView
     private CreatePersonView updatePersonView
@@ -125,7 +140,6 @@ class DependencyManager {
     private CreateAffiliationView createAffiliationView
     private AppView portletView
     private ConfigurationManager configurationManager
-    private CreateProjectView createProjectView
 
     private OverviewService overviewService
     private EventEmitter<Offer> offerUpdateEvent
@@ -135,6 +149,8 @@ class DependencyManager {
     private ProductsResourcesService productsResourcesService
     private ProjectManagerResourceService managerResourceService
     private PersonResourceService personResourceService
+    private ProjectSpaceResourceService projectSpaceResourceService
+    private ProjectResourceService projectResourceService
     private EventEmitter<Person> personUpdateEvent
 
     /**
@@ -182,11 +198,14 @@ class DependencyManager {
             projectDbConnector = new ProjectDbConnector(DatabaseSession.getInstance(), customerDbConnector)
             
             
-            final String openbisURL = configurationManager.getDataSourceUrl() + "/openbis/openbis";
+            final String openbisURL = configurationManager.getDataSourceUrl() + "/openbis/openbis"
             openbisClient = new OpenBisClient(configurationManager.getDataSourceUser(), configurationManager.getDataSourcePassword(), openbisURL)
-            openbisClient.login();
+            openbisClient.login()
             
-            projectMainConnector = new ProjectMainConnector(projectDbConnector, openbisClient)
+            projectMainConnector = new ProjectMainConnector(
+                    projectDbConnector,
+                    openbisClient,
+                    offerDbConnector)
 
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
@@ -202,6 +221,8 @@ class DependencyManager {
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
         this.customerResourceService = new CustomerResourceService(customerDbConnector)
         this.personResourceService = new PersonResourceService(customerDbConnector)
+        this.projectSpaceResourceService = new ProjectSpaceResourceService(projectMainConnector)
+        this.projectResourceService = new ProjectResourceService(projectMainConnector)
     }
 
     private void setupEventEmitter(){
@@ -214,7 +235,7 @@ class DependencyManager {
         try {
             this.viewModel = new AppViewModel(affiliationService, this.userRole)
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${AppViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${AppViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
@@ -226,7 +247,7 @@ class DependencyManager {
             createCustomerViewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
 
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreatePersonViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${CreatePersonViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
@@ -239,7 +260,7 @@ class DependencyManager {
             createCustomerViewModelNewOffer.academicTitles.addAll(AcademicTitle.values().collect {it.value})
 
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreatePersonViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${CreatePersonViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
@@ -253,7 +274,7 @@ class DependencyManager {
             updatePersonViewModel.academicTitles.addAll(AcademicTitle.values().collect {it.value})
 
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${UpdatePersonViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${UpdatePersonViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
@@ -261,7 +282,7 @@ class DependencyManager {
             this.createAffiliationViewModel = new CreateAffiliationViewModel(affiliationService)
             createAffiliationViewModel.affiliationCategories.addAll(AffiliationCategory.values().collect{it.value})
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreateAffiliationViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${CreateAffiliationViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
@@ -283,27 +304,45 @@ class DependencyManager {
                     productsResourcesService,
                     offerUpdateEvent)
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
 
         try {
             this.offerOverviewModel = new OfferOverviewModel(overviewService, viewModel, offerUpdateEvent)
         } catch (Exception e) {
-            log.error("Unexpected excpetion during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
         }
 
         try {
             this.searchPersonViewModel = new SearchPersonViewModel(personResourceService, personUpdateEvent)
         }catch (Exception e) {
-            log.error("Unexpected excpetion during ${SearchPersonViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${SearchPersonViewModel.getSimpleName()} view model setup.", e)
         }
 
         try {
-            this.createProjectModel = new CreateProjectViewModel()
+            this.createProjectModel = new CreateProjectViewModel(projectSpaceResourceService, projectResourceService)
         }catch (Exception e) {
-            log.error("Unexpected excpetion during ${CreateProjectViewModel.getSimpleName()} view model" +
+            log.error("Unexpected exception during ${CreateProjectViewModel.getSimpleName()} view model" +
                     " setup.", e)
+        }
+
+        try {
+            this.maintainProductsViewModel = new MaintainProductsViewModel(productsResourcesService)
+        }catch (Exception e) {
+            log.error("Unexpected exception during ${MaintainProductsViewModel.getSimpleName()} view model setup.", e)
+        }
+
+        try {
+            this.createProductViewModel = new CreateProductViewModel()
+        }catch (Exception e) {
+            log.error("Unexpected exception during ${CreateProductViewModel.getSimpleName()} view model setup.", e)
+        }
+
+        try {
+            this.copyProductViewModel = new CreateProductViewModel()
+        }catch (Exception e) {
+            log.error("Unexpected exception during ${CreateProductViewModel.getSimpleName()} view model setup.", e)
         }
     }
 
@@ -361,6 +400,11 @@ class DependencyManager {
         } catch (Exception e) {
             log.error("Unexpected exception during ${OfferOverviewPresenter.getSimpleName()} setup", e)
         }
+        try {
+            this.createProjectPresenter = new CreateProjectPresenter(createProjectModel, viewModel)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${OfferOverviewPresenter.getSimpleName()} setup", e)
+        }
     }
 
     private void setupUseCaseInteractors() {
@@ -376,6 +420,8 @@ class DependencyManager {
         this.fetchOfferOfferOverview = new FetchOffer(offerDbConnector, offerOverviewPresenter)
         this.fetchOfferCreateOffer = new FetchOffer(offerDbConnector, createOfferPresenter)
         this.fetchOfferUpdateOffer = new FetchOffer(offerDbConnector, updateOfferPresenter)
+
+        this.createProject = new CreateProject(createProjectPresenter, projectMainConnector, projectMainConnector)
     }
 
     private void setupControllers() {
@@ -415,6 +461,11 @@ class DependencyManager {
         }
         try {
             this.offerOverviewController = new OfferOverviewController(this.fetchOfferOfferOverview)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${OfferOverviewController.getSimpleName()} setup", e)
+        }
+        try {
+            this.createProjectController = new CreateProjectController(this.createProject)
         } catch (Exception e) {
             log.error("Unexpected exception during ${OfferOverviewController.getSimpleName()} setup", e)
         }
@@ -480,7 +531,7 @@ class DependencyManager {
 
         CreateProjectView createProjectView
         try{
-            createProjectView = new CreateProjectView(createProjectModel)
+            createProjectView = new CreateProjectView(createProjectModel, createProjectController)
         } catch (Exception e) {
             log.error("Could not create ${CreateProjectView.getSimpleName()} view.", e)
             throw e
@@ -502,6 +553,30 @@ class DependencyManager {
             throw e
         }
 
+        CreateProductView createProductView
+        try{
+            createProductView = new CreateProductView(createProductViewModel)
+        }catch(Exception e){
+            log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
+            throw e
+        }
+
+        CreateProductView copyProductView
+        try{
+            copyProductView = new CreateProductView(copyProductViewModel)
+        }catch(Exception e){
+            log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
+            throw e
+        }
+
+        MaintainProductsView maintainProductsView
+        try{
+            maintainProductsView = new MaintainProductsView(maintainProductsViewModel,createProductView,copyProductView)
+        }catch (Exception e) {
+            log.error("Could not create ${MaintainProductsView.getSimpleName()} view.", e)
+            throw e
+        }
+
         AppView portletView
         try {
             CreatePersonView createCustomerView2 = new CreatePersonView(createCustomerController, this
@@ -515,6 +590,7 @@ class DependencyManager {
                     overviewView,
                     updateOfferView,
                     searchPersonView,
+                    maintainProductsView,
                     createProjectView
             )
             this.portletView = portletView
