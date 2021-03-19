@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.product
 
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
+import life.qbic.business.products.Converter
 import life.qbic.business.products.archive.ArchiveProductInput
 import life.qbic.business.products.create.CreateProductInput
 
@@ -63,7 +64,7 @@ class MaintainProductsController {
             archiveProductInput.archive(productId)
         }catch(Exception unexpected){
             log.error("unexpected exception at archive product call", unexpected)
-            throw new IllegalArgumentException("Could not create products from provided arguments.")
+            throw new IllegalArgumentException("Could not archive products from provided arguments.")
         }
     }
 
@@ -80,28 +81,7 @@ class MaintainProductsController {
          * @return
          */
         static Product createProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit){
-            Product product
-            switch (category) {
-                case "Data Storage":
-                    //todo do we want to set the id manually to null or update the DTO constructor?
-                    product = new DataStorage(name, description, unitPrice,unit, null)
-                    break
-                case "Primary Bioinformatics":
-                    product = new PrimaryAnalysis(name, description, unitPrice,unit, null)
-                    break
-                case "Project Management":
-                    product = new ProjectManagement(name, description, unitPrice,unit, null)
-                    break
-                case "Secondary Bioinformatics":
-                    product = new SecondaryAnalysis(name, description, unitPrice,unit, null)
-                    break
-                case "Sequencing":
-                    product = new Sequencing(name, description, unitPrice,unit, null)
-                    break
-            }
-            if(!product) throw new IllegalArgumentException("Cannot parse products")
-
-            return product
+            return Converter.createProduct(category,name, description, unitPrice,unit)
         }
 
     }
