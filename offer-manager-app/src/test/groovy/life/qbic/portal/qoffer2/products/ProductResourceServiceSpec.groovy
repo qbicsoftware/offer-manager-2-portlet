@@ -44,5 +44,6 @@ class ProductResourceServiceSpec extends Specification{
 
         then: "the list does not longer contain the removed product"
         resourcesService.iterator().toList().size() == 1
+        resourcesService.iterator().toList().get(0) == sequencing
     }
 }
