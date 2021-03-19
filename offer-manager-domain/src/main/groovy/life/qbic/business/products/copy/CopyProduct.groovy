@@ -43,30 +43,27 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
     }
 
     /**
-     * creates a copy of an existing product
-     * @param product The modified product information
-     * @since 1.0.0
+     * {@inheritDoc}
      */
     @Override
     void copyModified(Product product) {
         copyAttempt++
         //1. retrieve product from db
         Optional<Product> searchResult = dataSource.fetch(product.getProductId())
-        if (! searchResult.isPresent()) {
-            failed("The provided product was not found. Please create a new one instead.")
-            return
+
+        if (searchResult.isPresent()) {
+            //2. construct new product with missing information filled from the db
+            Product existingProduct = searchResult.get()
+            //todo check difference with checksum??
+            //3. call the CreateProduct use case (new id is created here)
+            createProduct.create(product)
         }
-        //2. construct new product with missing information filled from the db
-        Product existingProduct = searchResult.get()
-        //3. call the CreateProduct use case (new id is created here)
-        createProduct.create(existingProduct)
+        //there is no product present
+        failed("The provided product was not found. Please create a new one instead.")
     }
 
     /**
-     * Sends failure notifications that have been
-     * recorded during the create use case.
-     * @param notification containing a failure message
-     * @since 1.0.0
+     * {@inheritDoc}
      */
     @Override
     void failNotification(String notification) {
@@ -74,9 +71,7 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
     }
 
     /**
-     * A product has been created in the database
-     * @param product The product that has been created
-     * @since 1.0.0
+     * {@inheritDoc}
      */
     @Override
     void created(Product product) {
@@ -84,13 +79,11 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
     }
 
     /**
-     * The product is already stored in the database
-     * @param product The product for which a duplicate has been found
-     * @since 1.0.0
+     *{@inhertDoc}
      */
     @Override
     void foundDuplicate(Product product) {
-        // we end up here when the id we creates already is present in the database upon creation
+        // we end up here when the id we created already is present in the database upon creation
         // this should happen only in the case that someone else beat us in creating the product.
         // since this should be very rare we log a warning here
         log.warn("The generated product id \"$product.productId\" already exists.")

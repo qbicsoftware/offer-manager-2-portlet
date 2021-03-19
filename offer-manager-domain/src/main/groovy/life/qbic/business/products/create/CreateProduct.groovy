@@ -3,9 +3,9 @@ package life.qbic.business.products.create
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
+import life.qbic.business.products.Converter
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
 
 /**
@@ -31,10 +31,7 @@ class CreateProduct implements CreateProductInput {
     @Override
     void create(Product product) {
         try {
-            //todo create new identifier
-            ProductId id = createNewProductId()
-            Product productWithID = null //todo use converter here
-            dataSource.store(productWithID)
+            dataSource.store(buildNewProduct(product))
             output.created(product)
         } catch(DatabaseQueryException databaseQueryException) {
             log.error("Product creation failed", databaseQueryException)
@@ -45,13 +42,18 @@ class CreateProduct implements CreateProductInput {
         }
     }
 
-    private ProductId createNewProductId(){
-        ProductCategory category = ProductCategory.SEQUENCING//todo use the converter here
+    private Product buildNewProduct(Product product){
+        ProductCategory category = Converter.getCategory(product)
+        long id = getProductVersion(category)
+
+        return Converter.createProductWithVersion(category,product.productName,product.description,product.unitPrice,product.unit,id)
+    }
+
+    private long getProductVersion(ProductCategory category){
         Optional<ProductId> id = dataSource.fetchLatestProductIdentifierVersion(category)
 
         if(id.isPresent()){
-            long newVersion = id.get().uniqueId + 1
-            return new ProductId.Builder(id.get().type,newVersion).build()
+            return id.get().uniqueId + 1
         }else{
             throw new IllegalArgumentException("The provided Product has no Identifier in the Database")
         }
