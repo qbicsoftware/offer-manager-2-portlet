@@ -52,6 +52,7 @@ class CreateProduct implements CreateProductInput {
     private long getProductVersion(ProductCategory category){
         Optional<ProductId> id = dataSource.fetchLatestProductIdentifierVersion(category)
 
+        //todo check that the number is positive
         if(id.isPresent()){
             return id.get().uniqueId + 1
         }else{

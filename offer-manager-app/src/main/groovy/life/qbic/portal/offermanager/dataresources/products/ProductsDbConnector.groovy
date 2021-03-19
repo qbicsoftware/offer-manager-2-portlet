@@ -282,7 +282,11 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     }
   }
 
-  /**
+  @Override
+  Optional<ProductId> fetchLatestProductIdentifierVersion(ProductCategory productCategory) throws DatabaseQueryException {
+    throw new IllegalArgumentException("not implemented")
+  }
+/**
    * Class that encapsulates the available SQL queries.
    */
   private static class Queries {

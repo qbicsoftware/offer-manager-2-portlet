@@ -1,10 +1,12 @@
 package life.qbic.business.products.create
 
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
+import life.qbic.datamodel.dtos.business.services.Sequencing
 import spock.lang.Specification
 
 /**
@@ -15,21 +17,16 @@ import spock.lang.Specification
  * @since 1.0.0
  */
 class CreateProductSpec extends Specification {
-    CreateProductOutput output
-    ProductId productId
-    Product product
+    CreateProductOutput output = Mock(CreateProductOutput)
+    Product product = new Sequencing("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, "1234") //todo use long when ProductId builder is fixed
 
-    def setup() {
-        output = Mock(CreateProductOutput)
-        productId = new ProductId.Builder("Test", 1234).build()
-        product = new AtomicProduct("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, productId)
-    }
 
     def "Create stores the provided product in the data source"() {
         given: "a data source that stores a product"
         CreateProductDataSource dataSource = Stub(CreateProductDataSource)
         String dataStatus = ""
         dataSource.store(product) >> { dataStatus = "stored" }
+        dataSource.fetchLatestProductIdentifierVersion(ProductCategory.SEQUENCING) >> new ProductId("SE","1")
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 
