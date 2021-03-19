@@ -202,7 +202,10 @@ class DependencyManager {
             openbisClient = new OpenBisClient(configurationManager.getDataSourceUser(), configurationManager.getDataSourcePassword(), openbisURL)
             openbisClient.login()
             
-            projectMainConnector = new ProjectMainConnector(projectDbConnector, openbisClient)
+            projectMainConnector = new ProjectMainConnector(
+                    projectDbConnector,
+                    openbisClient,
+                    offerDbConnector)
 
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)

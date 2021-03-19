@@ -133,6 +133,9 @@ class OfferOverviewView extends FormLayout {
                 .setCaption("Project Title").setId("ProjectTitle")
         overviewGrid.addColumn({overview -> overview.getCustomer()})
                 .setCaption("Customer").setId("Customer")
+        overviewGrid.addColumn({overview ->
+            overview.getAssociatedProject().isPresent() ? overview.getAssociatedProject().get() :
+                    "-"}).setCaption("Project ID").setId("ProjectID")
         // fix formatting of price
         overviewGrid.addColumn({overview -> Currency.getFormatterWithSymbol().format(overview.getTotalPrice())}).setCaption("Total Price")
         overviewGrid.sort(dateColumn, SortDirection.DESCENDING)
