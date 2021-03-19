@@ -4,7 +4,10 @@ import life.qbic.business.projects.create.CreateProjectOutput
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
+import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.AppViewModel
+
+import java.awt.Event
 
 /**
  * <h1>Presenter that deals with the Create Project use case output</h1>
@@ -25,9 +28,14 @@ class CreateProjectPresenter implements CreateProjectOutput{
 
     private final AppViewModel appViewModel
 
-    CreateProjectPresenter(CreateProjectViewModel createProjectViewModel, AppViewModel appViewModel) {
+    private final EventEmitter<Project> projectCreateEvent
+
+    CreateProjectPresenter(CreateProjectViewModel createProjectViewModel,
+                           AppViewModel appViewModel,
+                           EventEmitter<Project> projectCreateEvent) {
         this.createProjectViewModel = createProjectViewModel
         this.appViewModel = appViewModel
+        this.projectCreateEvent = projectCreateEvent
     }
 
     /**
@@ -46,6 +54,7 @@ class CreateProjectPresenter implements CreateProjectOutput{
     void projectCreated(Project project) {
         this.createProjectViewModel.setProjectCreated(true)
         this.appViewModel.successNotifications.add("Project ${project.projectId} created.")
+        this.projectCreateEvent.emit(project)
     }
 
     /**

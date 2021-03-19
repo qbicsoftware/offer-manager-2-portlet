@@ -12,6 +12,7 @@ import life.qbic.business.persons.create.CreatePerson
 import life.qbic.business.offers.create.CreateOffer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.general.Person
+import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewController
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewPresenter
@@ -162,6 +163,7 @@ class DependencyManager {
     private ProjectSpaceResourceService projectSpaceResourceService
     private ProjectResourceService projectResourceService
     private EventEmitter<Person> personUpdateEvent
+    private EventEmitter<Project> projectCreatedEvent
 
     /**
      * Public constructor.
@@ -225,7 +227,8 @@ class DependencyManager {
 
     private void setupServices() {
         this.offerService = new OfferResourcesService()
-        this.overviewService = new OverviewService(offerDbConnector, offerService)
+        this.projectCreatedEvent = new EventEmitter<>()
+        this.overviewService = new OverviewService(offerDbConnector, offerService, projectCreatedEvent)
         this.managerResourceService = new ProjectManagerResourceService(customerDbConnector)
         this.productsResourcesService = new ProductsResourcesService(productsDbConnector)
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
@@ -428,7 +431,7 @@ class DependencyManager {
             log.error("Unexpected exception during ${MaintainProductsPresenter.getSimpleName()} setup", e)
         }
         try {
-            this.createProjectPresenter = new CreateProjectPresenter(createProjectModel, viewModel)
+            this.createProjectPresenter = new CreateProjectPresenter(createProjectModel, viewModel, projectCreatedEvent)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateProjectPresenter.getSimpleName()} setup", e)
         }
