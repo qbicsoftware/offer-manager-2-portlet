@@ -2,9 +2,11 @@ package life.qbic.portal.offermanager.dataresources.products
 
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
+import life.qbic.business.products.Converter
 import life.qbic.business.products.archive.ArchiveProductDataSource
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.ProductExistsException
+import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
@@ -81,47 +83,36 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   private static Product rowResultToProduct(GroovyRowResult row) {
-    def productCategory = row.category
+    def dbProductCategory = row.category
     String productId = row.productId
-    Product product
-    switch(productCategory) {
+    ProductCategory productCategory
+    switch(dbProductCategory) {
       case "Data Storage":
-        product = new DataStorage(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.DATA_STORAGE
         break
       case "Primary Bioinformatics":
-        product = new PrimaryAnalysis(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.PRIMARY_BIOINFO
         break
       case "Project Management":
-        product = new ProjectManagement(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.PROJECT_MANAGEMENT
         break
       case "Secondary Bioinformatics":
-        product = new SecondaryAnalysis(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.SECONDARY_BIOINFO
         break
       case "Sequencing":
-        product = new Sequencing(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.SEQUENCING
         break
     }
-    if(product == null) {
+
+    if(!productCategory) {
       log.error("Product could not be parsed from database query.")
       log.error(row)
       throw new DatabaseQueryException("Cannot parse product")
     } else {
-      return product
+      return Converter.createProductWithVersion(productCategory,row.productName as String,
+              row.description as String,
+              row.unitPrice as Double,
+              new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
     }
   }
 
