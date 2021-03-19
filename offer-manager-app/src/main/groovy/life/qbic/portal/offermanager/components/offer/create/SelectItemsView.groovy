@@ -13,17 +13,9 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
-import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.business.offers.Currency
 import life.qbic.portal.offermanager.components.GridUtils
-import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
-import life.qbic.portal.offermanager.components.offer.create.ProductItemViewModel
 import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
@@ -47,19 +39,24 @@ class SelectItemsView extends VerticalLayout{
     private List<ProductItemViewModel> storageProduct
     private List<ProductItemViewModel> primaryAnalyseProduct
     private List<ProductItemViewModel> secondaryAnalyseProduct
-
+    private List<ProductItemViewModel> proteomicAnalysisProduct
+    private List<ProductItemViewModel> metabolomicAnalysisProduct
 
     Grid<ProductItemViewModel> sequencingGrid
     Grid<ProductItemViewModel> projectManagementGrid
     Grid<ProductItemViewModel> storageGrid
     Grid<ProductItemViewModel> primaryAnalyseGrid
     Grid<ProductItemViewModel> secondaryAnalyseGrid
+    Grid<ProductItemViewModel> proteomicsAnalysisGrid
+    Grid<ProductItemViewModel> metabolomicsAnalysisGrid
     Grid<ProductItemViewModel> overviewGrid
 
     Button applySequencing
     Button applyProjectManagement
     Button applyPrimaryAnalysis
     Button applySecondaryAnalysis
+    Button applyProteomicAnalysis
+    Button applyMetabolomicAnalysis
     Button applyDataStorage
     Button next
     Button previous
@@ -68,6 +65,8 @@ class SelectItemsView extends VerticalLayout{
     TextField amountProjectManagement
     TextField amountPrimaryAnalysis
     TextField amountSecondaryAnalysis
+    TextField amountProteomicAnalysis
+    TextField amountMetabolomicAnalysis
     TextField amountDataStorage
 
 
@@ -110,6 +109,20 @@ class SelectItemsView extends VerticalLayout{
             }
         })
 
+        proteomicAnalysisProduct = createOfferViewModel.proteomicAnalysisProducts as ObservableList
+        proteomicAnalysisProduct.addPropertyChangeListener({
+            if (it instanceof ObservableList.ElementEvent) {
+                proteomicsAnalysisGrid.dataProvider.refreshAll()
+            }
+        })
+
+        metabolomicAnalysisProduct = createOfferViewModel.metabolomicAnalysisProduct as ObservableList
+        metabolomicAnalysisProduct.addPropertyChangeListener({
+            if (it instanceof ObservableList.ElementEvent) {
+                metabolomicsAnalysisGrid.dataProvider.refreshAll()
+            }
+        })
+
         initLayout()
         setupDataProvider()
         addListener()
@@ -123,6 +136,8 @@ class SelectItemsView extends VerticalLayout{
         this.sequencingGrid = new Grid<>()
         this.primaryAnalyseGrid = new Grid<>()
         this.secondaryAnalyseGrid = new Grid<>()
+        this.proteomicsAnalysisGrid = new Grid<>()
+        this.metabolomicsAnalysisGrid = new Grid<>()
         this.projectManagementGrid = new Grid<>()
         this.storageGrid = new Grid<>()
         this.overviewGrid = new Grid<>("Overview:")
@@ -133,6 +148,10 @@ class SelectItemsView extends VerticalLayout{
         amountPrimaryAnalysis.setPlaceholder("e.g. 1")
         amountSecondaryAnalysis = new TextField("Quantity:")
         amountSecondaryAnalysis.setPlaceholder("e.g. 1")
+        amountProteomicAnalysis = new TextField("Quantity:")
+        amountProteomicAnalysis.setPlaceholder("e.g. 1")
+        amountMetabolomicAnalysis = new TextField("Quantity:")
+        amountMetabolomicAnalysis.setPlaceholder("e.g. 1")
         amountProjectManagement = new TextField("Quantity:")
         amountProjectManagement.setPlaceholder("e.g. 1.5")
         amountDataStorage = new TextField("Quantity:")
@@ -145,7 +164,6 @@ class SelectItemsView extends VerticalLayout{
         this.previous = new Button(VaadinIcons.CHEVRON_CIRCLE_LEFT)
         previous.addStyleName(ValoTheme.LABEL_LARGE)
 
-
         this.applySequencing = new Button("Apply", VaadinIcons.PLUS)
         applySequencing.setEnabled(false)
 
@@ -154,6 +172,12 @@ class SelectItemsView extends VerticalLayout{
 
         this.applySecondaryAnalysis = new Button("Apply", VaadinIcons.PLUS)
         applySecondaryAnalysis.setEnabled(false)
+
+        this.applyProteomicAnalysis = new Button("Apply", VaadinIcons.PLUS)
+        applyProteomicAnalysis.setEnabled(false)
+
+        this.applyMetabolomicAnalysis= new Button("Apply", VaadinIcons.PLUS)
+        applyMetabolomicAnalysis.setEnabled(false)
 
         this.applyDataStorage = new Button("Apply", VaadinIcons.PLUS)
         applyDataStorage.setEnabled(false)
@@ -184,6 +208,18 @@ class SelectItemsView extends VerticalLayout{
         VerticalLayout secondaryAnalysisLayout = new VerticalLayout(secondaryAnalyseGrid, quantitySecondary)
         secondaryAnalysisLayout.setSizeFull()
 
+        HorizontalLayout quantityProteomic = new HorizontalLayout(amountProteomicAnalysis,applyProteomicAnalysis)
+        quantityProteomic.setSizeFull()
+        quantityProteomic.setComponentAlignment(applyProteomicAnalysis, Alignment.BOTTOM_RIGHT)
+        VerticalLayout proteomicsLayout = new VerticalLayout(proteomicsAnalysisGrid, quantityProteomic)
+        proteomicsLayout.setSizeFull()
+
+        HorizontalLayout quantityMetabolomic = new HorizontalLayout(amountMetabolomicAnalysis ,applyMetabolomicAnalysis)
+        quantityMetabolomic.setSizeFull()
+        quantityMetabolomic.setComponentAlignment(applyMetabolomicAnalysis, Alignment.BOTTOM_RIGHT)
+        VerticalLayout metabolomicsLayout = new VerticalLayout(metabolomicsAnalysisGrid, quantityMetabolomic)
+        metabolomicsLayout.setSizeFull()
+
         HorizontalLayout quantityStorage = new HorizontalLayout(amountDataStorage,applyDataStorage)
         quantityStorage.setSizeFull()
         quantityStorage.setComponentAlignment(applyDataStorage, Alignment.BOTTOM_RIGHT)
@@ -203,6 +239,8 @@ class SelectItemsView extends VerticalLayout{
         generateProductGrid(sequencingGrid)
         generateProductGrid(primaryAnalyseGrid)
         generateProductGrid(secondaryAnalyseGrid)
+        generateProductGrid(proteomicsAnalysisGrid)
+        generateProductGrid(metabolomicsAnalysisGrid)
         generateProductGrid(storageGrid)
         generateProductGrid(projectManagementGrid)
         // This grid summarises product items selected for this specific offer, so we set quantity = true
@@ -216,6 +254,8 @@ class SelectItemsView extends VerticalLayout{
         packageAccordion.addTab(seqLayout,"Sequencing Products")
         packageAccordion.addTab(primaryAnalysisLayout,"Primary Bioinformatics Products")
         packageAccordion.addTab(secondaryAnalysisLayout,"Secondary Bioinformatics Products")
+        packageAccordion.addTab(proteomicsLayout,"Proteomic Products")
+        packageAccordion.addTab(metabolomicsLayout,"Metabolomic Products")
         packageAccordion.addTab(projectManagementLayout,"Project Management Products")
         packageAccordion.addTab(dataStorageLayout,"Data Storage Products")
 
@@ -245,6 +285,14 @@ class SelectItemsView extends VerticalLayout{
         ListDataProvider<ProductItemViewModel> secondaryAnalysisProductDataProvider = new ListDataProvider(createOfferViewModel.secondaryAnalysisProducts)
         this.secondaryAnalyseGrid.setDataProvider(secondaryAnalysisProductDataProvider)
         setupFilters(secondaryAnalysisProductDataProvider, secondaryAnalyseGrid)
+
+        ListDataProvider<ProductItemViewModel> proteomicAnalysisProductDataProvider = new ListDataProvider(createOfferViewModel.proteomicAnalysisProducts)
+        this.proteomicsAnalysisGrid.setDataProvider(proteomicAnalysisProductDataProvider)
+        setupFilters(proteomicAnalysisProductDataProvider, proteomicsAnalysisGrid)
+
+        ListDataProvider<ProductItemViewModel> metabolomicAnalysisProductDataProvider = new ListDataProvider(createOfferViewModel.metabolomicAnalysisProduct)
+        this.metabolomicsAnalysisGrid.setDataProvider(metabolomicAnalysisProductDataProvider)
+        setupFilters(metabolomicAnalysisProductDataProvider, metabolomicsAnalysisGrid)
 
         ListDataProvider<ProductItemViewModel> storageProductDataProvider = new ListDataProvider(createOfferViewModel.storageProducts)
         this.storageGrid.setDataProvider(storageProductDataProvider)
@@ -385,6 +433,61 @@ class SelectItemsView extends VerticalLayout{
             amountSecondaryAnalysis.clear()
             secondaryAnalyseGrid.deselectAll()
             applySecondaryAnalysis.setEnabled(false)
+        })
+
+        proteomicsAnalysisGrid.addSelectionListener({
+            applyProteomicAnalysis.setEnabled(true)
+        })
+
+        applyProteomicAnalysis.addClickListener({
+            if(proteomicsAnalysisGrid.getSelectedItems() != null) {
+                String amount = amountProteomicAnalysis.getValue()
+                try{
+                    if(amount != null && amount.isNumber()) {
+                        proteomicsAnalysisGrid.getSelectedItems().each {
+                            if(Integer.parseInt(amount) >= 0){
+                                it.setQuantity(Integer.parseInt(amount))
+                                updateOverviewGrid(it)
+                            }
+                        }
+                        proteomicsAnalysisGrid.getDataProvider().refreshAll()
+                    }
+                } catch(NumberFormatException e) {
+                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
+                } catch (Exception e) {
+                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
+                }
+            }
+            amountProteomicAnalysis.clear()
+            proteomicsAnalysisGrid.deselectAll()
+            applyProteomicAnalysis.setEnabled(false)
+        })
+
+        metabolomicsAnalysisGrid.addSelectionListener({
+            applyMetabolomicAnalysis.setEnabled(true)
+        })
+        applyMetabolomicAnalysis.addClickListener({
+            if(metabolomicsAnalysisGrid.getSelectedItems() != null) {
+                String amount = amountMetabolomicAnalysis.getValue()
+                try{
+                    if(amount != null && amount.isNumber()) {
+                        metabolomicsAnalysisGrid.getSelectedItems().each {
+                            if(Integer.parseInt(amount) >= 0){
+                                it.setQuantity(Integer.parseInt(amount))
+                                updateOverviewGrid(it)
+                            }
+                        }
+                        metabolomicsAnalysisGrid.getDataProvider().refreshAll()
+                    }
+                } catch(NumberFormatException e) {
+                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
+                } catch (Exception e) {
+                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
+                }
+            }
+            amountMetabolomicAnalysis.clear()
+            metabolomicsAnalysisGrid.deselectAll()
+            applyMetabolomicAnalysis.setEnabled(false)
         })
 
         projectManagementGrid.addSelectionListener({
