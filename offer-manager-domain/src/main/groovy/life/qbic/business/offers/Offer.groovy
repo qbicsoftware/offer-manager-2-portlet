@@ -304,6 +304,9 @@ class Offer {
         List<ProductItem> listOverheadProductItem = []
         items.each {
             if (it.product instanceof DataStorage || it.product instanceof ProjectManagement){
+                // No overheads are assigned for data storage and project management
+            }
+            else {
                 listOverheadProductItem.add(it)
             }
         }
@@ -319,9 +322,6 @@ class Offer {
         List<ProductItem> listNoOverheadProductItem = []
         items.each {
             if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
-                // No overheads are assigned for data storage and project management
-            }
-            else {
                 listNoOverheadProductItem.add(it)
             }
         }
