@@ -84,8 +84,8 @@ class ProjectDbConnector {
       ProjectManager projectManager = projectApplication.getProjectManager()
       
       //fetch needed person ids from database
-      int customerID = personDBConnector.getPersonId(customer)
-      int managerID = personDBConnector.getPersonId(projectManager)
+      int customerID = personDbConnector.getPersonId(customer)
+      int managerID = personDbConnector.getPersonId(projectManager)
     
       Connection connection = connectionProvider.connect()
       connection.setAutoCommit(false)
