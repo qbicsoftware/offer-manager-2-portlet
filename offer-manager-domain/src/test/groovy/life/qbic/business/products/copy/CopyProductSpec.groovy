@@ -52,7 +52,6 @@ class CopyProductSpec extends Specification {
     def "A duplicated entry leads to fail notification"() {
         given: "a CreateProductDataSource that throws a ProductExistsException"
         createProductDataSource.store(product) >> {throw new ProductExistsException(product.getProductId(), "Test exception")}
-        //todo when does this exception occur??
         and: "a copy use case with this datasource"
         CopyProduct copyProduct = new CopyProduct(dataSource, output, createProductDataSource)
 
@@ -104,6 +103,25 @@ class CopyProductSpec extends Specification {
         })
         and: "no other output method is called"
         0 * output.failNotification(_)
+        noExceptionThrown()
+    }
+
+    def "CopyModified fails for duplicated product"() {
+        given: "a data source that finds the product"
+        dataSource.fetch(_ as ProductId) >> Optional.of(product)
+        and: "a CreateProductDataSource that stores new products"
+        createProductDataSource.fetchLatestProductIdentifierVersion(ProductCategory.SEQUENCING) >> Optional.of(productId)
+        createProductDataSource.store(product) >> void
+        and: "a copy use case"
+        CopyProduct copyProduct = new CopyProduct(dataSource, output, createProductDataSource)
+
+        when: "copyModified is called with the product"
+        copyProduct.copyModified(product)
+
+        then: "the product is copied with a new id"
+        0 * output.copied(_)
+        and: "no other output method is called"
+        1 * output.failNotification(_)
         noExceptionThrown()
     }
 
