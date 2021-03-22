@@ -61,8 +61,7 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
                     //3. call the CreateProduct use case (new id is created here)
                     createProduct.create(product)
                 }else{
-                    log.error("The product ${product.productName} is a duplicate of ${existingProduct.productName - existingProduct.productId}.")
-                    output.failNotification("The product ${product.productName} is a duplicate of ${existingProduct.productName - existingProduct.productId}.")
+                    foundDuplicate(product)
                 }
             }else{
                 //there is no product present, this should not happen
@@ -96,9 +95,8 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      *{@inhertDoc}
      */
     @Override
-    @Deprecated
     void foundDuplicate(Product product) {
-        //todo what do do here?
+        output.failNotification("Product ${product.productName} already exists.")
     }
 
 
