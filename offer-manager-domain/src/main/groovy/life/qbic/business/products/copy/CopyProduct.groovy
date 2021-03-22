@@ -1,6 +1,7 @@
 package life.qbic.business.products.copy
 
 import life.qbic.business.Constants
+import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.products.Converter
@@ -49,22 +50,30 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      */
     @Override
     void copyModified(Product product) {
-        //1. retrieve product from db
-        Optional<Product> searchResult = dataSource.fetch(product.getProductId())
-
-        if (searchResult.isPresent()) {
-            Product existingProduct = searchResult.get()
-            //2. compare if there is a difference between the products in order
-            if(getProductChecksum(product) != getProductChecksum(existingProduct)){
-                //3. call the CreateProduct use case (new id is created here)
-                createProduct.create(product)
+        Optional<Product> searchResult
+        try{
+            //1. retrieve product from db
+            searchResult = dataSource.fetch(product.getProductId())
+            if (searchResult.isPresent()) {
+                Product existingProduct = searchResult.get()
+                //2. compare if there is a difference between the products in order
+                if(getProductChecksum(product) != getProductChecksum(existingProduct)){
+                    //3. call the CreateProduct use case (new id is created here)
+                    createProduct.create(product)
+                }else{
+                    log.error("The product ${product.productName} is a duplicate of ${existingProduct.productName - existingProduct.productId}.")
+                    output.failNotification("The product ${product.productName} is a duplicate of ${existingProduct.productName - existingProduct.productId}.")
+                }
             }else{
-                output.failNotification("The product ${product.productName} is a duplicate of ${existingProduct.productName - existingProduct.productId}.")
+                //there is no product present, this should not happen
+                log.error("An unexpected during the project creation occurred.")
+                output.failNotification("An unexpected during the project creation occurred. " +
+                        "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
             }
+        }catch(DatabaseQueryException databaseQueryException){
+            log.error("The copied product ${product.productId.toString()} cannot be found in the database", databaseQueryException)
+            output.failNotification("The copied product ${product.productId.toString()} cannot be found in the database")
         }
-        //there is no product present, this should not happen
-        output.failNotification("An unexpected during the project creation occurred. " +
-                "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
     }
 
     /**
@@ -87,8 +96,9 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      *{@inhertDoc}
      */
     @Override
+    @Deprecated
     void foundDuplicate(Product product) {
-        output.failNotification("A duplicate product was found in the database - ${product.toString()}")
+        //todo what do do here?
     }
 
 
