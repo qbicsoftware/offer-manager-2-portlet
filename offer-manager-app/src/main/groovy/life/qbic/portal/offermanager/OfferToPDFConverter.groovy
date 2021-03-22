@@ -107,7 +107,13 @@ class OfferToPDFConverter implements OfferExporter {
             return this.name;
         }
     }
-    private final Map productGroupClasses = [:]
+    /**
+     * Product group mapping
+     *
+     * This map represents the grouping of the different product categories in the offer pdf
+     *
+     */
+    private final Map<ProductGroups, List> productGroupClasses = [:]
 
     OfferToPDFConverter(Offer offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
@@ -144,6 +150,7 @@ class OfferToPDFConverter implements OfferExporter {
         setProjectInformation()
         setCustomerInformation()
         setManagerInformation()
+        setProductGroupMapping()
         setSelectedItems()
         setTotalPrices()
         setQuotationDetails()
@@ -212,8 +219,6 @@ class OfferToPDFConverter implements OfferExporter {
         tableItemsCount = 1
         int maxTableItems = 8
 
-        //Initialize map which stores which products are associated with the individual product groups
-        setProductGroupMapping()
         //Group ProductItems into Data Generation Data Analysis and Data & Project Management Categories
         Map productItemsMap = groupItems(productItems)
 
