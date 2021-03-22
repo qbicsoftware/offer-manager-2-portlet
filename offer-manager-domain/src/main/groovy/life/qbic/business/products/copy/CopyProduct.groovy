@@ -75,8 +75,8 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
                 return product
             }
         }catch(DatabaseQueryException databaseQueryException){
-            log.error("The copied product ${product.productId.toString()} cannot be found in the database", databaseQueryException)
-            output.failNotification("The copied product ${product.productId.toString()} cannot be found in the database")
+            log.error("The copied product ${productId.toString()} cannot be found in the database", databaseQueryException)
+            output.failNotification("The copied product ${productId.toString()} cannot be found in the database")
         }
     }
 
