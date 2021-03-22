@@ -108,4 +108,24 @@ class CreateProductSpec extends Specification {
         0 * output.failNotification(_)
     }
 
+    def "Create creates a new product id if none is present"() {
+        given: "a data source that stores a product"
+        CreateProductDataSource dataSource = Stub(CreateProductDataSource)
+        dataSource.store(_ as Product) >> {void}
+        dataSource.fetchLatestProductIdentifierVersion(ProductCategory.SEQUENCING) >> Optional.empty()
+
+        and: "an instance of the use case"
+        CreateProduct createProduct = new CreateProduct(dataSource, output)
+
+        when: "the create method is called"
+        createProduct.create(product)
+
+        then: "the output is send a failure notification"
+        1 * output.created({Product product1 ->
+            product1.productId.uniqueId == 1
+        })
+        0 * output.foundDuplicate(_)
+        0 * output.failNotification(_)
+    }
+
 }
