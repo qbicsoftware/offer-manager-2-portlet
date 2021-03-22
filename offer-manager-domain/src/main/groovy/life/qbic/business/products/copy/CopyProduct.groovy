@@ -9,6 +9,7 @@ import life.qbic.business.products.create.CreateProduct
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.CreateProductInput
 import life.qbic.business.products.create.CreateProductOutput
+import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.Product
 import org.aspectj.bridge.IMessage
 
@@ -52,28 +53,38 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
     void copyModified(Product product) {
         try {
             //1. retrieve product from db
-            Optional<Product> searchResult = dataSource.fetch(product.getProductId())
-            if (searchResult.isPresent()) {
-                life.qbic.business.products.Product existingProduct = Converter.convertDTOtoProduct(searchResult.get())
-
-                life.qbic.business.products.Product copyProduct = Converter.convertDTOtoProduct(product)
-                //2. compare if there is a difference between the products in order
-                if (copyProduct.checksum() != existingProduct.checksum()) {
-                    //3. call the CreateProduct use case (new id is created here)
-                    createProduct.create(product)
-                } else {
-                    foundDuplicate(product)
-                }
+            Product existingProduct = this.getExistingProduct()
+            //2. compare if there is a difference between the products in order
+            if (theProductHasChanged(product,existingProduct)) {
+                //3. call the CreateProduct use case (new id is created here)
+                createProduct.create(product)
             } else {
-                //there is no product present, this should not happen
-                log.error("An unexpected during the project creation occurred.")
-                output.failNotification("An unexpected during the project creation occurred. " +
-                        "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
+                foundDuplicate(product)
             }
         } catch (DatabaseQueryException databaseQueryException) {
             log.error("The copied product ${product.productId.toString()} cannot be found in the database", databaseQueryException)
             output.failNotification("The copied product ${product.productId.toString()} cannot be found in the database")
         }
+    }
+
+    private Product getExistingProduct(ProductId productId){
+        try{
+            Optional<Product> searchResult = dataSource.fetch(productId)
+            if (searchResult.isPresent()){
+                Product product = searchResult.get()
+                return product
+            }
+        }catch(DatabaseQueryException databaseQueryException){
+            log.error("The copied product ${product.productId.toString()} cannot be found in the database", databaseQueryException)
+            output.failNotification("The copied product ${product.productId.toString()} cannot be found in the database")
+        }
+    }
+
+    private static boolean theProductHasChanged(Product product1, Product product2){
+        life.qbic.business.products.Product copiedProduct = Converter.convertDTOtoProduct(product1)
+        life.qbic.business.products.Product oldProduct = Converter.convertDTOtoProduct(product2)
+
+        copiedProduct.checksum() != oldProduct.checksum()
     }
 
     /**
@@ -99,5 +110,6 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
     void foundDuplicate(Product product) {
         output.failNotification("Product ${product.productName} already exists.")
     }
+
 
 }
