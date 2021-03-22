@@ -7,8 +7,6 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.AppViewModel
 
-import java.awt.Event
-
 /**
  * <h1>Presenter that deals with the Create Project use case output</h1>
  *
