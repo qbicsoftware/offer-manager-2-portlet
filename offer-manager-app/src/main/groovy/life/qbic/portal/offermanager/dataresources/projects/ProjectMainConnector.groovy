@@ -92,7 +92,6 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
 
   private void fetchExistingProjects() {
     //projectDbConnector.fetchProjects() might be used at some point to fetch more metadata
-      
     openbisProjects = []
     for(ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project openbisProject : openbisClient.listProjects()) {
       try {
