@@ -93,4 +93,19 @@ class Converter {
 
         throw  new IllegalArgumentException("Cannot parse category of the provided product ${product.toString()}")
     }
+
+    static life.qbic.business.products.Product convertDTOtoProduct(Product product){
+        ProductCategory category = getCategory(product)
+        return new life.qbic.business.products.Product.Builder(category,
+                                                                product.productName,
+                                                                product.description,
+                                                                product.unitPrice,
+                                                                product.unit)
+                                                                .build()
+
+    }
+
+    static Product convertProductToDTO(life.qbic.business.products.Product product){
+        return createProductWithVersion(product.category,product.name, product.description, product.unitPrice, product.unit, product.id.uniqueId)
+    }
 }

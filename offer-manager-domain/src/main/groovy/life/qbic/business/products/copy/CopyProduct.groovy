@@ -50,26 +50,27 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      */
     @Override
     void copyModified(Product product) {
-        Optional<Product> searchResult
-        try{
+        try {
             //1. retrieve product from db
-            searchResult = dataSource.fetch(product.getProductId())
+            Optional<Product> searchResult = dataSource.fetch(product.getProductId())
             if (searchResult.isPresent()) {
-                Product existingProduct = searchResult.get()
+                life.qbic.business.products.Product existingProduct = Converter.convertDTOtoProduct(searchResult.get())
+
+                life.qbic.business.products.Product copyProduct = Converter.convertDTOtoProduct(product)
                 //2. compare if there is a difference between the products in order
-                if(getProductChecksum(product) != getProductChecksum(existingProduct)){
+                if (copyProduct.checksum() != existingProduct.checksum()) {
                     //3. call the CreateProduct use case (new id is created here)
                     createProduct.create(product)
-                }else{
+                } else {
                     foundDuplicate(product)
                 }
-            }else{
+            } else {
                 //there is no product present, this should not happen
                 log.error("An unexpected during the project creation occurred.")
                 output.failNotification("An unexpected during the project creation occurred. " +
                         "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
             }
-        }catch(DatabaseQueryException databaseQueryException){
+        } catch (DatabaseQueryException databaseQueryException) {
             log.error("The copied product ${product.productId.toString()} cannot be found in the database", databaseQueryException)
             output.failNotification("The copied product ${product.productId.toString()} cannot be found in the database")
         }
@@ -92,43 +93,11 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
     }
 
     /**
-     *{@inhertDoc}
+     * {@inhertDoc}
      */
     @Override
     void foundDuplicate(Product product) {
         output.failNotification("Product ${product.productName} already exists.")
     }
 
-
-    /**
-     * Compute the checksum for a product
-     * @param digest The digestor will digest the message that needs to be encrypted
-     * @param product Contains the product information
-     * @return a string that encrypts the product object
-     */
-    private static String getProductChecksum(Product product)
-    {
-        MessageDigest digest = MessageDigest.getInstance("SHA-256")
-        //digest crucial offer characteristics
-        digest.update(product.productName.getBytes(StandardCharsets.UTF_8))
-
-        digest.update(product.description.getBytes(StandardCharsets.UTF_8))
-
-        digest.update(product.unit.value.getBytes(StandardCharsets.UTF_8))
-        digest.update(product.unitPrice.toString().getBytes(StandardCharsets.UTF_8))
-        digest.update(Converter.getCategory(product).toString().getBytes(StandardCharsets.UTF_8))
-
-        //Get the hash's bytes
-        byte[] bytes = digest.digest()
-
-        //This bytes[] has bytes in decimal format
-        //Convert it to hexadecimal format
-        StringBuilder sb = new StringBuilder()
-        for(int i=0; i< bytes.length ;i++)
-        {
-            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-        }
-
-        //return complete hash
-        return sb.toString()
-    }}
+}
