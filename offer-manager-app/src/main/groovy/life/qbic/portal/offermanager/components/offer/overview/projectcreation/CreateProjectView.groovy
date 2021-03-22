@@ -284,6 +284,12 @@ class CreateProjectView extends VerticalLayout{
                                 new ProjectCode(model.resultingProjectCode)))
             }
         })
+        this.model.addPropertyChangeListener("projectCreated", {
+            if (model.getStartedFromView().isPresent()) {
+                this.setVisible(false)
+                this.model.getStartedFromView().get().setVisible(true)
+            }
+        })
     }
 
     private void bindData() {

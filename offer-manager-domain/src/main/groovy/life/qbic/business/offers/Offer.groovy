@@ -236,8 +236,10 @@ class Offer {
     double getOverheadSum() {
         double overheadSum = 0
         items.each {
-            // No overheads are assigned for data storage and project management
-            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
+            if (it.product instanceof ProjectManagement || it.product instanceof DataStorage) {
+                // No overheads are assigned for data storage and project management
+            }
+            else {
                 overheadSum += it.quantity * it.product.unitPrice * this.overhead
             }
         }
@@ -269,7 +271,10 @@ class Offer {
     double getOverheadItemsNet() {
         double costOverheadItemsNet = 0
         items.each {
-            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
+            if (it.product instanceof ProjectManagement || it.product instanceof DataStorage) {
+                // No overheads are assigned for data storage and project management
+            }
+            else {
                 costOverheadItemsNet += it.quantity * it.product.unitPrice
             }
         }
@@ -298,7 +303,10 @@ class Offer {
     List<ProductItem> getOverheadItems() {
         List<ProductItem> listOverheadProductItem = []
         items.each {
-            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
+            if (it.product instanceof DataStorage || it.product instanceof ProjectManagement){
+                // No overheads are assigned for data storage and project management
+            }
+            else {
                 listOverheadProductItem.add(it)
             }
         }
@@ -314,7 +322,7 @@ class Offer {
         List<ProductItem> listNoOverheadProductItem = []
         items.each {
             if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
-                 listNoOverheadProductItem.add(it)
+                listNoOverheadProductItem.add(it)
             }
         }
         return listNoOverheadProductItem
