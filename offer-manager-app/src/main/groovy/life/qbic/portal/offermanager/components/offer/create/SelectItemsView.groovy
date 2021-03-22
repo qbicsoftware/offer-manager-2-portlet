@@ -251,13 +251,13 @@ class SelectItemsView extends VerticalLayout{
 
 
         TabSheet packageAccordion = new TabSheet()
-        packageAccordion.addTab(seqLayout,"Sequencing Products")
-        packageAccordion.addTab(primaryAnalysisLayout,"Primary Bioinformatics Products")
-        packageAccordion.addTab(secondaryAnalysisLayout,"Secondary Bioinformatics Products")
-        packageAccordion.addTab(proteomicsLayout,"Proteomic Products")
-        packageAccordion.addTab(metabolomicsLayout,"Metabolomic Products")
-        packageAccordion.addTab(projectManagementLayout,"Project Management Products")
-        packageAccordion.addTab(dataStorageLayout,"Data Storage Products")
+        packageAccordion.addTab(seqLayout,"Sequencing")
+        packageAccordion.addTab(primaryAnalysisLayout,"Primary Bioinformatics")
+        packageAccordion.addTab(secondaryAnalysisLayout,"Secondary Bioinformatics")
+        packageAccordion.addTab(proteomicsLayout,"Proteomics")
+        packageAccordion.addTab(metabolomicsLayout,"Metabolomics")
+        packageAccordion.addTab(projectManagementLayout,"Project Management")
+        packageAccordion.addTab(dataStorageLayout,"Data Storage")
 
         this.addComponents(packageAccordion, overview, buttonLayout)
         this.setSizeFull()
