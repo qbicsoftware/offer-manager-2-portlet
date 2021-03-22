@@ -55,7 +55,7 @@ class OverviewService implements ResourcesService<OfferOverview> {
                         affectedOffer.projectTitle,
                         affectedOffer.customer.toString(),
                         affectedOffer.totalPrice,
-                        affectedOffer.associatedProject.get())
+                        project.projectId)
                 this.addToResource(updatedOverview)
             }
         })
