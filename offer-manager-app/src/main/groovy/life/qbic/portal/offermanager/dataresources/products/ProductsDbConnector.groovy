@@ -112,7 +112,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       return Converter.createProductWithVersion(productCategory,row.productName as String,
               row.description as String,
               row.unitPrice as Double,
-              new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+              new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId) as Long)
     }
   }
 
