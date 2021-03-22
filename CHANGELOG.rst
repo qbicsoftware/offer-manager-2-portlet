@@ -16,6 +16,7 @@ an existing project by its project identifier.
 * Finalized the ``life.qbic.business.products.archive.ArchiveProduct`` and ``life/qbic/business/products/create/CreateProduct.groovy``
 use cases of the product maintenance and creation feature(`#411 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/411>`_).
 * After a project has been created from an offer, the offer overview is updated accordingly
+(`#427 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/427>`_)
 
 **Fixed**
 
