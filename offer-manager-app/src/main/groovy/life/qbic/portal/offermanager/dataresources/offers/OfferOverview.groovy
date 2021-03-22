@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
+import groovy.transform.EqualsAndHashCode
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
@@ -12,6 +13,7 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
  *
  * @since 1.0.0
  */
+@EqualsAndHashCode
 class OfferOverview {
 
     final String projectTitle
