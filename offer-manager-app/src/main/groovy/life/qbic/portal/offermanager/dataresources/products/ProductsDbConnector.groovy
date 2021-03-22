@@ -112,7 +112,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       return Converter.createProductWithVersion(productCategory,row.productName as String,
               row.description as String,
               row.unitPrice as Double,
-              new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId) as Long)
+              new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
     }
   }
 
@@ -168,13 +168,13 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * Returns the product identifying running number given a productId
    *
    * @param productId String of productId stored in the DB e.g. "DS_1"
-   * @return identifier String of the iterative identifying part of the productId
+   * @return identifier Long of the iterative identifying part of the productId
    */
-  static String parseProductId(String productId) {
+  static long parseProductId(String productId) {
     def splitId = productId.split("_")
     // The first entry [0] contains the product type which is assigned automatically, no need to parse it.
     String identifier = splitId[1]
-    return identifier
+    return identifier as Long
   }
 
 

@@ -1,13 +1,18 @@
 package life.qbic.business.products.copy
 
+import life.qbic.business.Constants
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
+import life.qbic.business.products.Converter
 import life.qbic.business.products.create.CreateProduct
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.CreateProductInput
 import life.qbic.business.products.create.CreateProductOutput
 import life.qbic.datamodel.dtos.business.services.Product
 import org.aspectj.bridge.IMessage
+
+import java.nio.charset.StandardCharsets
+import java.security.MessageDigest
 
 /**
  * <h1>4.3.2 Copy Service Product</h1>
@@ -22,13 +27,10 @@ import org.aspectj.bridge.IMessage
 class CopyProduct implements CopyProductInput, CreateProductOutput {
 
     private static final Logging log = Logger.getLogger(this.class)
-    private static final int MAX_ATTEMPTS = 1
 
     private final CopyProductDataSource dataSource
     private final CopyProductOutput output
     private final CreateProductInput createProduct
-
-    private int copyAttempt = 0
 
     /**
      * The only constructor for this use case
@@ -47,19 +49,22 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      */
     @Override
     void copyModified(Product product) {
-        copyAttempt++
         //1. retrieve product from db
         Optional<Product> searchResult = dataSource.fetch(product.getProductId())
 
         if (searchResult.isPresent()) {
-            //2. construct new product with missing information filled from the db
             Product existingProduct = searchResult.get()
-            //todo check difference with checksum??
-            //3. call the CreateProduct use case (new id is created here)
-            createProduct.create(product)
+            //2. compare if there is a difference between the products in order
+            if(getProductChecksum(product) != getProductChecksum(existingProduct)){
+                //3. call the CreateProduct use case (new id is created here)
+                createProduct.create(product)
+            }else{
+                output.failNotification("The product ${product.productName} is a duplicate of ${existingProduct.productName - existingProduct.productId}.")
+            }
         }
-        //there is no product present
-        failed("The provided product was not found. Please create a new one instead.")
+        //there is no product present, this should not happen
+        output.failNotification("An unexpected during the project creation occurred. " +
+                "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
     }
 
     /**
@@ -67,7 +72,7 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      */
     @Override
     void failNotification(String notification) {
-        failed(notification)
+        output.failNotification(notification)
     }
 
     /**
@@ -75,7 +80,7 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      */
     @Override
     void created(Product product) {
-        succeeded(product)
+        output.copied(product)
     }
 
     /**
@@ -83,23 +88,39 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      */
     @Override
     void foundDuplicate(Product product) {
-        // we end up here when the id we created already is present in the database upon creation
-        // this should happen only in the case that someone else beat us in creating the product.
-        // since this should be very rare we log a warning here
-        log.warn("The generated product id \"$product.productId\" already exists.")
-        if (copyAttempt < MAX_ATTEMPTS) {
-            log.warn("Trying to copy the product again. Attempt no.$copyAttempt")
-            copyModified(product)
+        output.failNotification("A duplicate product was found in the database - ${product.toString()}")
+    }
+
+
+    /**
+     * Compute the checksum for a product
+     * @param digest The digestor will digest the message that needs to be encrypted
+     * @param product Contains the product information
+     * @return a string that encrypts the product object
+     */
+    private static String getProductChecksum(Product product)
+    {
+        MessageDigest digest = MessageDigest.getInstance("SHA-256")
+        //digest crucial offer characteristics
+        digest.update(product.productName.getBytes(StandardCharsets.UTF_8))
+
+        digest.update(product.description.getBytes(StandardCharsets.UTF_8))
+
+        digest.update(product.unit.value.getBytes(StandardCharsets.UTF_8))
+        digest.update(product.unitPrice.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(Converter.getCategory(product).toString().getBytes(StandardCharsets.UTF_8))
+
+        //Get the hash's bytes
+        byte[] bytes = digest.digest()
+
+        //This bytes[] has bytes in decimal format
+        //Convert it to hexadecimal format
+        StringBuilder sb = new StringBuilder()
+        for(int i=0; i< bytes.length ;i++)
+        {
+            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
         }
-    }
 
-    private void failed(String message) {
-        copyAttempt = 0
-        output.failNotification(message)
-    }
-
-    private void succeeded(Product product) {
-        copyAttempt = 0
-        output.copied(product)
-    }
-}
+        //return complete hash
+        return sb.toString()
+    }}

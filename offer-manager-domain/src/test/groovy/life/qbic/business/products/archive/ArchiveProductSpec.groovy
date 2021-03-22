@@ -7,9 +7,9 @@ import life.qbic.datamodel.dtos.business.services.ProductUnit
 import spock.lang.Specification
 
 /**
- * <h1>Archive Product tests</h1>
+ * <h1>{@kink ArchiveProduct} tests</h1>
  *
- * <p>This Specification contains tests for the use ArchiveProduct use case</p>
+ * <p>This Specification contains tests for the {@link ArchiveProduct} use case</p>
  *
  * @since 1.0.0
  */

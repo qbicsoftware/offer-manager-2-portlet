@@ -18,7 +18,7 @@ import spock.lang.Specification
 class CreateProductSpec extends Specification {
     CreateProductOutput output = Mock(CreateProductOutput)
     ProductId productId = new ProductId("SE","1")
-    Product product = new Sequencing("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, "1234") //todo use long when ProductId builder is fixed
+    Product product = new Sequencing("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, "1") //todo use long when ProductId builder is fixed
 
 
     def "Create stores the provided product in the data source"() {
@@ -87,4 +87,25 @@ class CreateProductSpec extends Specification {
         and: "the data was stored"
         dataStatus == "not stored"
     }
+
+    def "Create updates the id of the current product"() {
+        given: "a data source that stores a product"
+        CreateProductDataSource dataSource = Stub(CreateProductDataSource)
+        dataSource.store(_ as Product) >> {void}
+        dataSource.fetchLatestProductIdentifierVersion(ProductCategory.SEQUENCING) >> Optional.of(productId)
+
+        and: "an instance of the use case"
+        CreateProduct createProduct = new CreateProduct(dataSource, output)
+
+        when: "the create method is called"
+        createProduct.create(product)
+
+        then: "the output is send a failure notification"
+        1 * output.created({Product product1 ->
+            product1.productId.uniqueId == 2
+        })
+        0 * output.foundDuplicate(_)
+        0 * output.failNotification(_)
+    }
+
 }

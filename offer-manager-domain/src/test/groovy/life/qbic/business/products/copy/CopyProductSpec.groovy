@@ -9,15 +9,16 @@ import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
+import life.qbic.datamodel.dtos.business.services.Sequencing
 import org.apache.tools.ant.taskdefs.Copy
 import spock.lang.IgnoreRest
 import spock.lang.Shared
 import spock.lang.Specification
 
 /**
- * <h1>Archive Product tests</h1>
+ * <h1>{@link CopyProduct} tests</h1>
  *
- * <p>This Specification contains tests for the use ArchiveProduct use case</p>
+ * <p>This Specification contains tests for the {@link CopyProduct} use case</p>
  *
  * @since 1.0.0
  */
@@ -27,7 +28,8 @@ class CopyProductSpec extends Specification {
     CreateProductDataSource createProductDataSource = Stub(CreateProductDataSource)
     CopyProductDataSource dataSource = Stub(CopyProductDataSource)
     CopyProductOutput output = Mock(CopyProductOutput)
-    Product product = new AtomicProduct("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, new ProductId("Test", "1234"))
+    Product product = new Sequencing("test product", "this is a test product", 0.5,
+            ProductUnit.PER_GIGABYTE,"1234")
 
     def "FailNotification forwards received messages to the output"() {
         given: "a CreateProductDataSource that throws a DatabaseQueryException"
@@ -45,16 +47,17 @@ class CopyProductSpec extends Specification {
         noExceptionThrown()
     }
 
-    def "a duplicated entry leads to fail notification"() {
+    def "A duplicated entry leads to fail notification"() {
         given: "a CreateProductDataSource that throws a ProductExistsException"
         createProductDataSource.store(product) >> {throw new ProductExistsException(product.getProductId(), "Test exception")}
+        //todo when does this exception occur??
         and: "a copy use case with this datasource"
         CopyProduct copyProduct = new CopyProduct(dataSource, output, createProductDataSource)
 
         when: "copyModified is called"
         copyProduct.copyModified(product)
 
-        then: "a fail notification is recieved in the output"
+        then: "a fail notification is received in the output"
         1 * output.failNotification(_ as String)
         and: "no other output is registered"
         0 * output.copied(_)

@@ -31,8 +31,9 @@ class CreateProduct implements CreateProductInput {
     @Override
     void create(Product product) {
         try {
-            dataSource.store(buildNewProduct(product))
-            output.created(product)
+            Product newProduct = buildNewProduct(product)
+            dataSource.store(newProduct)
+            output.created(newProduct)
         } catch(DatabaseQueryException databaseQueryException) {
             log.error("Product creation failed", databaseQueryException)
             output.failNotification("Could not create product $product.productName with id $product.productId")
@@ -52,11 +53,13 @@ class CreateProduct implements CreateProductInput {
     private long getProductVersion(ProductCategory category){
         Optional<ProductId> id = dataSource.fetchLatestProductIdentifierVersion(category)
 
-        //todo check that the number is positive
         if(id.isPresent()){
-            return id.get().uniqueId + 1
+            ProductId productId = id.get()
+            if(productId.uniqueId > 0) return productId.uniqueId + 1
+            throw new IllegalArgumentException("An unexpected error occurred")
         }else{
-            throw new IllegalArgumentException("The provided Product has no Identifier in the Database")
+            //no product of this type was stored yet
+            return 1
         }
     }
 
