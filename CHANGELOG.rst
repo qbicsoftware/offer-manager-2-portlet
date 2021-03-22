@@ -19,6 +19,8 @@ use cases of the product maintenance and creation feature(`#411 <https://github.
 
 **Fixed**
 
+* Popup based Notifications are now properly centered in a liferay-environment(`#428 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/428>`_)
+
 **Dependencies**
 
 **Deprecated**

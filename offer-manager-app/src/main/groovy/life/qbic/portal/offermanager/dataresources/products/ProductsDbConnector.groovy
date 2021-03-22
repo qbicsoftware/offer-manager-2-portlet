@@ -102,6 +102,12 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       case "Sequencing":
         productCategory = ProductCategory.SEQUENCING
         break
+      case "Proteomics":
+        productCategory = ProductCategory.PROTEOMIC
+        break
+      case "Metabolomics":
+        productCategory = ProductCategory.METABOLOMIC
+        break
     }
 
     if(!productCategory) {
@@ -190,6 +196,8 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     if (product instanceof PrimaryAnalysis) return 'Primary Bioinformatics'
     if (product instanceof SecondaryAnalysis) return 'Secondary Bioinformatics'
     if (product instanceof DataStorage) return 'Data Storage'
+    if (product instanceof ProteomicAnalysis) return 'Proteomics'
+    if (product instanceof MetabolomicAnalysis) return 'Metabolomics'
 
     return null
   }
