@@ -59,7 +59,7 @@ class Product {
 
     /**
      * Calculates the checksum for the product
-     * @return
+     * @return a string containing the checksum for this product
      */
     String checksum(){
         MessageDigest digest = MessageDigest.getInstance("SHA-256")
