@@ -123,7 +123,6 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   def createOfferItems(List<ProductItem> items, int offerId) {
-
     items.each {productItem ->
       String query = "INSERT INTO productitem (productId, quantity, offerid) "+
               "VALUE(?,?,?)"
@@ -174,13 +173,13 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * Returns the product identifying running number given a productId
    *
    * @param productId String of productId stored in the DB e.g. "DS_1"
-   * @return identifier String of the iterative identifying part of the productId
+   * @return identifier Long of the iterative identifying part of the productId
    */
-  static String parseProductId(String productId) {
+  static long parseProductId(String productId) throws NumberFormatException{
     def splitId = productId.split("_")
     // The first entry [0] contains the product type which is assigned automatically, no need to parse it.
     String identifier = splitId[1]
-    return identifier
+    return Long.parseLong(identifier)
   }
 
 
@@ -290,7 +289,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     }
   }
 
-  /**
+/**
    * Class that encapsulates the available SQL queries.
    */
   private static class Queries {
