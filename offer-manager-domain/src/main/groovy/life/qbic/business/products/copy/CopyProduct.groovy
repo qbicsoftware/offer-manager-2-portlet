@@ -1,6 +1,5 @@
 package life.qbic.business.products.copy
 
-import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
@@ -11,10 +10,6 @@ import life.qbic.business.products.create.CreateProductInput
 import life.qbic.business.products.create.CreateProductOutput
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.Product
-import org.aspectj.bridge.IMessage
-
-import java.nio.charset.StandardCharsets
-import java.security.MessageDigest
 
 /**
  * <h1>4.3.2 Copy Service Product</h1>
@@ -53,7 +48,7 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
     void copyModified(Product product) {
         try {
             //1. retrieve product from db
-            Product existingProduct = this.getExistingProduct()
+            Product existingProduct = getExistingProduct(product.productId)
             //2. compare if there is a difference between the products in order
             if (theProductHasChanged(product,existingProduct)) {
                 //3. call the CreateProduct use case (new id is created here)
@@ -74,6 +69,7 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
                 Product product = searchResult.get()
                 return product
             }
+            output.failNotification("There is no product with the ID ${productId.toString()}")
         }catch(DatabaseQueryException databaseQueryException){
             log.error("The copied product ${productId.toString()} cannot be found in the database", databaseQueryException)
             output.failNotification("The copied product ${productId.toString()} cannot be found in the database")
