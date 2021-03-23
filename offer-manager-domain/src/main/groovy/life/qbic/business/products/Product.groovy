@@ -68,7 +68,7 @@ class Product {
 
     /**
      * Compute the checksum for a product based on the encryption method provided
-     * The checksum is computed based on the product name, description, unit, unit price and the category     *
+     * The checksum is computed based on the product name, description, unit, unit price and the category
      *
      * @param digest The digestor will digest the message that needs to be encrypted
      * @param product Contains the product information
