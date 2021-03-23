@@ -14,6 +14,7 @@ interface CreateProductDataSource {
     /**
      * Stores a product in the database
      * @param product The product that needs to be stored
+     * @return The product identifier of the just created product
      * @since 1.0.0
      * @throws DatabaseQueryException if any technical interaction with the data source fails
      * @throws ProductExistsException if the product already exists in the data source
