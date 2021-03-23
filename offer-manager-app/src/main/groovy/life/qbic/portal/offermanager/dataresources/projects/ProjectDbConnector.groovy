@@ -77,7 +77,8 @@ class ProjectDbConnector {
      * @param projectIdentifier a project identifier object denoting the openBIS identifier
      * @param projectApplication a project application object used to add additional metadata
      */
-    public Project addProjectAndConnectPersonsInUserDB(projectIdentifier, projectApplication) {
+    public Project addProjectAndConnectPersonsInUserDB(ProjectIdentifier projectIdentifier,
+                                                       ProjectApplication projectApplication) {
       //collect infos needed for database
       String projectTitle = projectApplication.getProjectTitle()
       Customer customer = projectApplication.getCustomer()
@@ -92,7 +93,7 @@ class ProjectDbConnector {
   
       connection.withCloseable {it ->
         try {
-          int projectID = addProjectToDB(it, projectIdentifier, projectTitle)
+          int projectID = addProjectToDB(projectIdentifier.toString(), projectTitle)
           addPersonToProject(it, projectID, managerID, "Manager")
           addPersonToProject(it, projectID, customerID, "PI")
 
@@ -106,7 +107,8 @@ class ProjectDbConnector {
           throw new DatabaseQueryException("Could not add person and project data to user database.")
         }
       }
-      return new Project(projectIdentifier, projectTitle, projectApplication.getLinkedOffer())
+      return new Project.Builder(projectIdentifier, projectTitle)
+          .linkedOfferId(projectApplication.linkedOffer).build()
     }
 
   private boolean isProjectInDB(String projectIdentifier) {
@@ -124,7 +126,9 @@ class ProjectDbConnector {
       return false;
     }
 
-  private int addProjectToDB(Connection connection, String projectIdentifier, String projectName) {
+  private int addProjectToDB(String projectIdentifier, String projectName) {
+      Connection connection = connectionProvider.connect()
+      connection.setAutoCommit(false)
       if(isProjectInDB(projectIdentifier)) {
         throw new ProjectExistsException("Project "+projectIdentifier+" is already in the user database")
       }
@@ -137,7 +141,6 @@ class ProjectDbConnector {
         statement.execute();
         ResultSet rs = statement.getGeneratedKeys();
         if (rs.next()) {
-          logout(conn);
           log.debug("Successful.");
           return rs.getInt(1);
         }
