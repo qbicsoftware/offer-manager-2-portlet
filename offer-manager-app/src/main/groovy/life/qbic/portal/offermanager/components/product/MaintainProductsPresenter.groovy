@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.products
+package life.qbic.portal.offermanager.components.product
 
 import life.qbic.business.products.archive.ArchiveProductOutput
 import life.qbic.business.products.create.CreateProductOutput
@@ -26,11 +26,13 @@ class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOu
     @Override
     void archived(Product product) {
         mainViewModel.successNotifications << "Successfully archived product $product.productId - $product.productName."
+        productsViewModel.productsResourcesService.removeFromResource(product)
     }
 
     @Override
     void created(Product product) {
         mainViewModel.successNotifications << "Successfully added new product $product.productId - $product.productName."
+        productsViewModel.productsResourcesService.addToResource(product)
     }
 
     @Override

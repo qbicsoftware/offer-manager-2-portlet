@@ -2,9 +2,11 @@ package life.qbic.portal.offermanager.dataresources.products
 
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
+import life.qbic.business.products.Converter
 import life.qbic.business.products.archive.ArchiveProductDataSource
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.ProductExistsException
+import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
@@ -63,9 +65,10 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
 
   private List<Product> fetchAllProductsFromDb() {
     List<Product> products = []
+    String query = Queries.SELECT_ALL_PRODUCTS + "WHERE active = 1"
     provider.connect().withCloseable {
-      final PreparedStatement query = it.prepareStatement(Queries.SELECT_ALL_PRODUCTS)
-      final ResultSet resultSet = query.executeQuery()
+      final PreparedStatement statement = it.prepareStatement(query)
+      final ResultSet resultSet = statement.executeQuery()
       products.addAll(convertResultSet(resultSet))
     }
     return products
@@ -80,47 +83,42 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   private static Product rowResultToProduct(GroovyRowResult row) {
-    def productCategory = row.category
+    def dbProductCategory = row.category
     String productId = row.productId
-    Product product
-    switch(productCategory) {
+    ProductCategory productCategory
+    switch(dbProductCategory) {
       case "Data Storage":
-        product = new DataStorage(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.DATA_STORAGE
         break
       case "Primary Bioinformatics":
-        product = new PrimaryAnalysis(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.PRIMARY_BIOINFO
         break
       case "Project Management":
-        product = new ProjectManagement(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.PROJECT_MANAGEMENT
         break
       case "Secondary Bioinformatics":
-        product = new SecondaryAnalysis(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.SECONDARY_BIOINFO
         break
       case "Sequencing":
-        product = new Sequencing(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
+        productCategory = ProductCategory.SEQUENCING
+        break
+      case "Proteomics":
+        productCategory = ProductCategory.PROTEOMIC
+        break
+      case "Metabolomics":
+        productCategory = ProductCategory.METABOLOMIC
         break
     }
-    if(product == null) {
+
+    if(!productCategory) {
       log.error("Product could not be parsed from database query.")
       log.error(row)
       throw new DatabaseQueryException("Cannot parse product")
     } else {
-      return product
+      return Converter.createProductWithVersion(productCategory,row.productName as String,
+              row.description as String,
+              row.unitPrice as Double,
+              new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
     }
   }
 
@@ -198,6 +196,8 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     if (product instanceof PrimaryAnalysis) return 'Primary Bioinformatics'
     if (product instanceof SecondaryAnalysis) return 'Secondary Bioinformatics'
     if (product instanceof DataStorage) return 'Data Storage'
+    if (product instanceof ProteomicAnalysis) return 'Proteomics'
+    if (product instanceof MetabolomicAnalysis) return 'Metabolomics'
 
     return null
   }
@@ -251,12 +251,12 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   @Override
   Optional<Product> fetch(ProductId productId) throws DatabaseQueryException {
     Connection connection = provider.connect()
-    String query = Queries.SELECT_ALL_PRODUCTS + " WHERE productId=?"
+    String query = Queries.SELECT_ALL_PRODUCTS + "WHERE active = 1 AND productId=?"
     Optional<Product> product = Optional.empty()
 
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(query)
-      preparedStatement.setString(1, productId.identifier.toString())
+      preparedStatement.setString(1, productId.toString())
       ResultSet result = preparedStatement.executeQuery()
 
       while (result.next()) {
@@ -308,7 +308,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     /**
      * Query for all available products.
      */
-    final static String SELECT_ALL_PRODUCTS = "SELECT * FROM product"
+    final static String SELECT_ALL_PRODUCTS = "SELECT * FROM product "
 
     /**
      * Query for all items of an offer.

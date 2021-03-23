@@ -15,6 +15,7 @@ import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Sequencing
+import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
@@ -105,6 +106,11 @@ class Offer {
      */
     private static final double VAT = 0.19
 
+    /**
+     * A project that has been created from this offer (optional)
+     */
+    private Optional<ProjectIdentifier> associatedProject
+
     private static Date calculateExpirationDate(Date date) {
         use (TimeCategory) {
             return date + 90.days
@@ -123,6 +129,7 @@ class Offer {
         Affiliation selectedCustomerAffiliation
         List<OfferId> availableVersions
         double overheadRatio
+        Optional<ProjectIdentifier> associatedProject
 
         Builder(Customer customer, ProjectManager projectManager, String projectTitle, String projectObjective, List<ProductItem> items, Affiliation selectedCustomerAffiliation) {
             this.customer = Objects.requireNonNull(customer, "Customer must not be null")
@@ -136,6 +143,7 @@ class Offer {
             // copy all immutable items to out internal list
             items.each {this.items.add(it)}
             this.selectedCustomerAffiliation = Objects.requireNonNull(selectedCustomerAffiliation, "Customer Affiliation must not be null")
+            this.associatedProject = Optional.empty()
         }
 
         Builder creationDate(Date creationDate) {
@@ -155,6 +163,11 @@ class Offer {
 
         Builder overheadRatio(double overheadRatio){
             this.overheadRatio = overheadRatio
+            return this
+        }
+
+        Builder associatedProject(ProjectIdentifier associatedProject) {
+            this.associatedProject = Optional.of(associatedProject)
             return this
         }
 
@@ -185,7 +198,11 @@ class Offer {
         this.itemsWithOverheadNetPrice = getOverheadItemsNet()
         this.itemsWithoutOverheadNetPrice = getNoOverheadItemsNet()
         this.overheadRatio = determineOverhead()
-
+        if (builder.associatedProject.isPresent()) {
+            this.associatedProject = Optional.of(builder.associatedProject.get())
+        } else {
+            this.associatedProject = Optional.empty()
+        }
     }
 
     /**
@@ -219,8 +236,10 @@ class Offer {
     double getOverheadSum() {
         double overheadSum = 0
         items.each {
-            // No overheads are assigned for data storage and project management
-            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
+            if (it.product instanceof ProjectManagement || it.product instanceof DataStorage) {
+                // No overheads are assigned for data storage and project management
+            }
+            else {
                 overheadSum += it.quantity * it.product.unitPrice * this.overhead
             }
         }
@@ -252,7 +271,10 @@ class Offer {
     double getOverheadItemsNet() {
         double costOverheadItemsNet = 0
         items.each {
-            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
+            if (it.product instanceof ProjectManagement || it.product instanceof DataStorage) {
+                // No overheads are assigned for data storage and project management
+            }
+            else {
                 costOverheadItemsNet += it.quantity * it.product.unitPrice
             }
         }
@@ -281,7 +303,10 @@ class Offer {
     List<ProductItem> getOverheadItems() {
         List<ProductItem> listOverheadProductItem = []
         items.each {
-            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
+            if (it.product instanceof DataStorage || it.product instanceof ProjectManagement){
+                // No overheads are assigned for data storage and project management
+            }
+            else {
                 listOverheadProductItem.add(it)
             }
         }
@@ -297,7 +322,7 @@ class Offer {
         List<ProductItem> listNoOverheadProductItem = []
         items.each {
             if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
-                 listNoOverheadProductItem.add(it)
+                listNoOverheadProductItem.add(it)
             }
         }
         return listNoOverheadProductItem
@@ -341,6 +366,10 @@ class Offer {
 
     double getOverheadRatio() {
         return overheadRatio
+    }
+
+    Optional<ProjectIdentifier> getAssociatedProject() {
+        return associatedProject
     }
 
     /**

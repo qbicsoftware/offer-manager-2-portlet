@@ -28,6 +28,7 @@ class CreateProduct implements CreateProductInput {
     @Override
     void create(Product product) {
         try {
+            //todo create new productId!!! the id is not provided from the controller. It must be generated in the use case itself
             dataSource.store(product)
             output.created(product)
         } catch(DatabaseQueryException databaseQueryException) {

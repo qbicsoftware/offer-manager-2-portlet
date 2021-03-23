@@ -133,6 +133,9 @@ class OfferOverviewView extends FormLayout {
                 .setCaption("Project Title").setId("ProjectTitle")
         overviewGrid.addColumn({overview -> overview.getCustomer()})
                 .setCaption("Customer").setId("Customer")
+        overviewGrid.addColumn({overview ->
+            overview.getAssociatedProject().isPresent() ? overview.getAssociatedProject().get() :
+                    "-"}).setCaption("Project ID").setId("ProjectID")
         // fix formatting of price
         overviewGrid.addColumn({overview -> Currency.getFormatterWithSymbol().format(overview.getTotalPrice())}).setCaption("Total Price")
         overviewGrid.sort(dateColumn, SortDirection.DESCENDING)
@@ -178,6 +181,14 @@ class OfferOverviewView extends FormLayout {
                         new LoadOfferInfoThread(UI.getCurrent(), overview).start()
                     })
                 })
+    }
+
+    private void checkProjectCreationAllowed(OfferOverview overview) {
+        if (overview.associatedProject.isPresent()) {
+            createProjectButton.setEnabled(false)
+        } else {
+            createProjectButton.setEnabled(true)
+        }
     }
 
     private void createResourceForDownload() {
@@ -236,7 +247,7 @@ class OfferOverviewView extends FormLayout {
                     overviewGrid.setEnabled(true)
                     downloadBtn.setEnabled(true)
                     updateOfferBtn.setEnabled(true)
-                    createProjectButton.setEnabled(true)
+                    checkProjectCreationAllowed(offerOverview)
                     ui.setPollInterval(-1)
                 })
         }

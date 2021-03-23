@@ -267,26 +267,6 @@ class SelectItemsView extends VerticalLayout{
                 customerFilterRow)
     }
 
-    private void addDummyValues(){
-        Sequencing sequencing = new Sequencing("RNA sequencing","Sequencing RNA sequences",1.4, ProductUnit.PER_SAMPLE)
-        Sequencing sequencing2 = new Sequencing("DNA sequencing","Sequencing DNA sequences",2.5, ProductUnit.PER_SAMPLE)
-        sequencingProduct = [new ProductItemViewModel(0,sequencing), new ProductItemViewModel(0,sequencing2)]
-
-        //todo add product unit per hour?
-        ProjectManagement management = new ProjectManagement("Consultation","Initial consultation for a project",4,ProductUnit.PER_DATASET)
-        ProjectManagement management2 = new ProjectManagement("Project Design","Advising customers on how to design their project",5,ProductUnit.PER_SAMPLE)
-        projectManagementProduct = [new ProductItemViewModel(0,management), new ProductItemViewModel(0,management2)]
-
-        DataStorage dataStorage = new DataStorage("Sequencing Data","Storage for all sequencing related data",3,ProductUnit.PER_GIGABYTE)
-        storageProduct = [new ProductItemViewModel(0,dataStorage)]
-
-        PrimaryAnalysis primaryAnalysis = new PrimaryAnalysis("Primary analysis","Analsis of primary data",2,ProductUnit.PER_DATASET)
-        primaryAnalyseProduct = [new ProductItemViewModel(0,primaryAnalysis)]
-
-        SecondaryAnalysis secondaryAnalysis = new SecondaryAnalysis("Secondary analysis","Analsis of secondary data",4,ProductUnit.PER_DATASET)
-        secondaryAnalyseProduct = [new ProductItemViewModel(0,secondaryAnalysis)]
-    }
-
     /**
      * Method which generates the grid and populates the columns with the set product information from the setupDataProvider Method
      *
