@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
+import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
