@@ -12,7 +12,7 @@ import life.qbic.datamodel.dtos.business.services.Product
 interface CopyProductInput {
 
     /**
-     * creates a product and populates it with provided information
+     * Creates a product and populates it with provided information
      * @param product The modified product information. The identifier should already be present.
      * @since 1.0.0
      */
