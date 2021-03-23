@@ -9,6 +9,7 @@ import life.qbic.datamodel.dtos.projectmanagement.*
 import life.qbic.business.projects.create.ProjectExistsException
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
+
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
@@ -93,7 +94,7 @@ class ProjectDbConnector {
 
         connection.withCloseable {it ->
             try {
-                int projectID = addProjectToDB(projectIdentifier.toString(), projectTitle)
+                int projectID = addProjectToDB(it, projectIdentifier.toString(), projectTitle)
                 addPersonToProject(it, projectID, managerID, "Manager")
                 addPersonToProject(it, projectID, customerID, "PI")
 
@@ -125,9 +126,7 @@ class ProjectDbConnector {
         return false
     }
 
-    private int addProjectToDB(String projectIdentifier, String projectName) {
-        Connection connection = connectionProvider.connect()
-        connection.setAutoCommit(false)
+    private int addProjectToDB(Connection connection, String projectIdentifier, String projectName) {
         if(isProjectInDB(projectIdentifier)) {
             throw new ProjectExistsException("Project "+projectIdentifier+" is already in the user database")
         }
