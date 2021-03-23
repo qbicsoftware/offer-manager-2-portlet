@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.products
 
+import com.mysql.cj.result.Row
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
 import life.qbic.business.products.Converter
@@ -277,6 +278,8 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   void store(Product product) throws DatabaseQueryException, ProductExistsException {
     Connection connection = provider.connect()
 
+    ProductId id //= createProductId(product)
+
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(Queries.INSERT_PRODUCT)
       preparedStatement.setString(1, getProductType(product))
@@ -284,10 +287,42 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       preparedStatement.setString(3, product.productName)
       preparedStatement.setDouble(4, product.unitPrice)
       preparedStatement.setString(5, product.unit.value)
-      preparedStatement.setString(6, product.productId.toString())
+      preparedStatement.setString(6, id.toString())
 
       preparedStatement.execute()
     }
+  }
+
+  private ProductId createProductId(Product product){
+    String productType = product.productId.type
+    String version = fetchLatestVersion(product) //todo exchange with long
+
+    return new ProductId(productType,version)
+  }
+
+  private Long fetchLatestVersion(Product product){
+    String query = Queries.SELECT_ALL_PRODUCTS + "WHERE category = ?"
+    Connection connection = provider.connect()
+
+    String category = getProductType(product)
+    Long latestVersion = 0
+
+    connection.withCloseable {
+      PreparedStatement preparedStatement = it.prepareStatement(query)
+      preparedStatement.setString(1, category)
+
+      ResultSet result = preparedStatement.executeQuery()
+
+      while(result.next()){
+        GroovyRowResult row = SqlExtensions.toRowResult(result)
+        String id = (row.get("productId") as String)
+
+        Long version = Long.parseLong(id.split('_')[1])
+        if(version > latestVersion) latestVersion = version
+      }
+    }
+
+    return latestVersion + 1
   }
 
   /**
