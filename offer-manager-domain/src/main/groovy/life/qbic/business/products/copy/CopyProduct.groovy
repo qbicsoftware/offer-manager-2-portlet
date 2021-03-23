@@ -1,5 +1,6 @@
 package life.qbic.business.products.copy
 
+import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
@@ -59,21 +60,16 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
         } catch (DatabaseQueryException databaseQueryException) {
             log.error("The copied product ${product.productId.toString()} cannot be found in the database", databaseQueryException)
             output.failNotification("The copied product ${product.productId.toString()} cannot be found in the database")
+        } catch(Exception ignore){
+            //there is no product present, this should not happen
+            log.error("An unexpected during the project creation occurred.", ignore)
+            output.failNotification("An unexpected during the project creation occurred. " +
+                    "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
     }
 
     private Product getExistingProduct(ProductId productId){
-        try{
-            Optional<Product> searchResult = dataSource.fetch(productId)
-            if (searchResult.isPresent()){
-                Product product = searchResult.get()
-                return product
-            }
-            output.failNotification("There is no product with the ID ${productId.toString()}")
-        }catch(DatabaseQueryException databaseQueryException){
-            log.error("The copied product ${productId.toString()} cannot be found in the database", databaseQueryException)
-            output.failNotification("The copied product ${productId.toString()} cannot be found in the database")
-        }
+        return dataSource.fetch(productId).get()
     }
 
     private static boolean theProductHasChanged(Product product1, Product product2){
