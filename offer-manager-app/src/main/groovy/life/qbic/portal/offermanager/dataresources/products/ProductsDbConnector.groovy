@@ -117,7 +117,6 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   def createOfferItems(List<ProductItem> items, int offerId) {
-
     items.each {productItem ->
       String query = "INSERT INTO productitem (productId, quantity, offerid) "+
               "VALUE(?,?,?)"
@@ -282,10 +281,6 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     }
   }
 
-  @Override
-  Optional<ProductId> fetchLatestProductIdentifierVersion(ProductCategory productCategory) throws DatabaseQueryException {
-    throw new IllegalArgumentException("not implemented")
-  }
 /**
    * Class that encapsulates the available SQL queries.
    */

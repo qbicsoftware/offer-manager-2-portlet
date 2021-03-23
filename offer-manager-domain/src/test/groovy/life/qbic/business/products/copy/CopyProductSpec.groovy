@@ -29,7 +29,6 @@ class CopyProductSpec extends Specification {
     CreateProductDataSource createProductDataSource = Stub(CreateProductDataSource)
     CopyProductDataSource dataSource = Stub(CopyProductDataSource)
     CopyProductOutput output = Mock(CopyProductOutput)
-    ProductId productId = new ProductId("SE","1")
     Product product = new Sequencing("test product", "this is a test product", 0.5,
             ProductUnit.PER_GIGABYTE,"1")
 
@@ -78,50 +77,6 @@ class CopyProductSpec extends Specification {
         1 * output.failNotification(_ as String)
         and: "no other output is registered"
         0 * output.copied(_)
-        noExceptionThrown()
-    }
-
-    def "CopyModified creates a new product with the provided information and a new identifier"() {
-        given: "a data source that finds the product"
-        dataSource.fetch(_ as ProductId) >> Optional.of(product)
-        and: "a CreateProductDataSource that stores new products"
-        createProductDataSource.fetchLatestProductIdentifierVersion(ProductCategory.SEQUENCING) >> Optional.of(productId)
-        createProductDataSource.store(product) >> void
-        and: "a copy use case"
-        CopyProduct copyProduct = new CopyProduct(dataSource, output, createProductDataSource)
-
-        and: "a copied product"
-        Product copied = new Sequencing("test product copied", "this is a test product", 1.0,
-                ProductUnit.PER_GIGABYTE,"1")
-
-        when: "copyModified is called with the product"
-        copyProduct.copyModified(copied)
-
-        then: "the product is copied with a new id"
-        1 * output.copied({ Product newProduct ->
-            newProduct.productId.uniqueId == 2
-        })
-        and: "no other output method is called"
-        0 * output.failNotification(_)
-        noExceptionThrown()
-    }
-
-    def "CopyModified fails for duplicated product"() {
-        given: "a data source that finds the product"
-        dataSource.fetch(_ as ProductId) >> Optional.of(product)
-        and: "a CreateProductDataSource that stores new products"
-        createProductDataSource.fetchLatestProductIdentifierVersion(ProductCategory.SEQUENCING) >> Optional.of(productId)
-        createProductDataSource.store(product) >> void
-        and: "a copy use case"
-        CopyProduct copyProduct = new CopyProduct(dataSource, output, createProductDataSource)
-
-        when: "copyModified is called with the product"
-        copyProduct.copyModified(product)
-
-        then: "the product is copied with a new id"
-        0 * output.copied(_)
-        and: "no other output method is called"
-        1 * output.failNotification(_)
         noExceptionThrown()
     }
 

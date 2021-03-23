@@ -102,6 +102,4 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
     void foundDuplicate(Product product) {
         output.failNotification("Product ${product.productName} already exists.")
     }
-
-
 }
