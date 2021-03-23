@@ -58,7 +58,7 @@ class Product {
     }
 
     /**
-     * Calculates the checksum for the product
+     * Calculates the SHA checksum for the product
      * @return a string containing the checksum for this product
      */
     String checksum(){
@@ -67,7 +67,9 @@ class Product {
     }
 
     /**
-     * Compute the checksum for a product
+     * Compute the checksum for a product based on the encryption method provided
+     * The checksum is computed based on the product name, description, unit, unit price and the category     *
+     *
      * @param digest The digestor will digest the message that needs to be encrypted
      * @param product Contains the product information
      * @return a string that encrypts the product object
