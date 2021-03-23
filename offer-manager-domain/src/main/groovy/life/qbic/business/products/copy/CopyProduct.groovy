@@ -100,7 +100,7 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
      */
     @Override
     void foundDuplicate(Product product) {
-        output.failNotification("Product ${product.productName} already exists.")
+        output.failNotification("A product with the same content like ${product.productName} already exists.")
     }
 
 
