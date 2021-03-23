@@ -24,9 +24,8 @@ class CreateProductSpec extends Specification {
     def "Create stores the provided product in the data source"() {
         given: "a data source that stores a product"
         CreateProductDataSource dataSource = Stub(CreateProductDataSource)
-        String dataStatus = ""
-        dataSource.store(product) >> { dataStatus = "stored" }
-        dataSource.fetchLatestProductIdentifierVersion(ProductCategory.SEQUENCING) >> Optional.of(productId)
+        dataSource.store(product) >> { productId }
+
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
 
@@ -37,8 +36,6 @@ class CreateProductSpec extends Specification {
         1 * output.created(product)
         0 * output.foundDuplicate(_)
         0 * output.failNotification(_)
-        and: "the data was stored in the database"
-        dataStatus == "stored"
     }
 
     def "Create informs the output that an entry matching the provided product already exists"() {
@@ -49,7 +46,6 @@ class CreateProductSpec extends Specification {
             dataStatus = "not stored"
             throw new ProductExistsException(productId)
         }
-        dataSource.fetchLatestProductIdentifierVersion(ProductCategory.SEQUENCING) >> Optional.of(productId)
 
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
@@ -72,7 +68,6 @@ class CreateProductSpec extends Specification {
         dataSource.store(product) >> {
             dataStatus = "not stored"
             throw new DatabaseQueryException("This is a test") }
-        dataSource.fetchLatestProductIdentifierVersion(ProductCategory.SEQUENCING) >> Optional.of(productId)
 
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)

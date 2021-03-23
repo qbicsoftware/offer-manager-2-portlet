@@ -30,12 +30,14 @@ class CreateProduct implements CreateProductInput {
 
     @Override
     void create(Product product) {
+        Product
         try {
-            dataSource.store(product)
-            output.created(product)
+            ProductId id = dataSource.store(product)
+            Product productWithNewID = Converter.duplicateProduct(product,id)
+            output.created(productWithNewID)
         } catch(DatabaseQueryException databaseQueryException) {
             log.error("Product creation failed", databaseQueryException)
-            output.failNotification("Could not create product $product.productName with id $product.productId")
+            output.failNotification("Could not create product $product.productName")
         } catch(ProductExistsException productExistsException) {
             log.warn("Product \"$product.productName\" already exists.", productExistsException)
             output.foundDuplicate(product)

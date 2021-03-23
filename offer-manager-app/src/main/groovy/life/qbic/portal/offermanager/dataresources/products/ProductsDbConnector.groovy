@@ -1,6 +1,5 @@
 package life.qbic.portal.offermanager.dataresources.products
 
-import com.mysql.cj.result.Row
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
 import life.qbic.business.products.Converter
@@ -274,7 +273,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * @throws ProductExistsException if the product already exists in the data source
    */
   @Override
-  void store(Product product) throws DatabaseQueryException, ProductExistsException {
+  ProductId store(Product product) throws DatabaseQueryException, ProductExistsException {
     Connection connection = provider.connect()
 
     ProductId id = createProductId(product)
@@ -290,6 +289,8 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
 
       preparedStatement.execute()
     }
+
+    return id
   }
 
   private ProductId createProductId(Product product){

@@ -1,6 +1,7 @@
 package life.qbic.business.products
 
 import life.qbic.datamodel.dtos.business.ProductCategory
+import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
@@ -107,5 +108,16 @@ class Converter {
 
     static Product convertProductToDTO(life.qbic.business.products.Product product){
         return createProductWithVersion(product.category,product.name, product.description, product.unitPrice, product.unit, product.id.uniqueId)
+    }
+
+    /**
+     * Creates a duplicate product based on the provided product and the given ID
+     * @param product Product to be duplicated
+     * @param newId The new product id of the duplicated product
+     * @return a product with the information form the provided product and the given product id
+     */
+    static Product duplicateProduct(Product product, ProductId newId){
+        ProductCategory category = getCategory(product)
+        return createProductWithVersion(category,product.productName,product.description,product.unitPrice,product.unit,newId.uniqueId)
     }
 }
