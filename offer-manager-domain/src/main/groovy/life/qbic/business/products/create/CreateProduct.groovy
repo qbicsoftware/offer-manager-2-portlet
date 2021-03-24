@@ -1,5 +1,6 @@
 package life.qbic.business.products.create
 
+import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
@@ -15,7 +16,6 @@ import life.qbic.datamodel.dtos.business.services.Product
  * </p>
  *
  * @since: 1.0.0
-
  *
  */
 class CreateProduct implements CreateProductInput {
@@ -40,6 +40,10 @@ class CreateProduct implements CreateProductInput {
         } catch(ProductExistsException productExistsException) {
             log.warn("Product $product.productName with identifier $product.productId already exists.", productExistsException)
             output.foundDuplicate(product)
+        } catch(Exception exception) {
+            log.error("An unexpected during the project creation occurred.", exception)
+            output.failNotification("An unexpected during the project creation occurred. " +
+                    "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
     }
 
