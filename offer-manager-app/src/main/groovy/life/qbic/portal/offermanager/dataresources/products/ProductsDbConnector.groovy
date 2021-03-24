@@ -292,17 +292,17 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
 
   private ProductId createProductId(Product product){
     String productType = product.productId.type
-    String version = fetchLatestVersion(product) //todo exchange with long
+    String version = fetchLatestIdentifier(product) //todo exchange with long
 
     return new ProductId(productType,version)
   }
 
-  private Long fetchLatestVersion(Product product){
+  private Long fetchLatestIdentifier(Product product){
     String query = Queries.SELECT_ALL_PRODUCTS + "WHERE category = ?"
     Connection connection = provider.connect()
 
     String category = getProductType(product)
-    Long latestVersion = 0
+    Long latestUniqueId = 0
 
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(query)
@@ -314,12 +314,12 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
         GroovyRowResult row = SqlExtensions.toRowResult(result)
         String id = (row.get("productId") as String)
 
-        Long version = Long.parseLong(id.split('_')[1])
-        if(version > latestVersion) latestVersion = version
+        Long uniqueId = Long.parseLong(id.split('_')[1])
+        if(uniqueId > latestUniqueId) latestUniqueId = uniqueId
       }
     }
 
-    return latestVersion + 1
+    return latestUniqueId + 1
   }
 
   /**
