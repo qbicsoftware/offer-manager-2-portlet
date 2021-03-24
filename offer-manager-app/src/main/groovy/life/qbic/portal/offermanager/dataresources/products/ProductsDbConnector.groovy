@@ -273,7 +273,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   ProductId store(Product product) throws DatabaseQueryException, ProductExistsException {
     Connection connection = provider.connect()
 
-    ProductId id = createProductId(product)
+    ProductId productId = createProductId(product)
 
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(Queries.INSERT_PRODUCT)
@@ -282,12 +282,12 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       preparedStatement.setString(3, product.productName)
       preparedStatement.setDouble(4, product.unitPrice)
       preparedStatement.setString(5, product.unit.value)
-      preparedStatement.setString(6, id.toString())
+      preparedStatement.setString(6, productId.toString())
 
       preparedStatement.execute()
     }
 
-    return id
+    return productId
   }
 
   private ProductId createProductId(Product product){
