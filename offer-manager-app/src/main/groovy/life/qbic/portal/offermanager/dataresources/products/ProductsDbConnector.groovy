@@ -122,7 +122,13 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     }
   }
 
-  def createOfferItems(List<ProductItem> items, int offerId) {
+  /**
+   * This method associates an offer with product items.
+   *
+   * @param items A list of product items of an offer
+   * @param offerId An offerId the references the offer that should contain the list of product items
+   */
+  void createOfferItems(List<ProductItem> items, int offerId) {
     items.each {productItem ->
       String query = "INSERT INTO productitem (productId, quantity, offerid) "+
               "VALUE(?,?,?)"
