@@ -341,6 +341,7 @@ class CreatePersonView extends VerticalLayout {
                 affiliations.add(createPersonViewModel.affiliation)
 
                 if(createPersonViewModel.outdatedPerson){
+                    affiliations.addAll(createPersonViewModel.outdatedPerson.affiliations)
                     controller.updatePerson(createPersonViewModel.outdatedPerson, firstName, lastName, title, email, affiliations)
                 }
                 else{
