@@ -33,7 +33,7 @@ class Converter {
      * @return
      */
     static Product createProduct(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit){
-        long runningNumber = 0
+        long runningNumber = 0 //todo it should be possible to create products without a running number
         return createProductWithVersion(category,name,description,unitPrice,unit,runningNumber)
     }
 

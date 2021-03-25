@@ -266,15 +266,14 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   /**
-   * Stores a product in the database
-   * @param product The product that needs to be stored
-   * @since 1.0.0
-   * @throws DatabaseQueryException if any technical interaction with the data source fails
-   * @throws ProductExistsException if the product already exists in the data source
+   *
+   * {@inheritDoc}
    */
   @Override
-  void store(Product product) throws DatabaseQueryException, ProductExistsException {
+  ProductId store(Product product) throws DatabaseQueryException, ProductExistsException {
     Connection connection = provider.connect()
+
+    ProductId productId = createProductId(product)
 
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(Queries.INSERT_PRODUCT)
@@ -283,13 +282,45 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       preparedStatement.setString(3, product.productName)
       preparedStatement.setDouble(4, product.unitPrice)
       preparedStatement.setString(5, product.unit.value)
-      preparedStatement.setString(6, product.productId.toString())
+      preparedStatement.setString(6, productId.toString())
 
       preparedStatement.execute()
     }
+
+    return productId
   }
 
-/**
+  private ProductId createProductId(Product product){
+    String productType = product.productId.type
+    String version = fetchLatestIdentifier(productType) //todo exchange with long
+
+    return new ProductId(productType,version)
+  }
+
+  private Long fetchLatestIdentifier(String productType){
+    String query = "SELECT MAX(productId) FROM product WHERE productId LIKE ?"
+    Connection connection = provider.connect()
+
+    String category = productType + "_%"
+    Long latestUniqueId = 0
+
+    connection.withCloseable {
+      PreparedStatement preparedStatement = it.prepareStatement(query)
+      preparedStatement.setString(1, category)
+
+      ResultSet result = preparedStatement.executeQuery()
+
+      while(result.next()){
+        String id = result.getString(1)
+
+        latestUniqueId = Long.parseLong(id.split('_')[1])
+      }
+    }
+
+    return latestUniqueId + 1
+  }
+
+  /**
    * Class that encapsulates the available SQL queries.
    */
   private static class Queries {
