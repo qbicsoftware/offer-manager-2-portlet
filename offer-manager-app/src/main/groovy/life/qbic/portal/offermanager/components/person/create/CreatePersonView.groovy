@@ -8,6 +8,7 @@ import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
+import com.vaadin.shared.Registration
 import com.vaadin.shared.data.sort.SortDirection
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
@@ -31,6 +32,7 @@ class CreatePersonView extends VerticalLayout {
     protected final AppViewModel sharedViewModel
     protected final CreatePersonViewModel createPersonViewModel
     final CreatePersonController controller
+    protected Registration registration
 
     ComboBox<String> titleField
     TextField firstNameField
@@ -330,9 +332,8 @@ class CreatePersonView extends VerticalLayout {
     }
 
     private void registerListeners() {
-        this.submitButton.addClickListener({ event ->
+        registration = this.submitButton.addClickListener({ event ->
             try {
-                println "I was clicked!"
                 // we assume that the view model and the view always contain the same information
                 String title = createPersonViewModel.academicTitle
                 String firstName = createPersonViewModel.firstName
@@ -392,7 +393,7 @@ class CreatePersonView extends VerticalLayout {
     /**
      *  Clears User Input from all fields in the Create Person View and reset validation status of all Fields
      */
-    private void clearAllFields() {
+    protected void clearAllFields() {
 
         titleField.clear()
         firstNameField.clear()

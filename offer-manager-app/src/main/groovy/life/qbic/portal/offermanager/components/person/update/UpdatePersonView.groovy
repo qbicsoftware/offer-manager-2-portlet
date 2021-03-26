@@ -30,12 +30,12 @@ class UpdatePersonView extends CreatePersonView{
     }
 
     private void adjustViewElements() {
-        super.submitButton.caption = "Update Person"
+        submitButton.caption = "Update Person"
     }
 
     private void registerListener(){
-        super.submitButton.getListeners(Button.ClickListener).clear()
-        super.submitButton.addClickListener({
+        registration.remove()
+        submitButton.addClickListener({
             try {
                 // we assume that the view model and the view always contain the same information
                 String title = updatePersonViewModel.academicTitle
