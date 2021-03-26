@@ -60,8 +60,8 @@ class OfferOverviewView extends FormLayout {
         this.model = model
         this.offerOverviewController = offerOverviewController
         this.overviewGrid = new Grid<>()
-        this.downloadBtn = new Button(VaadinIcons.DOWNLOAD)
-        this.updateOfferBtn = new Button(VaadinIcons.EDIT)
+        this.downloadBtn = new Button("Download Offer",VaadinIcons.DOWNLOAD)
+        this.updateOfferBtn = new Button("Update Offer",VaadinIcons.EDIT)
         this.createProjectButton =  new Button("Create Project", VaadinIcons.PLUS_CIRCLE)
         this.downloadSpinner = new ProgressBar()
         this.createProjectView = createProjectView
