@@ -181,7 +181,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * @param productId String of productId stored in the DB e.g. "DS_1"
    * @return identifier Long of the iterative identifying part of the productId
    */
-  static long parseProductId(String productId) throws NumberFormatException{
+  private static long parseProductId(String productId) throws NumberFormatException{
     def splitId = productId.split("_")
     // The first entry [0] contains the product type which is assigned automatically, no need to parse it.
     String identifier = splitId[1]
@@ -195,7 +195,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * @param product A product for which the type needs to be determined
    * @return the type of the product or null
    */
-  static String getProductType(Product product){
+  private static String getProductType(Product product){
     if (product instanceof Sequencing) return 'Sequencing'
     if (product instanceof ProjectManagement) return 'Project Management'
     if (product instanceof PrimaryAnalysis) return 'Primary Bioinformatics'
