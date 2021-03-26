@@ -126,7 +126,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * This method associates an offer with product items.
    *
    * @param items A list of product items of an offer
-   * @param offerId An offerId the references the offer that should contain the list of product items
+   * @param offerId An offerId which references the offer containing the list of product items
    */
   void createOfferItems(List<ProductItem> items, int offerId) {
     items.each {productItem ->
