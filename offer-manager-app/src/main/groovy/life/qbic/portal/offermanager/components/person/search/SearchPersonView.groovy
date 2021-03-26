@@ -94,6 +94,7 @@ class SearchPersonView extends FormLayout{
 
         updatePerson.addClickListener({
             viewModel.personEvent.emit(viewModel.selectedPerson)
+            detailsLayout.setVisible(false)
             searchPersonLayout.setVisible(false)
             updatePersonView.setVisible(true)
         })
