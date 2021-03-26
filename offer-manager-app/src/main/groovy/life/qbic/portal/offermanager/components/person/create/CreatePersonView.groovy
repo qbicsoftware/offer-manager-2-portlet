@@ -28,8 +28,8 @@ import life.qbic.portal.offermanager.components.AppViewModel
 
 @Log4j2
 class CreatePersonView extends VerticalLayout {
-    private final AppViewModel sharedViewModel
-    private final CreatePersonViewModel createPersonViewModel
+    protected final AppViewModel sharedViewModel
+    protected final CreatePersonViewModel createPersonViewModel
     final CreatePersonController controller
 
     ComboBox<String> titleField
@@ -322,7 +322,7 @@ class CreatePersonView extends VerticalLayout {
      * It relies on the separate fields for validation.
      * @return
      */
-    private boolean allValuesValid() {
+    protected boolean allValuesValid() {
         return createPersonViewModel.firstNameValid \
             && createPersonViewModel.lastNameValid \
             && createPersonViewModel.emailValid \
@@ -371,7 +371,7 @@ class CreatePersonView extends VerticalLayout {
 
     }
 
-    private void updateAffiliationDetails(Affiliation affiliation) {
+    protected void updateAffiliationDetails(Affiliation affiliation) {
         if (affiliation) {
             VerticalLayout content = new VerticalLayout()
             content.addComponent(new Label("<strong>${affiliation.category.value}</strong>", ContentMode.HTML))
