@@ -332,6 +332,7 @@ class CreatePersonView extends VerticalLayout {
     private void registerListeners() {
         this.submitButton.addClickListener({ event ->
             try {
+                println "I was clicked!"
                 // we assume that the view model and the view always contain the same information
                 String title = createPersonViewModel.academicTitle
                 String firstName = createPersonViewModel.firstName
@@ -340,11 +341,7 @@ class CreatePersonView extends VerticalLayout {
                 List<Affiliation> affiliations = new ArrayList()
                 affiliations.add(createPersonViewModel.affiliation)
 
-                if(createPersonViewModel.outdatedPerson){
-                    affiliations.addAll(createPersonViewModel.outdatedPerson.affiliations)
-                    controller.updatePerson(createPersonViewModel.outdatedPerson, firstName, lastName, title, email, affiliations)
-                }
-                else{
+                if(!createPersonViewModel.outdatedPerson){
                     controller.createNewPerson(firstName, lastName, title, email, affiliations)
                 }
 
