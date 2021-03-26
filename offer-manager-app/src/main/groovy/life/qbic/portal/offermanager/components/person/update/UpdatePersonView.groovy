@@ -1,6 +1,6 @@
 package life.qbic.portal.offermanager.components.person.update
 
-import com.vaadin.ui.Button
+
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
@@ -31,10 +31,11 @@ class UpdatePersonView extends CreatePersonView{
 
     private void adjustViewElements() {
         submitButton.caption = "Update Person"
+        abortButton.caption = "Abort Person Update"
     }
 
     private void registerListener(){
-        registration.remove()
+        submitButtonClickListenerRegistration.remove()
         submitButton.addClickListener({
             try {
                 // we assume that the view model and the view always contain the same information

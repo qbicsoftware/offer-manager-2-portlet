@@ -32,7 +32,7 @@ class CreatePersonView extends VerticalLayout {
     protected final AppViewModel sharedViewModel
     protected final CreatePersonViewModel createPersonViewModel
     final CreatePersonController controller
-    protected Registration registration
+    protected Registration submitButtonClickListenerRegistration
 
     ComboBox<String> titleField
     TextField firstNameField
@@ -332,7 +332,7 @@ class CreatePersonView extends VerticalLayout {
     }
 
     private void registerListeners() {
-        registration = this.submitButton.addClickListener({ event ->
+        submitButtonClickListenerRegistration = this.submitButton.addClickListener({ event ->
             try {
                 // we assume that the view model and the view always contain the same information
                 String title = createPersonViewModel.academicTitle
