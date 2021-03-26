@@ -37,6 +37,7 @@ class CreatePersonViewModel {
     @Bindable Boolean affiliationValid
 
     ObservableList availableAffiliations
+    Map<String,List<Affiliation>> affiliationToOrganisations
 
     final CustomerResourceService customerService
     final ProjectManagerResourceService managerResourceService
@@ -52,9 +53,35 @@ class CreatePersonViewModel {
         this.managerResourceService = managerResourceService
         this.personResourceService = personResourceService
         availableAffiliations = new ObservableList(new ArrayList<Affiliation>(affiliationService.iterator().collect()))
+        initMap()
 
         this.affiliationService.subscribe({
-            if (! (it in this.availableAffiliations) ) this.availableAffiliations.add(it)
+            if (! (it in this.availableAffiliations) ){
+                this.availableAffiliations.add(it)
+                updateMap(it)
+            }
         })
+
     }
+
+    protected void initMap(){
+        affiliationToOrganisations = new HashMap<>()
+
+        availableAffiliations.each {
+            Affiliation newAffiliation = it as Affiliation
+            updateMap(newAffiliation)
+        }
+    }
+
+    void updateMap(Affiliation newAffiliation){
+        String organisation = newAffiliation.organisation
+
+        if(! (organisation in affiliationToOrganisations)){
+            List addressAdditions = [newAffiliation]
+            affiliationToOrganisations.put(organisation,addressAdditions)
+        }else{
+            affiliationToOrganisations.get(organisation).add(newAffiliation)
+        }
+    }
+
 }
