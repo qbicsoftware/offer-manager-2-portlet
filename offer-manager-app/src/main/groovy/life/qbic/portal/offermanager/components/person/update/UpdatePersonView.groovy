@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.components.person.update
 
+import com.vaadin.ui.Button
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
@@ -24,8 +25,8 @@ class UpdatePersonView extends CreatePersonView{
         super(controller, sharedViewModel, updatePersonViewModel)
         this.updatePersonViewModel = updatePersonViewModel
         this.sharedViewModel = sharedViewModel
-        //adjustViewElements()
-        //registerListener()
+        adjustViewElements()
+        registerListener()
     }
 
     private void adjustViewElements() {
@@ -33,7 +34,7 @@ class UpdatePersonView extends CreatePersonView{
     }
 
     private void registerListener(){
-        //super.submitButton.getListeners(Button.ClickListener).clear()
+        super.submitButton.getListeners(Button.ClickListener).clear()
         super.submitButton.addClickListener({
             try {
                 // we assume that the view model and the view always contain the same information

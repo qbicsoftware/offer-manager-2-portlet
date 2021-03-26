@@ -229,7 +229,7 @@ class CreatePersonView extends VerticalLayout {
         })
     }
 
-    private void refreshAddressAdditions() {
+    protected void refreshAddressAdditions() {
         ListDataProvider<Affiliation> dataProvider = this.addressAdditionComboBox.dataProvider as ListDataProvider<Affiliation>
         dataProvider.clearFilters()
         dataProvider.addFilterByValue({it.organisation },
