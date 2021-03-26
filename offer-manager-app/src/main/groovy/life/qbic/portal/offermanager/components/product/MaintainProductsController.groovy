@@ -4,17 +4,12 @@ import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.products.Converter
 import life.qbic.business.products.archive.ArchiveProductInput
+import life.qbic.business.products.copy.CopyProductInput
 import life.qbic.business.products.create.CreateProductInput
-
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
-import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Sequencing
 
 /**
  * <h1>Controls how the information flows into the use cases {@link life.qbic.business.products.create.CreateProduct} and {@link life.qbic.business.products.archive.ArchiveProduct}</h1>
@@ -28,12 +23,15 @@ class MaintainProductsController {
 
     private final CreateProductInput createProductInput
     private final ArchiveProductInput archiveProductInput
+    private final CopyProductInput copyProductInput
     private static final Logging log = Logger.getLogger(this.class)
 
     MaintainProductsController(CreateProductInput createProductInput,
-                               ArchiveProductInput archiveProductInput){
+                               ArchiveProductInput archiveProductInput,
+                               CopyProductInput copyProductInput){
         this.createProductInput = createProductInput
         this.archiveProductInput = archiveProductInput
+        this.copyProductInput = copyProductInput
     }
 
     /**
@@ -65,6 +63,27 @@ class MaintainProductsController {
         }catch(Exception unexpected){
             log.error("unexpected exception at archive product call", unexpected)
             throw new IllegalArgumentException("Could not archive products from provided arguments.")
+        }
+    }
+
+    /**
+     * Triggers the copy Use Case of a product
+     *
+     * @param category The products category which determines what kind of product is created
+     * @param description The description of the product
+     * @param name The name of the product
+     * @param unitPrice The unit price of the product
+     * @param unit The unit in which the product is measured
+     */
+    void copyProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit, ProductId productId){
+        try{
+            println("You did it!")
+            //ToDo how should the Id be provided to the Use Case?
+            /**Product product = ProductConverter.createProduct(category, description, name, unitPrice, unit)
+            copyProductInput.copyModified(product) */
+        }catch(Exception unexpected){
+            log.error("unexpected exception at copy product call", unexpected)
+            throw new IllegalArgumentException("Could not copy product from provided arguments.")
         }
     }
 
