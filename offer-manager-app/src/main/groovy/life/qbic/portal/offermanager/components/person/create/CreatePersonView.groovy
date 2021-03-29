@@ -81,7 +81,7 @@ class CreatePersonView extends VerticalLayout {
         this.addressAdditionComboBox = new ComboBox<>("Address Addition")
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
         addressAdditionComboBox.setItemCaptionGenerator({it.addressAddition})
-        addressAdditionComboBox.setVisible(false)
+        addressAdditionComboBox.setEnabled(false)
 
         this.submitButton = new Button("Create Person")
         submitButton.setIcon(VaadinIcons.USER_CHECK)
@@ -170,12 +170,12 @@ class CreatePersonView extends VerticalLayout {
         createPersonViewModel.addPropertyChangeListener("affiliation", {
             Affiliation newValue = it.newValue as Affiliation
             if (newValue) {
-                organisationComboBox.value = newValue
-                refreshAddressAdditions()
+                println newValue.addressAddition+"kk"
+                organisationComboBox.value = getOrganisation(newValue).get()
                 addressAdditionComboBox.value = newValue
             } else {
-                organisationComboBox.value = organisationComboBox.emptyValue
                 addressAdditionComboBox.value = addressAdditionComboBox.emptyValue
+                organisationComboBox.value = organisationComboBox.emptyValue
             }
         })
         /*
@@ -214,22 +214,25 @@ class CreatePersonView extends VerticalLayout {
                     break
             }
             submitButton.enabled = allValuesValid()
-            addressAdditionComboBox.enabled = !Objects.isNull(createPersonViewModel.affiliation)
+            //addressAdditionComboBox.enabled = !Objects.isNull(createPersonViewModel.affiliation)
         })
 
         /* refresh affiliation list and set added item as selected item. This is needed to keep this
         field up to date and select an affiliation after it was created */
         createPersonViewModel.availableAffiliations.addPropertyChangeListener({
+            //todo refresh use the this trigger when the map changes
+            //refresh organisation box then (addressaddition is continously updated
             organisationComboBox.getDataProvider().refreshAll()
-            refreshAddressAdditions(it.newValue as String)
+            /**refreshAddressAdditions(it.newValue as String)
             if (it instanceof ObservableList.ElementAddedEvent) {
                 organisationComboBox.setSelectedItem(it.newValue as String)
-            }
+            }**/
         })
     }
 
     protected void refreshAddressAdditions(String organisation) {
-        addressAdditionComboBox.setVisible(true)
+        addressAdditionComboBox.setEnabled(true)
+        println "refreshing the address addition combobox"
 
         ListDataProvider<Affiliation> dataProvider = createPersonViewModel.affiliationToOrganisations.get(organisation)
         this.addressAdditionComboBox.setDataProvider(dataProvider)
@@ -352,8 +355,16 @@ class CreatePersonView extends VerticalLayout {
             }
         })
 
+        this.organisationComboBox.addSelectionListener({
+            //todo maybe its not good to do this here
+            if(it.selectedItem.isPresent()){
+                refreshAddressAdditions(it.selectedItem.get())
+            }
+        })
+
         this.addressAdditionComboBox.addSelectionListener({
             updateAffiliationDetails(it.value)
+            createPersonViewModel.affiliation = it.value
         })
 
         this.abortButton.addClickListener({ event ->
@@ -406,5 +417,15 @@ class CreatePersonView extends VerticalLayout {
         createPersonViewModel.affiliationValid = null
         createPersonViewModel.outdatedPerson = null
 
+    }
+
+    private Optional<String> getOrganisation(Affiliation affiliation) {
+        println "I am here"
+        Optional<String> foundOrganisation = Optional.empty()
+        createPersonViewModel.affiliationToOrganisations.each {
+            if(affiliation in it.value) foundOrganisation = Optional.of(it.key)
+        }
+
+        return foundOrganisation
     }
 }
