@@ -9,11 +9,11 @@ import life.qbic.portal.offermanager.components.product.create.CreateProductView
 
 
 /**
- * <class short description - One Line!>
+ * This class represents the GUI for copying a product
  *
- * <More detailed description - When to use, what it solves, etc.>
+ * The view is similar to the {@link CreateProductview} and updates the view to fit the copy product use case
  *
- * @since: <versiontag>
+ * @since: 1.0.0
  *
  */
 
