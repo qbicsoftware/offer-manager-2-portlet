@@ -42,7 +42,7 @@ class CreateProductView extends HorizontalLayout{
     Button createProductButton
     Button abortButton
 
-    Registration registration
+    Registration createProductButtonRegistration
 
     Label titleLabel
 
