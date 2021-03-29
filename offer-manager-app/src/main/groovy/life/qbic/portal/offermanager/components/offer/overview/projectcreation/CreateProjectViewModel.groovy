@@ -76,6 +76,7 @@ class CreateProjectViewModel {
 
         availableSpaces = new ListDataProvider(projectSpaceResourceService.iterator().toList())
         existingProjects = projectResourceService.iterator().collect {it.projectCode}
+        startedFromView = Optional.empty()
         initFields()
         setupListeners()
     }
@@ -104,11 +105,9 @@ class CreateProjectViewModel {
         resultingProjectCode = ""
         projectCodeValidationResult = ""
         codeIsValid = false
-        startedFromView = Optional.empty()
         createProjectEnabled = false
         projectCreated = false
         selectedOffer = Optional.empty()
-
     }
 
     private void resetModel() {

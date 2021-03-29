@@ -44,10 +44,10 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
     }
 
     private void loadData(Person person) {
-        super.academicTitle = person.title
-        super.firstName = person.firstName
-        super.lastName = person.lastName
-        super.email = person.emailAddress
-        this.affiliation = person.affiliations.first()
+        academicTitle = person.title
+        firstName = person.firstName
+        lastName = person.lastName
+        email = person.emailAddress
+        affiliation = person.affiliations.first()
     }
 }

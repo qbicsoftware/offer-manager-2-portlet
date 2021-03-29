@@ -90,11 +90,15 @@ class CreateOfferViewModel {
         Subscription<Product> productSubscription = new Subscription<Product>() {
             @Override
             void receive(Product product) {
-                List<Product> products = productsResourcesService.iterator().toList()
-                populateProductLists(products)
+                refreshProducts()
             }
         }
         this.productsResourcesService.subscribe(productSubscription)
+    }
+
+    private void refreshProducts(){
+        List<Product> products = productsResourcesService.iterator().toList()
+        populateProductLists(products)
     }
 
     private void populateProductLists(List<Product> products) {
