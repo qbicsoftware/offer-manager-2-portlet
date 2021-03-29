@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager.dataresources.products
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
 import life.qbic.business.products.Converter
+import life.qbic.business.products.ProductConverter
 import life.qbic.business.products.archive.ArchiveProductDataSource
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.ProductExistsException
@@ -115,7 +116,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       log.error(row)
       throw new DatabaseQueryException("Cannot parse product")
     } else {
-      return Converter.createProductWithVersion(productCategory,row.productName as String,
+      return ProductConverter.createProductWithVersion(productCategory,row.productName as String,
               row.description as String,
               row.unitPrice as Double,
               new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))

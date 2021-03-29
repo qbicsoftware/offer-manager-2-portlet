@@ -5,6 +5,7 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.products.Converter
+import life.qbic.business.products.ProductConverter
 import life.qbic.business.products.create.CreateProduct
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.CreateProductInput
@@ -73,8 +74,8 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
     }
 
     private static boolean theProductHasChanged(Product product1, Product product2){
-        life.qbic.business.products.Product copiedProduct = Converter.convertDTOtoProduct(product1)
-        life.qbic.business.products.Product oldProduct = Converter.convertDTOtoProduct(product2)
+        life.qbic.business.products.Product copiedProduct = ProductConverter.convertDTOtoProduct(product1)
+        life.qbic.business.products.Product oldProduct = ProductConverter.convertDTOtoProduct(product2)
 
         copiedProduct.checksum() != oldProduct.checksum()
     }

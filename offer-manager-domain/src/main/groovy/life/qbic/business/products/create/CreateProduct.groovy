@@ -5,6 +5,7 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.products.Converter
+import life.qbic.business.products.ProductConverter
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.Product
@@ -33,8 +34,8 @@ class CreateProduct implements CreateProductInput {
         try {
             ProductId createdProductId = dataSource.store(product)
             //create product with new product ID
-            ProductCategory category = Converter.getCategory(product)
-            Product storedProduct = Converter.createProductWithVersion(category,product.productName,product.description,product.unitPrice, product.unit, createdProductId.uniqueId)
+            ProductCategory category = ProductConverter.getCategory(product)
+            Product storedProduct = ProductConverter.createProductWithVersion(category,product.productName,product.description,product.unitPrice, product.unit, createdProductId.uniqueId)
 
             output.created(storedProduct)
         } catch(DatabaseQueryException databaseQueryException) {

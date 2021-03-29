@@ -15,7 +15,7 @@ import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Sequencing
-
+import life.qbic.business.products.ProductConverter
 /**
  * <h1>Controls how the information flows into the use cases {@link life.qbic.business.products.create.CreateProduct} and {@link life.qbic.business.products.archive.ArchiveProduct}</h1>
  *
@@ -81,7 +81,7 @@ class MaintainProductsController {
          * @return
          */
         static Product createProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit){
-            return Converter.createProduct(category,name, description, unitPrice,unit)
+            return life.qbic.business.products.ProductConverter.createProduct(category,name, description, unitPrice,unit)
         }
 
     }
