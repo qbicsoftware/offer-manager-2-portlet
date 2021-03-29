@@ -22,12 +22,18 @@ import life.qbic.datamodel.dtos.business.services.Sequencing
 */
 class Converter implements ProductConverter {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     Product createProduct(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit){
         long runningNumber = 0 //todo it should be possible to create products without a running number
         return createProductWithVersion(category,name,description,unitPrice,unit,runningNumber)
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     Product createProductWithVersion(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit, long runningNumber){
         Product product
@@ -58,6 +64,9 @@ class Converter implements ProductConverter {
         return product
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     ProductCategory getCategory(Product product){
         if(product instanceof ProjectManagement) return ProductCategory.PROJECT_MANAGEMENT
@@ -71,6 +80,9 @@ class Converter implements ProductConverter {
         throw  new IllegalArgumentException("Cannot parse category of the provided product ${product.toString()}")
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     life.qbic.business.products.Product convertDTOtoProduct(Product product){
         ProductCategory category = getCategory(product)
@@ -83,6 +95,9 @@ class Converter implements ProductConverter {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     Product convertProductToDTO(life.qbic.business.products.Product product){
         return createProductWithVersion(product.category,product.name, product.description, product.unitPrice, product.unit, product.id.uniqueId)

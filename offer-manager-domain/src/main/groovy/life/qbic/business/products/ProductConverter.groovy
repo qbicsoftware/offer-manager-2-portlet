@@ -21,7 +21,7 @@ interface ProductConverter {
      * @param unit The unit in which the product is measured
      * @return
      */
-    @Override
+
     Product createProduct(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit)
 
     /**
@@ -35,7 +35,7 @@ interface ProductConverter {
      * @param runningNumber The running version number of the product
      * @return
      */
-    @Override
+
     Product createProductWithVersion(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit, long runningNumber)
 
     /**
@@ -43,7 +43,7 @@ interface ProductConverter {
      * @param product The product of a specific product category
      * @return the product category of the given product
      */
-    @Override
+
     ProductCategory getCategory(life.qbic.datamodel.dtos.business.services.Product product)
 
     /**
@@ -51,7 +51,7 @@ interface ProductConverter {
      * @param product A life.qbic.datamodel.dtos.business.services.Product DTO
      * @return the life.qbic.business.products.Product entity with the information provided in the original DTO
      */
-    @Override
+
     life.qbic.business.products.Product convertDTOtoProduct(life.qbic.datamodel.dtos.business.services.Product product)
 
     /**
@@ -59,7 +59,7 @@ interface ProductConverter {
      * @param product A life.qbic.business.products.Product entity
      * @return the life.qbic.datamodel.dtos.business.services.Product DTO with the information provided in the original entity
      */
-    @Override
+
     Product convertProductToDTO(life.qbic.business.products.Product product)
 
 }
