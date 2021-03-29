@@ -40,7 +40,6 @@ class CreateProductView extends HorizontalLayout{
     ComboBox<String> productCategoryComboBox
     Button abortButton
 
-    /** These variables are adapted in the {@link CopyProductView} */
     Button createProductButton
     Registration createProductButtonRegistration
     Label titleLabel
