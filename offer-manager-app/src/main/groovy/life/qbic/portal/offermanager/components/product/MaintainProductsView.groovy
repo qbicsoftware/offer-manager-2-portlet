@@ -175,6 +175,11 @@ class MaintainProductsView extends VerticalLayout{
             copyProductView.setVisible(false)
         })
 
+        copyProductView.createProductButton.addClickListener({
+            maintenanceLayout.setVisible(true)
+            copyProductView.setVisible(false)
+        })
+
         archiveProduct.addClickListener({
             controller.archiveProduct(viewModel.selectedProduct.productId)
         })

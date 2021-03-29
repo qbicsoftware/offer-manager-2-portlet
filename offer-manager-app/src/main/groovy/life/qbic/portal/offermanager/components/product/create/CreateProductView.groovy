@@ -18,7 +18,7 @@ import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.portal.offermanager.components.product.MaintainProductsController
-import life.qbic.portal.offermanager.components.product.copy.CopyProductView
+
 /**
  * <h1>This view serves the user to create a new service product</h1>
  * <br>
