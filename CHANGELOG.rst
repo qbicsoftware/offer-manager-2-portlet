@@ -20,6 +20,7 @@ use cases of the product maintenance and creation feature(`#411 <https://github.
 * After a project has been created from an offer, the offer overview is updated accordingly
 (`#427 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/427>`_)
 * Add the UpdatePersonView to separate the Update and Create Person use cases more consequently (`#436 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/436>`_)
+* Proteomic and Metabolomic Products are now included in the Offer PDF
 
 **Fixed**
 
