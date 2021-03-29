@@ -24,6 +24,7 @@ import life.qbic.portal.offermanager.components.offer.overview.projectcreation.C
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectViewModel
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonViewModel
+import life.qbic.portal.offermanager.components.person.update.UpdatePersonView
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewModel
 import life.qbic.portal.offermanager.components.product.MaintainProductsPresenter
 import life.qbic.portal.offermanager.components.product.MaintainProductsView
@@ -533,9 +534,9 @@ class DependencyManager {
         }
 
         try {
-            this.updatePersonView = new CreatePersonView(this.updateCustomerController, this.viewModel, this.updatePersonViewModel)
+            this.updatePersonView = new UpdatePersonView(this.updateCustomerController, this.viewModel, this.updatePersonViewModel)
         } catch (Exception e) {
-            log.error("Could not create ${CreatePersonView.getSimpleName()} view.", e)
+            log.error("Could not create ${UpdatePersonView.getSimpleName()} view.", e)
             throw e
         }
 

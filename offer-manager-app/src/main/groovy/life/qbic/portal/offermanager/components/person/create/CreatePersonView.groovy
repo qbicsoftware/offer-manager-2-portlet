@@ -8,6 +8,7 @@ import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.data.validator.EmailValidator
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
+import com.vaadin.shared.Registration
 import com.vaadin.shared.data.sort.SortDirection
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
@@ -28,9 +29,10 @@ import life.qbic.portal.offermanager.components.AppViewModel
 
 @Log4j2
 class CreatePersonView extends VerticalLayout {
-    private final AppViewModel sharedViewModel
-    private final CreatePersonViewModel createPersonViewModel
+    protected final AppViewModel sharedViewModel
+    protected final CreatePersonViewModel createPersonViewModel
     final CreatePersonController controller
+    protected Registration submitButtonClickListenerRegistration
 
     ComboBox<String> titleField
     TextField firstNameField
@@ -229,7 +231,7 @@ class CreatePersonView extends VerticalLayout {
         })
     }
 
-    private void refreshAddressAdditions() {
+    protected void refreshAddressAdditions() {
         ListDataProvider<Affiliation> dataProvider = this.addressAdditionComboBox.dataProvider as ListDataProvider<Affiliation>
         dataProvider.clearFilters()
         dataProvider.addFilterByValue({it.organisation },
@@ -322,7 +324,7 @@ class CreatePersonView extends VerticalLayout {
      * It relies on the separate fields for validation.
      * @return
      */
-    private boolean allValuesValid() {
+    protected boolean allValuesValid() {
         return createPersonViewModel.firstNameValid \
             && createPersonViewModel.lastNameValid \
             && createPersonViewModel.emailValid \
@@ -330,7 +332,7 @@ class CreatePersonView extends VerticalLayout {
     }
 
     private void registerListeners() {
-        this.submitButton.addClickListener({ event ->
+        submitButtonClickListenerRegistration = this.submitButton.addClickListener({ event ->
             try {
                 // we assume that the view model and the view always contain the same information
                 String title = createPersonViewModel.academicTitle
@@ -340,10 +342,7 @@ class CreatePersonView extends VerticalLayout {
                 List<Affiliation> affiliations = new ArrayList()
                 affiliations.add(createPersonViewModel.affiliation)
 
-                if(createPersonViewModel.outdatedPerson){
-                    controller.updatePerson(createPersonViewModel.outdatedPerson, firstName, lastName, title, email, affiliations)
-                }
-                else{
+                if(!createPersonViewModel.outdatedPerson){
                     controller.createNewPerson(firstName, lastName, title, email, affiliations)
                 }
 
@@ -373,7 +372,7 @@ class CreatePersonView extends VerticalLayout {
 
     }
 
-    private void updateAffiliationDetails(Affiliation affiliation) {
+    protected void updateAffiliationDetails(Affiliation affiliation) {
         if (affiliation) {
             VerticalLayout content = new VerticalLayout()
             content.addComponent(new Label("<strong>${affiliation.category.value}</strong>", ContentMode.HTML))
@@ -394,7 +393,7 @@ class CreatePersonView extends VerticalLayout {
     /**
      *  Clears User Input from all fields in the Create Person View and reset validation status of all Fields
      */
-    private void clearAllFields() {
+    protected void clearAllFields() {
 
         titleField.clear()
         firstNameField.clear()
