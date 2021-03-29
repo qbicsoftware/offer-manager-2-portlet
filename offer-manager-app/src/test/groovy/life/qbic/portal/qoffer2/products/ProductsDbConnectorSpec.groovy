@@ -153,7 +153,6 @@ class ProductsDbConnectorSpec extends Specification {
     0 | "Unknown category" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample" | "DS_1"
     1 | "Primary Bioinformatics" | null | "Sample QC with report" | 49.99 | "Sample" | "DS_1"
     2 | "Primary Bioinformatics" | "Sample QC with report" | null | 49.99 | "Sample" | "DS_1"
-    3 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | "-5i29" | "Sample" | "DS_1"
     4 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Unknown Unit" | "DS_1"
     5 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample" | "This is some random string. Lorem ipsum"
   }

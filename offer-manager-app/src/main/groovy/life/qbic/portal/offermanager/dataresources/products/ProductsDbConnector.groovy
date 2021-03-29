@@ -99,21 +99,26 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    *  or fields could not be parsed
    */
   private static Product rowResultToProduct(GroovyRowResult row) throws IllegalArgumentException {
+    Product product
+    try {
+      String description = row.description
+      ProductCategory productCategory = productCategoryFactory.getForString(row.category as String)
+      long productId = parseProductId(row.productId as String)
+      String productName = row.productName
+      ProductUnit productUnit = productUnitFactory.getForString(row.unit as String)
+      double unitPrice = row.unitPrice
 
-    String description = row.description
-    ProductCategory productCategory = productCategoryFactory.getForString(row.category as String)
-    long productId = parseProductId(row.productId as String)
-    String productName = row.productName
-    ProductUnit productUnit = productUnitFactory.getForString(row.unit as String)
-    double unitPrice = row.unitPrice
-
-    return Converter.createProductWithVersion(
-            productCategory,
-            productName,
-            description,
-            unitPrice,
-            productUnit,
-            productId)
+      Converter.createProductWithVersion(
+              productCategory,
+              productName,
+              description,
+              unitPrice,
+              productUnit,
+              productId)
+    } catch (NullPointerException | IllegalArgumentException illegalArgument) {
+      throw new IllegalArgumentException("Could not parse product from provided information.", illegalArgument)
+    }
+    return product
   }
 
   /**
@@ -176,6 +181,9 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * @return identifier Long of the iterative identifying part of the productId
    */
   private static long parseProductId(String productId) throws NumberFormatException{
+    if (!productId.contains("_")) {
+      throw new IllegalArgumentException("Not a valid product identifier.")
+    }
     def splitId = productId.split("_")
     // The first entry [0] contains the product type which is assigned automatically, no need to parse it.
     String identifier = splitId[1]
