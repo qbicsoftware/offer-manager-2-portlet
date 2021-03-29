@@ -67,7 +67,7 @@ class MaintainProductsController {
     }
 
     /**
-     * Triggers the copy Use Case of a product
+     * Triggers the copy use case of a product
      *
      * @param category The products category which determines what kind of product is created
      * @param description The description of the product
