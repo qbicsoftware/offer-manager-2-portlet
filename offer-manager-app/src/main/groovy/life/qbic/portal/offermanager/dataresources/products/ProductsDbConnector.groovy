@@ -190,13 +190,13 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * @return the type of the product or null
    */
   private static String getProductType(Product product){
-    if (product instanceof Sequencing) return 'Sequencing'
-    if (product instanceof ProjectManagement) return 'Project Management'
-    if (product instanceof PrimaryAnalysis) return 'Primary Bioinformatics'
-    if (product instanceof SecondaryAnalysis) return 'Secondary Bioinformatics'
-    if (product instanceof DataStorage) return 'Data Storage'
-    if (product instanceof ProteomicAnalysis) return 'Proteomics'
-    if (product instanceof MetabolomicAnalysis) return 'Metabolomics'
+    if (product instanceof Sequencing) return ProductCategory.SEQUENCING.getValue()
+    if (product instanceof ProjectManagement) return ProductCategory.PROJECT_MANAGEMENT.getValue()
+    if (product instanceof PrimaryAnalysis) return ProductCategory.PRIMARY_BIOINFO.getValue()
+    if (product instanceof SecondaryAnalysis) return ProductCategory.SECONDARY_BIOINFO.getValue()
+    if (product instanceof DataStorage) return ProductCategory.DATA_STORAGE.getValue()
+    if (product instanceof ProteomicAnalysis) return ProductCategory.PROTEOMIC.getValue()
+    if (product instanceof MetabolomicAnalysis) return ProductCategory.METABOLOMIC.getValue()
 
     return null
   }
