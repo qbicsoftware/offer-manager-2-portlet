@@ -165,7 +165,7 @@ class MaintainProductsView extends VerticalLayout{
         })
 
         copyProduct.addClickListener({
-            viewModel.productUpdate.emit(viewModel.selectedProduct)
+            viewModel.productUpdate.emit(viewModel.selectedProduct.get())
             maintenanceLayout.setVisible(false)
             copyProductView.setVisible(true)
         })
@@ -181,7 +181,7 @@ class MaintainProductsView extends VerticalLayout{
         })
 
         archiveProduct.addClickListener({
-            controller.archiveProduct(viewModel.selectedProduct.productId)
+            controller.archiveProduct(viewModel.selectedProduct.get().productId)
         })
 
         viewModel.products.addPropertyChangeListener({
@@ -190,7 +190,7 @@ class MaintainProductsView extends VerticalLayout{
     }
 
     private void checkProductSelected() {
-        if (viewModel.selectedProduct) {
+        if (viewModel.selectedProduct.get()) {
             copyProduct.setEnabled(true)
             archiveProduct.setEnabled(true)
         } else {

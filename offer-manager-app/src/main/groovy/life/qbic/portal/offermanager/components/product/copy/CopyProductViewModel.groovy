@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.components.product.copy
 
+import life.qbic.business.products.Converter
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
@@ -44,33 +45,7 @@ class CopyProductViewModel extends CreateProductViewModel{
         productDescription = product.description
         productUnit = product.unit
         productUnitPrice = product.unitPrice
-        setProductCategory(product)
+        productCategory = Converter.getCategory(product)
         productId = product.productId
-    }
-
-    private ProductCategory setProductCategory(Product product){
-        switch(product.class) {
-            case DataStorage:
-                productCategory = ProductCategory.DATA_STORAGE
-                break
-            case PrimaryAnalysis:
-                productCategory = ProductCategory.PRIMARY_BIOINFO
-                break
-            case ProjectManagement:
-                productCategory = ProductCategory.PROJECT_MANAGEMENT
-                break
-            case SecondaryAnalysis:
-                productCategory = ProductCategory.SECONDARY_BIOINFO
-                break
-            case Sequencing:
-                productCategory = ProductCategory.SEQUENCING
-                break
-            case ProteomicAnalysis:
-                productCategory = ProductCategory.PROTEOMIC
-                break
-            case  MetabolomicAnalysis:
-                productCategory = ProductCategory.METABOLOMIC
-                break
-        }
     }
 }

@@ -51,11 +51,4 @@ class MaintainProductsViewModel {
         products.addAll(productsResourcesService.iterator().toList())
     }
 
-    Product getSelectedProduct() {
-        if(selectedProduct.isPresent()) {
-            return selectedProduct.get()
-        } else {
-            throw new RuntimeException("No product is currently selected.")
-        }
-    }
 }
