@@ -77,7 +77,7 @@ class MaintainProductsController {
      */
     void copyProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit, ProductId productId){
         try{
-            println("You did it!")
+       
             //ToDo how should the Id be provided to the Use Case?
             /**Product product = ProductConverter.createProduct(category, description, name, unitPrice, unit)
             copyProductInput.copyModified(product) */
