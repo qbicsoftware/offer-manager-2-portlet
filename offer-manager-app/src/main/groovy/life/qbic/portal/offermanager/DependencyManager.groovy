@@ -617,7 +617,7 @@ class DependencyManager {
         try{
             copyProductView = new CopyProductView(copyProductViewModel, maintainProductController)
         }catch(Exception e){
-            log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
+            log.error("Could not create ${CopyProductView.getSimpleName()} view.", e)
             throw e
         }
 
