@@ -214,7 +214,6 @@ class CreatePersonView extends VerticalLayout {
                     break
             }
             submitButton.enabled = allValuesValid()
-            //addressAdditionComboBox.enabled = !Objects.isNull(createPersonViewModel.affiliation)
         })
 
         /* refresh affiliation list and set added item as selected item. This is needed to keep this
@@ -232,7 +231,6 @@ class CreatePersonView extends VerticalLayout {
 
     protected void refreshAddressAdditions(String organisation) {
         addressAdditionComboBox.setEnabled(true)
-        println "refreshing the address addition combobox"
 
         ListDataProvider<Affiliation> dataProvider = createPersonViewModel.affiliationToOrganisations.get(organisation)
         this.addressAdditionComboBox.setDataProvider(dataProvider)
@@ -420,7 +418,6 @@ class CreatePersonView extends VerticalLayout {
     }
 
     private Optional<String> getOrganisation(Affiliation affiliation) {
-        println "I am here"
         Optional<String> foundOrganisation = Optional.empty()
         createPersonViewModel.affiliationToOrganisations.each {
             if(affiliation in it.value) foundOrganisation = Optional.of(it.key)
