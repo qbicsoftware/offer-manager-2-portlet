@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
+import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
@@ -9,6 +10,7 @@ import life.qbic.datamodel.dtos.projectmanagement.*
 import life.qbic.business.projects.create.ProjectExistsException
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
+
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
