@@ -2,16 +2,16 @@ package life.qbic.portal.offermanager.dataresources.products
 
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
+import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.products.Converter
 import life.qbic.business.products.archive.ArchiveProductDataSource
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.ProductExistsException
 import life.qbic.datamodel.dtos.business.ProductCategory
+import life.qbic.datamodel.dtos.business.ProductCategoryFactory
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
-import life.qbic.business.exceptions.DatabaseQueryException
-
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
 
@@ -29,6 +29,9 @@ import java.sql.SQLException
 class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource {
 
   private final ConnectionProvider provider
+
+  private static final ProductCategoryFactory productCategoryFactory = new ProductCategoryFactory()
+  private static final ProductUnitFactory productUnitFactory = new ProductUnitFactory()
 
   /**
    * Creates a connector for a MariaDB instance.
@@ -77,49 +80,40 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   private static List<Product> convertResultSet(ResultSet resultSet) {
     final def products = []
     while (resultSet.next()) {
-      products.add(rowResultToProduct(SqlExtensions.toRowResult(resultSet)))
+      try {
+        Product product = rowResultToProduct(SqlExtensions.toRowResult(resultSet))
+        products.add(product)
+      } catch (IllegalArgumentException illegalRow) {
+        log.warn("Could not parse row. Skipping")
+        log.debug("Could not parse row. Skipping.", illegalRow)
+      }
     }
     return products
   }
 
-  private static Product rowResultToProduct(GroovyRowResult row) {
-    def dbProductCategory = row.category
-    String productId = row.productId
-    ProductCategory productCategory
-    switch(dbProductCategory) {
-      case "Data Storage":
-        productCategory = ProductCategory.DATA_STORAGE
-        break
-      case "Primary Bioinformatics":
-        productCategory = ProductCategory.PRIMARY_BIOINFO
-        break
-      case "Project Management":
-        productCategory = ProductCategory.PROJECT_MANAGEMENT
-        break
-      case "Secondary Bioinformatics":
-        productCategory = ProductCategory.SECONDARY_BIOINFO
-        break
-      case "Sequencing":
-        productCategory = ProductCategory.SEQUENCING
-        break
-      case "Proteomics":
-        productCategory = ProductCategory.PROTEOMIC
-        break
-      case "Metabolomics":
-        productCategory = ProductCategory.METABOLOMIC
-        break
-    }
+  /**
+   *
+   * @param row a GroovyRowResult map
+   * @return a Product parsed from the provided map
+   * @throws IllegalArgumentException in case not all fields necessary are found
+   *  or fields could not be parsed
+   */
+  private static Product rowResultToProduct(GroovyRowResult row) throws IllegalArgumentException {
 
-    if(!productCategory) {
-      log.error("Product could not be parsed from database query.")
-      log.error(row)
-      throw new DatabaseQueryException("Cannot parse product")
-    } else {
-      return Converter.createProductWithVersion(productCategory,row.productName as String,
-              row.description as String,
-              row.unitPrice as Double,
-              new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
-    }
+    String description = row.description
+    ProductCategory productCategory = productCategoryFactory.getForString(row.category as String)
+    long productId = parseProductId(row.productId as String)
+    String productName = row.productName
+    ProductUnit productUnit = productUnitFactory.getForString(row.unit as String)
+    double unitPrice = row.unitPrice
+
+    return Converter.createProductWithVersion(
+            productCategory,
+            productName,
+            description,
+            unitPrice,
+            productUnit,
+            productId)
   }
 
   /**
@@ -220,10 +214,15 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       statement.setInt(1, offerPrimaryId)
       ResultSet result = statement.executeQuery()
       while (result.next()) {
-        Product product = rowResultToProduct(SqlExtensions.toRowResult(result))
-        double quantity = result.getDouble("quantity")
-        ProductItem item = new ProductItem(quantity, product)
-        productItems << item
+        try {
+          Product product = rowResultToProduct(SqlExtensions.toRowResult(result))
+          double quantity = result.getDouble("quantity")
+          ProductItem item = new ProductItem(quantity, product)
+          productItems << item
+        } catch (IllegalArgumentException illegalArgumentException) {
+          log.warn("Could not parse product. Skipping.")
+          log.debug("Could not parse product. Skipping.", illegalArgumentException)
+        }
       }
     }
     return productItems
@@ -265,7 +264,12 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       ResultSet result = preparedStatement.executeQuery()
 
       while (result.next()) {
-        product = Optional.of(rowResultToProduct(SqlExtensions.toRowResult(result)))
+        try {
+          product = Optional.of(rowResultToProduct(SqlExtensions.toRowResult(result)))
+        } catch(IllegalArgumentException illegalArgumentException) {
+          log.warn("Could not parse product. Skipping.")
+          log.debug("Could not parse product. Skipping", illegalArgumentException)
+        }
       }
     }
     return product
