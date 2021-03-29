@@ -82,7 +82,7 @@ class MaintainProductsController {
             /**Product product = ProductConverter.createProduct(category, description, name, unitPrice, unit)
             copyProductInput.copyModified(product) */
         }catch(Exception unexpected){
-            log.error("unexpected exception at copy product call", unexpected)
+            log.error("Unexpected exception at copy product call", unexpected)
             throw new IllegalArgumentException("Could not copy product from provided arguments.")
         }
     }
