@@ -6,7 +6,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 
 1.0.0-alpha.5-SNAPSHOT (2021-03-17)
---------------------------
+-----------------------------------
 
 **Added**
 
@@ -23,6 +23,7 @@ use cases of the product maintenance and creation feature(`#411 <https://github.
 
 * Popup based Notifications are now properly centered in a liferay-environment(`#428 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/428>`_)
 * Properly refresh the SearchPersonView after Updating a Person (`#436 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/436>`_)
+* Products that cannot be read from the database are skipped (`#444 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/444>`_)
 
 **Dependencies**
 
