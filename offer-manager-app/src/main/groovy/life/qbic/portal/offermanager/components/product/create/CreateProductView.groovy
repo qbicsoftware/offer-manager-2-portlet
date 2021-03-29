@@ -44,7 +44,7 @@ class CreateProductView extends HorizontalLayout{
 
     Registration registration
 
-    Label label
+    Label titleLabel
 
     CreateProductView(CreateProductViewModel createProductViewModel, MaintainProductsController controller){
         this.controller = controller
