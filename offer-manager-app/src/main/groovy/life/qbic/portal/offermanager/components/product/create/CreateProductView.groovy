@@ -18,7 +18,7 @@ import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.portal.offermanager.components.product.MaintainProductsController
-
+import life.qbic.portal.offermanager.components.product.copy.CopyProductView
 /**
  * <h1>This view serves the user to create a new service product</h1>
  * <br>
@@ -38,12 +38,11 @@ class CreateProductView extends HorizontalLayout{
 
     ComboBox<String> productUnitComboBox
     ComboBox<String> productCategoryComboBox
-
-    Button createProductButton
     Button abortButton
 
+    /** These variables are adapted in the {@link CopyProductView} */
+    Button createProductButton
     Registration createProductButtonRegistration
-
     Label titleLabel
 
     CreateProductView(CreateProductViewModel createProductViewModel, MaintainProductsController controller){
@@ -60,16 +59,16 @@ class CreateProductView extends HorizontalLayout{
     }
 
     private void initLayout(){
-        label = new Label("Create Service Product")
-        label.setStyleName(ValoTheme.LABEL_HUGE)
-        this.addComponent(label)
+        titleLabel = new Label("Create Service Product")
+        titleLabel.setStyleName(ValoTheme.LABEL_HUGE)
+        this.addComponent(titleLabel)
 
         //add textfields and boxes
         HorizontalLayout sharedLayout = new HorizontalLayout(productUnitPriceField,productUnitComboBox)
         sharedLayout.setWidthFull()
         HorizontalLayout buttons = new HorizontalLayout(abortButton,createProductButton)
 
-        VerticalLayout sideLayout = new VerticalLayout(label,productNameField,productDescriptionField,sharedLayout,productCategoryComboBox,buttons)
+        VerticalLayout sideLayout = new VerticalLayout(titleLabel,productNameField,productDescriptionField,sharedLayout,productCategoryComboBox,buttons)
         sideLayout.setSizeFull()
         sideLayout.setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT)
 
@@ -282,7 +281,7 @@ class CreateProductView extends HorizontalLayout{
     private void setupListeners(){
 
         abortButton.addClickListener({clearAllFields() })
-        registration = this.createProductButton.addClickListener({
+        createProductButtonRegistration = this.createProductButton.addClickListener({
             controller.createNewProduct(viewModel.productCategory, viewModel.productDescription,viewModel.productName, Double.parseDouble(viewModel.productUnitPrice),viewModel.productUnit)
         })
 

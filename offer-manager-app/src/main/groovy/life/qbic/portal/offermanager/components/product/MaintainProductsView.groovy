@@ -150,6 +150,7 @@ class MaintainProductsView extends VerticalLayout{
             if(it.firstSelectedItem.isPresent()){
                 updateProductDescription(it.firstSelectedItem.get())
                 viewModel.selectedProduct = it.firstSelectedItem
+                checkProductSelected()
             }
         })
 
@@ -181,13 +182,9 @@ class MaintainProductsView extends VerticalLayout{
         viewModel.products.addPropertyChangeListener({
             productGrid.dataProvider.refreshAll()
         })
-        viewModel.addPropertyChangeListener({
-            checkProductSelected(viewModel)
-        })
-
     }
 
-    private void checkProductSelected(MaintainProductsViewModel viewModel) {
+    private void checkProductSelected() {
         if (viewModel.selectedProduct) {
             copyProduct.setEnabled(true)
             archiveProduct.setEnabled(true)
