@@ -1,8 +1,12 @@
 package life.qbic.business.products.create
 
+import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
+import life.qbic.business.products.Converter
+import life.qbic.datamodel.dtos.business.ProductCategory
+import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.Product
 
 /**
@@ -12,7 +16,6 @@ import life.qbic.datamodel.dtos.business.services.Product
  * </p>
  *
  * @since: 1.0.0
-
  *
  */
 class CreateProduct implements CreateProductInput {
@@ -28,15 +31,23 @@ class CreateProduct implements CreateProductInput {
     @Override
     void create(Product product) {
         try {
-            //todo create new productId!!! the id is not provided from the controller. It must be generated in the use case itself
-            dataSource.store(product)
-            output.created(product)
+            ProductId createdProductId = dataSource.store(product)
+            //create product with new product ID
+            ProductCategory category = Converter.getCategory(product)
+            Product storedProduct = Converter.createProductWithVersion(category,product.productName,product.description,product.unitPrice, product.unit, createdProductId.uniqueId)
+
+            output.created(storedProduct)
         } catch(DatabaseQueryException databaseQueryException) {
             log.error("Product creation failed", databaseQueryException)
-            output.failNotification("Could not create product $product.productName with id $product.productId")
+            output.failNotification("Could not create new product $product.productName")
         } catch(ProductExistsException productExistsException) {
-            log.warn("Product \"$product.productName\" already existed.", productExistsException)
+            log.warn("Product $product.productName with identifier $product.productId already exists.", productExistsException)
             output.foundDuplicate(product)
+        } catch(Exception exception) {
+            log.error("An unexpected during the project creation occurred.", exception)
+            output.failNotification("An unexpected during the project creation occurred. " +
+                    "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
     }
+
 }

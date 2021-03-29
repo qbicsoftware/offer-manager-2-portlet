@@ -19,10 +19,12 @@ an existing project by its project identifier.
 use cases of the product maintenance and creation feature(`#411 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/411>`_).
 * After a project has been created from an offer, the offer overview is updated accordingly
 (`#427 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/427>`_)
+* Add the UpdatePersonView to separate the Update and Create Person use cases more consequently (`#436 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/436>`_)
 
 **Fixed**
 
 * Popup based Notifications are now properly centered in a liferay-environment(`#428 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/428>`_)
+* Properly refresh the SearchPersonView after Updating a Person (`#436 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/436>`_)
 
 **Dependencies**
 

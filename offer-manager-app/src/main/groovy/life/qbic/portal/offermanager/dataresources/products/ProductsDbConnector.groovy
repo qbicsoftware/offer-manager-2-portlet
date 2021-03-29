@@ -122,8 +122,13 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     }
   }
 
-  def createOfferItems(List<ProductItem> items, int offerId) {
-
+  /**
+   * This method associates an offer with product items.
+   *
+   * @param items A list of product items of an offer
+   * @param offerId An offerId which references the offer containing the list of product items
+   */
+  void createOfferItems(List<ProductItem> items, int offerId) {
     items.each {productItem ->
       String query = "INSERT INTO productitem (productId, quantity, offerid) "+
               "VALUE(?,?,?)"
@@ -174,13 +179,13 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * Returns the product identifying running number given a productId
    *
    * @param productId String of productId stored in the DB e.g. "DS_1"
-   * @return identifier String of the iterative identifying part of the productId
+   * @return identifier Long of the iterative identifying part of the productId
    */
-  static String parseProductId(String productId) {
+  private static long parseProductId(String productId) throws NumberFormatException{
     def splitId = productId.split("_")
     // The first entry [0] contains the product type which is assigned automatically, no need to parse it.
     String identifier = splitId[1]
-    return identifier
+    return Long.parseLong(identifier)
   }
 
 
@@ -190,7 +195,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * @param product A product for which the type needs to be determined
    * @return the type of the product or null
    */
-  static String getProductType(Product product){
+  private static String getProductType(Product product){
     if (product instanceof Sequencing) return 'Sequencing'
     if (product instanceof ProjectManagement) return 'Project Management'
     if (product instanceof PrimaryAnalysis) return 'Primary Bioinformatics'
@@ -267,15 +272,14 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   /**
-   * Stores a product in the database
-   * @param product The product that needs to be stored
-   * @since 1.0.0
-   * @throws DatabaseQueryException if any technical interaction with the data source fails
-   * @throws ProductExistsException if the product already exists in the data source
+   *
+   * {@inheritDoc}
    */
   @Override
-  void store(Product product) throws DatabaseQueryException, ProductExistsException {
+  ProductId store(Product product) throws DatabaseQueryException, ProductExistsException {
     Connection connection = provider.connect()
+
+    ProductId productId = createProductId(product)
 
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(Queries.INSERT_PRODUCT)
@@ -284,10 +288,42 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       preparedStatement.setString(3, product.productName)
       preparedStatement.setDouble(4, product.unitPrice)
       preparedStatement.setString(5, product.unit.value)
-      preparedStatement.setString(6, product.productId.toString())
+      preparedStatement.setString(6, productId.toString())
 
       preparedStatement.execute()
     }
+
+    return productId
+  }
+
+  private ProductId createProductId(Product product){
+    String productType = product.productId.type
+    String version = fetchLatestIdentifier(productType) //todo exchange with long
+
+    return new ProductId(productType,version)
+  }
+
+  private Long fetchLatestIdentifier(String productType){
+    String query = "SELECT MAX(productId) FROM product WHERE productId LIKE ?"
+    Connection connection = provider.connect()
+
+    String category = productType + "_%"
+    Long latestUniqueId = 0
+
+    connection.withCloseable {
+      PreparedStatement preparedStatement = it.prepareStatement(query)
+      preparedStatement.setString(1, category)
+
+      ResultSet result = preparedStatement.executeQuery()
+
+      while(result.next()){
+        String id = result.getString(1)
+
+        latestUniqueId = Long.parseLong(id.split('_')[1])
+      }
+    }
+
+    return latestUniqueId + 1
   }
 
   /**
