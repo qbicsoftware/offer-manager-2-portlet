@@ -1,6 +1,7 @@
 package life.qbic.portal.qoffer2.products
 
 import groovy.sql.GroovyRowResult
+import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
@@ -119,5 +120,40 @@ class ProductsDbConnectorSpec extends Specification {
     id | category | description | productName | unitPrice | unit | identifier
     0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | ProductUnit.PER_SAMPLE | "1"
 
+  }
+
+  def "Fetch(life.qbic.datamodel.dtos.business.ProductId) ignores rows with incomplete or uninterpretable information"() {
+    given: "some expected query results"
+    GroovyMock(SqlExtensions, global: true)
+    SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(
+            ["id":id, "category":category, "description":description, "productName": productName,
+             "unitPrice": unitPrice, "unit": unit, "productId": productId])
+
+    and: "a result set containing only 6 rows"
+    ResultSet resultSet = Stub(ResultSet, {
+      it.next() >>> [true, false]
+    })
+    PreparedStatement statement = Stub(PreparedStatement, {
+      it.executeQuery() >> resultSet
+    })
+
+    and: "a valid connection"
+    Connection connection = Stub(Connection, {it.prepareStatement(_ as String) >> statement})
+    ConnectionProvider provider = Stub(ConnectionProvider, {it.connect() >> connection})
+    def connector = new ProductsDbConnector(provider)
+
+    when: "the query is executed"
+    Optional<Product> result = connector.fetch(new ProductId("DS", "1"))
+
+    then:
+    ! result.isPresent()
+
+    where: "available products information is as follows"
+    id | category | description | productName | unitPrice | unit | productId
+    0 | "Unknown category" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample" | "DS_1"
+    1 | "Primary Bioinformatics" | null | "Sample QC with report" | 49.99 | "Sample" | "DS_1"
+    2 | "Primary Bioinformatics" | "Sample QC with report" | null | 49.99 | "Sample" | "DS_1"
+    4 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Unknown Unit" | "DS_1"
+    5 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample" | "This is some random string. Lorem ipsum"
   }
 }
