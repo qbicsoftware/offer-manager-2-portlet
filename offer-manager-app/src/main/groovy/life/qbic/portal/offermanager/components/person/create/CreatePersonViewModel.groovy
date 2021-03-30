@@ -70,7 +70,7 @@ class CreatePersonViewModel {
 
     protected List<Organisation> toOrganisation(List<Affiliation> affiliations){
 
-        List<String> organisationNames = affiliations.collect{it.organisation}.toUnique() //todo needs to be unique
+        List<String> organisationNames = affiliations.collect{it.organisation}.toUnique()
         List<Organisation> organisations = []
 
         organisationNames.each {organisationName ->
@@ -83,13 +83,5 @@ class CreatePersonViewModel {
         }
 
         return organisations
-    }
-
-    /**
-     *
-     */
-    protected static class OrganisationParser{
-
-
     }
 }
