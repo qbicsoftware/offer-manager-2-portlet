@@ -170,7 +170,6 @@ class CreatePersonView extends VerticalLayout {
         createPersonViewModel.addPropertyChangeListener("affiliation", {
             Affiliation newValue = it.newValue as Affiliation
             if (newValue) {
-                println newValue.addressAddition+"kk"
                 organisationComboBox.value = getOrganisation(newValue).get()
                 addressAdditionComboBox.value = newValue
             } else {
@@ -219,13 +218,7 @@ class CreatePersonView extends VerticalLayout {
         /* refresh affiliation list and set added item as selected item. This is needed to keep this
         field up to date and select an affiliation after it was created */
         createPersonViewModel.availableAffiliations.addPropertyChangeListener({
-            //todo refresh use the this trigger when the map changes
-            //refresh organisation box then (addressaddition is continously updated
             organisationComboBox.getDataProvider().refreshAll()
-            /**refreshAddressAdditions(it.newValue as String)
-            if (it instanceof ObservableList.ElementAddedEvent) {
-                organisationComboBox.setSelectedItem(it.newValue as String)
-            }**/
         })
     }
 
@@ -354,7 +347,6 @@ class CreatePersonView extends VerticalLayout {
         })
 
         this.organisationComboBox.addSelectionListener({
-            //todo maybe its not good to do this here
             if(it.selectedItem.isPresent()){
                 refreshAddressAdditions(it.selectedItem.get())
             }
@@ -417,7 +409,7 @@ class CreatePersonView extends VerticalLayout {
 
     }
 
-    private Optional<String> getOrganisation(Affiliation affiliation) {
+    protected Optional<String> getOrganisation(Affiliation affiliation) {
         Optional<String> foundOrganisation = Optional.empty()
         createPersonViewModel.affiliationToOrganisations.each {
             if(affiliation in it.value) foundOrganisation = Optional.of(it.key)
