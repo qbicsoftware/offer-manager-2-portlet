@@ -2,6 +2,8 @@ package life.qbic.portal.offermanager.components.product
 
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.datamodel.dtos.general.Person
+import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
 
 
@@ -22,12 +24,14 @@ class MaintainProductsViewModel {
 
     ObservableList products = new ObservableList(new ArrayList<Product>())
 
-    @Bindable Product selectedProduct
+    @Bindable Optional<Product> selectedProduct
 
     final ProductsResourcesService productsResourcesService
+    EventEmitter<Product> productUpdate
 
-    MaintainProductsViewModel(ProductsResourcesService productsResourcesService) {
+    MaintainProductsViewModel(ProductsResourcesService productsResourcesService, EventEmitter<Product> productUpdate) {
         this.productsResourcesService = productsResourcesService
+        this.productUpdate = productUpdate
         fetchProducts()
         subscribe()
     }
@@ -46,4 +50,5 @@ class MaintainProductsViewModel {
         products.clear()
         products.addAll(productsResourcesService.iterator().toList())
     }
+
 }

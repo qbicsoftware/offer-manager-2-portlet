@@ -5,6 +5,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.products.Converter
 import life.qbic.business.products.archive.ArchiveProductDataSource
+import life.qbic.business.products.copy.CopyProductDataSource
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.ProductExistsException
 import life.qbic.datamodel.dtos.business.ProductCategory
@@ -26,7 +27,7 @@ import java.sql.SQLException
  * @since 1.0.0
  */
 @Log4j2
-class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource {
+class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource, CopyProductDataSource {
 
   private final ConnectionProvider provider
 

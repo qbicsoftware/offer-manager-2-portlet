@@ -22,6 +22,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Add the UpdatePersonView to separate the Update and Create Person use cases more consequently (`#436 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/436>`_)
 
+* Proteomic and Metabolomic Products are now included in the Offer PDF
+
 **Fixed**
 
 * Popup based Notifications are now properly centered in a liferay-environment(`#428 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/428>`_)

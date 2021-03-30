@@ -32,6 +32,8 @@ class CreateOfferViewModel {
     List<ProductItemViewModel> secondaryAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
     List<ProductItemViewModel> managementProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
     List<ProductItemViewModel> storageProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<ProductItemViewModel> proteomicAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<ProductItemViewModel> metabolomicAnalysisProduct = new ObservableList(new ArrayList<ProductItemViewModel>())
 
     ObservableList productItems = new ObservableList(new ArrayList<ProductItemViewModel>())
     ObservableList foundCustomers = new ObservableList(new ArrayList<Customer>())
@@ -107,6 +109,8 @@ class CreateOfferViewModel {
         this.primaryAnalysisProducts.clear()
         this.secondaryAnalysisProducts.clear()
         this.storageProducts.clear()
+        this.proteomicAnalysisProducts.clear()
+        this.metabolomicAnalysisProduct.clear()
 
         products.each { product ->
             ProductItemViewModel productItem = new ProductItemViewModel(0, product)
@@ -126,6 +130,12 @@ class CreateOfferViewModel {
                     break
                 case DataStorage:
                     storageProducts.add(productItem)
+                    break
+                case ProteomicAnalysis:
+                    proteomicAnalysisProducts.add(productItem)
+                    break
+                case MetabolomicAnalysis:
+                    metabolomicAnalysisProduct.add(productItem)
                     break
                 default:
                     // this should not happen
