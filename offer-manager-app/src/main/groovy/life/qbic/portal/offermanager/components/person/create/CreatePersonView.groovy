@@ -38,7 +38,7 @@ class CreatePersonView extends VerticalLayout {
     TextField firstNameField
     TextField lastNameField
     TextField emailField
-    ComboBox<String> organisationComboBox
+    ComboBox<Organisation> organisationComboBox
     ComboBox<Affiliation> addressAdditionComboBox
     Button submitButton
     Button abortButton
@@ -75,7 +75,7 @@ class CreatePersonView extends VerticalLayout {
         emailField.setPlaceholder("Email address")
         emailField.setRequiredIndicatorVisible(true)
 
-        this.organisationComboBox = generateAffiliationSelector(createPersonViewModel.affiliationToOrganisations.keySet() as List<String>)
+        this.organisationComboBox = generateOrganisationSelector(createPersonViewModel.availableOrganisations)
         organisationComboBox.setRequiredIndicatorVisible(true)
 
         this.addressAdditionComboBox = new ComboBox<>("Address Addition")
@@ -217,15 +217,15 @@ class CreatePersonView extends VerticalLayout {
 
         /* refresh affiliation list and set added item as selected item. This is needed to keep this
         field up to date and select an affiliation after it was created */
-        createPersonViewModel.availableAffiliations.addPropertyChangeListener({
+        createPersonViewModel.availableOrganisations.addPropertyChangeListener({
             organisationComboBox.getDataProvider().refreshAll()
         })
     }
 
-    protected void refreshAddressAdditions(String organisation) {
+    protected void refreshAddressAdditions(Organisation organisation) {
         addressAdditionComboBox.setEnabled(true)
 
-        ListDataProvider<Affiliation> dataProvider = createPersonViewModel.affiliationToOrganisations.get(organisation)
+        ListDataProvider<Affiliation> dataProvider = organisation.affiliations
         this.addressAdditionComboBox.setDataProvider(dataProvider)
         dataProvider.setSortOrder({it.addressAddition}, SortDirection.ASCENDING)
     }
@@ -286,14 +286,15 @@ class CreatePersonView extends VerticalLayout {
      * @param affiliationList list of all selectable affiliation organisations
      * @return Vaadin Combobox component
      */
-    private static ComboBox<String> generateAffiliationSelector(List<String> affiliationList) {
-        ComboBox<String> affiliationComboBox =
+    private static ComboBox<Organisation> generateOrganisationSelector(List<Organisation> organisations) {
+        ComboBox<Organisation> organisationComboBox =
                 new ComboBox<>("Organisation")
-        affiliationComboBox.setPlaceholder("Select person affiliation organisation")
-        ListDataProvider<String> dataProvider = new ListDataProvider<>(affiliationList)
-        affiliationComboBox.setDataProvider(dataProvider)
-        affiliationComboBox.setEmptySelectionAllowed(false)
-        return affiliationComboBox
+        organisationComboBox.setPlaceholder("Select person affiliation organisation")
+        organisationComboBox.setItemCaptionGenerator({it.name})
+        ListDataProvider<Organisation> dataProvider = new ListDataProvider<>(organisations)
+        organisationComboBox.setDataProvider(dataProvider)
+        organisationComboBox.setEmptySelectionAllowed(false)
+        return organisationComboBox
     }
 
     /**
@@ -409,10 +410,10 @@ class CreatePersonView extends VerticalLayout {
 
     }
 
-    protected Optional<String> getOrganisation(Affiliation affiliation) {
-        Optional<String> foundOrganisation = Optional.empty()
-        createPersonViewModel.affiliationToOrganisations.each {
-            if(affiliation in it.value) foundOrganisation = Optional.of(it.key)
+    protected Optional<Organisation> getOrganisation(Affiliation affiliation) {
+        Optional<Organisation> foundOrganisation = Optional.empty()
+        createPersonViewModel.availableOrganisations.each {
+            if(affiliation in (it as Organisation).affiliations) foundOrganisation = Optional.of((it as Organisation))
         }
 
         return foundOrganisation
