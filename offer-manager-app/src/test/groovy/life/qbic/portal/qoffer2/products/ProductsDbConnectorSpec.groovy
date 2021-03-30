@@ -131,7 +131,7 @@ class ProductsDbConnectorSpec extends Specification {
 
     and: "a result set containing only 6 rows"
     ResultSet resultSet = Stub(ResultSet, {
-      it.next() >>> [true, true, true, true, true, true, false]
+      it.next() >>> [true, false]
     })
     PreparedStatement statement = Stub(PreparedStatement, {
       it.executeQuery() >> resultSet

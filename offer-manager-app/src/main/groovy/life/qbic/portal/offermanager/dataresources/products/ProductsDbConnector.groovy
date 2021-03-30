@@ -60,14 +60,14 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     try {
       return fetchAllProductsFromDb()
     } catch (SQLException e) {
-      log.error(e.message)
-      log.error(e.stackTrace.join("\n"))
+      log.error("Unexpected exception: $e.message")
+      log.debug("Unexpected exception: $e.message", e)
       throw new DatabaseQueryException("Unable to list all available products.")
     }
   }
 
   private List<Product> fetchAllProductsFromDb() {
-    List<Product> products = []
+    List<Product> products = new ArrayList<>()
     String query = Queries.SELECT_ALL_PRODUCTS + "WHERE active = 1"
     provider.connect().withCloseable {
       final PreparedStatement statement = it.prepareStatement(query)
@@ -78,7 +78,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   private static List<Product> convertResultSet(ResultSet resultSet) {
-    final def products = []
+    final List<Product> products = new ArrayList<>()
     while (resultSet.next()) {
       try {
         Product product = rowResultToProduct(SqlExtensions.toRowResult(resultSet))
@@ -108,13 +108,14 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       ProductUnit productUnit = productUnitFactory.getForString(row.unit as String)
       double unitPrice = row.unitPrice
 
-      Converter.createProductWithVersion(
+      product = Converter.createProductWithVersion(
               productCategory,
               productName,
               description,
               unitPrice,
               productUnit,
               productId)
+
     } catch (NullPointerException | IllegalArgumentException illegalArgument) {
       throw new IllegalArgumentException("Could not parse product from provided information.", illegalArgument)
     }
