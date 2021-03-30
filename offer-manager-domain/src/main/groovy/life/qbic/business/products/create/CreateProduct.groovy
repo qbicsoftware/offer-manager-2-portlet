@@ -23,6 +23,7 @@ class CreateProduct implements CreateProductInput {
     private final CreateProductDataSource dataSource
     private final CreateProductOutput output
     private static final Logging log = Logger.getLogger(this.class)
+    private final ProductConverter productConverter = new Converter()
 
     CreateProduct(CreateProductDataSource dataSource, CreateProductOutput output) {
         this.dataSource = dataSource
@@ -34,8 +35,8 @@ class CreateProduct implements CreateProductInput {
         try {
             ProductId createdProductId = dataSource.store(product)
             //create product with new product ID
-            ProductCategory category = ProductConverter.getCategory(product)
-            Product storedProduct = ProductConverter.createProductWithVersion(category,product.productName,product.description,product.unitPrice, product.unit, createdProductId.uniqueId)
+            ProductCategory category = productConverter.getCategory(product)
+            Product storedProduct = productConverter.createProductWithVersion(category,product.productName,product.description,product.unitPrice, product.unit, createdProductId.uniqueId)
 
             output.created(storedProduct)
         } catch(DatabaseQueryException databaseQueryException) {

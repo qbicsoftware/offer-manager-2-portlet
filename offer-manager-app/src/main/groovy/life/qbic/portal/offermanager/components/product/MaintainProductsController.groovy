@@ -4,17 +4,12 @@ import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.products.Converter
 import life.qbic.business.products.archive.ArchiveProductInput
+import life.qbic.business.products.copy.CopyProductInput
 import life.qbic.business.products.create.CreateProductInput
-
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
-import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.business.products.ProductConverter
 /**
  * <h1>Controls how the information flows into the use cases {@link life.qbic.business.products.create.CreateProduct} and {@link life.qbic.business.products.archive.ArchiveProduct}</h1>
@@ -28,12 +23,16 @@ class MaintainProductsController {
 
     private final CreateProductInput createProductInput
     private final ArchiveProductInput archiveProductInput
+    private final CopyProductInput copyProductInput
     private static final Logging log = Logger.getLogger(this.class)
+    private final ProductConverter productConverter = new Converter()
 
     MaintainProductsController(CreateProductInput createProductInput,
-                               ArchiveProductInput archiveProductInput){
+                               ArchiveProductInput archiveProductInput,
+                               CopyProductInput copyProductInput){
         this.createProductInput = createProductInput
         this.archiveProductInput = archiveProductInput
+        this.copyProductInput = copyProductInput
     }
 
     /**
@@ -47,7 +46,7 @@ class MaintainProductsController {
      */
     void createNewProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit){
         try {
-            Product product = ProductConverter.createProduct(category, description, name, unitPrice, unit)
+            Product product = productConverter.createProduct(category, description, name, unitPrice, unit)
             createProductInput.create(product)
         } catch (Exception unexpected) {
             log.error("unexpected exception during create product call", unexpected)
@@ -68,22 +67,24 @@ class MaintainProductsController {
         }
     }
 
-    private static class ProductConverter{
+    /**
+     * Triggers the copy use case of a product
+     *
+     * @param category The products category which determines what kind of product is created
+     * @param description The description of the product
+     * @param name The name of the product
+     * @param unitPrice The unit price of the product
+     * @param unit The unit in which the product is measured
+     * @param productId the productId of the to be copied product
+     */
+    void copyProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit, ProductId productId){
+        try{
 
-        /**
-         * Creates a product DTO based on its products category
-         *
-         * @param category The products category which determines what kind of products is created
-         * @param description The description of the product
-         * @param name The name of the product
-         * @param unitPrice The unit price of the product
-         * @param unit The unit in which the product is measured
-         * @return
-         */
-        static Product createProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit){
-            return life.qbic.business.products.ProductConverter.createProduct(category,name, description, unitPrice,unit)
+            Product product = productConverter.createProductWithVersion(category, description, name, unitPrice, unit, productId.uniqueId)
+            copyProductInput.copyModified(product)
+        }catch(Exception unexpected){
+            log.error("Unexpected exception at copy product call", unexpected)
+            throw new IllegalArgumentException("Could not copy product from provided arguments.")
         }
-
     }
-
 }

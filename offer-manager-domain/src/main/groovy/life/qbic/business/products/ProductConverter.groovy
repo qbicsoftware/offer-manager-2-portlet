@@ -44,7 +44,7 @@ interface ProductConverter {
      * @return the product category of the given product
      */
 
-    ProductCategory getCategory(life.qbic.datamodel.dtos.business.services.Product product)
+    ProductCategory getCategory(Product product)
 
     /**
      * Creates a product entity from the information provided in the product DTO
@@ -52,7 +52,7 @@ interface ProductConverter {
      * @return the life.qbic.business.products.Product entity with the information provided in the original DTO
      */
 
-    life.qbic.business.products.Product convertDTOtoProduct(life.qbic.datamodel.dtos.business.services.Product product)
+    life.qbic.business.products.Product convertDTOtoProduct(Product product)
 
     /**
      * Creates a product DTO from the information provided in the product entity
@@ -61,5 +61,4 @@ interface ProductConverter {
      */
 
     Product convertProductToDTO(life.qbic.business.products.Product product)
-
 }

@@ -30,7 +30,7 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
     private final CopyProductDataSource dataSource
     private final CopyProductOutput output
     private final CreateProductInput createProduct
-
+    private static ProductConverter productConverter = new Converter()
     /**
      * The only constructor for this use case
      * @param dataSource - a data source that provides mandatory functionality
@@ -74,8 +74,8 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
     }
 
     private static boolean theProductHasChanged(Product product1, Product product2){
-        life.qbic.business.products.Product copiedProduct = ProductConverter.convertDTOtoProduct(product1)
-        life.qbic.business.products.Product oldProduct = ProductConverter.convertDTOtoProduct(product2)
+        life.qbic.business.products.Product copiedProduct = productConverter.convertDTOtoProduct(product1)
+        life.qbic.business.products.Product oldProduct = productConverter.convertDTOtoProduct(product2)
 
         copiedProduct.checksum() != oldProduct.checksum()
     }

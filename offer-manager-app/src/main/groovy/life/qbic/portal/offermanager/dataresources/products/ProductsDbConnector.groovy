@@ -5,6 +5,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.business.products.Converter
 import life.qbic.business.products.ProductConverter
 import life.qbic.business.products.archive.ArchiveProductDataSource
+import life.qbic.business.products.copy.CopyProductDataSource
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.ProductExistsException
 import life.qbic.datamodel.dtos.business.ProductCategory
@@ -27,9 +28,10 @@ import java.sql.SQLException
  * @since 1.0.0
  */
 @Log4j2
-class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource {
+class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource, CopyProductDataSource {
 
   private final ConnectionProvider provider
+  private static ProductConverter productConverter = new Converter()
 
   /**
    * Creates a connector for a MariaDB instance.
@@ -116,7 +118,8 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       log.error(row)
       throw new DatabaseQueryException("Cannot parse product")
     } else {
-      return ProductConverter.createProductWithVersion(productCategory,row.productName as String,
+
+      return productConverter.createProductWithVersion(productCategory,row.productName as String,
               row.description as String,
               row.unitPrice as Double,
               new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
