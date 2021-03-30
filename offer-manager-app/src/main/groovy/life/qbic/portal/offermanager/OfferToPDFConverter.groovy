@@ -10,8 +10,10 @@ import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.business.offers.Currency
 import life.qbic.business.offers.OfferExporter
 import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
+import life.qbic.datamodel.dtos.business.services.ProteomicAnalysis
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Sequencing
 import org.jsoup.nodes.Document
@@ -105,6 +107,13 @@ class OfferToPDFConverter implements OfferExporter {
             return this.name;
         }
     }
+    /**
+     * Product group mapping
+     *
+     * This map represents the grouping of the different product categories in the offer pdf
+     *
+     */
+    private final Map<ProductGroups, List> productGroupClasses = [:]
 
     OfferToPDFConverter(Offer offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
@@ -141,6 +150,7 @@ class OfferToPDFConverter implements OfferExporter {
         setProjectInformation()
         setCustomerInformation()
         setManagerInformation()
+        setProductGroupMapping()
         setSelectedItems()
         setTotalPrices()
         setQuotationDetails()
@@ -185,6 +195,13 @@ class OfferToPDFConverter implements OfferExporter {
         htmlContent.getElementById("project-manager-street").text(affiliation.street)
         htmlContent.getElementById("project-manager-city").text("${affiliation.postalCode} ${affiliation.city}")
         htmlContent.getElementById("project-manager-email").text(pm.emailAddress)
+    }
+
+    void setProductGroupMapping() {
+
+        productGroupClasses[ProductGroups.DATA_GENERATION] = [Sequencing]
+        productGroupClasses[ProductGroups.DATA_ANALYSIS] = [PrimaryAnalysis, SecondaryAnalysis, ProteomicAnalysis, MetabolomicAnalysis]
+        productGroupClasses[ProductGroups.DATA_MANAGEMENT] = [ProjectManagement, DataStorage]
     }
 
     void setSelectedItems() {
@@ -269,11 +286,14 @@ class OfferToPDFConverter implements OfferExporter {
     }
 
     double calculateOverheadSum(List<ProductItem> productItems) {
-        double overheadSum = 0
+        double overheadSum
         productItems.each {
-            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis || it.product instanceof Sequencing) {
-                overheadSum += it.quantity * it.product.unitPrice * offer.overheadRatio
+            if (it.product.class in productGroupClasses[ProductGroups.DATA_MANAGEMENT]) {
+                overheadSum = 0
         }
+            else {
+                overheadSum += it.quantity * it.product.unitPrice * offer.overheadRatio
+            }
         }
         return overheadSum
     }
@@ -289,13 +309,13 @@ class OfferToPDFConverter implements OfferExporter {
 
         // Sort ProductItems into "DataGeneration", "Data Analysis" and "Project & Data Management"
         productItems.each {
-            if (it.product instanceof Sequencing) {
+            if (it.product.class in productGroupClasses[ProductGroups.DATA_GENERATION]) {
                 dataGenerationItems.add(it)
             }
-            if (it.product instanceof PrimaryAnalysis || it.product instanceof SecondaryAnalysis) {
+            if (it.product.class in productGroupClasses[ProductGroups.DATA_ANALYSIS]) {
                 dataAnalysisItems.add(it)
             }
-            if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
+            if (it.product.class in productGroupClasses[ProductGroups.DATA_MANAGEMENT]) {
                 dataManagementItems.add(it)
             }
         }

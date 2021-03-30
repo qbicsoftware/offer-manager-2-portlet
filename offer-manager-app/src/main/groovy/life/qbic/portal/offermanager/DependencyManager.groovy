@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager
 import groovy.util.logging.Log4j2
 import life.qbic.business.offers.fetch.FetchOffer
 import life.qbic.business.products.archive.ArchiveProduct
+import life.qbic.business.products.copy.CopyProduct
 import life.qbic.business.products.create.CreateProduct
 import life.qbic.business.projects.create.CreateProject
 import life.qbic.datamodel.dtos.business.AcademicTitle
@@ -11,6 +12,7 @@ import life.qbic.business.persons.affiliation.create.CreateAffiliation
 import life.qbic.business.persons.create.CreatePerson
 import life.qbic.business.offers.create.CreateOffer
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.portal.offermanager.communication.EventEmitter
@@ -27,6 +29,8 @@ import life.qbic.portal.offermanager.components.person.update.UpdatePersonViewMo
 import life.qbic.portal.offermanager.components.product.MaintainProductsPresenter
 import life.qbic.portal.offermanager.components.product.MaintainProductsView
 import life.qbic.portal.offermanager.components.product.MaintainProductsViewModel
+import life.qbic.portal.offermanager.components.product.copy.CopyProductView
+import life.qbic.portal.offermanager.components.product.copy.CopyProductViewModel
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
 import life.qbic.portal.offermanager.components.product.create.CreateProductViewModel
 import life.qbic.portal.offermanager.components.product.MaintainProductsController
@@ -101,7 +105,7 @@ class DependencyManager {
     private MaintainProductsViewModel maintainProductsViewModel
     private MaintainProductsViewModel maintainProductsViewModelArchive
     private CreateProductViewModel createProductViewModel
-    private CreateProductViewModel copyProductViewModel
+    private CopyProductViewModel copyProductViewModel
     private CreateProjectViewModel createProjectModel
 
     private AppPresenter presenter
@@ -114,6 +118,7 @@ class DependencyManager {
     private OfferOverviewPresenter offerOverviewPresenter
     private MaintainProductsPresenter createProductPresenter
     private MaintainProductsPresenter archiveProductPresenter
+    private MaintainProductsPresenter copyProductPresenter
     private CreateProjectPresenter createProjectPresenter
 
     private PersonDbConnector customerDbConnector
@@ -135,6 +140,7 @@ class DependencyManager {
     private FetchOffer fetchOfferUpdateOffer
     private CreateProduct createProduct
     private ArchiveProduct archiveProduct
+    private CopyProduct copyProduct
 
     private CreatePersonController createCustomerController
     private CreatePersonController updateCustomerController
@@ -165,7 +171,7 @@ class DependencyManager {
     private ProjectResourceService projectResourceService
     private EventEmitter<Person> personUpdateEvent
     private EventEmitter<Project> projectCreatedEvent
-
+    private EventEmitter<Product> productUpdateEvent
     /**
      * Public constructor.
      *
@@ -242,6 +248,7 @@ class DependencyManager {
     private void setupEventEmitter(){
         this.offerUpdateEvent = new EventEmitter<Offer>()
         this.personUpdateEvent = new EventEmitter<Person>()
+        this.productUpdateEvent = new EventEmitter<Product>()
     }
 
     private void setupViewModels() {
@@ -342,13 +349,13 @@ class DependencyManager {
         }
 
         try {
-            this.maintainProductsViewModel = new MaintainProductsViewModel(productsResourcesService)
+            this.maintainProductsViewModel = new MaintainProductsViewModel(productsResourcesService, productUpdateEvent)
         }catch (Exception e) {
             log.error("Unexpected exception during ${MaintainProductsViewModel.getSimpleName()} view model setup.", e)
         }
 
         try {
-            this.maintainProductsViewModelArchive = new MaintainProductsViewModel(productsResourcesService)
+            this.maintainProductsViewModelArchive = new MaintainProductsViewModel(productsResourcesService, productUpdateEvent)
         }catch (Exception e) {
             log.error("Unexpected exception during ${MaintainProductsViewModel.getSimpleName()} view model setup.", e)
         }
@@ -360,9 +367,9 @@ class DependencyManager {
         }
 
         try {
-            this.copyProductViewModel = new CreateProductViewModel()
+            this.copyProductViewModel = new CopyProductViewModel(productUpdateEvent)
         }catch (Exception e) {
-            log.error("Unexpected exception during ${CreateProductViewModel.getSimpleName()} view model setup.", e)
+            log.error("Unexpected exception during ${CopyProductViewModel.getSimpleName()} view model setup.", e)
         }
     }
 
@@ -432,6 +439,11 @@ class DependencyManager {
             log.error("Unexpected exception during ${MaintainProductsPresenter.getSimpleName()} setup", e)
         }
         try {
+            this.copyProductPresenter = new MaintainProductsPresenter(this.maintainProductsViewModel, this.viewModel)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${MaintainProductsPresenter.getSimpleName()} setup", e)
+        }
+        try {
             this.createProjectPresenter = new CreateProjectPresenter(createProjectModel, viewModel, projectCreatedEvent)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateProjectPresenter.getSimpleName()} setup", e)
@@ -454,7 +466,7 @@ class DependencyManager {
 
         this.createProduct = new CreateProduct(productsDbConnector,createProductPresenter)
         this.archiveProduct = new ArchiveProduct(productsDbConnector,archiveProductPresenter)
-
+        this.copyProduct = new CopyProduct(productsDbConnector, copyProductPresenter, productsDbConnector)
         this.createProject = new CreateProject(createProjectPresenter, projectMainConnector, projectMainConnector)
     }
 
@@ -500,7 +512,7 @@ class DependencyManager {
         }
 
         try {
-            this.maintainProductController = new MaintainProductsController(this.createProduct, this.archiveProduct)
+            this.maintainProductController = new MaintainProductsController(this.createProduct, this.archiveProduct, this.copyProduct)
         } catch (Exception e) {
             log.error("Unexpected exception during ${MaintainProductsController.getSimpleName()} setup", e)
         }
@@ -602,17 +614,17 @@ class DependencyManager {
             throw e
         }
 
-        /**CreateProductView copyProductView
+        CopyProductView copyProductView
         try{
-            copyProductView = new CreateProductView(copyProductViewModel,maintainProductController)
+            copyProductView = new CopyProductView(copyProductViewModel, maintainProductController)
         }catch(Exception e){
-            log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
+            log.error("Could not create ${CopyProductView.getSimpleName()} view.", e)
             throw e
-        }**/
+        }
 
         MaintainProductsView maintainProductsView
         try{
-            maintainProductsView = new MaintainProductsView(maintainProductsViewModel,createProductView,maintainProductController)
+            maintainProductsView = new MaintainProductsView(maintainProductsViewModel, createProductView, copyProductView, maintainProductController)
         }catch (Exception e) {
             log.error("Could not create ${MaintainProductsView.getSimpleName()} view.", e)
             throw e
