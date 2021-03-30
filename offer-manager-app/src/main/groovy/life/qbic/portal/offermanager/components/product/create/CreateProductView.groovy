@@ -6,6 +6,7 @@ import com.vaadin.data.ValueContext
 import com.vaadin.data.validator.RegexpValidator
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
+import com.vaadin.shared.Registration
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
@@ -28,8 +29,8 @@ import life.qbic.portal.offermanager.components.product.MaintainProductsControll
 */
 class CreateProductView extends HorizontalLayout{
 
-    private final CreateProductViewModel viewModel
-    private final MaintainProductsController controller
+    protected final CreateProductViewModel viewModel
+    protected final MaintainProductsController controller
 
     TextField productNameField
     TextField productDescriptionField
@@ -37,9 +38,11 @@ class CreateProductView extends HorizontalLayout{
 
     ComboBox<String> productUnitComboBox
     ComboBox<String> productCategoryComboBox
+    Button abortButton
 
     Button createProductButton
-    Button abortButton
+    Registration createProductButtonRegistration
+    Label titleLabel
 
     CreateProductView(CreateProductViewModel createProductViewModel, MaintainProductsController controller){
         this.controller = controller
@@ -55,16 +58,16 @@ class CreateProductView extends HorizontalLayout{
     }
 
     private void initLayout(){
-        Label label = new Label("Create Service Product")
-        label.setStyleName(ValoTheme.LABEL_HUGE)
-        this.addComponent(label)
+        titleLabel = new Label("Create Service Product")
+        titleLabel.setStyleName(ValoTheme.LABEL_HUGE)
+        this.addComponent(titleLabel)
 
         //add textfields and boxes
         HorizontalLayout sharedLayout = new HorizontalLayout(productUnitPriceField,productUnitComboBox)
         sharedLayout.setWidthFull()
         HorizontalLayout buttons = new HorizontalLayout(abortButton,createProductButton)
 
-        VerticalLayout sideLayout = new VerticalLayout(label,productNameField,productDescriptionField,sharedLayout,productCategoryComboBox,buttons)
+        VerticalLayout sideLayout = new VerticalLayout(titleLabel,productNameField,productDescriptionField,sharedLayout,productCategoryComboBox,buttons)
         sideLayout.setSizeFull()
         sideLayout.setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT)
 
@@ -266,7 +269,7 @@ class CreateProductView extends HorizontalLayout{
      * It relies on the separate fields for validation.
      * @return
      */
-    private boolean allValuesValid() {
+    protected boolean allValuesValid() {
         return viewModel.productNameValid \
             && viewModel.productDescriptionValid \
             && viewModel.productUnitValid \
@@ -275,9 +278,9 @@ class CreateProductView extends HorizontalLayout{
     }
 
     private void setupListeners(){
-        abortButton.addClickListener({ clearAllFields() })
 
-        createProductButton.addClickListener({
+        abortButton.addClickListener({clearAllFields() })
+        createProductButtonRegistration = this.createProductButton.addClickListener({
             controller.createNewProduct(viewModel.productCategory, viewModel.productDescription,viewModel.productName, Double.parseDouble(viewModel.productUnitPrice),viewModel.productUnit)
         })
 
@@ -286,7 +289,7 @@ class CreateProductView extends HorizontalLayout{
     /**
      *  Clears User Input from all fields in the Create Products View and reset validation status of all Fields
      */
-    private void clearAllFields() {
+    protected void clearAllFields() {
 
         productNameField.clear()
         productDescriptionField.clear()
