@@ -19,7 +19,7 @@ class Organisation {
     final String name
     /**
      * The affiliation associated to that organisation.
-     * It needs to be immutable so that new affiliations can be added
+     * It needs to be mutable so that new affiliations can be added
      *
      * @since 1.0.0
      */
@@ -32,8 +32,9 @@ class Organisation {
 
     /**
      * Creates an organisation with an organisation name and all of its affiliations
-     * @param name
-     * @param affiliations
+     *
+     * @param name name of the organisation
+     * @param affiliations list of affiliations associated with the organisation
      */
     Organisation(String name, List<Affiliation> affiliations) {
         this.name = name

@@ -37,7 +37,6 @@ class CreatePersonViewModel {
     @Bindable Boolean affiliationValid
 
     ObservableList availableOrganisations
-//     Map<String,List<Affiliation>> affiliationToOrganisations
 
     final CustomerResourceService customerService
     final ProjectManagerResourceService managerResourceService
