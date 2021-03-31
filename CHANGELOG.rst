@@ -10,6 +10,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Proteomic and Metabolomic products can now be selected and included in an offer (`#425 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/425>`_)
+
 * Link offers to project now. The ``life.qbic.business.offers.Offer`` and
   ``life.qbic.portal.offermanager.dataresources.offers`` have been extended
   with a new property to associate it with an existing project by its project identifier.
@@ -29,10 +31,15 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Popup based Notifications are now properly centered in a liferay-environment(`#428 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/428>`_)
 
 * Properly refresh the SearchPersonView after Updating a Person (`#436 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/436>`_)
+* Shows the same affiliation organisation only once and maps it correctly to the address addition (`#448 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/448>`_)
+
+* Fix fail based on double clicking a customer in the SelectCustomerView for in the offer creation process (`#452 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/452>`_)
 
 * Products that cannot be read from the database are skipped (`#444 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/444>`_)
 
 * Update position of country string in affiliation summary during customer creation (`#453 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/453>`_)
+
+* Input fields of the CreateProductView are cleared after successful product creation(`#454 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/454>`_)
 
 **Dependencies**
 
