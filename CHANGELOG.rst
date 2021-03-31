@@ -29,6 +29,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Popup based Notifications are now properly centered in a liferay-environment(`#428 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/428>`_)
 
 * Properly refresh the SearchPersonView after Updating a Person (`#436 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/436>`_)
+* Shows the same affiliation organisation only once and maps it correctly to the address addition (`#448 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/448>`_)
 
 * Products that cannot be read from the database are skipped (`#444 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/444>`_)
 
