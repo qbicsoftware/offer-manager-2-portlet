@@ -1,5 +1,7 @@
 package life.qbic.business.products
 
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis
@@ -21,6 +23,8 @@ import life.qbic.datamodel.dtos.business.services.Sequencing
  *
 */
 class Converter {
+
+    private static final Logging log = Logger.getLogger(this.class)
 
     /**
      * Creates a product DTO based on its products category without a version
@@ -49,29 +53,31 @@ class Converter {
      * @return
      */
     static Product createProductWithVersion(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit, long runningNumber){
-        Product product
+        Product product = null
         switch (category) {
-            case "DATA_STORAGE":
+            case ProductCategory.DATA_STORAGE:
                 product = new DataStorage(name, description, unitPrice,unit, runningNumber.toString())
                 break
-            case "PRIMARY_BIOINFO":
+            case ProductCategory.PRIMARY_BIOINFO:
                 product = new PrimaryAnalysis(name, description, unitPrice,unit, runningNumber.toString())
                 break
-            case "PROJECT_MANAGEMENT":
+            case ProductCategory.PROJECT_MANAGEMENT:
                 product = new ProjectManagement(name, description, unitPrice,unit, runningNumber.toString())
                 break
-            case "SECONDARY_BIOINFO":
+            case ProductCategory.SECONDARY_BIOINFO:
                 product = new SecondaryAnalysis(name, description, unitPrice,unit, runningNumber.toString())
                 break
-            case "SEQUENCING":
+            case ProductCategory.SEQUENCING:
                 product = new Sequencing(name, description, unitPrice,unit, runningNumber.toString())
                 break
-            case "PROTEOMIC":
+            case ProductCategory.PROTEOMIC:
                 product = new ProteomicAnalysis(name, description, unitPrice,unit, runningNumber.toString())
                 break
-            case "METABOLOMIC":
+            case ProductCategory.METABOLOMIC:
                 product = new MetabolomicAnalysis(name, description, unitPrice,unit, runningNumber.toString())
                 break
+            default:
+                log.warn("Unknown product category $category")
         }
         if(!product) throw new IllegalArgumentException("Cannot parse product")
         return product
