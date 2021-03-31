@@ -381,7 +381,8 @@ class CreatePersonView extends VerticalLayout {
                 content.addComponent(new Label("${affiliation.addressAddition}"))
             }
             content.addComponent(new Label("${affiliation.street}"))
-            content.addComponent(new Label("${affiliation.postalCode} ${affiliation.city} - ${affiliation.country}"))
+            content.addComponent(new Label("${affiliation.postalCode} ${affiliation.city}"))
+            content.addComponent(new Label("${affiliation.country}"))
             content.setMargin(true)
             content.setSpacing(false)
             this.affiliationDetails.setContent(content)
