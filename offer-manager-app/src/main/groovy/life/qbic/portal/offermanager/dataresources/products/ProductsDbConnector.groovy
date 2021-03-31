@@ -320,7 +320,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       while(result.next()){
         String id = result.getString(1)
 
-        latestUniqueId = Long.parseLong(id.split('_')[1])
+        if(id) latestUniqueId = Long.parseLong(id.split('_')[1])
       }
     }
 
