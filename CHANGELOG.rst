@@ -10,22 +10,18 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
-* Proteomic and Metabolomic Products can now be selected and included in an Offer (`#425 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/425>`_)
-
-* Link offers to project now. The ``life.qbic.business.offers.Offer`` and ``life.qbic.portal
-.offermanager.dataresources.offers`` have been extended with a new property to associate it with
-an existing project by its project identifier.
-* Finalized the ``life.qbic.business.products.archive.ArchiveProduct`` and ``life/qbic/business/products/create/CreateProduct.groovy``
-use cases of the product maintenance and creation feature(`#411 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/411>`_).
-* After a project has been created from an offer, the offer overview is updated accordingly
-(`#427 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/427>`_)
+* Proteomic and Metabolomic products can now be selected and included in an offer (`#425 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/425>`_)
+* Link offers to project now. The ``life.qbic.business.offers.Offer`` and ``life.qbic.portal.offermanager.dataresources.offers`` have been extended with a new property to associate it with an existing project by its project identifier.
+* Finalized the ``life.qbic.business.products.archive.ArchiveProduct`` and ``life/qbic/business/products/create/CreateProduct.groovy`` use cases of the product maintenance and creation feature(`#411 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/411>`_).
+* After a project has been created from an offer, the offer overview is updated accordingly (`#427 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/427>`_)
 * Add the UpdatePersonView to separate the Update and Create Person use cases more consequently (`#436 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/436>`_)
-* Proteomic and Metabolomic Products are now included in the Offer PDF
+* Proteomic and Metabolomic products are now included in the Offer PDF
 
 **Fixed**
 
-* Popup based Notifications are now properly centered in a liferay-environment(`#428 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/428>`_)
-* Properly refresh the SearchPersonView after Updating a Person (`#436 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/436>`_)
+* Popup based notifications are now properly centered in a liferay-environment(`#428 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/428>`_)
+* Properly refresh the SearchPersonView after updating a person (`#436 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/436>`_)
+* Fix fail based on double clicking a customer in the SelectCustomerView for in the offer creation process (`#452 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/452>`_)
 
 **Dependencies**
 
