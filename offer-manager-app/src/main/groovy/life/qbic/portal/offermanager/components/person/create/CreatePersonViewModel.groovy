@@ -67,6 +67,11 @@ class CreatePersonViewModel {
         })
     }
 
+    /**
+     * Maps a list of affiliations to organisations
+     * @param affiliations A list of affiliations where some have the same organisation
+     * @return a list of organisations containing the associated affiliations
+     */
     protected List<Organisation> toOrganisation(List<Affiliation> affiliations){
 
         List<String> organisationNames = affiliations.collect{it.organisation}.toUnique()

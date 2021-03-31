@@ -170,7 +170,7 @@ class CreatePersonView extends VerticalLayout {
         createPersonViewModel.addPropertyChangeListener("affiliation", {
             Affiliation newValue = it.newValue as Affiliation
             if (newValue) {
-                organisationComboBox.value = getOrganisation(newValue).get()
+                organisationComboBox.value = findOrganisation(newValue).get()
                 addressAdditionComboBox.value = newValue
             } else {
                 addressAdditionComboBox.value = addressAdditionComboBox.emptyValue
@@ -410,7 +410,12 @@ class CreatePersonView extends VerticalLayout {
 
     }
 
-    protected Optional<Organisation> getOrganisation(Affiliation affiliation) {
+    /**
+     * Returns the organisation for an affiliation if one is available
+     * @param affiliation An affiliation for which an organisation is searched
+     * @return an organisation if one is present
+     */
+    protected Optional<Organisation> findOrganisation(Affiliation affiliation) {
         Optional<Organisation> foundOrganisation = Optional.empty()
         createPersonViewModel.availableOrganisations.each {
             if(affiliation in (it as Organisation).affiliations) foundOrganisation = Optional.of((it as Organisation))
