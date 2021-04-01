@@ -178,7 +178,7 @@ class CreateProjectView extends VerticalLayout{
 
     private void createProjectCodeElements() {
         // Set a nice header
-        Label label = new Label("2. Set A Project Code")
+        Label label = new Label("2. Set Project Code")
         label.setStyleName(ValoTheme.LABEL_H3)
         this.inputFields.addComponent(label)
 
