@@ -26,6 +26,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Proteomic and Metabolomic Products are now included in the Offer PDF
 
+* Filter message in grids is now dependent on column ID (`#457 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/457>`_)
+
 **Fixed**
 
 * Popup based Notifications are now properly centered in a liferay-environment(`#428 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/428>`_)
