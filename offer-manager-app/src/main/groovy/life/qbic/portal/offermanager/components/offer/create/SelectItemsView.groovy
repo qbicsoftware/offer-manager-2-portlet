@@ -1,7 +1,12 @@
 package life.qbic.portal.offermanager.components.offer.create
 
+import com.vaadin.data.ValidationResult
+import com.vaadin.data.Validator
+import com.vaadin.data.ValueContext
+import com.vaadin.data.converter.StringToDoubleConverter
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.server.UserError
 import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
@@ -125,7 +130,10 @@ class SelectItemsView extends VerticalLayout{
 
         initLayout()
         setupDataProvider()
-        addListener()
+        addValueChangeListeners()
+        addSelectionListeners()
+        addClickListeners()
+        addPropertyChangeListener()
     }
 
 
@@ -341,209 +349,108 @@ class SelectItemsView extends VerticalLayout{
     /**
      * Adds listener to handle the logic after the user selected a product
      */
-    private void addListener() {
+    private void addSelectionListeners() {
         sequencingGrid.addSelectionListener({
-            applySequencing.setEnabled(true)
-        })
-        applySequencing.addClickListener({
-            if(sequencingGrid.getSelectedItems() != null){
-                String amount = amountSequencing.getValue()
-
-                try{
-                    if(amount != null && amount.isNumber()){
-                        sequencingGrid.getSelectedItems().each {
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
-                            }
-                        }
-                        sequencingGrid.getDataProvider().refreshAll()
-                    }
-                } catch (NumberFormatException e) {
-                    viewModel.failureNotifications.add("The quantity must be an integer value bigger than 0")
-                } catch (Exception e) {
-                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
-                }
-            }
-            amountSequencing.clear()
-            sequencingGrid.deselectAll()
-            applySequencing.setEnabled(false)
-        })
+            createOfferViewModel.sequencingGridSelected = true})
 
         primaryAnalyseGrid.addSelectionListener({
-            applyPrimaryAnalysis.setEnabled(true)
-        })
-        applyPrimaryAnalysis.addClickListener({
-            if(primaryAnalyseGrid.getSelectedItems() != null) {
-                String amount = amountPrimaryAnalysis.getValue()
-                
-                try{
-                    if(amount != null && amount.isNumber()) {
-                        primaryAnalyseGrid.getSelectedItems().each {
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
-                            }
-                        }
-                        primaryAnalyseGrid.getDataProvider().refreshAll()
-                    }
-                } catch(NumberFormatException e) {
-                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
-                } catch (Exception e) {
-                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
-                }
-            }
-            amountPrimaryAnalysis.clear()
-            primaryAnalyseGrid.deselectAll()
-            applyPrimaryAnalysis.setEnabled(false)
-        })
+            createOfferViewModel.primaryAnalyseGridSelected = true})
 
         secondaryAnalyseGrid.addSelectionListener({
-            applySecondaryAnalysis.setEnabled(true)
-        })
-        applySecondaryAnalysis.addClickListener({
-            if(secondaryAnalyseGrid.getSelectedItems() != null){
-                String amount = amountSecondaryAnalysis.getValue()
-
-                try{
-                    if(amount != null && amount.isNumber()){
-                        secondaryAnalyseGrid.getSelectedItems().each {
-
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
-                            }
-                        }
-                        secondaryAnalyseGrid.getDataProvider().refreshAll()
-                    }
-                }
-                catch(NumberFormatException e){
-                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
-                } catch (Exception e) {
-                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
-                }
-            }
-            amountSecondaryAnalysis.clear()
-            secondaryAnalyseGrid.deselectAll()
-            applySecondaryAnalysis.setEnabled(false)
-        })
+            createOfferViewModel.secondaryAnalyseGridSelected = true})
 
         proteomicsAnalysisGrid.addSelectionListener({
-            applyProteomicAnalysis.setEnabled(true)
-        })
-
-        applyProteomicAnalysis.addClickListener({
-            if(proteomicsAnalysisGrid.getSelectedItems() != null) {
-                String amount = amountProteomicAnalysis.getValue()
-                try{
-                    if(amount != null && amount.isNumber()) {
-                        proteomicsAnalysisGrid.getSelectedItems().each {
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
-                            }
-                        }
-                        proteomicsAnalysisGrid.getDataProvider().refreshAll()
-                    }
-                } catch(NumberFormatException e) {
-                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
-                } catch (Exception e) {
-                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
-                }
-            }
-            amountProteomicAnalysis.clear()
-            proteomicsAnalysisGrid.deselectAll()
-            applyProteomicAnalysis.setEnabled(false)
-        })
+            createOfferViewModel.proteomicsAnalysisGridSelected = true})
 
         metabolomicsAnalysisGrid.addSelectionListener({
-            applyMetabolomicAnalysis.setEnabled(true)
-        })
-        applyMetabolomicAnalysis.addClickListener({
-            if(metabolomicsAnalysisGrid.getSelectedItems() != null) {
-                String amount = amountMetabolomicAnalysis.getValue()
-                try{
-                    if(amount != null && amount.isNumber()) {
-                        metabolomicsAnalysisGrid.getSelectedItems().each {
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
-                            }
-                        }
-                        metabolomicsAnalysisGrid.getDataProvider().refreshAll()
-                    }
-                } catch(NumberFormatException e) {
-                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
-                } catch (Exception e) {
-                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
-                }
-            }
-            amountMetabolomicAnalysis.clear()
-            metabolomicsAnalysisGrid.deselectAll()
-            applyMetabolomicAnalysis.setEnabled(false)
-        })
+            createOfferViewModel.metabolomicsAnalysisGridSelected = true})
 
         projectManagementGrid.addSelectionListener({
-            applyProjectManagement.setEnabled(true)
-        })
-        applyProjectManagement.addClickListener({
-            if(projectManagementGrid.getSelectedItems() != null){
-                String amount = amountProjectManagement.getValue()
-
-                try{
-                    if(amount != null && amount.isNumber()){
-                        projectManagementGrid.getSelectedItems().each {
-
-                            if(Double.parseDouble(amount) >= 0.0){
-                                it.setQuantity(Double.parseDouble(amount))
-                                updateOverviewGrid(it)
-                            }
-                        }
-                        projectManagementGrid.getDataProvider().refreshAll()
-                    }
-                }
-                catch(Exception e){
-                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
-                }
-            }
-            amountProjectManagement.clear()
-            projectManagementGrid.deselectAll()
-            applyProjectManagement.setEnabled(false)
-        })
+            createOfferViewModel.projectManagementGridSelected = true})
 
         storageGrid.addSelectionListener({
-            applyDataStorage.setEnabled(true)
-        })
-        applyDataStorage.addClickListener({
-            if(storageGrid.getSelectedItems() != null){
-                String amount = amountDataStorage.getValue()
+            createOfferViewModel.storageGridSelected = true})
+    }
+    /**
+     * Adds listener to handle the logic after the user selected a product
+     */
+    private void addClickListeners() {
 
-                try{
-                    if(amount != null && amount.isNumber()){
-                        storageGrid.getSelectedItems().each {
+        addProductButtonListener(applySequencing, sequencingGrid, amountSequencing)
+        addProductButtonListener(applyPrimaryAnalysis, primaryAnalyseGrid, amountPrimaryAnalysis)
+        addProductButtonListener(applySecondaryAnalysis, secondaryAnalyseGrid, amountSecondaryAnalysis)
+        addProductButtonListener(applyProteomicAnalysis, proteomicsAnalysisGrid, amountProteomicAnalysis)
+        addProductButtonListener(applyMetabolomicAnalysis, metabolomicsAnalysisGrid, amountMetabolomicAnalysis)
+        addProductButtonListener(applyProjectManagement, projectManagementGrid, amountProjectManagement)
+        addProductButtonListener(applyDataStorage, storageGrid, amountDataStorage)
 
-                            if(Double.parseDouble(amount) >= 0.0){
-                                it.setQuantity(Double.parseDouble(amount))
-                                updateOverviewGrid(it)
-                            }
-                        }
-                        storageGrid.getDataProvider().refreshAll()
-                    }
-                }
-                catch(Exception e){
-                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
-                }
-            }
-            amountDataStorage.clear()
-            storageGrid.deselectAll()
-            applyDataStorage.setEnabled(false)
-        })
+    }
 
+    private void addValueChangeListeners() {
+        addProductFieldListener(amountSequencing, createOfferViewModel.sequencingQuantity)
+        addProductFieldListener(amountSequencing, createOfferViewModel.primaryAnalysisQuantity)
+        addProductFieldListener(amountSequencing, createOfferViewModel.secondaryAnalysisQuantity)
+        addProductFieldListener(amountSequencing, createOfferViewModel.proteomicsAnalysisQuantity)
+        addProductFieldListener(amountSequencing, createOfferViewModel.metabolomicsAnalysisQuantity)
+        addProductFieldListener(amountSequencing, createOfferViewModel.projectManagementQuantity)
+        addProductFieldListener(amountSequencing, createOfferViewModel.storageQuantity)
+    }
+
+    private void addPropertyChangeListener() {
         createOfferViewModel.productItems.addPropertyChangeListener({
             if (createOfferViewModel.productItems) {
                 next.setEnabled(true)
             } else {
                 next.setEnabled(false)
+            }
+        })
+    }
+
+    private void addProductButtonListener(Button productButton, Grid<ProductItemViewModel> productGrid, TextField productTextField){
+
+        productButton.addClickListener({
+            if(productGrid.getSelectedItems() != null){
+                String amount = productTextField.getValue()
+                try{
+                    if(amount != null && amount.isNumber()){
+                        productGrid.getSelectedItems().each {
+                            if(Double.parseDouble(amount) >= 0.0){
+                                it.setQuantity(Double.parseDouble(amount))
+                                updateOverviewGrid(it)
+                            }
+                        }
+                        productGrid.getDataProvider().refreshAll()
+                    }
+                }
+                catch(Exception e){
+                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
+                }
+            }
+            productTextField.clear()
+            productGrid.deselectAll()
+            productButton.setEnabled(false)
+        })
+    }
+
+    private void addProductFieldListener(TextField productField, double productQuantity){
+
+        Validator<String> nonEmptyStringValidator =  Validator.from({String value -> (value && !value.trim().empty)}, "Empty input not supported.")
+        Validator<Object> stringIsNumberValidator = Validator.from({String value -> new StringToDoubleConverter(value)}, "Input must be a number")
+
+        productField.addValueChangeListener({event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(productField))
+            ValidationResult noNumberResult = stringIsNumberValidator.apply(event.getValue(), new ValueContext(productField))
+            if (emptyResult.isError()) {
+                UserError error = new UserError(emptyResult.getErrorMessage())
+                productField.setComponentError(error)
+            }
+            //ToDo find out why this error is thrown
+            else if (noNumberResult.isError()){
+                UserError error = new UserError(noNumberResult.getErrorMessage())
+                productField.setComponentError(error)
+            }
+            else {
+                productQuantity = Double.parseDouble(event.getValue())
             }
         })
     }
