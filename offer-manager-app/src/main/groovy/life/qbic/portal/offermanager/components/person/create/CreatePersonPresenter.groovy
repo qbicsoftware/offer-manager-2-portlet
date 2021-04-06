@@ -75,18 +75,46 @@ class CreatePersonPresenter implements CreatePersonOutput{
                 .title(person.title)
                 .affiliations(person.affiliations).build()
         try{
-            if (createPersonViewModel.outdatedPerson) createPersonViewModel.personResourceService.removeFromResource(createPersonViewModel.outdatedPerson)
+            if (createPersonViewModel.outdatedPerson) {
+                    Customer foundCustomer
+                    Iterator<Customer>  customerIterator = createPersonViewModel.customerService.iterator()
+                    customerIterator.each {
+                        if (isSamePerson(it, customer)) {
+                            foundCustomer = it
+                        }
+                    }
+                    ProjectManager foundManager
+                    Iterator<ProjectManager>  managerIterator = createPersonViewModel.managerResourceService.iterator()
+                    managerIterator.each{
+                    if(isSamePerson(it, manager)) {
+                            foundManager = it
+                        }
+                    }
+                    createPersonViewModel.customerService.removeFromResource(foundCustomer)
+                    createPersonViewModel.managerResourceService.removeFromResource(foundManager)
+                }
+                createPersonViewModel.personResourceService.removeFromResource(createPersonViewModel.outdatedPerson)
         }catch(Exception e){
             log.error e.message
             log.error e.stackTrace.join("\n")
         }
-
         createPersonViewModel.customerService.addToResource(customer)
         createPersonViewModel.managerResourceService.addToResource(manager)
         createPersonViewModel.personResourceService.addToResource(person)
         //reset the view model
         clearPersonData()
-
         viewModel.successNotifications.add("Successfully created new person entry.")
     }
+    // determines if customer properties other than affiliations have changed
+    //ToDo should there be an exception if the last name was changed(e.g. after marriage)s
+    private static boolean isSamePerson(Person existingPerson, Person newPerson) {
+        boolean sameAttributes = existingPerson.firstName.equals(newPerson.firstName)
+                && existingPerson.lastName.equals(newPerson.lastName)
+                && existingPerson.emailAddress.equals(newPerson.emailAddress)
+                && existingPerson.title.equals(newPerson.title)
+
+        return sameAttributes
+    }
+
 }
+

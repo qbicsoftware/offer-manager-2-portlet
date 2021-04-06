@@ -32,9 +32,9 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
 
     UpdateOfferViewModel(CustomerResourceService customerResourceService,
                          ProjectManagerResourceService managerResourceService,
-                         ProductsResourcesService productsService,
+                         ProductsResourcesService productsResourcesService,
                          EventEmitter<Offer> offerUpdateEvent) {
-        super(customerResourceService, managerResourceService, productsService)
+        super(customerResourceService, managerResourceService, productsResourcesService)
         this.offerUpdate = offerUpdateEvent
 
         this.offerUpdate.register((Offer offer) -> {
