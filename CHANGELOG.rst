@@ -14,17 +14,17 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Link offers to project now. The ``life.qbic.business.offers.Offer`` and ``life.qbic.portal
 .offermanager.dataresources.offers`` have been extended with a new property to associate it with
-an existing project by its project identifier.
+an existing project by its project identifier. (`#410 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/410>`_).
 
 * Finalized the ``life.qbic.business.products.archive.ArchiveProduct`` and ``life/qbic/business/products/create/CreateProduct.groovy``
-  use cases of the product maintenance and creation feature(`#411 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/411>`_).
+  use cases of the product maintenance and creation feature (`#411 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/411>`_).
 
 * After a project has been created from an offer, the offer overview is updated accordingly
   (`#427 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/427>`_)
 
 * Add the UpdatePersonView to separate the Update and Create Person use cases more consequently (`#436 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/436>`_)
 
-* Proteomic and Metabolomic Products are now included in the Offer PDF
+* Proteomic and Metabolomic Products are now included in the Offer PDF (`#420 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/420>`_)
 
 **Fixed**
 
@@ -61,7 +61,7 @@ an existing project by its project identifier.
 
 * User cannot select other offers from the overview anymore, during the offer details are loaded
   after a selection. Selection is enabled again after the resource has been loaded. This solves a
-  not yet reported issue that can be observed when dealing with a significant network delay.
+  not yet reported issue that can be observed when dealing with a significant network delay. (`#374 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/374>`_)
 
 **Dependencies**
 
