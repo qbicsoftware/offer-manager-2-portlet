@@ -5,13 +5,6 @@ Changelog
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 
-1.0.0-alpha.6-SNAPSHOT (2021-04-x)
-
-**Fixed**
-
-* Prices are now sorted more intuitively
-
-
 1.0.0-alpha.5-SNAPSHOT (2021-03-17)
 -----------------------------------
 
