@@ -103,6 +103,12 @@ affiliations.setSelectionMode(Grid.SelectionMode.NONE)
         GridUtils.setupColumnFilter(affiliationListDataProvider,
                 affiliations.getColumn("City"),
                 personFilterRow)
+        GridUtils.setupColumnFilter(affiliationListDataProvider,
+                affiliations.getColumn("PostalCode"),
+                personFilterRow)
+        GridUtils.setupColumnFilter(affiliationListDataProvider,
+                affiliations.getColumn("Country"),
+                personFilterRow)
     }
 
     private void registerListener(){
