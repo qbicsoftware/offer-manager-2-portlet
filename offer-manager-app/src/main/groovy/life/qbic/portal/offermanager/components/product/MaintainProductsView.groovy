@@ -14,6 +14,7 @@ import com.vaadin.ui.themes.ValoTheme
 import life.qbic.business.offers.Currency
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.GridUtils
+import life.qbic.portal.offermanager.components.product.copy.CopyProductView
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
@@ -30,6 +31,7 @@ import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 class MaintainProductsView extends VerticalLayout{
 
     private final MaintainProductsViewModel viewModel
+    private final MaintainProductsController controller
 
     Grid<Product> productGrid
     HorizontalLayout buttonLayout
@@ -40,11 +42,12 @@ class MaintainProductsView extends VerticalLayout{
     VerticalLayout maintenanceLayout
 
     CreateProductView createProductView
-    CreateProductView copyProductView
+    CopyProductView copyProductView
 
-    MaintainProductsView(MaintainProductsViewModel viewModel, CreateProductView createProductView
-                         , CreateProductView copyProductView){
-        //todo add the controller
+    MaintainProductsView(MaintainProductsViewModel viewModel, CreateProductView createProductView,
+                         CopyProductView copyProductView,
+                         MaintainProductsController controller){
+        this.controller = controller
         this.viewModel = viewModel
         this.createProductView = createProductView
         this.copyProductView = copyProductView
@@ -69,6 +72,8 @@ class MaintainProductsView extends VerticalLayout{
         addProduct = new Button("Add Product", VaadinIcons.PLUS)
         copyProduct = new Button ("Copy Product", VaadinIcons.COPY)
         archiveProduct = new Button("Archive Product", VaadinIcons.ARCHIVE)
+        copyProduct.setEnabled(false)
+        archiveProduct.setEnabled(false)
 
         buttonLayout = new HorizontalLayout(productDescription, addProduct,copyProduct,archiveProduct)
         buttonLayout.setMargin(false)
@@ -123,7 +128,8 @@ class MaintainProductsView extends VerticalLayout{
     }
 
     private void addSubViews(){
-        this.addComponents(createProductView,copyProductView)
+        this.addComponents(createProductView)
+        this.addComponent(copyProductView)
         createProductView.setVisible(false)
         copyProductView.setVisible(false)
     }
@@ -143,6 +149,8 @@ class MaintainProductsView extends VerticalLayout{
         productGrid.addSelectionListener({
             if(it.firstSelectedItem.isPresent()){
                 updateProductDescription(it.firstSelectedItem.get())
+                viewModel.selectedProduct = it.firstSelectedItem
+                checkProductSelected()
             }
         })
 
@@ -157,14 +165,38 @@ class MaintainProductsView extends VerticalLayout{
         })
 
         copyProduct.addClickListener({
+            viewModel.productUpdate.emit(viewModel.selectedProduct.get())
             maintenanceLayout.setVisible(false)
-            copyProduct.setVisible(true)
+            copyProductView.setVisible(true)
+        })
+
+        copyProductView.abortButton.addClickListener({
+            maintenanceLayout.setVisible(true)
+            copyProductView.setVisible(false)
+        })
+
+        copyProductView.createProductButton.addClickListener({
+            maintenanceLayout.setVisible(true)
+            copyProductView.setVisible(false)
         })
 
         archiveProduct.addClickListener({
-            //todo use the controller to trigger the use case
+            controller.archiveProduct(viewModel.selectedProduct.get().productId)
         })
 
+        viewModel.products.addPropertyChangeListener({
+            productGrid.dataProvider.refreshAll()
+        })
+    }
+
+    private void checkProductSelected() {
+        if (viewModel.selectedProduct.get()) {
+            copyProduct.setEnabled(true)
+            archiveProduct.setEnabled(true)
+        } else {
+            copyProduct.setEnabled(false)
+            archiveProduct.setEnabled(false)
+        }
     }
 
 }

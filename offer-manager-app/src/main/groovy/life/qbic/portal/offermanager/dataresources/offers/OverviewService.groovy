@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
@@ -24,13 +25,40 @@ class OverviewService implements ResourcesService<OfferOverview> {
 
     private final EventEmitter<OfferOverview> updatedOverviewEvent
 
+    private final EventEmitter<Project> projectCreatedEvent
+
     OverviewService(OfferDbConnector offerDbConnector,
-                    OfferResourcesService offerService) {
+                    OfferResourcesService offerService,
+                    EventEmitter<Project> projectCreatedEvent) {
         this.offerDbConnector = offerDbConnector
         this.updatedOverviewEvent = new EventEmitter<>()
         this.offerService = offerService
+        this.projectCreatedEvent = projectCreatedEvent
         this.offerOverviewList = offerDbConnector.loadOfferOverview()
         subscribeToNewOffers()
+        subscribeToNewProjects()
+    }
+
+    private void subscribeToNewProjects() {
+        /*
+        Whenever a new project is created, we want to update the associated
+        offer overview with the project identifier detail
+         */
+        projectCreatedEvent.register({ Project project ->
+            OfferOverview affectedOffer = offerOverviewList.find{
+                it.offerId.equals(project.linkedOffer)}
+            if (affectedOffer) {
+                offerOverviewList.remove(affectedOffer)
+                OfferOverview updatedOverview = new OfferOverview(
+                        affectedOffer.offerId,
+                        affectedOffer.modificationDate,
+                        affectedOffer.projectTitle,
+                        affectedOffer.customer.toString(),
+                        affectedOffer.totalPrice,
+                        project.projectId)
+                this.addToResource(updatedOverview)
+            }
+        })
     }
 
     private void subscribeToNewOffers(){

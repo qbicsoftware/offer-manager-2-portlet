@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>offer-manager</artifactId>
 		<groupId>life.qbic</groupId>
-		<version>1.0.0-alpha.4</version>
+		<version>1.0.0-alpha.5</version>
 	</parent>
 	<dependencies>
 		<dependency>
@@ -23,7 +23,7 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.17</version>
 		</dependency>
-	</dependencies>
+    </dependencies>
 	<build>
 		<plugins>
 			<plugin>

@@ -2,14 +2,17 @@ package life.qbic.portal.offermanager.dataresources.products
 
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
+import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.products.Converter
 import life.qbic.business.products.archive.ArchiveProductDataSource
+import life.qbic.business.products.copy.CopyProductDataSource
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.ProductExistsException
+import life.qbic.datamodel.dtos.business.ProductCategory
+import life.qbic.datamodel.dtos.business.ProductCategoryFactory
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
-import life.qbic.business.exceptions.DatabaseQueryException
-
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
 
@@ -24,9 +27,12 @@ import java.sql.SQLException
  * @since 1.0.0
  */
 @Log4j2
-class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource {
+class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource, CopyProductDataSource {
 
   private final ConnectionProvider provider
+
+  private static final ProductCategoryFactory productCategoryFactory = new ProductCategoryFactory()
+  private static final ProductUnitFactory productUnitFactory = new ProductUnitFactory()
 
   /**
    * Creates a connector for a MariaDB instance.
@@ -55,77 +61,75 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     try {
       return fetchAllProductsFromDb()
     } catch (SQLException e) {
-      log.error(e.message)
-      log.error(e.stackTrace.join("\n"))
+      log.error("Unexpected exception: $e.message")
+      log.debug("Unexpected exception: $e.message", e)
       throw new DatabaseQueryException("Unable to list all available products.")
     }
   }
 
   private List<Product> fetchAllProductsFromDb() {
-    List<Product> products = []
+    List<Product> products = new ArrayList<>()
+    String query = Queries.SELECT_ALL_PRODUCTS + "WHERE active = 1"
     provider.connect().withCloseable {
-      final PreparedStatement query = it.prepareStatement(Queries.SELECT_ALL_PRODUCTS)
-      final ResultSet resultSet = query.executeQuery()
+      final PreparedStatement statement = it.prepareStatement(query)
+      final ResultSet resultSet = statement.executeQuery()
       products.addAll(convertResultSet(resultSet))
     }
     return products
   }
 
   private static List<Product> convertResultSet(ResultSet resultSet) {
-    final def products = []
+    final List<Product> products = new ArrayList<>()
     while (resultSet.next()) {
-      products.add(rowResultToProduct(SqlExtensions.toRowResult(resultSet)))
+      try {
+        Product product = rowResultToProduct(SqlExtensions.toRowResult(resultSet))
+        products.add(product)
+      } catch (IllegalArgumentException illegalRow) {
+        log.warn("Could not parse row. Skipping")
+        log.debug("Could not parse row. Skipping.", illegalRow)
+      }
     }
     return products
   }
 
-  private static Product rowResultToProduct(GroovyRowResult row) {
-    def productCategory = row.category
-    String productId = row.productId
+  /**
+   *
+   * @param row a GroovyRowResult map
+   * @return a Product parsed from the provided map
+   * @throws IllegalArgumentException in case not all fields necessary are found
+   *  or fields could not be parsed
+   */
+  private static Product rowResultToProduct(GroovyRowResult row) throws IllegalArgumentException {
     Product product
-    switch(productCategory) {
-      case "Data Storage":
-        product = new DataStorage(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
-        break
-      case "Primary Bioinformatics":
-        product = new PrimaryAnalysis(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
-        break
-      case "Project Management":
-        product = new ProjectManagement(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
-        break
-      case "Secondary Bioinformatics":
-        product = new SecondaryAnalysis(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
-        break
-      case "Sequencing":
-        product = new Sequencing(row.productName as String,
-            row.description as String,
-            row.unitPrice as Double,
-            new ProductUnitFactory().getForString(row.unit as String), parseProductId(productId))
-        break
+    try {
+      String description = row.description
+      ProductCategory productCategory = productCategoryFactory.getForString(row.category as String)
+      long productId = parseProductId(row.productId as String)
+      String productName = row.productName
+      ProductUnit productUnit = productUnitFactory.getForString(row.unit as String)
+      double unitPrice = row.unitPrice
+
+      product = Converter.createProductWithVersion(
+              productCategory,
+              productName,
+              description,
+              unitPrice,
+              productUnit,
+              productId)
+
+    } catch (NullPointerException | IllegalArgumentException illegalArgument) {
+      throw new IllegalArgumentException("Could not parse product from provided information.", illegalArgument)
     }
-    if(product == null) {
-      log.error("Product could not be parsed from database query.")
-      log.error(row)
-      throw new DatabaseQueryException("Cannot parse product")
-    } else {
-      return product
-    }
+    return product
   }
 
-  def createOfferItems(List<ProductItem> items, int offerId) {
-
+  /**
+   * This method associates an offer with product items.
+   *
+   * @param items A list of product items of an offer
+   * @param offerId An offerId which references the offer containing the list of product items
+   */
+  void createOfferItems(List<ProductItem> items, int offerId) {
     items.each {productItem ->
       String query = "INSERT INTO productitem (productId, quantity, offerid) "+
               "VALUE(?,?,?)"
@@ -176,13 +180,16 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * Returns the product identifying running number given a productId
    *
    * @param productId String of productId stored in the DB e.g. "DS_1"
-   * @return identifier String of the iterative identifying part of the productId
+   * @return identifier Long of the iterative identifying part of the productId
    */
-  static String parseProductId(String productId) {
+  private static long parseProductId(String productId) throws NumberFormatException{
+    if (!productId.contains("_")) {
+      throw new IllegalArgumentException("Not a valid product identifier.")
+    }
     def splitId = productId.split("_")
     // The first entry [0] contains the product type which is assigned automatically, no need to parse it.
     String identifier = splitId[1]
-    return identifier
+    return Long.parseLong(identifier)
   }
 
 
@@ -192,12 +199,14 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * @param product A product for which the type needs to be determined
    * @return the type of the product or null
    */
-  static String getProductType(Product product){
-    if (product instanceof Sequencing) return 'Sequencing'
-    if (product instanceof ProjectManagement) return 'Project Management'
-    if (product instanceof PrimaryAnalysis) return 'Primary Bioinformatics'
-    if (product instanceof SecondaryAnalysis) return 'Secondary Bioinformatics'
-    if (product instanceof DataStorage) return 'Data Storage'
+  private static String getProductType(Product product){
+    if (product instanceof Sequencing) return ProductCategory.SEQUENCING.getValue()
+    if (product instanceof ProjectManagement) return ProductCategory.PROJECT_MANAGEMENT.getValue()
+    if (product instanceof PrimaryAnalysis) return ProductCategory.PRIMARY_BIOINFO.getValue()
+    if (product instanceof SecondaryAnalysis) return ProductCategory.SECONDARY_BIOINFO.getValue()
+    if (product instanceof DataStorage) return ProductCategory.DATA_STORAGE.getValue()
+    if (product instanceof ProteomicAnalysis) return ProductCategory.PROTEOMIC.getValue()
+    if (product instanceof MetabolomicAnalysis) return ProductCategory.METABOLOMIC.getValue()
 
     return null
   }
@@ -215,10 +224,15 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       statement.setInt(1, offerPrimaryId)
       ResultSet result = statement.executeQuery()
       while (result.next()) {
-        Product product = rowResultToProduct(SqlExtensions.toRowResult(result))
-        double quantity = result.getDouble("quantity")
-        ProductItem item = new ProductItem(quantity, product)
-        productItems << item
+        try {
+          Product product = rowResultToProduct(SqlExtensions.toRowResult(result))
+          double quantity = result.getDouble("quantity")
+          ProductItem item = new ProductItem(quantity, product)
+          productItems << item
+        } catch (IllegalArgumentException illegalArgumentException) {
+          log.warn("Could not parse product. Skipping.")
+          log.debug("Could not parse product. Skipping.", illegalArgumentException)
+        }
       }
     }
     return productItems
@@ -251,31 +265,35 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   @Override
   Optional<Product> fetch(ProductId productId) throws DatabaseQueryException {
     Connection connection = provider.connect()
-    String query = Queries.SELECT_ALL_PRODUCTS + " WHERE productId=?"
+    String query = Queries.SELECT_ALL_PRODUCTS + "WHERE active = 1 AND productId=?"
     Optional<Product> product = Optional.empty()
 
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(query)
-      preparedStatement.setString(1, productId.identifier.toString())
+      preparedStatement.setString(1, productId.toString())
       ResultSet result = preparedStatement.executeQuery()
 
       while (result.next()) {
-        product = Optional.of(rowResultToProduct(SqlExtensions.toRowResult(result)))
+        try {
+          product = Optional.of(rowResultToProduct(SqlExtensions.toRowResult(result)))
+        } catch(IllegalArgumentException illegalArgumentException) {
+          log.warn("Could not parse product. Skipping.")
+          log.debug("Could not parse product. Skipping.", illegalArgumentException)
+        }
       }
     }
     return product
   }
 
   /**
-   * Stores a product in the database
-   * @param product The product that needs to be stored
-   * @since 1.0.0
-   * @throws DatabaseQueryException if any technical interaction with the data source fails
-   * @throws ProductExistsException if the product already exists in the data source
+   *
+   * {@inheritDoc}
    */
   @Override
-  void store(Product product) throws DatabaseQueryException, ProductExistsException {
+  ProductId store(Product product) throws DatabaseQueryException, ProductExistsException {
     Connection connection = provider.connect()
+
+    ProductId productId = createProductId(product)
 
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(Queries.INSERT_PRODUCT)
@@ -284,10 +302,42 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       preparedStatement.setString(3, product.productName)
       preparedStatement.setDouble(4, product.unitPrice)
       preparedStatement.setString(5, product.unit.value)
-      preparedStatement.setString(6, product.productId.toString())
+      preparedStatement.setString(6, productId.toString())
 
       preparedStatement.execute()
     }
+
+    return productId
+  }
+
+  private ProductId createProductId(Product product){
+    String productType = product.productId.type
+    String version = fetchLatestIdentifier(productType) //todo exchange with long
+
+    return new ProductId(productType,version)
+  }
+
+  private Long fetchLatestIdentifier(String productType){
+    String query = "SELECT MAX(productId) FROM product WHERE productId LIKE ?"
+    Connection connection = provider.connect()
+
+    String category = productType + "_%"
+    Long latestUniqueId = 0
+
+    connection.withCloseable {
+      PreparedStatement preparedStatement = it.prepareStatement(query)
+      preparedStatement.setString(1, category)
+
+      ResultSet result = preparedStatement.executeQuery()
+
+      while(result.next()){
+        String id = result.getString(1)
+
+        if(id) latestUniqueId = Long.parseLong(id.split('_')[1])
+      }
+    }
+
+    return latestUniqueId + 1
   }
 
   /**
@@ -308,7 +358,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     /**
      * Query for all available products.
      */
-    final static String SELECT_ALL_PRODUCTS = "SELECT * FROM product"
+    final static String SELECT_ALL_PRODUCTS = "SELECT * FROM product "
 
     /**
      * Query for all items of an offer.

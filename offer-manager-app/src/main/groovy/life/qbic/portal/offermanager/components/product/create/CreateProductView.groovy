@@ -6,6 +6,7 @@ import com.vaadin.data.ValueContext
 import com.vaadin.data.validator.RegexpValidator
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
+import com.vaadin.shared.Registration
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
@@ -16,6 +17,7 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.services.ProductUnit
+import life.qbic.portal.offermanager.components.product.MaintainProductsController
 
 /**
  * <h1>This view serves the user to create a new service product</h1>
@@ -27,7 +29,8 @@ import life.qbic.datamodel.dtos.business.services.ProductUnit
 */
 class CreateProductView extends HorizontalLayout{
 
-    private final CreateProductViewModel createProductViewModel
+    protected final CreateProductViewModel viewModel
+    protected final MaintainProductsController controller
 
     TextField productNameField
     TextField productDescriptionField
@@ -35,13 +38,16 @@ class CreateProductView extends HorizontalLayout{
 
     ComboBox<String> productUnitComboBox
     ComboBox<String> productCategoryComboBox
-
-    Button createProductButton
     Button abortButton
 
-    CreateProductView(CreateProductViewModel createProductViewModel){
+    Button createProductButton
+    Registration createProductButtonRegistration
+    Label titleLabel
 
-        this.createProductViewModel = createProductViewModel
+    CreateProductView(CreateProductViewModel createProductViewModel, MaintainProductsController controller){
+        this.controller = controller
+        this.viewModel = createProductViewModel
+
         initTextFields()
         initComboBoxes()
         initButtons()
@@ -52,16 +58,16 @@ class CreateProductView extends HorizontalLayout{
     }
 
     private void initLayout(){
-        Label label = new Label("Create Service Product")
-        label.setStyleName(ValoTheme.LABEL_HUGE)
-        this.addComponent(label)
+        titleLabel = new Label("Create Service Product")
+        titleLabel.setStyleName(ValoTheme.LABEL_HUGE)
+        this.addComponent(titleLabel)
 
         //add textfields and boxes
         HorizontalLayout sharedLayout = new HorizontalLayout(productUnitPriceField,productUnitComboBox)
         sharedLayout.setWidthFull()
         HorizontalLayout buttons = new HorizontalLayout(abortButton,createProductButton)
 
-        VerticalLayout sideLayout = new VerticalLayout(label,productNameField,productDescriptionField,sharedLayout,productCategoryComboBox,buttons)
+        VerticalLayout sideLayout = new VerticalLayout(titleLabel,productNameField,productDescriptionField,sharedLayout,productCategoryComboBox,buttons)
         sideLayout.setSizeFull()
         sideLayout.setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT)
 
@@ -113,29 +119,29 @@ class CreateProductView extends HorizontalLayout{
 
     private void bindViewModel(){
         //bind all textfields
-        this.productNameField.addValueChangeListener({this.createProductViewModel.productName = it.value })
+        this.productNameField.addValueChangeListener({this.viewModel.productName = it.value })
 
-        createProductViewModel.addPropertyChangeListener("productName", {
+        viewModel.addPropertyChangeListener("productName", {
             String newValue = it.newValue as String
             productNameField.value = newValue ?: productNameField.emptyValue
         })
 
-        this.productDescriptionField.addValueChangeListener({this.createProductViewModel.productDescription = it.value })
+        this.productDescriptionField.addValueChangeListener({this.viewModel.productDescription = it.value })
 
-        createProductViewModel.addPropertyChangeListener("productDescription", {
+        viewModel.addPropertyChangeListener("productDescription", {
             String newValue = it.newValue as String
             productDescriptionField.value = newValue ?: productDescriptionField.emptyValue
         })
 
-        this.productUnitPriceField.addValueChangeListener({this.createProductViewModel.productUnitPrice = it.value})
+        this.productUnitPriceField.addValueChangeListener({this.viewModel.productUnitPrice = it.value})
 
-        createProductViewModel.addPropertyChangeListener("productUnitPrice", {
+        viewModel.addPropertyChangeListener("productUnitPrice", {
             String newValue = it.newValue as String
             productUnitPriceField.value = newValue ?: productUnitPriceField.emptyValue
         })
 
         //bind combo boxes
-        createProductViewModel.addPropertyChangeListener("productUnit", {
+        viewModel.addPropertyChangeListener("productUnit", {
             ProductUnit newValue = it.newValue as ProductUnit
             if (newValue) {
                 productUnitComboBox.value = newValue
@@ -144,10 +150,10 @@ class CreateProductView extends HorizontalLayout{
             }
         })
         productUnitComboBox.addSelectionListener({
-            createProductViewModel.setProductUnit(it.value as ProductUnit)
+            viewModel.setProductUnit(it.value as ProductUnit)
         })
 
-        createProductViewModel.addPropertyChangeListener("productCategory", {
+        viewModel.addPropertyChangeListener("productCategory", {
             ProductCategory newValue = it.newValue as ProductCategory
             if (newValue) {
                 productCategoryComboBox.value = newValue
@@ -156,14 +162,14 @@ class CreateProductView extends HorizontalLayout{
             }
         })
         productCategoryComboBox.addSelectionListener({
-            createProductViewModel.setProductCategory(it.value as ProductCategory)
+            viewModel.setProductCategory(it.value as ProductCategory)
         })
 
         /*
        We listen to the valid properties. whenever the presenter resets values in the viewmodel
        and resets the valid properties the component error on the respective component is removed
        */
-        createProductViewModel.addPropertyChangeListener({
+        viewModel.addPropertyChangeListener({
             switch (it.propertyName) {
                 case "productNameValid":
                     if (it.newValue || it.newValue == null) {
@@ -210,51 +216,51 @@ class CreateProductView extends HorizontalLayout{
         this.productNameField.addValueChangeListener({ event ->
             ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.productNameField))
             if (result.isError()) {
-                createProductViewModel.productNameValid = false
+                viewModel.productNameValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 productNameField.setComponentError(error)
             } else {
-                createProductViewModel.productNameValid = true
+                viewModel.productNameValid = true
             }
         })
         this.productDescriptionField.addValueChangeListener({ event ->
             ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.productDescriptionField))
             if (result.isError()) {
-                createProductViewModel.productDescriptionValid = false
+                viewModel.productDescriptionValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 productDescriptionField.setComponentError(error)
             } else {
-                createProductViewModel.productDescriptionValid = true
+                viewModel.productDescriptionValid = true
             }
         })
         this.productUnitPriceField.addValueChangeListener({ event ->
             ValidationResult result = numberValidator.apply(event.getValue(), new ValueContext(this.productUnitPriceField))
             if (result.isError()) {
-                createProductViewModel.productUnitPriceValid = false
+                viewModel.productUnitPriceValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 productUnitPriceField.setComponentError(error)
             } else {
-                createProductViewModel.productUnitPriceValid = true
+                viewModel.productUnitPriceValid = true
             }
         })
         this.productUnitComboBox.addSelectionListener({selection ->
             ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.productUnitComboBox))
             if (result.isError()) {
-                createProductViewModel.productUnitValid = false
+                viewModel.productUnitValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 productUnitComboBox.setComponentError(error)
             } else {
-                createProductViewModel.productUnitValid = true
+                viewModel.productUnitValid = true
             }
         })
         this.productCategoryComboBox.addSelectionListener({ selection ->
             ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.productCategoryComboBox))
             if (result.isError()) {
-                createProductViewModel.productCategoryValid = false
+                viewModel.productCategoryValid = false
                 UserError error = new UserError(result.getErrorMessage())
                 productCategoryComboBox.setComponentError(error)
             } else {
-                createProductViewModel.productCategoryValid = true
+                viewModel.productCategoryValid = true
             }
         })
     }
@@ -263,22 +269,27 @@ class CreateProductView extends HorizontalLayout{
      * It relies on the separate fields for validation.
      * @return
      */
-    private boolean allValuesValid() {
-        return createProductViewModel.productNameValid \
-            && createProductViewModel.productDescriptionValid \
-            && createProductViewModel.productUnitValid \
-            && createProductViewModel.productUnitPriceValid \
-            && createProductViewModel.productCategoryValid
+    protected boolean allValuesValid() {
+        return viewModel.productNameValid \
+            && viewModel.productDescriptionValid \
+            && viewModel.productUnitValid \
+            && viewModel.productUnitPriceValid \
+            && viewModel.productCategoryValid
     }
 
     private void setupListeners(){
-        abortButton.addClickListener({ clearAllFields() })
+
+        abortButton.addClickListener({clearAllFields() })
+        createProductButtonRegistration = this.createProductButton.addClickListener({
+            controller.createNewProduct(viewModel.productCategory, viewModel.productDescription,viewModel.productName, Double.parseDouble(viewModel.productUnitPrice),viewModel.productUnit)
+        })
+
     }
 
     /**
      *  Clears User Input from all fields in the Create Products View and reset validation status of all Fields
      */
-    private void clearAllFields() {
+    protected void clearAllFields() {
 
         productNameField.clear()
         productDescriptionField.clear()
@@ -286,11 +297,11 @@ class CreateProductView extends HorizontalLayout{
         productCategoryComboBox.selectedItem = productCategoryComboBox.clear()
         productUnitComboBox.selectedItem = productUnitComboBox.clear()
 
-        createProductViewModel.productNameValid = null
-        createProductViewModel.productDescriptionValid = null
-        createProductViewModel.productUnitPriceValid = null
-        createProductViewModel.productCategoryValid = null
-        createProductViewModel.productUnitValid = null
+        viewModel.productNameValid = null
+        viewModel.productDescriptionValid = null
+        viewModel.productUnitPriceValid = null
+        viewModel.productCategoryValid = null
+        viewModel.productUnitValid = null
     }
 
 }

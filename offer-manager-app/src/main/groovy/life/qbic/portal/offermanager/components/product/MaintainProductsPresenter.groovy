@@ -1,6 +1,7 @@
-package life.qbic.portal.offermanager.components.products
+package life.qbic.portal.offermanager.components.product
 
 import life.qbic.business.products.archive.ArchiveProductOutput
+import life.qbic.business.products.copy.CopyProductOutput
 import life.qbic.business.products.create.CreateProductOutput
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.AppViewModel
@@ -13,7 +14,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
  * @since 1.0.0
  *
  */
-class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOutput{
+class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOutput, CopyProductOutput{
 
     private final MaintainProductsViewModel productsViewModel
     private final AppViewModel mainViewModel
@@ -26,11 +27,19 @@ class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOu
     @Override
     void archived(Product product) {
         mainViewModel.successNotifications << "Successfully archived product $product.productId - $product.productName."
+        productsViewModel.productsResourcesService.removeFromResource(product)
     }
 
     @Override
     void created(Product product) {
         mainViewModel.successNotifications << "Successfully added new product $product.productId - $product.productName."
+        productsViewModel.productsResourcesService.addToResource(product)
+    }
+
+    @Override
+    void copied(Product product) {
+mainViewModel.successNotifications << "Successfully copied product $product.productId - $product.productName."
+        productsViewModel.productsResourcesService.addToResource(product)
     }
 
     @Override
@@ -43,4 +52,5 @@ class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOu
     void failNotification(String notification) {
         mainViewModel.failureNotifications << notification
     }
+
 }
