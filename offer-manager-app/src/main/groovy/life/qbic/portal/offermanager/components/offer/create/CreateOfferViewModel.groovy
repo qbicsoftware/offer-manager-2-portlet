@@ -1,7 +1,6 @@
 package life.qbic.portal.offermanager.components.offer.create
 
 import groovy.beans.Bindable
-import groovy.transform.EqualsAndHashCode
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
