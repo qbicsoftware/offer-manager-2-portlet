@@ -40,10 +40,10 @@ class CreateProjectView extends VerticalLayout{
     static {
         spaceSelectionActionText.put(
                 CreateProjectViewModel.SPACE_SELECTION.EXISTING_SPACE,
-                "An existing project space")
+                "an existing project space")
         spaceSelectionActionText.put(
                 CreateProjectViewModel.SPACE_SELECTION.NEW_SPACE,
-                "A new project space")
+                "a new project space")
     }
 
     final CreateProjectViewModel model
@@ -148,14 +148,14 @@ class CreateProjectView extends VerticalLayout{
 
     private void createProjectSpaceElements() {
         // Set a nice header
-        Label label = new Label("1. Select/Create Project Space")
+        Label label = new Label("1. Select or Create Project Space")
         label.setStyleName(ValoTheme.LABEL_H3)
         this.inputFields.addComponent(label)
 
         /* The user needs to choose between creating a new project space
          or select an existing one */
         // First we create a ratio group with the choices available
-        projectSpaceSelection = new RadioButtonGroup<>("Create Project In",
+        projectSpaceSelection = new RadioButtonGroup<>("Create project In",
                 model.spaceSelectionDataProvider)
         projectSpaceSelection.setItemCaptionGenerator(item -> spaceSelectionActionText.get(item))
         this.inputFields.addComponent(projectSpaceSelection)
