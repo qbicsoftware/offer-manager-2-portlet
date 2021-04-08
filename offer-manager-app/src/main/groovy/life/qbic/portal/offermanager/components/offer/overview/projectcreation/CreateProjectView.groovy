@@ -155,7 +155,7 @@ class CreateProjectView extends VerticalLayout{
         /* The user needs to choose between creating a new project space
          or select an existing one */
         // First we create a ratio group with the choices available
-        projectSpaceSelection = new RadioButtonGroup<>("Create project In",
+        projectSpaceSelection = new RadioButtonGroup<>("Create project in",
                 model.spaceSelectionDataProvider)
         projectSpaceSelection.setItemCaptionGenerator(item -> spaceSelectionActionText.get(item))
         this.inputFields.addComponent(projectSpaceSelection)
