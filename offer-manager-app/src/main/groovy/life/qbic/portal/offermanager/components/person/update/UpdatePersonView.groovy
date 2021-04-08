@@ -1,7 +1,9 @@
 package life.qbic.portal.offermanager.components.person.update
 
 import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.grid.HeightMode
+import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
 import com.vaadin.ui.components.grid.HeaderRow
 import groovy.util.logging.Log4j2
@@ -25,6 +27,7 @@ class UpdatePersonView extends CreatePersonView{
     private final AppViewModel sharedViewModel
 
     private Grid<Affiliation> affiliations
+    private Button addAffiliationButton
 
 
     UpdatePersonView(CreatePersonController controller, AppViewModel sharedViewModel, UpdatePersonViewModel updatePersonViewModel) {
@@ -44,8 +47,13 @@ class UpdatePersonView extends CreatePersonView{
         generateAffiliationGrid()
         affiliations.setCaption("Current Affiliations")
         this.addComponent(affiliations,2)
-affiliations.setSelectionMode(Grid.SelectionMode.NONE)
+        affiliations.setSelectionMode(Grid.SelectionMode.NONE)
         //add the add button
+        addAffiliationButton = new Button("Add Affiliation")
+        addAffiliationButton.setIcon(VaadinIcons.PLUS)
+        addAffiliationButton.setEnabled(false)
+
+        buttonLayout.addComponent(addAffiliationButton,0)
     }
 
     private void generateAffiliationGrid() {
@@ -120,11 +128,9 @@ affiliations.setSelectionMode(Grid.SelectionMode.NONE)
                 String firstName = updatePersonViewModel.firstName
                 String lastName = updatePersonViewModel.lastName
                 String email = updatePersonViewModel.email
-                List<Affiliation> affiliations = new ArrayList()
-                affiliations.add(updatePersonViewModel.affiliation)
+                List<Affiliation> affiliations = updatePersonViewModel.affiliationList
 
                 if(updatePersonViewModel.outdatedPerson){
-                    affiliations.addAll(updatePersonViewModel.outdatedPerson.affiliations)
                     controller.updatePerson(updatePersonViewModel.outdatedPerson, firstName, lastName, title, email, affiliations)
                 }
 
@@ -138,5 +144,17 @@ affiliations.setSelectionMode(Grid.SelectionMode.NONE)
             }
         })
 
+        updatePersonViewModel.addPropertyChangeListener("affiliationValid",{
+            if(updatePersonViewModel.affiliationValid){
+                addAffiliationButton.setEnabled(true)
+            }else{
+                addAffiliationButton.setEnabled(false)
+            }
+        })
+        addAffiliationButton.addClickListener({
+            if(!updatePersonViewModel.affiliationList.contains(updatePersonViewModel.affiliation)) updatePersonViewModel.affiliationList << updatePersonViewModel.affiliation
+            addAffiliationButton.setEnabled(false)
+            affiliations.dataProvider.refreshAll()
+        })
     }
 }
