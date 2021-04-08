@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.components.offer.create
 
 import groovy.beans.Bindable
+import groovy.transform.EqualsAndHashCode
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
@@ -107,20 +108,28 @@ class CreateOfferViewModel {
         this.productsResourcesService.subscribe(productSubscription)
     }
 
-    private void refreshCustomers(){
+    /**
+     * This method replaces the foundCustomer list with the list provided by the customerResourceService
+     *
+     * This method will be triggered when a service event is triggered and is intended
+     * to refresh the customers shown in the grid with the ones currently stored in tce service
+     */
+    protected void refreshCustomers(){
         List<Customer> customers = customerResourceService.iterator().toList()
         this.foundCustomers.clear()
-        customers.each {customer ->
-            this.foundCustomers.add(customer)
-        }
+        foundCustomers.addAll(customers)
     }
 
-    private void refreshManagers(){
+    /**
+     * This method replaces the availableProjectManager list with the list provided by the managerResourceService
+     *
+     * This method will be triggered when a service event is triggered and is intended
+     * to refresh the project managers shown in the grid with the ones currently stored in the service
+     */
+    protected void refreshManagers(){
         List<ProjectManager> projectManagers = managerResourceService.iterator().toList()
         this.availableProjectManagers.clear()
-        projectManagers.each {manager ->
-            this.availableProjectManagers.add(manager)
-        }
+        availableProjectManagers.addAll(projectManagers)
     }
 
     private void refreshProducts(){

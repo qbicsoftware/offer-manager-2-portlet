@@ -64,36 +64,26 @@ class CreatePersonPresenter implements CreatePersonOutput{
 
 
     void personCreated(Person person) {
-        Customer customer = new Customer.Builder(person.firstName,
-                person.lastName,
-                person.emailAddress)
-                .title(person.title)
-                .affiliations(person.affiliations).build()
-        ProjectManager manager = new ProjectManager.Builder(person.firstName,
-                person.lastName,
-                person.emailAddress)
-                .title(person.title)
-                .affiliations(person.affiliations).build()
+        Customer customer = translateToCustomer(person)
+        ProjectManager manager = translateToProjectManager(person)
         try{
             if (createPersonViewModel.outdatedPerson) {
-                    Customer foundCustomer
                     Iterator<Customer>  customerIterator = createPersonViewModel.customerService.iterator()
+                    Customer outdatedCustomer = translateToCustomer(createPersonViewModel.outdatedPerson)
                     customerIterator.each {
-                        if (isSamePerson(it, customer)) {
-                            foundCustomer = it
+                        if (it == outdatedCustomer) {
+                            createPersonViewModel.customerService.removeFromResource(it)
                         }
                     }
-                    ProjectManager foundManager
                     Iterator<ProjectManager>  managerIterator = createPersonViewModel.managerResourceService.iterator()
+                    ProjectManager outdatedManager = translateToProjectManager(createPersonViewModel.outdatedPerson)
                     managerIterator.each{
-                    if(isSamePerson(it, manager)) {
-                            foundManager = it
+                    if(it == outdatedManager) {
+                        createPersonViewModel.managerResourceService.removeFromResource(it)
                         }
                     }
-                    createPersonViewModel.customerService.removeFromResource(foundCustomer)
-                    createPersonViewModel.managerResourceService.removeFromResource(foundManager)
-                }
                 createPersonViewModel.personResourceService.removeFromResource(createPersonViewModel.outdatedPerson)
+                }
         }catch(Exception e){
             log.error e.message
             log.error e.stackTrace.join("\n")
@@ -105,15 +95,23 @@ class CreatePersonPresenter implements CreatePersonOutput{
         clearPersonData()
         viewModel.successNotifications.add("Successfully created new person entry.")
     }
-    // determines if customer properties other than affiliations have changed
-    //ToDo should there be an exception if the last name was changed(e.g. after marriage)s
-    private static boolean isSamePerson(Person existingPerson, Person newPerson) {
-        boolean sameAttributes = existingPerson.firstName.equals(newPerson.firstName)
-                && existingPerson.lastName.equals(newPerson.lastName)
-                && existingPerson.emailAddress.equals(newPerson.emailAddress)
-                && existingPerson.title.equals(newPerson.title)
 
-        return sameAttributes
+    private static Customer translateToCustomer(Person person){
+        Customer customer = new Customer.Builder(person.firstName,
+                person.lastName,
+                person.emailAddress)
+                .title(person.title)
+                .affiliations(person.affiliations).build()
+        return customer
+    }
+
+    private static ProjectManager translateToProjectManager(Person person){
+        ProjectManager manager = new ProjectManager.Builder(person.firstName,
+                person.lastName,
+                person.emailAddress)
+                .title(person.title)
+                .affiliations(person.affiliations).build()
+        return manager
     }
 
 }
