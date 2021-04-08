@@ -36,7 +36,7 @@ class CreatePersonViewModel {
     @Bindable Boolean emailValid
     @Bindable Boolean affiliationValid
 
-    ObservableList availableAffiliations
+    ObservableList availableOrganisations
 
     final CustomerResourceService customerService
     final ProjectManagerResourceService managerResourceService
@@ -51,10 +51,41 @@ class CreatePersonViewModel {
         this.customerService = customerService
         this.managerResourceService = managerResourceService
         this.personResourceService = personResourceService
-        availableAffiliations = new ObservableList(new ArrayList<Affiliation>(affiliationService.iterator().collect()))
+
+        List<Affiliation> affiliations = affiliationService.iterator().collect()
+        availableOrganisations = new ObservableList(new ArrayList<Organisation>(toOrganisation(affiliations)))
 
         this.affiliationService.subscribe({
-            if (! (it in this.availableAffiliations) ) this.availableAffiliations.add(it)
+            List foundOrganisations = availableOrganisations.findAll(){organisation -> (organisation as Organisation).name == it.organisation}
+            if(foundOrganisations.empty){
+                //create a new organisation
+                availableOrganisations << new Organisation(it.organisation,[it])
+            }else{
+                //add the new affiliation
+                (foundOrganisations.get(0) as Organisation).affiliations << it
+            }
         })
+    }
+
+    /**
+     * Maps a list of affiliations to organisations
+     * @param affiliations A list of affiliations where some have the same organisation
+     * @return a list of organisations containing the associated affiliations
+     */
+    protected List<Organisation> toOrganisation(List<Affiliation> affiliations){
+
+        List<String> organisationNames = affiliations.collect{it.organisation}.toUnique()
+        List<Organisation> organisations = []
+
+        organisationNames.each {organisationName ->
+            List<Affiliation> organisationAffiliations = []
+            affiliations.each {affiliation ->
+                if(affiliation.organisation == organisationName) organisationAffiliations << affiliation
+            }
+
+            organisations << new Organisation(organisationName,organisationAffiliations)
+        }
+
+        return organisations
     }
 }

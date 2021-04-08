@@ -217,25 +217,32 @@ class CustomerSelectionView extends VerticalLayout{
     private void bindViewModel() {
 
         customerGrid.addSelectionListener({ selection ->
-            //vaadin is in single selection mode, selecting the first item will be fine
-            List<Affiliation> affiliations = customerGrid.getSelectedItems().getAt(0).affiliations
-            Customer customer = customerGrid.getSelectedItems().getAt(0)
 
-            viewModel.customer = customer
-            // We explicitly reset any existing selected affiliation, as the user
-            // must provide it again after changing the customer.
-            viewModel.customerAffiliation = null
+            if(selection.firstSelectedItem.isPresent()){
+                Customer selectedCustomer = selection.getFirstSelectedItem().get()
+                //vaadin is in single selection mode, selecting the first item will be fine
+                List<Affiliation> affiliations = selectedCustomer.affiliations
 
-            //todo do we need to clear the grid for another selection?
-            affiliationGrid.setItems(affiliations)
+                viewModel.customer = selectedCustomer
+                // We explicitly reset any existing selected affiliation, as the user
+                // must provide it again after changing the customer.
+                viewModel.customerAffiliation = null
 
-            affiliationSelectionContainer.setVisible(true)
+                //todo do we need to clear the grid for another selection?
+                affiliationGrid.setItems(affiliations)
+
+                affiliationSelectionContainer.setVisible(true)
+            }else{
+                affiliationSelectionContainer.setVisible(false)
+            }
 
         })
 
         affiliationGrid.addSelectionListener({
-            Affiliation affiliation = affiliationGrid.getSelectedItems().getAt(0)
-            viewModel.customerAffiliation = affiliation
+            if(it.firstSelectedItem.isPresent()){
+                Affiliation affiliation = it.firstSelectedItem.get()
+                viewModel.customerAffiliation = affiliation
+            }
         })
 
         /*
