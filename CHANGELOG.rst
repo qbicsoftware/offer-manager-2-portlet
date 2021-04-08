@@ -4,8 +4,28 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.0.0-alpha.6-SNAPSHOT (2021-04-08)
+-----------------------------------
 
-1.0.0-alpha.5-SNAPSHOT (2021-03-17)
+**Added**
+
+* Filter message in grids is now dependent on column ID (`#457 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/457>`_)
+
+**Fixed**
+
+* Update position of country string in affiliation summary during customer creation (`#453 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/453>`_)
+
+* Input fields of the CreateProductView are cleared after successful product creation(`#454 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/454>`_)
+
+* Shows the same affiliation organisation only once and maps it correctly to the address addition (`#448 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/448>`_)
+
+* Fix fail based on double clicking a customer in the SelectCustomerView for in the offer creation process (`#452 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/452>`_)
+
+**Dependencies**
+
+**Deprecated**
+
+1.0.0-alpha.5 (2021-04-07)
 -----------------------------------
 
 **Added**
@@ -17,14 +37,14 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
   with a new property to associate it with an existing project by its project identifier.
 
 * Finalized the ``life.qbic.business.products.archive.ArchiveProduct`` and ``life/qbic/business/products/create/CreateProduct.groovy``
-  use cases of the product maintenance and creation feature(`#411 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/411>`_).
+  use cases of the product maintenance and creation feature (`#411 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/411>`_).
 
 * After a project has been created from an offer, the offer overview is updated accordingly
   (`#427 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/427>`_)
 
 * Add the UpdatePersonView to separate the Update and Create Person use cases more consequently (`#436 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/436>`_)
 
-* Proteomic and Metabolomic Products are now included in the Offer PDF
+* Proteomic and Metabolomic Products are now included in the Offer PDF (`#420 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/420>`_)
 
 **Fixed**
 
@@ -32,17 +52,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Properly refresh the SearchPersonView after Updating a Person (`#436 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/436>`_)
 
-* Shows the same affiliation organisation only once and maps it correctly to the address addition (`#448 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/448>`_)
-
-* Fix fail based on double clicking a customer in the SelectCustomerView for in the offer creation process (`#452 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/452>`_)
-
 * Products that cannot be read from the database are skipped (`#444 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/444>`_)
-
-* Update position of country string in affiliation summary during customer creation (`#453 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/453>`_)
-
-* Input fields of the CreateProductView are cleared after successful product creation(`#454 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/454>`_)
-
-* Fix duplicate Person entries in the projectManagerService and customerService resulting from Update Person Use Case(`#454 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/456>`_)
 
 **Dependencies**
 
@@ -71,7 +81,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * User cannot select other offers from the overview anymore, during the offer details are loaded
   after a selection. Selection is enabled again after the resource has been loaded. This solves a
-  not yet reported issue that can be observed when dealing with a significant network delay.
+  not yet reported issue that can be observed when dealing with a significant network delay. (`#374 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/374>`_)
 
 **Dependencies**
 
