@@ -34,9 +34,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Proteomic and Metabolomic products can now be selected and included in an offer (`#425 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/425>`_)
 
-* Link offers to project now. The ``life.qbic.business.offers.Offer`` and
-  ``life.qbic.portal.offermanager.dataresources.offers`` have been extended
-  with a new property to associate it with an existing project by its project identifier.
+* Link offers to project now. The ``life.qbic.business.offers.Offer`` and ``life.qbic.portal.offermanager.dataresources.offers``
+  have been extended with a new property to associate it with
+  an existing project by its project identifier. (`#410 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/410>`_).
 
 * Finalized the ``life.qbic.business.products.archive.ArchiveProduct`` and ``life/qbic/business/products/create/CreateProduct.groovy``
   use cases of the product maintenance and creation feature (`#411 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/411>`_).
