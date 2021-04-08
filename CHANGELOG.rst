@@ -21,6 +21,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Fix fail based on double clicking a customer in the SelectCustomerView for in the offer creation process (`#452 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/452>`_)
 
+* Harmonized Title and label structure across all views(`#455 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/455>`_)
+
 **Dependencies**
 
 **Deprecated**
