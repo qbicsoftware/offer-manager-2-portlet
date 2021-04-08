@@ -39,12 +39,10 @@ class UpdatePersonView extends CreatePersonView{
         submitButton.caption = "Update Person"
         abortButton.caption = "Abort Person Update"
 
-        //remove the panel
-        super.removeComponent(affiliationDetails)
         //add a grid
         affiliations = new Grid<>()
-        this.addComponent(affiliations)
         generateAffiliationGrid()
+        this.addComponent(affiliations,2)
         //add the add button
     }
 
@@ -71,9 +69,10 @@ class UpdatePersonView extends CreatePersonView{
         } catch (Exception e) {
             new Exception("Unexpected exception in building the affiliation grid", e)
         }
+
         /*
         Let's not forget to setup the grid's data provider
-         */
+        */
         def affiliationDataProvider = setupAffiliationDataProvider()
         /*
         Lastly, we add some content filters for the columns
@@ -82,7 +81,7 @@ class UpdatePersonView extends CreatePersonView{
     }
 
     private ListDataProvider setupAffiliationDataProvider() {
-        def affiliationListDataProvider = new ListDataProvider<>(createPersonViewModel.availableOrganisations)
+        def affiliationListDataProvider = new ListDataProvider<>(updatePersonViewModel.affiliationList)
         this.affiliations.setDataProvider(affiliationListDataProvider)
 
         return affiliationListDataProvider
@@ -130,5 +129,6 @@ class UpdatePersonView extends CreatePersonView{
                 sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
             }
         })
+
     }
 }

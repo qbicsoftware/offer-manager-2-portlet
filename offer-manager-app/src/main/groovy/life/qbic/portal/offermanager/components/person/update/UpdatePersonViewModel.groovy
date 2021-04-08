@@ -29,7 +29,7 @@ import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourc
 class UpdatePersonViewModel extends CreatePersonViewModel{
 
     final private EventEmitter<Person> customerUpdate
-    private ObservableList affiliations
+    ObservableList affiliationList
 
     UpdatePersonViewModel(CustomerResourceService customerService,
             ProjectManagerResourceService managerResourceService,
@@ -38,11 +38,11 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
             PersonResourceService personResourceService) {
         super(customerService, managerResourceService, affiliationService, personResourceService)
         this.customerUpdate = customerUpdate
+        affiliationList = new ArrayList<Affiliation>()
 
         this.customerUpdate.register((Person person) -> {
             loadData(person)
             setOutdatedPerson(person)
-            affiliations = new ArrayList<Affiliation>(person.affiliations)
         })
     }
 
@@ -51,6 +51,8 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
         firstName = person.firstName
         lastName = person.lastName
         email = person.emailAddress
-        affiliation = person.affiliations.first()
+        //obtain the affiliations
+        affiliationList.clear()
+        affiliationList.addAll(person.affiliations)
     }
 }
