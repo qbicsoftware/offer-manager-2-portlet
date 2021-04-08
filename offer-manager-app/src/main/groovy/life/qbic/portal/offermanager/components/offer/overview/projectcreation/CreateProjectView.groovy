@@ -148,7 +148,7 @@ class CreateProjectView extends VerticalLayout{
 
     private void createProjectSpaceElements() {
         // Set a nice header
-        Label label = new Label("1. Please select/create a project space first")
+        Label label = new Label("1. Select or Create Project Space")
         label.setStyleName(ValoTheme.LABEL_H3)
         this.inputFields.addComponent(label)
 
@@ -162,7 +162,7 @@ class CreateProjectView extends VerticalLayout{
 
         // Case A: A new space needs to be created
         customSpaceLayout = new HorizontalLayout()
-        desiredSpaceName = new TextField("New space name")
+        desiredSpaceName = new TextField("New Space Name")
         desiredSpaceName.setPlaceholder("Your space name")
         desiredSpaceName.setWidth(300, Unit.PIXELS)
         customSpaceLayout.addComponents(desiredSpaceName)
@@ -170,7 +170,7 @@ class CreateProjectView extends VerticalLayout{
 
         // Case B: An existing space is selected
         existingSpaceLayout = new HorizontalLayout()
-        availableSpacesBox = new ComboBox<>("Available project spaces")
+        availableSpacesBox = new ComboBox<>("Available Project Spaces")
         existingSpaceLayout.addComponent(availableSpacesBox)
         availableSpacesBox.setWidth(300, Unit.PIXELS)
         this.inputFields.addComponent(existingSpaceLayout)
@@ -178,7 +178,7 @@ class CreateProjectView extends VerticalLayout{
 
     private void createProjectCodeElements() {
         // Set a nice header
-        Label label = new Label("2. Please set a project code")
+        Label label = new Label("2. Set Project Code")
         label.setStyleName(ValoTheme.LABEL_H3)
         this.inputFields.addComponent(label)
 
@@ -198,7 +198,7 @@ class CreateProjectView extends VerticalLayout{
 
     private void createProjectIdOverview() {
         def projectIdContainer = new HorizontalLayout()
-        def caption = new Label("Resulting project identifier")
+        def caption = new Label("3. Resulting Project Identifier")
         caption.setStyleName(ValoTheme.LABEL_H3)
         resultingSpaceName = new TextField()
         resultingSpaceName.setWidth(300, Unit.PIXELS)

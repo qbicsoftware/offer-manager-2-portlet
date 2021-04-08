@@ -107,7 +107,7 @@ class OfferOverviewView extends VerticalLayout{
 
         this.offerOverview = new Panel("Offer Details:")
 
-        this.itemGrid = new Grid<>("Selected items:")
+        this.itemGrid = new Grid<>("Selected Items:")
 
         this.addComponents(offerOverview,buttonLayout)
         this.setMargin(false)
@@ -178,15 +178,15 @@ class OfferOverviewView extends VerticalLayout{
     }
 
     private Panel createCostOverview() {
-        final Panel panel = new Panel("Cost overview")
+        final Panel panel = new Panel("Cost Overview")
         panel.setSizeUndefined()
         Grid<PriceField> gridLayout = new Grid<>()
         gridLayout.setHeightByRows(4)
         gridLayout.setItems([
-                new PriceField("Net price", createOfferViewModel.netPrice),
+                new PriceField("Net Price", createOfferViewModel.netPrice),
                 new PriceField("Overheads", createOfferViewModel.overheads),
                 new PriceField("Taxes", createOfferViewModel.taxes),
-                new PriceField("Total price", createOfferViewModel.totalPrice)
+                new PriceField("Total Price", createOfferViewModel.totalPrice)
         ])
         gridLayout.addColumn(PriceField::getName)
         gridLayout.addColumn(  {
