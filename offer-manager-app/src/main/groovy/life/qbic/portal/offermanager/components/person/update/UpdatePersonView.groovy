@@ -42,7 +42,9 @@ class UpdatePersonView extends CreatePersonView{
         //add a grid
         affiliations = new Grid<>()
         generateAffiliationGrid()
+        affiliations.setCaption("Current Affiliations")
         this.addComponent(affiliations,2)
+affiliations.setSelectionMode(Grid.SelectionMode.NONE)
         //add the add button
     }
 
