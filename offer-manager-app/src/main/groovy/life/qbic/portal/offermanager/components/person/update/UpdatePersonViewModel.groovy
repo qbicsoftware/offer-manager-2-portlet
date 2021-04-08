@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.components.person.update
 
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
 
@@ -28,6 +29,7 @@ import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourc
 class UpdatePersonViewModel extends CreatePersonViewModel{
 
     final private EventEmitter<Person> customerUpdate
+    private ObservableList affiliations
 
     UpdatePersonViewModel(CustomerResourceService customerService,
             ProjectManagerResourceService managerResourceService,
@@ -40,6 +42,7 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
         this.customerUpdate.register((Person person) -> {
             loadData(person)
             setOutdatedPerson(person)
+            affiliations = new ArrayList<Affiliation>(person.affiliations)
         })
     }
 
