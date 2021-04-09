@@ -16,6 +16,8 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
+import com.vaadin.ui.Grid.Column
+import com.vaadin.ui.renderers.TextRenderer
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
@@ -136,8 +138,10 @@ class OfferOverviewView extends FormLayout {
         overviewGrid.addColumn({overview ->
             overview.getAssociatedProject().isPresent() ? overview.getAssociatedProject().get() :
                     "-"}).setCaption("Project ID").setId("ProjectID")
-        // fix formatting of price
-        overviewGrid.addColumn({overview -> Currency.getFormatterWithSymbol().format(overview.getTotalPrice())}).setCaption("Total Price")
+        // Format price by using a column renderer. This way the sorting will happen on the underlying double values, leading to expected behaviour.
+        Column<Offer, Double> priceColumn = overviewGrid.addColumn({overview -> overview.getTotalPrice()}).setCaption("Total Price")
+        priceColumn.setRenderer(price -> Currency.getFormatterWithSymbol().format(price), new TextRenderer())
+
         overviewGrid.sort(dateColumn, SortDirection.DESCENDING)
         overviewGrid.setWidthFull()
 
