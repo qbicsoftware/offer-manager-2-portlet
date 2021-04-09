@@ -198,6 +198,7 @@ class UpdatePersonView extends CreatePersonView{
     private void resetAffiliation(){
         organisationComboBox.selectedItem = organisationComboBox.clear()
         addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
+        addressAdditionComboBox.setComponentError(null)
     }
 
     /**
