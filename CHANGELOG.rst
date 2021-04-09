@@ -25,6 +25,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Harmonized Title and label structure across all views(`#455 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/455>`_)
 
+* Updating a person removes the old entry also from the customerResourceService and projectManagerResourceService (`#456 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/456>`_)
+
 **Dependencies**
 
 **Deprecated**

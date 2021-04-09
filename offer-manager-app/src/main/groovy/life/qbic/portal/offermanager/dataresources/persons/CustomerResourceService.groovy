@@ -29,7 +29,8 @@ class CustomerResourceService implements ResourcesService<Customer>{
 
     @Override
     void reloadResources() {
-
+        this.customerList.clear()
+        this.customerList.addAll(dbConnector.fetchAllCustomers())
     }
 
     @Override

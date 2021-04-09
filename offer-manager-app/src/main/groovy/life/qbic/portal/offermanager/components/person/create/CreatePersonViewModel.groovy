@@ -88,4 +88,5 @@ class CreatePersonViewModel {
 
         return organisations
     }
+
 }
