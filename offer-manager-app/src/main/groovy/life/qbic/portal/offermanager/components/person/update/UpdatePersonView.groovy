@@ -163,9 +163,9 @@ class UpdatePersonView extends CreatePersonView{
                 updatePersonViewModel.personUpdated = true
             }else{
                 sharedViewModel.failureNotifications.add("Cannot add the selected affiliation. It was already associated with the person.")
-                resetAffiliation()
                 addAffiliationButton.setEnabled(false)
             }
+            resetAffiliation()
         })
 
         updatePersonViewModel.addPropertyChangeListener({it ->
