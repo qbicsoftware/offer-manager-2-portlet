@@ -7,7 +7,11 @@ import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
 import com.vaadin.ui.components.grid.HeaderRow
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.general.CommonPerson
+import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.person.create.CreatePersonController
@@ -151,10 +155,55 @@ class UpdatePersonView extends CreatePersonView{
                 addAffiliationButton.setEnabled(false)
             }
         })
+
         addAffiliationButton.addClickListener({
-            if(!updatePersonViewModel.affiliationList.contains(updatePersonViewModel.affiliation)) updatePersonViewModel.affiliationList << updatePersonViewModel.affiliation
-            addAffiliationButton.setEnabled(false)
-            affiliations.dataProvider.refreshAll()
+            if(!updatePersonViewModel.affiliationList.contains(updatePersonViewModel.affiliation)){
+                updatePersonViewModel.affiliationList << updatePersonViewModel.affiliation
+                affiliations.dataProvider.refreshAll()
+                updatePersonViewModel.personUpdated = true
+            }else{
+                sharedViewModel.failureNotifications.add("Cannot add the selected affiliation. It was already associated with the person.")
+                resetAffiliation()
+                addAffiliationButton.setEnabled(false)
+            }
         })
+
+        updatePersonViewModel.addPropertyChangeListener({it ->
+            if(updatePersonViewModel.outdatedPerson){
+                switch (it.propertyName) {
+                    case "academicTitle":
+                        boolean titleChanged = updatePersonViewModel.academicTitle != updatePersonViewModel.outdatedPerson.title.toString()
+                        updatePersonViewModel.personUpdated = updatePersonViewModel.academicTitleValid && titleChanged
+                        break
+                    case "firstName":
+                        boolean firstNameChanged = updatePersonViewModel.firstName != updatePersonViewModel.outdatedPerson.firstName
+                        updatePersonViewModel.personUpdated = updatePersonViewModel.firstNameValid && firstNameChanged
+                        break
+                    case "lastName":
+                        boolean lastNameChanged = updatePersonViewModel.lastName != updatePersonViewModel.outdatedPerson.lastName
+                        updatePersonViewModel.personUpdated = updatePersonViewModel.lastNameValid && lastNameChanged
+                        break
+                    case "email":
+                        boolean emailChanged = updatePersonViewModel.email != updatePersonViewModel.outdatedPerson.emailAddress
+                        updatePersonViewModel.personUpdated = updatePersonViewModel.emailValid && emailChanged
+                        break
+                    default:
+                        break
+                }
+                submitButton.enabled = allValuesValid()
+            }
+        })
+    }
+
+    private void resetAffiliation(){
+        organisationComboBox.selectedItem = organisationComboBox.clear()
+        addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
+    }
+
+    protected boolean allValuesValid() {
+        return createPersonViewModel.firstNameValid \
+            && createPersonViewModel.lastNameValid \
+            && createPersonViewModel.emailValid
+            && updatePersonViewModel.personUpdated
     }
 }

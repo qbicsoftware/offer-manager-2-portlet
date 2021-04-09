@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.components.person.update
 
+import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
@@ -31,6 +32,8 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
     final private EventEmitter<Person> customerUpdate
     ObservableList affiliationList
 
+    @Bindable Boolean personUpdated
+
     UpdatePersonViewModel(CustomerResourceService customerService,
             ProjectManagerResourceService managerResourceService,
             AffiliationResourcesService affiliationService,
@@ -39,10 +42,11 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
         super(customerService, managerResourceService, affiliationService, personResourceService)
         this.customerUpdate = customerUpdate
         affiliationList = new ArrayList<Affiliation>()
+        personUpdated = false
 
         this.customerUpdate.register((Person person) -> {
-            loadData(person)
             setOutdatedPerson(person)
+            loadData(person)
         })
     }
 
