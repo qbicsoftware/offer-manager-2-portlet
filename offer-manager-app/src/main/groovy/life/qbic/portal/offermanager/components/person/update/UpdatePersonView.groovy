@@ -1,11 +1,17 @@
 package life.qbic.portal.offermanager.components.person.update
 
 import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.grid.HeightMode
+import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
 import com.vaadin.ui.components.grid.HeaderRow
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.general.CommonPerson
+import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.person.create.CreatePersonController
@@ -25,6 +31,7 @@ class UpdatePersonView extends CreatePersonView{
     private final AppViewModel sharedViewModel
 
     private Grid<Affiliation> affiliations
+    private Button addAffiliationButton
 
 
     UpdatePersonView(CreatePersonController controller, AppViewModel sharedViewModel, UpdatePersonViewModel updatePersonViewModel) {
@@ -44,8 +51,13 @@ class UpdatePersonView extends CreatePersonView{
         generateAffiliationGrid()
         affiliations.setCaption("Current Affiliations")
         this.addComponent(affiliations,2)
-affiliations.setSelectionMode(Grid.SelectionMode.NONE)
+        affiliations.setSelectionMode(Grid.SelectionMode.NONE)
         //add the add button
+        addAffiliationButton = new Button("Add Affiliation")
+        addAffiliationButton.setIcon(VaadinIcons.PLUS)
+        addAffiliationButton.setEnabled(false)
+
+        buttonLayout.addComponent(addAffiliationButton,0)
     }
 
     private void generateAffiliationGrid() {
@@ -120,11 +132,9 @@ affiliations.setSelectionMode(Grid.SelectionMode.NONE)
                 String firstName = updatePersonViewModel.firstName
                 String lastName = updatePersonViewModel.lastName
                 String email = updatePersonViewModel.email
-                List<Affiliation> affiliations = new ArrayList()
-                affiliations.add(updatePersonViewModel.affiliation)
+                List<Affiliation> affiliations = updatePersonViewModel.affiliationList
 
                 if(updatePersonViewModel.outdatedPerson){
-                    affiliations.addAll(updatePersonViewModel.outdatedPerson.affiliations)
                     controller.updatePerson(updatePersonViewModel.outdatedPerson, firstName, lastName, title, email, affiliations)
                 }
 
@@ -138,5 +148,71 @@ affiliations.setSelectionMode(Grid.SelectionMode.NONE)
             }
         })
 
+        updatePersonViewModel.addPropertyChangeListener("affiliationValid",{
+            if(updatePersonViewModel.affiliationValid){
+                addAffiliationButton.setEnabled(true)
+            }else{
+                addAffiliationButton.setEnabled(false)
+            }
+        })
+
+        addAffiliationButton.addClickListener({
+            if(!updatePersonViewModel.affiliationList.contains(updatePersonViewModel.affiliation)){
+                updatePersonViewModel.affiliationList << updatePersonViewModel.affiliation
+                affiliations.dataProvider.refreshAll()
+                updatePersonViewModel.personUpdated = true
+            }else{
+                sharedViewModel.failureNotifications.add("Cannot add the selected affiliation. It was already associated with the person.")
+                addAffiliationButton.setEnabled(false)
+            }
+            resetAffiliation()
+        })
+
+        updatePersonViewModel.addPropertyChangeListener({it ->
+            if(updatePersonViewModel.outdatedPerson){
+                switch (it.propertyName) {
+                    case "academicTitle":
+                        boolean titleChanged = updatePersonViewModel.academicTitle != updatePersonViewModel.outdatedPerson.title.toString()
+                        updatePersonViewModel.personUpdated = updatePersonViewModel.academicTitleValid && titleChanged
+                        break
+                    case "firstName":
+                        boolean firstNameChanged = updatePersonViewModel.firstName != updatePersonViewModel.outdatedPerson.firstName
+                        updatePersonViewModel.personUpdated = updatePersonViewModel.firstNameValid && firstNameChanged
+                        break
+                    case "lastName":
+                        boolean lastNameChanged = updatePersonViewModel.lastName != updatePersonViewModel.outdatedPerson.lastName
+                        updatePersonViewModel.personUpdated = updatePersonViewModel.lastNameValid && lastNameChanged
+                        break
+                    case "email":
+                        boolean emailChanged = updatePersonViewModel.email != updatePersonViewModel.outdatedPerson.emailAddress
+                        updatePersonViewModel.personUpdated = updatePersonViewModel.emailValid && emailChanged
+                        break
+                    default:
+                        break
+                }
+                submitButton.enabled = allValuesValid()
+            }
+        })
+    }
+
+    private void resetAffiliation(){
+        organisationComboBox.selectedItem = organisationComboBox.clear()
+        addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
+        addressAdditionComboBox.setComponentError(null)
+    }
+
+    /**
+     * This is used to indicate whether all fields of this view are filled correctly.
+     * It relies on the separate fields for validation. It overrides the Method allValuesValid() of the CreatePersonView
+     * and makes the validity independent of an added affiliation. Furthermore, the person entry needs to be different to
+     * the person that needs to be updated.
+     *
+     * @return boolean which indicates if a person update can be triggered
+     */
+    protected boolean allValuesValid() {
+        return createPersonViewModel.firstNameValid \
+            && createPersonViewModel.lastNameValid \
+            && createPersonViewModel.emailValid
+            && updatePersonViewModel.personUpdated
     }
 }

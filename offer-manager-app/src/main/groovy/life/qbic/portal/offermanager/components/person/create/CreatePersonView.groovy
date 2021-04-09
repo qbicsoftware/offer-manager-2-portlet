@@ -44,6 +44,8 @@ class CreatePersonView extends VerticalLayout {
     Button abortButton
     Panel affiliationDetails
 
+    HorizontalLayout buttonLayout
+
     CreatePersonView(CreatePersonController controller, AppViewModel sharedViewModel, CreatePersonViewModel createPersonViewModel) {
         super()
         this.controller = controller
@@ -111,7 +113,7 @@ class CreatePersonView extends VerticalLayout {
         VerticalLayout affiliationPanel = new VerticalLayout(affiliationDetails)
         affiliationPanel.setMargin(false)
         affiliationPanel.setComponentAlignment(affiliationDetails, Alignment.TOP_LEFT)
-        HorizontalLayout buttonLayout = new HorizontalLayout(abortButton,
+        buttonLayout = new HorizontalLayout(abortButton,
                 submitButton)
         buttonLayout.setMargin(false)
         HorizontalLayout row4 = new HorizontalLayout(affiliationPanel, buttonLayout)
@@ -269,12 +271,12 @@ class CreatePersonView extends VerticalLayout {
                 createPersonViewModel.emailValid = true
             }
         })
-        this.organisationComboBox.addSelectionListener({ selection ->
-            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.organisationComboBox))
+        this.addressAdditionComboBox.addSelectionListener({ selection ->
+            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.addressAdditionComboBox))
             if (result.isError()) {
                 createPersonViewModel.affiliationValid = false
                 UserError error = new UserError(result.getErrorMessage())
-                organisationComboBox.setComponentError(error)
+                addressAdditionComboBox.setComponentError(error)
             } else {
                 createPersonViewModel.affiliationValid = true
             }
