@@ -233,7 +233,7 @@ class CreatePersonView extends VerticalLayout {
      * This method adds validation to the fields of this view
      */
     private void setupFieldValidators() {
-
+        Validator
         Validator<String> nameValidator =  Validator.from({String value -> (value && !value.trim().empty)}, "Please provide a valid name.")
         Validator<String> emailValidator = new EmailValidator("Please provide a valid email address.")
         Validator<? extends Object> selectionValidator = Validator.from({o -> o != null}, "Please make a selection.")

@@ -3,8 +3,8 @@ package life.qbic.portal.offermanager.components.offer.create
 import com.vaadin.data.ValidationResult
 import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
-import com.vaadin.data.converter.StringToDoubleConverter
 import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.data.validator.RegexpValidator
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
 import com.vaadin.shared.ui.grid.HeightMode
@@ -42,8 +42,8 @@ class SelectItemsView extends VerticalLayout{
     private List<ProductItemViewModel> sequencingProduct
     private List<ProductItemViewModel> projectManagementProduct
     private List<ProductItemViewModel> storageProduct
-    private List<ProductItemViewModel> primaryAnalyseProduct
-    private List<ProductItemViewModel> secondaryAnalyseProduct
+    private List<ProductItemViewModel> primaryAnalysisProduct
+    private List<ProductItemViewModel> secondaryAnalysisProduct
     private List<ProductItemViewModel> proteomicAnalysisProduct
     private List<ProductItemViewModel> metabolomicAnalysisProduct
 
@@ -100,15 +100,15 @@ class SelectItemsView extends VerticalLayout{
             }
         })
 
-        primaryAnalyseProduct = createOfferViewModel.primaryAnalysisProducts as ObservableList
-        primaryAnalyseProduct.addPropertyChangeListener({
+        primaryAnalysisProduct = createOfferViewModel.primaryAnalysisProducts as ObservableList
+        primaryAnalysisProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
               primaryAnalyseGrid.dataProvider.refreshAll()
             }
         })
 
-        secondaryAnalyseProduct = createOfferViewModel.secondaryAnalysisProducts as ObservableList
-        secondaryAnalyseProduct.addPropertyChangeListener({
+        secondaryAnalysisProduct = createOfferViewModel.secondaryAnalysisProducts as ObservableList
+        secondaryAnalysisProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
                 secondaryAnalyseGrid.dataProvider.refreshAll()
             }
@@ -273,11 +273,9 @@ class SelectItemsView extends VerticalLayout{
         this.sequencingGrid.setDataProvider(sequencingProductDataProvider)
         setupFilters(sequencingProductDataProvider, sequencingGrid)
 
-
         ListDataProvider<ProductItemViewModel> managementProductDataProvider = new ListDataProvider(createOfferViewModel.managementProducts)
         this.projectManagementGrid.setDataProvider(managementProductDataProvider)
         setupFilters(managementProductDataProvider, projectManagementGrid)
-
 
         ListDataProvider<ProductItemViewModel> primaryAnalysisProductDataProvider = new ListDataProvider(createOfferViewModel.primaryAnalysisProducts)
         this.primaryAnalyseGrid.setDataProvider(primaryAnalysisProductDataProvider)
@@ -351,31 +349,24 @@ class SelectItemsView extends VerticalLayout{
      */
     private void addSelectionListeners() {
         sequencingGrid.addSelectionListener({
-            createOfferViewModel.sequencingGridSelected = true})
-
+            setProductButtonStatus(applySequencing, amountSequencing, sequencingGrid)})
         primaryAnalyseGrid.addSelectionListener({
-            createOfferViewModel.primaryAnalyseGridSelected = true})
-
+            setProductButtonStatus(applyPrimaryAnalysis, amountPrimaryAnalysis, primaryAnalyseGrid)})
         secondaryAnalyseGrid.addSelectionListener({
-            createOfferViewModel.secondaryAnalyseGridSelected = true})
-
+            setProductButtonStatus(applySecondaryAnalysis, amountSecondaryAnalysis, secondaryAnalyseGrid)})
         proteomicsAnalysisGrid.addSelectionListener({
-            createOfferViewModel.proteomicsAnalysisGridSelected = true})
-
+            setProductButtonStatus(applyProteomicAnalysis, amountProteomicAnalysis, proteomicsAnalysisGrid)})
         metabolomicsAnalysisGrid.addSelectionListener({
-            createOfferViewModel.metabolomicsAnalysisGridSelected = true})
-
+            setProductButtonStatus(applyMetabolomicAnalysis, amountMetabolomicAnalysis, metabolomicsAnalysisGrid)})
         projectManagementGrid.addSelectionListener({
-            createOfferViewModel.projectManagementGridSelected = true})
-
+            setProductButtonStatus(applyProjectManagement, amountProjectManagement, projectManagementGrid)})
         storageGrid.addSelectionListener({
-            createOfferViewModel.storageGridSelected = true})
-    }
+            setProductButtonStatus(applyDataStorage, amountDataStorage, storageGrid)})
+        }
     /**
      * Adds listener to handle the logic after the user selected a product
      */
     private void addClickListeners() {
-
         addProductButtonListener(applySequencing, sequencingGrid, amountSequencing)
         addProductButtonListener(applyPrimaryAnalysis, primaryAnalyseGrid, amountPrimaryAnalysis)
         addProductButtonListener(applySecondaryAnalysis, secondaryAnalyseGrid, amountSecondaryAnalysis)
@@ -387,13 +378,14 @@ class SelectItemsView extends VerticalLayout{
     }
 
     private void addValueChangeListeners() {
-        addProductFieldListener(amountSequencing, createOfferViewModel.sequencingQuantity)
-        addProductFieldListener(amountSequencing, createOfferViewModel.primaryAnalysisQuantity)
-        addProductFieldListener(amountSequencing, createOfferViewModel.secondaryAnalysisQuantity)
-        addProductFieldListener(amountSequencing, createOfferViewModel.proteomicsAnalysisQuantity)
-        addProductFieldListener(amountSequencing, createOfferViewModel.metabolomicsAnalysisQuantity)
-        addProductFieldListener(amountSequencing, createOfferViewModel.projectManagementQuantity)
-        addProductFieldListener(amountSequencing, createOfferViewModel.storageQuantity)
+        addProductFieldListener(amountSequencing, sequencingGrid, applySequencing)
+        addProductFieldListener(amountPrimaryAnalysis, primaryAnalyseGrid, applyPrimaryAnalysis)
+        addProductFieldListener(amountSecondaryAnalysis, secondaryAnalyseGrid, applySecondaryAnalysis)
+        addProductFieldListener(amountProteomicAnalysis, proteomicsAnalysisGrid, applyProteomicAnalysis)
+        addProductFieldListener(amountMetabolomicAnalysis, metabolomicsAnalysisGrid, applyMetabolomicAnalysis)
+        addProductFieldListener(amountProjectManagement, projectManagementGrid, applyProjectManagement)
+        addProductFieldListener(amountDataStorage, storageGrid, applyDataStorage)
+
     }
 
     private void addPropertyChangeListener() {
@@ -406,54 +398,62 @@ class SelectItemsView extends VerticalLayout{
         })
     }
 
-    private void addProductButtonListener(Button productButton, Grid<ProductItemViewModel> productGrid, TextField productTextField){
+    protected void addProductButtonListener(Button productButton, Grid<ProductItemViewModel> productGrid, TextField productTextField){
 
         productButton.addClickListener({
-            if(productGrid.getSelectedItems() != null){
-                String amount = productTextField.getValue()
-                try{
-                    if(amount != null && amount.isNumber()){
-                        productGrid.getSelectedItems().each {
-                            if(Double.parseDouble(amount) >= 0.0){
-                                it.setQuantity(Double.parseDouble(amount))
-                                updateOverviewGrid(it)
-                            }
-                        }
-                        productGrid.getDataProvider().refreshAll()
-                    }
+            String amount = productTextField.getValue()
+            try{
+                productGrid.getSelectedItems().each {
+                    if(Double.parseDouble(amount) >= 0.0){
+                        it.setQuantity(Double.parseDouble(amount))
+                        updateOverviewGrid(it)}
                 }
+                productGrid.getDataProvider().refreshAll()}
                 catch(Exception e){
                     viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
                 }
-            }
+
             productTextField.clear()
             productGrid.deselectAll()
             productButton.setEnabled(false)
+            productTextField.setComponentError(null)
         })
     }
 
-    private void addProductFieldListener(TextField productField, double productQuantity){
+    private void addProductFieldListener(TextField productField, Grid productGrid, Button productButton) {
 
-        Validator<String> nonEmptyStringValidator =  Validator.from({String value -> (value && !value.trim().empty)}, "Empty input not supported.")
-        Validator<Object> stringIsNumberValidator = Validator.from({String value -> new StringToDoubleConverter(value)}, "Input must be a number")
-
-        productField.addValueChangeListener({event ->
+        Validator<String> nonEmptyStringValidator = Validator.from({ String value -> (value && !value.trim().empty) }, "Empty input not supported.")
+        Validator<String> stringIsNumberValidator = new RegexpValidator("This is not a valid number!", "[-]?[0-9]*\\.?[0-9]+")
+        productField.addValueChangeListener({ event ->
             ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(productField))
             ValidationResult noNumberResult = stringIsNumberValidator.apply(event.getValue(), new ValueContext(productField))
+            //Input in field is empty
             if (emptyResult.isError()) {
                 UserError error = new UserError(emptyResult.getErrorMessage())
+                productField.componentError = null
                 productField.setComponentError(error)
-            }
-            //ToDo find out why this error is thrown
-            else if (noNumberResult.isError()){
+                setProductButtonStatus(productButton, productField, productGrid)}
+            //Input in field is not a number
+            else if (noNumberResult.isError()) {
                 UserError error = new UserError(noNumberResult.getErrorMessage())
+                productField.componentError = null
                 productField.setComponentError(error)
-            }
+                setProductButtonStatus(productButton, productField, productGrid)}
+            //Input is a valid Number
             else {
-                productQuantity = Double.parseDouble(event.getValue())
+                productField.componentError = null
+                setProductButtonStatus(productButton, productField, productGrid)
             }
         })
     }
+
+    private void setProductButtonStatus(Button productButton, TextField productField, Grid productGrid){
+        if(productGrid.getSelectedItems() && !productField.componentError && !productField.empty){
+            productButton.setEnabled(true)}
+        else{
+            productButton.setEnabled(false)}
+    }
+
 
     /**
      * This method should be called whenever the quantity of a ProductItemViewModel changes. It updates the items in overview grid respectively
