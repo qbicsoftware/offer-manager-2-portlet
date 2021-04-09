@@ -200,6 +200,14 @@ class UpdatePersonView extends CreatePersonView{
         addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
     }
 
+    /**
+     * This is used to indicate whether all fields of this view are filled correctly.
+     * It relies on the separate fields for validation. It overrides the Method allValuesValid() of the CreatePersonView
+     * and makes the validity independent of an added affiliation. Furthermore, the person entry needs to be different to
+     * the person that needs to be updated.
+     *
+     * @return boolean which indicates if a person update can be triggered
+     */
     protected boolean allValuesValid() {
         return createPersonViewModel.firstNameValid \
             && createPersonViewModel.lastNameValid \
