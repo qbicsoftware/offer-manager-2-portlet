@@ -53,7 +53,7 @@ class ProjectManagerSelectionView extends VerticalLayout{
         title of what the view is about.
          */
         final def title = new HorizontalLayout()
-        final def label = new Label("Select A Project Manager")
+        final def label = new Label("Select Project Manager")
         label.addStyleName(ValoTheme.LABEL_HUGE)
         title.addComponent(label)
         this.addComponent(title)
