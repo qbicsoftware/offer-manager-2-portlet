@@ -35,6 +35,22 @@ class CreateOfferViewModel {
     List<ProductItemViewModel> proteomicAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
     List<ProductItemViewModel> metabolomicAnalysisProduct = new ObservableList(new ArrayList<ProductItemViewModel>())
 
+    @Bindable Boolean sequencingGridSelected
+    @Bindable Boolean projectManagementGridSelected
+    @Bindable Boolean storageGridSelected
+    @Bindable Boolean primaryAnalysisGridSelected
+    @Bindable Boolean secondaryAnalysisGridSelected
+    @Bindable Boolean proteomicsAnalysisGridSelected
+    @Bindable Boolean metabolomicsAnalysisGridSelected
+
+    @Bindable Boolean sequencingQuantityValid
+    @Bindable Boolean projectManagementQuantityValid
+    @Bindable Boolean storageQuantityValid
+    @Bindable Boolean primaryAnalysisQuantityValid
+    @Bindable Boolean secondaryAnalysisQuantityValid
+    @Bindable Boolean proteomicsAnalysisQuantityValid
+    @Bindable Boolean metabolomicsAnalysisQuantityValid
+
     ObservableList productItems = new ObservableList(new ArrayList<ProductItemViewModel>())
     ObservableList foundCustomers = new ObservableList(new ArrayList<Customer>())
     ObservableList availableProjectManagers = new ObservableList(new ArrayList<ProjectManager>())
