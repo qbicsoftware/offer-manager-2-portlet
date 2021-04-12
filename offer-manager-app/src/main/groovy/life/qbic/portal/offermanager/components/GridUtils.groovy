@@ -2,11 +2,15 @@ package life.qbic.portal.offermanager.components
 
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.shared.ui.ValueChangeMode
+import com.vaadin.ui.DateField
 import com.vaadin.ui.Grid
 import com.vaadin.ui.TextField
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import org.apache.commons.lang3.StringUtils
+
+import java.time.ZoneId
+import java.time.chrono.ChronoLocalDate
 
 /**
  * A helper class with static utility functions for Vaadin Grids.
@@ -43,5 +47,30 @@ class GridUtils {
         filterTextField.setPlaceholder("Filter by " + columnId)
         headerRow.getCell(column).setComponent(filterTextField)
         filterTextField.setSizeFull()
+    }
+
+    /**
+     * Provides a filter field into a header row of a grid for a given column of type Date.
+     *
+     * The current implementation filters a date column based on day and month
+     *
+     * @param dataProvider The grid's {@link ListDataProvider}
+     * @param column The date column to add the filter to
+     * @param headerRow The{@link com.vaadin.ui.components.grid.HeaderRow} of the {@link Grid}, where the filter input field is added
+     */
+    static <T> void setupDateColumnFilter(ListDataProvider<T> dataProvider,
+                                      Grid.Column<T, Date> column,
+                                      HeaderRow headerRow) {
+        DateField dateFilterField = new DateField()
+        dateFilterField.addValueChangeListener(event -> {
+            dataProvider.addFilter(element ->
+                    Date.from(dateFilterField.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()).equals(column.getValueProvider().apply(element))
+            )
+        })
+        //filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
+        //filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)
+
+        headerRow.getCell(column).setComponent(dateFilterField)
+        dateFilterField.setSizeFull()
     }
 }

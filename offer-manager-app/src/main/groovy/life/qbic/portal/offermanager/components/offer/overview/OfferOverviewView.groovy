@@ -19,6 +19,7 @@ import com.vaadin.ui.themes.ValoTheme
 import com.vaadin.ui.Grid.Column
 import com.vaadin.ui.renderers.TextRenderer
 import groovy.util.logging.Log4j2
+
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
@@ -127,8 +128,9 @@ class OfferOverviewView extends FormLayout {
     }
 
     private void setupGrid() {
-        def dateColumn = overviewGrid.addColumn({ overview -> overview.getModificationDate() })
+        Column<Offer, Date> dateColumn = overviewGrid.addColumn({ overview -> overview.getModificationDate() })
                 .setCaption("Creation Date").setId("CreationDate")
+        //dateColumn.setRenderer(date -> Date.AMERICAN_DATE_FORMAT.format(date), new TextRenderer())
         overviewGrid.addColumn({overview -> overview.offerId.toString()})
                 .setCaption("Offer ID").setId("OfferId")
         overviewGrid.addColumn({overview -> overview.getProjectTitle()})
@@ -152,6 +154,7 @@ class OfferOverviewView extends FormLayout {
 
     private void setupFilters(ListDataProvider<OfferOverview> offerOverviewDataProvider) {
         HeaderRow customerFilterRow = overviewGrid.appendHeaderRow()
+
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("OfferId"),
                 customerFilterRow)
@@ -160,6 +163,9 @@ class OfferOverviewView extends FormLayout {
                 customerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("Customer"),
+                customerFilterRow)
+        GridUtils.setupDateColumnFilter(offerOverviewDataProvider,
+                overviewGrid.getColumn("CreationDate"),
                 customerFilterRow)
     }
 
