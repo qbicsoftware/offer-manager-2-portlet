@@ -52,7 +52,7 @@ class GridUtils {
     /**
      * Provides a filter field into a header row of a grid for a given column of type Date.
      *
-     * The current implementation filters a date column based on day and month
+     * The current implementation filters a date column based on a picked date
      *
      * @param dataProvider The grid's {@link ListDataProvider}
      * @param column The date column to add the filter to
@@ -67,8 +67,7 @@ class GridUtils {
                     Date.from(dateFilterField.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()).equals(column.getValueProvider().apply(element))
             )
         })
-        //filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
-        //filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)
+        dateFilterField.addStyleName(ValoTheme.TEXTFIELD_TINY)
 
         headerRow.getCell(column).setComponent(dateFilterField)
         dateFilterField.setSizeFull()
