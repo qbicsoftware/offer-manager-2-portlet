@@ -25,6 +25,8 @@ import life.qbic.business.offers.Currency
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.AppViewModel
 
+import java.util.concurrent.atomic.AtomicBoolean
+
 /**
  * This class generates a Layout in which the user
  * can select the the different packages requested by the customer.
@@ -76,6 +78,27 @@ class SelectItemsView extends VerticalLayout{
     TextField amountMetabolomicAnalysis
     TextField amountDataStorage
 
+    /**
+     * Contains regex for filtering the different product types
+     *
+     * This enum stores the regex for validating a user input and differences between an atomic product
+     * which only allows integer input and a partial product which allows double input.
+     *
+     */
+    enum ProductTypeRegex {
+        ATOMIC("^[0-9]+\$"),
+        PARTIAL("[-]?[0-9]*\\.?[0-9]+"),
+
+        private String productType
+
+        ProductTypeRegex(String productType) {
+            this.productType = productType;
+        }
+
+        String getType() {
+            return this.type;
+        }
+    }
 
     SelectItemsView(CreateOfferViewModel createOfferViewModel, AppViewModel viewModel){
         this.createOfferViewModel = createOfferViewModel
@@ -238,7 +261,6 @@ class SelectItemsView extends VerticalLayout{
         HorizontalLayout overview = new HorizontalLayout(overviewGrid)
         overview.setSizeFull()
 
-
         generateProductGrid(sequencingGrid)
         generateProductGrid(primaryAnalyseGrid)
         generateProductGrid(secondaryAnalyseGrid)
@@ -251,7 +273,6 @@ class SelectItemsView extends VerticalLayout{
 
         //make the overview over selected items grow dynamically
         overviewGrid.setHeightMode(HeightMode.UNDEFINED)
-
 
         TabSheet packageAccordion = new TabSheet()
         packageAccordion.addTab(seqLayout,"Sequencing")
@@ -345,61 +366,30 @@ class SelectItemsView extends VerticalLayout{
             new Exception("Unexpected exception in building the product item grid", e)
         }
     }
-
     /**
      * Adds listener to handle the logic after the user selected a product
      */
     private void addSelectionListeners() {
         sequencingGrid.addSelectionListener({
-            if(it.getFirstSelectedItem()){
-                createOfferViewModel.sequencingGridSelected = true
-            }
-            else{
-                createOfferViewModel.sequencingGridSelected = false
-            }
+            createOfferViewModel.sequencingGridSelected = it.getFirstSelectedItem().isPresent()
         })
         primaryAnalyseGrid.addSelectionListener({
             createOfferViewModel.primaryAnalysisGridSelected = it.getFirstSelectedItem().isPresent()
         })
         secondaryAnalyseGrid.addSelectionListener({
-            if(it.getFirstSelectedItem()){
-                createOfferViewModel.secondaryAnalysisGridSelected= true
-            }
-            else{
-                createOfferViewModel.secondaryAnalysisGridSelected = false
-            }
+            createOfferViewModel.secondaryAnalysisGridSelected = it.getFirstSelectedItem().isPresent()
         })
         proteomicsAnalysisGrid.addSelectionListener({
-            if(it.getFirstSelectedItem()){
-                createOfferViewModel.proteomicsAnalysisGridSelected = true
-            }
-            else{
-                createOfferViewModel.proteomicsAnalysisGridSelected = false
-            }
+            createOfferViewModel.proteomicsAnalysisGridSelected = it.getFirstSelectedItem().isPresent()
         })
         metabolomicsAnalysisGrid.addSelectionListener({
-            if(it.getFirstSelectedItem()){
-                createOfferViewModel.metabolomicsAnalysisGridSelected = true
-            }
-            else{
-                createOfferViewModel.metabolomicsAnalysisGridSelected = false
-            }
+            createOfferViewModel.metabolomicsAnalysisGridSelected = it.getFirstSelectedItem().isPresent()
         })
         projectManagementGrid.addSelectionListener({
-            if(it.getFirstSelectedItem()){
-                createOfferViewModel.projectManagementGridSelected = true
-            }
-            else{
-                createOfferViewModel.projectManagementGridSelected = false
-            }
+            createOfferViewModel.projectManagementGridSelected = it.getFirstSelectedItem().isPresent()
         })
         storageGrid.addSelectionListener({
-            if(it.getFirstSelectedItem()){
-                createOfferViewModel.storageGridSelected = true
-            }
-            else{
-                createOfferViewModel.storageGridSelected = false
-            }
+            createOfferViewModel.storageGridSelected = it.getFirstSelectedItem().isPresent()
         })
     }
     /**
@@ -413,17 +403,21 @@ class SelectItemsView extends VerticalLayout{
         addProductButtonListener(applyMetabolomicAnalysis, metabolomicsAnalysisGrid, amountMetabolomicAnalysis)
         addProductButtonListener(applyProjectManagement, projectManagementGrid, amountProjectManagement)
         addProductButtonListener(applyDataStorage, storageGrid, amountDataStorage)
-
     }
 
     private void addValueChangeListeners() {
-        createOfferViewModel.sequencingQuantityValid = addQuantityFieldValidator(amountSequencing, true)
-        createOfferViewModel.primaryAnalysisQuantityValid = addQuantityFieldValidator(amountPrimaryAnalysis, true)
-        createOfferViewModel.secondaryAnalysisQuantityValid = addQuantityFieldValidator(amountSecondaryAnalysis, true)
-        createOfferViewModel.proteomicsAnalysisQuantityValid = addQuantityFieldValidator(amountProteomicAnalysis, true )
-        createOfferViewModel.metabolomicsAnalysisQuantityValid = addQuantityFieldValidator(amountMetabolomicAnalysis, true)
-        createOfferViewModel.projectManagementQuantityValid = addQuantityFieldValidator(amountProjectManagement, false)
-        createOfferViewModel.storageQuantityValid = addQuantityFieldValidator(amountDataStorage, false)
+
+        Validator<String> integerValidator = new RegexpValidator("Please provide an Integer Input", ProductTypeRegex.ATOMIC.productType)
+        Validator<String> doubleValidator = new RegexpValidator("Please provide a Double Input", ProductTypeRegex.PARTIAL.productType)
+
+        //ToDo Find a way to pass by reference since this doesn't work
+        createOfferViewModel.sequencingQuantityValid = addQuantityFieldValidator(amountSequencing, integerValidator)
+        createOfferViewModel.primaryAnalysisQuantityValid = addQuantityFieldValidator(amountPrimaryAnalysis, integerValidator)
+        createOfferViewModel.secondaryAnalysisQuantityValid = addQuantityFieldValidator(amountSecondaryAnalysis, integerValidator)
+        createOfferViewModel.proteomicsAnalysisQuantityValid = addQuantityFieldValidator(amountProteomicAnalysis, integerValidator)
+        createOfferViewModel.metabolomicsAnalysisQuantityValid = addQuantityFieldValidator(amountMetabolomicAnalysis, integerValidator)
+        createOfferViewModel.projectManagementQuantityValid = addQuantityFieldValidator(amountProjectManagement, doubleValidator)
+        createOfferViewModel.storageQuantityValid = addQuantityFieldValidator(amountDataStorage, doubleValidator)
     }
 
     private void addPropertyChangeListener() {
@@ -434,26 +428,13 @@ class SelectItemsView extends VerticalLayout{
                 next.setEnabled(false)
             }
         })
-
         createOfferViewModel.addPropertyChangeListener({
             applySequencing.setEnabled(createOfferViewModel.sequencingGridSelected && createOfferViewModel.sequencingQuantityValid)
-        })
-        createOfferViewModel.addPropertyChangeListener({
             applyPrimaryAnalysis.setEnabled(createOfferViewModel.primaryAnalysisGridSelected && createOfferViewModel.primaryAnalysisQuantityValid)
-        })
-        createOfferViewModel.addPropertyChangeListener({
             applySecondaryAnalysis.setEnabled(createOfferViewModel.secondaryAnalysisGridSelected && createOfferViewModel.secondaryAnalysisQuantityValid)
-        })
-        createOfferViewModel.addPropertyChangeListener({
             applyProteomicAnalysis.setEnabled(createOfferViewModel.proteomicsAnalysisGridSelected && createOfferViewModel.proteomicsAnalysisQuantityValid)
-        })
-        createOfferViewModel.addPropertyChangeListener({
             applyMetabolomicAnalysis.setEnabled(createOfferViewModel.metabolomicsAnalysisGridSelected && createOfferViewModel.metabolomicsAnalysisQuantityValid)
-        })
-        createOfferViewModel.addPropertyChangeListener({
             applyProjectManagement.setEnabled(createOfferViewModel.projectManagementGridSelected && createOfferViewModel.projectManagementQuantityValid)
-        })
-        createOfferViewModel.addPropertyChangeListener({
             applyDataStorage.setEnabled(createOfferViewModel.storageGridSelected && createOfferViewModel.storageQuantityValid)
         })
     }
@@ -479,41 +460,28 @@ class SelectItemsView extends VerticalLayout{
         })
     }
 
-    private boolean addQuantityFieldValidator(TextField amountProductField, boolean isAtomic) {
+    private Boolean addQuantityFieldValidator(TextField amountProductField, Validator<String> numberValidator) {
 
-        Validator<String> nonEmptyStringValidator = Validator.from({ String value -> (value && !value.trim().empty) }, "Empty input not supported.")
-        Validator stringIsNumberValidator
-
-        //ToDo find out why this doesn'T work
-        if(isAtomic) {
-            stringIsNumberValidator = new IntegerRangeValidator("This is not a valid Integer", null, null)
-        }
-        else{
-            stringIsNumberValidator = new DoubleRangeValidator("This is not a valid number!", null,null)
-        }
-
+        Boolean productQuantityValid = false
+        amountProductField.componentError = null
+        Validator<String> nonEmptyStringValidator = Validator.from({String value -> (value && !value.trim().empty)}, "Empty input not supported.")
         amountProductField.addValueChangeListener({ event ->
             ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountProductField))
-            ValidationResult noNumberResult = stringIsNumberValidator.apply(event.getValue(), new ValueContext(amountProductField))
-            //Input in field is empty or not valid
-            if (emptyResult.isError()){
-                UserError error = new UserError(emptyResult.getErrorMessage())
-                amountProductField.componentError = null
+            ValidationResult numberResult = numberValidator.apply(event.getValue(), new ValueContext(amountProductField))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
                 amountProductField.setComponentError(error)
-                return false
             }
-            else if (noNumberResult.isError()) {
-                UserError error = new UserError(noNumberResult.getErrorMessage())
-                amountProductField.componentError = null
+            if (numberResult.isError()){
+                error = new UserError(emptyResult.getErrorMessage())
                 amountProductField.setComponentError(error)
-                return false
             }
-            //Input is a valid Number
-            else {
-                amountProductField.componentError = null
-                return true
+            else{
+                productQuantityValid = true
             }
         })
+        return productQuantityValid
     }
 
     /**

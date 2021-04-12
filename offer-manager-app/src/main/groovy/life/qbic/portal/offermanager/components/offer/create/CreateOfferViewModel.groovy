@@ -30,26 +30,26 @@ class CreateOfferViewModel {
     List<ProductItemViewModel> sequencingProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
     List<ProductItemViewModel> primaryAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
     List<ProductItemViewModel> secondaryAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> managementProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> storageProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
     List<ProductItemViewModel> proteomicAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
     List<ProductItemViewModel> metabolomicAnalysisProduct = new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<ProductItemViewModel> managementProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<ProductItemViewModel> storageProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
 
     @Bindable Boolean sequencingGridSelected
-    @Bindable Boolean projectManagementGridSelected
-    @Bindable Boolean storageGridSelected
     @Bindable Boolean primaryAnalysisGridSelected
     @Bindable Boolean secondaryAnalysisGridSelected
     @Bindable Boolean proteomicsAnalysisGridSelected
     @Bindable Boolean metabolomicsAnalysisGridSelected
+    @Bindable Boolean projectManagementGridSelected
+    @Bindable Boolean storageGridSelected
 
     @Bindable Boolean sequencingQuantityValid
-    @Bindable Boolean projectManagementQuantityValid
-    @Bindable Boolean storageQuantityValid
     @Bindable Boolean primaryAnalysisQuantityValid
     @Bindable Boolean secondaryAnalysisQuantityValid
     @Bindable Boolean proteomicsAnalysisQuantityValid
     @Bindable Boolean metabolomicsAnalysisQuantityValid
+    @Bindable Boolean projectManagementQuantityValid
+    @Bindable Boolean storageQuantityValid
 
     ObservableList productItems = new ObservableList(new ArrayList<ProductItemViewModel>())
     ObservableList foundCustomers = new ObservableList(new ArrayList<Customer>())
