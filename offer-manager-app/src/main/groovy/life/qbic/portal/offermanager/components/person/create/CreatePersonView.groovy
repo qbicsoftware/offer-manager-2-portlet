@@ -82,7 +82,7 @@ class CreatePersonView extends VerticalLayout {
 
         this.addressAdditionComboBox = new ComboBox<>("Address Addition")
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
-        addressAdditionComboBox.setItemCaptionGenerator({it.addressAddition})
+        addressAdditionComboBox.setItemCaptionGenerator({(it.addressAddition == ""|| it.addressAddition == " ")? "no address addition" : it.addressAddition})
         addressAdditionComboBox.setEnabled(false)
 
         this.submitButton = new Button("Create Person")
@@ -231,6 +231,7 @@ class CreatePersonView extends VerticalLayout {
         this.addressAdditionComboBox.setDataProvider(dataProvider)
         dataProvider.setSortOrder({it.addressAddition}, SortDirection.ASCENDING)
     }
+
     /**
      * This method adds validation to the fields of this view
      */
