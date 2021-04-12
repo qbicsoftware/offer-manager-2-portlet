@@ -67,7 +67,7 @@ class GridUtils {
                     Date.from(dateFilterField.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()).equals(column.getValueProvider().apply(element))
             )
         })
-        dateFilterField.addStyleName(ValoTheme.TEXTFIELD_TINY)
+        dateFilterField.addStyleName(ValoTheme.DATEFIELD_TINY)
 
         headerRow.getCell(column).setComponent(dateFilterField)
         dateFilterField.setSizeFull()
