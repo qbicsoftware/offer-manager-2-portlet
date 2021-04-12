@@ -130,7 +130,6 @@ class OfferOverviewView extends FormLayout {
     private void setupGrid() {
         Column<Offer, Date> dateColumn = overviewGrid.addColumn({ overview -> overview.getModificationDate() })
                 .setCaption("Creation Date").setId("CreationDate")
-        //dateColumn.setRenderer(date -> Date.AMERICAN_DATE_FORMAT.format(date), new TextRenderer())
         overviewGrid.addColumn({overview -> overview.offerId.toString()})
                 .setCaption("Offer ID").setId("OfferId")
         overviewGrid.addColumn({overview -> overview.getProjectTitle()})
