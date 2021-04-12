@@ -167,10 +167,10 @@ class AppView extends VerticalLayout {
 
         TomatoFeatures() {
             this.createOfferBtn = new Button("New Offer")
-            this.createCustomerBtn = new Button("New Customer")
+            this.createCustomerBtn = new Button("New Person")
             this.createAffiliationBtn = new Button("New Affiliation")
             this.overviewBtn = new Button("Offer Overview")
-            this.searchPersonBtn = new Button("Search Customer")
+            this.searchPersonBtn = new Button("Search Person")
             this.maintainProductBtn = new Button("Maintain Products")
 
 
