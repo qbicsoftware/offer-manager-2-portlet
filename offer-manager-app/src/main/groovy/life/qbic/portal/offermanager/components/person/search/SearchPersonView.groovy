@@ -13,6 +13,7 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.GridUtils
 
@@ -34,6 +35,7 @@ class SearchPersonView extends FormLayout{
     Grid<Person> personGrid
     Panel selectedPersonInformation
     Button updatePerson
+    Grid<Affiliation> personAffiliations
     VerticalLayout detailsLayout
     VerticalLayout searchPersonLayout
 
@@ -66,12 +68,14 @@ class SearchPersonView extends FormLayout{
         detailsLayout.addComponent(detailsLabel)
         detailsLabel.addStyleName(ValoTheme.LABEL_LARGE)
 
+        personAffiliations = new Grid<>()
+        generateAffiliationGrid()
 
         detailsLayout.addComponent(selectedPersonInformation)
         detailsLayout.setVisible(false)
         detailsLayout.setMargin(false)
 
-        searchPersonLayout = new VerticalLayout(gridLabel,personGrid,detailsLayout)
+        searchPersonLayout = new VerticalLayout(gridLabel,personGrid,detailsLayout,personAffiliations)
         searchPersonLayout.setMargin(false)
 
         this.addComponents(searchPersonLayout,updatePersonView)
@@ -79,16 +83,43 @@ class SearchPersonView extends FormLayout{
         updatePersonView.setVisible(false)
     }
 
+    private def generateAffiliationGrid() {
+        try {
+            this.personAffiliations.addColumn({ affiliation -> affiliation.organisation }).setCaption("Organization")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.addressAddition }).setCaption("Address Addition")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.street }).setCaption("Street")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.postalCode }).setCaption("Postal Code")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.city }).setCaption("City")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.country }).setCaption("Country")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.category.value }).setCaption("Category")
+
+            personAffiliations.setHeightMode(HeightMode.UNDEFINED)
+
+        } catch (Exception e) {
+            new Exception("Unexpected exception in building the affiliation grid", e)
+        }
+
+    }
+
+    private ListDataProvider setupCustomerDataProvider(List<Affiliation> affiliations) {
+        def affiliationDataProvider = new ListDataProvider<>(affiliations)
+        this.personAffiliations.setDataProvider(affiliationDataProvider)
+        return affiliationDataProvider
+    }
+
     private void addListeners(){
 
         personGrid.addSelectionListener({
             if (it.firstSelectedItem.isPresent()) {
                 fillPanel(it.firstSelectedItem.get())
-                detailsLayout.setVisible(true)
+                selectedPersonInformation.setVisible(true)
                 updatePerson.setEnabled(true)
                 viewModel.selectedPerson = it.firstSelectedItem
+
+                //todo make it work here??
+                personAffiliations.setDataProvider(viewModel.selectedPerson.affiliations)
             } else {
-                detailsLayout.setVisible(false)
+                selectedPersonInformation.setVisible(false)
             }
         })
 
@@ -121,16 +152,6 @@ class SearchPersonView extends FormLayout{
         content.addComponent(new Label("<strong>${person.title == AcademicTitle.NONE ? "" : person.title} ${person.firstName} ${person.lastName}</strong>", ContentMode.HTML))
         content.addComponent(new Label("${person.emailAddress}", ContentMode.HTML))
 
-
-        person.affiliations.each { affiliation ->
-            content.addComponent(new Label("<strong>${affiliation.category.value}</strong>", ContentMode.HTML))
-            content.addComponent(new Label("${affiliation.organisation}"))
-            if (affiliation.addressAddition) {
-                content.addComponent(new Label("${affiliation.addressAddition}"))
-            }
-            content.addComponent(new Label("${affiliation.street}"))
-            content.addComponent(new Label("${affiliation.postalCode} ${affiliation.city} - ${affiliation.country}"))
-        }
         content.setMargin(true)
         content.setSpacing(false)
 
