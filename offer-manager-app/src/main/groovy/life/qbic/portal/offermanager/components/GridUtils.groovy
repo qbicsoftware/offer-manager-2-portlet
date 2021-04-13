@@ -9,6 +9,7 @@ import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import org.apache.commons.lang3.StringUtils
 
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.chrono.ChronoLocalDate
 
@@ -64,12 +65,21 @@ class GridUtils {
         DateField dateFilterField = new DateField()
         dateFilterField.addValueChangeListener(event -> {
             dataProvider.addFilter(element ->
-                    Date.from(dateFilterField.getValue().atStartOfDay(ZoneId.systemDefault()).toInstant()).equals(column.getValueProvider().apply(element))
+                    isSameDate(dateFilterField.getValue(), column.getValueProvider().apply(element))
             )
         })
         dateFilterField.addStyleName(ValoTheme.DATEFIELD_TINY)
 
         headerRow.getCell(column).setComponent(dateFilterField)
         dateFilterField.setSizeFull()
+    }
+
+    private static boolean isSameDate(LocalDate localDate, Date date){
+        try{
+            Date dateFromLocal = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
+            return dateFromLocal == date
+        }catch(Exception ignore){
+            return false
+        }
     }
 }
