@@ -15,7 +15,7 @@
         <dependency>
             <groupId>life.qbic</groupId>
             <artifactId>offer-manager-domain</artifactId>
-            <version>1.0.0-alpha.6-SNAPSHOT</version>
+            <version>1.0.0-alpha.6</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
