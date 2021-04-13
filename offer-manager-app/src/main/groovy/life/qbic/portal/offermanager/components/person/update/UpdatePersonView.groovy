@@ -5,13 +5,10 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
+import com.vaadin.ui.Label
 import com.vaadin.ui.components.grid.HeaderRow
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.general.CommonPerson
-import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.person.create.CreatePersonController
@@ -33,7 +30,6 @@ class UpdatePersonView extends CreatePersonView{
     private Grid<Affiliation> affiliations
     private Button addAffiliationButton
 
-
     UpdatePersonView(CreatePersonController controller, AppViewModel sharedViewModel, UpdatePersonViewModel updatePersonViewModel) {
         super(controller, sharedViewModel, updatePersonViewModel)
         this.updatePersonViewModel = updatePersonViewModel
@@ -50,8 +46,13 @@ class UpdatePersonView extends CreatePersonView{
         affiliations = new Grid<>()
         generateAffiliationGrid()
         affiliations.setCaption("Current Affiliations")
-        this.addComponent(affiliations,2)
         affiliations.setSelectionMode(Grid.SelectionMode.NONE)
+
+        this.addComponent(affiliations,2)
+        //add a heading for adding a new affiliation
+        Label newAffiliation = new Label("Add a new affiliation")
+        this.addComponent(newAffiliation,3)
+
         //add the add button
         addAffiliationButton = new Button("Add Affiliation")
         addAffiliationButton.setIcon(VaadinIcons.PLUS)
@@ -62,6 +63,8 @@ class UpdatePersonView extends CreatePersonView{
 
     private void generateAffiliationGrid() {
         try {
+            this.affiliations.addColumn({ affiliation -> affiliation.category.value })
+                    .setCaption("Category").setId("Category")
             this.affiliations.addColumn({ affiliation -> affiliation.organisation })
                     .setCaption("Organisation").setId("Organisation")
             this.affiliations.addColumn({ affiliation -> affiliation.addressAddition })
