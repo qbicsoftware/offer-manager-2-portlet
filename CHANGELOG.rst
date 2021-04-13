@@ -31,6 +31,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Updating a person removes the old entry also from the customerResourceService and projectManagerResourceService (`#456 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/456>`_)
 
+* Replace 'customer' with 'person' in menu bar for the headings 'create customer' and 'search person' (`#473 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/473>`_)
+
 **Dependencies**
 
 **Deprecated**
