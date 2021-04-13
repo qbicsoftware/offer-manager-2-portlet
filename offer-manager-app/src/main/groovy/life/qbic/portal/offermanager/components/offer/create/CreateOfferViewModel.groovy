@@ -54,14 +54,14 @@ class CreateOfferViewModel {
 
     Optional<Offer> savedOffer = Optional.empty()
 
-    private final CustomerResourceService customerService
+    private final CustomerResourceService customerResourceService
     private final ProductsResourcesService productsResourcesService
     private final ProjectManagerResourceService managerResourceService
 
-    CreateOfferViewModel(CustomerResourceService customerService,
+    CreateOfferViewModel(CustomerResourceService customerResourceService,
                          ProjectManagerResourceService managerResourceService,
                          ProductsResourcesService productsResourcesService) {
-        this.customerService = customerService
+        this.customerResourceService = customerResourceService
         this.productsResourcesService = productsResourcesService
         this.managerResourceService = managerResourceService
 
@@ -74,7 +74,7 @@ class CreateOfferViewModel {
         this.availableProjectManagers.clear()
         this.availableProjectManagers.addAll(managerResourceService.iterator())
         this.foundCustomers.clear()
-        this.foundCustomers.addAll(customerService.iterator())
+        this.foundCustomers.addAll(customerResourceService.iterator())
     }
 
     private void fetchProductData() {
@@ -82,12 +82,21 @@ class CreateOfferViewModel {
     }
 
     private void subscribeToResources() {
-        this.customerService.subscribe((Customer customer) -> {
-            this.foundCustomers.add(customer)
-        })
-        this.managerResourceService.subscribe((ProjectManager manager) -> {
-            this.availableProjectManagers.add(manager)
-        })
+        Subscription<Customer> customerSubscription = new Subscription<Customer>() {
+            @Override
+            void receive(Customer customer) {
+                refreshCustomers()
+            }
+        }
+        this.customerResourceService.subscribe(customerSubscription)
+
+        Subscription<ProjectManager> managerSubscription = new Subscription<ProjectManager>() {
+            @Override
+            void receive(ProjectManager projectManager) {
+                refreshManagers()
+            }
+        }
+        this.managerResourceService.subscribe(managerSubscription)
 
         Subscription<Product> productSubscription = new Subscription<Product>() {
             @Override
@@ -96,6 +105,30 @@ class CreateOfferViewModel {
             }
         }
         this.productsResourcesService.subscribe(productSubscription)
+    }
+
+    /**
+     * This method replaces the foundCustomer list with the list provided by the customerResourceService
+     *
+     * This method will be triggered when a service event is triggered and is intended
+     * to refresh the customers shown in the grid with the ones currently stored in tce service
+     */
+    protected void refreshCustomers(){
+        List<Customer> customers = customerResourceService.iterator().toList()
+        this.foundCustomers.clear()
+        foundCustomers.addAll(customers)
+    }
+
+    /**
+     * This method replaces the availableProjectManager list with the list provided by the managerResourceService
+     *
+     * This method will be triggered when a service event is triggered and is intended
+     * to refresh the project managers shown in the grid with the ones currently stored in the service
+     */
+    protected void refreshManagers(){
+        List<ProjectManager> projectManagers = managerResourceService.iterator().toList()
+        this.availableProjectManagers.clear()
+        availableProjectManagers.addAll(projectManagers)
     }
 
     private void refreshProducts(){

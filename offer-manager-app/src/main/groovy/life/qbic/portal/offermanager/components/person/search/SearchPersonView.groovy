@@ -1,9 +1,9 @@
 package life.qbic.portal.offermanager.components.person.search
 
 import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.shared.ui.grid.HeightMode
-import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
@@ -13,6 +13,7 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.GridUtils
 
@@ -34,13 +35,12 @@ class SearchPersonView extends FormLayout{
     Grid<Person> personGrid
     Panel selectedPersonInformation
     Button updatePerson
-    VerticalLayout detailsLayout
+    Grid<Affiliation> personAffiliations
     VerticalLayout searchPersonLayout
 
     SearchPersonView(SearchPersonViewModel searchPersonViewModel, CreatePersonView updatePersonView) {
         this.viewModel = searchPersonViewModel
         this.updatePersonView = updatePersonView
-
 
         initLayout()
         generatePersonGrid()
@@ -51,27 +51,17 @@ class SearchPersonView extends FormLayout{
         Label gridLabel = new Label("Available Person Entries")
         gridLabel.addStyleName(ValoTheme.LABEL_HUGE)
 
-
-        updatePerson = new Button("Update Person")
+        updatePerson = new Button("Update Person", VaadinIcons.EDIT)
         updatePerson.setEnabled(false)
-
-        detailsLayout = new VerticalLayout()
-        detailsLayout.addComponent(updatePerson)
-        detailsLayout.setComponentAlignment(updatePerson, Alignment.MIDDLE_RIGHT)
+        updatePerson.setStyleName(ValoTheme.BUTTON_LARGE)
 
         personGrid = new Grid<>()
         selectedPersonInformation = new Panel()
 
-        Label detailsLabel = new Label("Person Details: ")
-        detailsLayout.addComponent(detailsLabel)
-        detailsLabel.addStyleName(ValoTheme.LABEL_LARGE)
+        personAffiliations = new Grid<>("Current Affiliations")
+        generateAffiliationGrid()
 
-
-        detailsLayout.addComponent(selectedPersonInformation)
-        detailsLayout.setVisible(false)
-        detailsLayout.setMargin(false)
-
-        searchPersonLayout = new VerticalLayout(gridLabel,personGrid,detailsLayout)
+        searchPersonLayout = new VerticalLayout(gridLabel, updatePerson, personGrid, personAffiliations)
         searchPersonLayout.setMargin(false)
 
         this.addComponents(searchPersonLayout,updatePersonView)
@@ -79,22 +69,52 @@ class SearchPersonView extends FormLayout{
         updatePersonView.setVisible(false)
     }
 
+    private void generateAffiliationGrid() {
+        try {
+            this.personAffiliations.addColumn({ affiliation -> affiliation.category.value }).setCaption("Category")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.organisation }).setCaption("Organization")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.addressAddition }).setCaption("Address Addition")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.street }).setCaption("Street")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.postalCode }).setCaption("Postal Code")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.city }).setCaption("City")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.country }).setCaption("Country")
+
+            personAffiliations.setHeightMode(HeightMode.UNDEFINED)
+            personAffiliations.setSizeFull()
+            personAffiliations.setVisible(false)
+
+        } catch (Exception e) {
+            new Exception("Unexpected exception in building the affiliation grid", e)
+        }
+
+    }
+
+    private ListDataProvider setupCustomerDataProvider(List<Affiliation> affiliations) {
+        def affiliationDataProvider = new ListDataProvider<>(affiliations)
+        this.personAffiliations.setDataProvider(affiliationDataProvider)
+        return affiliationDataProvider
+    }
+
     private void addListeners(){
 
         personGrid.addSelectionListener({
             if (it.firstSelectedItem.isPresent()) {
                 fillPanel(it.firstSelectedItem.get())
-                detailsLayout.setVisible(true)
+                personAffiliations.setVisible(true)
                 updatePerson.setEnabled(true)
                 viewModel.selectedPerson = it.firstSelectedItem
+
+                setupCustomerDataProvider(viewModel.selectedPerson.affiliations)
             } else {
-                detailsLayout.setVisible(false)
+                personAffiliations.setVisible(false)
+                updatePerson.setEnabled(false)
             }
         })
 
         updatePerson.addClickListener({
             viewModel.personEvent.emit(viewModel.selectedPerson)
-            detailsLayout.setVisible(false)
+            personAffiliations.setVisible(false)
+            updatePerson.setEnabled(false)
             searchPersonLayout.setVisible(false)
             updatePersonView.setVisible(true)
         })
@@ -121,16 +141,6 @@ class SearchPersonView extends FormLayout{
         content.addComponent(new Label("<strong>${person.title == AcademicTitle.NONE ? "" : person.title} ${person.firstName} ${person.lastName}</strong>", ContentMode.HTML))
         content.addComponent(new Label("${person.emailAddress}", ContentMode.HTML))
 
-
-        person.affiliations.each { affiliation ->
-            content.addComponent(new Label("<strong>${affiliation.category.value}</strong>", ContentMode.HTML))
-            content.addComponent(new Label("${affiliation.organisation}"))
-            if (affiliation.addressAddition) {
-                content.addComponent(new Label("${affiliation.addressAddition}"))
-            }
-            content.addComponent(new Label("${affiliation.street}"))
-            content.addComponent(new Label("${affiliation.postalCode} ${affiliation.city} - ${affiliation.country}"))
-        }
         content.setMargin(true)
         content.setSpacing(false)
 

@@ -44,6 +44,8 @@ class CreatePersonView extends VerticalLayout {
     Button abortButton
     Panel affiliationDetails
 
+    HorizontalLayout buttonLayout
+
     CreatePersonView(CreatePersonController controller, AppViewModel sharedViewModel, CreatePersonViewModel createPersonViewModel) {
         super()
         this.controller = controller
@@ -80,9 +82,9 @@ class CreatePersonView extends VerticalLayout {
 
         this.addressAdditionComboBox = generateAffiliationSelector(createPersonViewModel.availableAffiliations)
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
-        addressAdditionComboBox.setItemCaptionGenerator({it.addressAddition})
+        addressAdditionComboBox.setItemCaptionGenerator({(it.addressAddition == ""|| it.addressAddition == " ")? "no address addition" : it.addressAddition})
+        addressAdditionComboBox.setEnabled(false)
         addressAdditionComboBox.setCaption("Address Addition")
-        addressAdditionComboBox.enabled = false
 
         this.submitButton = new Button("Create Person")
         submitButton.setIcon(VaadinIcons.USER_CHECK)
@@ -112,7 +114,7 @@ class CreatePersonView extends VerticalLayout {
         VerticalLayout affiliationPanel = new VerticalLayout(affiliationDetails)
         affiliationPanel.setMargin(false)
         affiliationPanel.setComponentAlignment(affiliationDetails, Alignment.TOP_LEFT)
-        HorizontalLayout buttonLayout = new HorizontalLayout(abortButton,
+        buttonLayout = new HorizontalLayout(abortButton,
                 submitButton)
         buttonLayout.setMargin(false)
         HorizontalLayout row4 = new HorizontalLayout(affiliationPanel, buttonLayout)
@@ -238,6 +240,7 @@ class CreatePersonView extends VerticalLayout {
                 createPersonViewModel.affiliation?.organisation)
         dataProvider.setSortOrder({it.addressAddition}, SortDirection.ASCENDING)
     }
+
     /**
      * This method adds validation to the fields of this view
      */
@@ -278,12 +281,12 @@ class CreatePersonView extends VerticalLayout {
                 createPersonViewModel.emailValid = true
             }
         })
-        this.affiliationComboBox.addSelectionListener({selection ->
-            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.affiliationComboBox))
+        this.addressAdditionComboBox.addSelectionListener({ selection ->
+            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.addressAdditionComboBox))
             if (result.isError()) {
                 createPersonViewModel.affiliationValid = false
                 UserError error = new UserError(result.getErrorMessage())
-                affiliationComboBox.setComponentError(error)
+                addressAdditionComboBox.setComponentError(error)
             } else {
                 createPersonViewModel.affiliationValid = true
             }

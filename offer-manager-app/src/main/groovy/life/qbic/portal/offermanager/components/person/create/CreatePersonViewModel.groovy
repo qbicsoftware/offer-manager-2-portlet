@@ -57,4 +57,27 @@ class CreatePersonViewModel {
             if (! (it in this.availableAffiliations) ) this.availableAffiliations.add(it)
         })
     }
+
+    /**
+     * Maps a list of affiliations to organisations
+     * @param affiliations A list of affiliations where some have the same organisation
+     * @return a list of organisations containing the associated affiliations
+     */
+    protected List<Organisation> toOrganisation(List<Affiliation> affiliations){
+
+        List<String> organisationNames = affiliations.collect{it.organisation}.toUnique()
+        List<Organisation> organisations = []
+
+        organisationNames.each {organisationName ->
+            List<Affiliation> organisationAffiliations = []
+            affiliations.each {affiliation ->
+                if(affiliation.organisation == organisationName) organisationAffiliations << affiliation
+            }
+
+            organisations << new Organisation(organisationName,organisationAffiliations)
+        }
+
+        return organisations
+    }
+
 }

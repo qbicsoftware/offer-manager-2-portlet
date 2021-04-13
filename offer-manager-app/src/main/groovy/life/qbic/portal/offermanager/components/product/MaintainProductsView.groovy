@@ -11,6 +11,8 @@ import com.vaadin.ui.Panel
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
+import com.vaadin.ui.Grid.Column
+import com.vaadin.ui.renderers.TextRenderer
 import life.qbic.business.offers.Currency
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.GridUtils
@@ -86,8 +88,9 @@ class MaintainProductsView extends VerticalLayout{
                 .setCaption("Product Id").setId("ProductId")
         productGrid.addColumn({ product -> product.productName })
                 .setCaption("Name").setId("ProductName")
-        productGrid.addColumn({ product -> Currency.getFormatterWithSymbol().format(product.unitPrice) })
-                .setCaption("Price").setId("UnitPrice")
+        // Format price by using a column renderer. This way the sorting will happen on the underlying double values, leading to expected behaviour.
+        Column<Product, Double> priceColumn = productGrid.addColumn({product -> product.unitPrice}).setCaption("Price").setId("UnitPrice")
+        priceColumn.setRenderer(price -> Currency.getFormatterWithSymbol().format(price), new TextRenderer())
         productGrid.addColumn({ product -> product.unit.value})
                 .setCaption("Unit").setId("ProductUnit")
 

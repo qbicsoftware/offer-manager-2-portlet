@@ -64,29 +64,55 @@ class CreatePersonPresenter implements CreatePersonOutput{
 
 
     void personCreated(Person person) {
-        Customer customer = new Customer.Builder(person.firstName,
-                person.lastName,
-                person.emailAddress)
-                .title(person.title)
-                .affiliations(person.affiliations).build()
-        ProjectManager manager = new ProjectManager.Builder(person.firstName,
-                person.lastName,
-                person.emailAddress)
-                .title(person.title)
-                .affiliations(person.affiliations).build()
+        Customer customer = translateToCustomer(person)
+        ProjectManager manager = translateToProjectManager(person)
         try{
-            if (createPersonViewModel.outdatedPerson) createPersonViewModel.personResourceService.removeFromResource(createPersonViewModel.outdatedPerson)
+            if (createPersonViewModel.outdatedPerson) {
+                    Iterator<Customer>  customerIterator = createPersonViewModel.customerService.iterator()
+                    Customer outdatedCustomer = translateToCustomer(createPersonViewModel.outdatedPerson)
+                    customerIterator.each {
+                        if (it == outdatedCustomer) {
+                            createPersonViewModel.customerService.removeFromResource(it)
+                        }
+                    }
+                    Iterator<ProjectManager>  managerIterator = createPersonViewModel.managerResourceService.iterator()
+                    ProjectManager outdatedManager = translateToProjectManager(createPersonViewModel.outdatedPerson)
+                    managerIterator.each{
+                    if(it == outdatedManager) {
+                        createPersonViewModel.managerResourceService.removeFromResource(it)
+                        }
+                    }
+                createPersonViewModel.personResourceService.removeFromResource(createPersonViewModel.outdatedPerson)
+                }
         }catch(Exception e){
             log.error e.message
             log.error e.stackTrace.join("\n")
         }
-
         createPersonViewModel.customerService.addToResource(customer)
         createPersonViewModel.managerResourceService.addToResource(manager)
         createPersonViewModel.personResourceService.addToResource(person)
         //reset the view model
         clearPersonData()
-
         viewModel.successNotifications.add("Successfully created new person entry.")
     }
+
+    private static Customer translateToCustomer(Person person){
+        Customer customer = new Customer.Builder(person.firstName,
+                person.lastName,
+                person.emailAddress)
+                .title(person.title)
+                .affiliations(person.affiliations).build()
+        return customer
+    }
+
+    private static ProjectManager translateToProjectManager(Person person){
+        ProjectManager manager = new ProjectManager.Builder(person.firstName,
+                person.lastName,
+                person.emailAddress)
+                .title(person.title)
+                .affiliations(person.affiliations).build()
+        return manager
+    }
+
 }
+

@@ -16,7 +16,10 @@ import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
+import com.vaadin.ui.Grid.Column
+import com.vaadin.ui.renderers.TextRenderer
 import groovy.util.logging.Log4j2
+
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
@@ -125,7 +128,7 @@ class OfferOverviewView extends FormLayout {
     }
 
     private void setupGrid() {
-        def dateColumn = overviewGrid.addColumn({ overview -> overview.getModificationDate() })
+        Column<Offer, Date> dateColumn = overviewGrid.addColumn({ overview -> overview.getModificationDate() })
                 .setCaption("Creation Date").setId("CreationDate")
         overviewGrid.addColumn({overview -> overview.offerId.toString()})
                 .setCaption("Offer ID").setId("OfferId")
@@ -136,8 +139,10 @@ class OfferOverviewView extends FormLayout {
         overviewGrid.addColumn({overview ->
             overview.getAssociatedProject().isPresent() ? overview.getAssociatedProject().get() :
                     "-"}).setCaption("Project ID").setId("ProjectID")
-        // fix formatting of price
-        overviewGrid.addColumn({overview -> Currency.getFormatterWithSymbol().format(overview.getTotalPrice())}).setCaption("Total Price")
+        // Format price by using a column renderer. This way the sorting will happen on the underlying double values, leading to expected behaviour.
+        Column<Offer, Double> priceColumn = overviewGrid.addColumn({overview -> overview.getTotalPrice()}).setCaption("Total Price")
+        priceColumn.setRenderer(price -> Currency.getFormatterWithSymbol().format(price), new TextRenderer())
+
         overviewGrid.sort(dateColumn, SortDirection.DESCENDING)
         overviewGrid.setWidthFull()
 
@@ -148,6 +153,7 @@ class OfferOverviewView extends FormLayout {
 
     private void setupFilters(ListDataProvider<OfferOverview> offerOverviewDataProvider) {
         HeaderRow customerFilterRow = overviewGrid.appendHeaderRow()
+
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("OfferId"),
                 customerFilterRow)
@@ -156,6 +162,9 @@ class OfferOverviewView extends FormLayout {
                 customerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("Customer"),
+                customerFilterRow)
+        GridUtils.setupDateColumnFilter(offerOverviewDataProvider,
+                overviewGrid.getColumn("CreationDate"),
                 customerFilterRow)
     }
 

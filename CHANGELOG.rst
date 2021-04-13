@@ -4,6 +4,40 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.0.0-alpha.6 (2021-04-13)
+-----------------------------------
+
+**Added**
+
+* Filter message in grids is now dependent on column ID (`#457 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/457>`_)
+
+* Add link to item table in offer pdf (`#469 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/469>`_)
+
+**Fixed**
+
+* Allow natural sorting of prices by their double value as opposed to their String representation (`#458 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/458>`_)
+
+* Update position of country string in affiliation summary during customer creation (`#453 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/453>`_)
+
+* Input fields of the CreateProductView are cleared after successful product creation(`#454 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/454>`_)
+
+* Shows the same affiliation organisation only once and maps it correctly to the address addition (`#448 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/448>`_)
+
+* Fix fail based on double clicking a customer in the SelectCustomerView for in the offer creation process (`#452 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/452>`_)
+
+* Make adding a new affiliation more intuitive (`#467 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/467>`_) (`#463 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/463>`_)
+
+* Harmonized Title and label structure across all views (`#455 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/455>`_)
+
+* Updating a person removes the old entry also from the customerResourceService and projectManagerResourceService (`#456 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/456>`_)
+
+* Make empty address addition explicitly selectable during person creation and update (`#474 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/474>`_)
+
+* Replace 'customer' with 'person' in menu bar for the headings 'create customer' and 'search person' (`#473 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/473>`_)
+
+**Dependencies**
+
+**Deprecated**
 
 1.0.0-alpha.5 (2021-04-07)
 -----------------------------------

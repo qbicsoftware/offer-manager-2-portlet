@@ -63,7 +63,7 @@ class CustomerSelectionView extends VerticalLayout{
      */
     private void initLayout(){
         affiliationLabelLayout = new VerticalLayout()
-        Label affiliationLabel = new Label("Select the Customers Affiliation")
+        Label affiliationLabel = new Label("Select Customer Affiliation")
         affiliationLabelLayout.addComponent(affiliationLabel)
         affiliationLabelLayout.setComponentAlignment(affiliationLabel, Alignment.MIDDLE_LEFT)
         affiliationLabelLayout.setMargin(false)
@@ -73,7 +73,7 @@ class CustomerSelectionView extends VerticalLayout{
         title of what the view is about.
          */
         final def title = new HorizontalLayout()
-        final def label = new Label("Select A Customer")
+        final def label = new Label("Select Customer")
         label.addStyleName(ValoTheme.LABEL_HUGE)
         title.addComponent(label)
         this.addComponent(title)
