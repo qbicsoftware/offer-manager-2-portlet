@@ -57,7 +57,6 @@ class CreatePersonViewModel {
             if (! (it in this.availableAffiliations) ) this.availableAffiliations.add(it)
         })
     }
-<<<<<<< HEAD
 
     /**
      * Maps a list of affiliations to organisations
@@ -81,6 +80,4 @@ class CreatePersonViewModel {
         return organisations
     }
 
-=======
->>>>>>> master
 }
