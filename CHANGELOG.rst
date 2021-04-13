@@ -29,7 +29,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Updating a person removes the old entry also from the customerResourceService and projectManagerResourceService (`#456 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/456>`_)
 
-* Make empty address addition explicit (`#474 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/474>`_)
+* Make empty address addition explicitly selectable during person creation and update (`#474 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/474>`_)
 
 **Dependencies**
 
