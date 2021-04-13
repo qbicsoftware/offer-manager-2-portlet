@@ -38,7 +38,7 @@ class CreatePersonView extends VerticalLayout {
     TextField firstNameField
     TextField lastNameField
     TextField emailField
-    ComboBox<Organisation> organisationComboBox
+    ComboBox<Affiliation> affiliationComboBox
     ComboBox<Affiliation> addressAdditionComboBox
     Button submitButton
     Button abortButton
@@ -77,13 +77,14 @@ class CreatePersonView extends VerticalLayout {
         emailField.setPlaceholder("Email address")
         emailField.setRequiredIndicatorVisible(true)
 
-        this.organisationComboBox = generateOrganisationSelector(createPersonViewModel.availableOrganisations)
-        organisationComboBox.setRequiredIndicatorVisible(true)
+        this.affiliationComboBox = generateAffiliationSelector(createPersonViewModel.availableAffiliations)
+        affiliationComboBox.setRequiredIndicatorVisible(true)
 
-        this.addressAdditionComboBox = new ComboBox<>("Address Addition")
+        this.addressAdditionComboBox = generateAffiliationSelector(createPersonViewModel.availableAffiliations)
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
         addressAdditionComboBox.setItemCaptionGenerator({(it.addressAddition == ""|| it.addressAddition == " ")? "no address addition" : it.addressAddition})
         addressAdditionComboBox.setEnabled(false)
+        addressAdditionComboBox.setCaption("Address Addition")
 
         this.submitButton = new Button("Create Person")
         submitButton.setIcon(VaadinIcons.USER_CHECK)
@@ -105,8 +106,8 @@ class CreatePersonView extends VerticalLayout {
         row2.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
         row2.setSizeFull()
 
-        HorizontalLayout row3 = new HorizontalLayout(organisationComboBox, addressAdditionComboBox)
-        row3.setComponentAlignment(organisationComboBox, Alignment.TOP_LEFT)
+        HorizontalLayout row3 = new HorizontalLayout(affiliationComboBox, addressAdditionComboBox)
+        row3.setComponentAlignment(affiliationComboBox, Alignment.TOP_LEFT)
         row3.setComponentAlignment(addressAdditionComboBox, Alignment.TOP_LEFT)
         row3.setSizeFull()
 
@@ -128,7 +129,7 @@ class CreatePersonView extends VerticalLayout {
         firstNameField.setSizeFull()
         lastNameField.setSizeFull()
         emailField.setSizeFull()
-        organisationComboBox.setSizeFull()
+        affiliationComboBox.setSizeFull()
         addressAdditionComboBox.setSizeFull()
         affiliationDetails.setSizeFull()
 
@@ -164,7 +165,9 @@ class CreatePersonView extends VerticalLayout {
             String newValue = it.newValue as String
             emailField.value = newValue ?: emailField.emptyValue
         })
-
+        this.affiliationComboBox.addValueChangeListener({
+            this.createPersonViewModel.setAffiliation(it.value)
+        })
         this.addressAdditionComboBox.addValueChangeListener({
             this.createPersonViewModel.setAffiliation(it.value)
         })
@@ -172,11 +175,12 @@ class CreatePersonView extends VerticalLayout {
         createPersonViewModel.addPropertyChangeListener("affiliation", {
             Affiliation newValue = it.newValue as Affiliation
             if (newValue) {
-                organisationComboBox.value = findOrganisation(newValue).get()
+                affiliationComboBox.value = newValue
+                refreshAddressAdditions()
                 addressAdditionComboBox.value = newValue
             } else {
+                affiliationComboBox.value = affiliationComboBox.emptyValue
                 addressAdditionComboBox.value = addressAdditionComboBox.emptyValue
-                organisationComboBox.value = organisationComboBox.emptyValue
             }
         })
         /*
@@ -207,7 +211,7 @@ class CreatePersonView extends VerticalLayout {
                     break
                 case "affiliationValid":
                     if (it.newValue || it.newValue == null) {
-                        organisationComboBox.componentError = null
+                        affiliationComboBox.componentError = null
                         addressAdditionComboBox.componentError = null
                     }
                     break
@@ -215,20 +219,25 @@ class CreatePersonView extends VerticalLayout {
                     break
             }
             submitButton.enabled = allValuesValid()
+            addressAdditionComboBox.enabled = !Objects.isNull(createPersonViewModel.affiliation)
         })
 
         /* refresh affiliation list and set added item as selected item. This is needed to keep this
         field up to date and select an affiliation after it was created */
-        createPersonViewModel.availableOrganisations.addPropertyChangeListener({
-            organisationComboBox.getDataProvider().refreshAll()
+        createPersonViewModel.availableAffiliations.addPropertyChangeListener({
+            affiliationComboBox.getDataProvider().refreshAll()
+            refreshAddressAdditions()
+            if (it instanceof ObservableList.ElementAddedEvent) {
+                affiliationComboBox.setSelectedItem(it.newValue as Affiliation)
+            }
         })
     }
 
-    protected void refreshAddressAdditions(Organisation organisation) {
-        addressAdditionComboBox.setEnabled(true)
-
-        ListDataProvider<Affiliation> dataProvider = organisation.affiliations
-        this.addressAdditionComboBox.setDataProvider(dataProvider)
+    protected void refreshAddressAdditions() {
+        ListDataProvider<Affiliation> dataProvider = this.addressAdditionComboBox.dataProvider as ListDataProvider<Affiliation>
+        dataProvider.clearFilters()
+        dataProvider.addFilterByValue({it.organisation },
+                createPersonViewModel.affiliation?.organisation)
         dataProvider.setSortOrder({it.addressAddition}, SortDirection.ASCENDING)
     }
 
@@ -285,19 +294,19 @@ class CreatePersonView extends VerticalLayout {
     }
 
     /**
-     * Generates a Combobox, which can be used for organisation selection by the user
-     * @param affiliationList list of all selectable affiliation organisations
+     * Generates a Combobox, which can be used for Affiliation selection by the user
+     * @param affiliationList list of all selectable affiliations
      * @return Vaadin Combobox component
      */
-    private static ComboBox<Organisation> generateOrganisationSelector(List<Organisation> organisations) {
-        ComboBox<Organisation> organisationComboBox =
-                new ComboBox<>("Organisation")
-        organisationComboBox.setPlaceholder("Select person affiliation organisation")
-        organisationComboBox.setItemCaptionGenerator({it.name})
-        ListDataProvider<Organisation> dataProvider = new ListDataProvider<>(organisations)
-        organisationComboBox.setDataProvider(dataProvider)
-        organisationComboBox.setEmptySelectionAllowed(false)
-        return organisationComboBox
+    private static ComboBox<Affiliation> generateAffiliationSelector(List<Affiliation> affiliationList) {
+        ComboBox<Affiliation> affiliationComboBox =
+                new ComboBox<>("Affiliation")
+        affiliationComboBox.setPlaceholder("Select person affiliation")
+        ListDataProvider<Affiliation> dataProvider = new ListDataProvider<>(affiliationList)
+        affiliationComboBox.setDataProvider(dataProvider)
+        affiliationComboBox.setEmptySelectionAllowed(false)
+        affiliationComboBox.setItemCaptionGenerator({it.organisation})
+        return affiliationComboBox
     }
 
     /**
@@ -350,15 +359,8 @@ class CreatePersonView extends VerticalLayout {
             }
         })
 
-        this.organisationComboBox.addSelectionListener({
-            if(it.selectedItem.isPresent()){
-                refreshAddressAdditions(it.selectedItem.get())
-            }
-        })
-
-        this.addressAdditionComboBox.addSelectionListener({
+        this.affiliationComboBox.addSelectionListener({
             updateAffiliationDetails(it.value)
-            createPersonViewModel.affiliation = it.value
         })
 
         this.abortButton.addClickListener({ event ->
@@ -382,8 +384,7 @@ class CreatePersonView extends VerticalLayout {
                 content.addComponent(new Label("${affiliation.addressAddition}"))
             }
             content.addComponent(new Label("${affiliation.street}"))
-            content.addComponent(new Label("${affiliation.postalCode} ${affiliation.city}"))
-            content.addComponent(new Label("${affiliation.country}"))
+            content.addComponent(new Label("${affiliation.postalCode} ${affiliation.city} - ${affiliation.country}"))
             content.setMargin(true)
             content.setSpacing(false)
             this.affiliationDetails.setContent(content)
@@ -401,7 +402,7 @@ class CreatePersonView extends VerticalLayout {
         firstNameField.clear()
         lastNameField.clear()
         emailField.clear()
-        organisationComboBox.selectedItem = organisationComboBox.clear()
+        affiliationComboBox.selectedItem = affiliationComboBox.clear()
         addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
         affiliationDetails.setContent(null)
 
@@ -412,19 +413,5 @@ class CreatePersonView extends VerticalLayout {
         createPersonViewModel.affiliationValid = null
         createPersonViewModel.outdatedPerson = null
 
-    }
-
-    /**
-     * Returns the organisation for an affiliation if one is available
-     * @param affiliation An affiliation for which an organisation is searched
-     * @return an organisation if one is present
-     */
-    protected Optional<Organisation> findOrganisation(Affiliation affiliation) {
-        Optional<Organisation> foundOrganisation = Optional.empty()
-        createPersonViewModel.availableOrganisations.each {
-            if(affiliation in (it as Organisation).affiliations) foundOrganisation = Optional.of((it as Organisation))
-        }
-
-        return foundOrganisation
     }
 }

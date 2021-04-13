@@ -41,11 +41,8 @@ class GridUtils {
         })
         filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
         filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)
-        String columnId = StringUtils.join(
-                StringUtils.splitByCharacterTypeCamelCase(column.id),
-                ' '
-        )
-        filterTextField.setPlaceholder("Filter by " + columnId)
+        filterTextField.setPlaceholder("Filter Me")
+
         headerRow.getCell(column).setComponent(filterTextField)
         filterTextField.setSizeFull()
     }
