@@ -11,6 +11,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Filter message in grids is now dependent on column ID (`#457 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/457>`_)
 
+* Add link to item table in offer pdf (`#469 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/469>`_)
+
 **Fixed**
 
 * Allow natural sorting of prices by their double value as opposed to their String representation (`#458 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/458>`_)
@@ -30,6 +32,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Updating a person removes the old entry also from the customerResourceService and projectManagerResourceService (`#456 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/456>`_)
 
 * Make empty address addition explicitly selectable during person creation and update (`#474 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/474>`_)
+
+* Replace 'customer' with 'person' in menu bar for the headings 'create customer' and 'search person' (`#473 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/473>`_)
 
 **Dependencies**
 

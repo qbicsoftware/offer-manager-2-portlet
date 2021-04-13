@@ -26,7 +26,7 @@ class AppView extends VerticalLayout {
 
     private final AppViewModel portletViewModel
 
-    private final CreatePersonView createCustomerView
+    private final CreatePersonView createPersonView
     private final CreateAffiliationView createAffiliationView
     private final CreateOfferView createOfferView
     private final List<Component> featureViews
@@ -37,7 +37,7 @@ class AppView extends VerticalLayout {
     private final CreateOfferView updateOfferView
 
     AppView(AppViewModel portletViewModel,
-            CreatePersonView createCustomerView,
+            CreatePersonView createPersonView,
             CreateAffiliationView createAffiliationView,
             CreateOfferView createOfferView,
             OfferOverviewView overviewView,
@@ -47,7 +47,7 @@ class AppView extends VerticalLayout {
             CreateProjectView createProjectView) {
         super()
         this.portletViewModel = portletViewModel
-        this.createCustomerView = createCustomerView
+        this.createPersonView = createPersonView
         this.createAffiliationView = createAffiliationView
         this.createOfferView = createOfferView
         this.featureViews = []
@@ -71,7 +71,7 @@ class AppView extends VerticalLayout {
 
     private void setupFeatureViews() {
         featureViews.addAll([
-                createCustomerView,
+                createPersonView,
                 createAffiliationView,
                 createOfferView,
                 overviewView,
@@ -99,7 +99,7 @@ class AppView extends VerticalLayout {
         //ToDo Find solution on how to best host different views in the portlet
         //gridLayout.addComponent(this.searchCustomerView)
         verticalLayout.addComponent(new TomatoFeatures())
-        verticalLayout.addComponent(this.createCustomerView)
+        verticalLayout.addComponent(this.createPersonView)
         verticalLayout.addComponent(this.createOfferView)
         verticalLayout.addComponents(this.createAffiliationView)
         verticalLayout.addComponent(this.overviewView)
@@ -154,7 +154,7 @@ class AppView extends VerticalLayout {
 
         Button createOfferBtn
 
-        Button createCustomerBtn
+        Button createPersonBtn
 
         Button createAffiliationBtn
 
@@ -167,17 +167,17 @@ class AppView extends VerticalLayout {
 
         TomatoFeatures() {
             this.createOfferBtn = new Button("New Offer")
-            this.createCustomerBtn = new Button("New Customer")
+            this.createPersonBtn = new Button("New Person")
             this.createAffiliationBtn = new Button("New Affiliation")
             this.overviewBtn = new Button("Offer Overview")
-            this.searchPersonBtn = new Button("Search Customer")
+            this.searchPersonBtn = new Button("Search Person")
             this.maintainProductBtn = new Button("Maintain Products")
 
 
             this.addComponents(
                     overviewBtn,
                     createOfferBtn,
-                    createCustomerBtn,
+                    createPersonBtn,
                     createAffiliationBtn,
                     searchPersonBtn,
                     maintainProductBtn
@@ -191,7 +191,7 @@ class AppView extends VerticalLayout {
 
         private void enableFeatures() {
             createOfferBtn.setEnabled(portletViewModel.createOfferFeatureEnabled)
-            createCustomerBtn.setEnabled(portletViewModel.createCustomerFeatureEnabled)
+            createPersonBtn.setEnabled(portletViewModel.createCustomerFeatureEnabled)
             searchPersonBtn.setEnabled(portletViewModel.searchCustomerFeatureEnabled)
             maintainProductBtn.setEnabled(portletViewModel.maintainProductsFeatureEnabled)
         }
@@ -203,7 +203,7 @@ class AppView extends VerticalLayout {
         private void setStyles() {
             overviewBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
             createOfferBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
-            createCustomerBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+            createPersonBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
             createAffiliationBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
             searchPersonBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
             maintainProductBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
@@ -212,7 +212,7 @@ class AppView extends VerticalLayout {
         private void setIcons() {
             overviewBtn.setIcon(VaadinIcons.GRID_BIG_O)
             createOfferBtn.setIcon(VaadinIcons.GRID_BIG_O)
-            createCustomerBtn.setIcon(VaadinIcons.GRID_BIG_O)
+            createPersonBtn.setIcon(VaadinIcons.GRID_BIG_O)
             createAffiliationBtn.setIcon(VaadinIcons.GRID_BIG_O)
             searchPersonBtn.setIcon(VaadinIcons.GRID_BIG_O)
             maintainProductBtn.setIcon(VaadinIcons.GRID_BIG_O)
@@ -235,11 +235,11 @@ class AppView extends VerticalLayout {
                 createOfferView.setVisible(true)
                 setButtonActive(this.createOfferBtn)
             })
-            this.createCustomerBtn.addClickListener(listener -> {
+            this.createPersonBtn.addClickListener(listener -> {
                 hideAllFeatureViews()
                 setIcons()
-                createCustomerView.setVisible(true)
-                setButtonActive(this.createCustomerBtn)
+                createPersonView.setVisible(true)
+                setButtonActive(this.createPersonBtn)
             })
             this.createAffiliationBtn.addClickListener(listener -> {
                 hideAllFeatureViews()
