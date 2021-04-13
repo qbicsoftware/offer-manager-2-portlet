@@ -1,12 +1,12 @@
 package life.qbic.portal.offermanager.components.person.search
 
 import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Button
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
-import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.Panel
 import com.vaadin.ui.VerticalLayout
@@ -51,8 +51,9 @@ class SearchPersonView extends FormLayout{
         Label gridLabel = new Label("Available Person Entries")
         gridLabel.addStyleName(ValoTheme.LABEL_HUGE)
 
-        updatePerson = new Button("Update Person")
+        updatePerson = new Button("Update Person", VaadinIcons.EDIT)
         updatePerson.setEnabled(false)
+        updatePerson.setStyleName(ValoTheme.BUTTON_LARGE)
 
         personGrid = new Grid<>()
         selectedPersonInformation = new Panel()
