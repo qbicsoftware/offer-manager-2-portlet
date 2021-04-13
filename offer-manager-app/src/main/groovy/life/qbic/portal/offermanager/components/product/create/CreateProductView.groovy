@@ -282,6 +282,7 @@ class CreateProductView extends HorizontalLayout{
         abortButton.addClickListener({clearAllFields() })
         createProductButtonRegistration = this.createProductButton.addClickListener({
             controller.createNewProduct(viewModel.productCategory, viewModel.productDescription,viewModel.productName, Double.parseDouble(viewModel.productUnitPrice),viewModel.productUnit)
+            clearAllFields()
         })
 
     }
