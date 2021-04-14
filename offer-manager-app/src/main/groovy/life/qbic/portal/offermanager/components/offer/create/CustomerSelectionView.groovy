@@ -217,7 +217,6 @@ class CustomerSelectionView extends VerticalLayout{
     private void bindViewModel() {
 
         customerGrid.addSelectionListener({ selection ->
-
             if(selection.firstSelectedItem.isPresent()){
                 Customer selectedCustomer = selection.getFirstSelectedItem().get()
                 //vaadin is in single selection mode, selecting the first item will be fine

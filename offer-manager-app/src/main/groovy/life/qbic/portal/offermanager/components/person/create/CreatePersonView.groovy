@@ -176,8 +176,7 @@ class CreatePersonView extends VerticalLayout {
                 addressAdditionComboBox.value = newValue
             } else {
                 addressAdditionComboBox.value = addressAdditionComboBox.emptyValue
-                organisationComboBox.value = organisationComboBox.emptyValue
-            }
+                organisationComboBox.value = organisationComboBox.emptyValue            }
         })
         /*
         we listen to the valid properties. whenever the presenter resets values in the viewmodel
@@ -272,12 +271,12 @@ class CreatePersonView extends VerticalLayout {
                 createPersonViewModel.emailValid = true
             }
         })
-        this.addressAdditionComboBox.addSelectionListener({ selection ->
-            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.addressAdditionComboBox))
+        this.organisationComboBox.addSelectionListener({ selection ->
+            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.organisationComboBox))
             if (result.isError()) {
                 createPersonViewModel.affiliationValid = false
                 UserError error = new UserError(result.getErrorMessage())
-                addressAdditionComboBox.setComponentError(error)
+                organisationComboBox.setComponentError(error)
             } else {
                 createPersonViewModel.affiliationValid = true
             }

@@ -51,7 +51,6 @@ class CreatePersonViewModel {
         this.customerService = customerService
         this.managerResourceService = managerResourceService
         this.personResourceService = personResourceService
-
         List<Affiliation> affiliations = affiliationService.iterator().collect()
         availableOrganisations = new ObservableList(new ArrayList<Organisation>(toOrganisation(affiliations)))
 
