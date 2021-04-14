@@ -9,6 +9,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Product selection now notifies a user if the provided input is incorrect and disables the button until the given information is valid (`#407 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/407>`_)
+
 **Fixed**
 
 **Dependencies**
