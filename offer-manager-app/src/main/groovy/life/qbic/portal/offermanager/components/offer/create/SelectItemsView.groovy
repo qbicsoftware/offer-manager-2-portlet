@@ -1,7 +1,12 @@
 package life.qbic.portal.offermanager.components.offer.create
 
+import com.vaadin.data.ValidationResult
+import com.vaadin.data.Validator
+import com.vaadin.data.ValueContext
 import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.data.validator.RegexpValidator
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.server.UserError
 import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
@@ -69,6 +74,27 @@ class SelectItemsView extends VerticalLayout{
     TextField amountMetabolomicAnalysis
     TextField amountDataStorage
 
+    /**
+     * Contains regex for filtering the different product types
+     *
+     * This enum stores the regex for validating a user input and differences between an atomic product
+     * which only allows integer input and a partial product which allows double input.
+     *
+     */
+    enum ProductTypeRegex {
+        ATOMIC("^[0-9]+\$"),
+        PARTIAL("[-]?[0-9]*\\.?[0-9]+"),
+
+        private String productType
+
+        ProductTypeRegex(String productType) {
+            this.productType = productType;
+        }
+
+        String getType() {
+            return this.type;
+        }
+    }
 
     SelectItemsView(CreateOfferViewModel createOfferViewModel, AppViewModel viewModel){
         this.createOfferViewModel = createOfferViewModel
@@ -191,44 +217,37 @@ class SelectItemsView extends VerticalLayout{
         buttonLayout.setSizeFull()
 
         HorizontalLayout quantitySeq = new HorizontalLayout(amountSequencing,applySequencing)
-        quantitySeq.setSizeFull()
-        quantitySeq.setComponentAlignment(applySequencing, Alignment.BOTTOM_RIGHT)
+        quantitySeq.setComponentAlignment(applySequencing, Alignment.BOTTOM_LEFT)
         VerticalLayout seqLayout = new VerticalLayout(sequencingGrid,quantitySeq)
         seqLayout.setSizeFull()
 
         HorizontalLayout quantityPrimary = new HorizontalLayout(amountPrimaryAnalysis,applyPrimaryAnalysis)
-        quantityPrimary.setSizeFull()
-        quantityPrimary.setComponentAlignment(applyPrimaryAnalysis, Alignment.BOTTOM_RIGHT)
+        quantityPrimary.setComponentAlignment(applyPrimaryAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout primaryAnalysisLayout = new VerticalLayout(primaryAnalyseGrid, quantityPrimary)
         primaryAnalysisLayout.setSizeFull()
 
         HorizontalLayout quantitySecondary = new HorizontalLayout(amountSecondaryAnalysis,applySecondaryAnalysis)
-        quantitySecondary.setSizeFull()
-        quantitySecondary.setComponentAlignment(applySecondaryAnalysis, Alignment.BOTTOM_RIGHT)
+        quantitySecondary.setComponentAlignment(applySecondaryAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout secondaryAnalysisLayout = new VerticalLayout(secondaryAnalyseGrid, quantitySecondary)
         secondaryAnalysisLayout.setSizeFull()
 
         HorizontalLayout quantityProteomic = new HorizontalLayout(amountProteomicAnalysis,applyProteomicAnalysis)
-        quantityProteomic.setSizeFull()
-        quantityProteomic.setComponentAlignment(applyProteomicAnalysis, Alignment.BOTTOM_RIGHT)
+        quantityProteomic.setComponentAlignment(applyProteomicAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout proteomicsLayout = new VerticalLayout(proteomicsAnalysisGrid, quantityProteomic)
         proteomicsLayout.setSizeFull()
 
         HorizontalLayout quantityMetabolomic = new HorizontalLayout(amountMetabolomicAnalysis ,applyMetabolomicAnalysis)
-        quantityMetabolomic.setSizeFull()
-        quantityMetabolomic.setComponentAlignment(applyMetabolomicAnalysis, Alignment.BOTTOM_RIGHT)
+        quantityMetabolomic.setComponentAlignment(applyMetabolomicAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout metabolomicsLayout = new VerticalLayout(metabolomicsAnalysisGrid, quantityMetabolomic)
         metabolomicsLayout.setSizeFull()
 
         HorizontalLayout quantityStorage = new HorizontalLayout(amountDataStorage,applyDataStorage)
-        quantityStorage.setSizeFull()
-        quantityStorage.setComponentAlignment(applyDataStorage, Alignment.BOTTOM_RIGHT)
+        quantityStorage.setComponentAlignment(applyDataStorage, Alignment.BOTTOM_LEFT)
         VerticalLayout dataStorageLayout = new VerticalLayout(storageGrid, quantityStorage)
         dataStorageLayout.setSizeFull()
 
         HorizontalLayout quantityManagement = new HorizontalLayout(amountProjectManagement,applyProjectManagement)
-        quantityManagement.setSizeFull()
-        quantityManagement.setComponentAlignment(applyProjectManagement, Alignment.BOTTOM_RIGHT)
+        quantityManagement.setComponentAlignment(applyProjectManagement, Alignment.BOTTOM_LEFT)
         VerticalLayout projectManagementLayout = new VerticalLayout(projectManagementGrid, quantityManagement)
         projectManagementLayout.setSizeFull()
 
@@ -350,8 +369,32 @@ class SelectItemsView extends VerticalLayout{
      */
     private void addListener() {
         sequencingGrid.addSelectionListener({
-            applySequencing.setEnabled(true)
+            createOfferViewModel.sequencingGridSelected = it.firstSelectedItem.isPresent()
         })
+
+        Validator<String> nonEmptyStringValidator = Validator.from({ String value -> (value && !value.trim().empty)}, "Empty input not supported.")
+        Validator<String> atomicValidator = new RegexpValidator("Please provide an integer Input", ProductTypeRegex.ATOMIC.productType)
+        Validator<String> partialValidator = new RegexpValidator("Please provide a decimal Input", ProductTypeRegex.PARTIAL.productType)
+        this.amountSequencing.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountSequencing))
+            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountSequencing))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountSequencing.setComponentError(error)
+                createOfferViewModel.sequencingQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountSequencing.setComponentError(error)
+                createOfferViewModel.sequencingQuantityValid = false
+            }
+            else{
+                this.amountSequencing.setComponentError(null)
+                createOfferViewModel.sequencingQuantityValid = true
+            }
+        })
+
         applySequencing.addClickListener({
             if(sequencingGrid.getSelectedItems() != null){
                 String amount = amountSequencing.getValue()
@@ -375,11 +418,33 @@ class SelectItemsView extends VerticalLayout{
             amountSequencing.clear()
             sequencingGrid.deselectAll()
             applySequencing.setEnabled(false)
+            amountSequencing.setComponentError(null)
         })
 
         primaryAnalyseGrid.addSelectionListener({
-            applyPrimaryAnalysis.setEnabled(true)
+            createOfferViewModel.primaryAnalysisGridSelected = it.firstSelectedItem.isPresent()
         })
+
+        this.amountPrimaryAnalysis.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountPrimaryAnalysis))
+            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountPrimaryAnalysis))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountPrimaryAnalysis.setComponentError(error)
+                createOfferViewModel.primaryAnalysisQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountPrimaryAnalysis.setComponentError(error)
+                createOfferViewModel.primaryAnalysisQuantityValid = false
+            }
+            else{
+                this.amountPrimaryAnalysis.setComponentError(null)
+                createOfferViewModel.primaryAnalysisQuantityValid = true
+            }
+        })
+
         applyPrimaryAnalysis.addClickListener({
             if(primaryAnalyseGrid.getSelectedItems() != null) {
                 String amount = amountPrimaryAnalysis.getValue()
@@ -393,6 +458,7 @@ class SelectItemsView extends VerticalLayout{
                             }
                         }
                         primaryAnalyseGrid.getDataProvider().refreshAll()
+
                     }
                 } catch(NumberFormatException e) {
                     viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
@@ -403,11 +469,33 @@ class SelectItemsView extends VerticalLayout{
             amountPrimaryAnalysis.clear()
             primaryAnalyseGrid.deselectAll()
             applyPrimaryAnalysis.setEnabled(false)
+            amountPrimaryAnalysis.setComponentError(null)
         })
 
         secondaryAnalyseGrid.addSelectionListener({
-            applySecondaryAnalysis.setEnabled(true)
+            createOfferViewModel.secondaryAnalysisGridSelected = it.firstSelectedItem.isPresent()
         })
+
+        this.amountSecondaryAnalysis.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountSecondaryAnalysis))
+            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountSecondaryAnalysis))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountSecondaryAnalysis.setComponentError(error)
+                createOfferViewModel.secondaryAnalysisQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountSecondaryAnalysis.setComponentError(error)
+                createOfferViewModel.secondaryAnalysisQuantityValid = false
+            }
+            else{
+                this.amountPrimaryAnalysis.setComponentError(null)
+                createOfferViewModel.secondaryAnalysisQuantityValid = true
+            }
+        })
+
         applySecondaryAnalysis.addClickListener({
             if(secondaryAnalyseGrid.getSelectedItems() != null){
                 String amount = amountSecondaryAnalysis.getValue()
@@ -433,10 +521,31 @@ class SelectItemsView extends VerticalLayout{
             amountSecondaryAnalysis.clear()
             secondaryAnalyseGrid.deselectAll()
             applySecondaryAnalysis.setEnabled(false)
+            amountSecondaryAnalysis.setComponentError(null)
         })
 
         proteomicsAnalysisGrid.addSelectionListener({
-            applyProteomicAnalysis.setEnabled(true)
+            createOfferViewModel.proteomicsAnalysisGridSelected = it.firstSelectedItem.isPresent()
+        })
+
+        this.amountProteomicAnalysis.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountProteomicAnalysis))
+            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountProteomicAnalysis))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountProteomicAnalysis.setComponentError(error)
+                createOfferViewModel.proteomicsAnalysisQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountProteomicAnalysis.setComponentError(error)
+                createOfferViewModel.proteomicsAnalysisQuantityValid = false
+            }
+            else{
+                this.amountProteomicAnalysis.setComponentError(null)
+                createOfferViewModel.proteomicsAnalysisQuantityValid = true
+            }
         })
 
         applyProteomicAnalysis.addClickListener({
@@ -461,11 +570,33 @@ class SelectItemsView extends VerticalLayout{
             amountProteomicAnalysis.clear()
             proteomicsAnalysisGrid.deselectAll()
             applyProteomicAnalysis.setEnabled(false)
+            amountProteomicAnalysis.setComponentError(null)
         })
 
         metabolomicsAnalysisGrid.addSelectionListener({
-            applyMetabolomicAnalysis.setEnabled(true)
+            createOfferViewModel.metabolomicsAnalysisGridSelected = it.firstSelectedItem.isPresent()
         })
+
+        this.amountMetabolomicAnalysis.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountMetabolomicAnalysis))
+            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountMetabolomicAnalysis))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountMetabolomicAnalysis.setComponentError(error)
+                createOfferViewModel.metabolomicsAnalysisQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountMetabolomicAnalysis.setComponentError(error)
+                createOfferViewModel.metabolomicsAnalysisQuantityValid = false
+            }
+            else{
+                this.amountMetabolomicAnalysis.setComponentError(null)
+                createOfferViewModel.metabolomicsAnalysisQuantityValid = true
+            }
+        })
+
         applyMetabolomicAnalysis.addClickListener({
             if(metabolomicsAnalysisGrid.getSelectedItems() != null) {
                 String amount = amountMetabolomicAnalysis.getValue()
@@ -488,11 +619,33 @@ class SelectItemsView extends VerticalLayout{
             amountMetabolomicAnalysis.clear()
             metabolomicsAnalysisGrid.deselectAll()
             applyMetabolomicAnalysis.setEnabled(false)
+            amountMetabolomicAnalysis.setComponentError(null)
         })
 
         projectManagementGrid.addSelectionListener({
-            applyProjectManagement.setEnabled(true)
+            createOfferViewModel.projectManagementGridSelected = it.firstSelectedItem.isPresent()
         })
+
+        this.amountProjectManagement.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountProjectManagement))
+            ValidationResult numberResult = partialValidator.apply(event.getValue(), new ValueContext(amountProjectManagement))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountProjectManagement.setComponentError(error)
+                createOfferViewModel.projectManagementQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountProjectManagement.setComponentError(error)
+                createOfferViewModel.projectManagementQuantityValid = false
+            }
+            else{
+                this.amountProjectManagement.setComponentError(null)
+                createOfferViewModel.projectManagementQuantityValid = true
+            }
+        })
+
         applyProjectManagement.addClickListener({
             if(projectManagementGrid.getSelectedItems() != null){
                 String amount = amountProjectManagement.getValue()
@@ -516,11 +669,33 @@ class SelectItemsView extends VerticalLayout{
             amountProjectManagement.clear()
             projectManagementGrid.deselectAll()
             applyProjectManagement.setEnabled(false)
+            amountProjectManagement.setComponentError(null)
         })
 
         storageGrid.addSelectionListener({
-            applyDataStorage.setEnabled(true)
+            createOfferViewModel.storageGridSelected = it.firstSelectedItem.isPresent()
         })
+
+        this.amountDataStorage.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountDataStorage))
+            ValidationResult numberResult = partialValidator.apply(event.getValue(), new ValueContext(amountDataStorage))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountDataStorage.setComponentError(error)
+                createOfferViewModel.storageQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountDataStorage.setComponentError(error)
+                createOfferViewModel.storageQuantityValid = false
+            }
+            else{
+                this.amountDataStorage.setComponentError(null)
+                createOfferViewModel.storageQuantityValid = true
+            }
+        })
+
         applyDataStorage.addClickListener({
             if(storageGrid.getSelectedItems() != null){
                 String amount = amountDataStorage.getValue()
@@ -544,6 +719,7 @@ class SelectItemsView extends VerticalLayout{
             amountDataStorage.clear()
             storageGrid.deselectAll()
             applyDataStorage.setEnabled(false)
+            amountDataStorage.setComponentError(null)
         })
 
         createOfferViewModel.productItems.addPropertyChangeListener({
@@ -552,6 +728,16 @@ class SelectItemsView extends VerticalLayout{
             } else {
                 next.setEnabled(false)
             }
+        })
+
+        createOfferViewModel.addPropertyChangeListener({
+            applySequencing.setEnabled(createOfferViewModel.sequencingGridSelected && createOfferViewModel.sequencingQuantityValid)
+            applyPrimaryAnalysis.setEnabled(createOfferViewModel.primaryAnalysisGridSelected && createOfferViewModel.primaryAnalysisQuantityValid)
+            applySecondaryAnalysis.setEnabled(createOfferViewModel.secondaryAnalysisGridSelected && createOfferViewModel.secondaryAnalysisQuantityValid)
+            applyProteomicAnalysis.setEnabled(createOfferViewModel.proteomicsAnalysisGridSelected && createOfferViewModel.proteomicsAnalysisQuantityValid)
+            applyMetabolomicAnalysis.setEnabled(createOfferViewModel.metabolomicsAnalysisGridSelected && createOfferViewModel.metabolomicsAnalysisQuantityValid)
+            applyProjectManagement.setEnabled(createOfferViewModel.projectManagementGridSelected && createOfferViewModel.projectManagementQuantityValid)
+            applyDataStorage.setEnabled(createOfferViewModel.storageGridSelected && createOfferViewModel.storageQuantityValid)
         })
     }
 
