@@ -27,6 +27,7 @@ class ProjectInformationView extends VerticalLayout {
 
     TextField projectTitle
     TextArea projectObjective
+    TextArea experimentalDesign
     Button next
 
     ProjectInformationView(CreateOfferViewModel createOfferViewModel) {
@@ -50,11 +51,17 @@ class ProjectInformationView extends VerticalLayout {
         projectObjective.setRequiredIndicatorVisible(true)
         projectObjective.setSizeFull()
 
+        this.experimentalDesign = new TextArea("Experimental Design")
+        experimentalDesign.setPlaceholder("Enter the experimental design here")
+        //todo is it required
+        experimentalDesign.setRequiredIndicatorVisible(true)
+        experimentalDesign.setSizeFull()
+
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.addStyleName(ValoTheme.LABEL_LARGE)
         next.setEnabled(false)
 
-        VerticalLayout textLayout = new VerticalLayout(projectTitle, projectObjective)
+        VerticalLayout textLayout = new VerticalLayout(projectTitle, projectObjective, experimentalDesign)
         textLayout.setComponentAlignment(projectTitle, Alignment.TOP_CENTER)
         textLayout.setComponentAlignment(projectObjective, Alignment.BOTTOM_CENTER)
         textLayout.setSizeFull()
