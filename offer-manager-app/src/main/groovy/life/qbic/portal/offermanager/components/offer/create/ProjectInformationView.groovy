@@ -53,8 +53,6 @@ class ProjectInformationView extends VerticalLayout {
 
         this.experimentalDesign = new TextArea("Experimental Design")
         experimentalDesign.setPlaceholder("Enter the experimental design here")
-        //todo is it required
-        experimentalDesign.setRequiredIndicatorVisible(true)
         experimentalDesign.setSizeFull()
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
@@ -89,6 +87,8 @@ class ProjectInformationView extends VerticalLayout {
                 .bind({ it.projectTitle }, { it, updatedValue -> it.setProjectTitle(updatedValue) })
         binder.forField(projectObjective)
                 .bind({ it.projectObjective }, { it, updatedValue -> it.setProjectObjective(updatedValue) })
+        binder.forField(experimentalDesign)
+                .bind({ it.experimentalDesign }, { it, updatedValue -> it.setExperimentalDesign(updatedValue) })
 
 
         /*
@@ -110,6 +110,10 @@ class ProjectInformationView extends VerticalLayout {
                 case "projectObjective":
                     String newValue = it.newValue as String
                     projectObjective.value = newValue ?: projectObjective.emptyValue
+                    break
+                case "experimentalDesign":
+                    String newValue = it.newValue as String
+                    experimentalDesign.value = newValue ?: experimentalDesign.emptyValue
                     break
                 default:
                     break

@@ -43,8 +43,7 @@ class CreateOfferView extends FormLayout{
                     CreateOfferController controller,
                     CreatePersonView createCustomerView,
                     CreateAffiliationView createAffiliationView,
-                    OfferResourcesService offerProviderService
-    ) {
+                    OfferResourcesService offerProviderService) {
         super()
         this.sharedViewModel = sharedViewModel
         this.viewModel = createOfferViewModel
@@ -159,7 +158,8 @@ class CreateOfferView extends FormLayout{
                     viewModel.customer,
                     viewModel.projectManager,
                     getProductItems(viewModel.productItems),
-                    viewModel.customerAffiliation)
+                    viewModel.customerAffiliation,
+                    viewModel.experimentalDesign)
         })
     }
 
