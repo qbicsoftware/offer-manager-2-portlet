@@ -52,6 +52,22 @@ class CreateOfferViewModel {
     @Bindable double overheads = 0
     @Bindable double totalPrice = 0
 
+    @Bindable Boolean sequencingGridSelected
+    @Bindable Boolean primaryAnalysisGridSelected
+    @Bindable Boolean secondaryAnalysisGridSelected
+    @Bindable Boolean proteomicsAnalysisGridSelected
+    @Bindable Boolean metabolomicsAnalysisGridSelected
+    @Bindable Boolean projectManagementGridSelected
+    @Bindable Boolean storageGridSelected
+
+    @Bindable Boolean sequencingQuantityValid
+    @Bindable Boolean primaryAnalysisQuantityValid
+    @Bindable Boolean secondaryAnalysisQuantityValid
+    @Bindable Boolean proteomicsAnalysisQuantityValid
+    @Bindable Boolean metabolomicsAnalysisQuantityValid
+    @Bindable Boolean projectManagementQuantityValid
+    @Bindable Boolean storageQuantityValid
+
     Optional<Offer> savedOffer = Optional.empty()
 
     private final CustomerResourceService customerResourceService
