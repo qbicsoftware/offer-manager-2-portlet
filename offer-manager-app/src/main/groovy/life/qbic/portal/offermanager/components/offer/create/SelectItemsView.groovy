@@ -85,14 +85,14 @@ class SelectItemsView extends VerticalLayout{
         ATOMIC("^[0-9]+\$"),
         PARTIAL("[-]?[0-9]*\\.?[0-9]+"),
 
-        private String productType
+        private String regex
 
-        ProductTypeRegex(String productType) {
-            this.productType = productType;
+        ProductTypeRegex(String regex) {
+            this.regex = regex;
         }
 
-        String getType() {
-            return this.type;
+        String getRegex() {
+            return this.regex;
         }
     }
 
