@@ -271,12 +271,12 @@ class CreatePersonView extends VerticalLayout {
                 createPersonViewModel.emailValid = true
             }
         })
-        this.organisationComboBox.addSelectionListener({ selection ->
-            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.organisationComboBox))
+        this.addressAdditionComboBox.addSelectionListener({ selection ->
+            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.addressAdditionComboBox))
             if (result.isError()) {
                 createPersonViewModel.affiliationValid = false
                 UserError error = new UserError(result.getErrorMessage())
-                organisationComboBox.setComponentError(error)
+                addressAdditionComboBox.setComponentError(error)
             } else {
                 createPersonViewModel.affiliationValid = true
             }
