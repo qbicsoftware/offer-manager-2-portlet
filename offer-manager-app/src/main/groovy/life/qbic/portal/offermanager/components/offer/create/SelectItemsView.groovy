@@ -373,8 +373,8 @@ class SelectItemsView extends VerticalLayout{
         })
 
         Validator<String> nonEmptyStringValidator = Validator.from({ String value -> (value && !value.trim().empty)}, "Please provide a number as input.")
-        Validator<String> atomicValidator = new RegexpValidator("Please provide an integer Input", ProductTypeRegex.ATOMIC.productType)
-        Validator<String> partialValidator = new RegexpValidator("Please provide a decimal Input", ProductTypeRegex.PARTIAL.productType)
+        Validator<String> atomicValidator = new RegexpValidator("Please provide an integer Input", ProductTypeRegex.ATOMIC.regex)
+        Validator<String> partialValidator = new RegexpValidator("Please provide a decimal Input", ProductTypeRegex.PARTIAL.regex)
         this.amountSequencing.addValueChangeListener({ event ->
             ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountSequencing))
             ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountSequencing))
