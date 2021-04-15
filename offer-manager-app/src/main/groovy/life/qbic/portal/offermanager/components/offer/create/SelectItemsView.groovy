@@ -372,7 +372,7 @@ class SelectItemsView extends VerticalLayout{
             createOfferViewModel.sequencingGridSelected = it.firstSelectedItem.isPresent()
         })
 
-        Validator<String> nonEmptyStringValidator = Validator.from({ String value -> (value && !value.trim().empty)}, "Empty input not supported.")
+        Validator<String> nonEmptyStringValidator = Validator.from({ String value -> (value && !value.trim().empty)}, "Please provide a number as input.")
         Validator<String> atomicValidator = new RegexpValidator("Please provide an integer Input", ProductTypeRegex.ATOMIC.productType)
         Validator<String> partialValidator = new RegexpValidator("Please provide a decimal Input", ProductTypeRegex.PARTIAL.productType)
         this.amountSequencing.addValueChangeListener({ event ->
