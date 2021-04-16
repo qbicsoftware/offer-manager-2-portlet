@@ -37,10 +37,10 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (offerId, " +
             "creationDate, expirationDate, customerId, projectManagerId, projectTitle, " +
             "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, " +
-            "checksum)"
+            "checksum, experimentalDesign)"
 
     private static final String OFFER_SELECT_QUERY = "SELECT offerId, creationDate, expirationDate, customerId, projectManagerId, projectTitle," +
-                                                        "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads FROM offer"
+                                                        "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, experimentalDesign FROM offer"
 
 
     OfferDbConnector(ConnectionProvider connectionProvider, PersonDbConnector personDbConnector, ProductsDbConnector productsDbConnector){
@@ -148,13 +148,17 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
      * @return the id of the stored offer in the database
      */
     private int storeOffer(Offer offer, int projectManagerId, int customerId, int affiliationId){
-        String sqlValues = "VALUE(?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        String sqlValues = "VALUE(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
         String queryTemplate = OFFER_INSERT_QUERY + " " + sqlValues
         def identifier = offer.identifier
         List<Integer> generatedKeys = []
         Connection connection = connectionProvider.connect()
         log.info("New offer with id: ${offer.identifier}")
         connection.withCloseable {
+
+            String experimentalDesign = null
+            if(offer.experimentalDesign.isPresent()) experimentalDesign = offer.experimentalDesign.get()
+
             PreparedStatement preparedStatement = it.prepareStatement(queryTemplate, Statement.RETURN_GENERATED_KEYS)
             preparedStatement.setString(1, identifier.toString())
             preparedStatement.setDate(2, new Date(offer.modificationDate.time))
@@ -169,6 +173,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             preparedStatement.setDouble(11, offer.netPrice)
             preparedStatement.setDouble(12, offer.overheads)
             preparedStatement.setString(13, offer.checksum)
+            preparedStatement.setString(14, experimentalDesign)
 
 
             preparedStatement.execute()
@@ -276,6 +281,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
                 def items = productGateway.getItemsForOffer(offerPrimaryId)
                 def checksum = resultSet.getString("checksum")
                 def associatedProject = resultSet.getString("associatedProject")
+                def experimentalDesign = resultSet.getString("experimentalDesign")
 
                 def offerBuilder = new Offer.Builder(
                         customer,
@@ -295,6 +301,9 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
                 Optional<ProjectIdentifier> projectIdentifier = parseProjectIdentifier(associatedProject)
                 if (projectIdentifier.isPresent()) {
                     offerBuilder.associatedProject(projectIdentifier.get())
+                }
+                if(experimentalDesign){
+                    offerBuilder.experimentalDesign(experimentalDesign)
                 }
                 offer = Optional.of(offerBuilder.build())
             }
