@@ -2,11 +2,14 @@ package life.qbic.portal.offermanager.dataresources.offers
 
 import groovy.util.logging.Log4j2
 import life.qbic.business.offers.fetch.FetchOfferDataSource
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.create.CreateOfferDataSource
+import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
@@ -37,10 +40,10 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (offerId, " +
             "creationDate, expirationDate, customerId, projectManagerId, projectTitle, " +
             "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, " +
-            "checksum)"
+            "checksum, experimentalDesign)"
 
     private static final String OFFER_SELECT_QUERY = "SELECT offerId, creationDate, expirationDate, customerId, projectManagerId, projectTitle," +
-                                                        "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads FROM offer"
+                                                        "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, experimentalDesign FROM offer"
 
 
     OfferDbConnector(ConnectionProvider connectionProvider, PersonDbConnector personDbConnector, ProductsDbConnector productsDbConnector){
@@ -148,13 +151,14 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
      * @return the id of the stored offer in the database
      */
     private int storeOffer(Offer offer, int projectManagerId, int customerId, int affiliationId){
-        String sqlValues = "VALUE(?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        String sqlValues = "VALUE(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
         String queryTemplate = OFFER_INSERT_QUERY + " " + sqlValues
         def identifier = offer.identifier
         List<Integer> generatedKeys = []
         Connection connection = connectionProvider.connect()
         log.info("New offer with id: ${offer.identifier}")
         connection.withCloseable {
+            String experimentalDesign = offer.experimentalDesign.orElse(null)
             PreparedStatement preparedStatement = it.prepareStatement(queryTemplate, Statement.RETURN_GENERATED_KEYS)
             preparedStatement.setString(1, identifier.toString())
             preparedStatement.setDate(2, new Date(offer.modificationDate.time))
@@ -169,6 +173,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             preparedStatement.setDouble(11, offer.netPrice)
             preparedStatement.setDouble(12, offer.overheads)
             preparedStatement.setString(13, offer.checksum)
+            preparedStatement.setString(14, experimentalDesign)
 
 
             preparedStatement.execute()
@@ -251,31 +256,32 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
                 /*
                 Load the offer Id first
                  */
-                def fetchedOfferId = parseOfferId(resultSet.getString("offerId"))
-                def offerPrimaryId = resultSet.getInt("id")
+                OfferId fetchedOfferId = parseOfferId(resultSet.getString("offerId"))
+                int offerPrimaryId = resultSet.getInt("id")
                 /*
                 Load customer and project manager info
                  */
-                def customerId =  resultSet.getInt("customerId")
-                def projectManagerId = resultSet.getInt("projectManagerId")
-                def customer = customerGateway.getCustomer(customerId)
-                def projectManager = customerGateway.getProjectManager(projectManagerId)
+                int customerId =  resultSet.getInt("customerId")
+                int projectManagerId = resultSet.getInt("projectManagerId")
+                Customer customer = customerGateway.getCustomer(customerId)
+                ProjectManager projectManager = customerGateway.getProjectManager(projectManagerId)
                 /*
                 Load general offer info
                  */
-                def projectTitle = resultSet.getString("projectTitle")
-                def projectObjective = resultSet.getString("projectObjective")
-                def totalCosts = resultSet.getDouble("totalPrice")
-                def vat = resultSet.getDouble("vat")
-                def overheads = resultSet.getDouble("overheads")
-                def net = resultSet.getDouble("netPrice")
-                def creationDate = resultSet.getDate("creationDate")
-                def expirationDate = resultSet.getDate("expirationDate")
-                def selectedAffiliationId = resultSet.getInt("customerAffiliationId")
-                def selectedAffiliation = customerGateway.getAffiliation(selectedAffiliationId)
-                def items = productGateway.getItemsForOffer(offerPrimaryId)
-                def checksum = resultSet.getString("checksum")
-                def associatedProject = resultSet.getString("associatedProject")
+                String projectTitle = resultSet.getString("projectTitle")
+                String projectObjective = resultSet.getString("projectObjective")
+                double totalCosts = resultSet.getDouble("totalPrice")
+                double vat = resultSet.getDouble("vat")
+                double overheads = resultSet.getDouble("overheads")
+                double net = resultSet.getDouble("netPrice")
+                Date creationDate = resultSet.getDate("creationDate")
+                Date expirationDate = resultSet.getDate("expirationDate")
+                int selectedAffiliationId = resultSet.getInt("customerAffiliationId")
+                Affiliation selectedAffiliation = customerGateway.getAffiliation(selectedAffiliationId)
+                List<ProductItem> items = productGateway.getItemsForOffer(offerPrimaryId)
+                String checksum = resultSet.getString("checksum")
+                String associatedProject = resultSet.getString("associatedProject")
+                String experimentalDesign = resultSet.getString("experimentalDesign")
 
                 def offerBuilder = new Offer.Builder(
                         customer,
@@ -295,6 +301,9 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
                 Optional<ProjectIdentifier> projectIdentifier = parseProjectIdentifier(associatedProject)
                 if (projectIdentifier.isPresent()) {
                     offerBuilder.associatedProject(projectIdentifier.get())
+                }
+                if(experimentalDesign){
+                    offerBuilder.experimentalDesign(experimentalDesign)
                 }
                 offer = Optional.of(offerBuilder.build())
             }
