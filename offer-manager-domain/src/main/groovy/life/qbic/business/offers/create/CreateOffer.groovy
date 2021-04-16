@@ -58,8 +58,6 @@ class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput
                 .identifier(newOfferId)
                 .build()
 
-        println offerContent.experimentalDesign
-
         storeOffer(finalizedOffer)
     }
 
