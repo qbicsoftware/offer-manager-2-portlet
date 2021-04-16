@@ -49,7 +49,7 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
         super.customer = offer.customer
         super.customerAffiliation = offer.selectedCustomerAffiliation
         super.projectManager = offer.projectManager
-        super.experimentalDesign = offer.experimentalDesign.isPresent() ? offer.experimentalDesign.get() : ""
+        super.experimentalDesign = offer.experimentalDesign.orElse("")
         super.productItems.clear()
         super.productItems.addAll(offer.items.collect {
             new ProductItemViewModel(it.quantity, it.product)})

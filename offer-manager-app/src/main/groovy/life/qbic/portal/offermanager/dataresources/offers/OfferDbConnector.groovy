@@ -155,10 +155,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
         Connection connection = connectionProvider.connect()
         log.info("New offer with id: ${offer.identifier}")
         connection.withCloseable {
-
-            String experimentalDesign = null
-            if(offer.experimentalDesign.isPresent()) experimentalDesign = offer.experimentalDesign.get()
-
+            String experimentalDesign = offer.experimentalDesign.orElse(null)
             PreparedStatement preparedStatement = it.prepareStatement(queryTemplate, Statement.RETURN_GENERATED_KEYS)
             preparedStatement.setString(1, identifier.toString())
             preparedStatement.setDate(2, new Date(offer.modificationDate.time))
