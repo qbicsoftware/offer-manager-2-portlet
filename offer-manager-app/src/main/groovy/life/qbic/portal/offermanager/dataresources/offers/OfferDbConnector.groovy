@@ -2,11 +2,14 @@ package life.qbic.portal.offermanager.dataresources.offers
 
 import groovy.util.logging.Log4j2
 import life.qbic.business.offers.fetch.FetchOfferDataSource
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.create.CreateOfferDataSource
+import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
@@ -253,32 +256,32 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
                 /*
                 Load the offer Id first
                  */
-                def fetchedOfferId = parseOfferId(resultSet.getString("offerId"))
-                def offerPrimaryId = resultSet.getInt("id")
+                OfferId fetchedOfferId = parseOfferId(resultSet.getString("offerId"))
+                int offerPrimaryId = resultSet.getInt("id")
                 /*
                 Load customer and project manager info
                  */
-                def customerId =  resultSet.getInt("customerId")
-                def projectManagerId = resultSet.getInt("projectManagerId")
-                def customer = customerGateway.getCustomer(customerId)
-                def projectManager = customerGateway.getProjectManager(projectManagerId)
+                int customerId =  resultSet.getInt("customerId")
+                int projectManagerId = resultSet.getInt("projectManagerId")
+                Customer customer = customerGateway.getCustomer(customerId)
+                ProjectManager projectManager = customerGateway.getProjectManager(projectManagerId)
                 /*
                 Load general offer info
                  */
-                def projectTitle = resultSet.getString("projectTitle")
-                def projectObjective = resultSet.getString("projectObjective")
-                def totalCosts = resultSet.getDouble("totalPrice")
-                def vat = resultSet.getDouble("vat")
-                def overheads = resultSet.getDouble("overheads")
-                def net = resultSet.getDouble("netPrice")
-                def creationDate = resultSet.getDate("creationDate")
-                def expirationDate = resultSet.getDate("expirationDate")
-                def selectedAffiliationId = resultSet.getInt("customerAffiliationId")
-                def selectedAffiliation = customerGateway.getAffiliation(selectedAffiliationId)
-                def items = productGateway.getItemsForOffer(offerPrimaryId)
-                def checksum = resultSet.getString("checksum")
-                def associatedProject = resultSet.getString("associatedProject")
-                def experimentalDesign = resultSet.getString("experimentalDesign")
+                String projectTitle = resultSet.getString("projectTitle")
+                String projectObjective = resultSet.getString("projectObjective")
+                double totalCosts = resultSet.getDouble("totalPrice")
+                double vat = resultSet.getDouble("vat")
+                double overheads = resultSet.getDouble("overheads")
+                double net = resultSet.getDouble("netPrice")
+                Date creationDate = resultSet.getDate("creationDate")
+                Date expirationDate = resultSet.getDate("expirationDate")
+                int selectedAffiliationId = resultSet.getInt("customerAffiliationId")
+                Affiliation selectedAffiliation = customerGateway.getAffiliation(selectedAffiliationId)
+                List<ProductItem> items = productGateway.getItemsForOffer(offerPrimaryId)
+                String checksum = resultSet.getString("checksum")
+                String associatedProject = resultSet.getString("associatedProject")
+                String experimentalDesign = resultSet.getString("experimentalDesign")
 
                 def offerBuilder = new Offer.Builder(
                         customer,
