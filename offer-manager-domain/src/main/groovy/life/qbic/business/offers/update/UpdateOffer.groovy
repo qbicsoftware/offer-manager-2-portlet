@@ -62,6 +62,7 @@ class UpdateOffer{
     private void storeOffer() {
         try {
             final offer = Converter.convertOfferToDTO(offerToUpdate)
+            println offer.experimentalDesign
             dataSource.store(offer)
             output.updatedOffer(offer)
         } catch (Exception e) {
