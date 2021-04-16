@@ -5,13 +5,16 @@ Changelog
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 1.0.0-alpha.7-SNAPSHOT (2021-04-14)
---------------------------
+-----------------------------------
 
 **Added**
 
 * Product selection now notifies a user if the provided input is incorrect and disables the button until the given information is valid (`#407 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/407>`_)
 
 **Fixed**
+
+* Add timeout of 10 second to PDF rendering (`#494 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/494>`_)
+
 
 **Dependencies**
 
@@ -138,7 +141,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Update offers without changes is not possible anymore (`#222 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/222>`_)
 
-* Rename CreateCustomer and UpdateCustomer classes and methods (`#315 https://github.com/qbicsoftware/offer-manager-2-portlet/issues/315`_)
+* Rename CreateCustomer and UpdateCustomer classes and methods (`#315 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/315>`_)
 
 **Dependencies**
 
