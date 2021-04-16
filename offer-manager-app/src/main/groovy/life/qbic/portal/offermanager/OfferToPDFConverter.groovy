@@ -25,6 +25,7 @@ import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
 import java.text.DateFormat
 import java.text.DecimalFormat
+import java.util.concurrent.TimeUnit
 
 /**
  * Handles the conversion of offers to pdf files
@@ -394,7 +395,7 @@ class OfferToPDFConverter implements OfferExporter {
             builder.directory(new File(sourceFile.getParent().toString()))
             builder.redirectErrorStream(true)
             Process process = builder.start()
-            process.waitFor()
+            process.waitFor(1, TimeUnit.SECONDS)
             process.getInputStream().eachLine {log.info(it)}
             if (! new File(output.toString()).exists()) {
                 throw new RuntimeException("Offer PDF has not been generated.")
