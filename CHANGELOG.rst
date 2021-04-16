@@ -13,7 +13,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
-* Add timeout of 1 second to PDF rendering
+* Add timeout of 10 second to PDF rendering
 
 
 **Dependencies**

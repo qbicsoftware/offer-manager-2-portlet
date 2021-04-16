@@ -395,7 +395,7 @@ class OfferToPDFConverter implements OfferExporter {
             builder.directory(new File(sourceFile.getParent().toString()))
             builder.redirectErrorStream(true)
             Process process = builder.start()
-            process.waitFor(1, TimeUnit.SECONDS)
+            process.waitFor(10, TimeUnit.SECONDS)
             process.getInputStream().eachLine {log.info(it)}
             if (! new File(output.toString()).exists()) {
                 throw new RuntimeException("Offer PDF has not been generated.")
