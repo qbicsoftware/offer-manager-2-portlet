@@ -60,6 +60,10 @@ class Offer {
      */
     private String projectObjective
     /**
+     * A short description of the experimental design of the project
+     */
+    private Optional<String> experimentalDesign
+    /**
      * A list of items for which the customer will be charged
      */
     private List<ProductItem> items
@@ -124,6 +128,7 @@ class Offer {
         ProjectManager projectManager
         String projectTitle
         String projectObjective
+        Optional<String> experimentalDesign
         List<ProductItem> items
         OfferId identifier
         Affiliation selectedCustomerAffiliation
@@ -139,6 +144,7 @@ class Offer {
             this.items = []
             this.availableVersions = []
             this.creationDate = new Date()
+            this.experimentalDesign = Optional.empty()
             // Since the incoming item list is mutable we need to
             // copy all immutable items to out internal list
             items.each {this.items.add(it)}
@@ -171,6 +177,10 @@ class Offer {
             return this
         }
 
+        Builder experimentalDesign(Optional<String> experimentalDesign){
+            this.experimentalDesign = experimentalDesign
+            return this
+        }
 
         Offer build() {
             return new Offer(this)
@@ -186,6 +196,13 @@ class Offer {
         this.creationDate = builder.creationDate
         this.projectManager = builder.projectManager
         this.projectObjective = builder.projectObjective
+
+        if (builder.experimentalDesign.isPresent()) {
+            this.experimentalDesign = builder.experimentalDesign
+        } else {
+            this.experimentalDesign = Optional.empty()
+        }
+
         this.projectTitle = builder.projectTitle
         this.selectedCustomerAffiliation = builder.selectedCustomerAffiliation
         this.overhead = determineOverhead()
@@ -350,6 +367,10 @@ class Offer {
 
     String getProjectObjective() {
         return projectObjective
+    }
+
+    Optional<String> getExperimentalDesign(){
+        return experimentalDesign
     }
 
     List<ProductItem> getItems() {

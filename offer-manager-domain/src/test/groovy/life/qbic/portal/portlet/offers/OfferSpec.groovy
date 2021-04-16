@@ -88,7 +88,9 @@ class OfferSpec extends Specification {
         when: "we create an offer with that id"
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, internalAffiliation)
-                .identifier(offerId)build()
+                .identifier(offerId)
+                .experimentalDesign(Optional.of("this is a design"))
+                .build()
         offer.addAllAvailableVersions(versions)
 
         then: "the latest version must be 4"

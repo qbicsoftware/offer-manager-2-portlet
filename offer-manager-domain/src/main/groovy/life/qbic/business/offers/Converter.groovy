@@ -49,6 +49,10 @@ class Converter {
             builder.associatedProject(offer.associatedProject.get())
         }
 
+        if(offer.experimentalDesign.isPresent()){
+            builder.experimentalDesign(offer.experimentalDesign.get())
+        }
+
         return builder.build()
     }
     static Offer buildOfferForCostCalculation(List<ProductItem> items,
@@ -88,6 +92,7 @@ class Converter {
                 offer.projectDescription,
                 offer.items,
                 offer.selectedCustomerAffiliation)
+                .experimentalDesign(offer.experimentalDesign)
                 .identifier(buildOfferId(offer.identifier))
                 //ToDo Is this the correct mapping?
                 .creationDate(offer.modificationDate)

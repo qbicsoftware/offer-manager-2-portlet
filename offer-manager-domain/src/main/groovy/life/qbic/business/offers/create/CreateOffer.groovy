@@ -54,6 +54,7 @@ class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput
                 offerContent.projectDescription,
                 offerContent.items,
                 offerContent.selectedCustomerAffiliation)
+                .experimentalDesign(offerContent.experimentalDesign)
                 .identifier(newOfferId)
                 .build()
 

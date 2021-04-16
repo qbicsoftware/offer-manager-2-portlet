@@ -27,6 +27,7 @@ class ProjectInformationView extends VerticalLayout {
 
     TextField projectTitle
     TextArea projectObjective
+    TextArea experimentalDesign
     Button next
 
     ProjectInformationView(CreateOfferViewModel createOfferViewModel) {
@@ -50,11 +51,15 @@ class ProjectInformationView extends VerticalLayout {
         projectObjective.setRequiredIndicatorVisible(true)
         projectObjective.setSizeFull()
 
+        this.experimentalDesign = new TextArea("Experimental Design")
+        experimentalDesign.setPlaceholder("Enter the experimental design here")
+        experimentalDesign.setSizeFull()
+
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.addStyleName(ValoTheme.LABEL_LARGE)
         next.setEnabled(false)
 
-        VerticalLayout textLayout = new VerticalLayout(projectTitle, projectObjective)
+        VerticalLayout textLayout = new VerticalLayout(projectTitle, projectObjective, experimentalDesign)
         textLayout.setComponentAlignment(projectTitle, Alignment.TOP_CENTER)
         textLayout.setComponentAlignment(projectObjective, Alignment.BOTTOM_CENTER)
         textLayout.setSizeFull()
@@ -82,6 +87,8 @@ class ProjectInformationView extends VerticalLayout {
                 .bind({ it.projectTitle }, { it, updatedValue -> it.setProjectTitle(updatedValue) })
         binder.forField(projectObjective)
                 .bind({ it.projectObjective }, { it, updatedValue -> it.setProjectObjective(updatedValue) })
+        binder.forField(experimentalDesign)
+                .bind({ it.experimentalDesign }, { it, updatedValue -> it.setExperimentalDesign(updatedValue) })
 
 
         /*
@@ -103,6 +110,10 @@ class ProjectInformationView extends VerticalLayout {
                 case "projectObjective":
                     String newValue = it.newValue as String
                     projectObjective.value = newValue ?: projectObjective.emptyValue
+                    break
+                case "experimentalDesign":
+                    String newValue = it.newValue as String
+                    experimentalDesign.value = newValue ?: experimentalDesign.emptyValue
                     break
                 default:
                     break

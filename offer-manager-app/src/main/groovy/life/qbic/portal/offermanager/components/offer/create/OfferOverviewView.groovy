@@ -157,6 +157,7 @@ class OfferOverviewView extends VerticalLayout{
         VerticalLayout projectInfo = new VerticalLayout()
         projectInfo.addComponent(new Label("${createOfferViewModel.projectTitle}"))
         projectInfo.addComponent(new Label("${createOfferViewModel.projectObjective}"))
+        if(createOfferViewModel.experimentalDesign) projectInfo.addComponent(new Label("${createOfferViewModel.experimentalDesign}"))
         projectInfo.addComponent(new Label("${createOfferViewModel.customer}"))
         projectInfo.addComponent(new Label("${createOfferViewModel.customerAffiliation}"))
         projectInfo.addComponent(new Label("${createOfferViewModel.projectManager}"))
