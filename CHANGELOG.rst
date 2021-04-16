@@ -5,7 +5,7 @@ Changelog
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 1.0.0-alpha.7-SNAPSHOT (2021-04-14)
---------------------------
+-----------------------------------
 
 **Added**
 
@@ -13,7 +13,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
-* Add timeout of 10 second to PDF rendering
+* Add timeout of 10 second to PDF rendering (`#494 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/494>`_)
 
 
 **Dependencies**
