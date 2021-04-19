@@ -4,6 +4,7 @@ import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
+import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
@@ -30,7 +31,7 @@ import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
  * @since 1.0.0
  *
  */
-class MaintainProductsView extends VerticalLayout{
+class MaintainProductsView extends FormLayout {
 
     private final MaintainProductsViewModel viewModel
     private final MaintainProductsController controller
@@ -53,13 +54,12 @@ class MaintainProductsView extends VerticalLayout{
         this.viewModel = viewModel
         this.createProductView = createProductView
         this.copyProductView = copyProductView
-
+        setupTitle()
         setupPanel()
         createButtons()
         setupGrid()
         setupDataProvider()
         setupOverviewLayout()
-        setupTitle()
         addSubViews()
         setupListeners()
     }
@@ -67,7 +67,8 @@ class MaintainProductsView extends VerticalLayout{
     private void setupTitle(){
         Label label = new Label("Service Product Maintenance")
         label.setStyleName(ValoTheme.LABEL_HUGE)
-        maintenanceLayout.addComponent(label,0)
+        this.setMargin(false)
+        this.addComponent(label, 0)
     }
 
     private void createButtons(){
@@ -121,7 +122,7 @@ class MaintainProductsView extends VerticalLayout{
     }
 
     private void setupOverviewLayout(){
-        maintenanceLayout = new VerticalLayout(productGrid,buttonLayout)
+        maintenanceLayout = new VerticalLayout(productGrid, buttonLayout)
         maintenanceLayout.setSizeFull()
         maintenanceLayout.setMargin(false)
         maintenanceLayout.addComponents()
