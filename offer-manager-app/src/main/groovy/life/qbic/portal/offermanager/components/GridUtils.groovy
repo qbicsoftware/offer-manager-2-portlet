@@ -79,7 +79,9 @@ class GridUtils {
             Date dateFromLocal = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
             return dateFromLocal == date
         }catch(Exception ignore){
-            return false
+            //if the local date cannot be parsed we want the filter to not be applied and return true for all inputs
+            return true
         }
     }
+
 }
