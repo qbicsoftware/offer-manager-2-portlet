@@ -3,7 +3,6 @@ package life.qbic.portal.offermanager.components
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.Page
 import com.vaadin.ui.*
-import com.vaadin.ui.MenuBar.Command
 import com.vaadin.ui.MenuBar.MenuItem
 import com.vaadin.ui.themes.ValoTheme
 import groovy.transform.CompileStatic
@@ -104,7 +103,7 @@ class AppView extends VerticalLayout {
         verticalLayout.setSizeFull()
         //ToDo Find solution on how to best host different views in the portlet
         //gridLayout.addComponent(this.searchCustomerView)
-        verticalLayout.addComponent(new NewTomatoFeatures())
+        verticalLayout.addComponent(new TomatoFeatures())
         verticalLayout.addComponent(this.createPersonView)
         verticalLayout.addComponent(this.createOfferView)
         verticalLayout.addComponents(this.createAffiliationView)
@@ -156,9 +155,9 @@ class AppView extends VerticalLayout {
         notification.show(Page.getCurrent())
     }
 
-    private class NewTomatoFeatures extends HorizontalLayout {
+    private class TomatoFeatures extends HorizontalLayout {
 
-        NewTomatoFeatures() {
+        TomatoFeatures() {
             createMenuBar()
         }
 
