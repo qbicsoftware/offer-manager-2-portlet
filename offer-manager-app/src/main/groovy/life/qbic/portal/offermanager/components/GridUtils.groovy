@@ -57,7 +57,7 @@ class GridUtils {
     /**
      * Provides a filter field into a header row of a grid for a given column of type Date.
      *
-     * The current implementation filters a date column based on a picked date. If not date is provided
+     * The current implementation filters a date column based on a picked date. If no date is provided,
      * the filter does not apply.
      *
      * @param dataProvider The grid's {@link ListDataProvider}
@@ -89,8 +89,9 @@ class GridUtils {
         try {
             Date dateFromLocal = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
             return dateFromLocal == date
-        } catch(Exception ignore) {
+        } catch(Exception unexpected) {
             log.error("Unexpected exception for $localDate and $date")
+            log.debug("Unexpected exception for $localDate and $date", unexpected)
             return false
         }
     }
