@@ -21,12 +21,12 @@ import com.vaadin.ui.renderers.TextRenderer
 import groovy.util.logging.Log4j2
 
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.portal.offermanager.OfferFileNameFormatter
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 import life.qbic.business.offers.Currency
 import life.qbic.portal.offermanager.components.GridUtils
 
-import java.time.LocalDate
 
 /**
  * A basic offer overview user interface.
@@ -206,7 +206,7 @@ class OfferOverviewView extends FormLayout {
         StreamResource offerResource =
                 new StreamResource((StreamResource.StreamSource res) -> {
                     return model.getOfferAsPdf()
-                }, FileNameFormatter.getFileNameForOffer(model.getSelectedOffer()))
+                }, OfferFileNameFormatter.getFileNameForOffer(model.getSelectedOffer()))
         fileDownloader = new FileDownloader(offerResource)
         fileDownloader.extend(downloadBtn)
     }
@@ -262,26 +262,4 @@ class OfferOverviewView extends FormLayout {
         }
     }
 
-    private static class FileNameFormatter {
-
-        /**
-         * Returns an offer file name in this schema:
-         *
-         * Q_<year>_<month>_<day>_<project-conserved-part>_<random-id-part>_v<offer-version>.pdf
-         * @param offer
-         * @return
-         */
-        static String getFileNameForOffer(Offer offer) {
-            LocalDate date = offer.modificationDate.toLocalDate()
-            String dateString = createDateString(date)
-            return "Q_${dateString}_" +
-                    "${offer.identifier.projectConservedPart}_${offer.identifier.randomPart}_" +
-                    "v${offer.identifier.version}.pdf"
-        }
-
-        private static String createDateString(LocalDate date) {
-            return String.format("%04d_%02d_%02d", date.getYear(), date.getMonthValue(), date.getDayOfMonth())
-        }
-
-    }
 }

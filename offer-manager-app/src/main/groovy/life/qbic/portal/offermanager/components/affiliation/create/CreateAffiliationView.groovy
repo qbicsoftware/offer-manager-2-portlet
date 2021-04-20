@@ -25,7 +25,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
  * @since: 1.0.0
  */
 @Log4j2
-class CreateAffiliationView extends VerticalLayout {
+class CreateAffiliationView extends FormLayout {
     final public AppViewModel sharedViewModel
     final public CreateAffiliationViewModel createAffiliationViewModel
     private final CreateAffiliationController controller
@@ -54,6 +54,11 @@ class CreateAffiliationView extends VerticalLayout {
     }
 
     private void initLayout() {
+        final Label label = new Label("Create A New Affiliation")
+
+        label.addStyleName(ValoTheme.LABEL_HUGE)
+        this.addComponent(label)
+
         this.organisationBox = new ComboBox<>("Organisation Name")
         organisationBox.setPlaceholder("Name of the organisation")
         organisationBox.setDescription("Select or enter new name of the organisation e.g. Universität Tübingen.")

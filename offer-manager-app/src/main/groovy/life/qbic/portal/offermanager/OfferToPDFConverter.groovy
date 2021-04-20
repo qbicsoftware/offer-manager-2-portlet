@@ -165,7 +165,7 @@ class OfferToPDFConverter implements OfferExporter {
     private void setProjectInformation() {
         htmlContent.getElementById("project-title").text(offer.projectTitle)
         htmlContent.getElementById("project-description").text(offer.projectDescription)
-        htmlContent.getElementById("experimental-design").text(offer.experimentalDesign.orElse(""))
+        if(offer.experimentalDesign.isPresent()) htmlContent.getElementById("experimental-design").text(offer.experimentalDesign.get())
     }
 
     private void setCustomerInformation() {
