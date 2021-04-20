@@ -75,7 +75,7 @@ class GridUtils {
                 if (filterValue) {
                     return isSameDate(filterValue, columnValue)
                 } else {
-                    return true
+                    return true // when no filter argument is provided
                 }
             })
         })
