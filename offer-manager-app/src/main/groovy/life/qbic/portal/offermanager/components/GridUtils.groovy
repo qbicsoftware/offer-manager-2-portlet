@@ -7,6 +7,8 @@ import com.vaadin.ui.Grid
 import com.vaadin.ui.TextField
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import org.apache.commons.lang3.StringUtils
 
 import java.time.LocalDate
@@ -19,6 +21,8 @@ import java.time.chrono.ChronoLocalDate
  * @since 1.0.0
  */
 class GridUtils {
+
+    private static Logging log = Logger.getLogger(this.class)
 
     /**
      * Provides a filter field into a header row of a grid for a given column.
@@ -53,7 +57,8 @@ class GridUtils {
     /**
      * Provides a filter field into a header row of a grid for a given column of type Date.
      *
-     * The current implementation filters a date column based on a picked date
+     * The current implementation filters a date column based on a picked date. If no date is provided,
+     * the filter does not apply.
      *
      * @param dataProvider The grid's {@link ListDataProvider}
      * @param column The date column to add the filter to
@@ -64,9 +69,15 @@ class GridUtils {
                                       HeaderRow headerRow) {
         DateField dateFilterField = new DateField()
         dateFilterField.addValueChangeListener(event -> {
-            dataProvider.addFilter(element ->
-                    isSameDate(dateFilterField.getValue(), column.getValueProvider().apply(element))
-            )
+            dataProvider.addFilter(element -> {
+                LocalDate filterValue = dateFilterField.getValue()
+                Date columnValue = column.getValueProvider().apply(element)
+                if (filterValue) {
+                    return isSameDate(filterValue, columnValue)
+                } else {
+                    return true // when no filter argument is provided
+                }
+            })
         })
         dateFilterField.addStyleName(ValoTheme.DATEFIELD_TINY)
 
@@ -75,12 +86,13 @@ class GridUtils {
     }
 
     private static boolean isSameDate(LocalDate localDate, Date date){
-        try{
+        try {
             Date dateFromLocal = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant())
             return dateFromLocal == date
-        }catch(Exception ignore){
-            //if the local date cannot be parsed we want the filter to not be applied and return true for all inputs
-            return true
+        } catch(Exception unexpected) {
+            log.error("Unexpected exception for $localDate and $date")
+            log.debug("Unexpected exception for $localDate and $date", unexpected)
+            return false
         }
     }
 
