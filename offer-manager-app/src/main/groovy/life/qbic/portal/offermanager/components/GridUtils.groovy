@@ -73,7 +73,7 @@ class GridUtils {
                 LocalDate filterValue = dateFilterField.getValue()
                 Date columnValue = column.getValueProvider().apply(element)
                 if (filterValue) {
-                    isSameDate(filterValue, columnValue)
+                    return isSameDate(filterValue, columnValue)
                 } else {
                     return true
                 }
