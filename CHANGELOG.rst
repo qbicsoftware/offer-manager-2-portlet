@@ -22,6 +22,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Naming of the downloaded offer pdf is consistent (`#498 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/498>`_)
 
+* Provide ISO 8601 date format renderer for offer overview table (`#299 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/299>`_)
+
 
 **Dependencies**
 
