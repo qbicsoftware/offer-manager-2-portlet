@@ -19,6 +19,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.business.offers.Currency
+import life.qbic.portal.offermanager.OfferFileNameFormatter
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.OfferToPDFConverter
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
@@ -215,7 +216,7 @@ class OfferOverviewView extends VerticalLayout{
         OfferToPDFConverter converter = new OfferToPDFConverter(createOfferViewModel.savedOffer.get())
         StreamResource offerResource = new StreamResource((StreamResource.StreamSource res) -> {
             return converter.getOfferAsPdf()
-        }, "${offer.identifier.toString()}.pdf")
+        }, OfferFileNameFormatter.getFileNameForOffer(offer))
         // ... and attach it to the download button
         currentFileDownloader = new FileDownloader(offerResource)
         currentFileDownloader.extend(downloadOffer)
