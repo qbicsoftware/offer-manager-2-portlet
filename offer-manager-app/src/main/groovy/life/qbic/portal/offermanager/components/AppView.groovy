@@ -143,6 +143,13 @@ class AppView extends VerticalLayout {
             this.updateOfferView.setVisible(true)
         })
 
+        this.updateOfferView.viewModel.addPropertyChangeListener("offerCreatedSuccessfully", {
+            if(it.newValue as Boolean){
+                this.updateOfferView.setVisible(false)
+                this.overviewView.setVisible(true)
+            }
+        })
+
         this.createOfferView.viewModel.addPropertyChangeListener("offerCreatedSuccessfully", {
             if(it.newValue as Boolean){
                 this.createOfferView.setVisible(false)
