@@ -15,6 +15,7 @@ import com.vaadin.ui.ProgressBar
 import com.vaadin.ui.UI
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
+import com.vaadin.ui.renderers.DateRenderer
 import com.vaadin.ui.themes.ValoTheme
 import com.vaadin.ui.Grid.Column
 import com.vaadin.ui.renderers.TextRenderer
@@ -128,8 +129,9 @@ class OfferOverviewView extends FormLayout {
     }
 
     private void setupGrid() {
-        Column<Offer, Date> dateColumn = overviewGrid.addColumn({ overview -> overview.getModificationDate() })
-                .setCaption("Creation Date").setId("CreationDate")
+        Column<Offer, Date> dateColumn = overviewGrid.addColumn({ overview -> overview
+                .getModificationDate() }).setCaption("Creation Date").setId("CreationDate")
+        dateColumn.setRenderer(date -> date,  new DateRenderer('%1$tY-%1$tm-%1$td'))
         overviewGrid.addColumn({overview -> overview.offerId.toString()})
                 .setCaption("Offer ID").setId("OfferId")
         overviewGrid.addColumn({overview -> overview.getProjectTitle()})
