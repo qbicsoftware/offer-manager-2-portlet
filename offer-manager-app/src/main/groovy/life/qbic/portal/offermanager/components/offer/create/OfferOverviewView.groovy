@@ -40,13 +40,10 @@ class OfferOverviewView extends VerticalLayout{
 
     private final CreateOfferViewModel createOfferViewModel
 
-    private FileDownloader currentFileDownloader
-
     Panel offerOverview
     Grid<ProductItemViewModel> itemGrid
     Button previous
     Button save
-    Button downloadOffer
     CreateOfferController createOfferController
 
     OfferOverviewView(CreateOfferViewModel viewModel, CreateOfferController controller, OfferResourcesService service){
@@ -54,16 +51,6 @@ class OfferOverviewView extends VerticalLayout{
         this.createOfferController = controller
         initLayout()
         setUpGrid()
-        service.subscribe((Offer offer) -> {
-            try {
-                createOfferController.fetchOffer(offer.identifier)
-                addOfferResource(offer)
-            } catch (Exception e) {
-                log.error("Unable to create the offer PDF resource.")
-                log.error(e.message)
-                log.error(e.stackTrace.join("\n"))
-            }
-        })
     }
 
     private void setUpGrid() {
@@ -95,11 +82,7 @@ class OfferOverviewView extends VerticalLayout{
         this.save = new Button("Save Offer", VaadinIcons.CHECK_SQUARE)
         save.addStyleName(ValoTheme.LABEL_LARGE)
 
-        this.downloadOffer = new Button("Download Offer", VaadinIcons.DOWNLOAD)
-        downloadOffer.addStyleName(ValoTheme.LABEL_LARGE)
-        downloadOffer.setEnabled(false)
-
-        HorizontalLayout offerActionButtons = new HorizontalLayout(save, downloadOffer)
+        HorizontalLayout offerActionButtons = new HorizontalLayout(save)
         HorizontalLayout buttonLayout = new HorizontalLayout(previous, offerActionButtons)
         buttonLayout.setSizeFull()
 
@@ -199,36 +182,6 @@ class OfferOverviewView extends VerticalLayout{
         panel.setContent(gridLayout)
 
         return panel
-    }
-
-    private void addOfferResource(Offer offer) {
-        /*
-        First, we make sure that no download resources are still attached to the download
-        button.
-         */
-        removeExistingResources()
-        //Check if an Offer has been saved.
-        if (!createOfferViewModel.savedOffer.isPresent()) {
-            downloadOffer.setEnabled(false)
-            return
-        }
-        // Then we create a new PDF resource ...
-        OfferToPDFConverter converter = new OfferToPDFConverter(createOfferViewModel.savedOffer.get())
-        StreamResource offerResource = new StreamResource((StreamResource.StreamSource res) -> {
-            return converter.getOfferAsPdf()
-        }, OfferFileNameFormatter.getFileNameForOffer(offer))
-        // ... and attach it to the download button
-        currentFileDownloader = new FileDownloader(offerResource)
-        currentFileDownloader.extend(downloadOffer)
-        downloadOffer.setEnabled(true)
-        }
-
-
-    private void removeExistingResources() {
-        if (currentFileDownloader) {
-            downloadOffer.removeExtension(currentFileDownloader)
-            downloadOffer.setEnabled(false)
-        }
     }
 
     /*

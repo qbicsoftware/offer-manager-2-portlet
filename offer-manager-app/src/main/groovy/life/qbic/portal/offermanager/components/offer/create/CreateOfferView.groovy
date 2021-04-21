@@ -24,7 +24,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
 class CreateOfferView extends FormLayout{
 
     final private AppViewModel sharedViewModel
-    final private CreateOfferViewModel viewModel
+    final CreateOfferViewModel viewModel
 
     private final CreateOfferController controller
 
@@ -170,6 +170,9 @@ class CreateOfferView extends FormLayout{
                     viewModel.customerAffiliation,
                     viewModel.experimentalDesign)
         })
+        this.viewModel.addPropertyChangeListener("offerCreatedSuccessfully", {
+            resetViewContent()
+        })
     }
 
     /**
@@ -204,6 +207,15 @@ class CreateOfferView extends FormLayout{
                 this.projectManagerSelectionView,
                 this.selectItemsView,
                 this.overviewView)
+    }
+
+    void resetViewContent() {
+        viewHistory.loadNewView(this.projectInformationView)
+        navigationView.rewind()
+        projectInformationView.reset()
+        customerSelectionView.reset()
+        projectManagerSelectionView.reset()
+        selectItemsView.reset()
     }
 
     /*

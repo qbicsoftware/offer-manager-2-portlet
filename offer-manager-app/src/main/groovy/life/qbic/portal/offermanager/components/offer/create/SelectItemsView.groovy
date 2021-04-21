@@ -22,6 +22,7 @@ import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.business.offers.Currency
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.AppViewModel
+import life.qbic.portal.offermanager.components.Resettable
 
 /**
  * This class generates a Layout in which the user
@@ -34,7 +35,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
  * @since: 0.1.0
  *
  */
-class SelectItemsView extends VerticalLayout{
+class SelectItemsView extends VerticalLayout implements Resettable{
 
     private final CreateOfferViewModel createOfferViewModel
     private final AppViewModel viewModel
@@ -73,6 +74,8 @@ class SelectItemsView extends VerticalLayout{
     TextField amountProteomicAnalysis
     TextField amountMetabolomicAnalysis
     TextField amountDataStorage
+
+    TabSheet packageAccordion
 
     /**
      * Contains regex for filtering the different product types
@@ -152,6 +155,16 @@ class SelectItemsView extends VerticalLayout{
         initLayout()
         setupDataProvider()
         addListener()
+    }
+
+    @Override
+    void reset() {
+        resetSelectedItems()
+    }
+
+    private void resetSelectedItems() {
+        overviewGrid.deselectAll()
+        packageAccordion.setSelectedTab(0)
     }
 
 
@@ -269,7 +282,7 @@ class SelectItemsView extends VerticalLayout{
         overviewGrid.setHeightMode(HeightMode.UNDEFINED)
 
 
-        TabSheet packageAccordion = new TabSheet()
+        packageAccordion = new TabSheet()
         packageAccordion.addTab(seqLayout,"Sequencing")
         packageAccordion.addTab(primaryAnalysisLayout,"Primary Bioinformatics")
         packageAccordion.addTab(secondaryAnalysisLayout,"Secondary Bioinformatics")
