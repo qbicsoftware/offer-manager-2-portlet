@@ -86,7 +86,8 @@ class CreateOfferViewModel {
 
         offerCreatedSuccessfully = false
         this.addPropertyChangeListener("offerCreatedSuccessfully", {
-            resetModel()
+            if (it.newValue as Boolean)
+                resetModel()
         })
 
         fetchPersonData()
