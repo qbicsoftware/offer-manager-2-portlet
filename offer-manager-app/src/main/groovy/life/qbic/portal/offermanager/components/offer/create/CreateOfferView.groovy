@@ -215,6 +215,7 @@ class CreateOfferView extends FormLayout{
         projectInformationView.reset()
         customerSelectionView.reset()
         projectManagerSelectionView.reset()
+        selectItemsView.reset()
     }
 
     /*
