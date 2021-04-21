@@ -50,4 +50,12 @@ class ButtonNavigationView extends HorizontalLayout{
         if (currentStep >= 0) currentStep--
         buttonList.get(currentStep).setStyleName(ValoTheme.BUTTON_BORDERLESS)
     }
+
+    void rewind() {
+        buttonList.each {
+            it.setStyleName(ValoTheme.BUTTON_BORDERLESS)
+        }
+        buttonList.first().setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+        currentStep = 1
+    }
 }

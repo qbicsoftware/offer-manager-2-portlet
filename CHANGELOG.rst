@@ -21,6 +21,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Allow resetting the date picker in the offer overview (`#486 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/486>`_)
 
 * Naming of the downloaded offer pdf is consistent (`#498 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/498>`_)
+* Reset the view after an offer has been created  (`#495 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/495>`_)
 
 
 **Dependencies**

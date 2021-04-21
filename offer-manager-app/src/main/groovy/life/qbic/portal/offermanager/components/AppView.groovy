@@ -26,7 +26,6 @@ import life.qbic.portal.offermanager.components.product.MaintainProductsView
  *
  */
 @Log4j2
-@CompileStatic
 class AppView extends VerticalLayout {
 
     private final AppViewModel portletViewModel
@@ -142,6 +141,13 @@ class AppView extends VerticalLayout {
         this.overviewView.updateOfferBtn.addClickListener({
             hideAllFeatureViews()
             this.updateOfferView.setVisible(true)
+        })
+
+        this.createOfferView.viewModel.addPropertyChangeListener("offerCreatedSuccessfully", {
+            if(it.newValue as Boolean){
+                this.createOfferView.setVisible(false)
+                this.overviewView.setVisible(true)
+            }
         })
     }
 

@@ -75,6 +75,8 @@ class CreateOfferViewModel {
     private final ProductsResourcesService productsResourcesService
     private final ProjectManagerResourceService managerResourceService
 
+    @Bindable Boolean offerCreatedSuccessfully
+
     CreateOfferViewModel(CustomerResourceService customerResourceService,
                          ProjectManagerResourceService managerResourceService,
                          ProductsResourcesService productsResourcesService) {
@@ -82,9 +84,34 @@ class CreateOfferViewModel {
         this.productsResourcesService = productsResourcesService
         this.managerResourceService = managerResourceService
 
+        offerCreatedSuccessfully = false
+        this.addPropertyChangeListener("offerCreatedSuccessfully", {
+            resetModel()
+        })
+
         fetchPersonData()
         fetchProductData()
         subscribeToResources()
+    }
+
+    protected void resetModel() {
+        offerCreatedSuccessfully = false
+
+        offerId = null
+        projectTitle = ""
+        projectObjective = ""
+        experimentalDesign = ""
+        customer = null
+        customerAffiliation = null
+        projectManager = null
+        offerPrice = 0
+
+        netPrice = 0
+        taxes = 0
+        overheads = 0
+        totalPrice = 0
+
+        productItems.clear()
     }
 
     private void fetchPersonData() {

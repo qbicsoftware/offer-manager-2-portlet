@@ -9,6 +9,7 @@ import com.vaadin.ui.TextArea
 import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
+import life.qbic.portal.offermanager.components.Resettable
 
 /**
  * This class generates a Layout in which the user
@@ -21,7 +22,7 @@ import com.vaadin.ui.themes.ValoTheme
  * @since: 0.1.0
  *
  */
-class ProjectInformationView extends VerticalLayout {
+class ProjectInformationView extends VerticalLayout implements Resettable {
 
     private final CreateOfferViewModel createOfferViewModel
 
@@ -71,6 +72,12 @@ class ProjectInformationView extends VerticalLayout {
 
         this.setMargin(false)
         this.addComponents(textLayout, buttonLayout)
+    }
+
+    private void resetContent() {
+        this.projectTitle.setValue("")
+        this.projectObjective.setValue("")
+        this.experimentalDesign.setValue("")
     }
 
 
@@ -143,4 +150,8 @@ class ProjectInformationView extends VerticalLayout {
         })
     }
 
+    @Override
+    void reset() {
+        resetContent()
+    }
 }

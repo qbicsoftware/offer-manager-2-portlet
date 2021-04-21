@@ -31,6 +31,7 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
                 "\'${createdOffer.projectTitle}\' successfully")
 
         this.offerService.addToResource(createdOffer)
+        this.createOfferViewModel.setOfferCreatedSuccessfully(true)
     }
 
     @Override

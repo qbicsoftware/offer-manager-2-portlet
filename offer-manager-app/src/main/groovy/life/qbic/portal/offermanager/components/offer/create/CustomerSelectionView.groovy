@@ -16,6 +16,7 @@ import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.offermanager.components.GridUtils
+import life.qbic.portal.offermanager.components.Resettable
 
 /**
  * This class generates a Layout in which the user
@@ -28,7 +29,7 @@ import life.qbic.portal.offermanager.components.GridUtils
  * @since: 0.1.0
  *
  */
-class CustomerSelectionView extends VerticalLayout{
+class CustomerSelectionView extends VerticalLayout implements Resettable{
 
     private final CreateOfferViewModel viewModel
 
@@ -288,5 +289,17 @@ class CustomerSelectionView extends VerticalLayout{
         GridUtils.setupColumnFilter(customerListDataProvider,
                 customerGrid.getColumn("EmailAddress"),
                 customerFilterRow)
+    }
+
+    @Override
+    void reset() {
+        resetSelection()
+    }
+
+    private void resetSelection() {
+        selectedCustomer.setValue("-")
+        selectedAffiliation.setValue("-")
+        customerGrid.deselectAll()
+        affiliationGrid.deselectAll()
     }
 }

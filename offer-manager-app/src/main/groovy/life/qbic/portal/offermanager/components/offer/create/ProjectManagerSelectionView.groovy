@@ -13,6 +13,7 @@ import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.portal.offermanager.components.GridUtils
+import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
 
 /**
@@ -25,7 +26,7 @@ import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewMode
  * @since: 0.1.0
  *
  */
-class ProjectManagerSelectionView extends VerticalLayout{
+class ProjectManagerSelectionView extends VerticalLayout implements Resettable {
 
     private final CreateOfferViewModel viewModel
 
@@ -185,5 +186,15 @@ class ProjectManagerSelectionView extends VerticalLayout{
         GridUtils.setupColumnFilter(projectManagerListDataProvider,
                 projectManagerGrid.getColumn("EmailAddress"),
                 customerFilterRow)
+    }
+
+    @Override
+    void reset() {
+        resetSelection()
+    }
+
+    private void resetSelection() {
+        projectManagerGrid.deselectAll()
+        selectedProjectManager.setValue("-")
     }
 }
