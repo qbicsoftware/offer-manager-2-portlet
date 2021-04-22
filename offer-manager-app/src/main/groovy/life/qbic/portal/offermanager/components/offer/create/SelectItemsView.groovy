@@ -225,7 +225,7 @@ class SelectItemsView extends VerticalLayout implements Resettable{
         this.applyProjectManagement = new Button("Apply", VaadinIcons.PLUS)
         applyProjectManagement.setEnabled(false)
 
-        this.removeItemsButton = new Button("Remove Selected Item", VaadinIcons.MINUS)
+        this.removeItemsButton = new Button("Remove Item", VaadinIcons.MINUS)
         removeItemsButton.setEnabled(false)
         removeItemsButton.setStyleName(ValoTheme.BUTTON_DANGER)
 
