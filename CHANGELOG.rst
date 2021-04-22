@@ -24,7 +24,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Reset the view after an offer has been created  (`#495 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/495>`_)
 
 * Provide ISO 8601 date format renderer for offer overview table (`#299 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/299>`_)
-
+* Provide functionality to remove items from an offer (`#516 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/516>`_)
 
 **Dependencies**
 
