@@ -229,6 +229,8 @@ class CreatePersonView extends VerticalLayout {
         ListDataProvider<Affiliation> dataProvider = organisation.affiliations
         this.addressAdditionComboBox.setDataProvider(dataProvider)
         dataProvider.setSortOrder({it.addressAddition}, SortDirection.ASCENDING)
+
+        addressAdditionComboBox.setSelectedItem(dataProvider.getItems().getAt(0))
     }
 
     /**
