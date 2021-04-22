@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.components.offer.create
 
+import groovy.transform.EqualsAndHashCode
 import life.qbic.datamodel.dtos.business.services.Product
 
 /**
@@ -10,6 +11,7 @@ import life.qbic.datamodel.dtos.business.services.Product
  * @since: 0.1.0
  *
  */
+@EqualsAndHashCode
 class ProductItemViewModel {
 
     double quantity

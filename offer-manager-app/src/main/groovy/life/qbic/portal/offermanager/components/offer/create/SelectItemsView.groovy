@@ -64,6 +64,7 @@ class SelectItemsView extends VerticalLayout implements Resettable{
     Button applyProteomicAnalysis
     Button applyMetabolomicAnalysis
     Button applyDataStorage
+    Button removeItemsButton
     Button next
     Button previous
 
@@ -224,7 +225,12 @@ class SelectItemsView extends VerticalLayout implements Resettable{
         this.applyProjectManagement = new Button("Apply", VaadinIcons.PLUS)
         applyProjectManagement.setEnabled(false)
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(previous,next)
+        this.removeItemsButton = new Button("Remove Item", VaadinIcons.MINUS)
+        removeItemsButton.setEnabled(false)
+        removeItemsButton.setStyleName(ValoTheme.BUTTON_DANGER)
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(previous, removeItemsButton, next)
+        buttonLayout.setComponentAlignment(removeItemsButton, Alignment.BOTTOM_CENTER)
         buttonLayout.setComponentAlignment(next, Alignment.BOTTOM_RIGHT)
         buttonLayout.setComponentAlignment(previous, Alignment.BOTTOM_LEFT)
         buttonLayout.setSizeFull()
@@ -758,6 +764,23 @@ class SelectItemsView extends VerticalLayout implements Resettable{
             applyMetabolomicAnalysis.setEnabled(createOfferViewModel.metabolomicsAnalysisGridSelected && createOfferViewModel.metabolomicsAnalysisQuantityValid)
             applyProjectManagement.setEnabled(createOfferViewModel.projectManagementGridSelected && createOfferViewModel.projectManagementQuantityValid)
             applyDataStorage.setEnabled(createOfferViewModel.storageGridSelected && createOfferViewModel.storageQuantityValid)
+        })
+
+        overviewGrid.addSelectionListener({
+            if (it.allSelectedItems) {
+                removeItemsButton.setEnabled(true)
+            } else {
+                removeItemsButton.setEnabled(false)
+            }
+        })
+
+        removeItemsButton.addClickListener({
+            def selectedItems = overviewGrid.getSelectedItems()
+            if (selectedItems) {
+                createOfferViewModel.productItems.removeAll(selectedItems)
+                overviewGrid.dataProvider.refreshAll()
+                overviewGrid.deselectAll()
+            }
         })
     }
 
