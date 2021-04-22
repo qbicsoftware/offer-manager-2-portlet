@@ -235,6 +235,8 @@ class CreatePersonView extends FormLayout {
         ListDataProvider<Affiliation> dataProvider = organisation.affiliations
         this.addressAdditionComboBox.setDataProvider(dataProvider)
         dataProvider.setSortOrder({it.addressAddition}, SortDirection.ASCENDING)
+
+        this.addressAdditionComboBox.setSelectedItem(dataProvider.getItems().getAt(0))
     }
 
     /**
