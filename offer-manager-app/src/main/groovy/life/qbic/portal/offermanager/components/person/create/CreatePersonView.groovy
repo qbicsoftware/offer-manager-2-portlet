@@ -230,7 +230,7 @@ class CreatePersonView extends VerticalLayout {
         this.addressAdditionComboBox.setDataProvider(dataProvider)
         dataProvider.setSortOrder({it.addressAddition}, SortDirection.ASCENDING)
 
-        addressAdditionComboBox.setSelectedItem(dataProvider.getItems().getAt(0))
+        this.addressAdditionComboBox.setSelectedItem(dataProvider.getItems().getAt(0))
     }
 
     /**
