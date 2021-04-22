@@ -232,36 +232,43 @@ class SelectItemsView extends VerticalLayout implements Resettable{
         HorizontalLayout quantitySeq = new HorizontalLayout(amountSequencing,applySequencing)
         quantitySeq.setComponentAlignment(applySequencing, Alignment.BOTTOM_LEFT)
         VerticalLayout seqLayout = new VerticalLayout(sequencingGrid,quantitySeq)
+        sequencingGrid.setHeightByRows(6)
         seqLayout.setSizeFull()
 
         HorizontalLayout quantityPrimary = new HorizontalLayout(amountPrimaryAnalysis,applyPrimaryAnalysis)
         quantityPrimary.setComponentAlignment(applyPrimaryAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout primaryAnalysisLayout = new VerticalLayout(primaryAnalyseGrid, quantityPrimary)
+        primaryAnalyseGrid.setHeightByRows(6)
         primaryAnalysisLayout.setSizeFull()
 
         HorizontalLayout quantitySecondary = new HorizontalLayout(amountSecondaryAnalysis,applySecondaryAnalysis)
         quantitySecondary.setComponentAlignment(applySecondaryAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout secondaryAnalysisLayout = new VerticalLayout(secondaryAnalyseGrid, quantitySecondary)
+        secondaryAnalyseGrid.setHeightByRows(6)
         secondaryAnalysisLayout.setSizeFull()
 
         HorizontalLayout quantityProteomic = new HorizontalLayout(amountProteomicAnalysis,applyProteomicAnalysis)
         quantityProteomic.setComponentAlignment(applyProteomicAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout proteomicsLayout = new VerticalLayout(proteomicsAnalysisGrid, quantityProteomic)
+        proteomicsAnalysisGrid.setHeightByRows(6)
         proteomicsLayout.setSizeFull()
 
         HorizontalLayout quantityMetabolomic = new HorizontalLayout(amountMetabolomicAnalysis ,applyMetabolomicAnalysis)
         quantityMetabolomic.setComponentAlignment(applyMetabolomicAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout metabolomicsLayout = new VerticalLayout(metabolomicsAnalysisGrid, quantityMetabolomic)
+        metabolomicsAnalysisGrid.setHeightByRows(6)
         metabolomicsLayout.setSizeFull()
 
         HorizontalLayout quantityStorage = new HorizontalLayout(amountDataStorage,applyDataStorage)
         quantityStorage.setComponentAlignment(applyDataStorage, Alignment.BOTTOM_LEFT)
         VerticalLayout dataStorageLayout = new VerticalLayout(storageGrid, quantityStorage)
+        storageGrid.setHeightByRows(6)
         dataStorageLayout.setSizeFull()
 
         HorizontalLayout quantityManagement = new HorizontalLayout(amountProjectManagement,applyProjectManagement)
         quantityManagement.setComponentAlignment(applyProjectManagement, Alignment.BOTTOM_LEFT)
         VerticalLayout projectManagementLayout = new VerticalLayout(projectManagementGrid, quantityManagement)
+        projectManagementGrid.setHeightByRows(6)
         projectManagementLayout.setSizeFull()
 
         HorizontalLayout overview = new HorizontalLayout(overviewGrid)
