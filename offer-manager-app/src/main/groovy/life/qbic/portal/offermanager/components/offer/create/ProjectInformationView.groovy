@@ -162,7 +162,10 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
     }
 
     private boolean allValuesValid(){
-        return false
+
+        return createOfferViewModel.projectTitleValid &&
+                createOfferViewModel.projectObjectiveValid &&
+                createOfferViewModel.experimentalDesignValid
     }
 
     private void setupValidators(){
