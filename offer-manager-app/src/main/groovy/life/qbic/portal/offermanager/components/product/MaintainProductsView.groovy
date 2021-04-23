@@ -191,6 +191,14 @@ class MaintainProductsView extends FormLayout {
         viewModel.products.addPropertyChangeListener({
             productGrid.dataProvider.refreshAll()
         })
+
+        viewModel.addPropertyChangeListener("productCreatedSuccessfully", {
+            if(it.newValue as Boolean){
+                createProductView.setVisible(false)
+                maintenanceLayout.setVisible(true)
+                viewModel.reset()
+            }
+        })
     }
 
     private void checkProductSelected() {
