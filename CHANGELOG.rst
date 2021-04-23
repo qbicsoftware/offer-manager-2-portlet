@@ -13,6 +13,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Experimental designs can be defined for an offer (`#263 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/263>` _)
 * New dropdown menu bar (`#490` <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/490>` _)
+* Jump back to maintain view after product creation/update (`#481` <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/481>` _)
 
 **Fixed**
 
@@ -25,6 +26,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Provide ISO 8601 date format renderer for offer overview table (`#299 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/299>`_)
 * Provide functionality to remove items from an offer (`#516 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/516>`_)
+
 
 **Dependencies**
 
