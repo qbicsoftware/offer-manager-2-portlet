@@ -10,11 +10,8 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.business.offers.identifier.OfferId
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Sequencing
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
@@ -491,6 +488,8 @@ class Offer {
     {
         //digest crucial offer characteristics
         digest.update(offer.projectTitle.getBytes(StandardCharsets.UTF_8))
+        digest.update(offer.projectObjective.getBytes(StandardCharsets.UTF_8))
+        if(offer.experimentalDesign.isPresent()) digest.update(offer.experimentalDesign.get().getBytes(StandardCharsets.UTF_8))
 
         offer.items.each {item ->
             digest.update(item.product.productName.getBytes(StandardCharsets.UTF_8))
