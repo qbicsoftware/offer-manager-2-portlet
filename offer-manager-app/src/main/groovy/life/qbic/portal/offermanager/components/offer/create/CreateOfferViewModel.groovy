@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.components.offer.create
 
 import groovy.beans.Bindable
+import groovy.transform.CompileStatic
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
@@ -27,13 +28,13 @@ import life.qbic.portal.offermanager.communication.Subscription
  */
 class CreateOfferViewModel {
 
-    List<ProductItemViewModel> sequencingProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> primaryAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> secondaryAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> managementProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> storageProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> proteomicAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> metabolomicAnalysisProduct = new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<Product> sequencingProducts = new ObservableList(new ArrayList<Product>())
+    List<Product> primaryAnalysisProducts = new ObservableList(new ArrayList<Product>())
+    List<Product> secondaryAnalysisProducts = new ObservableList(new ArrayList<Product>())
+    List<Product> managementProducts = new ObservableList(new ArrayList<Product>())
+    List<Product> storageProducts = new ObservableList(new ArrayList<Product>())
+    List<Product> proteomicAnalysisProducts = new ObservableList(new ArrayList<Product>())
+    List<Product> metabolomicAnalysisProduct = new ObservableList(new ArrayList<Product>())
 
     ObservableList productItems = new ObservableList(new ArrayList<ProductItemViewModel>())
     ObservableList foundCustomers = new ObservableList(new ArrayList<Customer>())
@@ -93,6 +94,23 @@ class CreateOfferViewModel {
         fetchPersonData()
         fetchProductData()
         subscribeToResources()
+    }
+
+    void addItem(ProductItemViewModel item) {
+        // we don't do anything when the amount is equal or smaller zero
+        if (item.quantity <= 0.0) {
+            return
+        }
+        List<ProductItemViewModel> alreadyExistingItems = productItems.findAll {
+            (ProductItemViewModel currentItem) ->
+                    currentItem.product.productId == item.product.productId
+        } as List<ProductItemViewModel>
+        double totalAmount = item.quantity
+        for (ProductItemViewModel currentItem : alreadyExistingItems) {
+            totalAmount = totalAmount + currentItem.quantity
+        }
+        productItems.add(new ProductItemViewModel(totalAmount, item.product))
+        productItems.removeAll(alreadyExistingItems)
     }
 
     protected void resetModel() {
@@ -191,29 +209,28 @@ class CreateOfferViewModel {
         this.metabolomicAnalysisProduct.clear()
 
         products.each { product ->
-            ProductItemViewModel productItem = new ProductItemViewModel(0, product)
 
             switch (product) {
                 case Sequencing:
-                    sequencingProducts.add(productItem)
+                    sequencingProducts.add(product)
                     break
                 case ProjectManagement:
-                    managementProducts.add(productItem)
+                    managementProducts.add(product)
                     break
                 case PrimaryAnalysis:
-                    primaryAnalysisProducts.add(productItem)
+                    primaryAnalysisProducts.add(product)
                     break
                 case SecondaryAnalysis:
-                    secondaryAnalysisProducts.add(productItem)
+                    secondaryAnalysisProducts.add(product)
                     break
                 case DataStorage:
-                    storageProducts.add(productItem)
+                    storageProducts.add(product)
                     break
                 case ProteomicAnalysis:
-                    proteomicAnalysisProducts.add(productItem)
+                    proteomicAnalysisProducts.add(product)
                     break
                 case MetabolomicAnalysis:
-                    metabolomicAnalysisProduct.add(productItem)
+                    metabolomicAnalysisProduct.add(product)
                     break
                 default:
                     // this should not happen
