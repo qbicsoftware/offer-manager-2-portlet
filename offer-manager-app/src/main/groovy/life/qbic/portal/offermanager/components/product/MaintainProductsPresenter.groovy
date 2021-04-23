@@ -34,12 +34,14 @@ class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOu
     void created(Product product) {
         mainViewModel.successNotifications << "Successfully added new product $product.productId - $product.productName."
         productsViewModel.productsResourcesService.addToResource(product)
+        productsViewModel.productCreatedSuccessfully = true
     }
 
     @Override
     void copied(Product product) {
-mainViewModel.successNotifications << "Successfully copied product $product.productId - $product.productName."
+        mainViewModel.successNotifications << "Successfully copied product $product.productId - $product.productName."
         productsViewModel.productsResourcesService.addToResource(product)
+        productsViewModel.productCreatedSuccessfully = true
     }
 
     @Override

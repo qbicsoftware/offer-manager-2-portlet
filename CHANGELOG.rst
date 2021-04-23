@@ -15,6 +15,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * New dropdown menu bar (`#490` <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/490>` _)
 
+* Jump back to maintain view after product creation/update (`#481 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/481>`_)
+
 **Fixed**
 
 * Add timeout of 10 second to PDF rendering (`#494 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/494>`_)
@@ -30,6 +32,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Provide functionality to remove items from an offer (`#516 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/516>`_)
 
 * Make filter for service product view work  (`#523 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/523>`_)
+
 
 **Dependencies**
 
