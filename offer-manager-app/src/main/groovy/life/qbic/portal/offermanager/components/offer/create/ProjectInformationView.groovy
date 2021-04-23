@@ -1,7 +1,11 @@
 package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.data.Binder
+import com.vaadin.data.ValidationResult
+import com.vaadin.data.Validator
+import com.vaadin.data.ValueContext
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.server.UserError
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.HorizontalLayout
@@ -36,6 +40,7 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
 
         initLayout()
         bindViewModel()
+        setupValidators()
     }
 
     /**
@@ -143,11 +148,62 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
                         projectObjective.componentError = null
                     }
                     break
+                case "experimentalDesign":
+                    if (it.newValue || it.newValue == null) {
+                        experimentalDesign.componentError = null
+                    }
+                    break
                 default:
                     break
             }
-            next.setEnabled(true)
+            //todo should not always be enabled
+            next.enabled = allValuesValid()
         })
+    }
+
+    private boolean allValuesValid(){
+        return false
+    }
+
+    private void setupValidators(){
+        Validator<String> notNullValidator =  Validator.from({ String value -> (value != null)}, "Please provide a valid description.")
+        Validator<String> notEmptyValidator =  Validator.from({ String value -> (value && !value.trim().empty)}, "Please provide a valid description.")
+
+
+        //Add Listeners to all Fields in the Form layout
+        this.projectTitle.addValueChangeListener({ event ->
+            ValidationResult result = notEmptyValidator.apply(event.getValue(), new ValueContext(this.projectTitle))
+            if (result.isError()) {
+                createOfferViewModel.projectTitleValid = false
+                UserError error = new UserError(result.getErrorMessage())
+                projectTitle.setComponentError(error)
+            } else {
+                createOfferViewModel.projectTitleValid = true
+            }
+        })
+
+        this.projectObjective.addValueChangeListener({ event ->
+            ValidationResult result = notEmptyValidator.apply(event.getValue(), new ValueContext(this.projectObjective))
+            if (result.isError()) {
+                createOfferViewModel.projectObjectiveValid = false
+                UserError error = new UserError(result.getErrorMessage())
+                projectObjective.setComponentError(error)
+            } else {
+                createOfferViewModel.projectObjectiveValid = true
+            }
+        })
+
+        this.experimentalDesign.addValueChangeListener({ event ->
+            ValidationResult result = notNullValidator.apply(event.getValue(), new ValueContext(this.experimentalDesign))
+            if (result.isError()) {
+                createOfferViewModel.experimentalDesignValid = false
+                UserError error = new UserError(result.getErrorMessage())
+                experimentalDesign.setComponentError(error)
+            } else {
+                createOfferViewModel.experimentalDesignValid = true
+            }
+        })
+
     }
 
     @Override
