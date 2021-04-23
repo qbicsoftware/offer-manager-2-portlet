@@ -48,6 +48,10 @@ class CreateOfferViewModel {
     @Bindable ProjectManager projectManager
     @Bindable double offerPrice
 
+    @Bindable Boolean projectTitleValid = false
+    @Bindable Boolean projectObjectiveValid = false
+    @Bindable Boolean experimentalDesignValid = true
+
     @Bindable double netPrice = 0
     @Bindable double taxes = 0
     @Bindable double overheads = 0
