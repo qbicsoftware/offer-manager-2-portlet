@@ -17,7 +17,7 @@ class SearchAffiliationViewModel {
      * A list of available affiliations. All items are of class {@link Affiliation}
      */
     ObservableList affiliations
-    @Bindable Affiliation selectedAffiliation
+    @Bindable Optional<Affiliation> selectedAffiliation
     @Bindable boolean detailsVisible
 
     private final AffiliationResourcesService affiliationResourcesService
@@ -27,7 +27,7 @@ class SearchAffiliationViewModel {
         this.affiliations = new ObservableList(new ArrayList<Affiliation>())
         resetAffiliations()
         subscribeToResources()
-        detailsVisible = selectedAffiliation as boolean
+        detailsVisible = selectedAffiliation.isPresent()
     }
 
     /**
@@ -38,7 +38,7 @@ class SearchAffiliationViewModel {
      */
     void resetAffiliations() {
         affiliations.clear()
-        selectedAffiliation = null
+        selectedAffiliation = Optional.empty()
 
         affiliations.addAll(affiliationResourcesService.iterator())
     }

@@ -83,7 +83,7 @@ class SearchAffiliationView extends FormLayout{
      */
     private void listenToAffiliationSelection() {
         this.affiliationGrid.addSelectionListener({
-            viewModel.selectedAffiliation = it.firstSelectedItem.orElse(null)
+            viewModel.selectedAffiliation = it.firstSelectedItem
         })
 
         this.viewModel.addPropertyChangeListener("selectedAffiliation", {
@@ -101,8 +101,9 @@ class SearchAffiliationView extends FormLayout{
     private void refreshSelectionDetails() {
         FormLayout detailsContent = new FormLayout()
         detailsContent.setMargin(true)
-        Affiliation selectedAffiliation = viewModel.selectedAffiliation
-        if (selectedAffiliation) {
+        if (viewModel.selectedAffiliation.isPresent()) {
+            Affiliation selectedAffiliation = viewModel.selectedAffiliation.get()
+
             if (selectedAffiliation.category) {
                 Label category = new Label("$selectedAffiliation.category")
                 //there might be a better label
