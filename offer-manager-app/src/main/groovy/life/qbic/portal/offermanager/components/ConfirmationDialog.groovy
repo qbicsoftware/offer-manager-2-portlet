@@ -23,7 +23,6 @@ class ConfirmationDialog extends Window{
     Button decline
     private HorizontalLayout buttonLayout
     private Label descriptionLabel
-    private Label titleLabel
     private String descriptionText
     private VerticalLayout content
 
@@ -38,7 +37,7 @@ class ConfirmationDialog extends Window{
         init()
         addListeners()
 
-        content.addComponents(titleLabel, descriptionLabel, buttonLayout)
+        content.addComponents(descriptionLabel, buttonLayout)
         content.setComponentAlignment(buttonLayout, Alignment.MIDDLE_RIGHT)
 
         setContent(content)
@@ -49,8 +48,8 @@ class ConfirmationDialog extends Window{
         decline = new Button("Decline")
 
         descriptionLabel = new Label(descriptionText)
-        titleLabel = new Label ("Are you sure?")
-        titleLabel.addStyleName(ValoTheme.LABEL_HUGE)
+
+        this.caption = "Are you sure?"
 
         this.setResizable(false)
 
