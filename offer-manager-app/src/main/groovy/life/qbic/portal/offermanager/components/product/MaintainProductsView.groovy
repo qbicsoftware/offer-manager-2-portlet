@@ -190,6 +190,13 @@ class MaintainProductsView extends FormLayout {
             dialog = new ConfirmationDialog("Do you want to archive ${viewModel.selectedProduct.get().productId.toString()}?")
             UI.getCurrent().addWindow(dialog)
 
+            dialog.confirm.caption = "Archive"
+            dialog.confirm.setIcon(VaadinIcons.ARCHIVE)
+            dialog.confirm.addStyleName(ValoTheme.BUTTON_DANGER)
+
+            dialog.decline.caption = "Abort"
+            dialog.decline.setIcon(VaadinIcons.CLOSE)
+
             dialog.confirm.addClickListener({
                 controller.archiveProduct(viewModel.selectedProduct.get().productId)
             })
