@@ -49,7 +49,9 @@ class ConfirmationDialog extends Window{
 
         descriptionLabel = new Label(descriptionText)
 
-        this.caption = "Are you sure?"
+        this.setCaptionAsHtml(true)
+        this.caption = "<strong> Are you sure? </strong>"
+
 
         this.setResizable(false)
 
