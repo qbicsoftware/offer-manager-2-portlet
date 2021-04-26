@@ -55,6 +55,7 @@ class ConfirmationDialog extends Window{
         this.setResizable(false)
 
         content = new VerticalLayout()
+        content.setMargin(true)
 
         buttonLayout = new HorizontalLayout()
         buttonLayout.addComponents(decline, confirm)
