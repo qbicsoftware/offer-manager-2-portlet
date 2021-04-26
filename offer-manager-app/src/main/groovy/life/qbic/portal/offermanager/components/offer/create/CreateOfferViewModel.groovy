@@ -101,10 +101,8 @@ class CreateOfferViewModel {
         if (item.quantity <= 0.0) {
             return
         }
-        List<ProductItemViewModel> alreadyExistingItems = productItems.findAll {
-            (ProductItemViewModel currentItem) ->
-                    currentItem.product.productId == item.product.productId
-        } as List<ProductItemViewModel>
+        List<ProductItemViewModel> alreadyExistingItems =
+                productItems.findAll { it.product.productId.equals(item.product.productId)} as List<ProductItemViewModel>
         double totalAmount = item.quantity
         for (ProductItemViewModel currentItem : alreadyExistingItems) {
             totalAmount = totalAmount + currentItem.quantity
