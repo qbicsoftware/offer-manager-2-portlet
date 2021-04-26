@@ -187,7 +187,7 @@ class MaintainProductsView extends FormLayout {
         })
 
         archiveProduct.addClickListener({
-            dialog = new ConfirmationDialog("Do you want to archive this product?")
+            dialog = new ConfirmationDialog("Do you want to archive ${viewModel.selectedProduct.get().productId.toString()}?")
             UI.getCurrent().addWindow(dialog)
 
             dialog.confirm.addClickListener({
