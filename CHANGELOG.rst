@@ -17,6 +17,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Jump back to maintain view after product creation/update (`#481 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/481>`_)
 
+* Search for affiliations is now possible (`#533 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/533>`_)
+
 * Add confirmation request for product archiving (`#528 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/528>`_)
 
 * Allow offer updated when experimental design has changed (`#515 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/515>`_)
