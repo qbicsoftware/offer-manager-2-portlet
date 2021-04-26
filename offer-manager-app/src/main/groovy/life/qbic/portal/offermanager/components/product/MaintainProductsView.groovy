@@ -16,6 +16,7 @@ import com.vaadin.ui.Grid.Column
 import com.vaadin.ui.renderers.TextRenderer
 import life.qbic.business.offers.Currency
 import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.portal.offermanager.components.ConfirmationDialog
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.product.copy.CopyProductView
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
@@ -34,6 +35,8 @@ class MaintainProductsView extends FormLayout {
 
     private final MaintainProductsViewModel viewModel
     private final MaintainProductsController controller
+
+    ConfirmationDialog dialog
 
     private Grid<Product> productGrid
     private HorizontalLayout buttonLayout
@@ -184,7 +187,12 @@ class MaintainProductsView extends FormLayout {
         })
 
         archiveProduct.addClickListener({
-            controller.archiveProduct(viewModel.selectedProduct.get().productId)
+            dialog = new ConfirmationDialog("Do you want to archive ${viewModel.selectedProduct.get().productId.toString()}?")
+            UI.getCurrent().addWindow(dialog)
+
+            dialog.confirm.addClickListener({
+                controller.archiveProduct(viewModel.selectedProduct.get().productId)
+            })
         })
 
         viewModel.products.addPropertyChangeListener({
