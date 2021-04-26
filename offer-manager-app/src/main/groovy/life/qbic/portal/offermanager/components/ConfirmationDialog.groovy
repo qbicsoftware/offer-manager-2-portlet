@@ -1,7 +1,12 @@
 package life.qbic.portal.offermanager.components
 
-import com.vaadin.server.VaadinRequest
-import com.vaadin.ui.UI
+import com.vaadin.ui.Alignment
+import com.vaadin.ui.Button
+import com.vaadin.ui.HorizontalLayout
+import com.vaadin.ui.Label
+import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.Window
+import com.vaadin.ui.themes.ValoTheme
 
 /**
  * <h1>Dialog to ask for user confirmation</h1>
@@ -12,9 +17,64 @@ import com.vaadin.ui.UI
  * @since 1.0.0
  *
 */
-class ConfirmationDialog extends UI{
-    @Override
-    protected void init(VaadinRequest vaadinRequest) {
+class ConfirmationDialog extends Window{
 
+    private Button confirm
+    private Button decline
+    private HorizontalLayout buttonLayout
+    private Label descriptionLabel
+    private Label titleLabel
+    private String descriptionText
+    private VerticalLayout content
+
+    boolean isConfirmed
+    boolean isDeclined
+
+    ConfirmationDialog(String description){
+        center()
+        // Disable the close button
+        setClosable(false)
+
+        descriptionText = description
+
+        init()
+        addListeners()
+
+        content.addComponents(titleLabel, descriptionLabel, buttonLayout)
+        content.setComponentAlignment(buttonLayout, Alignment.MIDDLE_RIGHT)
+
+        setContent(content)
     }
+
+    private void init(){
+        confirm = new Button("Confirm")
+        decline = new Button("Decline")
+
+        descriptionLabel = new Label(descriptionText)
+        titleLabel = new Label ("Are you sure?")
+        titleLabel.addStyleName(ValoTheme.LABEL_HUGE)
+
+        isConfirmed = false
+        isDeclined = false
+
+        this.setResizable(false)
+
+        content = new VerticalLayout()
+
+        buttonLayout = new HorizontalLayout()
+        buttonLayout.addComponents(decline, confirm)
+    }
+
+    private void addListeners(){
+        confirm.addClickListener({
+            isConfirmed = true
+            close()
+        })
+
+        decline.addClickListener({
+            isDeclined = true
+            close()
+        })
+    }
+
 }
