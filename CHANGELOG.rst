@@ -33,6 +33,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Provide functionality to remove items from an offer (`#516 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/516>`_)
 
+* Adds amount to existing items on the offer (`#462 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/462>`_)
+
 * Make filter for service product view work  (`#523 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/523>`_)
 
 * Add validation for project information input for offer creation/update (`#488 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/488>`_)

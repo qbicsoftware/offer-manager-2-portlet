@@ -18,6 +18,7 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
+import groovy.transform.CompileStatic
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.business.offers.Currency
 import life.qbic.portal.offermanager.components.GridUtils
@@ -48,13 +49,13 @@ class SelectItemsView extends VerticalLayout implements Resettable{
     private List<ProductItemViewModel> proteomicAnalysisProduct
     private List<ProductItemViewModel> metabolomicAnalysisProduct
 
-    Grid<ProductItemViewModel> sequencingGrid
-    Grid<ProductItemViewModel> projectManagementGrid
-    Grid<ProductItemViewModel> storageGrid
-    Grid<ProductItemViewModel> primaryAnalyseGrid
-    Grid<ProductItemViewModel> secondaryAnalyseGrid
-    Grid<ProductItemViewModel> proteomicsAnalysisGrid
-    Grid<ProductItemViewModel> metabolomicsAnalysisGrid
+    Grid<Product> sequencingGrid
+    Grid<Product> projectManagementGrid
+    Grid<Product> storageGrid
+    Grid<Product> primaryAnalyseGrid
+    Grid<Product> secondaryAnalyseGrid
+    Grid<Product> proteomicsAnalysisGrid
+    Grid<Product> metabolomicsAnalysisGrid
     Grid<ProductItemViewModel> overviewGrid
 
     Button applySequencing
@@ -289,7 +290,7 @@ class SelectItemsView extends VerticalLayout implements Resettable{
         generateProductGrid(storageGrid)
         generateProductGrid(projectManagementGrid)
         // This grid summarises product items selected for this specific offer, so we set quantity = true
-        generateProductGrid(overviewGrid, true)
+        generateItemGrid(overviewGrid)
 
         //make the overview over selected items grow dynamically
         overviewGrid.setHeightMode(HeightMode.UNDEFINED)
@@ -365,21 +366,41 @@ class SelectItemsView extends VerticalLayout implements Resettable{
      *
      * This Method is responsible for setting up the grid and setting the product information to the individual grid columns.
      */
-    private static void generateProductGrid(Grid<ProductItemViewModel> grid, boolean showQuantity = false) {
+    private static void generateProductGrid(Grid<Product> grid) {
         try {
-            if(showQuantity){
-            grid.addColumn({ productItem -> productItem.quantity })
-                    .setCaption("Quantity").setId("Quantity")
-            }
-            grid.addColumn({ productItem -> productItem.product.productId})
+            grid.addColumn({ it.productId})
                     .setCaption("Product Id").setId("ProductId")
-            grid.addColumn({ productItem -> productItem.product.productName })
+            grid.addColumn({ it.productName })
                     .setCaption("Product Name").setId("ProductName")
-            grid.addColumn({ productItem -> productItem.product.description })
+            grid.addColumn({ it.description })
                     .setCaption("Product Description").setId("ProductDescription")
-            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol()))
+            grid.addColumn({ it.unitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol()))
                     .setCaption("Product Unit Price").setId("ProductUnitPrice")
-            grid.addColumn({ productItem -> productItem.product.unit.value })
+            grid.addColumn({ it.unit.value })
+                    .setCaption("Product Unit").setId("ProductUnit")
+
+            //specify size of grid and layout
+            grid.setWidthFull()
+            grid.setHeightMode(HeightMode.ROW)
+        } catch (Exception e) {
+            new Exception("Unexpected exception in building the product item grid", e)
+        }
+    }
+
+    private static void generateItemGrid(Grid<ProductItemViewModel> grid) {
+        try {
+            grid.addColumn({ it.quantity})
+                    .setCaption("Quantity").setId("Quantity")
+            grid.addColumn({ it.product.productId})
+                    .setCaption("Product Id").setId("ProductId")
+            grid.addColumn({ it.product.productName })
+                    .setCaption("Product Name").setId("ProductName")
+            grid.addColumn({ it.product.description })
+                    .setCaption("Product Description").setId("ProductDescription")
+            grid.addColumn({ it.product.unitPrice }, new NumberRenderer(Currency
+                    .getFormatterWithSymbol()))
+                    .setCaption("Product Unit Price").setId("ProductUnitPrice")
+            grid.addColumn({ it.product.unit.value })
                     .setCaption("Product Unit").setId("ProductUnit")
 
             //specify size of grid and layout
@@ -428,9 +449,10 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 try{
                     if(amount != null && amount.isNumber()){
                         sequencingGrid.getSelectedItems().each {
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Integer.parseInt(amount)
+                            if(amountParsed >= 0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         sequencingGrid.getDataProvider().refreshAll()
@@ -478,9 +500,10 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 try{
                     if(amount != null && amount.isNumber()) {
                         primaryAnalyseGrid.getSelectedItems().each {
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Integer.parseInt(amount)
+                            if(amountParsed >= 0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         primaryAnalyseGrid.getDataProvider().refreshAll()
@@ -529,10 +552,10 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 try{
                     if(amount != null && amount.isNumber()){
                         secondaryAnalyseGrid.getSelectedItems().each {
-
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Integer.parseInt(amount)
+                            if(amountParsed >= 0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         secondaryAnalyseGrid.getDataProvider().refreshAll()
@@ -580,9 +603,10 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 try{
                     if(amount != null && amount.isNumber()) {
                         proteomicsAnalysisGrid.getSelectedItems().each {
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Integer.parseInt(amount)
+                            if(amountParsed >= 0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         proteomicsAnalysisGrid.getDataProvider().refreshAll()
@@ -629,9 +653,10 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 try{
                     if(amount != null && amount.isNumber()) {
                         metabolomicsAnalysisGrid.getSelectedItems().each {
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Integer.parseInt(amount)
+                            if(amountParsed >= 0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         metabolomicsAnalysisGrid.getDataProvider().refreshAll()
@@ -679,10 +704,10 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 try{
                     if(amount != null && amount.isNumber()){
                         projectManagementGrid.getSelectedItems().each {
-
-                            if(Double.parseDouble(amount) >= 0.0){
-                                it.setQuantity(Double.parseDouble(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Double.parseDouble(amount)
+                            if(amountParsed >= 0.0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         projectManagementGrid.getDataProvider().refreshAll()
@@ -729,10 +754,10 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 try{
                     if(amount != null && amount.isNumber()){
                         storageGrid.getSelectedItems().each {
-
-                            if(Double.parseDouble(amount) >= 0.0){
-                                it.setQuantity(Double.parseDouble(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Double.parseDouble(amount)
+                            if(amountParsed >= 0.0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         storageGrid.getDataProvider().refreshAll()
@@ -788,14 +813,12 @@ class SelectItemsView extends VerticalLayout implements Resettable{
      * This method should be called whenever the quantity of a ProductItemViewModel changes. It updates the items in overview grid respectively
      */
     void updateOverviewGrid(ProductItemViewModel item){
-        if(!createOfferViewModel.productItems.contains(item)){
-            createOfferViewModel.productItems.add(item)
-        }
-        if(item.quantity == 0.0 as Double){
-            createOfferViewModel.productItems.remove(item)
-        }
+        createOfferViewModel.addItem(item)
         overviewGrid.getDataProvider().refreshAll()
+        refreshNavButtons()
+    }
 
+    private void refreshNavButtons() {
         if(createOfferViewModel.productItems.size() > 0){
             next.setEnabled(true)
         }else{
