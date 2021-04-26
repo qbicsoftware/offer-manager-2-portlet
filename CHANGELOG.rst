@@ -19,6 +19,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Add confirmation request for product archiving (`#528 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/528>`_)
 
+* Allow offer updated when experimental design has changed (`#515 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/515>`_)
+
 **Fixed**
 
 * Add timeout of 10 second to PDF rendering (`#494 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/494>`_)
@@ -33,10 +35,11 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Provide functionality to remove items from an offer (`#516 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/516>`_)
 
+* Adds amount to existing items on the offer (`#462 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/462>`_)
+
 * Make filter for service product view work  (`#523 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/523>`_)
 
 * Add validation for project information input for offer creation/update (`#488 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/488>`_)
-
 
 **Dependencies**
 
