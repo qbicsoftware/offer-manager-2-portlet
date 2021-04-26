@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.components.affiliation.search
 
+import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 
@@ -16,6 +17,7 @@ class SearchAffiliationViewModel {
      * A list of available affiliations. All items are of class {@link Affiliation}
      */
     ObservableList affiliations
+    @Bindable Affiliation selectedAffiliation
 
     private final AffiliationResourcesService affiliationResourcesService
 
@@ -28,12 +30,14 @@ class SearchAffiliationViewModel {
 
     /**
      * Resets the list of affiliations to the state of the affiliation
-     * resource service
+     * resource service. Deselects selected affiliation.
      * @since 1.0.0
      * @see #affiliations
      */
     void resetAffiliations() {
         affiliations.clear()
+        selectedAffiliation = null
+
         affiliations.addAll(affiliationResourcesService.iterator())
     }
 

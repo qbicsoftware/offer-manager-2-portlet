@@ -8,6 +8,8 @@ import com.vaadin.ui.themes.ValoTheme
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
+import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationView
+import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationViewModel
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
@@ -32,6 +34,7 @@ class AppView extends VerticalLayout {
 
     private final CreatePersonView createPersonView
     private final CreateAffiliationView createAffiliationView
+    private final SearchAffiliationView searchAffiliationView
     private final CreateOfferView createOfferView
     private final List<Component> featureViews
     private final OfferOverviewView overviewView
@@ -43,6 +46,7 @@ class AppView extends VerticalLayout {
     AppView(AppViewModel portletViewModel,
             CreatePersonView createPersonView,
             CreateAffiliationView createAffiliationView,
+            SearchAffiliationView searchAffiliationView,
             CreateOfferView createOfferView,
             OfferOverviewView overviewView,
             CreateOfferView updateOfferView,
@@ -53,6 +57,7 @@ class AppView extends VerticalLayout {
         this.portletViewModel = portletViewModel
         this.createPersonView = createPersonView
         this.createAffiliationView = createAffiliationView
+        this.searchAffiliationView = searchAffiliationView
         this.createOfferView = createOfferView
         this.featureViews = []
         this.overviewView = overviewView
@@ -77,6 +82,7 @@ class AppView extends VerticalLayout {
         featureViews.addAll([
                 createPersonView,
                 createAffiliationView,
+                searchAffiliationView,
                 createOfferView,
                 overviewView,
                 updateOfferView,
@@ -106,6 +112,7 @@ class AppView extends VerticalLayout {
         verticalLayout.addComponent(this.createPersonView)
         verticalLayout.addComponent(this.createOfferView)
         verticalLayout.addComponents(this.createAffiliationView)
+        verticalLayout.addComponent(this.searchAffiliationView)
         verticalLayout.addComponent(this.overviewView)
         verticalLayout.addComponent(this.updateOfferView)
         verticalLayout.addComponent(this.searchPersonView)
@@ -188,6 +195,7 @@ class AppView extends VerticalLayout {
             this.addComponent(dropDownButton("Affiliations",
                     [
                             "New Affiliation": {toggleView(createAffiliationView)},
+                            "Search": {toggleView(searchAffiliationView)}
                     ]))
             Button maintainProducts = new Button("Service Products", VaadinIcons.GRID_BIG)
             maintainProducts.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
