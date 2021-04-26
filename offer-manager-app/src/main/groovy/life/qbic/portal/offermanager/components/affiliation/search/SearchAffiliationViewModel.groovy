@@ -18,6 +18,7 @@ class SearchAffiliationViewModel {
      */
     ObservableList affiliations
     @Bindable Affiliation selectedAffiliation
+    @Bindable boolean detailsVisible
 
     private final AffiliationResourcesService affiliationResourcesService
 
@@ -26,6 +27,7 @@ class SearchAffiliationViewModel {
         this.affiliations = new ObservableList(new ArrayList<Affiliation>())
         resetAffiliations()
         subscribeToResources()
+        detailsVisible = selectedAffiliation as boolean
     }
 
     /**
