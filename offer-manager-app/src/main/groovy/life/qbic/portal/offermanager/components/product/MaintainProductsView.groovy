@@ -16,10 +16,10 @@ import com.vaadin.ui.Grid.Column
 import com.vaadin.ui.renderers.TextRenderer
 import life.qbic.business.offers.Currency
 import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.portal.offermanager.components.ConfirmationDialog
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.product.copy.CopyProductView
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
-import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
 /**
  *
@@ -36,13 +36,15 @@ class MaintainProductsView extends FormLayout {
     private final MaintainProductsViewModel viewModel
     private final MaintainProductsController controller
 
-    Grid<Product> productGrid
-    HorizontalLayout buttonLayout
-    Button addProduct
-    Button copyProduct
-    Button archiveProduct
-    Panel productDescription
-    VerticalLayout maintenanceLayout
+    ConfirmationDialog dialog
+
+    private Grid<Product> productGrid
+    private HorizontalLayout buttonLayout
+    private Button addProduct
+    private Button copyProduct
+    private Button archiveProduct
+    private Panel productDescription
+    private VerticalLayout maintenanceLayout
 
     CreateProductView createProductView
     CopyProductView copyProductView
@@ -58,7 +60,6 @@ class MaintainProductsView extends FormLayout {
         setupPanel()
         createButtons()
         setupGrid()
-        setupDataProvider()
         setupOverviewLayout()
         addSubViews()
         setupListeners()
@@ -97,18 +98,19 @@ class MaintainProductsView extends FormLayout {
 
         productGrid.setWidthFull()
 
-        def productsDataProvider = setupDataProvider()
+        ListDataProvider<Product> productsDataProvider = setupDataProvider()
         setupFilters(productsDataProvider)
     }
 
     private ListDataProvider setupDataProvider(){
-        def dataProvider = new ListDataProvider(viewModel.products)
+        ListDataProvider<Product> dataProvider = new ListDataProvider(viewModel.products)
         productGrid.setDataProvider(dataProvider)
         return dataProvider
     }
 
-    private void setupFilters(ListDataProvider<OfferOverview> dataProvider){
+    private void setupFilters(ListDataProvider<Product> dataProvider){
         HeaderRow productsFilterRow = productGrid.appendHeaderRow()
+
         GridUtils.setupColumnFilter(dataProvider,
                 productGrid.getColumn("ProductId"),
                 productsFilterRow)
@@ -185,11 +187,24 @@ class MaintainProductsView extends FormLayout {
         })
 
         archiveProduct.addClickListener({
-            controller.archiveProduct(viewModel.selectedProduct.get().productId)
+            dialog = new ConfirmationDialog("Do you want to archive ${viewModel.selectedProduct.get().productId.toString()}?")
+            UI.getCurrent().addWindow(dialog)
+
+            dialog.confirm.addClickListener({
+                controller.archiveProduct(viewModel.selectedProduct.get().productId)
+            })
         })
 
         viewModel.products.addPropertyChangeListener({
             productGrid.dataProvider.refreshAll()
+        })
+
+        viewModel.addPropertyChangeListener("productCreatedSuccessfully", {
+            if(it.newValue as Boolean){
+                createProductView.setVisible(false)
+                maintenanceLayout.setVisible(true)
+                viewModel.reset()
+            }
         })
     }
 

@@ -16,6 +16,8 @@ import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.portal.offermanager.communication.EventEmitter
+import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationView
+import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationViewModel
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewController
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewPresenter
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectController
@@ -97,6 +99,7 @@ class DependencyManager {
     private CreatePersonViewModel createCustomerViewModel
     private UpdatePersonViewModel updatePersonViewModel
     private CreateAffiliationViewModel createAffiliationViewModel
+    private SearchAffiliationViewModel searchAffiliationViewModel
     private CreateOfferViewModel createOfferViewModel
     private CreateOfferViewModel updateOfferViewModel
     private OfferOverviewModel offerOverviewModel
@@ -371,6 +374,13 @@ class DependencyManager {
         }catch (Exception e) {
             log.error("Unexpected exception during ${CopyProductViewModel.getSimpleName()} view model setup.", e)
         }
+
+        try {
+            this.searchAffiliationViewModel = new SearchAffiliationViewModel(affiliationService)
+        } catch (Exception e) {
+            log.error("Unexpected exception during ${SearchAffiliationViewModel.getSimpleName()} creation.")
+            log.debug("Unexpected exception during ${SearchAffiliationViewModel.getSimpleName()} creation.", e)
+        }
     }
 
     private void setupPresenters() {
@@ -636,9 +646,10 @@ class DependencyManager {
                     .viewModel, createCustomerViewModel)
             CreateAffiliationView createAffiliationView2 = new CreateAffiliationView(this.viewModel,
                     createAffiliationViewModel, createAffiliationController)
-
+            SearchAffiliationView searchAffiliationView = new SearchAffiliationView(this.searchAffiliationViewModel)
             portletView = new AppView(this.viewModel, createCustomerView2,
                     createAffiliationView2,
+                    searchAffiliationView,
                     createOfferView,
                     overviewView,
                     updateOfferView,

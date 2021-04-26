@@ -29,11 +29,18 @@ class MaintainProductsViewModel {
     final ProductsResourcesService productsResourcesService
     EventEmitter<Product> productUpdate
 
+    @Bindable Boolean productCreatedSuccessfully
+
     MaintainProductsViewModel(ProductsResourcesService productsResourcesService, EventEmitter<Product> productUpdate) {
         this.productsResourcesService = productsResourcesService
         this.productUpdate = productUpdate
+        productCreatedSuccessfully = false
         fetchProducts()
         subscribe()
+    }
+
+    void reset() {
+        productCreatedSuccessfully = false
     }
 
     private void fetchProducts(){
