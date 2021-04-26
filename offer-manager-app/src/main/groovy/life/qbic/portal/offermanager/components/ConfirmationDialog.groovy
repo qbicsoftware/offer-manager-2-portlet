@@ -19,16 +19,14 @@ import com.vaadin.ui.themes.ValoTheme
 */
 class ConfirmationDialog extends Window{
 
-    private Button confirm
-    private Button decline
+    Button confirm
+    Button decline
     private HorizontalLayout buttonLayout
     private Label descriptionLabel
     private Label titleLabel
     private String descriptionText
     private VerticalLayout content
 
-    boolean isConfirmed
-    boolean isDeclined
 
     ConfirmationDialog(String description){
         center()
@@ -54,9 +52,6 @@ class ConfirmationDialog extends Window{
         titleLabel = new Label ("Are you sure?")
         titleLabel.addStyleName(ValoTheme.LABEL_HUGE)
 
-        isConfirmed = false
-        isDeclined = false
-
         this.setResizable(false)
 
         content = new VerticalLayout()
@@ -67,12 +62,10 @@ class ConfirmationDialog extends Window{
 
     private void addListeners(){
         confirm.addClickListener({
-            isConfirmed = true
             close()
         })
 
         decline.addClickListener({
-            isDeclined = true
             close()
         })
     }

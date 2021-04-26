@@ -36,7 +36,7 @@ class MaintainProductsView extends FormLayout {
     private final MaintainProductsViewModel viewModel
     private final MaintainProductsController controller
 
-    ConfirmationDialog dialog = new ConfirmationDialog("Do you want to archive this product?")
+    ConfirmationDialog dialog
 
     private Grid<Product> productGrid
     private HorizontalLayout buttonLayout
@@ -187,8 +187,12 @@ class MaintainProductsView extends FormLayout {
         })
 
         archiveProduct.addClickListener({
-            //controller.archiveProduct(viewModel.selectedProduct.get().productId)
+            dialog = new ConfirmationDialog("Do you want to archive this product?")
             UI.getCurrent().addWindow(dialog)
+
+            dialog.confirm.addClickListener({
+                controller.archiveProduct(viewModel.selectedProduct.get().productId)
+            })
         })
 
         viewModel.products.addPropertyChangeListener({
