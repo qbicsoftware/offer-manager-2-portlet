@@ -1,6 +1,8 @@
 package life.qbic.portal.offermanager.components.affiliation.search
 
 import com.vaadin.ui.FormLayout
+import com.vaadin.ui.Grid
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 
 /**
@@ -14,8 +16,39 @@ class SearchAffiliationView extends FormLayout{
 
     private final SearchAffiliationViewModel
 
+    private Grid<Affiliation> affiliationGrid
+
     SearchAffiliationView(SearchAffiliationViewModel) {
         this.SearchAffiliationViewModel = SearchAffiliationViewModel
+        initLayout()
+        setupAffiliationGrid()
+        listenToAffiliationSelection()
     }
+
+    private void initLayout() {
+
+    }
+
+    private void setupAffiliationGrid() {
+
+    }
+
+    /**
+     * Sets a listener to the affiliation grid.
+     * @see #onAffiliationSelection
+     */
+    private void listenToAffiliationSelection() {
+
+    }
+
+    /**
+     * This method performs actions on affiliation selection.
+     *
+     */
+    private void onAffiliationSelection() {
+
+    }
+
+
 
 }
