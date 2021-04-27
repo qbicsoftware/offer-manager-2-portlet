@@ -43,6 +43,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Add validation for project information input for offer creation/update (`#488 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/488>`_)
 
+* Use ``life.qbic.business.logging.Logging`` instead of console print outs (`unknown <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/488>`_)
+
 **Dependencies**
 
 * Bump Vaadin 8.12.0 -> 8.12.3
