@@ -64,7 +64,7 @@ class ProjectDbConnector {
                     ProjectCode project = new ProjectCode(tokens[2])
                     projects.add(new ProjectIdentifier(space, project))
                 } catch (Exception e) {
-                    e.printStackTrace()
+                    log.error(e)
                     throw new DatabaseQueryException("Could not parse existing projects from database.")
                 }
             }
@@ -160,7 +160,7 @@ class ProjectDbConnector {
                 statement.execute()
             } catch (Exception e) {
                 log.error("SQL operation unsuccessful: " + e.getMessage())
-                e.printStackTrace()
+                log.debug("SQL operation unsuccessful: " + e.getMessage(), e)
             }
         }
     }
@@ -181,7 +181,7 @@ class ProjectDbConnector {
             }
         } catch (Exception e) {
             log.error("SQL operation unsuccessful: " + e.getMessage())
-            e.printStackTrace()
+            log.debug("SQL operation unsuccessful: " + e.getMessage(), e)
         }
         return res
     }
