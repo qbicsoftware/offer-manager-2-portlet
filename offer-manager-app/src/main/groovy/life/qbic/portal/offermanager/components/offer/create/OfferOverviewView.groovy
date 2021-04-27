@@ -6,7 +6,6 @@ import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.Component
-import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
@@ -137,7 +136,7 @@ class OfferOverviewView extends VerticalLayout{
         The detailed project information container
          */
 
-        FormLayout projectInfoForm = new FormLayout()
+        VerticalLayout projectInfoForm = new VerticalLayout()
 
         Label customer = new Label("${createOfferViewModel.customer}")
         customer.setIcon(VaadinIcons.USER)
