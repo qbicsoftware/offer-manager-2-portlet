@@ -4,7 +4,7 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-1.0.0-alpha.7-SNAPSHOT (2021-04-14)
+1.0.0-beta.1 (2021-04-27)
 -----------------------------------
 
 **Added**
@@ -48,6 +48,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Bump Vaadin 8.12.0 -> 8.12.3
 
 **Deprecated**
+
 
 1.0.0-alpha.6 (2021-04-13)
 -----------------------------------
@@ -179,9 +180,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 
 1.0.0-SNAPSHOT (2020-11-09)
-----------------------------------------------
 
-**Added**
 
 * Create project with QUBE
 
