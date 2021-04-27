@@ -279,12 +279,12 @@ class CreatePersonView extends FormLayout {
                 createPersonViewModel.emailValid = true
             }
         })
-        this.addressAdditionComboBox.addSelectionListener({ selection ->
-            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.addressAdditionComboBox))
+        this.organisationComboBox.addSelectionListener({ selection ->
+            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.organisationComboBox))
             if (result.isError()) {
                 createPersonViewModel.affiliationValid = false
                 UserError error = new UserError(result.getErrorMessage())
-                addressAdditionComboBox.setComponentError(error)
+                organisationComboBox.setComponentError(error)
             } else {
                 createPersonViewModel.affiliationValid = true
             }
