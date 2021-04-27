@@ -41,10 +41,8 @@ class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
     } catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)
     } catch(Exception unexpected) {
-      println "-------------------------"
-      println "Unexpected Exception ...."
-      println unexpected.message
-      println unexpected.stackTrace.join("\n")
+      log.error("Unexpected Exception: $unexpected.message")
+      log.debug("Unexpected Exception: $unexpected.message", unexpected)
       output.failNotification("Could not create new person")
     }
   }
