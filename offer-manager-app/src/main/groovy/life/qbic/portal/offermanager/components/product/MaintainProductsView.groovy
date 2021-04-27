@@ -4,6 +4,7 @@ import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
+import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
@@ -15,10 +16,10 @@ import com.vaadin.ui.Grid.Column
 import com.vaadin.ui.renderers.TextRenderer
 import life.qbic.business.offers.Currency
 import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.portal.offermanager.components.ConfirmationDialog
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.product.copy.CopyProductView
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
-import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
 /**
  *
@@ -30,18 +31,20 @@ import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
  * @since 1.0.0
  *
  */
-class MaintainProductsView extends VerticalLayout{
+class MaintainProductsView extends FormLayout {
 
     private final MaintainProductsViewModel viewModel
     private final MaintainProductsController controller
 
-    Grid<Product> productGrid
-    HorizontalLayout buttonLayout
-    Button addProduct
-    Button copyProduct
-    Button archiveProduct
-    Panel productDescription
-    VerticalLayout maintenanceLayout
+    ConfirmationDialog dialog
+
+    private Grid<Product> productGrid
+    private HorizontalLayout buttonLayout
+    private Button addProduct
+    private Button copyProduct
+    private Button archiveProduct
+    private Panel productDescription
+    private VerticalLayout maintenanceLayout
 
     CreateProductView createProductView
     CopyProductView copyProductView
@@ -53,13 +56,11 @@ class MaintainProductsView extends VerticalLayout{
         this.viewModel = viewModel
         this.createProductView = createProductView
         this.copyProductView = copyProductView
-
+        setupTitle()
         setupPanel()
         createButtons()
         setupGrid()
-        setupDataProvider()
         setupOverviewLayout()
-        setupTitle()
         addSubViews()
         setupListeners()
     }
@@ -67,7 +68,8 @@ class MaintainProductsView extends VerticalLayout{
     private void setupTitle(){
         Label label = new Label("Service Product Maintenance")
         label.setStyleName(ValoTheme.LABEL_HUGE)
-        maintenanceLayout.addComponent(label,0)
+        this.setMargin(false)
+        this.addComponent(label, 0)
     }
 
     private void createButtons(){
@@ -96,18 +98,19 @@ class MaintainProductsView extends VerticalLayout{
 
         productGrid.setWidthFull()
 
-        def productsDataProvider = setupDataProvider()
+        ListDataProvider<Product> productsDataProvider = setupDataProvider()
         setupFilters(productsDataProvider)
     }
 
     private ListDataProvider setupDataProvider(){
-        def dataProvider = new ListDataProvider(viewModel.products)
+        ListDataProvider<Product> dataProvider = new ListDataProvider(viewModel.products)
         productGrid.setDataProvider(dataProvider)
         return dataProvider
     }
 
-    private void setupFilters(ListDataProvider<OfferOverview> dataProvider){
+    private void setupFilters(ListDataProvider<Product> dataProvider){
         HeaderRow productsFilterRow = productGrid.appendHeaderRow()
+
         GridUtils.setupColumnFilter(dataProvider,
                 productGrid.getColumn("ProductId"),
                 productsFilterRow)
@@ -121,7 +124,7 @@ class MaintainProductsView extends VerticalLayout{
     }
 
     private void setupOverviewLayout(){
-        maintenanceLayout = new VerticalLayout(productGrid,buttonLayout)
+        maintenanceLayout = new VerticalLayout(productGrid, buttonLayout)
         maintenanceLayout.setSizeFull()
         maintenanceLayout.setMargin(false)
         maintenanceLayout.addComponents()
@@ -184,11 +187,31 @@ class MaintainProductsView extends VerticalLayout{
         })
 
         archiveProduct.addClickListener({
-            controller.archiveProduct(viewModel.selectedProduct.get().productId)
+            dialog = new ConfirmationDialog("Do you want to archive ${viewModel.selectedProduct.get().productId.toString()}?")
+            UI.getCurrent().addWindow(dialog)
+
+            dialog.confirm.caption = "Archive"
+            dialog.confirm.setIcon(VaadinIcons.ARCHIVE)
+            dialog.confirm.addStyleName(ValoTheme.BUTTON_DANGER)
+
+            dialog.decline.caption = "Abort"
+            dialog.decline.setIcon(VaadinIcons.CLOSE)
+
+            dialog.confirm.addClickListener({
+                controller.archiveProduct(viewModel.selectedProduct.get().productId)
+            })
         })
 
         viewModel.products.addPropertyChangeListener({
             productGrid.dataProvider.refreshAll()
+        })
+
+        viewModel.addPropertyChangeListener("productCreatedSuccessfully", {
+            if(it.newValue as Boolean){
+                createProductView.setVisible(false)
+                maintenanceLayout.setVisible(true)
+                viewModel.reset()
+            }
         })
     }
 

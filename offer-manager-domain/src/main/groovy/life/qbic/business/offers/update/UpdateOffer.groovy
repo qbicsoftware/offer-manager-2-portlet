@@ -97,6 +97,7 @@ class UpdateOffer{
                 offer.projectDescription,
                 offer.items,
                 offer.selectedCustomerAffiliation)
+                .experimentalDesign(offer.experimentalDesign)
                 .identifier(Converter.buildOfferId(offer.identifier))
                 .build()
     }

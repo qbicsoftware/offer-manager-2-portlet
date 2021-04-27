@@ -39,19 +39,24 @@ class UpdatePersonView extends CreatePersonView{
     }
 
     private void adjustViewElements() {
+        viewCaption.setValue("Update Person Entry")
+
         submitButton.caption = "Update Person"
         abortButton.caption = "Abort Person Update"
+
+        //be careful when adding new components to the view
+        //it is based on the CreatePersonView, you might disrupt the view when adding new components to the wrong position
 
         //add a grid
         affiliations = new Grid<>()
         generateAffiliationGrid()
-        affiliations.setCaption("Current Affiliations")
+        Label currentAffiliationLabel = new Label("Current Affiliations")
         affiliations.setSelectionMode(Grid.SelectionMode.NONE)
-
-        this.addComponent(affiliations,2)
+        this.addComponent(currentAffiliationLabel, 3)
+        this.addComponent(affiliations,4)
         //add a heading for adding a new affiliation
         Label newAffiliation = new Label("Add a new affiliation")
-        this.addComponent(newAffiliation,3)
+        this.addComponent(newAffiliation,5)
 
         //add the add button
         addAffiliationButton = new Button("Add Affiliation")

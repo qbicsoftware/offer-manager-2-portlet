@@ -28,11 +28,13 @@ import life.qbic.portal.offermanager.components.AppViewModel
  */
 
 @Log4j2
-class CreatePersonView extends VerticalLayout {
+class CreatePersonView extends FormLayout {
     protected final AppViewModel sharedViewModel
     protected final CreatePersonViewModel createPersonViewModel
     final CreatePersonController controller
     protected Registration submitButtonClickListenerRegistration
+
+    Label viewCaption
 
     ComboBox<String> titleField
     TextField firstNameField
@@ -62,6 +64,10 @@ class CreatePersonView extends VerticalLayout {
      * to enable user input for person creation
      */
     private def initLayout() {
+        this.viewCaption = new Label("Create New Person Entry")
+
+        viewCaption.addStyleName(ValoTheme.LABEL_HUGE)
+        this.addComponent(viewCaption)
 
         this.titleField = generateTitleSelector(createPersonViewModel.academicTitles)
 
@@ -229,6 +235,8 @@ class CreatePersonView extends VerticalLayout {
         ListDataProvider<Affiliation> dataProvider = organisation.affiliations
         this.addressAdditionComboBox.setDataProvider(dataProvider)
         dataProvider.setSortOrder({it.addressAddition}, SortDirection.ASCENDING)
+
+        this.addressAdditionComboBox.setSelectedItem(dataProvider.getItems().getAt(0))
     }
 
     /**

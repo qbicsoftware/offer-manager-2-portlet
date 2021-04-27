@@ -2,6 +2,9 @@ package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.ui.Component
 import com.vaadin.ui.FormLayout
+import com.vaadin.ui.Label
+import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
@@ -21,7 +24,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
 class CreateOfferView extends FormLayout{
 
     final private AppViewModel sharedViewModel
-    final private CreateOfferViewModel viewModel
+    final CreateOfferViewModel viewModel
 
     private final CreateOfferController controller
 
@@ -43,8 +46,7 @@ class CreateOfferView extends FormLayout{
                     CreateOfferController controller,
                     CreatePersonView createCustomerView,
                     CreateAffiliationView createAffiliationView,
-                    OfferResourcesService offerProviderService
-    ) {
+                    OfferResourcesService offerProviderService) {
         super()
         this.sharedViewModel = sharedViewModel
         this.viewModel = createOfferViewModel
@@ -68,13 +70,17 @@ class CreateOfferView extends FormLayout{
 
         // Init the view navigation history to be able to navigate back in history
         this.viewHistory = new ViewHistory(projectInformationView)
-
     }
 
     /**
      * Initializes the view with the ProjectInformationView, which is the first component to be shown
      */
     private void initLayout(){
+        final Label label = new Label("Create A New Offer")
+
+        label.addStyleName(ValoTheme.LABEL_HUGE)
+        this.addComponent(label)
+
         navigationView = new ButtonNavigationView()
                 .addNavigationItem("1. Project Information")
                 .addNavigationItem("2. Select Customer")
@@ -94,6 +100,8 @@ class CreateOfferView extends FormLayout{
         )
         this.setSizeFull()
         this.setMargin(false)
+        this.setSpacing(false)
+
     }
 
     /**
@@ -159,7 +167,11 @@ class CreateOfferView extends FormLayout{
                     viewModel.customer,
                     viewModel.projectManager,
                     getProductItems(viewModel.productItems),
-                    viewModel.customerAffiliation)
+                    viewModel.customerAffiliation,
+                    viewModel.experimentalDesign)
+        })
+        this.viewModel.addPropertyChangeListener("offerCreatedSuccessfully", {
+            resetViewContent()
         })
     }
 
@@ -195,6 +207,15 @@ class CreateOfferView extends FormLayout{
                 this.projectManagerSelectionView,
                 this.selectItemsView,
                 this.overviewView)
+    }
+
+    void resetViewContent() {
+        viewHistory.loadNewView(this.projectInformationView)
+        navigationView.rewind()
+        projectInformationView.reset()
+        customerSelectionView.reset()
+        projectManagerSelectionView.reset()
+        selectItemsView.reset()
     }
 
     /*

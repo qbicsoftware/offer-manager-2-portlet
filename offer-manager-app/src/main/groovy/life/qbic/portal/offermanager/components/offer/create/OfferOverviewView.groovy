@@ -2,25 +2,23 @@ package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
-import com.vaadin.server.FileDownloader
-import com.vaadin.server.StreamResource
 import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
+import com.vaadin.ui.Component
 import com.vaadin.ui.Grid
 import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.Panel
+import com.vaadin.ui.TextArea
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.business.offers.Currency
 import life.qbic.portal.offermanager.components.GridUtils
-import life.qbic.portal.offermanager.OfferToPDFConverter
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
 
 /**
@@ -39,13 +37,10 @@ class OfferOverviewView extends VerticalLayout{
 
     private final CreateOfferViewModel createOfferViewModel
 
-    private FileDownloader currentFileDownloader
-
     Panel offerOverview
     Grid<ProductItemViewModel> itemGrid
     Button previous
     Button save
-    Button downloadOffer
     CreateOfferController createOfferController
 
     OfferOverviewView(CreateOfferViewModel viewModel, CreateOfferController controller, OfferResourcesService service){
@@ -53,16 +48,6 @@ class OfferOverviewView extends VerticalLayout{
         this.createOfferController = controller
         initLayout()
         setUpGrid()
-        service.subscribe((Offer offer) -> {
-            try {
-                createOfferController.fetchOffer(offer.identifier)
-                addOfferResource(offer)
-            } catch (Exception e) {
-                log.error("Unable to create the offer PDF resource.")
-                log.error(e.message)
-                log.error(e.stackTrace.join("\n"))
-            }
-        })
     }
 
     private void setUpGrid() {
@@ -94,11 +79,7 @@ class OfferOverviewView extends VerticalLayout{
         this.save = new Button("Save Offer", VaadinIcons.CHECK_SQUARE)
         save.addStyleName(ValoTheme.LABEL_LARGE)
 
-        this.downloadOffer = new Button("Download Offer", VaadinIcons.DOWNLOAD)
-        downloadOffer.addStyleName(ValoTheme.LABEL_LARGE)
-        downloadOffer.setEnabled(false)
-
-        HorizontalLayout offerActionButtons = new HorizontalLayout(save, downloadOffer)
+        HorizontalLayout offerActionButtons = new HorizontalLayout(save)
         HorizontalLayout buttonLayout = new HorizontalLayout(previous, offerActionButtons)
         buttonLayout.setSizeFull()
 
@@ -154,23 +135,59 @@ class OfferOverviewView extends VerticalLayout{
         /*
         The detailed project information container
          */
-        VerticalLayout projectInfo = new VerticalLayout()
-        projectInfo.addComponent(new Label("${createOfferViewModel.projectTitle}"))
-        projectInfo.addComponent(new Label("${createOfferViewModel.projectObjective}"))
-        projectInfo.addComponent(new Label("${createOfferViewModel.customer}"))
-        projectInfo.addComponent(new Label("${createOfferViewModel.customerAffiliation}"))
-        projectInfo.addComponent(new Label("${createOfferViewModel.projectManager}"))
+
+        VerticalLayout projectInfoForm = new VerticalLayout()
+
+        Label customer = new Label("${createOfferViewModel.customer}")
+        customer.setIcon(VaadinIcons.USER)
+        customer.setCaption("Customer")
+        projectInfoForm.addComponent(customer)
+
+        Label affiliation = new Label("${createOfferViewModel.customerAffiliation}")
+        affiliation.setIcon(VaadinIcons.WORKPLACE)
+        affiliation.setCaption("Affiliation")
+        projectInfoForm.addComponent(affiliation)
+
+        Label projectManager = new Label("${createOfferViewModel.projectManager}")
+        projectManager.setIcon(VaadinIcons.USER_STAR)
+        projectManager.setCaption("Project Manager")
+        projectInfoForm.addComponent(projectManager)
+
+        TextArea objective = new TextArea("Objective")
+        objective.setIcon(VaadinIcons.TRENDING_UP)
+        objective.setValue(createOfferViewModel.projectObjective)
+        objective.setEnabled(false)
+        objective.setWidth("100%")
+        projectInfoForm.addComponent(objective)
+
+        TextArea experimentInfo = new TextArea("Experimental design")
+        experimentInfo.setIcon(VaadinIcons.NOTEBOOK)
+        experimentInfo.setValue(
+                createOfferViewModel.experimentalDesign ? createOfferViewModel.experimentalDesign: "No design defined.")
+        experimentInfo.setEnabled(false)
+        experimentInfo.setWidth("100%")
+        projectInfoForm.addComponent(experimentInfo)
+
+
+
+
         /*
         Here we set the header components, which is the project info
         on the left and a basic cost overview on the right
          */
-        header.addComponent(projectInfo)
-        header.addComponent(createCostOverview())
+        header.addComponent(projectInfoForm)
+        Component costOverview = createCostOverview()
+        header.addComponent(costOverview)
         header.setWidthFull()
+        header.setComponentAlignment(costOverview, Alignment.TOP_CENTER)
         header.setDefaultComponentAlignment(Alignment.TOP_LEFT)
         /*
         We add the header as top component in the final view
          */
+        Label spacer = new Label("")
+        Label title = new Label("${createOfferViewModel.projectTitle}")
+        title.addStyleName(ValoTheme.LABEL_HUGE)
+        content.addComponents(spacer, title)
         content.addComponent(header)
         content.addComponent(itemGrid)
 
@@ -197,36 +214,6 @@ class OfferOverviewView extends VerticalLayout{
         panel.setContent(gridLayout)
 
         return panel
-    }
-
-    private void addOfferResource(Offer offer) {
-        /*
-        First, we make sure that no download resources are still attached to the download
-        button.
-         */
-        removeExistingResources()
-        //Check if an Offer has been saved.
-        if (!createOfferViewModel.savedOffer.isPresent()) {
-            downloadOffer.setEnabled(false)
-            return
-        }
-        // Then we create a new PDF resource ...
-        OfferToPDFConverter converter = new OfferToPDFConverter(createOfferViewModel.savedOffer.get())
-        StreamResource offerResource = new StreamResource((StreamResource.StreamSource res) -> {
-            return converter.getOfferAsPdf()
-        }, "${offer.identifier.toString()}.pdf")
-        // ... and attach it to the download button
-        currentFileDownloader = new FileDownloader(offerResource)
-        currentFileDownloader.extend(downloadOffer)
-        downloadOffer.setEnabled(true)
-        }
-
-
-    private void removeExistingResources() {
-        if (currentFileDownloader) {
-            downloadOffer.removeExtension(currentFileDownloader)
-            downloadOffer.setEnabled(false)
-        }
     }
 
     /*

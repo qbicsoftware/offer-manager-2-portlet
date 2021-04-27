@@ -4,6 +4,52 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.0.0-beta.1 (2021-04-27)
+-----------------------------------
+
+**Added**
+
+* Product selection now notifies a user if the provided input is incorrect and disables the button until the given information is valid (`#407 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/407>`_)
+
+* Experimental designs can be defined for an offer (`#263 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/263>`_)
+
+* New dropdown menu bar (`#490 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/490>`_)
+
+* Jump back to maintain view after product creation/update (`#481 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/481>`_)
+
+* Search for affiliations is now possible (`#533 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/533>`_)
+
+* Add confirmation request for product archiving (`#528 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/528>`_)
+
+* Allow offer updated when experimental design has changed (`#515 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/515>`_)
+
+**Fixed**
+
+* Add timeout of 10 second to PDF rendering (`#494 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/494>`_)
+
+* Allow resetting the date picker in the offer overview (`#486 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/486>`_)
+
+* Naming of the downloaded offer pdf is consistent (`#498 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/498>`_)
+
+* Reset the view after an offer has been created  (`#495 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/495>`_)
+
+* Provide ISO 8601 date format renderer for offer overview table (`#299 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/299>`_)
+
+* Provide functionality to remove items from an offer (`#516 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/516>`_)
+
+* Adds amount to existing items on the offer (`#462 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/462>`_)
+
+* Make filter for service product view work  (`#523 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/523>`_)
+
+* Add validation for project information input for offer creation/update (`#488 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/488>`_)
+
+**Dependencies**
+
+* Bump Vaadin 8.12.0 -> 8.12.3
+
+**Deprecated**
+
+
 1.0.0-alpha.6 (2021-04-13)
 -----------------------------------
 
@@ -125,7 +171,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Update offers without changes is not possible anymore (`#222 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/222>`_)
 
-* Rename CreateCustomer and UpdateCustomer classes and methods (`#315 https://github.com/qbicsoftware/offer-manager-2-portlet/issues/315`_)
+* Rename CreateCustomer and UpdateCustomer classes and methods (`#315 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/315>`_)
 
 **Dependencies**
 
@@ -134,9 +180,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 
 1.0.0-SNAPSHOT (2020-11-09)
-----------------------------------------------
 
-**Added**
 
 * Create project with QUBE
 

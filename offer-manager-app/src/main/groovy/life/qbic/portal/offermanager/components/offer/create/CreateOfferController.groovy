@@ -51,7 +51,8 @@ class CreateOfferController {
             Customer customer,
             ProjectManager manager,
             List<ProductItem> items,
-            Affiliation customerAffiliation){
+            Affiliation customerAffiliation,
+            String experimentalDesign){
 
         Offer offer = new Offer.Builder(
                     customer,
@@ -61,6 +62,7 @@ class CreateOfferController {
                     customerAffiliation)
                     .items(items)
                     .identifier(offerId)
+                    .experimentalDesign(experimentalDesign)
                     .build()
 
         this.input.createOffer(offer)

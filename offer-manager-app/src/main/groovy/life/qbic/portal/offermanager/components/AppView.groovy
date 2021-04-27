@@ -3,8 +3,13 @@ package life.qbic.portal.offermanager.components
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.Page
 import com.vaadin.ui.*
+import com.vaadin.ui.MenuBar.MenuItem
 import com.vaadin.ui.themes.ValoTheme
+import groovy.transform.CompileStatic
+import groovy.util.logging.Log4j2
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
+import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationView
+import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationViewModel
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
@@ -22,12 +27,14 @@ import life.qbic.portal.offermanager.components.product.MaintainProductsView
  * @since 1.0.0
  *
  */
+@Log4j2
 class AppView extends VerticalLayout {
 
     private final AppViewModel portletViewModel
 
     private final CreatePersonView createPersonView
     private final CreateAffiliationView createAffiliationView
+    private final SearchAffiliationView searchAffiliationView
     private final CreateOfferView createOfferView
     private final List<Component> featureViews
     private final OfferOverviewView overviewView
@@ -39,6 +46,7 @@ class AppView extends VerticalLayout {
     AppView(AppViewModel portletViewModel,
             CreatePersonView createPersonView,
             CreateAffiliationView createAffiliationView,
+            SearchAffiliationView searchAffiliationView,
             CreateOfferView createOfferView,
             OfferOverviewView overviewView,
             CreateOfferView updateOfferView,
@@ -49,6 +57,7 @@ class AppView extends VerticalLayout {
         this.portletViewModel = portletViewModel
         this.createPersonView = createPersonView
         this.createAffiliationView = createAffiliationView
+        this.searchAffiliationView = searchAffiliationView
         this.createOfferView = createOfferView
         this.featureViews = []
         this.overviewView = overviewView
@@ -73,6 +82,7 @@ class AppView extends VerticalLayout {
         featureViews.addAll([
                 createPersonView,
                 createAffiliationView,
+                searchAffiliationView,
                 createOfferView,
                 overviewView,
                 updateOfferView,
@@ -102,6 +112,7 @@ class AppView extends VerticalLayout {
         verticalLayout.addComponent(this.createPersonView)
         verticalLayout.addComponent(this.createOfferView)
         verticalLayout.addComponents(this.createAffiliationView)
+        verticalLayout.addComponent(this.searchAffiliationView)
         verticalLayout.addComponent(this.overviewView)
         verticalLayout.addComponent(this.updateOfferView)
         verticalLayout.addComponent(this.searchPersonView)
@@ -138,6 +149,20 @@ class AppView extends VerticalLayout {
             hideAllFeatureViews()
             this.updateOfferView.setVisible(true)
         })
+
+        this.updateOfferView.viewModel.addPropertyChangeListener("offerCreatedSuccessfully", {
+            if(it.newValue as Boolean){
+                this.updateOfferView.setVisible(false)
+                this.overviewView.setVisible(true)
+            }
+        })
+
+        this.createOfferView.viewModel.addPropertyChangeListener("offerCreatedSuccessfully", {
+            if(it.newValue as Boolean){
+                this.createOfferView.setVisible(false)
+                this.overviewView.setVisible(true)
+            }
+        })
     }
 
     private static def showNotification(String message, Notification.Type type) {
@@ -152,113 +177,48 @@ class AppView extends VerticalLayout {
 
     private class TomatoFeatures extends HorizontalLayout {
 
-        Button createOfferBtn
-
-        Button createPersonBtn
-
-        Button createAffiliationBtn
-
-        Button overviewBtn
-
-        Button searchPersonBtn
-
-        Button maintainProductBtn
-
-
         TomatoFeatures() {
-            this.createOfferBtn = new Button("New Offer")
-            this.createPersonBtn = new Button("New Person")
-            this.createAffiliationBtn = new Button("New Affiliation")
-            this.overviewBtn = new Button("Offer Overview")
-            this.searchPersonBtn = new Button("Search Person")
-            this.maintainProductBtn = new Button("Maintain Products")
-
-
-            this.addComponents(
-                    overviewBtn,
-                    createOfferBtn,
-                    createPersonBtn,
-                    createAffiliationBtn,
-                    searchPersonBtn,
-                    maintainProductBtn
-            )
-            setStyles()
-            setupListeners()
-            setIcons()
-            setDefault()
-            enableFeatures()
+            createMenuBar()
         }
 
-        private void enableFeatures() {
-            createOfferBtn.setEnabled(portletViewModel.createOfferFeatureEnabled)
-            createPersonBtn.setEnabled(portletViewModel.createCustomerFeatureEnabled)
-            searchPersonBtn.setEnabled(portletViewModel.searchCustomerFeatureEnabled)
-            maintainProductBtn.setEnabled(portletViewModel.maintainProductsFeatureEnabled)
+        private void createMenuBar() {
+            this.addComponent(dropDownButton("Offers",
+                    [
+                            "New Offer": {toggleView(createOfferView)},
+                            "Offer Overview": {toggleView(overviewView)}
+                    ]))
+            this.addComponent(dropDownButton("Persons",
+                    [
+                            "New Person": {toggleView(createPersonView)},
+                            "Search": {toggleView(searchPersonView)}
+                    ]))
+            this.addComponent(dropDownButton("Affiliations",
+                    [
+                            "New Affiliation": {toggleView(createAffiliationView)},
+                            "Search": {toggleView(searchAffiliationView)}
+                    ]))
+            Button maintainProducts = new Button("Service Products", VaadinIcons.GRID_BIG)
+            maintainProducts.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+            maintainProducts.addClickListener({
+                toggleView(maintainProductsView)
+            })
+            this.addComponent(maintainProducts)
         }
 
-        private void setDefault() {
-            setButtonActive(overviewBtn)
+        private void toggleView(Component component) {
+            hideAllFeatureViews()
+            component.setVisible(true)
         }
 
-        private void setStyles() {
-            overviewBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
-            createOfferBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
-            createPersonBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
-            createAffiliationBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
-            searchPersonBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
-            maintainProductBtn.addStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
-        }
-
-        private void setIcons() {
-            overviewBtn.setIcon(VaadinIcons.GRID_BIG_O)
-            createOfferBtn.setIcon(VaadinIcons.GRID_BIG_O)
-            createPersonBtn.setIcon(VaadinIcons.GRID_BIG_O)
-            createAffiliationBtn.setIcon(VaadinIcons.GRID_BIG_O)
-            searchPersonBtn.setIcon(VaadinIcons.GRID_BIG_O)
-            maintainProductBtn.setIcon(VaadinIcons.GRID_BIG_O)
-        }
-
-        private void setButtonActive(Button b) {
-            b.setIcon(VaadinIcons.GRID_BIG)
-        }
-
-        private void setupListeners() {
-            this.overviewBtn.addClickListener(listener -> {
-                hideAllFeatureViews()
-                setIcons()
-                overviewView.setVisible(true)
-                setButtonActive(this.overviewBtn)
-            })
-            this.createOfferBtn.addClickListener(listener -> {
-                hideAllFeatureViews()
-                setIcons()
-                createOfferView.setVisible(true)
-                setButtonActive(this.createOfferBtn)
-            })
-            this.createPersonBtn.addClickListener(listener -> {
-                hideAllFeatureViews()
-                setIcons()
-                createPersonView.setVisible(true)
-                setButtonActive(this.createPersonBtn)
-            })
-            this.createAffiliationBtn.addClickListener(listener -> {
-                hideAllFeatureViews()
-                setIcons()
-                createAffiliationView.setVisible(true)
-                setButtonActive(this.createAffiliationBtn)
-            })
-            this.searchPersonBtn.addClickListener(listener -> {
-                hideAllFeatureViews()
-                setIcons()
-                searchPersonView.setVisible(true)
-                setButtonActive(this.searchPersonBtn)
-            })
-            this.maintainProductBtn.addClickListener({
-                hideAllFeatureViews()
-                setIcons()
-                maintainProductsView.setVisible(true)
-                setButtonActive(this.maintainProductBtn)
-            })
+        MenuBar dropDownButton(String caption, Map<String, Closure> items) {
+            MenuBar dropDownButton = new MenuBar()
+            MenuItem content = dropDownButton.addItem(caption)
+            content.setIcon(VaadinIcons.GRID_BIG)
+            for (String item : items.keySet()) {
+                content.addItem(item, items.get(item))
+            }
+            dropDownButton.addStyleName(ValoTheme.MENUBAR_BORDERLESS)
+            return dropDownButton
         }
 
     }

@@ -1,7 +1,12 @@
 package life.qbic.portal.offermanager.components.offer.create
 
+import com.vaadin.data.ValidationResult
+import com.vaadin.data.Validator
+import com.vaadin.data.ValueContext
 import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.data.validator.RegexpValidator
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.server.UserError
 import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
@@ -13,10 +18,12 @@ import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
+import groovy.transform.CompileStatic
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.business.offers.Currency
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.AppViewModel
+import life.qbic.portal.offermanager.components.Resettable
 
 /**
  * This class generates a Layout in which the user
@@ -29,7 +36,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
  * @since: 0.1.0
  *
  */
-class SelectItemsView extends VerticalLayout{
+class SelectItemsView extends VerticalLayout implements Resettable{
 
     private final CreateOfferViewModel createOfferViewModel
     private final AppViewModel viewModel
@@ -42,13 +49,13 @@ class SelectItemsView extends VerticalLayout{
     private List<ProductItemViewModel> proteomicAnalysisProduct
     private List<ProductItemViewModel> metabolomicAnalysisProduct
 
-    Grid<ProductItemViewModel> sequencingGrid
-    Grid<ProductItemViewModel> projectManagementGrid
-    Grid<ProductItemViewModel> storageGrid
-    Grid<ProductItemViewModel> primaryAnalyseGrid
-    Grid<ProductItemViewModel> secondaryAnalyseGrid
-    Grid<ProductItemViewModel> proteomicsAnalysisGrid
-    Grid<ProductItemViewModel> metabolomicsAnalysisGrid
+    Grid<Product> sequencingGrid
+    Grid<Product> projectManagementGrid
+    Grid<Product> storageGrid
+    Grid<Product> primaryAnalyseGrid
+    Grid<Product> secondaryAnalyseGrid
+    Grid<Product> proteomicsAnalysisGrid
+    Grid<Product> metabolomicsAnalysisGrid
     Grid<ProductItemViewModel> overviewGrid
 
     Button applySequencing
@@ -58,6 +65,7 @@ class SelectItemsView extends VerticalLayout{
     Button applyProteomicAnalysis
     Button applyMetabolomicAnalysis
     Button applyDataStorage
+    Button removeItemsButton
     Button next
     Button previous
 
@@ -69,6 +77,29 @@ class SelectItemsView extends VerticalLayout{
     TextField amountMetabolomicAnalysis
     TextField amountDataStorage
 
+    TabSheet packageAccordion
+
+    /**
+     * Contains regex for filtering the different product types
+     *
+     * This enum stores the regex for validating a user input and differences between an atomic product
+     * which only allows integer input and a partial product which allows double input.
+     *
+     */
+    enum ProductTypeRegex {
+        ATOMIC("^[0-9]+\$"),
+        PARTIAL("[-]?[0-9]*\\.?[0-9]+"),
+
+        private String regex
+
+        ProductTypeRegex(String regex) {
+            this.regex = regex;
+        }
+
+        String getRegex() {
+            return this.regex;
+        }
+    }
 
     SelectItemsView(CreateOfferViewModel createOfferViewModel, AppViewModel viewModel){
         this.createOfferViewModel = createOfferViewModel
@@ -128,6 +159,16 @@ class SelectItemsView extends VerticalLayout{
         addListener()
     }
 
+    @Override
+    void reset() {
+        resetSelectedItems()
+    }
+
+    private void resetSelectedItems() {
+        overviewGrid.deselectAll()
+        packageAccordion.setSelectedTab(0)
+    }
+
 
     /**
      * Initializes the start layout for this view
@@ -185,51 +226,56 @@ class SelectItemsView extends VerticalLayout{
         this.applyProjectManagement = new Button("Apply", VaadinIcons.PLUS)
         applyProjectManagement.setEnabled(false)
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(previous,next)
+        this.removeItemsButton = new Button("Remove Item", VaadinIcons.MINUS)
+        removeItemsButton.setEnabled(false)
+        removeItemsButton.setStyleName(ValoTheme.BUTTON_DANGER)
+
+        HorizontalLayout buttonLayout = new HorizontalLayout(previous, removeItemsButton, next)
+        buttonLayout.setComponentAlignment(removeItemsButton, Alignment.BOTTOM_CENTER)
         buttonLayout.setComponentAlignment(next, Alignment.BOTTOM_RIGHT)
         buttonLayout.setComponentAlignment(previous, Alignment.BOTTOM_LEFT)
         buttonLayout.setSizeFull()
 
         HorizontalLayout quantitySeq = new HorizontalLayout(amountSequencing,applySequencing)
-        quantitySeq.setSizeFull()
-        quantitySeq.setComponentAlignment(applySequencing, Alignment.BOTTOM_RIGHT)
+        quantitySeq.setComponentAlignment(applySequencing, Alignment.BOTTOM_LEFT)
         VerticalLayout seqLayout = new VerticalLayout(sequencingGrid,quantitySeq)
+        sequencingGrid.setHeightByRows(6)
         seqLayout.setSizeFull()
 
         HorizontalLayout quantityPrimary = new HorizontalLayout(amountPrimaryAnalysis,applyPrimaryAnalysis)
-        quantityPrimary.setSizeFull()
-        quantityPrimary.setComponentAlignment(applyPrimaryAnalysis, Alignment.BOTTOM_RIGHT)
+        quantityPrimary.setComponentAlignment(applyPrimaryAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout primaryAnalysisLayout = new VerticalLayout(primaryAnalyseGrid, quantityPrimary)
+        primaryAnalyseGrid.setHeightByRows(6)
         primaryAnalysisLayout.setSizeFull()
 
         HorizontalLayout quantitySecondary = new HorizontalLayout(amountSecondaryAnalysis,applySecondaryAnalysis)
-        quantitySecondary.setSizeFull()
-        quantitySecondary.setComponentAlignment(applySecondaryAnalysis, Alignment.BOTTOM_RIGHT)
+        quantitySecondary.setComponentAlignment(applySecondaryAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout secondaryAnalysisLayout = new VerticalLayout(secondaryAnalyseGrid, quantitySecondary)
+        secondaryAnalyseGrid.setHeightByRows(6)
         secondaryAnalysisLayout.setSizeFull()
 
         HorizontalLayout quantityProteomic = new HorizontalLayout(amountProteomicAnalysis,applyProteomicAnalysis)
-        quantityProteomic.setSizeFull()
-        quantityProteomic.setComponentAlignment(applyProteomicAnalysis, Alignment.BOTTOM_RIGHT)
+        quantityProteomic.setComponentAlignment(applyProteomicAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout proteomicsLayout = new VerticalLayout(proteomicsAnalysisGrid, quantityProteomic)
+        proteomicsAnalysisGrid.setHeightByRows(6)
         proteomicsLayout.setSizeFull()
 
         HorizontalLayout quantityMetabolomic = new HorizontalLayout(amountMetabolomicAnalysis ,applyMetabolomicAnalysis)
-        quantityMetabolomic.setSizeFull()
-        quantityMetabolomic.setComponentAlignment(applyMetabolomicAnalysis, Alignment.BOTTOM_RIGHT)
+        quantityMetabolomic.setComponentAlignment(applyMetabolomicAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout metabolomicsLayout = new VerticalLayout(metabolomicsAnalysisGrid, quantityMetabolomic)
+        metabolomicsAnalysisGrid.setHeightByRows(6)
         metabolomicsLayout.setSizeFull()
 
         HorizontalLayout quantityStorage = new HorizontalLayout(amountDataStorage,applyDataStorage)
-        quantityStorage.setSizeFull()
-        quantityStorage.setComponentAlignment(applyDataStorage, Alignment.BOTTOM_RIGHT)
+        quantityStorage.setComponentAlignment(applyDataStorage, Alignment.BOTTOM_LEFT)
         VerticalLayout dataStorageLayout = new VerticalLayout(storageGrid, quantityStorage)
+        storageGrid.setHeightByRows(6)
         dataStorageLayout.setSizeFull()
 
         HorizontalLayout quantityManagement = new HorizontalLayout(amountProjectManagement,applyProjectManagement)
-        quantityManagement.setSizeFull()
-        quantityManagement.setComponentAlignment(applyProjectManagement, Alignment.BOTTOM_RIGHT)
+        quantityManagement.setComponentAlignment(applyProjectManagement, Alignment.BOTTOM_LEFT)
         VerticalLayout projectManagementLayout = new VerticalLayout(projectManagementGrid, quantityManagement)
+        projectManagementGrid.setHeightByRows(6)
         projectManagementLayout.setSizeFull()
 
         HorizontalLayout overview = new HorizontalLayout(overviewGrid)
@@ -244,13 +290,13 @@ class SelectItemsView extends VerticalLayout{
         generateProductGrid(storageGrid)
         generateProductGrid(projectManagementGrid)
         // This grid summarises product items selected for this specific offer, so we set quantity = true
-        generateProductGrid(overviewGrid, true)
+        generateItemGrid(overviewGrid)
 
         //make the overview over selected items grow dynamically
         overviewGrid.setHeightMode(HeightMode.UNDEFINED)
 
 
-        TabSheet packageAccordion = new TabSheet()
+        packageAccordion = new TabSheet()
         packageAccordion.addTab(seqLayout,"Sequencing")
         packageAccordion.addTab(primaryAnalysisLayout,"Primary Bioinformatics")
         packageAccordion.addTab(secondaryAnalysisLayout,"Secondary Bioinformatics")
@@ -320,21 +366,41 @@ class SelectItemsView extends VerticalLayout{
      *
      * This Method is responsible for setting up the grid and setting the product information to the individual grid columns.
      */
-    private static void generateProductGrid(Grid<ProductItemViewModel> grid, boolean showQuantity = false) {
+    private static void generateProductGrid(Grid<Product> grid) {
         try {
-            if(showQuantity){
-            grid.addColumn({ productItem -> productItem.quantity })
-                    .setCaption("Quantity").setId("Quantity")
-            }
-            grid.addColumn({ productItem -> productItem.product.productId})
+            grid.addColumn({ it.productId})
                     .setCaption("Product Id").setId("ProductId")
-            grid.addColumn({ productItem -> productItem.product.productName })
+            grid.addColumn({ it.productName })
                     .setCaption("Product Name").setId("ProductName")
-            grid.addColumn({ productItem -> productItem.product.description })
+            grid.addColumn({ it.description })
                     .setCaption("Product Description").setId("ProductDescription")
-            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol()))
+            grid.addColumn({ it.unitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol()))
                     .setCaption("Product Unit Price").setId("ProductUnitPrice")
-            grid.addColumn({ productItem -> productItem.product.unit.value })
+            grid.addColumn({ it.unit.value })
+                    .setCaption("Product Unit").setId("ProductUnit")
+
+            //specify size of grid and layout
+            grid.setWidthFull()
+            grid.setHeightMode(HeightMode.ROW)
+        } catch (Exception e) {
+            new Exception("Unexpected exception in building the product item grid", e)
+        }
+    }
+
+    private static void generateItemGrid(Grid<ProductItemViewModel> grid) {
+        try {
+            grid.addColumn({ it.quantity})
+                    .setCaption("Quantity").setId("Quantity")
+            grid.addColumn({ it.product.productId})
+                    .setCaption("Product Id").setId("ProductId")
+            grid.addColumn({ it.product.productName })
+                    .setCaption("Product Name").setId("ProductName")
+            grid.addColumn({ it.product.description })
+                    .setCaption("Product Description").setId("ProductDescription")
+            grid.addColumn({ it.product.unitPrice }, new NumberRenderer(Currency
+                    .getFormatterWithSymbol()))
+                    .setCaption("Product Unit Price").setId("ProductUnitPrice")
+            grid.addColumn({ it.product.unit.value })
                     .setCaption("Product Unit").setId("ProductUnit")
 
             //specify size of grid and layout
@@ -350,8 +416,32 @@ class SelectItemsView extends VerticalLayout{
      */
     private void addListener() {
         sequencingGrid.addSelectionListener({
-            applySequencing.setEnabled(true)
+            createOfferViewModel.sequencingGridSelected = it.firstSelectedItem.isPresent()
         })
+
+        Validator<String> nonEmptyStringValidator = Validator.from({ String value -> (value && !value.trim().empty)}, "Please provide a number as input.")
+        Validator<String> atomicValidator = new RegexpValidator("Please provide an integer Input", ProductTypeRegex.ATOMIC.regex)
+        Validator<String> partialValidator = new RegexpValidator("Please provide a decimal Input", ProductTypeRegex.PARTIAL.regex)
+        this.amountSequencing.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountSequencing))
+            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountSequencing))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountSequencing.setComponentError(error)
+                createOfferViewModel.sequencingQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountSequencing.setComponentError(error)
+                createOfferViewModel.sequencingQuantityValid = false
+            }
+            else{
+                this.amountSequencing.setComponentError(null)
+                createOfferViewModel.sequencingQuantityValid = true
+            }
+        })
+
         applySequencing.addClickListener({
             if(sequencingGrid.getSelectedItems() != null){
                 String amount = amountSequencing.getValue()
@@ -359,9 +449,10 @@ class SelectItemsView extends VerticalLayout{
                 try{
                     if(amount != null && amount.isNumber()){
                         sequencingGrid.getSelectedItems().each {
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Integer.parseInt(amount)
+                            if(amountParsed >= 0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         sequencingGrid.getDataProvider().refreshAll()
@@ -375,11 +466,33 @@ class SelectItemsView extends VerticalLayout{
             amountSequencing.clear()
             sequencingGrid.deselectAll()
             applySequencing.setEnabled(false)
+            amountSequencing.setComponentError(null)
         })
 
         primaryAnalyseGrid.addSelectionListener({
-            applyPrimaryAnalysis.setEnabled(true)
+            createOfferViewModel.primaryAnalysisGridSelected = it.firstSelectedItem.isPresent()
         })
+
+        this.amountPrimaryAnalysis.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountPrimaryAnalysis))
+            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountPrimaryAnalysis))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountPrimaryAnalysis.setComponentError(error)
+                createOfferViewModel.primaryAnalysisQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountPrimaryAnalysis.setComponentError(error)
+                createOfferViewModel.primaryAnalysisQuantityValid = false
+            }
+            else{
+                this.amountPrimaryAnalysis.setComponentError(null)
+                createOfferViewModel.primaryAnalysisQuantityValid = true
+            }
+        })
+
         applyPrimaryAnalysis.addClickListener({
             if(primaryAnalyseGrid.getSelectedItems() != null) {
                 String amount = amountPrimaryAnalysis.getValue()
@@ -387,12 +500,14 @@ class SelectItemsView extends VerticalLayout{
                 try{
                     if(amount != null && amount.isNumber()) {
                         primaryAnalyseGrid.getSelectedItems().each {
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Integer.parseInt(amount)
+                            if(amountParsed >= 0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         primaryAnalyseGrid.getDataProvider().refreshAll()
+
                     }
                 } catch(NumberFormatException e) {
                     viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
@@ -403,11 +518,33 @@ class SelectItemsView extends VerticalLayout{
             amountPrimaryAnalysis.clear()
             primaryAnalyseGrid.deselectAll()
             applyPrimaryAnalysis.setEnabled(false)
+            amountPrimaryAnalysis.setComponentError(null)
         })
 
         secondaryAnalyseGrid.addSelectionListener({
-            applySecondaryAnalysis.setEnabled(true)
+            createOfferViewModel.secondaryAnalysisGridSelected = it.firstSelectedItem.isPresent()
         })
+
+        this.amountSecondaryAnalysis.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountSecondaryAnalysis))
+            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountSecondaryAnalysis))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountSecondaryAnalysis.setComponentError(error)
+                createOfferViewModel.secondaryAnalysisQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountSecondaryAnalysis.setComponentError(error)
+                createOfferViewModel.secondaryAnalysisQuantityValid = false
+            }
+            else{
+                this.amountPrimaryAnalysis.setComponentError(null)
+                createOfferViewModel.secondaryAnalysisQuantityValid = true
+            }
+        })
+
         applySecondaryAnalysis.addClickListener({
             if(secondaryAnalyseGrid.getSelectedItems() != null){
                 String amount = amountSecondaryAnalysis.getValue()
@@ -415,10 +552,10 @@ class SelectItemsView extends VerticalLayout{
                 try{
                     if(amount != null && amount.isNumber()){
                         secondaryAnalyseGrid.getSelectedItems().each {
-
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Integer.parseInt(amount)
+                            if(amountParsed >= 0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         secondaryAnalyseGrid.getDataProvider().refreshAll()
@@ -433,10 +570,31 @@ class SelectItemsView extends VerticalLayout{
             amountSecondaryAnalysis.clear()
             secondaryAnalyseGrid.deselectAll()
             applySecondaryAnalysis.setEnabled(false)
+            amountSecondaryAnalysis.setComponentError(null)
         })
 
         proteomicsAnalysisGrid.addSelectionListener({
-            applyProteomicAnalysis.setEnabled(true)
+            createOfferViewModel.proteomicsAnalysisGridSelected = it.firstSelectedItem.isPresent()
+        })
+
+        this.amountProteomicAnalysis.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountProteomicAnalysis))
+            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountProteomicAnalysis))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountProteomicAnalysis.setComponentError(error)
+                createOfferViewModel.proteomicsAnalysisQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountProteomicAnalysis.setComponentError(error)
+                createOfferViewModel.proteomicsAnalysisQuantityValid = false
+            }
+            else{
+                this.amountProteomicAnalysis.setComponentError(null)
+                createOfferViewModel.proteomicsAnalysisQuantityValid = true
+            }
         })
 
         applyProteomicAnalysis.addClickListener({
@@ -445,9 +603,10 @@ class SelectItemsView extends VerticalLayout{
                 try{
                     if(amount != null && amount.isNumber()) {
                         proteomicsAnalysisGrid.getSelectedItems().each {
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Integer.parseInt(amount)
+                            if(amountParsed >= 0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         proteomicsAnalysisGrid.getDataProvider().refreshAll()
@@ -461,20 +620,43 @@ class SelectItemsView extends VerticalLayout{
             amountProteomicAnalysis.clear()
             proteomicsAnalysisGrid.deselectAll()
             applyProteomicAnalysis.setEnabled(false)
+            amountProteomicAnalysis.setComponentError(null)
         })
 
         metabolomicsAnalysisGrid.addSelectionListener({
-            applyMetabolomicAnalysis.setEnabled(true)
+            createOfferViewModel.metabolomicsAnalysisGridSelected = it.firstSelectedItem.isPresent()
         })
+
+        this.amountMetabolomicAnalysis.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountMetabolomicAnalysis))
+            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountMetabolomicAnalysis))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountMetabolomicAnalysis.setComponentError(error)
+                createOfferViewModel.metabolomicsAnalysisQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountMetabolomicAnalysis.setComponentError(error)
+                createOfferViewModel.metabolomicsAnalysisQuantityValid = false
+            }
+            else{
+                this.amountMetabolomicAnalysis.setComponentError(null)
+                createOfferViewModel.metabolomicsAnalysisQuantityValid = true
+            }
+        })
+
         applyMetabolomicAnalysis.addClickListener({
             if(metabolomicsAnalysisGrid.getSelectedItems() != null) {
                 String amount = amountMetabolomicAnalysis.getValue()
                 try{
                     if(amount != null && amount.isNumber()) {
                         metabolomicsAnalysisGrid.getSelectedItems().each {
-                            if(Integer.parseInt(amount) >= 0){
-                                it.setQuantity(Integer.parseInt(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Integer.parseInt(amount)
+                            if(amountParsed >= 0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         metabolomicsAnalysisGrid.getDataProvider().refreshAll()
@@ -488,11 +670,33 @@ class SelectItemsView extends VerticalLayout{
             amountMetabolomicAnalysis.clear()
             metabolomicsAnalysisGrid.deselectAll()
             applyMetabolomicAnalysis.setEnabled(false)
+            amountMetabolomicAnalysis.setComponentError(null)
         })
 
         projectManagementGrid.addSelectionListener({
-            applyProjectManagement.setEnabled(true)
+            createOfferViewModel.projectManagementGridSelected = it.firstSelectedItem.isPresent()
         })
+
+        this.amountProjectManagement.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountProjectManagement))
+            ValidationResult numberResult = partialValidator.apply(event.getValue(), new ValueContext(amountProjectManagement))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountProjectManagement.setComponentError(error)
+                createOfferViewModel.projectManagementQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountProjectManagement.setComponentError(error)
+                createOfferViewModel.projectManagementQuantityValid = false
+            }
+            else{
+                this.amountProjectManagement.setComponentError(null)
+                createOfferViewModel.projectManagementQuantityValid = true
+            }
+        })
+
         applyProjectManagement.addClickListener({
             if(projectManagementGrid.getSelectedItems() != null){
                 String amount = amountProjectManagement.getValue()
@@ -500,10 +704,10 @@ class SelectItemsView extends VerticalLayout{
                 try{
                     if(amount != null && amount.isNumber()){
                         projectManagementGrid.getSelectedItems().each {
-
-                            if(Double.parseDouble(amount) >= 0.0){
-                                it.setQuantity(Double.parseDouble(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Double.parseDouble(amount)
+                            if(amountParsed >= 0.0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         projectManagementGrid.getDataProvider().refreshAll()
@@ -516,11 +720,33 @@ class SelectItemsView extends VerticalLayout{
             amountProjectManagement.clear()
             projectManagementGrid.deselectAll()
             applyProjectManagement.setEnabled(false)
+            amountProjectManagement.setComponentError(null)
         })
 
         storageGrid.addSelectionListener({
-            applyDataStorage.setEnabled(true)
+            createOfferViewModel.storageGridSelected = it.firstSelectedItem.isPresent()
         })
+
+        this.amountDataStorage.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountDataStorage))
+            ValidationResult numberResult = partialValidator.apply(event.getValue(), new ValueContext(amountDataStorage))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountDataStorage.setComponentError(error)
+                createOfferViewModel.storageQuantityValid = false
+            }
+            else if (numberResult.isError()){
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountDataStorage.setComponentError(error)
+                createOfferViewModel.storageQuantityValid = false
+            }
+            else{
+                this.amountDataStorage.setComponentError(null)
+                createOfferViewModel.storageQuantityValid = true
+            }
+        })
+
         applyDataStorage.addClickListener({
             if(storageGrid.getSelectedItems() != null){
                 String amount = amountDataStorage.getValue()
@@ -528,10 +754,10 @@ class SelectItemsView extends VerticalLayout{
                 try{
                     if(amount != null && amount.isNumber()){
                         storageGrid.getSelectedItems().each {
-
-                            if(Double.parseDouble(amount) >= 0.0){
-                                it.setQuantity(Double.parseDouble(amount))
-                                updateOverviewGrid(it)
+                            def amountParsed = Double.parseDouble(amount)
+                            if(amountParsed >= 0.0){
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
                             }
                         }
                         storageGrid.getDataProvider().refreshAll()
@@ -544,6 +770,7 @@ class SelectItemsView extends VerticalLayout{
             amountDataStorage.clear()
             storageGrid.deselectAll()
             applyDataStorage.setEnabled(false)
+            amountDataStorage.setComponentError(null)
         })
 
         createOfferViewModel.productItems.addPropertyChangeListener({
@@ -553,20 +780,45 @@ class SelectItemsView extends VerticalLayout{
                 next.setEnabled(false)
             }
         })
+
+        createOfferViewModel.addPropertyChangeListener({
+            applySequencing.setEnabled(createOfferViewModel.sequencingGridSelected && createOfferViewModel.sequencingQuantityValid)
+            applyPrimaryAnalysis.setEnabled(createOfferViewModel.primaryAnalysisGridSelected && createOfferViewModel.primaryAnalysisQuantityValid)
+            applySecondaryAnalysis.setEnabled(createOfferViewModel.secondaryAnalysisGridSelected && createOfferViewModel.secondaryAnalysisQuantityValid)
+            applyProteomicAnalysis.setEnabled(createOfferViewModel.proteomicsAnalysisGridSelected && createOfferViewModel.proteomicsAnalysisQuantityValid)
+            applyMetabolomicAnalysis.setEnabled(createOfferViewModel.metabolomicsAnalysisGridSelected && createOfferViewModel.metabolomicsAnalysisQuantityValid)
+            applyProjectManagement.setEnabled(createOfferViewModel.projectManagementGridSelected && createOfferViewModel.projectManagementQuantityValid)
+            applyDataStorage.setEnabled(createOfferViewModel.storageGridSelected && createOfferViewModel.storageQuantityValid)
+        })
+
+        overviewGrid.addSelectionListener({
+            if (it.allSelectedItems) {
+                removeItemsButton.setEnabled(true)
+            } else {
+                removeItemsButton.setEnabled(false)
+            }
+        })
+
+        removeItemsButton.addClickListener({
+            def selectedItems = overviewGrid.getSelectedItems()
+            if (selectedItems) {
+                createOfferViewModel.productItems.removeAll(selectedItems)
+                overviewGrid.dataProvider.refreshAll()
+                overviewGrid.deselectAll()
+            }
+        })
     }
 
     /**
      * This method should be called whenever the quantity of a ProductItemViewModel changes. It updates the items in overview grid respectively
      */
     void updateOverviewGrid(ProductItemViewModel item){
-        if(!createOfferViewModel.productItems.contains(item)){
-            createOfferViewModel.productItems.add(item)
-        }
-        if(item.quantity == 0.0 as Double){
-            createOfferViewModel.productItems.remove(item)
-        }
+        createOfferViewModel.addItem(item)
         overviewGrid.getDataProvider().refreshAll()
+        refreshNavButtons()
+    }
 
+    private void refreshNavButtons() {
         if(createOfferViewModel.productItems.size() > 0){
             next.setEnabled(true)
         }else{

@@ -1,5 +1,7 @@
 package life.qbic.business.offers.create
 
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.update.UpdateOffer
 import life.qbic.business.offers.identifier.OfferId
@@ -23,6 +25,8 @@ import life.qbic.business.exceptions.DatabaseQueryException
  * @author: Tobias Koch
  */
 class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput{
+
+    private static final Logging log = Logger.getLogger(this.class)
 
     private CreateOfferDataSource dataSource
     private CreateOfferOutput output
@@ -54,6 +58,7 @@ class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput
                 offerContent.projectDescription,
                 offerContent.items,
                 offerContent.selectedCustomerAffiliation)
+                .experimentalDesign(offerContent.experimentalDesign)
                 .identifier(newOfferId)
                 .build()
 
@@ -68,9 +73,8 @@ class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput
         } catch (DatabaseQueryException e) {
             output.failNotification(e.message)
         } catch (Exception unexpected) {
-            //TODO use logger facade instead of println
-            println unexpected.message
-            println unexpected.stackTrace.join("\n")
+            log.error(unexpected.message)
+            log.debug(unexpected.message, unexpected)
             output.failNotification("An unexpected during the saving of your offer occurred. " +
                     "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }

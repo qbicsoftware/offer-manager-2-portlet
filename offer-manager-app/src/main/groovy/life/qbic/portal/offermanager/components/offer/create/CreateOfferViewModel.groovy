@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.components.offer.create
 
 import groovy.beans.Bindable
+import groovy.transform.CompileStatic
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
@@ -27,13 +28,13 @@ import life.qbic.portal.offermanager.communication.Subscription
  */
 class CreateOfferViewModel {
 
-    List<ProductItemViewModel> sequencingProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> primaryAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> secondaryAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> managementProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> storageProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> proteomicAnalysisProducts = new ObservableList(new ArrayList<ProductItemViewModel>())
-    List<ProductItemViewModel> metabolomicAnalysisProduct = new ObservableList(new ArrayList<ProductItemViewModel>())
+    List<Product> sequencingProducts = new ObservableList(new ArrayList<Product>())
+    List<Product> primaryAnalysisProducts = new ObservableList(new ArrayList<Product>())
+    List<Product> secondaryAnalysisProducts = new ObservableList(new ArrayList<Product>())
+    List<Product> managementProducts = new ObservableList(new ArrayList<Product>())
+    List<Product> storageProducts = new ObservableList(new ArrayList<Product>())
+    List<Product> proteomicAnalysisProducts = new ObservableList(new ArrayList<Product>())
+    List<Product> metabolomicAnalysisProduct = new ObservableList(new ArrayList<Product>())
 
     ObservableList productItems = new ObservableList(new ArrayList<ProductItemViewModel>())
     ObservableList foundCustomers = new ObservableList(new ArrayList<Customer>())
@@ -42,21 +43,44 @@ class CreateOfferViewModel {
     @Bindable OfferId offerId
     @Bindable String projectTitle
     @Bindable String projectObjective
+    @Bindable String experimentalDesign
     @Bindable Customer customer
     @Bindable Affiliation customerAffiliation
     @Bindable ProjectManager projectManager
     @Bindable double offerPrice
+
+    @Bindable Boolean projectTitleValid = false
+    @Bindable Boolean projectObjectiveValid = false
+    @Bindable Boolean experimentalDesignValid = true
 
     @Bindable double netPrice = 0
     @Bindable double taxes = 0
     @Bindable double overheads = 0
     @Bindable double totalPrice = 0
 
+    @Bindable Boolean sequencingGridSelected
+    @Bindable Boolean primaryAnalysisGridSelected
+    @Bindable Boolean secondaryAnalysisGridSelected
+    @Bindable Boolean proteomicsAnalysisGridSelected
+    @Bindable Boolean metabolomicsAnalysisGridSelected
+    @Bindable Boolean projectManagementGridSelected
+    @Bindable Boolean storageGridSelected
+
+    @Bindable Boolean sequencingQuantityValid
+    @Bindable Boolean primaryAnalysisQuantityValid
+    @Bindable Boolean secondaryAnalysisQuantityValid
+    @Bindable Boolean proteomicsAnalysisQuantityValid
+    @Bindable Boolean metabolomicsAnalysisQuantityValid
+    @Bindable Boolean projectManagementQuantityValid
+    @Bindable Boolean storageQuantityValid
+
     Optional<Offer> savedOffer = Optional.empty()
 
     private final CustomerResourceService customerResourceService
     private final ProductsResourcesService productsResourcesService
     private final ProjectManagerResourceService managerResourceService
+
+    @Bindable Boolean offerCreatedSuccessfully
 
     CreateOfferViewModel(CustomerResourceService customerResourceService,
                          ProjectManagerResourceService managerResourceService,
@@ -65,9 +89,50 @@ class CreateOfferViewModel {
         this.productsResourcesService = productsResourcesService
         this.managerResourceService = managerResourceService
 
+        offerCreatedSuccessfully = false
+        this.addPropertyChangeListener("offerCreatedSuccessfully", {
+            if (it.newValue as Boolean)
+                resetModel()
+        })
+
         fetchPersonData()
         fetchProductData()
         subscribeToResources()
+    }
+
+    void addItem(ProductItemViewModel item) {
+        // we don't do anything when the amount is equal or smaller zero
+        if (item.quantity <= 0.0) {
+            return
+        }
+        List<ProductItemViewModel> alreadyExistingItems =
+                productItems.findAll { it.product.productId.equals(item.product.productId)} as List<ProductItemViewModel>
+        double totalAmount = item.quantity
+        for (ProductItemViewModel currentItem : alreadyExistingItems) {
+            totalAmount = totalAmount + currentItem.quantity
+        }
+        productItems.add(new ProductItemViewModel(totalAmount, item.product))
+        productItems.removeAll(alreadyExistingItems)
+    }
+
+    protected void resetModel() {
+        offerCreatedSuccessfully = false
+
+        offerId = null
+        projectTitle = ""
+        projectObjective = ""
+        experimentalDesign = ""
+        customer = null
+        customerAffiliation = null
+        projectManager = null
+        offerPrice = 0
+
+        netPrice = 0
+        taxes = 0
+        overheads = 0
+        totalPrice = 0
+
+        productItems.clear()
     }
 
     private void fetchPersonData() {
@@ -146,29 +211,28 @@ class CreateOfferViewModel {
         this.metabolomicAnalysisProduct.clear()
 
         products.each { product ->
-            ProductItemViewModel productItem = new ProductItemViewModel(0, product)
 
             switch (product) {
                 case Sequencing:
-                    sequencingProducts.add(productItem)
+                    sequencingProducts.add(product)
                     break
                 case ProjectManagement:
-                    managementProducts.add(productItem)
+                    managementProducts.add(product)
                     break
                 case PrimaryAnalysis:
-                    primaryAnalysisProducts.add(productItem)
+                    primaryAnalysisProducts.add(product)
                     break
                 case SecondaryAnalysis:
-                    secondaryAnalysisProducts.add(productItem)
+                    secondaryAnalysisProducts.add(product)
                     break
                 case DataStorage:
-                    storageProducts.add(productItem)
+                    storageProducts.add(product)
                     break
                 case ProteomicAnalysis:
-                    proteomicAnalysisProducts.add(productItem)
+                    proteomicAnalysisProducts.add(product)
                     break
                 case MetabolomicAnalysis:
-                    metabolomicAnalysisProduct.add(productItem)
+                    metabolomicAnalysisProduct.add(product)
                     break
                 default:
                     // this should not happen

@@ -74,7 +74,7 @@ class CreateOfferSpec extends Specification {
         ]
 
         Offer offer = new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
-                .modificationDate(date).expirationDate(date).items([items[0]])
+                .modificationDate(date).expirationDate(date).items([items[0]]).experimentalDesign("A design")
                 .build()
 
         when:
@@ -93,8 +93,8 @@ class CreateOfferSpec extends Specification {
         List<ProductItem> items = [new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE, "1")),
                                    new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE, "1"))]
         when:
-        createOffer.calculatePrice(items, new Affiliation.Builder("Test", "", "", "").category
-        (AffiliationCategory.INTERNAL).build())
+        createOffer.calculatePrice(items, new Affiliation.Builder("Test", "", "", "")
+                .category(AffiliationCategory.INTERNAL).build())
 
         then:
         1 * output.calculatedPrice(2.8, 0, 0, 2.8)
