@@ -44,8 +44,8 @@ class CreateProduct implements CreateProductInput {
             log.warn("Product $product.productName with identifier $product.productId already exists.", productExistsException)
             output.foundDuplicate(product)
         } catch(Exception exception) {
-            log.error("An unexpected during the project creation occurred.", exception)
-            output.failNotification("An unexpected during the project creation occurred. " +
+            log.error("An unexpected error occured during product creation.", exception)
+            output.failNotification("An unexpected error occured during product creation. " +
                     "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
     }
