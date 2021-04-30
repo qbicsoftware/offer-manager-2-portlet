@@ -318,7 +318,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   private Long fetchLatestIdentifier(String productType){
-    String query = "SELECT MAX(productId) FROM product WHERE productId LIKE ?"
+    String query = "SELECT productId FROM product WHERE productId LIKE ?"
     Connection connection = provider.connect()
 
     String category = productType + "_%"
@@ -332,8 +332,10 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
 
       while(result.next()){
         String id = result.getString(1)
-
-        if(id) latestUniqueId = Long.parseLong(id.split('_')[1])
+        if(id) {
+          long idRunningNumber = Long.parseLong(id.split('_')[1])
+          if(idRunningNumber > latestUniqueId) latestUniqueId = idRunningNumber
+        }
       }
     }
 
