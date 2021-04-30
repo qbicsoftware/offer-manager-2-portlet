@@ -11,6 +11,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* Duplicate product identifiers are no longer generated (`#551 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/551>`_) fixes (`#546 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/546>`_)
+
 **Dependencies**
 
 **Deprecated**
