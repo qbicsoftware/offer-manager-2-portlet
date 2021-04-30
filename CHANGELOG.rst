@@ -4,6 +4,19 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.0.0-beta.2
+-------------
+
+**Added**
+
+**Fixed**
+
+* Rephrased error message for product creation failure (`#552 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/263>`_)
+
+**Dependencies**
+
+**Deprecated**
+
 1.0.0-beta.1 (2021-04-27)
 -----------------------------------
 
