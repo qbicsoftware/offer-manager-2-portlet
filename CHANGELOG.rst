@@ -11,6 +11,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* Rephrased error message for product creation failure (`#552 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/263>`_)
+
 **Dependencies**
 
 **Deprecated**
