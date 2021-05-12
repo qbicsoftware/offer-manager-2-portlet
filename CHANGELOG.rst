@@ -4,6 +4,14 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+uncategorized
+-------------
+**Dependencies**
+
+* ``com.vaadin.vaadin-bom:8.12.3`` -> ``8.13.0`` (`#572 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/572>`_)
+
+
+
 1.0.0-beta.2 (2021-04-30)
 -------------------------
 
@@ -18,6 +26,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 **Dependencies**
 
 **Deprecated**
+
 
 1.0.0-beta.1 (2021-04-27)
 -----------------------------------
