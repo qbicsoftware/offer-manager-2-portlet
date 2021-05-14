@@ -332,13 +332,15 @@ class OfferToPDFConverter implements OfferExporter {
 
     void generateProductTable(Map productItemsMap, int maxTableItems) {
         // Create the items in html in the overview table
+        int itemNumber = 0
         productItemsMap.each {ProductGroups productGroup, List<ProductItem> items ->
             //Check if there are ProductItems stored in map entry
             if(items){
                 def elementId = "product-items" + "-" + tableCount
                 //Append Table Title
                 htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
-                items.eachWithIndex {ProductItem item, int itemPos ->
+                items.each{ProductItem item ->
+                    itemNumber++
                     //start (next) table and add Product to it
                     if (tableItemsCount >= maxTableItems) {
                         ++tableCount
@@ -347,8 +349,7 @@ class OfferToPDFConverter implements OfferExporter {
                         tableItemsCount = 1
                     }
                     //add product to current table
-                    int productNumber = itemPos + 1
-                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(productNumber, item))
+                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
                     tableItemsCount++
                 }
                 //add subtotal footer to table
