@@ -138,6 +138,8 @@ class OfferOverviewView extends FormLayout {
                 .setCaption("Project Title").setId("ProjectTitle")
         overviewGrid.addColumn({overview -> overview.getCustomer()})
                 .setCaption("Customer").setId("Customer")
+        overviewGrid.addColumn({overview -> overview.getProjectManager()})
+                .setCaption("ProjectManager").setId("ProjectManager")
         overviewGrid.addColumn({overview ->
             overview.getAssociatedProject().isPresent() ? overview.getAssociatedProject().get() :
                     "-"}).setCaption("Project ID").setId("ProjectID")
@@ -154,20 +156,23 @@ class OfferOverviewView extends FormLayout {
     }
 
     private void setupFilters(ListDataProvider<OfferOverview> offerOverviewDataProvider) {
-        HeaderRow customerFilterRow = overviewGrid.appendHeaderRow()
+        HeaderRow headerFilterRow = overviewGrid.appendHeaderRow()
 
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("OfferId"),
-                customerFilterRow)
+                headerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("ProjectTitle"),
-                customerFilterRow)
+                headerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("Customer"),
-                customerFilterRow)
+                headerFilterRow)
+        GridUtils.setupColumnFilter(offerOverviewDataProvider,
+                overviewGrid.getColumn("ProjectManager"),
+                headerFilterRow)
         GridUtils.setupDateColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("CreationDate"),
-                customerFilterRow)
+                headerFilterRow)
     }
 
     private void setupListeners() {
