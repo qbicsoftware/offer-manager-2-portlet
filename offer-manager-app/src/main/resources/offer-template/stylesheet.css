@@ -18,8 +18,12 @@ body {
     text-align: center;
 }
 
-#total-costs-sum {
-  margin-top: 0.5cm;
+.table-row {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.total-costs-sum-row {
   font-weight: bold;
   font-size: 14pt;
 }
@@ -105,6 +109,7 @@ body {
 
     .inline {
         display: inline-block;
+        margin: 0 0 0 0;
     }
 
     .project-section {
@@ -139,6 +144,7 @@ body {
         padding-top: 20px;
         padding-bottom: 20px;
         font-size: 2vw;
+        margin: 0 0 0 0;
     }
 
     /* Items introduction and outro text*/
