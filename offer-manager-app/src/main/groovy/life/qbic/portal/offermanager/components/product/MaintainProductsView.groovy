@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.product
 
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.shared.data.sort.SortDirection
 import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.FormLayout
@@ -97,6 +98,7 @@ class MaintainProductsView extends FormLayout {
                 .setCaption("Unit").setId("ProductUnit")
 
         productGrid.setWidthFull()
+        productGrid.sort("ProductId", SortDirection.ASCENDING)
 
         ListDataProvider<Product> productsDataProvider = setupDataProvider()
         setupFilters(productsDataProvider)
