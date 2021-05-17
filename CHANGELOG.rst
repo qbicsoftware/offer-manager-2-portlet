@@ -9,6 +9,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Introduce filterable Project Manager column to offer overview (`#576 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/576>`_)
+
 * Displays a total price overview on the first offer page, including taxes and overheads
 
 **Fixed**
@@ -20,6 +22,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * ``com.vaadin.vaadin-bom:8.12.3`` -> ``8.13.0`` (`#572 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/572>`_)
 
 **Deprecated**
+
+* Deprecate OfferOverview Constructor to allow for inclusion of ProjectManager (`#576 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/576>`_)
 
 
 1.0.0-beta.2 (2021-04-30)
