@@ -298,12 +298,13 @@ class Offer {
     /**
      * The tax price on all items net price including overheads.
      *
-     * For internal persons, this will be 0.
+     * For internal persons and customers outside of Germany, this will be set to 0.
+     *
      *
      * @return The amount of VAT price based on all items in the offer.
      */
     double getTaxCosts() {
-        if (selectedCustomerAffiliation.category.equals(AffiliationCategory.INTERNAL)) {
+        if (selectedCustomerAffiliation.category.equals(AffiliationCategory.INTERNAL) || !selectedCustomerAffiliation.country.equals("Germany")) {
             return 0
         }
         return (calculateNetPrice() + getOverheadSum()) * VAT
