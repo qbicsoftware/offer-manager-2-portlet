@@ -72,10 +72,25 @@
             </div>
             <br>
             <div>Detailed information about the comprised services are listed in the <a href="#items-container-table">Quotation Details</a>.</div>
-
+            <br>
+            <div>
+                <strong>Price summary:</strong>
+            </div>
             <div class="cost-summary">
-                <div class="">Estimated total (net)</div>
-                <div id ="total-costs-net">1,000.00 €</div>
+                <table style="border-collapse: collapse;">
+                    <tr class="table-row">
+                        <td class="table-row">Net</td>
+                        <td id ="total-costs-net" class="right-align table-row">€ 1,000.00</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid black;">
+                        <td class="table-row">VAT (19%)</td>
+                        <td id ="total-taxes" class="right-align table-row">€ 190.00</td>
+                    </tr>
+                    <tr>
+                        <td class="total-costs-sum-row table-row">Total </td>
+                        <td id ="total-costs-sum" class="right-align total-costs-sum-row table-row">€ 1,190.00</td>
+                    </tr>
+                </table>
             </div>
         </div>
         <div class="signature">

@@ -259,12 +259,19 @@ class OfferToPDFConverter implements OfferExporter {
 
     void setTotalPrices() {
         final totalPrice = Currency.getFormatterWithoutSymbol().format(offer.totalPrice)
+        final totalPriceWithCurrency = Currency.getFormatterWithSymbol().format(offer.totalPrice)
         final taxes = Currency.getFormatterWithoutSymbol().format(offer.taxes)
+        final taxesWithCurrency = Currency.getFormatterWithSymbol().format(offer.taxes)
         final netPrice = Currency.getFormatterWithoutSymbol().format(offer.netPrice)
-        final netPrice_withSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
+        final netPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
         final overheadPrice = Currency.getFormatterWithoutSymbol().format(offer.overheads)
 
-        htmlContent.getElementById("total-costs-net").text(netPrice_withSymbol)
+        // First page summary
+        htmlContent.getElementById("total-costs-net").text(netPriceWithSymbol)
+        htmlContent.getElementById("total-taxes").text(taxesWithCurrency)
+        htmlContent.getElementById("total-costs-sum").text(totalPriceWithCurrency)
+
+        // Detailed listing summary
         htmlContent.getElementById("overhead-cost-value").text(overheadPrice)
         htmlContent.getElementById("total-cost-value-net").text(netPrice)
         htmlContent.getElementById("vat-cost-value").text(taxes)
