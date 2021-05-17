@@ -18,6 +18,12 @@ body {
     text-align: center;
 }
 
+#total-costs-sum {
+  margin-top: 0.5cm;
+  font-weight: bold;
+  font-size: 14pt;
+}
+
     /* Grid container */
     .grid-container {
         /*max-height: 85vh;*/
@@ -95,6 +101,10 @@ body {
         grid-column-end: 2;
         grid-row-start: 5;
         grid-row-end: 8;
+    }
+
+    .inline {
+        display: inline-block;
     }
 
     .project-section {
@@ -245,6 +255,10 @@ body {
 
     .double-underscore {
     border-bottom: 3px double #bbbbbb;
+    }
+
+    .right-align {
+      text-align: right;
     }
 
 
