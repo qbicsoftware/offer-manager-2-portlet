@@ -87,7 +87,7 @@ class MaintainProductsView extends FormLayout {
     private void setupGrid(){
         productGrid = new Grid<>()
 
-        productGrid.addColumn({ product -> product.productId.toString() })
+        productGrid.addColumn({ product -> product.productId})
                 .setCaption("Product Id").setId("ProductId")
         productGrid.addColumn({ product -> product.productName })
                 .setCaption("Name").setId("ProductName")
