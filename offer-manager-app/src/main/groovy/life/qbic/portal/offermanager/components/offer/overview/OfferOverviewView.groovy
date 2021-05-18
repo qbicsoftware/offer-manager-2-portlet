@@ -173,6 +173,7 @@ class OfferOverviewView extends FormLayout {
         GridUtils.setupDateColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("CreationDate"),
                 headerFilterRow)
+        GridUtils.setupColumnFilter(offerOverviewDataProvider, overviewGrid.getColumn("ProjectID"), headerFilterRow)
     }
 
     private void setupListeners() {
