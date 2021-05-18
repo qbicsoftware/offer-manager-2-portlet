@@ -6,6 +6,7 @@ import com.vaadin.ui.DateField
 import com.vaadin.ui.Grid
 import com.vaadin.ui.TextField
 import com.vaadin.ui.components.grid.HeaderRow
+import com.vaadin.ui.renderers.Renderer
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
@@ -14,6 +15,9 @@ import org.apache.commons.lang3.StringUtils
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.chrono.ChronoLocalDate
+import java.util.function.BiPredicate
+import java.util.function.Function
+import java.util.function.Predicate
 
 /**
  * A helper class with static utility functions for Vaadin Grids.
@@ -53,6 +57,42 @@ class GridUtils {
         headerRow.getCell(column).setComponent(filterTextField)
         filterTextField.setSizeFull()
     }
+
+    /**
+     * Provides a filter field into a header row of a grid for a given column.
+     *
+     * <p>This filter tests for the provided predicate based on textual user input.</p>
+     *
+     *
+     * @param <T> the grid bean type
+     * @param <V> the column value type
+     * @param dataProvider The grid's {@link ListDataProvider}
+     * @param column The column to add the filter to
+     * @param predicate the predicate that has to be true for a tested value and a user input String
+     * @param headerRow The {@link com.vaadin.ui.components.grid.HeaderRow} of the {@link Grid}, where the filter input field is added
+     */
+    static <T,V> void setupColumnFilter(ListDataProvider<T> dataProvider,
+                                        Grid.Column<T, V> column,
+                                        BiPredicate<V, String> predicate,
+                                        HeaderRow headerRow) {
+        TextField filterTextField = new TextField()
+        filterTextField.addValueChangeListener(event -> {
+            dataProvider.addFilter(element ->
+                predicate.test(column.getValueProvider().apply(element), filterTextField.getValue())
+            )
+        })
+        filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
+        filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)
+        String columnId = StringUtils.join(
+                StringUtils.splitByCharacterTypeCamelCase(column.id),
+                ' '
+        )
+        filterTextField.setPlaceholder("Filter by " + columnId)
+        headerRow.getCell(column).setComponent(filterTextField)
+        filterTextField.setSizeFull()
+    }
+
+
 
     /**
      * Provides a filter field into a header row of a grid for a given column of type Date.
