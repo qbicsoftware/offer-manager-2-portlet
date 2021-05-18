@@ -234,11 +234,11 @@ class OfferToPDFConverter implements OfferExporter {
             String elementId = "product-items" + "-" + tableCount
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter(offer.overheadRatio))
+                    .append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation().country))
         } else {
             //otherwise add total pricing to table
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter(offer.overheadRatio))
+                    .append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation().country))
         }
     }
 
@@ -474,10 +474,20 @@ class OfferToPDFConverter implements OfferExporter {
                                  """
         }
 
-        static String tableFooter(double overheadRatio){
+        static String tableFooter(double overheadRatio, String country){
 
             DecimalFormat decimalFormat = new DecimalFormat("#%")
             String overheadPercentage = decimalFormat.format(overheadRatio)
+            double taxRatio
+            if (country.equals("Germany")){
+                taxRatio = 0.19
+            }
+            else
+            {
+                taxRatio = 0
+            }
+
+            String taxPercentage = decimalFormat.format(taxRatio)
 
             return """<div id="grid-table-footer">
                                      <div class="row total-costs" id = "offer-net">
@@ -490,7 +500,7 @@ class OfferToPDFConverter implements OfferExporter {
                                          <div class="col-2 price-value" id="overhead-cost-value"></div>
                                      </div>
                                      <div class="row total-costs" id = "offer-vat">
-                                         <div class="col-10 cost-summary-field">VAT (19%):</div>
+                                         <div class="col-10 cost-summary-field">VAT (${taxPercentage}):</div>
                                          <div class="col-2 price-value" id="vat-cost-value">0.00</div>
                                      </div>
                                      <div class="row total-costs" id ="offer-total">
