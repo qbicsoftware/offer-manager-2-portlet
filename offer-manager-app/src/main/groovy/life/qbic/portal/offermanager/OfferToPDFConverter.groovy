@@ -171,6 +171,7 @@ class OfferToPDFConverter implements OfferExporter {
         setSelectedItems()
         setTotalPrices()
         setTaxationStatement()
+        setTaxationRatioInSummary()
         setQuotationDetails()
     }
 
@@ -259,10 +260,25 @@ class OfferToPDFConverter implements OfferExporter {
         }
     }
 
-    void setTaxationStatement(){
+    void setTaxationStatement() {
         if(!offer.getSelectedCustomerAffiliation().country.equals(countryWithVAT)) {
             htmlContent.getElementById("vat-cost-applicable").text("Vat is non-applicable for offers outside of ${countryWithVAT}")
+            htmlContent.getElementById("total-taxes-ratio").text("VAT (0%)")
         }
+
+    }
+
+    void setTaxationRatioInSummary() {
+        DecimalFormat decimalFormat = new DecimalFormat("#%")
+        double taxRatio
+        if(offer.getSelectedCustomerAffiliation().getCountry().equals(countryWithVAT) && !offer.getSelectedCustomerAffiliation().getCategory().equals(noVatCategory)) {
+            taxRatio = VAT
+        }
+        else {
+            taxRatio = 0
+        }
+        String taxPercentage = decimalFormat.format(taxRatio)
+        htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
     }
 
     void setSubTotalPrices(ProductGroups productGroup, List<ProductItem> productItems) {
@@ -282,12 +298,19 @@ class OfferToPDFConverter implements OfferExporter {
 
     void setTotalPrices() {
         final totalPrice = Currency.getFormatterWithoutSymbol().format(offer.totalPrice)
+        final totalPriceWithCurrency = Currency.getFormatterWithSymbol().format(offer.totalPrice)
         final taxes = Currency.getFormatterWithoutSymbol().format(offer.taxes)
+        final taxesWithCurrency = Currency.getFormatterWithSymbol().format(offer.taxes)
         final netPrice = Currency.getFormatterWithoutSymbol().format(offer.netPrice)
-        final netPrice_withSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
+        final netPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
         final overheadPrice = Currency.getFormatterWithoutSymbol().format(offer.overheads)
 
-        htmlContent.getElementById("total-costs-net").text(netPrice_withSymbol)
+        // First page summary
+        htmlContent.getElementById("total-costs-net").text(netPriceWithSymbol)
+        htmlContent.getElementById("total-taxes").text(taxesWithCurrency)
+        htmlContent.getElementById("total-costs-sum").text(totalPriceWithCurrency)
+
+        // Detailed listing summary
         htmlContent.getElementById("overhead-cost-value").text(overheadPrice)
         htmlContent.getElementById("total-cost-value-net").text(netPrice)
         htmlContent.getElementById("vat-cost-value").text(taxes)
