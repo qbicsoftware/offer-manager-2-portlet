@@ -6,7 +6,6 @@ import com.vaadin.ui.DateField
 import com.vaadin.ui.Grid
 import com.vaadin.ui.TextField
 import com.vaadin.ui.components.grid.HeaderRow
-import com.vaadin.ui.renderers.Renderer
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
@@ -14,10 +13,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.chrono.ChronoLocalDate
 import java.util.function.BiPredicate
-import java.util.function.Function
-import java.util.function.Predicate
 
 /**
  * A helper class with static utility functions for Vaadin Grids.
