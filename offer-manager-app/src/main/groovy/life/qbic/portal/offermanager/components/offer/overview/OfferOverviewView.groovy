@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.components.offer.overview
 
+
 import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
@@ -18,6 +19,7 @@ import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.OfferFileNameFormatter
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
+import life.qbic.portal.offermanager.components.project.ProjectIdContainsString
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
 /**
@@ -131,9 +133,10 @@ class OfferOverviewView extends FormLayout {
                 .setCaption("Customer").setId("Customer")
         overviewGrid.addColumn({overview -> overview.getProjectManager()})
                 .setCaption("ProjectManager").setId("ProjectManager")
-        overviewGrid.addColumn({overview ->
-            overview.getAssociatedProject().isPresent() ? overview.getAssociatedProject().get() :
-                    "-"}).setCaption("Project ID").setId("ProjectID")
+        overviewGrid.addColumn({overview -> overview.getAssociatedProject()})
+                .setCaption("Project ID").setId("ProjectID")
+                .setRenderer({maybeIdentifier -> maybeIdentifier.isPresent()? maybeIdentifier.get().toString() : "-"}, new TextRenderer())
+
         // Format price by using a column renderer. This way the sorting will happen on the underlying double values, leading to expected behaviour.
         Column<Offer, Double> priceColumn = overviewGrid.addColumn({overview -> overview.getTotalPrice()}).setCaption("Total Price")
         priceColumn.setRenderer(price -> Currency.getFormatterWithSymbol().format(price), new TextRenderer())
@@ -163,6 +166,9 @@ class OfferOverviewView extends FormLayout {
                 headerFilterRow)
         GridUtils.setupDateColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("CreationDate"),
+                headerFilterRow)
+        GridUtils.setupColumnFilter(offerOverviewDataProvider,
+                overviewGrid.getColumn("ProjectID"), new ProjectIdContainsString(),
                 headerFilterRow)
     }
 
