@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductItem
@@ -88,6 +89,21 @@ class OfferToPDFConverter implements OfferExporter {
                     .toURI())
 
     /**
+     * Holds the current VAT rate
+     */
+    private static final double VAT = 0.19
+
+    /**
+     * Holds the Country for which the current VAT rate is applicable
+     */
+    private static final String countryWithVAT = "Germany"
+
+    /**
+     * AffiliationCategory for which no tax cost is applied
+     */
+    private static final AffiliationCategory noVatCategory = AffiliationCategory.INTERNAL
+
+    /**
      * Possible product groups
      *
      * This enum describes the product groups into which the products of an offer are listed.
@@ -154,6 +170,7 @@ class OfferToPDFConverter implements OfferExporter {
         setProductGroupMapping()
         setSelectedItems()
         setTotalPrices()
+        setTaxationStatement()
         setQuotationDetails()
     }
 
@@ -234,11 +251,17 @@ class OfferToPDFConverter implements OfferExporter {
             String elementId = "product-items" + "-" + tableCount
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation().country))
+                    .append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation()))
         } else {
             //otherwise add total pricing to table
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation().country))
+                    .append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation()))
+        }
+    }
+
+    void setTaxationStatement(){
+        if(!offer.getSelectedCustomerAffiliation().country.equals(countryWithVAT)) {
+            htmlContent.getElementById("vat-cost-applicable").text("Vat is non-applicable for offers outside of ${countryWithVAT}")
         }
     }
 
@@ -474,19 +497,19 @@ class OfferToPDFConverter implements OfferExporter {
                                  """
         }
 
-        static String tableFooter(double overheadRatio, String country){
+        static String tableFooter(double overheadRatio, Affiliation affiliation){
 
             DecimalFormat decimalFormat = new DecimalFormat("#%")
             String overheadPercentage = decimalFormat.format(overheadRatio)
             double taxRatio
-            if (country.equals("Germany")){
-                taxRatio = 0.19
+            //Apply Vat only if the offer originated from germany and if it's a non-internal Affilation
+            if (affiliation.getCountry().equals(countryWithVAT) && !affiliation.getCategory().equals(noVatCategory)){
+                taxRatio = VAT
             }
             else
             {
                 taxRatio = 0
             }
-
             String taxPercentage = decimalFormat.format(taxRatio)
 
             return """<div id="grid-table-footer">
