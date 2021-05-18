@@ -77,9 +77,17 @@ class GridUtils {
                                         HeaderRow headerRow) {
         TextField filterTextField = new TextField()
         filterTextField.addValueChangeListener(event -> {
-            dataProvider.addFilter(element ->
-                predicate.test(column.getValueProvider().apply(element), filterTextField.getValue())
-            )
+            dataProvider.addFilter({ element ->
+                try {
+                    V value = column.getValueProvider().apply(element)
+                    String searchString = filterTextField.getValue()
+                    predicate.test(value, searchString)
+                } catch (ClassCastException castException) {
+                    log.error("Value provider provided wrong value type. Excluding entry from filtering. $castException.message")
+                    log.debug("Value provider provided wrong value type. Excluding entry from filtering. $castException.message", castException)
+                    return true
+                }
+            })
         })
         filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
         filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)
