@@ -1,33 +1,25 @@
 package life.qbic.portal.offermanager.components.offer.overview
 
+
 import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.FileDownloader
 import com.vaadin.server.StreamResource
 import com.vaadin.shared.data.sort.SortDirection
-import com.vaadin.ui.Button
-import com.vaadin.ui.FormLayout
-import com.vaadin.ui.Grid
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Label
-import com.vaadin.ui.ProgressBar
-import com.vaadin.ui.UI
-import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.*
+import com.vaadin.ui.Grid.Column
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.DateRenderer
-import com.vaadin.ui.themes.ValoTheme
-import com.vaadin.ui.Grid.Column
 import com.vaadin.ui.renderers.TextRenderer
+import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
-
+import life.qbic.business.offers.Currency
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.OfferFileNameFormatter
+import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
-import life.qbic.business.offers.Currency
-import life.qbic.portal.offermanager.components.GridUtils
-
 
 /**
  * A basic offer overview user interface.
@@ -140,9 +132,10 @@ class OfferOverviewView extends FormLayout {
                 .setCaption("Customer").setId("Customer")
         overviewGrid.addColumn({overview -> overview.getProjectManager()})
                 .setCaption("ProjectManager").setId("ProjectManager")
-        overviewGrid.addColumn({overview ->
-            overview.getAssociatedProject().isPresent() ? overview.getAssociatedProject().get() :
-                    "-"}).setCaption("Project ID").setId("ProjectID")
+        overviewGrid.addColumn({overview -> overview.getAssociatedProject()})
+                .setCaption("Project ID").setId("ProjectID")
+                .setRenderer({maybeIdentifier -> maybeIdentifier.isPresent()? maybeIdentifier.get().toString() : "-"}, new TextRenderer())
+
         // Format price by using a column renderer. This way the sorting will happen on the underlying double values, leading to expected behaviour.
         Column<Offer, Double> priceColumn = overviewGrid.addColumn({overview -> overview.getTotalPrice()}).setCaption("Total Price")
         priceColumn.setRenderer(price -> Currency.getFormatterWithSymbol().format(price), new TextRenderer())
