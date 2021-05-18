@@ -300,7 +300,6 @@ class Offer {
      *
      * For internal persons and customers outside of Germany, this will be set to 0.
      *
-     *
      * @return The amount of VAT price based on all items in the offer.
      */
     double getTaxCosts() {
