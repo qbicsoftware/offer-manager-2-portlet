@@ -43,15 +43,8 @@ class GridUtils {
                     StringUtils.containsIgnoreCase(column.getValueProvider().apply(element), filterTextField.getValue())
             )
         })
-        filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
-        filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)
-        String columnId = StringUtils.join(
-                StringUtils.splitByCharacterTypeCamelCase(column.id),
-                ' '
-        )
-        filterTextField.setPlaceholder("Filter by " + columnId)
+        styleFilterTextField(filterTextField, column.getCaption())
         headerRow.getCell(column).setComponent(filterTextField)
-        filterTextField.setSizeFull()
     }
 
     /**
