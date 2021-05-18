@@ -13,7 +13,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Enumeration of product items increases over all productGroups in Offer PDF (`#562 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/562>`_)
 
-* Taxes for offers outside of germany is set to 0 (`#575 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/575>`_)
+* Tax cost for offers outside of germany is set to 0 during offer creation (`#575 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/575>`_)
+
+* Tax cost for offers outside of germany is set to 0 in Offer PDF (`#575 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/575>`_)
 
 **Dependencies**
 
