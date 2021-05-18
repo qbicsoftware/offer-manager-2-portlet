@@ -270,7 +270,7 @@ class OfferToPDFConverter implements OfferExporter {
 
         // First page summary
         htmlContent.getElementById("total-costs-net").text(netPriceWithSymbol)
-        htmlContent.getElementById("ratio-costs-overhead").text("Overhead (${overheadPercentage})")
+        htmlContent.getElementById("ratio-costs-overhead").text("Overheads (${overheadPercentage})")
         htmlContent.getElementById("total-costs-overhead").text(overheadPrice)
         htmlContent.getElementById("total-taxes").text(taxesWithCurrency)
         htmlContent.getElementById("total-costs-sum").text(totalPriceWithCurrency)
