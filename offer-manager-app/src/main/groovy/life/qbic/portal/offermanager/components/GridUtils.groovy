@@ -6,7 +6,6 @@ import com.vaadin.ui.DateField
 import com.vaadin.ui.Grid
 import com.vaadin.ui.TextField
 import com.vaadin.ui.components.grid.HeaderRow
-import com.vaadin.ui.renderers.Renderer
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
@@ -14,10 +13,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.chrono.ChronoLocalDate
 import java.util.function.BiPredicate
-import java.util.function.Function
-import java.util.function.Predicate
 
 /**
  * A helper class with static utility functions for Vaadin Grids.
@@ -47,15 +43,8 @@ class GridUtils {
                     StringUtils.containsIgnoreCase(column.getValueProvider().apply(element), filterTextField.getValue())
             )
         })
-        filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
-        filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)
-        String columnId = StringUtils.join(
-                StringUtils.splitByCharacterTypeCamelCase(column.id),
-                ' '
-        )
-        filterTextField.setPlaceholder("Filter by " + columnId)
+        styleFilterTextField(filterTextField, column.getCaption())
         headerRow.getCell(column).setComponent(filterTextField)
-        filterTextField.setSizeFull()
     }
 
     /**
@@ -66,10 +55,11 @@ class GridUtils {
      *
      * @param <T> the grid bean type
      * @param <V> the column value type
-     * @param dataProvider The grid's {@link ListDataProvider}
-     * @param column The column to add the filter to
+     * @param dataProvider the grid's {@link ListDataProvider}
+     * @param column the column to add the filter to
      * @param predicate the predicate that has to be true for a tested value and a user input String
-     * @param headerRow The {@link com.vaadin.ui.components.grid.HeaderRow} of the {@link Grid}, where the filter input field is added
+     * @param headerRow the {@link com.vaadin.ui.components.grid.HeaderRow} of the {@link Grid}, where the filter input field is added
+     * @since 1.0.0-rc.1
      */
     static <T,V> void setupColumnFilter(ListDataProvider<T> dataProvider,
                                         Grid.Column<T, V> column,
@@ -89,15 +79,8 @@ class GridUtils {
                 }
             })
         })
-        filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
-        filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)
-        String columnId = StringUtils.join(
-                StringUtils.splitByCharacterTypeCamelCase(column.id),
-                ' '
-        )
-        filterTextField.setPlaceholder("Filter by " + columnId)
+        styleFilterTextField(filterTextField, column.getCaption())
         headerRow.getCell(column).setComponent(filterTextField)
-        filterTextField.setSizeFull()
     }
 
 
@@ -142,6 +125,14 @@ class GridUtils {
             log.debug("Unexpected exception for $localDate and $date", unexpected)
             return false
         }
+    }
+
+    private static void styleFilterTextField(TextField filterTextField, String columnCaption) {
+        filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
+        filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)
+        filterTextField.setPlaceholder("Filter by $columnCaption")
+        filterTextField.setSizeFull()
+
     }
 
 }

@@ -15,6 +15,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Displays a total price overview on the first offer page, including taxes and overheads
 
+* Add a column filter option which takes a predicate as argument (`#589 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/589>`_)
+
 **Fixed**
 
 * Enumeration of product items increases over all productGroups in Offer PDF (`#562 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/562>`_)
