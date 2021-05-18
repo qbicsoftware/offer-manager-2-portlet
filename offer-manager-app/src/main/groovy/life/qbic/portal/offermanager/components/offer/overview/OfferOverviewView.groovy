@@ -19,6 +19,7 @@ import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.OfferFileNameFormatter
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
+import life.qbic.portal.offermanager.components.project.ProjectIdContainsString
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
 /**
@@ -166,7 +167,9 @@ class OfferOverviewView extends FormLayout {
         GridUtils.setupDateColumnFilter(offerOverviewDataProvider,
                 overviewGrid.getColumn("CreationDate"),
                 headerFilterRow)
-        GridUtils.setupColumnFilter(offerOverviewDataProvider, overviewGrid.getColumn("ProjectID"), headerFilterRow)
+        GridUtils.setupColumnFilter(offerOverviewDataProvider,
+                overviewGrid.getColumn("ProjectID"), new ProjectIdContainsString(),
+                headerFilterRow)
     }
 
     private void setupListeners() {
