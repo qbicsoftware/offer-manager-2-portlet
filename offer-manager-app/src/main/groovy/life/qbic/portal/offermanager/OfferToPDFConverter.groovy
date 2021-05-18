@@ -263,7 +263,6 @@ class OfferToPDFConverter implements OfferExporter {
     void setTaxationStatement() {
         if(!offer.getSelectedCustomerAffiliation().country.equals(countryWithVAT)) {
             htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${countryWithVAT}")
-            htmlContent.getElementById("total-taxes-ratio").text("VAT (0%)")
         }
 
     }
