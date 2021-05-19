@@ -269,7 +269,9 @@ class OfferToPDFConverter implements OfferExporter {
 
     void setTaxationRatioInSummary() {
         DecimalFormat decimalFormat = new DecimalFormat("#%")
-        double taxRatio = determineTaxCost(offer.getSelectedCustomerAffiliation().getCountry(), offer.getSelectedCustomerAffiliation().getCategory())
+        String country = offer.getSelectedCustomerAffiliation().getCountry()
+        AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory()
+        double taxRatio = determineTaxCost(country, affiliationCategory)
         String taxPercentage = decimalFormat.format(taxRatio)
         htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
     }
