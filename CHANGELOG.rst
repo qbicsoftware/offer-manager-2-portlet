@@ -27,6 +27,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Tax cost for offers outside of germany is set to 0 (`#575 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/575>`_)
 
+* App won't freeze after creation of mutiple projects (`#558 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/558>`_)
+
 **Dependencies**
 
 * ``com.vaadin.vaadin-bom:8.12.3`` -> ``8.13.0`` (`#572 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/572>`_)
