@@ -9,17 +9,33 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
-* Displays a total price overview on the first offer page, including taxes and overheads
+* Introduce filterable Project Manager column to offer overview (`#576 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/576>`_)
+
+* Adds ability to filter by project identifiers in the offer overview (`#591 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/591>`_)
+
+* Displays a total price overview on the first offer page, including taxes, net cost and total cost (`#559 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/559>`_)
+
+* Include overhead cost in total price overview on the first offer page (`#593 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/593>`_)
+
+* Add a column filter option which takes a predicate as argument (`#589 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/589>`_)
+
+* Enable Github workflow for changelog update checks (`#595 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/595>`_)
 
 **Fixed**
 
 * Enumeration of product items increases over all productGroups in Offer PDF (`#562 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/562>`_)
 
+* Tax cost for offers outside of germany is set to 0 (`#575 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/575>`_)
+
 **Dependencies**
 
 * ``com.vaadin.vaadin-bom:8.12.3`` -> ``8.13.0`` (`#572 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/572>`_)
 
+* ``org.spockframework.spock-bom:2.0-M4-groovy-3.0`` -> ``2.0-groovy-3.0`` ( `#588 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/588>`_)
+
 **Deprecated**
+
+* Deprecate OfferOverview Constructor to allow for inclusion of ProjectManager (`#576 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/576>`_)
 
 
 1.0.0-beta.2 (2021-04-30)

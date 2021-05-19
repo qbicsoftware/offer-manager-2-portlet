@@ -26,6 +26,8 @@ class OfferOverview {
 
     final String customer
 
+    final String projectManager
+
     final Date modificationDate
 
     final double totalPrice
@@ -51,6 +53,7 @@ class OfferOverview {
         this.associatedProject = Optional.empty()
     }
 
+    @Deprecated
     OfferOverview(
             OfferId offerId,
             Date modificationDate,
@@ -63,6 +66,42 @@ class OfferOverview {
         this.projectId = ""
         this.projectTitle = projectTitle
         this.customer = customer
+        this.totalPrice = totalPrice
+        this.associatedProject = Optional.of(associatedProject)
+    }
+
+    OfferOverview(
+            OfferId offerId,
+            Date modificationDate,
+            String projectTitle,
+            String projectId,
+            String customer,
+            String projectManager,
+            double totalPrice) {
+        this.offerId = offerId
+        this.modificationDate = modificationDate
+        this.projectId = projectId
+        this.projectTitle = projectTitle
+        this.customer = customer
+        this.projectManager = projectManager
+        this.totalPrice = totalPrice
+        this.associatedProject = Optional.empty()
+    }
+
+    OfferOverview(
+            OfferId offerId,
+            Date modificationDate,
+            String projectTitle,
+            String customer,
+            String projectManager,
+            double totalPrice,
+            ProjectIdentifier associatedProject) {
+        this.offerId = offerId
+        this.modificationDate = modificationDate
+        this.projectId = ""
+        this.projectTitle = projectTitle
+        this.customer = customer
+        this.projectManager = projectManager
         this.totalPrice = totalPrice
         this.associatedProject = Optional.of(associatedProject)
     }

@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductItem
@@ -88,6 +89,21 @@ class OfferToPDFConverter implements OfferExporter {
                     .toURI())
 
     /**
+     * Holds the current VAT rate
+     */
+    private static final double VAT = 0.19
+
+    /**
+     * Holds the Country for which the current VAT rate is applicable
+     */
+    private static final String countryWithVAT = "Germany"
+
+    /**
+     * AffiliationCategory for which no tax cost is applied
+     */
+    private static final AffiliationCategory noVatCategory = AffiliationCategory.INTERNAL
+
+    /**
      * Possible product groups
      *
      * This enum describes the product groups into which the products of an offer are listed.
@@ -154,6 +170,8 @@ class OfferToPDFConverter implements OfferExporter {
         setProductGroupMapping()
         setSelectedItems()
         setTotalPrices()
+        setTaxationStatement()
+        setTaxationRatioInSummary()
         setQuotationDetails()
     }
 
@@ -234,12 +252,36 @@ class OfferToPDFConverter implements OfferExporter {
             String elementId = "product-items" + "-" + tableCount
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter(offer.overheadRatio))
+                    .append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation()))
         } else {
             //otherwise add total pricing to table
             htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter(offer.overheadRatio))
+                    .append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation()))
         }
+    }
+
+    void setTaxationStatement() {
+        if(!offer.getSelectedCustomerAffiliation().country.equals(countryWithVAT)) {
+            htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${countryWithVAT}")
+        }
+
+    }
+
+    void setTaxationRatioInSummary() {
+        DecimalFormat decimalFormat = new DecimalFormat("#%")
+        String country = offer.getSelectedCustomerAffiliation().getCountry()
+        AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory()
+        double taxRatio = determineTaxCost(country, affiliationCategory)
+        String taxPercentage = decimalFormat.format(taxRatio)
+        htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
+    }
+
+    // Apply VAT only if the offer originated from Germany and it's affilation category is non-internal
+    static double determineTaxCost(String country, AffiliationCategory category) {
+        if(country.equals(countryWithVAT) && !category.equals(noVatCategory)) {
+            return VAT
+        }
+        return 0
     }
 
     void setSubTotalPrices(ProductGroups productGroup, List<ProductItem> productItems) {
@@ -264,10 +306,14 @@ class OfferToPDFConverter implements OfferExporter {
         final taxesWithCurrency = Currency.getFormatterWithSymbol().format(offer.taxes)
         final netPrice = Currency.getFormatterWithoutSymbol().format(offer.netPrice)
         final netPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
-        final overheadPrice = Currency.getFormatterWithoutSymbol().format(offer.overheads)
+        final overheadPrice = Currency.getFormatterWithSymbol().format(offer.overheads)
+        DecimalFormat decimalFormat = new DecimalFormat("#%")
+        String overheadPercentage = decimalFormat.format(offer.overheadRatio)
 
         // First page summary
         htmlContent.getElementById("total-costs-net").text(netPriceWithSymbol)
+        htmlContent.getElementById("ratio-costs-overhead").text("Overheads (${overheadPercentage})")
+        htmlContent.getElementById("total-costs-overhead").text(overheadPrice)
         htmlContent.getElementById("total-taxes").text(taxesWithCurrency)
         htmlContent.getElementById("total-costs-sum").text(totalPriceWithCurrency)
 
@@ -481,10 +527,12 @@ class OfferToPDFConverter implements OfferExporter {
                                  """
         }
 
-        static String tableFooter(double overheadRatio){
+        static String tableFooter(double overheadRatio, Affiliation affiliation){
 
             DecimalFormat decimalFormat = new DecimalFormat("#%")
             String overheadPercentage = decimalFormat.format(overheadRatio)
+            double taxRatio = determineTaxCost(affiliation.country, affiliation.getCategory())
+            String taxPercentage = decimalFormat.format(taxRatio)
 
             return """<div id="grid-table-footer">
                                      <div class="row total-costs" id = "offer-net">
@@ -497,7 +545,7 @@ class OfferToPDFConverter implements OfferExporter {
                                          <div class="col-2 price-value" id="overhead-cost-value"></div>
                                      </div>
                                      <div class="row total-costs" id = "offer-vat">
-                                         <div class="col-10 cost-summary-field">VAT (19%):</div>
+                                         <div class="col-10 cost-summary-field">VAT (${taxPercentage}):</div>
                                          <div class="col-2 price-value" id="vat-cost-value">0.00</div>
                                      </div>
                                      <div class="row total-costs" id ="offer-total">
