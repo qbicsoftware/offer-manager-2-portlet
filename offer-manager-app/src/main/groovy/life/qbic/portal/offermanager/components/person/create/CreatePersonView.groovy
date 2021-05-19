@@ -16,6 +16,7 @@ import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
+import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 
 /**
  * This class generates a Form Layout in which the user
@@ -389,6 +390,10 @@ class CreatePersonView extends FormLayout {
                 log.error("Unexpected error aborting the person creation.", e)
                 sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
             }
+        })
+
+        this.addAffiliationButton.addClickListener({
+            //TODO load create affiliation view
         })
 
     }
