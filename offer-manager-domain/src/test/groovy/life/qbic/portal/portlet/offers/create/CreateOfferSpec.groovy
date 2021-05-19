@@ -84,7 +84,7 @@ class CreateOfferSpec extends Specification {
         1* output.createdNewOffer(_)
     }
 
-    def "Taxes and overhead cost for internal affilations are set to 0"(){
+    def "calculate offer price for internal affiliations correctly"(){
         given:
         CreateOfferOutput output = Mock(CreateOfferOutput)
         CreateOffer createOffer = new CreateOffer(Stub(CreateOfferDataSource),output)
