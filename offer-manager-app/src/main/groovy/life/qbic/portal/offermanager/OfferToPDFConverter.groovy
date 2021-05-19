@@ -269,15 +269,17 @@ class OfferToPDFConverter implements OfferExporter {
 
     void setTaxationRatioInSummary() {
         DecimalFormat decimalFormat = new DecimalFormat("#%")
-        double taxRatio
-        if(offer.getSelectedCustomerAffiliation().getCountry().equals(countryWithVAT) && !offer.getSelectedCustomerAffiliation().getCategory().equals(noVatCategory)) {
-            taxRatio = VAT
-        }
-        else {
-            taxRatio = 0
-        }
+        double taxRatio = determineTaxCost(offer.getSelectedCustomerAffiliation().getCountry(), offer.getSelectedCustomerAffiliation().getCategory())
         String taxPercentage = decimalFormat.format(taxRatio)
         htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
+    }
+
+    // Apply VAT only if the offer originated from Germany and it's affilation category is non-internal
+    static double determineTaxCost(String country, AffiliationCategory category) {
+        if(country.equals(countryWithVAT) && !category.equals(noVatCategory)) {
+            return VAT
+        }
+            return 0
     }
 
     void setSubTotalPrices(ProductGroups productGroup, List<ProductItem> productItems) {
@@ -523,15 +525,7 @@ class OfferToPDFConverter implements OfferExporter {
 
             DecimalFormat decimalFormat = new DecimalFormat("#%")
             String overheadPercentage = decimalFormat.format(overheadRatio)
-            double taxRatio
-            //Apply Vat only if the offer originated from germany and if it's a non-internal Affilation
-            if (affiliation.getCountry().equals(countryWithVAT) && !affiliation.getCategory().equals(noVatCategory)){
-                taxRatio = VAT
-            }
-            else
-            {
-                taxRatio = 0
-            }
+            double taxRatio = determineTaxCost(affiliation.country, affiliation.getCategory())
             String taxPercentage = decimalFormat.format(taxRatio)
 
             return """<div id="grid-table-footer">
