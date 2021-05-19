@@ -69,9 +69,14 @@ class GridUtils {
         filterTextField.addValueChangeListener(event -> {
             dataProvider.addFilter({ element ->
                 try {
-                    V value = column.getValueProvider().apply(element)
                     String searchString = filterTextField.getValue()
-                    predicate.test(value, searchString)
+                    // only apply predicate if user input is present
+                    if (searchString) {
+                        V value = column.getValueProvider().apply(element)
+                        return predicate.test(value, searchString)
+                    } else {
+                        return true
+                    }
                 } catch (ClassCastException castException) {
                     log.error("Value provider provided wrong value type. Excluding entry from filtering. $castException.message")
                     log.debug("Value provider provided wrong value type. Excluding entry from filtering. $castException.message", castException)
