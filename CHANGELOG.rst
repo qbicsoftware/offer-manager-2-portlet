@@ -21,6 +21,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Enable Github workflow for changelog update checks (`#595 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/595>`_)
 
+* Enable sorting products by productId (MaintainProductView) (`#574 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/574>`_)
+
 **Fixed**
 
 * Enumeration of product items increases over all productGroups in Offer PDF (`#562 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/562>`_)
@@ -30,6 +32,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * App won't freeze after creation of mutiple projects (`#558 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/558>`_)
 
 **Dependencies**
+
+* ``life.qbic.data-model-lib:2.5.0`` -> ``2.7.0-SNAPSHOT`` (`#586 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/586>`_)
 
 * ``com.vaadin.vaadin-bom:8.12.3`` -> ``8.13.0`` (`#572 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/572>`_)
 

@@ -246,8 +246,8 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     return generatedKeys[0]
   }
   
-  private void storeAffiliation(Connection connection, int personId, List<Affiliation>
-          affiliations) {
+  private void storeAffiliation(Connection connection, int personId,
+                                List<Affiliation> affiliations) {
     String query = "INSERT INTO person_affiliation (person_id, affiliation_id) " +
             "VALUES(?, ?)"
 
