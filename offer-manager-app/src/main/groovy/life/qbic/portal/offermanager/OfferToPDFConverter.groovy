@@ -264,10 +264,14 @@ class OfferToPDFConverter implements OfferExporter {
         final taxesWithCurrency = Currency.getFormatterWithSymbol().format(offer.taxes)
         final netPrice = Currency.getFormatterWithoutSymbol().format(offer.netPrice)
         final netPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
-        final overheadPrice = Currency.getFormatterWithoutSymbol().format(offer.overheads)
+        final overheadPrice = Currency.getFormatterWithSymbol().format(offer.overheads)
+        DecimalFormat decimalFormat = new DecimalFormat("#%")
+        String overheadPercentage = decimalFormat.format(offer.overheadRatio)
 
         // First page summary
         htmlContent.getElementById("total-costs-net").text(netPriceWithSymbol)
+        htmlContent.getElementById("ratio-costs-overhead").text("Overheads (${overheadPercentage})")
+        htmlContent.getElementById("total-costs-overhead").text(overheadPrice)
         htmlContent.getElementById("total-taxes").text(taxesWithCurrency)
         htmlContent.getElementById("total-costs-sum").text(totalPriceWithCurrency)
 

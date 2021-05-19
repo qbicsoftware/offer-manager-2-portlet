@@ -13,7 +13,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Adds ability to filter by project identifiers in the offer overview (`#591 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/591>`_)
 
-* Displays a total price overview on the first offer page, including taxes and overheads
+* Displays a total price overview on the first offer page, including taxes, net cost and total cost (`#559 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/559>`_)
+
+* Include overhead cost in total price overview on the first offer page (`#593 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/593>`_)
 
 * Add a column filter option which takes a predicate as argument (`#589 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/589>`_)
 
