@@ -46,6 +46,8 @@ class CreatePersonView extends FormLayout {
     Button abortButton
     Panel affiliationDetails
 
+    protected Button addAffiliationButton
+
     HorizontalLayout buttonLayout
 
     CreatePersonView(CreatePersonController controller, AppViewModel sharedViewModel, CreatePersonViewModel createPersonViewModel) {
@@ -83,8 +85,19 @@ class CreatePersonView extends FormLayout {
         emailField.setPlaceholder("Email address")
         emailField.setRequiredIndicatorVisible(true)
 
+        HorizontalLayout organisationLayout = new HorizontalLayout()
+        organisationLayout.setMargin(false)
+        organisationLayout.setSpacing(false)
+        organisationLayout.setSizeFull()
+
         this.organisationComboBox = generateOrganisationSelector(createPersonViewModel.availableOrganisations)
         organisationComboBox.setRequiredIndicatorVisible(true)
+        organisationComboBox.setSizeFull()
+        this.addAffiliationButton = new Button(VaadinIcons.PLUS)
+        organisationLayout.addComponentsAndExpand(organisationComboBox)
+        organisationLayout.addComponent(addAffiliationButton)
+        organisationLayout.setComponentAlignment(addAffiliationButton, Alignment.BOTTOM_LEFT)
+        addAffiliationButton.setHeight(organisationComboBox.getHeight(), organisationComboBox.getHeightUnits())
 
         this.addressAdditionComboBox = new ComboBox<>("Address Addition")
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
@@ -111,8 +124,8 @@ class CreatePersonView extends FormLayout {
         row2.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
         row2.setSizeFull()
 
-        HorizontalLayout row3 = new HorizontalLayout(organisationComboBox, addressAdditionComboBox)
-        row3.setComponentAlignment(organisationComboBox, Alignment.TOP_LEFT)
+        HorizontalLayout row3 = new HorizontalLayout(organisationLayout, addressAdditionComboBox)
+        row3.setComponentAlignment(organisationLayout, Alignment.TOP_LEFT)
         row3.setComponentAlignment(addressAdditionComboBox, Alignment.TOP_LEFT)
         row3.setSizeFull()
 
