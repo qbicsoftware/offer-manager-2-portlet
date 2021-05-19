@@ -17,6 +17,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Dependencies**
 
+* ``life.qbic.data-model-lib:2.5.0`` -> ``2.7.0-SNAPSHOT`` (`#586 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/586>`_)
+
 * ``com.vaadin.vaadin-bom:8.12.3`` -> ``8.13.0`` (`#572 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/572>`_)
 
 **Deprecated**
