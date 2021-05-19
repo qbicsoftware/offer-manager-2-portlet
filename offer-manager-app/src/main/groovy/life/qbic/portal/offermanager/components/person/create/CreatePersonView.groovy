@@ -94,10 +94,12 @@ class CreatePersonView extends FormLayout {
         organisationComboBox.setRequiredIndicatorVisible(true)
         organisationComboBox.setSizeFull()
         this.createAffiliationButton = new Button(VaadinIcons.PLUS)
+        createAffiliationButton.setHeight(organisationComboBox.getHeight(), organisationComboBox.getHeightUnits())
+        createAffiliationButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
+
         organisationLayout.addComponentsAndExpand(organisationComboBox)
         organisationLayout.addComponent(createAffiliationButton)
         organisationLayout.setComponentAlignment(createAffiliationButton, Alignment.BOTTOM_LEFT)
-        createAffiliationButton.setHeight(organisationComboBox.getHeight(), organisationComboBox.getHeightUnits())
 
         this.addressAdditionComboBox = new ComboBox<>("Address Addition")
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
