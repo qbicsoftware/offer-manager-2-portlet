@@ -114,7 +114,7 @@ class MaintainProductsView extends FormLayout {
         HeaderRow productsFilterRow = productGrid.appendHeaderRow()
 
         GridUtils.setupColumnFilter(dataProvider,
-                productGrid.getColumn("ProductId"),
+                productGrid.getColumn("ProductId"), new ProductIdContainsString(),
                 productsFilterRow)
         GridUtils.setupColumnFilter(dataProvider,
                 productGrid.getColumn("ProductName"),
