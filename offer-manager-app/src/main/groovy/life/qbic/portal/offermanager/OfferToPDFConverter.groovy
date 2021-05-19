@@ -281,7 +281,7 @@ class OfferToPDFConverter implements OfferExporter {
         if(country.equals(countryWithVAT) && !category.equals(noVatCategory)) {
             return VAT
         }
-            return 0
+        return 0
     }
 
     void setSubTotalPrices(ProductGroups productGroup, List<ProductItem> productItems) {
