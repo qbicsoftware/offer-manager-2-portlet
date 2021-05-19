@@ -16,7 +16,6 @@ import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
-import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 
 /**
  * This class generates a Form Layout in which the user
@@ -47,7 +46,7 @@ class CreatePersonView extends FormLayout {
     Button abortButton
     Panel affiliationDetails
 
-    protected Button addAffiliationButton
+    protected Button createAffiliationButton
 
     HorizontalLayout buttonLayout
 
@@ -94,11 +93,11 @@ class CreatePersonView extends FormLayout {
         this.organisationComboBox = generateOrganisationSelector(createPersonViewModel.availableOrganisations)
         organisationComboBox.setRequiredIndicatorVisible(true)
         organisationComboBox.setSizeFull()
-        this.addAffiliationButton = new Button(VaadinIcons.PLUS)
+        this.createAffiliationButton = new Button(VaadinIcons.PLUS)
         organisationLayout.addComponentsAndExpand(organisationComboBox)
-        organisationLayout.addComponent(addAffiliationButton)
-        organisationLayout.setComponentAlignment(addAffiliationButton, Alignment.BOTTOM_LEFT)
-        addAffiliationButton.setHeight(organisationComboBox.getHeight(), organisationComboBox.getHeightUnits())
+        organisationLayout.addComponent(createAffiliationButton)
+        organisationLayout.setComponentAlignment(createAffiliationButton, Alignment.BOTTOM_LEFT)
+        createAffiliationButton.setHeight(organisationComboBox.getHeight(), organisationComboBox.getHeightUnits())
 
         this.addressAdditionComboBox = new ComboBox<>("Address Addition")
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
@@ -392,7 +391,7 @@ class CreatePersonView extends FormLayout {
             }
         })
 
-        this.addAffiliationButton.addClickListener({
+        this.createAffiliationButton.addClickListener({
             //TODO load create affiliation view
         })
 
