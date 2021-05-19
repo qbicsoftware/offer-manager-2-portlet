@@ -54,6 +54,7 @@ class OverviewService implements ResourcesService<OfferOverview> {
                         affectedOffer.modificationDate,
                         affectedOffer.projectTitle,
                         affectedOffer.customer.toString(),
+                        affectedOffer.projectManager.toString(),
                         affectedOffer.totalPrice,
                         project.projectId)
                 this.addToResource(updatedOverview)
@@ -79,6 +80,7 @@ class OverviewService implements ResourcesService<OfferOverview> {
                 offer.projectTitle,
                 "",
                 "${offer.customer.firstName} ${offer.customer.lastName}",
+                "${offer.projectManager.firstName} ${offer.projectManager.lastName}",
                 offer.totalPrice
         )
     }

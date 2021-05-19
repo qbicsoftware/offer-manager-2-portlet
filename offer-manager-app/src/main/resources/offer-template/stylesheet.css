@@ -18,6 +18,15 @@ body {
     text-align: center;
 }
 
+.table-row {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.total-costs-sum-row {
+  font-weight: bold;
+}
+
     /* Grid container */
     .grid-container {
         /*max-height: 85vh;*/
@@ -97,6 +106,11 @@ body {
         grid-row-end: 8;
     }
 
+    .inline {
+        display: inline-block;
+        margin: 0 0 0 0;
+    }
+
     .project-section {
         padding-left: 20px;
         grid-column-start: 2;
@@ -129,6 +143,7 @@ body {
         padding-top: 20px;
         padding-bottom: 20px;
         font-size: 2vw;
+        margin: 0 0 0 0;
     }
 
     /* Items introduction and outro text*/
@@ -245,6 +260,10 @@ body {
 
     .double-underscore {
     border-bottom: 3px double #bbbbbb;
+    }
+
+    .right-align {
+      text-align: right;
     }
 
 

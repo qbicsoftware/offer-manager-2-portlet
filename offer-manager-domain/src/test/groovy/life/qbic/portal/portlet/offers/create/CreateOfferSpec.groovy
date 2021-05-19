@@ -84,7 +84,7 @@ class CreateOfferSpec extends Specification {
         1* output.createdNewOffer(_)
     }
 
-    def "calculate offer price correctly"(){
+    def "calculate offer price for internal affiliations correctly"(){
         given:
         CreateOfferOutput output = Mock(CreateOfferOutput)
         CreateOffer createOffer = new CreateOffer(Stub(CreateOfferDataSource),output)
@@ -99,6 +99,23 @@ class CreateOfferSpec extends Specification {
         then:
         1 * output.calculatedPrice(2.8, 0, 0, 2.8)
     }
+
+    def "Taxes for Affilations outside of Germany are set to 0"(){
+        given:
+        CreateOfferOutput output = Mock(CreateOfferOutput)
+        CreateOffer createOffer = new CreateOffer(Stub(CreateOfferDataSource),output)
+
+        and:
+        List<ProductItem> items = [new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",4, ProductUnit.PER_SAMPLE, "1")),
+                                   new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",4, ProductUnit.PER_SAMPLE, "1"))]
+        when:
+        createOffer.calculatePrice(items, new Affiliation.Builder("Test", "", "", "").country("France")
+                .category(AffiliationCategory.EXTERNAL).build())
+
+        then:
+        1 * output.calculatedPrice(8.0, 0, 3.2, 11.2)
+    }
+
 
     def "Creating an Offer DTO from the Offer Entity works correctly"() {
         given:
