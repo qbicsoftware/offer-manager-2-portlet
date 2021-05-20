@@ -55,11 +55,11 @@ class UpdatePersonView extends CreatePersonView{
         generateAffiliationGrid()
         Label currentAffiliationLabel = new Label("Current Affiliations")
         affiliations.setSelectionMode(Grid.SelectionMode.NONE)
-        this.addComponent(currentAffiliationLabel, 3)
-        this.addComponent(affiliations,4)
+        defaultContent.addComponent(currentAffiliationLabel, 3)
+        defaultContent.addComponent(affiliations,4)
         //add a heading for adding a new affiliation
         Label newAffiliation = new Label("Add a new affiliation")
-        this.addComponent(newAffiliation,5)
+        defaultContent.addComponent(newAffiliation,5)
 
         //add the add button
         addAffiliationButton = new Button("Add Affiliation")

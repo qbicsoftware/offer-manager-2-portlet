@@ -545,6 +545,7 @@ class DependencyManager {
         }
 
         try {
+            CreateAffiliationView createAffiliationView = new CreateAffiliationView(this.viewModel, this.createAffiliationViewModel, this.createAffiliationController)
             this.createCustomerView = new CreatePersonView(this.createCustomerController, this.viewModel, this.createCustomerViewModel, createAffiliationView)
         } catch (Exception e) {
             log.error("Could not create ${CreatePersonView.getSimpleName()} view.", e)
@@ -552,6 +553,7 @@ class DependencyManager {
         }
 
         try {
+            CreateAffiliationView createAffiliationView = new CreateAffiliationView(this.viewModel, this.createAffiliationViewModel, this.createAffiliationController)
             this.updatePersonView = new UpdatePersonView(this.updateCustomerController, this.viewModel, this.updatePersonViewModel, createAffiliationView)
         } catch (Exception e) {
             log.error("Could not create ${UpdatePersonView.getSimpleName()} view.", e)
@@ -559,7 +561,7 @@ class DependencyManager {
         }
 
         try {
-            this.createCustomerViewNewOffer = new CreatePersonView(this.createCustomerControllerNewOffer, this.viewModel, this.createCustomerViewModelNewOffer)
+            this.createCustomerViewNewOffer = new CreatePersonView(this.createCustomerControllerNewOffer, this.viewModel, this.createCustomerViewModelNewOffer, createAffiliationView)
         } catch (Exception e) {
             log.error("Could not create ${CreatePersonView.getSimpleName()} view.", e)
             throw e
@@ -644,7 +646,7 @@ class DependencyManager {
         AppView portletView
         try {
             CreatePersonView createCustomerView2 = new CreatePersonView(createCustomerController, this
-                    .viewModel, createCustomerViewModel)
+                    .viewModel, createCustomerViewModel, createAffiliationView)
             CreateAffiliationView createAffiliationView2 = new CreateAffiliationView(this.viewModel,
                     createAffiliationViewModel, createAffiliationController)
             SearchAffiliationView searchAffiliationView = new SearchAffiliationView(this.searchAffiliationViewModel)

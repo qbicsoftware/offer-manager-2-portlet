@@ -49,7 +49,7 @@ class CreatePersonView extends FormLayout {
 
     protected Button createAffiliationButton
 
-    protected Layout defaultContent
+    protected AbstractOrderedLayout defaultContent
     protected CreateAffiliationView createAffiliationView
     HorizontalLayout buttonLayout
 
@@ -65,7 +65,7 @@ class CreatePersonView extends FormLayout {
         registerListeners()
     }
 
-    private Layout generateViewContent() {
+    private AbstractOrderedLayout generateViewContent() {
         FormLayout defaultContent = new FormLayout()
         this.viewCaption = new Label("Create New Person Entry")
 
