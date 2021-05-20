@@ -96,7 +96,6 @@ class CreatePersonView extends FormLayout {
         organisationComboBox.setSizeFull()
         this.createAffiliationButton = new Button(VaadinIcons.PLUS)
         createAffiliationButton.setHeight(organisationComboBox.getHeight(), organisationComboBox.getHeightUnits())
-        createAffiliationButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
 
         organisationLayout.addComponentsAndExpand(organisationComboBox)
         organisationLayout.addComponent(createAffiliationButton)
