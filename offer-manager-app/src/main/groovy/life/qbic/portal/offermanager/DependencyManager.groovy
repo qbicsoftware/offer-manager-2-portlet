@@ -536,15 +536,23 @@ class DependencyManager {
 
     private void setupViews() {
 
+
         try {
-            this.createCustomerView = new CreatePersonView(this.createCustomerController, this.viewModel, this.createCustomerViewModel)
+            this.createAffiliationView = new CreateAffiliationView(this.viewModel, this.createAffiliationViewModel, this.createAffiliationController)
+        } catch (Exception e) {
+            log.error("Could not create ${CreateAffiliationView.getSimpleName()} view.", e)
+            throw e
+        }
+
+        try {
+            this.createCustomerView = new CreatePersonView(this.createCustomerController, this.viewModel, this.createCustomerViewModel, createAffiliationView)
         } catch (Exception e) {
             log.error("Could not create ${CreatePersonView.getSimpleName()} view.", e)
             throw e
         }
 
         try {
-            this.updatePersonView = new UpdatePersonView(this.updateCustomerController, this.viewModel, this.updatePersonViewModel)
+            this.updatePersonView = new UpdatePersonView(this.updateCustomerController, this.viewModel, this.updatePersonViewModel, createAffiliationView)
         } catch (Exception e) {
             log.error("Could not create ${UpdatePersonView.getSimpleName()} view.", e)
             throw e
@@ -554,13 +562,6 @@ class DependencyManager {
             this.createCustomerViewNewOffer = new CreatePersonView(this.createCustomerControllerNewOffer, this.viewModel, this.createCustomerViewModelNewOffer)
         } catch (Exception e) {
             log.error("Could not create ${CreatePersonView.getSimpleName()} view.", e)
-            throw e
-        }
-
-        try {
-            this.createAffiliationView = new CreateAffiliationView(this.viewModel, this.createAffiliationViewModel, this.createAffiliationController)
-        } catch (Exception e) {
-            log.error("Could not create ${CreateAffiliationView.getSimpleName()} view.", e)
             throw e
         }
 
