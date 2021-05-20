@@ -66,6 +66,9 @@ class CreatePersonView extends FormLayout {
      * to enable user input for person creation
      */
     private def initLayout() {
+        //TODO avoid calls to this.addComponent for separate child components as we want
+        // to exchange the view dynamically
+
         this.viewCaption = new Label("Create New Person Entry")
 
         viewCaption.addStyleName(ValoTheme.LABEL_HUGE)
@@ -395,6 +398,8 @@ class CreatePersonView extends FormLayout {
 
         this.createAffiliationButton.addClickListener({
             //TODO load create affiliation view
+            //TODO set this view invisible
+            //TODO set the create affiliation view visible
         })
 
     }
