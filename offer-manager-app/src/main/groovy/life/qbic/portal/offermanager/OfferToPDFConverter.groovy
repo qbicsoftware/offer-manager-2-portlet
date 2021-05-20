@@ -227,8 +227,10 @@ class OfferToPDFConverter implements OfferExporter {
     void setSelectedItems() {
         // Let's clear the existing item template content first
         htmlContent.getElementById("product-items-1").empty()
+        htmlContent.getElementById("product-items-2").empty()
+        htmlContent.getElementById("grid-table-header").empty()
+        htmlContent.getElementById("grid-table-header-2").empty()
         //and remove the footer on the first page
-        //htmlContent.getElementById("grid-table-footer").remove()
 
         List<ProductItem> productItems = offer.items
 
@@ -245,19 +247,16 @@ class OfferToPDFConverter implements OfferExporter {
         //Generate Product Table for each Category
         generateProductTable(productItemsMap, maxTableItems)
 
+        String elementId
         //Append total cost footer
-        if (tableItemsCount > maxTableItems) {
-            //If currentTable is filled with Items generate new one and add total pricing there
+        if (tableItemsCount >= maxTableItems) {
+            //If currentTable is filled with Items generate new table by increasing table count
             ++tableCount
-            String elementId = "product-items" + "-" + tableCount
-            htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
-            htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation()))
-        } else {
-            //otherwise add total pricing to table
-            htmlContent.getElementById("item-table-grid")
-                    .append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation()))
         }
+            //Append Footer to current or new table
+            elementId = "product-items" + "-" + tableCount
+            htmlContent.getElementById(elementId)
+                    .append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation()))
     }
 
     void setTaxationStatement() {
@@ -391,14 +390,18 @@ class OfferToPDFConverter implements OfferExporter {
             if(items){
                 def elementId = "product-items" + "-" + tableCount
                 //Append Table Title
-                htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
+                if(tableItemsCount < maxTableItems) {
+                    htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader(elementId))
+                    htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
+                }
                 items.each{ProductItem item ->
                     itemNumber++
                     //start (next) table and add Product to it
                     if (tableItemsCount >= maxTableItems) {
                         ++tableCount
                         elementId = "product-items" + "-" + tableCount
-                        htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
+                        htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader(elementId))
+                        htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
                         tableItemsCount = 1
                     }
                     //add product to current table
@@ -469,7 +472,7 @@ class OfferToPDFConverter implements OfferExporter {
                         <div class="col-2 text-center">${item.product.unit}</div>
                         <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(item.product.unitPrice)}</div>
                         <div class="col-2 price-value">${totalCost}</div>
-                    </div>
+                    </div>  
                     <div class="row product-item">
                         <div class="col-1"></div>
                         <div class="col-4 item-description">${item.product.description}</div>
@@ -482,7 +485,7 @@ class OfferToPDFConverter implements OfferExporter {
         static String tableHeader(String elementId) {
             //1. add pagebreak
             //2. create empty table for elementId
-            return """<div class="pagebreak"></div>
+            return """<div class = "small-spacer"</div>
                                      <div class="row table-header" id="grid-table-header">
                                          <div class="col-1">Pos.</div>
                                          <div class="col-4">Service Description</div>
