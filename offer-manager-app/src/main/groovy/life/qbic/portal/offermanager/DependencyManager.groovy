@@ -155,7 +155,7 @@ class DependencyManager {
     private MaintainProductsController maintainProductController
     private CreateProjectController createProjectController
 
-    private CreatePersonView createCustomerView
+    private CreatePersonView createPersonView
     private CreatePersonView updatePersonView
     private CreatePersonView createCustomerViewNewOffer
     private CreateAffiliationView createAffiliationView
@@ -546,7 +546,7 @@ class DependencyManager {
 
         try {
             CreateAffiliationView createAffiliationView = new CreateAffiliationView(this.viewModel, this.createAffiliationViewModel, this.createAffiliationController)
-            this.createCustomerView = new CreatePersonView(this.createCustomerController, this.viewModel, this.createCustomerViewModel, createAffiliationView)
+            this.createPersonView = new CreatePersonView(this.createCustomerController, this.viewModel, this.createCustomerViewModel, createAffiliationView)
         } catch (Exception e) {
             log.error("Could not create ${CreatePersonView.getSimpleName()} view.", e)
             throw e
@@ -587,7 +587,7 @@ class DependencyManager {
                     this.viewModel,
                     this.updateOfferViewModel,
                     this.updateOfferController,
-                    this.createCustomerView,
+                    this.createPersonView,
                     this.createAffiliationView,
                     this.offerService)
         } catch (Exception e) {
