@@ -40,6 +40,8 @@ class UpdatePersonView extends CreatePersonView{
     }
 
     private void adjustViewElements() {
+        //TODO adjust to changes from the parent class
+
         viewCaption.setValue("Update Person Entry")
 
         submitButton.caption = "Update Person"
