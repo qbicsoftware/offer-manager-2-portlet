@@ -98,13 +98,21 @@ body {
         grid-column-end: 4;
     }
 
-    .common-quote-information {
-        font-size: 10pt;
-        grid-column-start: 1;
+    .valid-date {
+        font-size: 11pt;
+        grid-column-start: 2;
         grid-column-end: 2;
-        grid-row-start: 5;
-        grid-row-end: 8;
     }
+    .reference-number {
+        font-size: 11pt;
+        grid-column-start: 1;
+        grid-column-end: 1;
+    }
+
+    .common-quote-information {
+         font-size: 10pt;
+    }
+
 
     .inline {
         display: inline-block;
@@ -112,11 +120,8 @@ body {
     }
 
     .project-section {
-        padding-left: 20px;
-        grid-column-start: 2;
+        grid-column-start: 1;
         grid-column-end: 4;
-        grid-row-start: 5;
-        grid-row-end: 8;
     }
 
     .info-title {
@@ -258,6 +263,10 @@ body {
     border-bottom: 2px solid #bbbbbb;
     }
 
+    .single-overscore {
+        border-top: 1px solid #bbbbbb;
+    }
+
     .double-underscore {
     border-bottom: 3px double #bbbbbb;
     }
@@ -303,7 +312,7 @@ body {
         /*margin-right: -15px;
         margin-left: -15px;*/
 
-        padding-top: 15px;
+        padding-top: 5px;
         padding-bottom: 5px;
     }
 
