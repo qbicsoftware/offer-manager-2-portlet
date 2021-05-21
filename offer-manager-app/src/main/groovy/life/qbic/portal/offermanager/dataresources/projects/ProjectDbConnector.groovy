@@ -148,7 +148,7 @@ class ProjectDbConnector {
     }
 
     private void addPersonToProject(Connection connection, int projectID, int personID, String role) {
-        if (!hasPersonRoleInProject(personID, projectID, role)) {
+        if (!hasPersonRoleInProject(connection, personID, projectID, role)) {
             log.debug("Trying to add person with role " + role + " to a project.")
             String sql =
                     "INSERT INTO projects_persons (project_id, person_id, project_role) VALUES(?, ?, ?)";
@@ -165,11 +165,10 @@ class ProjectDbConnector {
         }
     }
 
-    private boolean hasPersonRoleInProject(int personID, int projectID, String role) {
+    private boolean hasPersonRoleInProject(Connection connection, int personID, int projectID, String role) {
         String sql =
                 "SELECT * from projects_persons WHERE person_id = ? AND project_id = ? and project_role = ?"
         boolean res = false
-        Connection connection = connectionProvider.connect()
         try {
             PreparedStatement statement = connection.prepareStatement(sql)
             statement.setInt(1, personID)

@@ -191,7 +191,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
         List<OfferOverview> offerOverviewList = []
 
         String query = "SELECT offerId, creationDate, projectTitle, " +
-                "totalPrice, first_name, last_name, email, associatedProject\n" +
+                "totalPrice, first_name, last_name, email, projectManagerId, associatedProject\n" +
                 "FROM offer \n" +
                 "LEFT JOIN person \n" +
                 "ON offer.customerId = person.id"
@@ -206,10 +206,13 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
                         resultSet.getString("last_name"),
                         resultSet.getString("email"))
                         .build()
+                int projectManagerId = resultSet.getInt("projectManagerId")
+                ProjectManager projectManager = customerGateway.getProjectManager(projectManagerId)
                 def projectTitle = resultSet.getString("projectTitle")
                 def totalCosts = resultSet.getDouble("totalPrice")
                 def creationDate = resultSet.getDate("creationDate")
                 def customerName = "${customer.getFirstName()} ${customer.getLastName()}"
+                def projectManagerName = "${projectManager.getFirstName()} ${projectManager.getLastName()}"
                 def offerId = parseOfferId(resultSet.getString("offerId"))
                 Optional<ProjectIdentifier> projectIdentifier = parseProjectIdentifier(
                         resultSet.getString("associatedProject"))
@@ -218,11 +221,11 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
                 if (projectIdentifier.isPresent()) {
                     offerOverview = new OfferOverview(offerId,
                             creationDate,projectTitle,
-                            customerName, totalCosts, projectIdentifier.get())
+                            customerName, projectManagerName ,totalCosts, projectIdentifier.get())
                 } else {
                     offerOverview = new OfferOverview(offerId,
                             creationDate,projectTitle, "",
-                            customerName, totalCosts)
+                            customerName, projectManagerName, totalCosts)
                 }
                 offerOverviewList.add(offerOverview)
             }

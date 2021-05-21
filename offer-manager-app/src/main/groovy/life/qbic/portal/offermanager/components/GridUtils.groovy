@@ -13,7 +13,7 @@ import org.apache.commons.lang3.StringUtils
 
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.chrono.ChronoLocalDate
+import java.util.function.BiPredicate
 
 /**
  * A helper class with static utility functions for Vaadin Grids.
@@ -43,16 +43,47 @@ class GridUtils {
                     StringUtils.containsIgnoreCase(column.getValueProvider().apply(element), filterTextField.getValue())
             )
         })
-        filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
-        filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)
-        String columnId = StringUtils.join(
-                StringUtils.splitByCharacterTypeCamelCase(column.id),
-                ' '
-        )
-        filterTextField.setPlaceholder("Filter by " + columnId)
+        styleFilterTextField(filterTextField, column.getCaption())
         headerRow.getCell(column).setComponent(filterTextField)
-        filterTextField.setSizeFull()
     }
+
+    /**
+     * Provides a filter field into a header row of a grid for a given column.
+     *
+     * <p>This filter tests for the provided predicate based on textual user input.</p>
+     *
+     *
+     * @param <T> the grid bean type
+     * @param <V> the column value type
+     * @param dataProvider the grid's {@link ListDataProvider}
+     * @param column the column to add the filter to
+     * @param predicate the predicate that has to be true for a tested value and a user input String
+     * @param headerRow the {@link com.vaadin.ui.components.grid.HeaderRow} of the {@link Grid}, where the filter input field is added
+     * @since 1.0.0-rc.1
+     */
+    static <T,V> void setupColumnFilter(ListDataProvider<T> dataProvider,
+                                        Grid.Column<T, V> column,
+                                        BiPredicate<V, String> predicate,
+                                        HeaderRow headerRow) {
+        TextField filterTextField = new TextField()
+        filterTextField.addValueChangeListener(event -> {
+            dataProvider.addFilter({ element ->
+                try {
+                    V value = column.getValueProvider().apply(element)
+                    String searchString = filterTextField.getValue()
+                    predicate.test(value, searchString)
+                } catch (ClassCastException castException) {
+                    log.error("Value provider provided wrong value type. Excluding entry from filtering. $castException.message")
+                    log.debug("Value provider provided wrong value type. Excluding entry from filtering. $castException.message", castException)
+                    return true
+                }
+            })
+        })
+        styleFilterTextField(filterTextField, column.getCaption())
+        headerRow.getCell(column).setComponent(filterTextField)
+    }
+
+
 
     /**
      * Provides a filter field into a header row of a grid for a given column of type Date.
@@ -94,6 +125,14 @@ class GridUtils {
             log.debug("Unexpected exception for $localDate and $date", unexpected)
             return false
         }
+    }
+
+    private static void styleFilterTextField(TextField filterTextField, String columnCaption) {
+        filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
+        filterTextField.addStyleName(ValoTheme.TEXTFIELD_TINY)
+        filterTextField.setPlaceholder("Filter by $columnCaption")
+        filterTextField.setSizeFull()
+
     }
 
 }

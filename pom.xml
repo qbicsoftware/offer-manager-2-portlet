@@ -8,7 +8,7 @@
 		<module>offer-manager-app</module>
 	</modules>
 	<artifactId>offer-manager</artifactId>
-	<version>1.0.0-beta.2</version> <!-- <<QUBE_FORCE_BUMP>> -->
+	<version>1.0.0-rc.1-SNAPSHOT</version> <!-- <<QUBE_FORCE_BUMP>> -->
 	<groupId>life.qbic</groupId>
 	<name>The new offer manager</name>
 	<url>http://github.com/qbicsoftware/qOffer_2.0</url>
@@ -21,8 +21,8 @@
 
 		<groovy.version>3.0.8</groovy.version>
 
-		<vaadin.version>8.12.3</vaadin.version>
-		<vaadin.plugin.version>8.12.3</vaadin.plugin.version>
+		<vaadin.version>8.13.0</vaadin.version>
+		<vaadin.plugin.version>8.13.0</vaadin.plugin.version>
 	</properties>
 	<pluginRepositories>
 		<pluginRepository>

@@ -259,12 +259,23 @@ class OfferToPDFConverter implements OfferExporter {
 
     void setTotalPrices() {
         final totalPrice = Currency.getFormatterWithoutSymbol().format(offer.totalPrice)
+        final totalPriceWithCurrency = Currency.getFormatterWithSymbol().format(offer.totalPrice)
         final taxes = Currency.getFormatterWithoutSymbol().format(offer.taxes)
+        final taxesWithCurrency = Currency.getFormatterWithSymbol().format(offer.taxes)
         final netPrice = Currency.getFormatterWithoutSymbol().format(offer.netPrice)
-        final netPrice_withSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
-        final overheadPrice = Currency.getFormatterWithoutSymbol().format(offer.overheads)
+        final netPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
+        final overheadPrice = Currency.getFormatterWithSymbol().format(offer.overheads)
+        DecimalFormat decimalFormat = new DecimalFormat("#%")
+        String overheadPercentage = decimalFormat.format(offer.overheadRatio)
 
-        htmlContent.getElementById("total-costs-net").text(netPrice_withSymbol)
+        // First page summary
+        htmlContent.getElementById("total-costs-net").text(netPriceWithSymbol)
+        htmlContent.getElementById("ratio-costs-overhead").text("Overheads (${overheadPercentage})")
+        htmlContent.getElementById("total-costs-overhead").text(overheadPrice)
+        htmlContent.getElementById("total-taxes").text(taxesWithCurrency)
+        htmlContent.getElementById("total-costs-sum").text(totalPriceWithCurrency)
+
+        // Detailed listing summary
         htmlContent.getElementById("overhead-cost-value").text(overheadPrice)
         htmlContent.getElementById("total-cost-value-net").text(netPrice)
         htmlContent.getElementById("vat-cost-value").text(taxes)
@@ -332,13 +343,15 @@ class OfferToPDFConverter implements OfferExporter {
 
     void generateProductTable(Map productItemsMap, int maxTableItems) {
         // Create the items in html in the overview table
+        int itemNumber = 0
         productItemsMap.each {ProductGroups productGroup, List<ProductItem> items ->
             //Check if there are ProductItems stored in map entry
             if(items){
                 def elementId = "product-items" + "-" + tableCount
                 //Append Table Title
                 htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
-                items.eachWithIndex {ProductItem item, int itemPos ->
+                items.each{ProductItem item ->
+                    itemNumber++
                     //start (next) table and add Product to it
                     if (tableItemsCount >= maxTableItems) {
                         ++tableCount
@@ -347,8 +360,7 @@ class OfferToPDFConverter implements OfferExporter {
                         tableItemsCount = 1
                     }
                     //add product to current table
-                    int productNumber = itemPos + 1
-                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(productNumber, item))
+                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
                     tableItemsCount++
                 }
                 //add subtotal footer to table
