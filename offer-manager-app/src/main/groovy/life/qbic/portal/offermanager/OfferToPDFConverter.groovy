@@ -391,8 +391,8 @@ class OfferToPDFConverter implements OfferExporter {
                 def elementId = "product-items" + "-" + tableCount
                 //Append Table Title
                 if(tableItemsCount < maxTableItems) {
-                    htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader(elementId))
                     htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
+                    htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader(elementId))
                 }
                 items.each{ProductItem item ->
                     itemNumber++
@@ -400,8 +400,8 @@ class OfferToPDFConverter implements OfferExporter {
                     if (tableItemsCount >= maxTableItems) {
                         ++tableCount
                         elementId = "product-items" + "-" + tableCount
-                        htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader(elementId))
                         htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
+                        htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader(elementId))
                         tableItemsCount = 1
                     }
                     //add product to current table
