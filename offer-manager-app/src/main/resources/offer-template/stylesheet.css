@@ -226,11 +226,11 @@ h2 {
     padding: 10px 20px 2px 20px;
 }
 
- #grid-sub-total-footer{
+ .grid-sub-total-footer{
     text-align: right;
     border-top: 1px solid #bbbbbb;
     padding: 10px 0px 2px 20px;
-}
+ }
 
 .text-center{
     text-align: center;
