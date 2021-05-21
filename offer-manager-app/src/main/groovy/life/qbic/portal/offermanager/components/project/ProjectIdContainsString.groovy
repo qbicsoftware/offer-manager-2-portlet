@@ -23,10 +23,14 @@ class ProjectIdContainsString implements BiPredicate<Optional<ProjectIdentifier>
      */
     @Override
     boolean test(Optional<ProjectIdentifier> projectIdentifier, String userInput) {
-        if (projectIdentifier.isPresent()) {
-            return StringUtils.containsIgnoreCase(projectIdentifier.get().toString(), userInput)
+        if (userInput) {
+            if (projectIdentifier.isPresent()) {
+                return StringUtils.containsIgnoreCase(projectIdentifier.get().toString(), userInput)
+            } else {
+                return false
+            }
         } else {
-            return false
+            return true
         }
     }
 }

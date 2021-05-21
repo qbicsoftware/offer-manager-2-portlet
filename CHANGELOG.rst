@@ -19,15 +19,27 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Add a column filter option which takes a predicate as argument (`#589 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/589>`_)
 
+* Enable Github workflow for changelog update checks (`#595 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/595>`_)
+
+* Enable sorting products by productId (MaintainProductView) (`#574 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/574>`_)
+
 **Fixed**
 
 * Enumeration of product items increases over all productGroups in Offer PDF (`#562 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/562>`_)
 
 * Test description for external non-academic customers
 
+* Tax cost for offers outside of germany is set to 0 (`#575 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/575>`_)
+
+* App won't freeze after creation of mutiple projects (`#558 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/558>`_)
+
 **Dependencies**
 
+* ``life.qbic.data-model-lib:2.5.0`` -> ``2.7.0-SNAPSHOT`` (`#586 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/586>`_)
+
 * ``com.vaadin.vaadin-bom:8.12.3`` -> ``8.13.0`` (`#572 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/572>`_)
+
+* ``org.spockframework.spock-bom:2.0-M4-groovy-3.0`` -> ``2.0-groovy-3.0`` ( `#588 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/588>`_)
 
 **Deprecated**
 
