@@ -23,7 +23,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Enable sorting products by productId (MaintainProductView) (`#574 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/574>`_)
 
-* Add section headers above productcategory titles in offer PDF (`#603 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/603>`_)
+* Move table header below section/product category title in offer html template (`#604 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/604>`_)
 
 **Fixed**
 
