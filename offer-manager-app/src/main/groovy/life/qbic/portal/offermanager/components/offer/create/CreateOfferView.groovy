@@ -206,6 +206,7 @@ class CreateOfferView extends FormLayout{
         this.projectInformationView.setVisible(false)
         this.customerSelectionView.setVisible(false)
         this.createCustomerView.setVisible(false)
+        this.updatePersonView.setVisible(false)
         this.createAffiliationView.setVisible(false)
         this.projectManagerSelectionView.setVisible(false)
         this.selectItemsView.setVisible(false)
@@ -217,6 +218,7 @@ class CreateOfferView extends FormLayout{
                 this.projectInformationView,
                 this.customerSelectionView,
                 this.createCustomerView,
+                this.updatePersonView,
                 this.createAffiliationView,
                 this.projectManagerSelectionView,
                 this.selectItemsView,
