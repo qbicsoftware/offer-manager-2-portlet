@@ -36,6 +36,8 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
     Button next
     Button previous
 
+    Button updatePerson
+
     HorizontalLayout addButtonsLayout
     Button createCustomerButton
     Grid<Customer> customerGrid
@@ -101,9 +103,13 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
          */
         addButtonsLayout = new HorizontalLayout()
         this.createCustomerButton = new Button("Create Customer", VaadinIcons.USER)
+        this.updatePerson = new Button("Update Customer", VaadinIcons.USER)
         createCustomerButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
-        addButtonsLayout.addComponent(createCustomerButton)
+        updatePerson.addStyleName(ValoTheme.BUTTON_FRIENDLY)
+        addButtonsLayout.addComponents(createCustomerButton, updatePerson)
         addButtonsLayout.setComponentAlignment(createCustomerButton, Alignment.MIDDLE_RIGHT)
+        addButtonsLayout.setComponentAlignment(updatePerson, Alignment.MIDDLE_RIGHT)
+
 
         addButtonsLayout.setSizeFull()
 

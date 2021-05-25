@@ -8,6 +8,7 @@ import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
+import life.qbic.portal.offermanager.components.person.update.UpdatePersonView
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
 import life.qbic.portal.offermanager.components.AppViewModel
 
@@ -35,6 +36,7 @@ class CreateOfferView extends FormLayout{
     private final OfferOverviewView overviewView
 
     private final CreatePersonView createCustomerView
+    private final UpdatePersonView updatePersonView
     private ButtonNavigationView navigationView
     private final CreateAffiliationView createAffiliationView
 
@@ -45,6 +47,7 @@ class CreateOfferView extends FormLayout{
                     CreateOfferViewModel createOfferViewModel,
                     CreateOfferController controller,
                     CreatePersonView createCustomerView,
+                    UpdatePersonView updatePersonView,
                     CreateAffiliationView createAffiliationView,
                     OfferResourcesService offerProviderService) {
         super()
@@ -52,6 +55,7 @@ class CreateOfferView extends FormLayout{
         this.viewModel = createOfferViewModel
         this.controller = controller
         this.createCustomerView = createCustomerView
+        this.updatePersonView = updatePersonView
         this.createAffiliationView = createAffiliationView
         this.projectInformationView = new ProjectInformationView(viewModel)
         this.customerSelectionView = new CustomerSelectionView(viewModel)
@@ -94,6 +98,7 @@ class CreateOfferView extends FormLayout{
                 projectInformationView,
                 customerSelectionView,
                 createCustomerView,
+                updatePersonView,
                 projectManagerSelectionView,
                 selectItemsView,
                 overviewView
@@ -121,13 +126,22 @@ class CreateOfferView extends FormLayout{
             viewHistory.loadNewView(projectInformationView)
             navigationView.showPreviousStep()
         })
-        this.customerSelectionView.createCustomerButton.addClickListener({
-            viewHistory.loadNewView(createCustomerView)
-        })
         this.createCustomerView.abortButton.addClickListener({
             viewHistory.showPrevious()
         })
         this.createCustomerView.submitButton.addClickListener({
+            viewHistory.showPrevious()
+        })
+        this.customerSelectionView.createCustomerButton.addClickListener({
+            viewHistory.loadNewView(createCustomerView)
+        })
+        this.customerSelectionView.updatePerson.addClickListener({
+            viewHistory.loadNewView(updatePersonView)
+        })
+        this.updatePersonView.abortButton.addClickListener({
+            viewHistory.showPrevious()
+        })
+        this.updatePersonView.submitButton.addClickListener({
             viewHistory.showPrevious()
         })
         this.createAffiliationView.abortButton.addClickListener({
