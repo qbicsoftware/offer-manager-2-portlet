@@ -23,9 +23,15 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Enable sorting products by productId (MaintainProductView) (`#574 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/574>`_)
 
+* Move table header below section/product category title in offer html template (`#604 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/604>`_)
+
+* Provide entry point to affiliation creation in CreatePersonView (`#601 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/601>`_)
+
 **Fixed**
 
 * Enumeration of product items increases over all productGroups in Offer PDF (`#562 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/562>`_)
+
+* Improve test description for external non-academic customers (`#605 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/605>`_)
 
 * Tax cost for offers outside of germany is set to 0 (`#575 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/575>`_)
 

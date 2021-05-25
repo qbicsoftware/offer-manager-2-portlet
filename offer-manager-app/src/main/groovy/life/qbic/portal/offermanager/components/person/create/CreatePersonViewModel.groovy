@@ -36,6 +36,8 @@ class CreatePersonViewModel {
     @Bindable Boolean emailValid
     @Bindable Boolean affiliationValid
 
+    @Bindable Boolean affiliationViewVisible
+
     ObservableList availableOrganisations
 
     final CustomerResourceService customerService

@@ -152,7 +152,7 @@ class OfferSpec extends Specification {
         totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes
     }
 
-    def "A customer with an external affiliation shall pay 40% overheads and 19% VAT"() {
+    def "A customer with an external (non-academic) affiliation shall pay 40% overheads and 19% VAT"() {
         given:
         List<ProductItem> items = [
                 new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
