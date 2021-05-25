@@ -11,6 +11,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.GridUtils
+import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonController
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 
@@ -30,8 +31,8 @@ class UpdatePersonView extends CreatePersonView{
     private Grid<Affiliation> affiliations
     private Button addAffiliationButton
 
-    UpdatePersonView(CreatePersonController controller, AppViewModel sharedViewModel, UpdatePersonViewModel updatePersonViewModel) {
-        super(controller, sharedViewModel, updatePersonViewModel)
+    UpdatePersonView(CreatePersonController controller, AppViewModel sharedViewModel, UpdatePersonViewModel updatePersonViewModel, CreateAffiliationView createAffiliationView) {
+        super(controller, sharedViewModel, updatePersonViewModel, createAffiliationView)
         this.updatePersonViewModel = updatePersonViewModel
         this.sharedViewModel = sharedViewModel
         adjustViewElements()
@@ -52,11 +53,11 @@ class UpdatePersonView extends CreatePersonView{
         generateAffiliationGrid()
         Label currentAffiliationLabel = new Label("Current Affiliations")
         affiliations.setSelectionMode(Grid.SelectionMode.NONE)
-        this.addComponent(currentAffiliationLabel, 3)
-        this.addComponent(affiliations,4)
+        defaultContent.addComponent(currentAffiliationLabel, 3)
+        defaultContent.addComponent(affiliations,4)
         //add a heading for adding a new affiliation
         Label newAffiliation = new Label("Add a new affiliation")
-        this.addComponent(newAffiliation,5)
+        defaultContent.addComponent(newAffiliation,5)
 
         //add the add button
         addAffiliationButton = new Button("Add Affiliation")

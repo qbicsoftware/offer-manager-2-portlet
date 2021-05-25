@@ -16,6 +16,7 @@ import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
+import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 
 /**
  * This class generates a Form Layout in which the user
@@ -46,28 +47,30 @@ class CreatePersonView extends FormLayout {
     Button abortButton
     Panel affiliationDetails
 
+    protected Button createAffiliationButton
+
+    protected AbstractOrderedLayout defaultContent
+    protected CreateAffiliationView createAffiliationView
     HorizontalLayout buttonLayout
 
-    CreatePersonView(CreatePersonController controller, AppViewModel sharedViewModel, CreatePersonViewModel createPersonViewModel) {
+    CreatePersonView(CreatePersonController controller, AppViewModel sharedViewModel, CreatePersonViewModel createPersonViewModel, CreateAffiliationView createAffiliationView) {
         super()
         this.controller = controller
         this.sharedViewModel = sharedViewModel
         this.createPersonViewModel = createPersonViewModel
+        this.createAffiliationView = createAffiliationView
         initLayout()
         bindViewModel()
         setupFieldValidators()
         registerListeners()
     }
 
-    /**
-     * Generates a vaadin Form Layout as an UserInterface consisting of vaadin components
-     * to enable user input for person creation
-     */
-    private def initLayout() {
+    private AbstractOrderedLayout generateViewContent() {
+        FormLayout defaultContent = new FormLayout()
         this.viewCaption = new Label("Create New Person Entry")
 
         viewCaption.addStyleName(ValoTheme.LABEL_HUGE)
-        this.addComponent(viewCaption)
+        defaultContent.addComponent(viewCaption)
 
         this.titleField = generateTitleSelector(createPersonViewModel.academicTitles)
 
@@ -83,8 +86,20 @@ class CreatePersonView extends FormLayout {
         emailField.setPlaceholder("Email address")
         emailField.setRequiredIndicatorVisible(true)
 
+        HorizontalLayout organisationLayout = new HorizontalLayout()
+        organisationLayout.setMargin(false)
+        organisationLayout.setSpacing(false)
+        organisationLayout.setSizeFull()
+
         this.organisationComboBox = generateOrganisationSelector(createPersonViewModel.availableOrganisations)
         organisationComboBox.setRequiredIndicatorVisible(true)
+        organisationComboBox.setSizeFull()
+        this.createAffiliationButton = new Button(VaadinIcons.PLUS)
+        createAffiliationButton.setHeight(organisationComboBox.getHeight(), organisationComboBox.getHeightUnits())
+
+        organisationLayout.addComponentsAndExpand(organisationComboBox)
+        organisationLayout.addComponent(createAffiliationButton)
+        organisationLayout.setComponentAlignment(createAffiliationButton, Alignment.BOTTOM_LEFT)
 
         this.addressAdditionComboBox = new ComboBox<>("Address Addition")
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
@@ -111,8 +126,8 @@ class CreatePersonView extends FormLayout {
         row2.setDefaultComponentAlignment(Alignment.BOTTOM_LEFT)
         row2.setSizeFull()
 
-        HorizontalLayout row3 = new HorizontalLayout(organisationComboBox, addressAdditionComboBox)
-        row3.setComponentAlignment(organisationComboBox, Alignment.TOP_LEFT)
+        HorizontalLayout row3 = new HorizontalLayout(organisationLayout, addressAdditionComboBox)
+        row3.setComponentAlignment(organisationLayout, Alignment.TOP_LEFT)
         row3.setComponentAlignment(addressAdditionComboBox, Alignment.TOP_LEFT)
         row3.setSizeFull()
 
@@ -128,7 +143,7 @@ class CreatePersonView extends FormLayout {
 
 
         //Add the components to the FormLayout
-        this.addComponents(row1, row2, row3, row4)
+        defaultContent.addComponents(row1, row2, row3, row4)
 
 
         firstNameField.setSizeFull()
@@ -138,8 +153,27 @@ class CreatePersonView extends FormLayout {
         addressAdditionComboBox.setSizeFull()
         affiliationDetails.setSizeFull()
 
-        this.setSpacing(true)
+        defaultContent.setSpacing(true)
+        defaultContent.setMargin(false)
+
+        return defaultContent
+    }
+
+    /**
+     * Generates a vaadin Form Layout as an UserInterface consisting of vaadin components
+     * to enable user input for person creation
+     */
+    private def initLayout() {
+        this.addComponent(this.createAffiliationView)
+        this.createAffiliationView.setVisible(false)
+        this.defaultContent = generateViewContent()
+        this.addComponent(defaultContent)
+        this.defaultContent.setVisible(false)
+
         this.setMargin(false)
+        this.setSpacing(false)
+
+        refreshVisibleContent()
     }
 
     /**
@@ -184,6 +218,11 @@ class CreatePersonView extends FormLayout {
                 addressAdditionComboBox.value = addressAdditionComboBox.emptyValue
                 organisationComboBox.value = organisationComboBox.emptyValue            }
         })
+
+        createPersonViewModel.addPropertyChangeListener("affiliationViewVisible", {
+            refreshVisibleContent()
+        })
+
         /*
         we listen to the valid properties. whenever the presenter resets values in the viewmodel
         and resets the valid properties the component error on the respective component is removed
@@ -378,6 +417,18 @@ class CreatePersonView extends FormLayout {
             }
         })
 
+        this.createAffiliationButton.addClickListener({
+            this.createPersonViewModel.affiliationViewVisible = true
+        })
+
+        this.createAffiliationView.submitButton.addClickListener({
+            this.createPersonViewModel.affiliationViewVisible = false
+        })
+
+        this.createAffiliationView.abortButton.addClickListener({
+            this.createPersonViewModel.affiliationViewVisible = false
+        })
+
     }
 
     protected void updateAffiliationDetails(Affiliation affiliation) {
@@ -433,5 +484,18 @@ class CreatePersonView extends FormLayout {
         }
 
         return foundOrganisation
+    }
+
+    /**
+     * Determines which view is set to visible
+     */
+    protected void refreshVisibleContent() {
+        if (createPersonViewModel.affiliationViewVisible) {
+            this.createAffiliationView.setVisible(true)
+            this.defaultContent.setVisible(false)
+        } else {
+            this.createAffiliationView.setVisible(false)
+            this.defaultContent.setVisible(true)
+        }
     }
 }
