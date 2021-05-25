@@ -25,6 +25,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Adjust agreement text in offer template and move table header below section/product category title in offer html template (`#606 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/606>`_)
 
+* Move table header below section/product category title in offer html template (`#604 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/604>`_)
+
 * Provide entry point to affiliation creation in CreatePersonView (`#601 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/601>`_)
 
 **Fixed**
