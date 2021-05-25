@@ -27,6 +27,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Provide entry point to affiliation creation in CreatePersonView (`#601 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/601>`_)
 
+* Customers can now be updated in the selection step of creating a new offer (`#611 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/611>`_)
+
 **Fixed**
 
 * Enumeration of product items increases over all productGroups in Offer PDF (`#562 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/562>`_)
