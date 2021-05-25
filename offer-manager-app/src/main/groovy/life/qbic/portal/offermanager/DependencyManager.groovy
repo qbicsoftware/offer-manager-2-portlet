@@ -630,7 +630,7 @@ class DependencyManager {
                     this.updateOfferViewModel,
                     this.updateOfferController,
                     this.createPersonView,
-                    this.updatePersonViewNewOffer,
+                    this.updatePersonView as UpdatePersonView,
                     this.createAffiliationView,
                     this.offerService)
         } catch (Exception e) {
