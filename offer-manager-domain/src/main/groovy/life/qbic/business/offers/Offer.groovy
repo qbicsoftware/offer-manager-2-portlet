@@ -108,6 +108,16 @@ class Offer {
     private static final double VAT = 0.19
 
     /**
+     * Holds the Country for which VAT is applicable
+     */
+    private static final String countryWithVat = "Germany"
+
+    /**
+     * Holds the AffiliationCategory for which VAT is non-applicable
+     */
+    private static final AffiliationCategory noVatCategory = AffiliationCategory.INTERNAL
+
+    /**
      * A project that has been created from this offer (optional)
      */
     private Optional<ProjectIdentifier> associatedProject
@@ -298,15 +308,17 @@ class Offer {
     /**
      * The tax price on all items net price including overheads.
      *
-     * For internal persons, this will be 0.
+     * For internal affiliated customers and customers outside of Germany, this will be set to 0.
      *
      * @return The amount of VAT price based on all items in the offer.
      */
     double getTaxCosts() {
-        if (selectedCustomerAffiliation.category.equals(AffiliationCategory.INTERNAL)) {
+        if (!selectedCustomerAffiliation.category.equals(noVatCategory) && selectedCustomerAffiliation.country.equals(countryWithVat)) {
+            return (calculateNetPrice() + getOverheadSum()) * VAT
+        }
+        else {
             return 0
         }
-        return (calculateNetPrice() + getOverheadSum()) * VAT
     }
 
     /**

@@ -4,6 +4,53 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.0.0-rc.1-SNAPSHOT
+-------------------
+
+**Added**
+
+* Introduce filterable Project Manager column to offer overview (`#576 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/576>`_)
+
+* Adds ability to filter by project identifiers in the offer overview (`#591 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/591>`_)
+
+* Displays a total price overview on the first offer page, including taxes, net cost and total cost (`#559 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/559>`_)
+
+* Include overhead cost in total price overview on the first offer page (`#593 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/593>`_)
+
+* Add a column filter option which takes a predicate as argument (`#589 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/589>`_)
+
+* Enable Github workflow for changelog update checks (`#595 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/595>`_)
+
+* Enable sorting products by productId (MaintainProductView) (`#574 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/574>`_)
+
+* Adjust agreement text in offer template and move table header below section/product category title in offer html template (`#606 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/606>`_)
+
+* Provide entry point to affiliation creation in CreatePersonView (`#601 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/601>`_)
+
+**Fixed**
+
+* Update and fix broken offer template (`#597 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/597>`_)
+* Enumeration of product items increases over all productGroups in Offer PDF (`#562 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/562>`_)
+
+* Improve test description for external non-academic customers (`#605 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/605>`_)
+
+* Tax cost for offers outside of germany is set to 0 (`#575 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/575>`_)
+
+* App won't freeze after creation of mutiple projects (`#558 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/558>`_)
+
+**Dependencies**
+
+* ``life.qbic.data-model-lib:2.5.0`` -> ``2.7.0`` (`#606 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/606>`_)
+
+* ``com.vaadin.vaadin-bom:8.12.3`` -> ``8.13.0`` (`#572 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/572>`_)
+
+* ``org.spockframework.spock-bom:2.0-M4-groovy-3.0`` -> ``2.0-groovy-3.0`` ( `#588 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/588>`_)
+
+**Deprecated**
+
+* Deprecate OfferOverview Constructor to allow for inclusion of ProjectManager (`#576 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/576>`_)
+
+
 1.0.0-beta.2 (2021-04-30)
 -------------------------
 
@@ -18,6 +65,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 **Dependencies**
 
 **Deprecated**
+
 
 1.0.0-beta.1 (2021-04-27)
 -----------------------------------
