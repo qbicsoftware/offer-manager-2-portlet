@@ -4,8 +4,8 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-1.0.0-rc.1-SNAPSHOT
--------------------
+1.0.0-rc.1
+----------
 
 **Added**
 
