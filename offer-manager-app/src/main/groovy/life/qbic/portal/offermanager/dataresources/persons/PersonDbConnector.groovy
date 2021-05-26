@@ -225,18 +225,19 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   }
   
   private static int createNewPerson(Connection connection, Person person) {
-    String query = "INSERT INTO person (first_name, last_name, title, email, active) " +
-            "VALUES(?, ?, ?, ?, ?)"
+    String query = "INSERT INTO person (user_id, first_name, last_name, title, email, active) " +
+            "VALUES(?, ?, ?, ?, ?, ?)"
 
     List<Integer> generatedKeys = []
 
     def statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)
-    statement.setString(1, person.firstName )
-    statement.setString(2, person.lastName)
-    statement.setString(3, person.title.value)
-    statement.setString(4, person.emailAddress )
+    statement.setString(1, person.emailAddress)
+    statement.setString(2, person.firstName)
+    statement.setString(3, person.lastName)
+    statement.setString(4, person.title.value)
+    statement.setString(5, person.emailAddress)
     //a new customer is always active
-    statement.setBoolean(5, true)
+    statement.setBoolean(6, true)
     statement.execute()
     def keys = statement.getGeneratedKeys()
     while (keys.next()){
