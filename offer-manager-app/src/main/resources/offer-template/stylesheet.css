@@ -126,6 +126,7 @@ h2 {
 
 .total-costs-sum-row {
   font-weight: bold;
+  white-space:nowrap;
 }
 
 .signature {

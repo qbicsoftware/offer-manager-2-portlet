@@ -13,6 +13,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * user_id of a person is set in database during person creation/update (`#616 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/616>`_)
 
+* layout of total price row in price summary of offer pdf stays inline (`#615 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/615>`_)
+
 **Dependencies**
 
 **Deprecated**
