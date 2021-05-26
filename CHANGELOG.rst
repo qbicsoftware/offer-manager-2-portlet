@@ -7,6 +7,14 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 1.0.0
 -----
 
+**Added**
+
+**Fixed**
+
+**Dependencies**
+
+**Deprecated**
+
 1.0.0-rc.1 (2021-04-25)
 -----------------------
 
