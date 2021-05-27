@@ -320,6 +320,10 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             return identifier
         }
         try {
+            /*
+            A full openBIS project ID has the format: '/<space>/<project>', where
+            <space> and <project> are placeholders for real space and project names.
+             */
             def splittedIdentifier = projectIdentifier.split("/")
             if (splittedIdentifier.length != 3) {
                 throw new RuntimeException("Project identifier has an unknown format: ${projectIdentifier.split()}.")
