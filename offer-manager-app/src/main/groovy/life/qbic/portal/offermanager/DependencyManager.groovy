@@ -646,7 +646,15 @@ class DependencyManager {
         return offerOverviewView
     }
 
-    private static CreateOfferView createUpdateOffer() {
+    private static CreateOfferView createUpdateOffer(ResourcesService<Customer> customerResourcesService,
+                                                     ResourcesService<ProjectManager> projectManagerResourcesService,
+                                                     ResourcesService<Product> productResourcesService,
+                                                     EventEmitter<Offer> offerUpdateEvent) {
+        UpdateOfferViewModel updateOfferViewModel = new UpdateOfferViewModel(
+                customerResourcesService,
+                projectManagerResourcesService,
+                productResourcesService,
+                offerUpdateEvent)
         //TODO implement
         throw new RuntimeException("Not Implemented.")
     }

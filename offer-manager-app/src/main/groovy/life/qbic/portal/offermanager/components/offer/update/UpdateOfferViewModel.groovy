@@ -28,9 +28,6 @@ import life.qbic.portal.offermanager.components.offer.create.ProductItemViewMode
  *
  * @since 1.0.0
  */
-//fixme this might not be a real extension of the create offer use case
-// in any case the view model should not extend the other view model
-// this extension makes it difficult to debug imo (TK)
 class UpdateOfferViewModel extends CreateOfferViewModel{
 
     final private EventEmitter<Offer> offerUpdate
