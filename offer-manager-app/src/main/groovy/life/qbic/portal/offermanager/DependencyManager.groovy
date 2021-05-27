@@ -679,9 +679,51 @@ class DependencyManager {
         throw new RuntimeException("Not Implemented.")
     }
 
-    private static UpdatePersonView createUpdatePersonView() {
-        //TODO implement
-        throw new RuntimeException("Not Implemented.")
+    /**
+     *
+     * @param sharedViewModel
+     * @param affiliationResourcesService
+     * @param customerResourcesService
+     * @param personResourcesService
+     * @param projectManagerResourcesService
+     * @param personUpdateEvent
+     * @param createAffiliationDataSource
+     * @param createPersonDataSource
+     * @return
+     */
+    private static UpdatePersonView createUpdatePersonView(AppViewModel sharedViewModel,
+                                                           ResourcesService<Affiliation> affiliationResourcesService,
+                                                           ResourcesService<Customer> customerResourcesService,
+                                                           ResourcesService<Person> personResourcesService,
+                                                           ResourcesService<ProjectManager> projectManagerResourcesService,
+                                                           EventEmitter<Person> personUpdateEvent,
+                                                           CreateAffiliationDataSource createAffiliationDataSource,
+                                                           CreatePersonDataSource createPersonDataSource) {
+
+        CreateAffiliationView createAffiliationView = createCreateAffiliationView(
+                sharedViewModel,
+                affiliationResourcesService,
+                createAffiliationDataSource
+        )
+        UpdatePersonViewModel updatePersonViewModel = new UpdatePersonViewModel(
+                customerResourcesService,
+                projectManagerResourcesService,
+                affiliationResourcesService,
+                personUpdateEvent,
+                projectManagerResourcesService
+        )
+        CreatePersonPresenter updatePersonPresenter = new CreatePersonPresenter(sharedViewModel, updatePersonViewModel)
+        CreatePerson updatePerson = new CreatePerson(updatePersonPresenter, createPersonDataSource)
+        CreatePersonController updatePersonController = new CreatePersonController(updatePerson)
+
+        UpdatePersonView updatePersonView = new UpdatePersonView(
+                updatePersonController,
+                sharedViewModel,
+                updatePersonViewModel,
+                createAffiliationView
+        )
+
+        return updatePersonView
     }
 
 
