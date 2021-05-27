@@ -308,13 +308,16 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
     @Override
     void reset() {
         resetSelection()
+        viewModel.customer = null
+        viewModel.customerAffiliation = null
     }
 
     private void addButtonListeners() {
         this.updatePerson.addClickListener({
-            //TODO
+            //this is handled by the create offer view
         })
     }
+
     private void resetSelection() {
         selectedCustomer.setValue("-")
         selectedAffiliation.setValue("-")

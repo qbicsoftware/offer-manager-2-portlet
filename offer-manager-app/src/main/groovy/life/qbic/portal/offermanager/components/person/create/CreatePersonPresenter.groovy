@@ -27,17 +27,7 @@ class CreatePersonPresenter implements CreatePersonOutput{
     }
 
     private void clearPersonData() {
-        createPersonViewModel.academicTitle = null
-        createPersonViewModel.firstName = null
-        createPersonViewModel.lastName = null
-        createPersonViewModel.email = null
-        createPersonViewModel.affiliation = null
-
-        createPersonViewModel.academicTitleValid = null
-        createPersonViewModel.firstNameValid = null
-        createPersonViewModel.lastNameValid = null
-        createPersonViewModel.emailValid = null
-        createPersonViewModel.affiliationValid = null
+        createPersonViewModel.reset()
     }
 
     @Override

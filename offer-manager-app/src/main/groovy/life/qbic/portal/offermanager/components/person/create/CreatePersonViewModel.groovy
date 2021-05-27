@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager.components.person.create
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.general.Person
+import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
 import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
@@ -20,7 +21,7 @@ import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourc
  *
  * @since: 1.0.0
  */
-class CreatePersonViewModel {
+class CreatePersonViewModel implements Resettable{
     List<String> academicTitles = new ArrayList<>()
     Person outdatedPerson
 
@@ -53,8 +54,8 @@ class CreatePersonViewModel {
         this.customerService = customerService
         this.managerResourceService = managerResourceService
         this.personResourceService = personResourceService
-        List<Affiliation> affiliations = affiliationService.iterator().collect()
-        availableOrganisations = new ObservableList(new ArrayList<Organisation>(toOrganisation(affiliations)))
+        availableOrganisations = new ObservableList()
+        refreshAvailableOrganizations()
 
         this.affiliationService.subscribe({
             List foundOrganisations = availableOrganisations.findAll(){organisation -> (organisation as Organisation).name == it.organisation}
@@ -66,6 +67,12 @@ class CreatePersonViewModel {
                 (foundOrganisations.get(0) as Organisation).affiliations << it
             }
         })
+    }
+
+    private void refreshAvailableOrganizations() {
+        availableOrganisations.clear()
+        List<Affiliation> affiliations = affiliationService.iterator().collect()
+        availableOrganisations.addAll(new ArrayList<Organisation>(toOrganisation(affiliations)))
     }
 
     /**
@@ -90,4 +97,19 @@ class CreatePersonViewModel {
         return organisations
     }
 
+    @Override
+    void reset() {
+        setAcademicTitle(null)
+        setFirstName(null)
+        setLastName(null)
+        setEmail(null)
+        setAffiliation(null)
+        setAcademicTitleValid(null)
+        setFirstNameValid(null)
+        setLastNameValid(null)
+        setEmailValid(null)
+        setAffiliationValid(null)
+
+        refreshAvailableOrganizations()
+    }
 }
