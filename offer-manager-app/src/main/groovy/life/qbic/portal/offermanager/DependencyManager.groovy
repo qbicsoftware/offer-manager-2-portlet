@@ -646,17 +646,66 @@ class DependencyManager {
         return offerOverviewView
     }
 
-    private static CreateOfferView createUpdateOffer(ResourcesService<Customer> customerResourcesService,
-                                                     ResourcesService<ProjectManager> projectManagerResourcesService,
-                                                     ResourcesService<Product> productResourcesService,
-                                                     EventEmitter<Offer> offerUpdateEvent) {
+    /**
+     *
+     * @param sharedViewModel
+     * @param affiliationResourcesService
+     * @param customerResourcesService
+     * @param offerResourcesService
+     * @param personResourcesService
+     * @param projectManagerResourcesService
+     * @param productResourcesService
+     * @param offerUpdateEvent
+     * @param createAffiliationDataSource
+     * @param createOfferDataSource
+     * @param createPersonDataSource
+     * @param fetchOfferDataSource
+     * @return
+     */
+    private static CreateOfferView createUpdateOfferView(AppViewModel sharedViewModel,
+                                                         ResourcesService<Affiliation> affiliationResourcesService,
+                                                         ResourcesService<Customer> customerResourcesService,
+                                                         ResourcesService<Offer> offerResourcesService,
+                                                         ResourcesService<Person> personResourcesService,
+                                                         ResourcesService<ProjectManager> projectManagerResourcesService,
+                                                         ResourcesService<Product> productResourcesService,
+                                                         EventEmitter<Offer> offerUpdateEvent,
+                                                         CreateAffiliationDataSource createAffiliationDataSource,
+                                                         CreateOfferDataSource createOfferDataSource,
+                                                         CreatePersonDataSource createPersonDataSource,
+                                                         FetchOfferDataSource fetchOfferDataSource) {
         UpdateOfferViewModel updateOfferViewModel = new UpdateOfferViewModel(
                 customerResourcesService,
                 projectManagerResourcesService,
                 productResourcesService,
                 offerUpdateEvent)
-        //TODO implement
-        throw new RuntimeException("Not Implemented.")
+        CreateOfferPresenter updateOfferPresenter = new CreateOfferPresenter(sharedViewModel, updateOfferViewModel, offerResourcesService)
+        CreateOffer updateOffer = new CreateOffer(createOfferDataSource, updateOfferPresenter)
+
+        FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, updateOfferPresenter)
+        CreatePersonView createPersonView = createCreatePersonView(
+                sharedViewModel,
+                affiliationResourcesService,
+                customerResourcesService,
+                personResourcesService,
+                projectManagerResourcesService,
+                createAffiliationDataSource,
+                createPersonDataSource)
+        CreateAffiliationView createAffiliationView = createCreateAffiliationView(
+                sharedViewModel,
+                affiliationResourcesService,
+                createAffiliationDataSource)
+
+        CreateOfferController updateOfferController = new CreateOfferController(updateOffer, fetchOffer, updateOffer)
+        CreateOfferView updateOfferView = new CreateOfferView(
+                sharedViewModel,
+                updateOfferViewModel,
+                updateOfferController,
+                createPersonView,
+                createAffiliationView,
+                offerResourcesService)
+
+        return updateOfferView
     }
 
     private static SearchPersonView createSearchPerson() {
