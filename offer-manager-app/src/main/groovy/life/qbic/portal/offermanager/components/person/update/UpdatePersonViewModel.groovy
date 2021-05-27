@@ -67,10 +67,7 @@ class UpdatePersonViewModel extends CreatePersonViewModel implements Resettable{
 
     @Override
     void reset() {
-        academicTitle = null
-        firstName = null
-        lastName = null
-        email = null
+        super.reset()
         affiliationList.clear()
     }
 }
