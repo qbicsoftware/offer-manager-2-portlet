@@ -199,79 +199,14 @@ class DependencyManager {
     }
 
     private AppView setupAppView() {
-        CreateAffiliationView createAffiliationView
-        try {
-            createAffiliationView = createCreateAffiliationView(
-                    viewModel,
-                    affiliationService,
-                    customerDbConnector
-            )
-        } catch (Exception e) {
-            throw new RuntimeException("Unexpected exception during ${CreateAffiliationView.getSimpleName()} creation", e)
-        }
-
-        CreateOfferView createOfferView = createCreateOfferView(
-                affiliationService,
-                customerResourceService,
-                personResourceService,
-                managerResourceService,
-                productsResourcesService,
-                offerService,
-                viewModel,
-                customerDbConnector,
-                customerDbConnector,
-                offerDbConnector,
-                offerDbConnector
-        )
-        CreatePersonView createPersonView = createCreatePersonView(viewModel,
-                affiliationService,
-                customerResourceService,
-                personResourceService,
-                managerResourceService,
-                customerDbConnector,
-                customerDbConnector
-        )
-        CreateOfferView updateOfferView = createUpdateOfferView(
-                viewModel,
-                affiliationService,
-                customerResourceService,
-                offerService,
-                personResourceService,
-                managerResourceService,
-                productsResourcesService,
-                offerUpdateEvent,
-                customerDbConnector,
-                offerDbConnector,
-                customerDbConnector,
-                offerDbConnector
-        )
-        MaintainProductsView maintainProductsView = createMaintainProductsView(
-                viewModel,
-                productsResourcesService,
-                productsDbConnector,
-                productsDbConnector,
-                productsDbConnector
-        )
-        OfferOverviewView overviewView = createOfferOverviewView(
-                viewModel,
-                overviewService,
-                projectResourceService,
-                projectSpaceResourceService,
-                offerUpdateEvent,
-                projectCreatedEvent,
-                projectMainConnector,
-                projectMainConnector,
-                offerDbConnector)
+        CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
+        CreateOfferView createOfferView = createCreateOfferView(affiliationService, customerResourceService, personResourceService, managerResourceService, productsResourcesService, offerService, viewModel, customerDbConnector, customerDbConnector, offerDbConnector, offerDbConnector)
+        CreatePersonView createPersonView = createCreatePersonView(viewModel, affiliationService, customerResourceService, personResourceService, managerResourceService, customerDbConnector, customerDbConnector)
+        CreateOfferView updateOfferView = createUpdateOfferView(viewModel, affiliationService, customerResourceService, offerService, personResourceService, managerResourceService, productsResourcesService, offerUpdateEvent, customerDbConnector, offerDbConnector, customerDbConnector, offerDbConnector)
+        MaintainProductsView maintainProductsView = createMaintainProductsView(viewModel, productsResourcesService, productsDbConnector, productsDbConnector, productsDbConnector)
+        OfferOverviewView overviewView = createOfferOverviewView(viewModel, overviewService, projectResourceService, projectSpaceResourceService, offerUpdateEvent, projectCreatedEvent, projectMainConnector, projectMainConnector, offerDbConnector)
         SearchAffiliationView searchAffiliationView = createSearchAffiliationView(affiliationService)
-        SearchPersonView searchPersonView = createSearchPersonView(
-                viewModel,
-                affiliationService,
-                customerResourceService,
-                managerResourceService,
-                personResourceService,
-                customerDbConnector,
-                customerDbConnector
-        )
+        SearchPersonView searchPersonView = createSearchPersonView(viewModel, affiliationService, customerResourceService, managerResourceService, personResourceService, customerDbConnector, customerDbConnector)
 
         AppView portletView = new AppView(this.viewModel,
                 createPersonView,
