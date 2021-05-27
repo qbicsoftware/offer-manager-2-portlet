@@ -4,8 +4,28 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-1.0.0-rc.1-SNAPSHOT
--------------------
+1.0.0
+-----
+
+**Added**
+
+* Small modifications for the offer layout  (`#620 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/620>`_)
+
+**Fixed**
+
+* User ID of a person is set in database during person creation/update (`#616 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/616>`_)
+
+* Layout of total price row in price summary of offer pdf stays inline (`#615 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/615>`_)
+
+* Deprecated project identifier format assumption leads to failing parsing (`#617 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/617>`_)
+
+
+**Dependencies**
+
+**Deprecated**
+
+1.0.0-rc.1 (2021-04-25)
+-----------------------
 
 **Added**
 
@@ -23,6 +43,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Enable sorting products by productId (MaintainProductView) (`#574 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/574>`_)
 
+* Adjust agreement text in offer template and move table header below section/product category title in offer html template (`#606 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/606>`_)
+
 * Move table header below section/product category title in offer html template (`#604 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/604>`_)
 
 * Provide entry point to affiliation creation in CreatePersonView (`#601 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/601>`_)
@@ -31,6 +53,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* Update and fix broken offer template (`#597 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/597>`_)
 * Enumeration of product items increases over all productGroups in Offer PDF (`#562 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/562>`_)
 
 * Improve test description for external non-academic customers (`#605 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/605>`_)
@@ -41,7 +64,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Dependencies**
 
-* ``life.qbic.data-model-lib:2.5.0`` -> ``2.7.0-SNAPSHOT`` (`#586 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/586>`_)
+* ``life.qbic.data-model-lib:2.5.0`` -> ``2.7.0`` (`#606 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/606>`_)
 
 * ``com.vaadin.vaadin-bom:8.12.3`` -> ``8.13.0`` (`#572 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/572>`_)
 
