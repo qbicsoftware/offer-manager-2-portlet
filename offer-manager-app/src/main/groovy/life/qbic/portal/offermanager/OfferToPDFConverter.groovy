@@ -227,6 +227,7 @@ class OfferToPDFConverter implements OfferExporter {
     void setSelectedItems() {
         // Let's clear the existing item template content first
         htmlContent.getElementById("product-items-1").empty()
+        htmlContent.getElementById("product-items-2").empty()
         //and remove the footer on the first page
         //htmlContent.getElementById("grid-table-footer").remove()
 
@@ -250,7 +251,7 @@ class OfferToPDFConverter implements OfferExporter {
             //If currentTable is filled with Items generate new one and add total pricing there
             ++tableCount
             String elementId = "product-items" + "-" + tableCount
-            htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
+            htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader())
             htmlContent.getElementById("item-table-grid")
                     .append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation()))
         } else {
@@ -392,13 +393,14 @@ class OfferToPDFConverter implements OfferExporter {
                 def elementId = "product-items" + "-" + tableCount
                 //Append Table Title
                 htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
+                htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
                 items.each{ProductItem item ->
                     itemNumber++
                     //start (next) table and add Product to it
                     if (tableItemsCount >= maxTableItems) {
                         ++tableCount
                         elementId = "product-items" + "-" + tableCount
-                        htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
+                        htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader())
                         tableItemsCount = 1
                     }
                     //add product to current table
@@ -411,7 +413,7 @@ class OfferToPDFConverter implements OfferExporter {
                  should be accounted for the subtotal Footer */
                 int productSpaceCount = 2
 
-                tableItemsCount = tableItemsCount + productSpaceCount
+                tableItemsCount += tableItemsCount + productSpaceCount
                 // Update Footer Prices
                 setSubTotalPrices(productGroup, items)
             }
@@ -479,20 +481,17 @@ class OfferToPDFConverter implements OfferExporter {
 
         }
 
-        static String tableHeader(String elementId) {
-            //1. add pagebreak
+        static String tableHeader() {
             //2. create empty table for elementId
-            return """<div class="pagebreak"></div>
-                                     <div class="row table-header" id="grid-table-header">
-                                         <div class="col-1">Pos.</div>
+            return """<div class="row table-header" id="grid-table-header-${tableCount}">
+                                         <div class="col-1">&#8470;</div>
                                          <div class="col-4">Service Description</div>
                                          <div class="col-1 price-value">Amount</div>
                                          <div class="col-2 text-center">Unit</div>
                                          <div class="col-2 price-value">Price/Unit (€)</div>
                                          <div class="col-2 price-value">Total (€)</div>
                                     </div>
-                                 <div class="product-items" id="${elementId}"></div>
-                             """
+                                    """
         }
 
         static String tableTitle(ProductGroups productGroup){
