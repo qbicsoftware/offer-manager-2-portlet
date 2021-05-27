@@ -94,7 +94,6 @@ class DependencyManager {
     private final Role userRole
 
     private AppViewModel viewModel
-    private UpdatePersonViewModel updatePersonViewModel
     private SearchPersonViewModel searchPersonViewModel
     private MaintainProductsViewModel maintainProductsViewModel
     private MaintainProductsViewModel maintainProductsViewModelArchive
@@ -122,7 +121,6 @@ class DependencyManager {
     private CreatePersonController updateCustomerController
     private MaintainProductsController maintainProductController
 
-    private CreatePersonView updatePersonView
     private AppView portletView
     private ConfigurationManager configurationManager
 
@@ -226,21 +224,6 @@ class DependencyManager {
             log.error("Unexpected exception during ${AppViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
-
-        try {
-            this.updatePersonViewModel = new UpdatePersonViewModel(
-                    customerResourceService,
-                    managerResourceService,
-                    affiliationService,
-                    personUpdateEvent,
-                    personResourceService)
-            updatePersonViewModel.academicTitles.addAll(AcademicTitle.values().collect { it.value })
-
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${UpdatePersonViewModel.getSimpleName()} view model setup.", e)
-            throw e
-        }
-
         try {
             this.searchPersonViewModel = new SearchPersonViewModel(personResourceService, personUpdateEvent)
         } catch (Exception e) {
@@ -277,13 +260,6 @@ class DependencyManager {
             this.presenter = new AppPresenter(this.viewModel)
         } catch (Exception e) {
             log.error("Unexpected exception during ${AppPresenter.getSimpleName()} setup.", e)
-            throw e
-        }
-
-        try {
-            this.updateCustomerPresenter = new CreatePersonPresenter(this.viewModel, this.updatePersonViewModel)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${CreatePersonPresenter.getSimpleName()} setup.", e)
             throw e
         }
         try {
@@ -327,16 +303,18 @@ class DependencyManager {
 
     private void setupViews() {
 
-        try {
-            CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
-            this.updatePersonView = new UpdatePersonView(this.updateCustomerController, this.viewModel, this.updatePersonViewModel, createAffiliationView)
-        } catch (Exception e) {
-            log.error("Could not create ${UpdatePersonView.getSimpleName()} view.", e)
-            throw e
-        }
-
         SearchPersonView searchPersonView
         try {
+            UpdatePersonView updatePersonView = createUpdatePersonView(
+                    viewModel,
+                    affiliationService,
+                    customerResourceService,
+                    managerResourceService,
+                    personResourceService,
+                    personUpdateEvent,
+                    customerDbConnector,
+                    customerDbConnector
+            )
             searchPersonView = new SearchPersonView(searchPersonViewModel, updatePersonView)
         } catch (Exception e) {
             log.error("Could not create ${SearchPersonView.getSimpleName()} view.", e)
@@ -391,7 +369,6 @@ class DependencyManager {
                     offerDbConnector,
                     offerDbConnector
             )
-
             CreateOfferView updateOfferView = createUpdateOfferView(
                     viewModel,
                     affiliationService,
@@ -694,6 +671,7 @@ class DependencyManager {
                                                            ResourcesService<Affiliation> affiliationResourcesService,
                                                            ResourcesService<Customer> customerResourcesService,
                                                            ResourcesService<ProjectManager> projectManagerResourcesService,
+                                                           ResourcesService<Person> personResourcesService,
                                                            EventEmitter<Person> personUpdateEvent,
                                                            CreateAffiliationDataSource createAffiliationDataSource,
                                                            CreatePersonDataSource createPersonDataSource) {
@@ -708,8 +686,10 @@ class DependencyManager {
                 projectManagerResourcesService,
                 affiliationResourcesService,
                 personUpdateEvent,
-                projectManagerResourcesService
+                personResourcesService
         )
+        updatePersonViewModel.academicTitles.addAll(AcademicTitle.values().collect { it.value })
+
         CreatePersonPresenter updatePersonPresenter = new CreatePersonPresenter(sharedViewModel, updatePersonViewModel)
         CreatePerson updatePerson = new CreatePerson(updatePersonPresenter, createPersonDataSource)
         CreatePersonController updatePersonController = new CreatePersonController(updatePerson)
