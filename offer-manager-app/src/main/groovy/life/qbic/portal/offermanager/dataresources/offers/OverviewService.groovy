@@ -21,14 +21,14 @@ class OverviewService implements ResourcesService<OfferOverview> {
 
     private final OfferDbConnector offerDbConnector
 
-    private final OfferResourcesService offerService
+    private final ResourcesService<Offer> offerService
 
     private final EventEmitter<OfferOverview> updatedOverviewEvent
 
     private final EventEmitter<Project> projectCreatedEvent
 
     OverviewService(OfferDbConnector offerDbConnector,
-                    OfferResourcesService offerService,
+                    ResourcesService<Offer> offerService,
                     EventEmitter<Project> projectCreatedEvent) {
         this.offerDbConnector = offerDbConnector
         this.updatedOverviewEvent = new EventEmitter<>()
@@ -45,8 +45,9 @@ class OverviewService implements ResourcesService<OfferOverview> {
         offer overview with the project identifier detail
          */
         projectCreatedEvent.register({ Project project ->
-            OfferOverview affectedOffer = offerOverviewList.find{
-                it.offerId.equals(project.linkedOffer)}
+            OfferOverview affectedOffer = offerOverviewList.find {
+                it.offerId.equals(project.linkedOffer)
+            }
             if (affectedOffer) {
                 offerOverviewList.remove(affectedOffer)
                 OfferOverview updatedOverview = new OfferOverview(
@@ -62,7 +63,7 @@ class OverviewService implements ResourcesService<OfferOverview> {
         })
     }
 
-    private void subscribeToNewOffers(){
+    private void subscribeToNewOffers() {
         /*
         Whenever a new offer is created, we want
         to update the offer overview content.
