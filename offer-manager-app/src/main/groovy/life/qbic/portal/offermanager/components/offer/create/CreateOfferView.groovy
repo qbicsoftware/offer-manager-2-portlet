@@ -139,9 +139,11 @@ class CreateOfferView extends FormLayout{
             viewHistory.loadNewView(updatePersonView)
         })
         this.updatePersonView.abortButton.addClickListener({
+            customerSelectionView.reset()
             viewHistory.showPrevious()
         })
         this.updatePersonView.submitButton.addClickListener({
+            customerSelectionView.reset()
             viewHistory.showPrevious()
         })
         this.createAffiliationView.abortButton.addClickListener({
