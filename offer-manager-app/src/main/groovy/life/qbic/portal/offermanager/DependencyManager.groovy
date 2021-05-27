@@ -94,7 +94,6 @@ class DependencyManager {
     private final Role userRole
 
     private AppViewModel viewModel
-    private SearchPersonViewModel searchPersonViewModel
     private MaintainProductsViewModel maintainProductsViewModel
     private MaintainProductsViewModel maintainProductsViewModelArchive
     private CreateProductViewModel createProductViewModel
@@ -225,12 +224,6 @@ class DependencyManager {
             throw e
         }
         try {
-            this.searchPersonViewModel = new SearchPersonViewModel(personResourceService, personUpdateEvent)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${SearchPersonViewModel.getSimpleName()} view model setup.", e)
-        }
-
-        try {
             this.maintainProductsViewModel = new MaintainProductsViewModel(productsResourcesService, productUpdateEvent)
         } catch (Exception e) {
             log.error("Unexpected exception during ${MaintainProductsViewModel.getSimpleName()} view model setup.", e)
@@ -302,25 +295,6 @@ class DependencyManager {
     }
 
     private void setupViews() {
-
-        SearchPersonView searchPersonView
-        try {
-            UpdatePersonView updatePersonView = createUpdatePersonView(
-                    viewModel,
-                    affiliationService,
-                    customerResourceService,
-                    managerResourceService,
-                    personResourceService,
-                    personUpdateEvent,
-                    customerDbConnector,
-                    customerDbConnector
-            )
-            searchPersonView = new SearchPersonView(searchPersonViewModel, updatePersonView)
-        } catch (Exception e) {
-            log.error("Could not create ${SearchPersonView.getSimpleName()} view.", e)
-            throw e
-        }
-
         CreateProductView createProductView
         try {
             createProductView = new CreateProductView(createProductViewModel, maintainProductController)
@@ -394,7 +368,15 @@ class DependencyManager {
                     projectMainConnector,
                     projectMainConnector,
                     offerDbConnector)
-
+            SearchPersonView searchPersonView = createSearchPersonView(
+                    viewModel,
+                    affiliationService,
+                    customerResourceService,
+                    managerResourceService,
+                    personResourceService,
+                    customerDbConnector,
+                    customerDbConnector
+            )
             portletView = new AppView(this.viewModel,
                     createPersonView,
                     createAffiliationView,
