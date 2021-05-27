@@ -6,7 +6,9 @@ import com.vaadin.ui.Layout
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
+import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 import life.qbic.portal.offermanager.dataresources.projects.ProjectResourceService
 import life.qbic.portal.offermanager.dataresources.projects.ProjectSpaceResourceService
 
@@ -62,12 +64,12 @@ class CreateProjectViewModel {
 
     @Bindable Boolean codeIsValid
 
-    private final ProjectSpaceResourceService projectSpaceResourceService
+    private final ResourcesService<ProjectSpace> projectSpaceResourceService
 
-    private final ProjectResourceService projectResourceService
+    private final ResourcesService<ProjectIdentifier> projectResourceService
 
-    CreateProjectViewModel(ProjectSpaceResourceService projectSpaceResourceService,
-                           ProjectResourceService projectResourceService) {
+    CreateProjectViewModel(ResourcesService<ProjectSpace> projectSpaceResourceService,
+                           ResourcesService<ProjectIdentifier> projectResourceService) {
         this.projectSpaceResourceService = projectSpaceResourceService
         this.projectResourceService = projectResourceService
 
