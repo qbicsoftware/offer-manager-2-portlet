@@ -10,8 +10,11 @@ import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.create.CreatePerson
 import life.qbic.business.persons.create.CreatePersonDataSource
 import life.qbic.business.products.archive.ArchiveProduct
+import life.qbic.business.products.archive.ArchiveProductDataSource
 import life.qbic.business.products.copy.CopyProduct
+import life.qbic.business.products.copy.CopyProductDataSource
 import life.qbic.business.products.create.CreateProduct
+import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.projects.create.CreateProject
 import life.qbic.business.projects.create.CreateProjectDataSource
 import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
@@ -714,9 +717,45 @@ class DependencyManager {
         return updatePersonView
     }
 
-    private static MaintainProductsView createMaintainProducts() {
-        //TODO implement
-        throw new RuntimeException("Not Implemented.")
+    /**
+     *
+     * @param sharedViewModel
+     * @param productResourcesService
+     * @param archiveProductDataSource
+     * @param createProductDataSource
+     * @param copyProductDataSource
+     * @return
+     */
+    private static MaintainProductsView createMaintainProductsView(AppViewModel sharedViewModel,
+                                                                   ResourcesService<Product> productResourcesService,
+                                                                   ArchiveProductDataSource archiveProductDataSource,
+                                                                   CreateProductDataSource createProductDataSource,
+                                                                   CopyProductDataSource copyProductDataSource) {
+        // used to communicate selection events from the MaintainProducts to CopyProduct
+        EventEmitter<Product> productSelectEvent = new EventEmitter<Product>()
+
+        MaintainProductsViewModel maintainProductsViewModel = new MaintainProductsViewModel(productResourcesService, productSelectEvent)
+        MaintainProductsPresenter maintainProductsPresenter = new MaintainProductsPresenter(maintainProductsViewModel, sharedViewModel)
+
+        ArchiveProduct archiveProduct = new ArchiveProduct(archiveProductDataSource, maintainProductsPresenter)
+        CreateProduct createProduct = new CreateProduct(createProductDataSource, maintainProductsPresenter)
+        CopyProduct copyProduct = new CopyProduct(copyProductDataSource, maintainProductsPresenter, createProductDataSource)
+
+        MaintainProductsController maintainProductsController = new MaintainProductsController(createProduct, archiveProduct, copyProduct)
+
+        CreateProductViewModel createProductViewModel = new CreateProductViewModel()
+        CreateProductView createProductView = new CreateProductView(createProductViewModel, maintainProductsController)
+        CopyProductViewModel copyProductViewModel = new CopyProductViewModel(productSelectEvent)
+        CopyProductView copyProductView = new CopyProductView(copyProductViewModel, maintainProductsController)
+
+
+        MaintainProductsView maintainProductsView = new MaintainProductsView(
+                maintainProductsViewModel,
+                createProductView,
+                copyProductView,
+                maintainProductsController)
+
+        return maintainProductsView
     }
 
 }
