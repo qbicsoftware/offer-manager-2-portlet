@@ -251,7 +251,7 @@ class OfferToPDFConverter implements OfferExporter {
             //If currentTable is filled with Items generate new one and add total pricing there
             ++tableCount
             String elementId = "product-items" + "-" + tableCount
-            htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader())
+            htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
             htmlContent.getElementById("item-table-grid")
                     .append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation()))
         } else {
@@ -393,14 +393,14 @@ class OfferToPDFConverter implements OfferExporter {
                 def elementId = "product-items" + "-" + tableCount
                 //Append Table Title
                 htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
-                htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
+                htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader(elementId))
                 items.each{ProductItem item ->
                     itemNumber++
                     //start (next) table and add Product to it
                     if (tableItemsCount >= maxTableItems) {
                         ++tableCount
                         elementId = "product-items" + "-" + tableCount
-                        htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader())
+                        htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader(elementId))
                         tableItemsCount = 1
                     }
                     //add product to current table
@@ -481,7 +481,7 @@ class OfferToPDFConverter implements OfferExporter {
 
         }
 
-        static String tableHeader() {
+        static String tableHeader(String elementId) {
             //2. create empty table for elementId
             return """<div class="row table-header" id="grid-table-header-${tableCount}">
                                          <div class="col-1">&#8470;</div>
@@ -491,6 +491,7 @@ class OfferToPDFConverter implements OfferExporter {
                                          <div class="col-2 price-value">Price/Unit (€)</div>
                                          <div class="col-2 price-value">Total (€)</div>
                                     </div>
+                                    <div class="product-items" id="${elementId}"></div>
                                     """
         }
 
