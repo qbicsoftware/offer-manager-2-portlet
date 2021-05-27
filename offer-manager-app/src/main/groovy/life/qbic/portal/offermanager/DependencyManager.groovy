@@ -453,8 +453,8 @@ class DependencyManager {
                     projectSpaceResourceService as ResourcesService<ProjectSpace>,
                     offerUpdateEvent as EventEmitter<Offer>,
                     projectCreatedEvent as EventEmitter<Project>,
-                    projectDbConnector as CreateProjectDataSource,
-                    projectDbConnector as CreateProjectSpaceDataSource,
+                    projectMainConnector as CreateProjectDataSource,
+                    projectMainConnector as CreateProjectSpaceDataSource,
                     offerDbConnector as FetchOfferDataSource)
 
             portletView = new AppView(this.viewModel,
