@@ -90,7 +90,6 @@ class DependencyManager {
     private AppViewModel viewModel
     private CreatePersonViewModel createCustomerViewModel
     private UpdatePersonViewModel updatePersonViewModel
-    private SearchAffiliationViewModel searchAffiliationViewModel
     private CreateOfferViewModel createOfferViewModel
     private CreateOfferViewModel updateOfferViewModel
     private OfferOverviewModel offerOverviewModel
@@ -353,13 +352,6 @@ class DependencyManager {
         } catch (Exception e) {
             log.error("Unexpected exception during ${CopyProductViewModel.getSimpleName()} view model setup.", e)
         }
-
-        try {
-            this.searchAffiliationViewModel = new SearchAffiliationViewModel(affiliationService)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${SearchAffiliationViewModel.getSimpleName()} creation.")
-            log.debug("Unexpected exception during ${SearchAffiliationViewModel.getSimpleName()} creation.", e)
-        }
     }
 
     private void setupPresenters() {
@@ -614,7 +606,7 @@ class DependencyManager {
                     createAffiliationViewCreateCustomer
             )
 
-            SearchAffiliationView searchAffiliationView = new SearchAffiliationView(this.searchAffiliationViewModel)
+            SearchAffiliationView searchAffiliationView = createSearchAffiliationView(affiliationService)
             CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
             portletView = new AppView(this.viewModel,
                     createCustomerView2,
