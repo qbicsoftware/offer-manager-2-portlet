@@ -97,16 +97,11 @@ class DependencyManager {
     private final Role userRole
 
     private AppViewModel viewModel
-    private MaintainProductsViewModel maintainProductsViewModel
-    private MaintainProductsViewModel maintainProductsViewModelArchive
     private CreateProductViewModel createProductViewModel
     private CopyProductViewModel copyProductViewModel
 
     private AppPresenter presenter
     private CreatePersonPresenter updateCustomerPresenter
-    private MaintainProductsPresenter createProductPresenter
-    private MaintainProductsPresenter archiveProductPresenter
-    private MaintainProductsPresenter copyProductPresenter
 
     private PersonDbConnector customerDbConnector
     private OfferDbConnector offerDbConnector
@@ -114,14 +109,6 @@ class DependencyManager {
     private ProjectMainConnector projectMainConnector
     private ProjectDbConnector projectDbConnector
     private OpenBisClient openbisClient
-
-    private CreatePerson updateCustomer
-    private CreateProduct createProduct
-    private ArchiveProduct archiveProduct
-    private CopyProduct copyProduct
-
-    private CreatePersonController updateCustomerController
-    private MaintainProductsController maintainProductController
 
     private AppView portletView
     private ConfigurationManager configurationManager
@@ -138,7 +125,6 @@ class DependencyManager {
     private ProjectResourceService projectResourceService
     private EventEmitter<Person> personUpdateEvent
     private EventEmitter<Project> projectCreatedEvent
-    private EventEmitter<Product> productUpdateEvent
     /**
      * Public constructor.
      *
@@ -154,13 +140,11 @@ class DependencyManager {
     private void initializeDependencies() {
         // The ORDER in which the methods below are called MUST NOT CHANGE
         setupDbConnections()
-        setupServices()
         setupEventEmitter()
-        setupViewModels()
-        setupPresenters()
-        setupUseCaseInteractors()
-        setupControllers()
-        setupViews()
+        setupServices()
+        viewModel = new AppViewModel(affiliationService, this.userRole)
+        presenter = new AppPresenter(this.viewModel)
+        portletView = setupAppView()
     }
 
     protected AppView getPortletView() {
@@ -200,201 +184,109 @@ class DependencyManager {
     }
 
     private void setupServices() {
-        this.offerService = new OfferResourcesService()
-        this.projectCreatedEvent = new EventEmitter<>()
-        this.overviewService = new OverviewService(offerDbConnector, offerService, projectCreatedEvent)
-        this.managerResourceService = new ProjectManagerResourceService(customerDbConnector)
-        this.productsResourcesService = new ProductsResourcesService(productsDbConnector)
         this.affiliationService = new AffiliationResourcesService(customerDbConnector)
         this.customerResourceService = new CustomerResourceService(customerDbConnector)
+        this.managerResourceService = new ProjectManagerResourceService(customerDbConnector)
+        this.offerService = new OfferResourcesService()
+        this.overviewService = new OverviewService(offerDbConnector, offerService, projectCreatedEvent)
         this.personResourceService = new PersonResourceService(customerDbConnector)
-        this.projectSpaceResourceService = new ProjectSpaceResourceService(projectMainConnector)
+        this.productsResourcesService = new ProductsResourcesService(productsDbConnector)
         this.projectResourceService = new ProjectResourceService(projectMainConnector)
+        this.projectSpaceResourceService = new ProjectSpaceResourceService(projectMainConnector)
     }
 
     private void setupEventEmitter() {
         this.offerUpdateEvent = new EventEmitter<Offer>()
         this.personUpdateEvent = new EventEmitter<Person>()
-        this.productUpdateEvent = new EventEmitter<Product>()
+        this.projectCreatedEvent = new EventEmitter<Project>()
     }
 
-    private void setupViewModels() {
-        // setup view models
+    private AppView setupAppView() {
+        CreateAffiliationView createAffiliationView
         try {
-            this.viewModel = new AppViewModel(affiliationService, this.userRole)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${AppViewModel.getSimpleName()} view model setup.", e)
-            throw e
-        }
-        try {
-            this.maintainProductsViewModel = new MaintainProductsViewModel(productsResourcesService, productUpdateEvent)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${MaintainProductsViewModel.getSimpleName()} view model setup.", e)
-        }
-
-        try {
-            this.maintainProductsViewModelArchive = new MaintainProductsViewModel(productsResourcesService, productUpdateEvent)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${MaintainProductsViewModel.getSimpleName()} view model setup.", e)
-        }
-
-        try {
-            this.createProductViewModel = new CreateProductViewModel()
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${CreateProductViewModel.getSimpleName()} view model setup.", e)
-        }
-
-        try {
-            this.copyProductViewModel = new CopyProductViewModel(productUpdateEvent)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${CopyProductViewModel.getSimpleName()} view model setup.", e)
-        }
-    }
-
-    private void setupPresenters() {
-        try {
-            this.presenter = new AppPresenter(this.viewModel)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${AppPresenter.getSimpleName()} setup.", e)
-            throw e
-        }
-        try {
-            this.createProductPresenter = new MaintainProductsPresenter(this.maintainProductsViewModel, this.viewModel)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${MaintainProductsPresenter.getSimpleName()} setup", e)
-        }
-        try {
-            this.archiveProductPresenter = new MaintainProductsPresenter(this.maintainProductsViewModelArchive, this.viewModel)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${MaintainProductsPresenter.getSimpleName()} setup", e)
-        }
-        try {
-            this.copyProductPresenter = new MaintainProductsPresenter(this.maintainProductsViewModel, this.viewModel)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${MaintainProductsPresenter.getSimpleName()} setup", e)
-        }
-    }
-
-    private void setupUseCaseInteractors() {
-
-        this.updateCustomer = new CreatePerson(updateCustomerPresenter, customerDbConnector)
-        this.createProduct = new CreateProduct(productsDbConnector, createProductPresenter)
-        this.archiveProduct = new ArchiveProduct(productsDbConnector, archiveProductPresenter)
-        this.copyProduct = new CopyProduct(productsDbConnector, copyProductPresenter, productsDbConnector)
-    }
-
-    private void setupControllers() {
-        try {
-            this.updateCustomerController = new CreatePersonController(this.updateCustomer)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${CreatePersonController.getSimpleName()} setup.", e)
-            throw e
-        }
-        try {
-            this.maintainProductController = new MaintainProductsController(this.createProduct, this.archiveProduct, this.copyProduct)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${MaintainProductsController.getSimpleName()} setup", e)
-        }
-    }
-
-    private void setupViews() {
-        CreateProductView createProductView
-        try {
-            createProductView = new CreateProductView(createProductViewModel, maintainProductController)
-        } catch (Exception e) {
-            log.error("Could not create ${CreateProductView.getSimpleName()} view.", e)
-            throw e
-        }
-
-        CopyProductView copyProductView
-        try {
-            copyProductView = new CopyProductView(copyProductViewModel, maintainProductController)
-        } catch (Exception e) {
-            log.error("Could not create ${CopyProductView.getSimpleName()} view.", e)
-            throw e
-        }
-
-        MaintainProductsView maintainProductsView
-        try {
-            maintainProductsView = new MaintainProductsView(maintainProductsViewModel, createProductView, copyProductView, maintainProductController)
-        } catch (Exception e) {
-            log.error("Could not create ${MaintainProductsView.getSimpleName()} view.", e)
-            throw e
-        }
-
-        AppView portletView
-        try {
-            CreatePersonView createPersonView = createCreatePersonView(viewModel,
-                    affiliationService,
-                    customerResourceService,
-                    personResourceService,
-                    managerResourceService,
-                    customerDbConnector,
-                    customerDbConnector)
-            CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
-            SearchAffiliationView searchAffiliationView = createSearchAffiliationView(affiliationService)
-            CreateOfferView createOfferView = createCreateOfferView(
-                    affiliationService,
-                    customerResourceService,
-                    personResourceService,
-                    managerResourceService,
-                    productsResourcesService,
-                    offerService,
-                    viewModel,
-                    customerDbConnector,
-                    customerDbConnector,
-                    offerDbConnector,
-                    offerDbConnector
-            )
-            CreateOfferView updateOfferView = createUpdateOfferView(
+            createAffiliationView = createCreateAffiliationView(
                     viewModel,
                     affiliationService,
-                    customerResourceService,
-                    offerService,
-                    personResourceService,
-                    managerResourceService,
-                    productsResourcesService,
-                    offerUpdateEvent,
-                    customerDbConnector,
-                    offerDbConnector,
-                    customerDbConnector,
-                    offerDbConnector
-            )
-
-            OfferOverviewView overviewView = createOfferOverviewView(
-                    viewModel,
-                    overviewService,
-                    projectResourceService,
-                    projectSpaceResourceService,
-                    offerUpdateEvent,
-                    projectCreatedEvent,
-                    projectMainConnector,
-                    projectMainConnector,
-                    offerDbConnector)
-            SearchPersonView searchPersonView = createSearchPersonView(
-                    viewModel,
-                    affiliationService,
-                    customerResourceService,
-                    managerResourceService,
-                    personResourceService,
-                    customerDbConnector,
                     customerDbConnector
             )
-            portletView = new AppView(this.viewModel,
-                    createPersonView,
-                    createAffiliationView,
-                    searchAffiliationView,
-                    createOfferView,
-                    overviewView,
-                    updateOfferView,
-                    searchPersonView,
-                    maintainProductsView
-            )
-            this.portletView = portletView
         } catch (Exception e) {
-            log.error("Could not create ${AppView.getSimpleName()} view.", e)
-            throw e
+            throw new RuntimeException("Unexpected exception during ${CreateAffiliationView.getSimpleName()} creation", e)
         }
+
+        CreateOfferView createOfferView = createCreateOfferView(
+                affiliationService,
+                customerResourceService,
+                personResourceService,
+                managerResourceService,
+                productsResourcesService,
+                offerService,
+                viewModel,
+                customerDbConnector,
+                customerDbConnector,
+                offerDbConnector,
+                offerDbConnector
+        )
+        CreatePersonView createPersonView = createCreatePersonView(viewModel,
+                affiliationService,
+                customerResourceService,
+                personResourceService,
+                managerResourceService,
+                customerDbConnector,
+                customerDbConnector
+        )
+        CreateOfferView updateOfferView = createUpdateOfferView(
+                viewModel,
+                affiliationService,
+                customerResourceService,
+                offerService,
+                personResourceService,
+                managerResourceService,
+                productsResourcesService,
+                offerUpdateEvent,
+                customerDbConnector,
+                offerDbConnector,
+                customerDbConnector,
+                offerDbConnector
+        )
+        MaintainProductsView maintainProductsView = createMaintainProductsView(
+                viewModel,
+                productsResourcesService,
+                productsDbConnector,
+                productsDbConnector,
+                productsDbConnector
+        )
+        OfferOverviewView overviewView = createOfferOverviewView(
+                viewModel,
+                overviewService,
+                projectResourceService,
+                projectSpaceResourceService,
+                offerUpdateEvent,
+                projectCreatedEvent,
+                projectMainConnector,
+                projectMainConnector,
+                offerDbConnector)
+        SearchAffiliationView searchAffiliationView = createSearchAffiliationView(affiliationService)
+        SearchPersonView searchPersonView = createSearchPersonView(
+                viewModel,
+                affiliationService,
+                customerResourceService,
+                managerResourceService,
+                personResourceService,
+                customerDbConnector,
+                customerDbConnector
+        )
+
+        AppView portletView = new AppView(this.viewModel,
+                createPersonView,
+                createAffiliationView,
+                searchAffiliationView,
+                createOfferView,
+                overviewView,
+                updateOfferView,
+                searchPersonView,
+                maintainProductsView
+        )
+        return portletView
     }
 
     /**
