@@ -90,7 +90,6 @@ class DependencyManager {
     private AppViewModel viewModel
     private CreatePersonViewModel createCustomerViewModel
     private UpdatePersonViewModel updatePersonViewModel
-    private CreateAffiliationViewModel createAffiliationViewModel
     private SearchAffiliationViewModel searchAffiliationViewModel
     private CreateOfferViewModel createOfferViewModel
     private CreateOfferViewModel updateOfferViewModel
@@ -107,7 +106,6 @@ class DependencyManager {
     private CreatePersonPresenter createCustomerPresenter
     private CreatePersonPresenter updateCustomerPresenter
     private CreatePersonPresenter createCustomerPresenterNewOffer
-    private CreateAffiliationPresenter createAffiliationPresenter
     private CreateOfferPresenter createOfferPresenter
     private CreateOfferPresenter updateOfferPresenter
     private OfferOverviewPresenter offerOverviewPresenter
@@ -126,7 +124,6 @@ class DependencyManager {
     private CreatePerson createCustomer
     private CreatePerson createCustomerNewOffer
     private CreatePerson updateCustomer
-    private CreateAffiliation createAffiliation
     private CreateOffer createOffer
     private CreateOffer updateOffer
     private CreateProject createProject
@@ -140,7 +137,6 @@ class DependencyManager {
     private CreatePersonController createCustomerController
     private CreatePersonController updateCustomerController
     private CreatePersonController createCustomerControllerNewOffer
-    private CreateAffiliationController createAffiliationController
     private CreateOfferController createOfferController
     private CreateOfferController updateOfferController
     private OfferOverviewController offerOverviewController
@@ -150,7 +146,6 @@ class DependencyManager {
     private CreatePersonView createPersonView
     private CreatePersonView updatePersonView
     private CreatePersonView createCustomerViewNewOffer
-    private CreateAffiliationView createAffiliationView
     private AppView portletView
     private ConfigurationManager configurationManager
 
@@ -295,14 +290,6 @@ class DependencyManager {
         }
 
         try {
-            this.createAffiliationViewModel = new CreateAffiliationViewModel(affiliationService)
-            createAffiliationViewModel.affiliationCategories.addAll(AffiliationCategory.values().collect { it.value })
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${CreateAffiliationViewModel.getSimpleName()} view model setup.", e)
-            throw e
-        }
-
-        try {
             this.createOfferViewModel = new CreateOfferViewModel(
                     customerResourceService,
                     managerResourceService,
@@ -404,12 +391,6 @@ class DependencyManager {
             throw e
         }
 
-        try {
-            this.createAffiliationPresenter = new CreateAffiliationPresenter(this.viewModel, this.createAffiliationViewModel)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${CreateAffiliationPresenter.getSimpleName()} setup.", e)
-            throw e
-        }
 
         try {
             this.createOfferPresenter = new CreateOfferPresenter(this.viewModel,
@@ -456,8 +437,6 @@ class DependencyManager {
         this.createCustomer = new CreatePerson(createCustomerPresenter, customerDbConnector)
         this.createCustomerNewOffer = new CreatePerson(createCustomerPresenterNewOffer, customerDbConnector)
 
-        this.createAffiliation = new CreateAffiliation(createAffiliationPresenter, customerDbConnector)
-
         this.createOffer = new CreateOffer(offerDbConnector, createOfferPresenter)
         this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
         this.updateCustomer = new CreatePerson(updateCustomerPresenter, customerDbConnector)
@@ -489,12 +468,6 @@ class DependencyManager {
             this.createCustomerControllerNewOffer = new CreatePersonController(this.createCustomerNewOffer)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreatePersonController.getSimpleName()} setup.", e)
-            throw e
-        }
-        try {
-            this.createAffiliationController = new CreateAffiliationController(this.createAffiliation)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${CreateAffiliationController.getSimpleName()} setup.", e)
             throw e
         }
         try {
@@ -530,14 +503,7 @@ class DependencyManager {
 
 
         try {
-            this.createAffiliationView = new CreateAffiliationView(this.viewModel, this.createAffiliationViewModel, this.createAffiliationController)
-        } catch (Exception e) {
-            log.error("Could not create ${CreateAffiliationView.getSimpleName()} view.", e)
-            throw e
-        }
-
-        try {
-            CreateAffiliationView createAffiliationView = new CreateAffiliationView(this.viewModel, this.createAffiliationViewModel, this.createAffiliationController)
+            CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
             this.createPersonView = new CreatePersonView(this.createCustomerController, this.viewModel, this.createCustomerViewModel, createAffiliationView)
         } catch (Exception e) {
             log.error("Could not create ${CreatePersonView.getSimpleName()} view.", e)
@@ -545,7 +511,7 @@ class DependencyManager {
         }
 
         try {
-            CreateAffiliationView createAffiliationView = new CreateAffiliationView(this.viewModel, this.createAffiliationViewModel, this.createAffiliationController)
+            CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
             this.updatePersonView = new UpdatePersonView(this.updateCustomerController, this.viewModel, this.updatePersonViewModel, createAffiliationView)
         } catch (Exception e) {
             log.error("Could not create ${UpdatePersonView.getSimpleName()} view.", e)
@@ -553,6 +519,7 @@ class DependencyManager {
         }
 
         try {
+            CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
             this.createCustomerViewNewOffer = new CreatePersonView(this.createCustomerControllerNewOffer, this.viewModel, this.createCustomerViewModelNewOffer, createAffiliationView)
         } catch (Exception e) {
             log.error("Could not create ${CreatePersonView.getSimpleName()} view.", e)
@@ -561,12 +528,13 @@ class DependencyManager {
 
         CreateOfferView createOfferView
         try {
+            CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
             createOfferView = new CreateOfferView(
                     this.viewModel,
                     this.createOfferViewModel,
                     this.createOfferController,
                     this.createCustomerViewNewOffer,
-                    this.createAffiliationView,
+                    createAffiliationView,
                     this.offerService)
         } catch (Exception e) {
             log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
@@ -575,12 +543,13 @@ class DependencyManager {
 
         CreateOfferView updateOfferView
         try {
+            CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
             updateOfferView = new CreateOfferView(
                     this.viewModel,
                     this.updateOfferViewModel,
                     this.updateOfferController,
                     this.createPersonView,
-                    this.createAffiliationView,
+                    createAffiliationView,
                     this.offerService)
         } catch (Exception e) {
             log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
@@ -637,14 +606,19 @@ class DependencyManager {
 
         AppView portletView
         try {
-            CreatePersonView createCustomerView2 = new CreatePersonView(createCustomerController, this
-                    .viewModel, createCustomerViewModel, createAffiliationView)
-            CreateAffiliationView createAffiliationView2 = new CreateAffiliationView(this.viewModel,
-                    createAffiliationViewModel, createAffiliationController)
+            CreateAffiliationView createAffiliationViewCreateCustomer = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
+            CreatePersonView createCustomerView2 = new CreatePersonView(
+                    createCustomerController,
+                    this.viewModel,
+                    createCustomerViewModel,
+                    createAffiliationViewCreateCustomer
+            )
+
             SearchAffiliationView searchAffiliationView = new SearchAffiliationView(this.searchAffiliationViewModel)
+            CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
             portletView = new AppView(this.viewModel,
                     createCustomerView2,
-                    createAffiliationView2,
+                    createAffiliationView,
                     searchAffiliationView,
                     createOfferView,
                     overviewView,
