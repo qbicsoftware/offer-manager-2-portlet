@@ -95,7 +95,6 @@ class DependencyManager {
 
     private AppViewModel viewModel
     private UpdatePersonViewModel updatePersonViewModel
-    private CreateOfferViewModel updateOfferViewModel
     private SearchPersonViewModel searchPersonViewModel
     private MaintainProductsViewModel maintainProductsViewModel
     private MaintainProductsViewModel maintainProductsViewModelArchive
@@ -104,7 +103,6 @@ class DependencyManager {
 
     private AppPresenter presenter
     private CreatePersonPresenter updateCustomerPresenter
-    private CreateOfferPresenter updateOfferPresenter
     private MaintainProductsPresenter createProductPresenter
     private MaintainProductsPresenter archiveProductPresenter
     private MaintainProductsPresenter copyProductPresenter
@@ -117,14 +115,11 @@ class DependencyManager {
     private OpenBisClient openbisClient
 
     private CreatePerson updateCustomer
-    private CreateOffer updateOffer
-    private FetchOffer fetchOfferUpdateOffer
     private CreateProduct createProduct
     private ArchiveProduct archiveProduct
     private CopyProduct copyProduct
 
     private CreatePersonController updateCustomerController
-    private CreateOfferController updateOfferController
     private MaintainProductsController maintainProductController
 
     private CreatePersonView updatePersonView
@@ -245,16 +240,6 @@ class DependencyManager {
             log.error("Unexpected exception during ${UpdatePersonViewModel.getSimpleName()} view model setup.", e)
             throw e
         }
-        try {
-            this.updateOfferViewModel = new UpdateOfferViewModel(
-                    customerResourceService,
-                    managerResourceService,
-                    productsResourcesService,
-                    offerUpdateEvent)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
-            throw e
-        }
 
         try {
             this.searchPersonViewModel = new SearchPersonViewModel(personResourceService, personUpdateEvent)
@@ -301,14 +286,6 @@ class DependencyManager {
             log.error("Unexpected exception during ${CreatePersonPresenter.getSimpleName()} setup.", e)
             throw e
         }
-
-        try {
-            this.updateOfferPresenter = new CreateOfferPresenter(this.viewModel,
-                    this.updateOfferViewModel, this.offerService)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} setup", e)
-        }
-
         try {
             this.createProductPresenter = new MaintainProductsPresenter(this.maintainProductsViewModel, this.viewModel)
         } catch (Exception e) {
@@ -328,11 +305,7 @@ class DependencyManager {
 
     private void setupUseCaseInteractors() {
 
-        this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
         this.updateCustomer = new CreatePerson(updateCustomerPresenter, customerDbConnector)
-
-        this.fetchOfferUpdateOffer = new FetchOffer(offerDbConnector, updateOfferPresenter)
-
         this.createProduct = new CreateProduct(productsDbConnector, createProductPresenter)
         this.archiveProduct = new ArchiveProduct(productsDbConnector, archiveProductPresenter)
         this.copyProduct = new CopyProduct(productsDbConnector, copyProductPresenter, productsDbConnector)
@@ -345,12 +318,6 @@ class DependencyManager {
             log.error("Unexpected exception during ${CreatePersonController.getSimpleName()} setup.", e)
             throw e
         }
-        try {
-            this.updateOfferController = new CreateOfferController(this.updateOffer, this.fetchOfferUpdateOffer, this.updateOffer)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
-        }
-
         try {
             this.maintainProductController = new MaintainProductsController(this.createProduct, this.archiveProduct, this.copyProduct)
         } catch (Exception e) {
@@ -365,28 +332,6 @@ class DependencyManager {
             this.updatePersonView = new UpdatePersonView(this.updateCustomerController, this.viewModel, this.updatePersonViewModel, createAffiliationView)
         } catch (Exception e) {
             log.error("Could not create ${UpdatePersonView.getSimpleName()} view.", e)
-            throw e
-        }
-
-        CreateOfferView updateOfferView
-        try {
-            CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
-            CreatePersonView createCustomerView = createCreatePersonView(viewModel,
-                    affiliationService,
-                    customerResourceService,
-                    personResourceService,
-                    managerResourceService,
-                    customerDbConnector,
-                    customerDbConnector)
-            updateOfferView = new CreateOfferView(
-                    this.viewModel,
-                    this.updateOfferViewModel,
-                    this.updateOfferController,
-                    createCustomerView,
-                    createAffiliationView,
-                    this.offerService)
-        } catch (Exception e) {
-            log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
             throw e
         }
 
@@ -446,6 +391,22 @@ class DependencyManager {
                     offerDbConnector,
                     offerDbConnector
             )
+
+            CreateOfferView updateOfferView = createUpdateOfferView(
+                    viewModel,
+                    affiliationService,
+                    customerResourceService,
+                    offerService,
+                    personResourceService,
+                    managerResourceService,
+                    productsResourcesService,
+                    offerUpdateEvent,
+                    customerDbConnector,
+                    offerDbConnector,
+                    customerDbConnector,
+                    offerDbConnector
+            )
+
             OfferOverviewView overviewView = createOfferOverviewView(
                     viewModel,
                     overviewService,
