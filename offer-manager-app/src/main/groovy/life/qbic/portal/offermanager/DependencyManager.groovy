@@ -684,7 +684,6 @@ class DependencyManager {
      * @param sharedViewModel
      * @param affiliationResourcesService
      * @param customerResourcesService
-     * @param personResourcesService
      * @param projectManagerResourcesService
      * @param personUpdateEvent
      * @param createAffiliationDataSource
@@ -694,7 +693,6 @@ class DependencyManager {
     private static UpdatePersonView createUpdatePersonView(AppViewModel sharedViewModel,
                                                            ResourcesService<Affiliation> affiliationResourcesService,
                                                            ResourcesService<Customer> customerResourcesService,
-                                                           ResourcesService<Person> personResourcesService,
                                                            ResourcesService<ProjectManager> projectManagerResourcesService,
                                                            EventEmitter<Person> personUpdateEvent,
                                                            CreateAffiliationDataSource createAffiliationDataSource,
