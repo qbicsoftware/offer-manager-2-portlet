@@ -95,36 +95,33 @@ import life.qbic.portal.utils.ConfigurationManagerFactory
 class DependencyManager {
 
     private final Role userRole
-
-    private AppViewModel viewModel
-    private CreateProductViewModel createProductViewModel
-    private CopyProductViewModel copyProductViewModel
-
-    private AppPresenter presenter
-    private CreatePersonPresenter updateCustomerPresenter
-
-    private PersonDbConnector customerDbConnector
-    private OfferDbConnector offerDbConnector
-    private ProductsDbConnector productsDbConnector
-    private ProjectMainConnector projectMainConnector
-    private ProjectDbConnector projectDbConnector
-    private OpenBisClient openbisClient
-
-    private AppView portletView
     private ConfigurationManager configurationManager
 
-    private OverviewService overviewService
+    private AppPresenter presenter
+    private AppView portletView
+    private AppViewModel viewModel
+
+    private ResourcesService<Affiliation> affiliationService
+    private ResourcesService<Customer> customerResourceService
+    private ResourcesService<Offer> offerService
+    private ResourcesService<OfferOverview> overviewService
+    private ResourcesService<Person> personResourceService
+    private ResourcesService<Product> productsResourcesService
+    private ResourcesService<ProjectIdentifier> projectResourceService
+    private ResourcesService<ProjectManager> managerResourceService
+    private ResourcesService<ProjectSpace> projectSpaceResourceService
+
     private EventEmitter<Offer> offerUpdateEvent
-    private CustomerResourceService customerResourceService
-    private AffiliationResourcesService affiliationService
-    private OfferResourcesService offerService
-    private ProductsResourcesService productsResourcesService
-    private ProjectManagerResourceService managerResourceService
-    private PersonResourceService personResourceService
-    private ProjectSpaceResourceService projectSpaceResourceService
-    private ProjectResourceService projectResourceService
     private EventEmitter<Person> personUpdateEvent
     private EventEmitter<Project> projectCreatedEvent
+
+    private OfferDbConnector offerDbConnector
+    private OpenBisClient openbisClient
+    private PersonDbConnector customerDbConnector
+    private ProductsDbConnector productsDbConnector
+    private ProjectDbConnector projectDbConnector
+    private ProjectMainConnector projectMainConnector
+
     /**
      * Public constructor.
      *
@@ -142,7 +139,7 @@ class DependencyManager {
         setupDbConnections()
         setupEventEmitter()
         setupServices()
-        viewModel = new AppViewModel(affiliationService, this.userRole)
+        viewModel = new AppViewModel(this.userRole)
         presenter = new AppPresenter(this.viewModel)
         portletView = setupAppView()
     }
