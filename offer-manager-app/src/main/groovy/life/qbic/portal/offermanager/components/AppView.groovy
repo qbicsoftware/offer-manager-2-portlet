@@ -5,18 +5,14 @@ import com.vaadin.server.Page
 import com.vaadin.ui.*
 import com.vaadin.ui.MenuBar.MenuItem
 import com.vaadin.ui.themes.ValoTheme
-import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationView
-import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationViewModel
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
-import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
-import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
+import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.product.MaintainProductsView
-
 
 /**
  * Class which connects the view elements with the ViewModel and the Controller
@@ -24,8 +20,7 @@ import life.qbic.portal.offermanager.components.product.MaintainProductsView
  * This class provides the initial listeners
  * and layout upon which the views are presented
  *
- * @since 1.0.0
- *
+ * @since 1.0.0*
  */
 @Log4j2
 class AppView extends VerticalLayout {
@@ -40,7 +35,6 @@ class AppView extends VerticalLayout {
     private final OfferOverviewView overviewView
     private final SearchPersonView searchPersonView
     private final MaintainProductsView maintainProductsView
-    private final CreateProjectView createProjectView
     private final CreateOfferView updateOfferView
 
     AppView(AppViewModel portletViewModel,
@@ -51,8 +45,7 @@ class AppView extends VerticalLayout {
             OfferOverviewView overviewView,
             CreateOfferView updateOfferView,
             SearchPersonView searchPersonView,
-            MaintainProductsView maintainProductsView,
-            CreateProjectView createProjectView) {
+            MaintainProductsView maintainProductsView) {
         super()
         this.portletViewModel = portletViewModel
         this.createPersonView = createPersonView
@@ -64,7 +57,6 @@ class AppView extends VerticalLayout {
         this.updateOfferView = updateOfferView
         this.searchPersonView = searchPersonView
         this.maintainProductsView = maintainProductsView
-        this.createProjectView = createProjectView
 
         initLayout()
         registerListeners()
@@ -87,13 +79,12 @@ class AppView extends VerticalLayout {
                 overviewView,
                 updateOfferView,
                 searchPersonView,
-                maintainProductsView,
-                createProjectView
+                maintainProductsView
         ])
     }
 
     private void hideAllFeatureViews() {
-        featureViews.each {it.setVisible(false)}
+        featureViews.each { it.setVisible(false) }
     }
 
     /**
@@ -117,7 +108,6 @@ class AppView extends VerticalLayout {
         verticalLayout.addComponent(this.updateOfferView)
         verticalLayout.addComponent(this.searchPersonView)
         verticalLayout.addComponent(this.maintainProductsView)
-        verticalLayout.addComponent(this.createProjectView)
 
         this.setSizeFull()
         this.addComponent(verticalLayout)
@@ -151,14 +141,14 @@ class AppView extends VerticalLayout {
         })
 
         this.updateOfferView.viewModel.addPropertyChangeListener("offerCreatedSuccessfully", {
-            if(it.newValue as Boolean){
+            if (it.newValue as Boolean) {
                 this.updateOfferView.setVisible(false)
                 this.overviewView.setVisible(true)
             }
         })
 
         this.createOfferView.viewModel.addPropertyChangeListener("offerCreatedSuccessfully", {
-            if(it.newValue as Boolean){
+            if (it.newValue as Boolean) {
                 this.createOfferView.setVisible(false)
                 this.overviewView.setVisible(true)
             }
@@ -184,18 +174,18 @@ class AppView extends VerticalLayout {
         private void createMenuBar() {
             this.addComponent(dropDownButton("Offers",
                     [
-                            "New Offer": {toggleView(createOfferView)},
-                            "Offer Overview": {toggleView(overviewView)}
+                            "New Offer"     : { toggleView(createOfferView) },
+                            "Offer Overview": { toggleView(overviewView) }
                     ]))
             this.addComponent(dropDownButton("Persons",
                     [
-                            "New Person": {toggleView(createPersonView)},
-                            "Search": {toggleView(searchPersonView)}
+                            "New Person": { toggleView(createPersonView) },
+                            "Search"    : { toggleView(searchPersonView) }
                     ]))
             this.addComponent(dropDownButton("Affiliations",
                     [
-                            "New Affiliation": {toggleView(createAffiliationView)},
-                            "Search": {toggleView(searchAffiliationView)}
+                            "New Affiliation": { toggleView(createAffiliationView) },
+                            "Search"         : { toggleView(searchAffiliationView) }
                     ]))
             Button maintainProducts = new Button("Service Products", VaadinIcons.GRID_BIG)
             maintainProducts.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)

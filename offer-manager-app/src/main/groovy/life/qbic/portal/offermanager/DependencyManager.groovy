@@ -96,22 +96,18 @@ class DependencyManager {
     private AppViewModel viewModel
     private UpdatePersonViewModel updatePersonViewModel
     private CreateOfferViewModel updateOfferViewModel
-    private OfferOverviewModel offerOverviewModel
     private SearchPersonViewModel searchPersonViewModel
     private MaintainProductsViewModel maintainProductsViewModel
     private MaintainProductsViewModel maintainProductsViewModelArchive
     private CreateProductViewModel createProductViewModel
     private CopyProductViewModel copyProductViewModel
-    private CreateProjectViewModel createProjectModel
 
     private AppPresenter presenter
     private CreatePersonPresenter updateCustomerPresenter
     private CreateOfferPresenter updateOfferPresenter
-    private OfferOverviewPresenter offerOverviewPresenter
     private MaintainProductsPresenter createProductPresenter
     private MaintainProductsPresenter archiveProductPresenter
     private MaintainProductsPresenter copyProductPresenter
-    private CreateProjectPresenter createProjectPresenter
 
     private PersonDbConnector customerDbConnector
     private OfferDbConnector offerDbConnector
@@ -122,8 +118,6 @@ class DependencyManager {
 
     private CreatePerson updateCustomer
     private CreateOffer updateOffer
-    private CreateProject createProject
-    private FetchOffer fetchOfferOfferOverview
     private FetchOffer fetchOfferUpdateOffer
     private CreateProduct createProduct
     private ArchiveProduct archiveProduct
@@ -131,9 +125,7 @@ class DependencyManager {
 
     private CreatePersonController updateCustomerController
     private CreateOfferController updateOfferController
-    private OfferOverviewController offerOverviewController
     private MaintainProductsController maintainProductController
-    private CreateProjectController createProjectController
 
     private CreatePersonView updatePersonView
     private AppView portletView
@@ -265,22 +257,9 @@ class DependencyManager {
         }
 
         try {
-            this.offerOverviewModel = new OfferOverviewModel(overviewService, viewModel, offerUpdateEvent)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${OfferOverviewModel.getSimpleName()} view model setup.", e)
-        }
-
-        try {
             this.searchPersonViewModel = new SearchPersonViewModel(personResourceService, personUpdateEvent)
         } catch (Exception e) {
             log.error("Unexpected exception during ${SearchPersonViewModel.getSimpleName()} view model setup.", e)
-        }
-
-        try {
-            this.createProjectModel = new CreateProjectViewModel(projectSpaceResourceService, projectResourceService)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${CreateProjectViewModel.getSimpleName()} view model" +
-                    " setup.", e)
         }
 
         try {
@@ -329,11 +308,6 @@ class DependencyManager {
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} setup", e)
         }
-        try {
-            this.offerOverviewPresenter = new OfferOverviewPresenter(this.viewModel, this.offerOverviewModel)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${OfferOverviewPresenter.getSimpleName()} setup", e)
-        }
 
         try {
             this.createProductPresenter = new MaintainProductsPresenter(this.maintainProductsViewModel, this.viewModel)
@@ -350,11 +324,6 @@ class DependencyManager {
         } catch (Exception e) {
             log.error("Unexpected exception during ${MaintainProductsPresenter.getSimpleName()} setup", e)
         }
-        try {
-            this.createProjectPresenter = new CreateProjectPresenter(createProjectModel, viewModel, projectCreatedEvent)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${CreateProjectPresenter.getSimpleName()} setup", e)
-        }
     }
 
     private void setupUseCaseInteractors() {
@@ -362,13 +331,11 @@ class DependencyManager {
         this.updateOffer = new CreateOffer(offerDbConnector, updateOfferPresenter)
         this.updateCustomer = new CreatePerson(updateCustomerPresenter, customerDbConnector)
 
-        this.fetchOfferOfferOverview = new FetchOffer(offerDbConnector, offerOverviewPresenter)
         this.fetchOfferUpdateOffer = new FetchOffer(offerDbConnector, updateOfferPresenter)
 
         this.createProduct = new CreateProduct(productsDbConnector, createProductPresenter)
         this.archiveProduct = new ArchiveProduct(productsDbConnector, archiveProductPresenter)
         this.copyProduct = new CopyProduct(productsDbConnector, copyProductPresenter, productsDbConnector)
-        this.createProject = new CreateProject(createProjectPresenter, projectMainConnector, projectMainConnector)
     }
 
     private void setupControllers() {
@@ -383,22 +350,11 @@ class DependencyManager {
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferController.getSimpleName()} setup", e)
         }
-        try {
-            this.offerOverviewController = new OfferOverviewController(this.fetchOfferOfferOverview)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${OfferOverviewController.getSimpleName()} setup", e)
-        }
 
         try {
             this.maintainProductController = new MaintainProductsController(this.createProduct, this.archiveProduct, this.copyProduct)
         } catch (Exception e) {
             log.error("Unexpected exception during ${MaintainProductsController.getSimpleName()} setup", e)
-        }
-
-        try {
-            this.createProjectController = new CreateProjectController(this.createProject)
-        } catch (Exception e) {
-            log.error("Unexpected exception during ${CreateProjectController.getSimpleName()} setup", e)
         }
     }
 
@@ -431,22 +387,6 @@ class DependencyManager {
                     this.offerService)
         } catch (Exception e) {
             log.error("Could not create ${CreateOfferView.getSimpleName()} view.", e)
-            throw e
-        }
-
-        CreateProjectView createProjectView
-        try {
-            createProjectView = new CreateProjectView(createProjectModel, createProjectController)
-        } catch (Exception e) {
-            log.error("Could not create ${CreateProjectView.getSimpleName()} view.", e)
-            throw e
-        }
-
-        OfferOverviewView overviewView
-        try {
-            overviewView = new OfferOverviewView(offerOverviewModel, offerOverviewController, createProjectView)
-        } catch (Exception e) {
-            log.error("Could not create ${OfferOverviewView.getSimpleName()} view.", e)
             throw e
         }
 
@@ -506,6 +446,17 @@ class DependencyManager {
                     offerDbConnector as CreateOfferDataSource,
                     offerDbConnector as FetchOfferDataSource
             )
+            OfferOverviewView overviewView = createOfferOverviewView(
+                    viewModel,
+                    overviewService as ResourcesService<OfferOverview>,
+                    projectResourceService as ResourcesService<ProjectIdentifier>,
+                    projectSpaceResourceService as ResourcesService<ProjectSpace>,
+                    offerUpdateEvent as EventEmitter<Offer>,
+                    projectCreatedEvent as EventEmitter<Project>,
+                    projectDbConnector as CreateProjectDataSource,
+                    projectDbConnector as CreateProjectSpaceDataSource,
+                    offerDbConnector as FetchOfferDataSource)
+
             portletView = new AppView(this.viewModel,
                     createPersonView,
                     createAffiliationView,
@@ -515,7 +466,6 @@ class DependencyManager {
                     updateOfferView,
                     searchPersonView,
                     maintainProductsView,
-                    createProjectView
             )
             this.portletView = portletView
         } catch (Exception e) {
@@ -697,27 +647,23 @@ class DependencyManager {
     }
 
     private static CreateOfferView createUpdateOffer() {
-        //TODO
-        return null
-
+        //TODO implement
+        throw new RuntimeException("Not Implemented.")
     }
 
     private static SearchPersonView createSearchPerson() {
-        //TODO
-        return null
-
+        //TODO implement
+        throw new RuntimeException("Not Implemented.")
     }
 
     private static MaintainProductsView createMaintainProducts() {
-        //TODO
-        return null
-
+        //TODO implement
+        throw new RuntimeException("Not Implemented.")
     }
 
-    private static CreateProjectView createCreateProject() {
-        //TODO
-        return null
-
+    private static UpdatePersonView createUpdatePersonView() {
+        //TODO implement
+        throw new RuntimeException("Not Implemented.")
     }
 
 
