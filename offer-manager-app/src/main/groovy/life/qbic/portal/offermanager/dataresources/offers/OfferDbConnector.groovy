@@ -326,7 +326,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
              */
             def splittedIdentifier = projectIdentifier.split("/")
             if (splittedIdentifier.length != 3) {
-                throw new RuntimeException("Project identifier has an unknown format: ${projectIdentifier.split()}.")
+                throw new RuntimeException("Project identifier has an unexpected number of separators: ${projectIdentifier.split()}.")
             }
             def space = new ProjectSpace(splittedIdentifier[1])
             def code = new ProjectCode(splittedIdentifier[2])
