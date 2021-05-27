@@ -111,7 +111,7 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
         addButtonsLayout.setComponentAlignment(updatePerson, Alignment.MIDDLE_RIGHT)
 
 
-        addButtonsLayout.setSizeFull()
+        addButtonsLayout.setHeightFull()
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.setEnabled(false)
@@ -144,6 +144,7 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
                 affiliationSelectionContainer,
                 buttonLayout)
 
+        this.setComponentAlignment(addButtonsLayout, Alignment.MIDDLE_RIGHT)
         affiliationSelectionContainer.setVisible(false)
 
         this.setMargin(false)
