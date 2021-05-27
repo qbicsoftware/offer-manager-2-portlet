@@ -5,6 +5,7 @@ import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.OfferToPDFConverter
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 import life.qbic.portal.offermanager.dataresources.offers.OverviewService
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
@@ -33,7 +34,7 @@ class OfferOverviewModel {
 
     Optional<Offer> offer
 
-    private final OverviewService service
+    private final ResourcesService<OfferOverview> service
 
     private final AppViewModel viewModel
 
@@ -43,7 +44,7 @@ class OfferOverviewModel {
 
     EventEmitter offerEventEmitter
 
-    OfferOverviewModel(OverviewService service,
+    OfferOverviewModel(ResourcesService<OfferOverview> service,
                        AppViewModel viewModel,
                        EventEmitter<Offer> offerEventEmitter) {
         this.service = service
