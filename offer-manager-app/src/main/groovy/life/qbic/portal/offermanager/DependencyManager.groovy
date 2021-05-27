@@ -403,7 +403,7 @@ class DependencyManager {
                     overviewView,
                     updateOfferView,
                     searchPersonView,
-                    maintainProductsView,
+                    maintainProductsView
             )
             this.portletView = portletView
         } catch (Exception e) {
@@ -646,14 +646,41 @@ class DependencyManager {
         return updateOfferView
     }
 
-    private static SearchPersonView createSearchPerson() {
-        //TODO implement
-        throw new RuntimeException("Not Implemented.")
-    }
+    /**
+     *
+     * @param sharedViewModel
+     * @param affiliationResourcesService
+     * @param customerResourcesService
+     * @param projectManagerResourcesService
+     * @param personResourcesService
+     * @param createAffiliationDataSource
+     * @param createPersonDataSource
+     * @return
+     */
+    private static SearchPersonView createSearchPersonView(AppViewModel sharedViewModel,
+                                                           ResourcesService<Affiliation> affiliationResourcesService,
+                                                           ResourcesService<Customer> customerResourcesService,
+                                                           ResourcesService<ProjectManager> projectManagerResourcesService,
+                                                           ResourcesService<Person> personResourcesService,
+                                                           CreateAffiliationDataSource createAffiliationDataSource,
+                                                           CreatePersonDataSource createPersonDataSource) {
+        // this event emitter is used to communicate between the search person view and the
+        // update person view
+        EventEmitter<Person> personSelectEvent = new EventEmitter<Person>()
 
-    private static MaintainProductsView createMaintainProducts() {
-        //TODO implement
-        throw new RuntimeException("Not Implemented.")
+        SearchPersonViewModel searchPersonViewModel = new SearchPersonViewModel(personResourcesService, personSelectEvent)
+        UpdatePersonView updatePersonView = createUpdatePersonView(
+                sharedViewModel,
+                affiliationResourcesService,
+                customerResourcesService,
+                projectManagerResourcesService,
+                personResourcesService,
+                personSelectEvent,
+                createAffiliationDataSource,
+                createPersonDataSource
+        )
+        SearchPersonView searchPersonView = new SearchPersonView(searchPersonViewModel, updatePersonView)
+        return searchPersonView
     }
 
     /**
@@ -662,6 +689,7 @@ class DependencyManager {
      * @param affiliationResourcesService
      * @param customerResourcesService
      * @param projectManagerResourcesService
+     * @param personResourcesService
      * @param personUpdateEvent
      * @param createAffiliationDataSource
      * @param createPersonDataSource
@@ -704,5 +732,9 @@ class DependencyManager {
         return updatePersonView
     }
 
+    private static MaintainProductsView createMaintainProducts() {
+        //TODO implement
+        throw new RuntimeException("Not Implemented.")
+    }
 
 }
