@@ -320,9 +320,18 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             return identifier
         }
         try {
+            /*
+            A full openBIS project ID has the format: '/<space>/<project>', where
+            <space> and <project> are placeholders for real space and project names.
+             */
             def splittedIdentifier = projectIdentifier.split("/")
-            def space = new ProjectSpace(splittedIdentifier[0])
-            def code = new ProjectCode(splittedIdentifier[1])
+            if (splittedIdentifier.length != 3) {
+                throw new RuntimeException(
+                        "Project identifier has an unexpected number of separators: ${projectIdentifier}. " +
+                                "The expected format must follow this schema: \'/<space>/<project>\'")
+            }
+            def space = new ProjectSpace(splittedIdentifier[1])
+            def code = new ProjectCode(splittedIdentifier[2])
             identifier = Optional.of(new ProjectIdentifier(space, code))
         } catch (Exception e) {
             log.error(e.message)
