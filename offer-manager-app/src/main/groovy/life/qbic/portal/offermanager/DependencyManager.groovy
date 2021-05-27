@@ -2,8 +2,6 @@ package life.qbic.portal.offermanager
 
 import groovy.util.logging.Log4j2
 import life.qbic.business.offers.fetch.FetchOffer
-import life.qbic.business.persons.update.UpdatePerson
-import life.qbic.business.persons.update.UpdatePersonOutput
 import life.qbic.business.products.archive.ArchiveProduct
 import life.qbic.business.products.copy.CopyProduct
 import life.qbic.business.products.create.CreateProduct
@@ -179,6 +177,7 @@ class DependencyManager {
     private PersonResourceService personResourceService
     private ProjectSpaceResourceService projectSpaceResourceService
     private ProjectResourceService projectResourceService
+    private EventEmitter<Person> personUpdateEventNewOffer
     private EventEmitter<Person> personUpdateEvent
     private EventEmitter<Project> projectCreatedEvent
     private EventEmitter<Product> productUpdateEvent
@@ -259,6 +258,7 @@ class DependencyManager {
         this.offerUpdateEvent = new EventEmitter<Offer>()
         this.personUpdateEvent = new EventEmitter<Person>()
         this.productUpdateEvent = new EventEmitter<Product>()
+        this.personUpdateEventNewOffer = new EventEmitter<Person>()
     }
 
     private void setupViewModels() {
@@ -300,7 +300,7 @@ class DependencyManager {
                 customerResourceService,
                 managerResourceService,
                 affiliationService,
-                personUpdateEvent,
+                personUpdateEventNewOffer,
                 personResourceService)
             updatePersonViewModelNewOffer.academicTitles.addAll(AcademicTitle.values().collect{it.value})
         } catch (Exception e) {
@@ -334,7 +334,8 @@ class DependencyManager {
             this.createOfferViewModel = new CreateOfferViewModel(
                     customerResourceService,
                     managerResourceService,
-                    productsResourcesService)
+                    productsResourcesService,
+                    personUpdateEventNewOffer)
             //todo add affiliations, persons and project managers to the model
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)
@@ -346,6 +347,7 @@ class DependencyManager {
                     customerResourceService,
                     managerResourceService,
                     productsResourcesService,
+                    personUpdateEvent,
                     offerUpdateEvent)
         } catch (Exception e) {
             log.error("Unexpected exception during ${CreateOfferViewModel.getSimpleName()} view model setup.", e)

@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.components.offer.update
 
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -33,8 +34,9 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
     UpdateOfferViewModel(CustomerResourceService customerResourceService,
                          ProjectManagerResourceService managerResourceService,
                          ProductsResourcesService productsService,
+                         EventEmitter<Person> updatePersonEvent,
                          EventEmitter<Offer> offerUpdateEvent) {
-        super(customerResourceService, managerResourceService, productsService)
+        super(customerResourceService, managerResourceService, productsService, updatePersonEvent)
         this.offerUpdate = offerUpdateEvent
 
         this.offerUpdate.register((Offer offer) -> {

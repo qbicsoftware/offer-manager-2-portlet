@@ -1,13 +1,16 @@
 package life.qbic.portal.offermanager.components.offer.create
 
 import groovy.beans.Bindable
-import groovy.transform.CompileStatic
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.*
+import life.qbic.datamodel.dtos.general.Person
+import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
 import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
@@ -76,18 +79,25 @@ class CreateOfferViewModel {
 
     Optional<Offer> savedOffer = Optional.empty()
 
+    // where to emit selection for updatable person to
+    private final EventEmitter<Person> personUpdateEvent
+
     private final CustomerResourceService customerResourceService
     private final ProductsResourcesService productsResourcesService
     private final ProjectManagerResourceService managerResourceService
 
     @Bindable Boolean offerCreatedSuccessfully
 
+    private final Logging log = Logger.getLogger(this.class)
+
     CreateOfferViewModel(CustomerResourceService customerResourceService,
                          ProjectManagerResourceService managerResourceService,
-                         ProductsResourcesService productsResourcesService) {
+                         ProductsResourcesService productsResourcesService,
+                         EventEmitter<Person> personUpdateEvent) {
         this.customerResourceService = customerResourceService
         this.productsResourcesService = productsResourcesService
         this.managerResourceService = managerResourceService
+        this.personUpdateEvent = personUpdateEvent
 
         offerCreatedSuccessfully = false
         this.addPropertyChangeListener("offerCreatedSuccessfully", {
@@ -239,5 +249,18 @@ class CreateOfferViewModel {
                     throw new RuntimeException("Unknown product category '${product.getClass().getSimpleName()}'")
             }
         }
+    }
+
+    /**
+     * Sets the customer for the offer. Whenever a change is detected an event is emitted.
+     * @param customer
+     */
+    void setCustomer(Customer customer) {
+        if (this.customer != customer) {
+            personUpdateEvent.emit(customer)
+        } else {
+            log.warn("Overwrite of equal values. ${this.customer} to be overwritten with $customer.")
+        }
+        this.customer = customer
     }
 }

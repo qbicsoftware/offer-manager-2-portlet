@@ -4,7 +4,7 @@ import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.general.Person
-
+import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel
@@ -27,7 +27,7 @@ import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourc
  * @since: 1.0.0
  *
  */
-class UpdatePersonViewModel extends CreatePersonViewModel{
+class UpdatePersonViewModel extends CreatePersonViewModel implements Resettable{
 
     final private EventEmitter<Person> customerUpdate
     ObservableList affiliationList
@@ -45,8 +45,13 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
         personUpdated = false
 
         this.customerUpdate.register((Person person) -> {
-            setOutdatedPerson(person)
-            loadData(person)
+            if (person) {
+                setOutdatedPerson(person)
+                loadData(person)
+            } else {
+                setOutdatedPerson(null)
+                reset()
+            }
         })
     }
 
@@ -58,5 +63,14 @@ class UpdatePersonViewModel extends CreatePersonViewModel{
         //obtain the affiliations
         affiliationList.clear()
         affiliationList.addAll(person.affiliations)
+    }
+
+    @Override
+    void reset() {
+        academicTitle = null
+        firstName = null
+        lastName = null
+        email = null
+        affiliationList.clear()
     }
 }

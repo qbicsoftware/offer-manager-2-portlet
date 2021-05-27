@@ -234,12 +234,16 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
                 // must provide it again after changing the customer.
                 viewModel.customerAffiliation = null
 
-                //todo do we need to clear the grid for another selection?
                 affiliationGrid.setItems(affiliations)
 
                 affiliationSelectionContainer.setVisible(true)
             }else{
                 affiliationSelectionContainer.setVisible(false)
+                //removing selection from view model
+                viewModel.customer = null
+                viewModel.customerAffiliation = null
+                //clear grid on removing the selection
+                affiliationGrid.setItems([])
             }
 
         })
@@ -257,10 +261,14 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
          */
         viewModel.addPropertyChangeListener({
             if (it.propertyName.equals("customer")) {
-                def customerFullName =
-                        "${ viewModel.customer?.firstName ?: "" } " +
-                                "${viewModel.customer?.lastName ?: "" }"
-                selectedCustomer.setValue(customerFullName)
+                if (it.getNewValue()) {
+                    def customerFullName =
+                            "${viewModel.customer?.firstName ?: ""} " +
+                                    "${viewModel.customer?.lastName ?: ""}"
+                    selectedCustomer.setValue(customerFullName)
+                } else {
+                    selectedCustomer.setValue("-")
+                }
             }
             if (it.propertyName.equals("customerAffiliation")) {
                 def affiliationInfo = "${viewModel.customerAffiliation?.organisation ?: "-"}"
@@ -302,6 +310,11 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
         resetSelection()
     }
 
+    private void addButtonListeners() {
+        this.updatePerson.addClickListener({
+            //TODO
+        })
+    }
     private void resetSelection() {
         selectedCustomer.setValue("-")
         selectedAffiliation.setValue("-")
