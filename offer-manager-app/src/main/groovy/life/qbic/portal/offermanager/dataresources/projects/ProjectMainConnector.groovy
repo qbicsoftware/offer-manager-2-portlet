@@ -1,48 +1,40 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
-import groovy.transform.CompileStatic
-import groovy.util.logging.Log4j2
-
-import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
-import life.qbic.business.projects.spaces.ProjectSpaceExistsException
-import life.qbic.business.projects.create.CreateProjectDataSource
-import life.qbic.business.projects.create.ProjectExistsException
-import life.qbic.business.projects.create.SpaceNonExistingException
-
-import life.qbic.datamodel.dtos.business.*
-import life.qbic.datamodel.dtos.projectmanagement.*
-import life.qbic.business.exceptions.DatabaseQueryException
-
-import life.qbic.datamodel.identifiers.ExperimentCodeFunctions
-
-import java.sql.Connection
-import java.sql.PreparedStatement
-import java.sql.ResultSet
-import java.sql.Statement
-
-import life.qbic.openbis.openbisclient.OpenBisClient
-
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import life.qbic.xml.manager.StudyXMLParser
-import life.qbic.xml.study.Qexperiment
-
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.SynchronousOperationExecutionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.CreateProjectsOperation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.ProjectCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.CreateExperimentsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.ExperimentCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.id.ExperimentIdentifier
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.CreateExperimentsOperation
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.SynchronousOperationExecutionOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.CreateProjectsOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.ProjectCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.CreateSamplesOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.CreateSpacesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.SpaceCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
-import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
+import groovy.transform.CompileStatic
+import groovy.util.logging.Log4j2
+import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.projects.create.CreateProjectDataSource
+import life.qbic.business.projects.create.ProjectExistsException
+import life.qbic.business.projects.create.SpaceNonExistingException
+import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
+import life.qbic.business.projects.spaces.ProjectSpaceExistsException
+import life.qbic.datamodel.dtos.business.ProjectApplication
+import life.qbic.datamodel.dtos.projectmanagement.Project
+import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
+import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
+import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
+import life.qbic.datamodel.identifiers.ExperimentCodeFunctions
+import life.qbic.openbis.openbisclient.OpenBisClient
 import life.qbic.portal.offermanager.dataresources.offers.ProjectAssistant
+import life.qbic.xml.manager.StudyXMLParser
+import life.qbic.xml.study.Qexperiment
 
+import javax.xml.bind.JAXBElement
+import javax.xml.bind.JAXBException
 
 /**
  * Provides operations on QBiC project data
@@ -130,51 +122,51 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     }
 
     private void setupEmptyExperimentalDesign(ProjectSpace space, ProjectCode projectCodeObj)
-    throws JAXBException {
-  StudyXMLParser xmlParser = new StudyXMLParser()
-  JAXBElement<Qexperiment> res =
-      xmlParser.createNewDesign(new HashSet<>(), new ArrayList<>(), new HashMap<>(), new HashMap<>())
-  String emptyStudyXML = xmlParser.toString(res)
+            throws JAXBException {
+        StudyXMLParser xmlParser = new StudyXMLParser()
+        JAXBElement<Qexperiment> res =
+                xmlParser.createNewDesign(new HashSet<>(), new ArrayList<>(), new HashMap<>(), new HashMap<>())
+        String emptyStudyXML = xmlParser.toString(res)
 
-  String spaceCode = space.toString()
-  String projectCode = projectCodeObj.toString()
+        String spaceCode = space.toString()
+        String projectCode = projectCodeObj.toString()
 
-  String experimentCode = projectCode + "_INFO"
-  String sampleCode = projectCode + "000"
-  String experimentIdentifier = ExperimentCodeFunctions.getInfoExperimentID(spaceCode, projectCode)
+        String experimentCode = projectCode + "_INFO"
+        String sampleCode = projectCode + "000"
+        String experimentIdentifier = ExperimentCodeFunctions.getInfoExperimentID(spaceCode, projectCode)
 
-  Map<String, String> properties = new HashMap<>()
-  properties.put("Q_EXPERIMENTAL_SETUP", emptyStudyXML)
+        Map<String, String> properties = new HashMap<>()
+        properties.put("Q_EXPERIMENTAL_SETUP", emptyStudyXML)
 
-  createOpenbisExperiment(spaceCode, projectCode, experimentCode, "Q_PROJECT_DETAILS", properties)
+        createOpenbisExperiment(spaceCode, projectCode, experimentCode, "Q_PROJECT_DETAILS", properties)
 
-  createOpenbisSample(spaceCode, experimentIdentifier, sampleCode, "Q_ATTACHMENT_SAMPLE", new HashMap<>())
-}
+        createOpenbisSample(spaceCode, experimentIdentifier, sampleCode, "Q_ATTACHMENT_SAMPLE", new HashMap<>())
+    }
 
-private void createOpenbisExperiment(String spaceCode, String projectCode, String experimentCode, String experimentType, Map<String,String> properties) {
-  ExperimentCreation experiment = new ExperimentCreation()
-  experiment.setCode(experimentCode)
-  experiment.setProjectId(new ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier(spaceCode, projectCode))
-  experiment.setTypeId(new EntityTypePermId(experimentType))
-  experiment.setProperties(properties)
+    private void createOpenbisExperiment(String spaceCode, String projectCode, String experimentCode, String experimentType, Map<String, String> properties) {
+        ExperimentCreation experiment = new ExperimentCreation()
+        experiment.setCode(experimentCode)
+        experiment.setProjectId(new ch.ethz.sis.openbis.generic.asapi.v3.dto.project.id.ProjectIdentifier(spaceCode, projectCode))
+        experiment.setTypeId(new EntityTypePermId(experimentType))
+        experiment.setProperties(properties)
 
-  IOperation operation = new CreateExperimentsOperation(experiment)
-  handleOperations(operation)
-}
+        IOperation operation = new CreateExperimentsOperation(experiment)
+        handleOperations(operation)
+    }
 
-private void createOpenbisSample(String spaceCode, String experimentIdentifier, String sampleCode, String sampleType, Map<String,String> properties) {
-  SampleCreation sampleCreation = new SampleCreation()
-  sampleCreation.setTypeId(new EntityTypePermId(sampleType))
-  sampleCreation.setSpaceId(new SpacePermId(spaceCode))
+    private void createOpenbisSample(String spaceCode, String experimentIdentifier, String sampleCode, String sampleType, Map<String, String> properties) {
+        SampleCreation sampleCreation = new SampleCreation()
+        sampleCreation.setTypeId(new EntityTypePermId(sampleType))
+        sampleCreation.setSpaceId(new SpacePermId(spaceCode))
 
-  sampleCreation.setExperimentId(new ExperimentIdentifier(experimentIdentifier))
-  sampleCreation.setCode(sampleCode)
+        sampleCreation.setExperimentId(new ExperimentIdentifier(experimentIdentifier))
+        sampleCreation.setCode(sampleCode)
 
-  sampleCreation.setProperties(properties)
+        sampleCreation.setProperties(properties)
 
-  IOperation operation = new CreateSamplesOperation(sampleCreation)
-  handleOperations(operation)
-}
+        IOperation operation = new CreateSamplesOperation(sampleCreation)
+        handleOperations(operation)
+    }
 
     /**
      * Returns a copied list of existing projects fetched upon creation of this class

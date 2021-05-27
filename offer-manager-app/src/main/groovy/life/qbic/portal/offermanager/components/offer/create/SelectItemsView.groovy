@@ -8,21 +8,14 @@ import com.vaadin.data.validator.RegexpValidator
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
 import com.vaadin.shared.ui.grid.HeightMode
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Button
-import com.vaadin.ui.Grid
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.TabSheet
-import com.vaadin.ui.TextField
-import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
-import groovy.transform.CompileStatic
-import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.business.offers.Currency
-import life.qbic.portal.offermanager.components.GridUtils
+import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.AppViewModel
+import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.Resettable
 
 /**
@@ -33,10 +26,9 @@ import life.qbic.portal.offermanager.components.Resettable
  * with the intention of enabling a user the selecting of packages which the customer ordered. This will be the bases for
  * the calculated offer price.
  *
- * @since: 0.1.0
- *
+ * @since: 0.1.0*
  */
-class SelectItemsView extends VerticalLayout implements Resettable{
+class SelectItemsView extends VerticalLayout implements Resettable {
 
     private final CreateOfferViewModel createOfferViewModel
     private final AppViewModel viewModel
@@ -93,29 +85,29 @@ class SelectItemsView extends VerticalLayout implements Resettable{
         private String regex
 
         ProductTypeRegex(String regex) {
-            this.regex = regex;
+            this.regex = regex
         }
 
         String getRegex() {
-            return this.regex;
+            return this.regex
         }
     }
 
-    SelectItemsView(CreateOfferViewModel createOfferViewModel, AppViewModel viewModel){
+    SelectItemsView(CreateOfferViewModel createOfferViewModel, AppViewModel viewModel) {
         this.createOfferViewModel = createOfferViewModel
         this.viewModel = viewModel
 
         sequencingProduct = createOfferViewModel.sequencingProducts as ObservableList
         sequencingProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
-              sequencingGrid.dataProvider.refreshAll()
+                sequencingGrid.dataProvider.refreshAll()
             }
         })
 
         projectManagementProduct = createOfferViewModel.managementProducts as ObservableList
         projectManagementProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
-              projectManagementGrid.dataProvider.refreshAll()
+                projectManagementGrid.dataProvider.refreshAll()
             }
         })
 
@@ -129,7 +121,7 @@ class SelectItemsView extends VerticalLayout implements Resettable{
         primaryAnalyseProduct = createOfferViewModel.primaryAnalysisProducts as ObservableList
         primaryAnalyseProduct.addPropertyChangeListener({
             if (it instanceof ObservableList.ElementEvent) {
-              primaryAnalyseGrid.dataProvider.refreshAll()
+                primaryAnalyseGrid.dataProvider.refreshAll()
             }
         })
 
@@ -173,7 +165,7 @@ class SelectItemsView extends VerticalLayout implements Resettable{
     /**
      * Initializes the start layout for this view
      */
-    private void initLayout(){
+    private void initLayout() {
         this.sequencingGrid = new Grid<>()
         this.primaryAnalyseGrid = new Grid<>()
         this.secondaryAnalyseGrid = new Grid<>()
@@ -208,7 +200,7 @@ class SelectItemsView extends VerticalLayout implements Resettable{
         this.applySequencing = new Button("Apply", VaadinIcons.PLUS)
         applySequencing.setEnabled(false)
 
-        this.applyPrimaryAnalysis = new Button("Apply",VaadinIcons.PLUS)
+        this.applyPrimaryAnalysis = new Button("Apply", VaadinIcons.PLUS)
         applyPrimaryAnalysis.setEnabled(false)
 
         this.applySecondaryAnalysis = new Button("Apply", VaadinIcons.PLUS)
@@ -217,7 +209,7 @@ class SelectItemsView extends VerticalLayout implements Resettable{
         this.applyProteomicAnalysis = new Button("Apply", VaadinIcons.PLUS)
         applyProteomicAnalysis.setEnabled(false)
 
-        this.applyMetabolomicAnalysis= new Button("Apply", VaadinIcons.PLUS)
+        this.applyMetabolomicAnalysis = new Button("Apply", VaadinIcons.PLUS)
         applyMetabolomicAnalysis.setEnabled(false)
 
         this.applyDataStorage = new Button("Apply", VaadinIcons.PLUS)
@@ -236,43 +228,43 @@ class SelectItemsView extends VerticalLayout implements Resettable{
         buttonLayout.setComponentAlignment(previous, Alignment.BOTTOM_LEFT)
         buttonLayout.setSizeFull()
 
-        HorizontalLayout quantitySeq = new HorizontalLayout(amountSequencing,applySequencing)
+        HorizontalLayout quantitySeq = new HorizontalLayout(amountSequencing, applySequencing)
         quantitySeq.setComponentAlignment(applySequencing, Alignment.BOTTOM_LEFT)
-        VerticalLayout seqLayout = new VerticalLayout(sequencingGrid,quantitySeq)
+        VerticalLayout seqLayout = new VerticalLayout(sequencingGrid, quantitySeq)
         sequencingGrid.setHeightByRows(6)
         seqLayout.setSizeFull()
 
-        HorizontalLayout quantityPrimary = new HorizontalLayout(amountPrimaryAnalysis,applyPrimaryAnalysis)
+        HorizontalLayout quantityPrimary = new HorizontalLayout(amountPrimaryAnalysis, applyPrimaryAnalysis)
         quantityPrimary.setComponentAlignment(applyPrimaryAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout primaryAnalysisLayout = new VerticalLayout(primaryAnalyseGrid, quantityPrimary)
         primaryAnalyseGrid.setHeightByRows(6)
         primaryAnalysisLayout.setSizeFull()
 
-        HorizontalLayout quantitySecondary = new HorizontalLayout(amountSecondaryAnalysis,applySecondaryAnalysis)
+        HorizontalLayout quantitySecondary = new HorizontalLayout(amountSecondaryAnalysis, applySecondaryAnalysis)
         quantitySecondary.setComponentAlignment(applySecondaryAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout secondaryAnalysisLayout = new VerticalLayout(secondaryAnalyseGrid, quantitySecondary)
         secondaryAnalyseGrid.setHeightByRows(6)
         secondaryAnalysisLayout.setSizeFull()
 
-        HorizontalLayout quantityProteomic = new HorizontalLayout(amountProteomicAnalysis,applyProteomicAnalysis)
+        HorizontalLayout quantityProteomic = new HorizontalLayout(amountProteomicAnalysis, applyProteomicAnalysis)
         quantityProteomic.setComponentAlignment(applyProteomicAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout proteomicsLayout = new VerticalLayout(proteomicsAnalysisGrid, quantityProteomic)
         proteomicsAnalysisGrid.setHeightByRows(6)
         proteomicsLayout.setSizeFull()
 
-        HorizontalLayout quantityMetabolomic = new HorizontalLayout(amountMetabolomicAnalysis ,applyMetabolomicAnalysis)
+        HorizontalLayout quantityMetabolomic = new HorizontalLayout(amountMetabolomicAnalysis, applyMetabolomicAnalysis)
         quantityMetabolomic.setComponentAlignment(applyMetabolomicAnalysis, Alignment.BOTTOM_LEFT)
         VerticalLayout metabolomicsLayout = new VerticalLayout(metabolomicsAnalysisGrid, quantityMetabolomic)
         metabolomicsAnalysisGrid.setHeightByRows(6)
         metabolomicsLayout.setSizeFull()
 
-        HorizontalLayout quantityStorage = new HorizontalLayout(amountDataStorage,applyDataStorage)
+        HorizontalLayout quantityStorage = new HorizontalLayout(amountDataStorage, applyDataStorage)
         quantityStorage.setComponentAlignment(applyDataStorage, Alignment.BOTTOM_LEFT)
         VerticalLayout dataStorageLayout = new VerticalLayout(storageGrid, quantityStorage)
         storageGrid.setHeightByRows(6)
         dataStorageLayout.setSizeFull()
 
-        HorizontalLayout quantityManagement = new HorizontalLayout(amountProjectManagement,applyProjectManagement)
+        HorizontalLayout quantityManagement = new HorizontalLayout(amountProjectManagement, applyProjectManagement)
         quantityManagement.setComponentAlignment(applyProjectManagement, Alignment.BOTTOM_LEFT)
         VerticalLayout projectManagementLayout = new VerticalLayout(projectManagementGrid, quantityManagement)
         projectManagementGrid.setHeightByRows(6)
@@ -297,13 +289,13 @@ class SelectItemsView extends VerticalLayout implements Resettable{
 
 
         packageAccordion = new TabSheet()
-        packageAccordion.addTab(seqLayout,"Sequencing")
-        packageAccordion.addTab(primaryAnalysisLayout,"Primary Bioinformatics")
-        packageAccordion.addTab(secondaryAnalysisLayout,"Secondary Bioinformatics")
-        packageAccordion.addTab(proteomicsLayout,"Proteomics")
-        packageAccordion.addTab(metabolomicsLayout,"Metabolomics")
-        packageAccordion.addTab(projectManagementLayout,"Project Management")
-        packageAccordion.addTab(dataStorageLayout,"Data Storage")
+        packageAccordion.addTab(seqLayout, "Sequencing")
+        packageAccordion.addTab(primaryAnalysisLayout, "Primary Bioinformatics")
+        packageAccordion.addTab(secondaryAnalysisLayout, "Secondary Bioinformatics")
+        packageAccordion.addTab(proteomicsLayout, "Proteomics")
+        packageAccordion.addTab(metabolomicsLayout, "Metabolomics")
+        packageAccordion.addTab(projectManagementLayout, "Project Management")
+        packageAccordion.addTab(dataStorageLayout, "Data Storage")
 
         this.addComponents(packageAccordion, overview, buttonLayout)
         this.setSizeFull()
@@ -368,7 +360,7 @@ class SelectItemsView extends VerticalLayout implements Resettable{
      */
     private static void generateProductGrid(Grid<Product> grid) {
         try {
-            grid.addColumn({ it.productId})
+            grid.addColumn({ it.productId })
                     .setCaption("Product Id").setId("ProductId")
             grid.addColumn({ it.productName })
                     .setCaption("Product Name").setId("ProductName")
@@ -389,9 +381,9 @@ class SelectItemsView extends VerticalLayout implements Resettable{
 
     private static void generateItemGrid(Grid<ProductItemViewModel> grid) {
         try {
-            grid.addColumn({ it.quantity})
+            grid.addColumn({ it.quantity })
                     .setCaption("Quantity").setId("Quantity")
-            grid.addColumn({ it.product.productId})
+            grid.addColumn({ it.product.productId })
                     .setCaption("Product Id").setId("ProductId")
             grid.addColumn({ it.product.productName })
                     .setCaption("Product Name").setId("ProductName")
@@ -419,7 +411,7 @@ class SelectItemsView extends VerticalLayout implements Resettable{
             createOfferViewModel.sequencingGridSelected = it.firstSelectedItem.isPresent()
         })
 
-        Validator<String> nonEmptyStringValidator = Validator.from({ String value -> (value && !value.trim().empty)}, "Please provide a number as input.")
+        Validator<String> nonEmptyStringValidator = Validator.from({ String value -> (value && !value.trim().empty) }, "Please provide a number as input.")
         Validator<String> atomicValidator = new RegexpValidator("Please provide an integer Input", ProductTypeRegex.ATOMIC.regex)
         Validator<String> partialValidator = new RegexpValidator("Please provide a decimal Input", ProductTypeRegex.PARTIAL.regex)
         this.amountSequencing.addValueChangeListener({ event ->
@@ -430,27 +422,25 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 error = new UserError(emptyResult.getErrorMessage())
                 this.amountSequencing.setComponentError(error)
                 createOfferViewModel.sequencingQuantityValid = false
-            }
-            else if (numberResult.isError()){
+            } else if (numberResult.isError()) {
                 error = new UserError(numberResult.getErrorMessage())
                 this.amountSequencing.setComponentError(error)
                 createOfferViewModel.sequencingQuantityValid = false
-            }
-            else{
+            } else {
                 this.amountSequencing.setComponentError(null)
                 createOfferViewModel.sequencingQuantityValid = true
             }
         })
 
         applySequencing.addClickListener({
-            if(sequencingGrid.getSelectedItems() != null){
+            if (sequencingGrid.getSelectedItems() != null) {
                 String amount = amountSequencing.getValue()
 
-                try{
-                    if(amount != null && amount.isNumber()){
+                try {
+                    if (amount != null && amount.isNumber()) {
                         sequencingGrid.getSelectedItems().each {
                             def amountParsed = Integer.parseInt(amount)
-                            if(amountParsed >= 0){
+                            if (amountParsed >= 0) {
                                 ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
                                 updateOverviewGrid(offerItem)
                             }
@@ -481,27 +471,25 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 error = new UserError(emptyResult.getErrorMessage())
                 this.amountPrimaryAnalysis.setComponentError(error)
                 createOfferViewModel.primaryAnalysisQuantityValid = false
-            }
-            else if (numberResult.isError()){
+            } else if (numberResult.isError()) {
                 error = new UserError(numberResult.getErrorMessage())
                 this.amountPrimaryAnalysis.setComponentError(error)
                 createOfferViewModel.primaryAnalysisQuantityValid = false
-            }
-            else{
+            } else {
                 this.amountPrimaryAnalysis.setComponentError(null)
                 createOfferViewModel.primaryAnalysisQuantityValid = true
             }
         })
 
         applyPrimaryAnalysis.addClickListener({
-            if(primaryAnalyseGrid.getSelectedItems() != null) {
+            if (primaryAnalyseGrid.getSelectedItems() != null) {
                 String amount = amountPrimaryAnalysis.getValue()
-                
-                try{
-                    if(amount != null && amount.isNumber()) {
+
+                try {
+                    if (amount != null && amount.isNumber()) {
                         primaryAnalyseGrid.getSelectedItems().each {
                             def amountParsed = Integer.parseInt(amount)
-                            if(amountParsed >= 0){
+                            if (amountParsed >= 0) {
                                 ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
                                 updateOverviewGrid(offerItem)
                             }
@@ -509,7 +497,7 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                         primaryAnalyseGrid.getDataProvider().refreshAll()
 
                     }
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
                 } catch (Exception e) {
                     viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
@@ -533,27 +521,25 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 error = new UserError(emptyResult.getErrorMessage())
                 this.amountSecondaryAnalysis.setComponentError(error)
                 createOfferViewModel.secondaryAnalysisQuantityValid = false
-            }
-            else if (numberResult.isError()){
+            } else if (numberResult.isError()) {
                 error = new UserError(numberResult.getErrorMessage())
                 this.amountSecondaryAnalysis.setComponentError(error)
                 createOfferViewModel.secondaryAnalysisQuantityValid = false
-            }
-            else{
+            } else {
                 this.amountPrimaryAnalysis.setComponentError(null)
                 createOfferViewModel.secondaryAnalysisQuantityValid = true
             }
         })
 
         applySecondaryAnalysis.addClickListener({
-            if(secondaryAnalyseGrid.getSelectedItems() != null){
+            if (secondaryAnalyseGrid.getSelectedItems() != null) {
                 String amount = amountSecondaryAnalysis.getValue()
 
-                try{
-                    if(amount != null && amount.isNumber()){
+                try {
+                    if (amount != null && amount.isNumber()) {
                         secondaryAnalyseGrid.getSelectedItems().each {
                             def amountParsed = Integer.parseInt(amount)
-                            if(amountParsed >= 0){
+                            if (amountParsed >= 0) {
                                 ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
                                 updateOverviewGrid(offerItem)
                             }
@@ -561,7 +547,7 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                         secondaryAnalyseGrid.getDataProvider().refreshAll()
                     }
                 }
-                catch(NumberFormatException e){
+                catch (NumberFormatException e) {
                     viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
                 } catch (Exception e) {
                     viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
@@ -585,33 +571,31 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 error = new UserError(emptyResult.getErrorMessage())
                 this.amountProteomicAnalysis.setComponentError(error)
                 createOfferViewModel.proteomicsAnalysisQuantityValid = false
-            }
-            else if (numberResult.isError()){
+            } else if (numberResult.isError()) {
                 error = new UserError(numberResult.getErrorMessage())
                 this.amountProteomicAnalysis.setComponentError(error)
                 createOfferViewModel.proteomicsAnalysisQuantityValid = false
-            }
-            else{
+            } else {
                 this.amountProteomicAnalysis.setComponentError(null)
                 createOfferViewModel.proteomicsAnalysisQuantityValid = true
             }
         })
 
         applyProteomicAnalysis.addClickListener({
-            if(proteomicsAnalysisGrid.getSelectedItems() != null) {
+            if (proteomicsAnalysisGrid.getSelectedItems() != null) {
                 String amount = amountProteomicAnalysis.getValue()
-                try{
-                    if(amount != null && amount.isNumber()) {
+                try {
+                    if (amount != null && amount.isNumber()) {
                         proteomicsAnalysisGrid.getSelectedItems().each {
                             def amountParsed = Integer.parseInt(amount)
-                            if(amountParsed >= 0){
+                            if (amountParsed >= 0) {
                                 ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
                                 updateOverviewGrid(offerItem)
                             }
                         }
                         proteomicsAnalysisGrid.getDataProvider().refreshAll()
                     }
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
                 } catch (Exception e) {
                     viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
@@ -635,33 +619,31 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 error = new UserError(emptyResult.getErrorMessage())
                 this.amountMetabolomicAnalysis.setComponentError(error)
                 createOfferViewModel.metabolomicsAnalysisQuantityValid = false
-            }
-            else if (numberResult.isError()){
+            } else if (numberResult.isError()) {
                 error = new UserError(numberResult.getErrorMessage())
                 this.amountMetabolomicAnalysis.setComponentError(error)
                 createOfferViewModel.metabolomicsAnalysisQuantityValid = false
-            }
-            else{
+            } else {
                 this.amountMetabolomicAnalysis.setComponentError(null)
                 createOfferViewModel.metabolomicsAnalysisQuantityValid = true
             }
         })
 
         applyMetabolomicAnalysis.addClickListener({
-            if(metabolomicsAnalysisGrid.getSelectedItems() != null) {
+            if (metabolomicsAnalysisGrid.getSelectedItems() != null) {
                 String amount = amountMetabolomicAnalysis.getValue()
-                try{
-                    if(amount != null && amount.isNumber()) {
+                try {
+                    if (amount != null && amount.isNumber()) {
                         metabolomicsAnalysisGrid.getSelectedItems().each {
                             def amountParsed = Integer.parseInt(amount)
-                            if(amountParsed >= 0){
+                            if (amountParsed >= 0) {
                                 ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
                                 updateOverviewGrid(offerItem)
                             }
                         }
                         metabolomicsAnalysisGrid.getDataProvider().refreshAll()
                     }
-                } catch(NumberFormatException e) {
+                } catch (NumberFormatException e) {
                     viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
                 } catch (Exception e) {
                     viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
@@ -685,27 +667,25 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 error = new UserError(emptyResult.getErrorMessage())
                 this.amountProjectManagement.setComponentError(error)
                 createOfferViewModel.projectManagementQuantityValid = false
-            }
-            else if (numberResult.isError()){
+            } else if (numberResult.isError()) {
                 error = new UserError(numberResult.getErrorMessage())
                 this.amountProjectManagement.setComponentError(error)
                 createOfferViewModel.projectManagementQuantityValid = false
-            }
-            else{
+            } else {
                 this.amountProjectManagement.setComponentError(null)
                 createOfferViewModel.projectManagementQuantityValid = true
             }
         })
 
         applyProjectManagement.addClickListener({
-            if(projectManagementGrid.getSelectedItems() != null){
+            if (projectManagementGrid.getSelectedItems() != null) {
                 String amount = amountProjectManagement.getValue()
 
-                try{
-                    if(amount != null && amount.isNumber()){
+                try {
+                    if (amount != null && amount.isNumber()) {
                         projectManagementGrid.getSelectedItems().each {
                             def amountParsed = Double.parseDouble(amount)
-                            if(amountParsed >= 0.0){
+                            if (amountParsed >= 0.0) {
                                 ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
                                 updateOverviewGrid(offerItem)
                             }
@@ -713,7 +693,7 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                         projectManagementGrid.getDataProvider().refreshAll()
                     }
                 }
-                catch(Exception e){
+                catch (Exception e) {
                     viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
                 }
             }
@@ -735,27 +715,25 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                 error = new UserError(emptyResult.getErrorMessage())
                 this.amountDataStorage.setComponentError(error)
                 createOfferViewModel.storageQuantityValid = false
-            }
-            else if (numberResult.isError()){
+            } else if (numberResult.isError()) {
                 error = new UserError(numberResult.getErrorMessage())
                 this.amountDataStorage.setComponentError(error)
                 createOfferViewModel.storageQuantityValid = false
-            }
-            else{
+            } else {
                 this.amountDataStorage.setComponentError(null)
                 createOfferViewModel.storageQuantityValid = true
             }
         })
 
         applyDataStorage.addClickListener({
-            if(storageGrid.getSelectedItems() != null){
+            if (storageGrid.getSelectedItems() != null) {
                 String amount = amountDataStorage.getValue()
 
-                try{
-                    if(amount != null && amount.isNumber()){
+                try {
+                    if (amount != null && amount.isNumber()) {
                         storageGrid.getSelectedItems().each {
                             def amountParsed = Double.parseDouble(amount)
-                            if(amountParsed >= 0.0){
+                            if (amountParsed >= 0.0) {
                                 ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
                                 updateOverviewGrid(offerItem)
                             }
@@ -763,7 +741,7 @@ class SelectItemsView extends VerticalLayout implements Resettable{
                         storageGrid.getDataProvider().refreshAll()
                     }
                 }
-                catch(Exception e){
+                catch (Exception e) {
                     viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
                 }
             }
@@ -812,16 +790,16 @@ class SelectItemsView extends VerticalLayout implements Resettable{
     /**
      * This method should be called whenever the quantity of a ProductItemViewModel changes. It updates the items in overview grid respectively
      */
-    void updateOverviewGrid(ProductItemViewModel item){
+    void updateOverviewGrid(ProductItemViewModel item) {
         createOfferViewModel.addItem(item)
         overviewGrid.getDataProvider().refreshAll()
         refreshNavButtons()
     }
 
     private void refreshNavButtons() {
-        if(createOfferViewModel.productItems.size() > 0){
+        if (createOfferViewModel.productItems.size() > 0) {
             next.setEnabled(true)
-        }else{
+        } else {
             next.setEnabled(false)
         }
     }

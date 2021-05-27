@@ -1,22 +1,10 @@
 package life.qbic.portal.offermanager
 
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.business.offers.Currency
 import life.qbic.business.offers.OfferExporter
-import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.ProteomicAnalysis
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Sequencing
+import life.qbic.datamodel.dtos.business.*
+import life.qbic.datamodel.dtos.business.services.*
 import org.jsoup.nodes.Document
 import org.jsoup.parser.Parser
 
@@ -33,8 +21,7 @@ import java.util.concurrent.TimeUnit
  *
  * Implements {@link OfferExporter} and is responsible for converting an offer into PDF Format
  *
- * @since: 1.0.0
- * @author: Jennifer Bödker
+ * @since: 1.0.0* @author: Jennifer Bödker
  *
  */
 @Log4j2
@@ -117,11 +104,11 @@ class OfferToPDFConverter implements OfferExporter {
         private String name
 
         ProductGroups(String name) {
-            this.name = name;
+            this.name = name
         }
 
         String getName() {
-            return this.name;
+            return this.name
         }
     }
     /**
@@ -183,7 +170,7 @@ class OfferToPDFConverter implements OfferExporter {
     private void setProjectInformation() {
         htmlContent.getElementById("project-title").text(offer.projectTitle)
         htmlContent.getElementById("project-description").text(offer.projectDescription)
-        if(offer.experimentalDesign.isPresent()) htmlContent.getElementById("experimental-design").text(offer.experimentalDesign.get())
+        if (offer.experimentalDesign.isPresent()) htmlContent.getElementById("experimental-design").text(offer.experimentalDesign.get())
     }
 
     private void setCustomerInformation() {
@@ -261,7 +248,7 @@ class OfferToPDFConverter implements OfferExporter {
     }
 
     void setTaxationStatement() {
-        if(!offer.getSelectedCustomerAffiliation().country.equals(countryWithVAT)) {
+        if (!offer.getSelectedCustomerAffiliation().country.equals(countryWithVAT)) {
             htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${countryWithVAT}")
         }
 
@@ -278,7 +265,7 @@ class OfferToPDFConverter implements OfferExporter {
 
     // Apply VAT only if the offer originated from Germany and it's affilation category is non-internal
     static double determineTaxCost(String country, AffiliationCategory category) {
-        if(country.equals(countryWithVAT) && !category.equals(noVatCategory)) {
+        if (country.equals(countryWithVAT) && !category.equals(noVatCategory)) {
             return VAT
         }
         return 0
@@ -332,10 +319,10 @@ class OfferToPDFConverter implements OfferExporter {
         htmlContent.getElementById("offer-date").text(dateFormat.format(offer.modificationDate))
     }
 
-    double calculateNetSum(List<ProductItem> productItems){
+    double calculateNetSum(List<ProductItem> productItems) {
         double netSum = 0
         productItems.each {
-                netSum += it.quantity * it.product.unitPrice
+            netSum += it.quantity * it.product.unitPrice
         }
         return netSum
     }
@@ -345,8 +332,7 @@ class OfferToPDFConverter implements OfferExporter {
         productItems.each {
             if (it.product.class in productGroupClasses[ProductGroups.DATA_MANAGEMENT]) {
                 overheadSum = 0
-        }
-            else {
+            } else {
                 overheadSum += it.quantity * it.product.unitPrice * offer.overheadRatio
             }
         }
@@ -375,24 +361,24 @@ class OfferToPDFConverter implements OfferExporter {
             }
         }
 
-            //Map Lists to the "DataGeneration", "DataAnalysis" and "Project and Data Management"
-            productItemsMap[ProductGroups.DATA_GENERATION] = dataGenerationItems
-            productItemsMap[ProductGroups.DATA_ANALYSIS] = dataAnalysisItems
-            productItemsMap[ProductGroups.DATA_MANAGEMENT] = dataManagementItems
+        //Map Lists to the "DataGeneration", "DataAnalysis" and "Project and Data Management"
+        productItemsMap[ProductGroups.DATA_GENERATION] = dataGenerationItems
+        productItemsMap[ProductGroups.DATA_ANALYSIS] = dataAnalysisItems
+        productItemsMap[ProductGroups.DATA_MANAGEMENT] = dataManagementItems
 
-            return productItemsMap
-        }
+        return productItemsMap
+    }
 
     void generateProductTable(Map productItemsMap, int maxTableItems) {
         // Create the items in html in the overview table
         int itemNumber = 0
-        productItemsMap.each {ProductGroups productGroup, List<ProductItem> items ->
+        productItemsMap.each { ProductGroups productGroup, List<ProductItem> items ->
             //Check if there are ProductItems stored in map entry
-            if(items){
+            if (items) {
                 def elementId = "product-items" + "-" + tableCount
                 //Append Table Title
                 htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
-                items.each{ProductItem item ->
+                items.each { ProductItem item ->
                     itemNumber++
                     //start (next) table and add Product to it
                     if (tableItemsCount >= maxTableItems) {
@@ -451,8 +437,8 @@ class OfferToPDFConverter implements OfferExporter {
             builder.redirectErrorStream(true)
             Process process = builder.start()
             process.waitFor(10, TimeUnit.SECONDS)
-            process.getInputStream().eachLine {log.info(it)}
-            if (! new File(output.toString()).exists()) {
+            process.getInputStream().eachLine { log.info(it) }
+            if (!new File(output.toString()).exists()) {
                 throw new RuntimeException("Offer PDF has not been generated.")
             }
         }
@@ -495,9 +481,9 @@ class OfferToPDFConverter implements OfferExporter {
                              """
         }
 
-        static String tableTitle(ProductGroups productGroup){
+        static String tableTitle(ProductGroups productGroup) {
 
-            String tableTitle= productGroup.getName()
+            String tableTitle = productGroup.getName()
 
 
             return """<div class = "small-spacer"</div>
@@ -505,7 +491,7 @@ class OfferToPDFConverter implements OfferExporter {
                    """
         }
 
-        static String subTableFooter(ProductGroups productGroup){
+        static String subTableFooter(ProductGroups productGroup) {
 
             String footerTitle = productGroup.getName()
 
@@ -527,7 +513,7 @@ class OfferToPDFConverter implements OfferExporter {
                                  """
         }
 
-        static String tableFooter(double overheadRatio, Affiliation affiliation){
+        static String tableFooter(double overheadRatio, Affiliation affiliation) {
 
             DecimalFormat decimalFormat = new DecimalFormat("#%")
             String overheadPercentage = decimalFormat.format(overheadRatio)
@@ -556,5 +542,5 @@ class OfferToPDFConverter implements OfferExporter {
                                  """
         }
 
-        }
+    }
 }
