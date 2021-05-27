@@ -2,10 +2,8 @@ package life.qbic.portal.offermanager.components.product
 
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
-import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
-
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
  * <h1>A ViewModel holding data that is presented in a
@@ -17,21 +15,22 @@ import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesSer
  *
  * <p>This class can contain JavaBean objects to enable views to listen to changes in the values.</p>
  *
- * @since 1.0.0
- *
+ * @since 1.0.0*
  */
 class MaintainProductsViewModel {
 
     ObservableList products = new ObservableList(new ArrayList<Product>())
 
-    @Bindable Optional<Product> selectedProduct
+    @Bindable
+    Optional<Product> selectedProduct
 
-    final ProductsResourcesService productsResourcesService
+    final ResourcesService<Product> productsResourcesService
     EventEmitter<Product> productUpdate
 
-    @Bindable Boolean productCreatedSuccessfully
+    @Bindable
+    Boolean productCreatedSuccessfully
 
-    MaintainProductsViewModel(ProductsResourcesService productsResourcesService, EventEmitter<Product> productUpdate) {
+    MaintainProductsViewModel(ResourcesService<Product> productsResourcesService, EventEmitter<Product> productUpdate) {
         this.productsResourcesService = productsResourcesService
         this.productUpdate = productUpdate
         productCreatedSuccessfully = false
@@ -43,17 +42,17 @@ class MaintainProductsViewModel {
         productCreatedSuccessfully = false
     }
 
-    private void fetchProducts(){
+    private void fetchProducts() {
         products.addAll(productsResourcesService.iterator())
     }
 
-    private void subscribe(){
+    private void subscribe() {
         productsResourcesService.subscribe({ product ->
             refreshList()
         })
     }
 
-    private void refreshList(){
+    private void refreshList() {
         products.clear()
         products.addAll(productsResourcesService.iterator().toList())
     }
