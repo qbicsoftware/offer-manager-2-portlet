@@ -2,11 +2,13 @@ package life.qbic.portal.offermanager
 
 import groovy.util.logging.Log4j2
 import life.qbic.business.offers.fetch.FetchOffer
+import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.products.archive.ArchiveProduct
 import life.qbic.business.products.copy.CopyProduct
 import life.qbic.business.products.create.CreateProduct
 import life.qbic.business.projects.create.CreateProject
 import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.business.persons.affiliation.create.CreateAffiliation
 import life.qbic.business.persons.create.CreatePerson
@@ -36,6 +38,7 @@ import life.qbic.portal.offermanager.components.product.copy.CopyProductViewMode
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
 import life.qbic.portal.offermanager.components.product.create.CreateProductViewModel
 import life.qbic.portal.offermanager.components.product.MaintainProductsController
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
@@ -665,6 +668,54 @@ class DependencyManager {
             log.error("Could not create ${AppView.getSimpleName()} view.", e)
             throw e
         }
+    }
+
+    /**
+     *
+     * @param sharedViewModel
+     * @param affiliationResourcesService
+     * @param dataSource
+     * @return a new CreateAffiliationView using the provided resources
+     */
+    private static CreateAffiliationView createCreateAffiliationView(AppViewModel sharedViewModel, ResourcesService<Affiliation> affiliationResourcesService, CreateAffiliationDataSource dataSource) {
+        CreateAffiliationViewModel createAffiliationViewModel = new CreateAffiliationViewModel(affiliationResourcesService)
+        CreateAffiliationPresenter createAffiliationPresenter = new CreateAffiliationPresenter(sharedViewModel, createAffiliationViewModel)
+        CreateAffiliation createAffiliation = new CreateAffiliation(createAffiliationPresenter, dataSource)
+        CreateAffiliationController createAffiliationController = new CreateAffiliationController(createAffiliation)
+        return new CreateAffiliationView(sharedViewModel, createAffiliationViewModel, createAffiliationController)
+    }
+
+
+    /**
+     *
+     * @param affiliationResourcesService
+     * @return a new SearchAffiliationView using the provided resources
+     */
+    private static SearchAffiliationView createSearchAffiliationView(ResourcesService<Affiliation> affiliationResourcesService) {
+        SearchAffiliationViewModel searchAffiliationViewModel = new SearchAffiliationViewModel(affiliationResourcesService)
+        SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel)
+        return searchAffiliationView
+    }
+
+    private CreateOfferView setupCreateOffer() {
+
+        //TODO
+    }
+
+    private CreateOfferView setupUpdateOffer() {
+        //TODO
+    }
+
+    private SearchPersonView setupSearchPerson() {
+        //TODO
+    }
+
+    private MaintainProductsView setupMaintainProducts() {
+        //TODO
+    }
+
+    private CreateProjectView setupCreateProject() {
+        //TODO
     }
 
 
