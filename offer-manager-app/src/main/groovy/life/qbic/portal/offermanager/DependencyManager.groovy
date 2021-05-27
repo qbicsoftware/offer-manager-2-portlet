@@ -8,6 +8,7 @@ import life.qbic.business.offers.fetch.FetchOfferDataSource
 import life.qbic.business.persons.affiliation.create.CreateAffiliation
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.create.CreatePerson
+import life.qbic.business.persons.create.CreatePersonDataSource
 import life.qbic.business.products.archive.ArchiveProduct
 import life.qbic.business.products.copy.CopyProduct
 import life.qbic.business.products.create.CreateProduct
@@ -655,9 +656,29 @@ class DependencyManager {
         return searchAffiliationView
     }
 
-    private static CreatePersonView createCreatePersonView() {
-        //TODO implement
-        return null
+    private static CreatePersonView createCreatePersonView(AppViewModel sharedViewModel,
+                                                           ResourcesService<Affiliation> affiliationResourcesService,
+                                                           ResourcesService<Customer> customerResourcesService,
+                                                           ResourcesService<Person> personResourcesService,
+                                                           ResourcesService<ProjectManager> projectManagerResourcesService,
+                                                           CreateAffiliationDataSource createAffiliationDataSource,
+                                                           CreatePersonDataSource createPersonDataSource) {
+
+        CreatePersonViewModel createPersonViewModel = new CreatePersonViewModel(
+                customerResourcesService,
+                projectManagerResourcesService,
+                affiliationResourcesService,
+                personResourcesService
+        )
+
+        CreatePersonPresenter createPersonPresenter = new CreatePersonPresenter(sharedViewModel, createPersonViewModel)
+        CreatePerson createPerson = new CreatePerson(createPersonPresenter, createPersonDataSource)
+        CreatePersonController createPersonController = new CreatePersonController(createPerson)
+
+        CreateAffiliationView createAffiliationView = createCreateAffiliationView(sharedViewModel, affiliationResourcesService, createAffiliationDataSource)
+
+        CreatePersonView createPersonView = new CreatePersonView(createPersonController, sharedViewModel, createPersonViewModel, createAffiliationView)
+        return createPersonView
     }
 
     /**
@@ -675,11 +696,13 @@ class DependencyManager {
      */
     private static CreateOfferView createCreateOfferView(ResourcesService<Affiliation> affiliationResourcesService,
                                                          ResourcesService<Customer> customerResourcesService,
+                                                         ResourcesService<Person> personResourcesService,
                                                          ResourcesService<ProjectManager> projectManagerResourcesService,
                                                          ResourcesService<Product> productResourcesService,
                                                          ResourcesService<Offer> offerResourcesService,
                                                          AppViewModel sharedViewModel,
                                                          CreateAffiliationDataSource createAffiliationDataSource,
+                                                         CreatePersonDataSource createPersonDataSource,
                                                          CreateOfferDataSource createOfferDataSource,
                                                          FetchOfferDataSource fetchOfferDataSource) {
         CreateOfferViewModel createOfferViewModel = new CreateOfferViewModel(
@@ -698,8 +721,16 @@ class DependencyManager {
         FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, createOfferPresenter)
         CreateOfferController createOfferController = new CreateOfferController(createOffer, fetchOffer, createOffer)
 
-        //fixme this method is not implemented
-        CreatePersonView createPersonView = createCreatePersonView()
+        CreatePersonView createPersonView = createCreatePersonView(
+                sharedViewModel,
+                affiliationResourcesService,
+                customerResourcesService,
+                personResourcesService,
+                projectManagerResourcesService,
+                createAffiliationDataSource,
+                createPersonDataSource
+        )
+
         CreateAffiliationView createAffiliationView = createCreateAffiliationView(
                 sharedViewModel,
                 affiliationResourcesService,
