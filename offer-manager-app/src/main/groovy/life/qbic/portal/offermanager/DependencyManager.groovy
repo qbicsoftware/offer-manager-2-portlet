@@ -429,8 +429,8 @@ class DependencyManager {
                     customerResourceService,
                     personResourceService,
                     managerResourceService,
-                    customerDbConnector as CreateAffiliationDataSource,
-                    customerDbConnector as CreatePersonDataSource)
+                    customerDbConnector,
+                    customerDbConnector)
             CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
             SearchAffiliationView searchAffiliationView = createSearchAffiliationView(affiliationService)
             CreateOfferView createOfferView = createCreateOfferView(
@@ -441,21 +441,21 @@ class DependencyManager {
                     productsResourcesService,
                     offerService,
                     viewModel,
-                    customerDbConnector as CreateAffiliationDataSource,
-                    customerDbConnector as CreatePersonDataSource,
-                    offerDbConnector as CreateOfferDataSource,
-                    offerDbConnector as FetchOfferDataSource
+                    customerDbConnector,
+                    customerDbConnector,
+                    offerDbConnector,
+                    offerDbConnector
             )
             OfferOverviewView overviewView = createOfferOverviewView(
                     viewModel,
-                    overviewService as ResourcesService<OfferOverview>,
-                    projectResourceService as ResourcesService<ProjectIdentifier>,
-                    projectSpaceResourceService as ResourcesService<ProjectSpace>,
-                    offerUpdateEvent as EventEmitter<Offer>,
-                    projectCreatedEvent as EventEmitter<Project>,
-                    projectMainConnector as CreateProjectDataSource,
-                    projectMainConnector as CreateProjectSpaceDataSource,
-                    offerDbConnector as FetchOfferDataSource)
+                    overviewService,
+                    projectResourceService,
+                    projectSpaceResourceService,
+                    offerUpdateEvent,
+                    projectCreatedEvent,
+                    projectMainConnector,
+                    projectMainConnector,
+                    offerDbConnector)
 
             portletView = new AppView(this.viewModel,
                     createPersonView,
