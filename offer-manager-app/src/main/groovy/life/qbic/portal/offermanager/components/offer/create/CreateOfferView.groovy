@@ -3,13 +3,13 @@ package life.qbic.portal.offermanager.components.offer.create
 import com.vaadin.ui.Component
 import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Label
-import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
-import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
-import life.qbic.portal.offermanager.components.AppViewModel
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
  * This class generates a Layout in which the user
@@ -46,7 +46,7 @@ class CreateOfferView extends FormLayout{
                     CreateOfferController controller,
                     CreatePersonView createCustomerView,
                     CreateAffiliationView createAffiliationView,
-                    OfferResourcesService offerProviderService) {
+                    ResourcesService<Offer> offerProviderService) {
         super()
         this.sharedViewModel = sharedViewModel
         this.viewModel = createOfferViewModel

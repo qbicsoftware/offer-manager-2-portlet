@@ -3,23 +3,16 @@ package life.qbic.portal.offermanager.components.offer.create
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.grid.HeightMode
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Button
-import com.vaadin.ui.Component
-import com.vaadin.ui.Grid
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Label
-import com.vaadin.ui.Panel
-import com.vaadin.ui.TextArea
-import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.business.offers.Currency
+import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.GridUtils
-import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
  * This class generates a Layout in which the user
@@ -43,7 +36,8 @@ class OfferOverviewView extends VerticalLayout{
     Button save
     CreateOfferController createOfferController
 
-    OfferOverviewView(CreateOfferViewModel viewModel, CreateOfferController controller, OfferResourcesService service){
+    OfferOverviewView(CreateOfferViewModel viewModel, CreateOfferController controller, ResourcesService<Offer> service){
+        //FIXME the service is unused
         this.createOfferViewModel = viewModel
         this.createOfferController = controller
         initLayout()
