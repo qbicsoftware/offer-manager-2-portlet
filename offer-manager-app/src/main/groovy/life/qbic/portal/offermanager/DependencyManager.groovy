@@ -13,10 +13,14 @@ import life.qbic.business.products.archive.ArchiveProduct
 import life.qbic.business.products.copy.CopyProduct
 import life.qbic.business.products.create.CreateProduct
 import life.qbic.business.projects.create.CreateProject
+import life.qbic.business.projects.create.CreateProjectDataSource
+import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.datamodel.dtos.projectmanagement.Project
+import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
+import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 import life.qbic.openbis.openbisclient.OpenBisClient
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.AppPresenter
@@ -60,6 +64,7 @@ import life.qbic.portal.offermanager.components.product.create.CreateProductView
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 import life.qbic.portal.offermanager.dataresources.database.DatabaseSession
 import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
+import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
 import life.qbic.portal.offermanager.dataresources.offers.OverviewService
 import life.qbic.portal.offermanager.dataresources.persons.*
@@ -484,11 +489,10 @@ class DependencyManager {
                     customerResourceService,
                     personResourceService,
                     managerResourceService,
-                    customerDbConnector,
-                    customerDbConnector)
-
-            SearchAffiliationView searchAffiliationView = createSearchAffiliationView(affiliationService)
+                    customerDbConnector as CreateAffiliationDataSource,
+                    customerDbConnector as CreatePersonDataSource)
             CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
+            SearchAffiliationView searchAffiliationView = createSearchAffiliationView(affiliationService)
             CreateOfferView createOfferView = createCreateOfferView(
                     affiliationService,
                     customerResourceService,
@@ -652,6 +656,44 @@ class DependencyManager {
                 offerResourcesService)
 
         return createOfferView
+    }
+
+    /**
+     *
+     * @param sharedViewModel
+     * @param offerOverviewResourcesService a service with offerOverviews should listen to the events emitted in the projectCreatedEvent
+     * @param projectResourcesService
+     * @param projectSpaceResourcesService
+     * @param offerSelectedEvent
+     * @param projectCreatedEvent the event emitter where a project event should be emitted to
+     * @param createProjectDataSource
+     * @param createProjectSpaceDataSource
+     * @param fetchOfferDataSource
+     * @return
+     */
+    private static OfferOverviewView createOfferOverviewView(AppViewModel sharedViewModel,
+                                                             ResourcesService<OfferOverview> offerOverviewResourcesService,
+                                                             ResourcesService<ProjectIdentifier> projectResourcesService,
+                                                             ResourcesService<ProjectSpace> projectSpaceResourcesService,
+                                                             EventEmitter<Offer> offerSelectedEvent,
+                                                             EventEmitter<Project> projectCreatedEvent,
+                                                             CreateProjectDataSource createProjectDataSource,
+                                                             CreateProjectSpaceDataSource createProjectSpaceDataSource,
+                                                             FetchOfferDataSource fetchOfferDataSource) {
+
+        OfferOverviewModel offerOverviewViewModel = new OfferOverviewModel(offerOverviewResourcesService, sharedViewModel, offerSelectedEvent)
+        OfferOverviewPresenter offerOverviewPresenter = new OfferOverviewPresenter(sharedViewModel, offerOverviewViewModel)
+        FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, offerOverviewPresenter)
+        OfferOverviewController offerOverviewController = new OfferOverviewController(fetchOffer)
+
+        CreateProjectViewModel createProjectViewModel = new CreateProjectViewModel(projectSpaceResourcesService, projectResourcesService)
+        CreateProjectPresenter createProjectPresenter = new CreateProjectPresenter(createProjectViewModel, sharedViewModel, projectCreatedEvent)
+        CreateProject createProject = new CreateProject(createProjectPresenter, createProjectDataSource, createProjectSpaceDataSource)
+        CreateProjectController createProjectController = new CreateProjectController(createProject)
+        CreateProjectView createProjectView = new CreateProjectView(createProjectViewModel, createProjectController)
+
+        OfferOverviewView offerOverviewView = new OfferOverviewView(offerOverviewViewModel, offerOverviewController, createProjectView)
+        return offerOverviewView
     }
 
     private static CreateOfferView createUpdateOffer() {
