@@ -15,7 +15,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Layout of total price row in price summary of offer pdf stays inline (`#615 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/615>`_)
 
-* Deprecated project identifier format assumption leads to failing parsinge (`#617 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/617>`_)
+* Deprecated project identifier format assumption leads to failing parsing (`#617 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/617>`_)
 
 
 **Dependencies**
