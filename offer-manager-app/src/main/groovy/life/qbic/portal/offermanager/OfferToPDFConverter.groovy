@@ -261,7 +261,7 @@ class OfferToPDFConverter implements OfferExporter {
             ++tableCount
             htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
             elementId = "product-items" + "-" + tableCount
-            htmlContent.getElementById("item-table-grid").append(ItemPrintout.seedNewTable(elementId))
+            htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
             htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
         }
             //Add total pricing to table
@@ -390,7 +390,7 @@ class OfferToPDFConverter implements OfferExporter {
                     ++tableCount
                     htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
                     elementId = "product-items" + "-" + tableCount
-                    htmlContent.getElementById("item-table-grid").append(ItemPrintout.seedNewTable(elementId))
+                    htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
                     tableItemsCount = 1
                 }
                 //Append Table Title and Header
@@ -403,7 +403,7 @@ class OfferToPDFConverter implements OfferExporter {
                         ++tableCount
                         htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
                         elementId = "product-items" + "-" + tableCount
-                        htmlContent.getElementById("item-table-grid").append(ItemPrintout.seedNewTable(elementId))
+                        htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
                         htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
                         tableItemsCount = 1
                     }
@@ -500,7 +500,7 @@ class OfferToPDFConverter implements OfferExporter {
                                     """
         }
 
-        static String seedNewTable(String elementId) {
+        static String createNewTable(String elementId) {
             """<div class="product-items" id="${elementId}"></div>
             """
         }
