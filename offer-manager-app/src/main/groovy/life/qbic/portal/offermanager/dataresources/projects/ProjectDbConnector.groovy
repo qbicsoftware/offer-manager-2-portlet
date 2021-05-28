@@ -24,7 +24,7 @@ import java.sql.Statement
  *
  * This class is responsible for transferring project data to the project/customer db
  *
- * @since 1.0.0*
+ * @since 1.0.0
  */
 @Log4j2
 class ProjectDbConnector {

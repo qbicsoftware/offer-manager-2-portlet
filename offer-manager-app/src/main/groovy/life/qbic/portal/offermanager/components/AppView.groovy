@@ -20,7 +20,7 @@ import life.qbic.portal.offermanager.components.product.MaintainProductsView
  * This class provides the initial listeners
  * and layout upon which the views are presented
  *
- * @since 1.0.0*
+ * @since 1.0.0
  */
 @Log4j2
 class AppView extends VerticalLayout {

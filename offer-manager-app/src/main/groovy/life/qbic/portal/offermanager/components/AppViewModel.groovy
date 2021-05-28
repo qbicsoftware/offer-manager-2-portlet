@@ -9,7 +9,8 @@ import life.qbic.portal.offermanager.security.Role
  * This class holds information and data to be displayed in the view.
  * It can contain JavaBean objects to enable views to listen to changes in the values.
  *
- * @since: 1.0.0* @author: Tobias Koch
+ * @since 1.0.0
+ * @author Tobias Koch
  */
 class AppViewModel {
     final ObservableList successNotifications

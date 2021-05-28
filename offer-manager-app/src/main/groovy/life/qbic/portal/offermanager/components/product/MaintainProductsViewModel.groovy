@@ -15,7 +15,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * <p>This class can contain JavaBean objects to enable views to listen to changes in the values.</p>
  *
- * @since 1.0.0*
+ * @since 1.0.0
  */
 class MaintainProductsViewModel {
 

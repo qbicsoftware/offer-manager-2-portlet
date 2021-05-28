@@ -20,7 +20,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * Everytime such an event is emitted, it loads the event data into its properties.
  *
- * @since: 1.0.0*
+ * @since 1.0.0
  */
 class UpdatePersonViewModel extends CreatePersonViewModel {
 

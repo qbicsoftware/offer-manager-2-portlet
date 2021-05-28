@@ -9,7 +9,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * This model holds all the data that is displayed in the respective view {@link SearchPersonView}
  *
- * @since: 1.0.0*
+ * @since: 1.0.0
  */
 class SearchPersonViewModel {
 

@@ -23,7 +23,8 @@ import java.sql.Statement
  *
  * This class implements the data sources of the different use cases and is responsible for transferring data from the database towards them
  *
- * @since: 1.0.0* @author: Jennifer Bödker
+ * @since 1.0.0
+ * @author Jennifer Bödker
  *
  */
 @Log4j2

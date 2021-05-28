@@ -26,7 +26,7 @@ import life.qbic.portal.offermanager.components.Resettable
  * with the intention of enabling a user the selecting of packages which the customer ordered. This will be the bases for
  * the calculated offer price.
  *
- * @since: 0.1.0*
+ * @since 0.1.0
  */
 class SelectItemsView extends VerticalLayout implements Resettable {
 
