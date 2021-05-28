@@ -9,10 +9,8 @@ import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.offers.Currency
-import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.GridUtils
-import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
  * This class generates a Layout in which the user
@@ -22,11 +20,10 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  * with the intention of allowing the user to get an overview over all information he has entered before he creates and stores an
  * offer in the QBiC database.
  *
- * @since: 0.1.0
- *
+ * @since 0.1.0
  */
 @Log4j2
-class OfferOverviewView extends VerticalLayout{
+class OfferOverviewView extends VerticalLayout {
 
     private final CreateOfferViewModel createOfferViewModel
 
@@ -36,8 +33,7 @@ class OfferOverviewView extends VerticalLayout{
     Button save
     CreateOfferController createOfferController
 
-    OfferOverviewView(CreateOfferViewModel viewModel, CreateOfferController controller, ResourcesService<Offer> service){
-        //FIXME the service is unused
+    OfferOverviewView(CreateOfferViewModel viewModel, CreateOfferController controller) {
         this.createOfferViewModel = viewModel
         this.createOfferController = controller
         initLayout()
@@ -66,7 +62,7 @@ class OfferOverviewView extends VerticalLayout{
     /**
      * Initializes the start layout for this view
      */
-    private void initLayout(){
+    private void initLayout() {
         this.previous = new Button(VaadinIcons.CHEVRON_CIRCLE_LEFT)
         previous.addStyleName(ValoTheme.LABEL_LARGE)
 
@@ -84,7 +80,7 @@ class OfferOverviewView extends VerticalLayout{
 
         this.itemGrid = new Grid<>("Selected Items:")
 
-        this.addComponents(offerOverview,buttonLayout)
+        this.addComponents(offerOverview, buttonLayout)
         this.setMargin(false)
     }
 
@@ -117,7 +113,7 @@ class OfferOverviewView extends VerticalLayout{
     /**
      * Fills the information of the offer into the panel
      */
-    void fillPanel(){
+    void fillPanel() {
         /*
         Container for the complete overview
          */
@@ -157,12 +153,10 @@ class OfferOverviewView extends VerticalLayout{
         TextArea experimentInfo = new TextArea("Experimental design")
         experimentInfo.setIcon(VaadinIcons.NOTEBOOK)
         experimentInfo.setValue(
-                createOfferViewModel.experimentalDesign ? createOfferViewModel.experimentalDesign: "No design defined.")
+                createOfferViewModel.experimentalDesign ? createOfferViewModel.experimentalDesign : "No design defined.")
         experimentInfo.setEnabled(false)
         experimentInfo.setWidth("100%")
         projectInfoForm.addComponent(experimentInfo)
-
-
 
 
         /*
@@ -200,8 +194,9 @@ class OfferOverviewView extends VerticalLayout{
                 new PriceField("Total Price", createOfferViewModel.totalPrice)
         ])
         gridLayout.addColumn(PriceField::getName)
-        gridLayout.addColumn(  {
-            costs -> costs.value},
+        gridLayout.addColumn({
+            costs -> costs.value
+        },
                 new NumberRenderer(Currency.getFormatterWithSymbol()))
 
         gridLayout.headerVisible = false
@@ -214,6 +209,7 @@ class OfferOverviewView extends VerticalLayout{
     Small helper object, that will display information
     about individual price positions for offer overviews.
      */
+
     private class PriceField {
 
         String name
