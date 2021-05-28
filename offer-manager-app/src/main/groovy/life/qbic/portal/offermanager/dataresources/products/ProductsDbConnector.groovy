@@ -8,6 +8,7 @@ import life.qbic.business.products.archive.ArchiveProductDataSource
 import life.qbic.business.products.copy.CopyProductDataSource
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.ProductExistsException
+import life.qbic.business.products.list.ListProductsDataSource
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductCategoryFactory
 import life.qbic.datamodel.dtos.business.ProductId
@@ -27,7 +28,7 @@ import java.sql.SQLException
  * @since 1.0.0
  */
 @Log4j2
-class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource, CopyProductDataSource {
+class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource, CopyProductDataSource, ListProductsDataSource {
 
   private final ConnectionProvider provider
 
@@ -45,7 +46,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     this.provider = Objects.requireNonNull(provider, "Provider must not be null.")
   }
 
-  /**
+/**
    * Queries a data source for all available service
    * product that have been defined by the organisation.
    *
@@ -57,7 +58,8 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * @return A list of service {@link Product}.
    * @throws DatabaseQueryException
    */
-  List<Product> findAllAvailableProducts() throws DatabaseQueryException {
+  @Override
+  List<Product> listProducts() throws DatabaseQueryException {
     try {
       return fetchAllProductsFromDb()
     } catch (SQLException e) {

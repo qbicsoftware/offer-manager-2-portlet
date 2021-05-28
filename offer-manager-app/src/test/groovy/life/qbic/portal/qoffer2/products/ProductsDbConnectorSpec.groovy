@@ -1,12 +1,12 @@
 package life.qbic.portal.qoffer2.products
 
 import groovy.sql.GroovyRowResult
+import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 import org.apache.groovy.sql.extensions.SqlExtensions
@@ -44,7 +44,7 @@ class ProductsDbConnectorSpec extends Specification {
 
     when:
     def connector = new ProductsDbConnector(provider)
-    connector.findAllAvailableProducts()
+    connector.listProducts()
 
     then:
     thrown(DatabaseQueryException)
@@ -69,7 +69,7 @@ class ProductsDbConnectorSpec extends Specification {
     def connector = new ProductsDbConnector(provider)
 
     when: "the query is executed"
-    List<Product> result = connector.findAllAvailableProducts()
+    List<Product> result = connector.listProducts()
 
     then:
     result.size() == 1

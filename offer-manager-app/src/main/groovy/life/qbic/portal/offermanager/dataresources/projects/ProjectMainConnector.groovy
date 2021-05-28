@@ -20,8 +20,10 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.projects.create.CreateProjectDataSource
 import life.qbic.business.projects.create.ProjectExistsException
 import life.qbic.business.projects.create.SpaceNonExistingException
-import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
-import life.qbic.business.projects.spaces.ProjectSpaceExistsException
+import life.qbic.business.projects.list.ListProjectsDataSource
+import life.qbic.business.projects.spaces.create.CreateProjectSpaceDataSource
+import life.qbic.business.projects.spaces.create.ProjectSpaceExistsException
+import life.qbic.business.projects.spaces.list.ListProjectSpacesDataSource
 import life.qbic.datamodel.dtos.business.ProjectApplication
 import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
@@ -46,7 +48,7 @@ import javax.xml.bind.JAXBException
  */
 @Log4j2
 @CompileStatic
-class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpaceDataSource {
+class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpaceDataSource, ListProjectsDataSource, ListProjectSpacesDataSource {
 
     /**
      * A connection to the project (and customer) database used to create queries.
@@ -80,8 +82,10 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     }
 
     /**
-     * Returns a copy of the list of available project spaces that has been fetched from openBIS upon creation of this class instance
+     * Returns a copy of the list of available project spaces that has been fetched from openBIS
+     * upon creation of this class instance
      */
+    @Override
     List<ProjectSpace> listSpaces() {
         return new ArrayList<ProjectSpace>(openbisSpaces)
     }
@@ -170,8 +174,10 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
 
     /**
      * Returns a copied list of existing projects fetched upon creation of this class
+     * @inheritDoc
      */
-    List<ProjectIdentifier> fetchProjects() {
+    @Override
+    List<ProjectIdentifier> listProjects() {
         return new ArrayList<ProjectIdentifier>(openbisProjects)
     }
 

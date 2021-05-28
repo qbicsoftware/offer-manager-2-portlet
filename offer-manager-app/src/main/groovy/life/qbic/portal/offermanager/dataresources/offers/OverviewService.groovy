@@ -19,7 +19,7 @@ class OverviewService implements ResourcesService<OfferOverview> {
 
     private List<OfferOverview> offerOverviewList
 
-    private final OfferDbConnector offerDbConnector
+    private final OfferOverviewDataSource overviewDataSource
 
     private final ResourcesService<Offer> offerService
 
@@ -27,14 +27,14 @@ class OverviewService implements ResourcesService<OfferOverview> {
 
     private final EventEmitter<Project> projectCreatedEvent
 
-    OverviewService(OfferDbConnector offerDbConnector,
+    OverviewService(OfferOverviewDataSource overviewDataSource,
                     ResourcesService<Offer> offerService,
                     EventEmitter<Project> projectCreatedEvent) {
-        this.offerDbConnector = offerDbConnector
+        this.overviewDataSource = overviewDataSource
         this.updatedOverviewEvent = new EventEmitter<>()
         this.offerService = offerService
         this.projectCreatedEvent = projectCreatedEvent
-        this.offerOverviewList = offerDbConnector.loadOfferOverview()
+        this.offerOverviewList = overviewDataSource.listOfferOverviews()
         subscribeToNewOffers()
         subscribeToNewProjects()
     }

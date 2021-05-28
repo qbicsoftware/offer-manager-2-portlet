@@ -7,17 +7,23 @@ import life.qbic.business.offers.fetch.FetchOffer
 import life.qbic.business.offers.fetch.FetchOfferDataSource
 import life.qbic.business.persons.affiliation.create.CreateAffiliation
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
+import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
 import life.qbic.business.persons.create.CreatePerson
 import life.qbic.business.persons.create.CreatePersonDataSource
+import life.qbic.business.persons.list.ListPersonsDataSource
+import life.qbic.business.persons.search.SearchPersonDataSource
 import life.qbic.business.products.archive.ArchiveProduct
 import life.qbic.business.products.archive.ArchiveProductDataSource
 import life.qbic.business.products.copy.CopyProduct
 import life.qbic.business.products.copy.CopyProductDataSource
 import life.qbic.business.products.create.CreateProduct
 import life.qbic.business.products.create.CreateProductDataSource
+import life.qbic.business.products.list.ListProductsDataSource
 import life.qbic.business.projects.create.CreateProject
 import life.qbic.business.projects.create.CreateProjectDataSource
-import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
+import life.qbic.business.projects.list.ListProjectsDataSource
+import life.qbic.business.projects.spaces.create.CreateProjectSpaceDataSource
+import life.qbic.business.projects.spaces.list.ListProjectSpacesDataSource
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.general.Person
@@ -66,10 +72,7 @@ import life.qbic.portal.offermanager.components.product.create.CreateProductView
 import life.qbic.portal.offermanager.components.product.create.CreateProductViewModel
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 import life.qbic.portal.offermanager.dataresources.database.DatabaseSession
-import life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
-import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
-import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
-import life.qbic.portal.offermanager.dataresources.offers.OverviewService
+import life.qbic.portal.offermanager.dataresources.offers.*
 import life.qbic.portal.offermanager.dataresources.persons.*
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
@@ -115,12 +118,29 @@ class DependencyManager {
     private EventEmitter<Person> personUpdateEvent
     private EventEmitter<Project> projectCreatedEvent
 
-    private OfferDbConnector offerDbConnector
-    private OpenBisClient openbisClient
-    private PersonDbConnector customerDbConnector
-    private ProductsDbConnector productsDbConnector
-    private ProjectDbConnector projectDbConnector
-    private ProjectMainConnector projectMainConnector
+
+    //fixme remove comment
+    // offerdbconnector
+    private CreateOfferDataSource createOfferDataSource
+    private FetchOfferDataSource fetchOfferDataSource
+    private ProjectAssistant projectAssistant
+    private OfferOverviewDataSource offerOverviewDataSource
+    //persondbconnector
+    private CreatePersonDataSource createPersonDataSource
+    private SearchPersonDataSource searchPersonDataSource
+    private CreateAffiliationDataSource createAffiliationDataSource
+    private ListAffiliationsDataSource listAffiliationsDataSource
+    private ListPersonsDataSource listPersonsDataSource
+    //productsdbconnector
+    private ArchiveProductDataSource archiveProductDataSource
+    private CreateProductDataSource createProductDataSource
+    private CopyProductDataSource copyProductDataSource
+    private ListProductsDataSource listProductsDataSource
+    //projectmainconnector
+    private CreateProjectDataSource createProjectDataSource
+    private CreateProjectSpaceDataSource createProjectSpaceDataSource
+    private ListProjectsDataSource listProjectsDataSource
+    private ListProjectSpacesDataSource listProjectSpacesDataSource
 
     /**
      * Public constructor.
@@ -150,7 +170,6 @@ class DependencyManager {
 
     private void setupDbConnections() {
         try {
-
             String user = Objects.requireNonNull(configurationManager.getMysqlUser(), "Mysql user missing.")
             String password = Objects.requireNonNull(configurationManager.getMysqlPass(), "Mysql password missing.")
             String host = Objects.requireNonNull(configurationManager.getMysqlHost(), "Mysql host missing.")
@@ -158,21 +177,48 @@ class DependencyManager {
             String sqlDatabase = Objects.requireNonNull(configurationManager.getMysqlDB(), "Mysql database name missing.")
 
             DatabaseSession.init(user, password, host, port, sqlDatabase)
-            customerDbConnector = new PersonDbConnector(DatabaseSession.getInstance())
-            productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
-            offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(),
-                    customerDbConnector, productsDbConnector)
-            projectDbConnector = new ProjectDbConnector(DatabaseSession.getInstance(), customerDbConnector)
+            PersonDbConnector personDbConnector = new PersonDbConnector(DatabaseSession.getInstance())
+            createPersonDataSource = personDbConnector
+            searchPersonDataSource = personDbConnector
+            createAffiliationDataSource = personDbConnector
+            listAffiliationsDataSource = personDbConnector
+            listPersonsDataSource = personDbConnector
 
+            ProductsDbConnector productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
+            archiveProductDataSource = productsDbConnector
+            createProductDataSource = productsDbConnector
+            copyProductDataSource = productsDbConnector
+            listProductsDataSource = productsDbConnector
+
+            /* Currently life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
+             *  cannot be decoupled by interfaces from
+             *  life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector nor
+             *  life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
+            */
+            OfferDbConnector offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(),
+                    personDbConnector, productsDbConnector)
+            createOfferDataSource = offerDbConnector
+            fetchOfferDataSource = offerDbConnector
+            projectAssistant = offerDbConnector
+            offerOverviewDataSource = offerDbConnector
+
+            /* Currently life.qbic.portal.offermanager.dataresources.projects.ProjectDbConnector
+             *  cannot be decoupled by interfaces from
+             *  life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
+             */
+            ProjectDbConnector projectDbConnector = new ProjectDbConnector(DatabaseSession.getInstance(), personDbConnector)
 
             final String openbisURL = configurationManager.getDataSourceUrl() + "/openbis/openbis"
-            openbisClient = new OpenBisClient(configurationManager.getDataSourceUser(), configurationManager.getDataSourcePassword(), openbisURL)
+            OpenBisClient openbisClient = new OpenBisClient(configurationManager.getDataSourceUser(), configurationManager.getDataSourcePassword(), openbisURL)
             openbisClient.login()
-
-            projectMainConnector = new ProjectMainConnector(
+            ProjectMainConnector projectMainConnector = new ProjectMainConnector(
                     projectDbConnector,
                     openbisClient,
-                    offerDbConnector)
+                    projectAssistant)
+            createProjectDataSource = projectMainConnector
+            createProjectSpaceDataSource = projectMainConnector
+            listProjectsDataSource = projectMainConnector
+            listProjectSpacesDataSource = projectMainConnector
 
         } catch (Exception e) {
             log.error("Unexpected exception during customer database connection.", e)
@@ -180,16 +226,23 @@ class DependencyManager {
         }
     }
 
+    /**
+     * This method needs the following field to be instantiated
+     * <ul>
+     *     <li>{@link #listAffiliationsDataSource}</li>
+     *     <li>{@link }</li>
+     * </ul>
+     */
     private void setupServices() {
-        this.affiliationService = new AffiliationResourcesService(customerDbConnector)
-        this.customerResourceService = new CustomerResourceService(customerDbConnector)
-        this.managerResourceService = new ProjectManagerResourceService(customerDbConnector)
+        this.affiliationService = new AffiliationResourcesService(listAffiliationsDataSource)
+        this.customerResourceService = new CustomerResourceService(listPersonsDataSource)
+        this.managerResourceService = new ProjectManagerResourceService(listPersonsDataSource)
         this.offerService = new OfferResourcesService()
-        this.overviewService = new OverviewService(offerDbConnector, offerService, projectCreatedEvent)
-        this.personResourceService = new PersonResourceService(customerDbConnector)
-        this.productsResourcesService = new ProductsResourcesService(productsDbConnector)
-        this.projectResourceService = new ProjectResourceService(projectMainConnector)
-        this.projectSpaceResourceService = new ProjectSpaceResourceService(projectMainConnector)
+        this.overviewService = new OverviewService(offerOverviewDataSource, offerService, projectCreatedEvent)
+        this.personResourceService = new PersonResourceService(listPersonsDataSource)
+        this.productsResourcesService = new ProductsResourcesService(listProductsDataSource)
+        this.projectResourceService = new ProjectResourceService(listProjectsDataSource)
+        this.projectSpaceResourceService = new ProjectSpaceResourceService(listProjectSpacesDataSource)
     }
 
     private void setupEventEmitter() {
@@ -199,14 +252,68 @@ class DependencyManager {
     }
 
     private AppView setupAppView() {
-        CreateAffiliationView createAffiliationView = createCreateAffiliationView(viewModel, affiliationService, customerDbConnector)
-        CreateOfferView createOfferView = createCreateOfferView(affiliationService, customerResourceService, personResourceService, managerResourceService, productsResourcesService, offerService, viewModel, customerDbConnector, customerDbConnector, offerDbConnector, offerDbConnector)
-        CreatePersonView createPersonView = createCreatePersonView(viewModel, affiliationService, customerResourceService, personResourceService, managerResourceService, customerDbConnector, customerDbConnector)
-        CreateOfferView updateOfferView = createUpdateOfferView(viewModel, affiliationService, customerResourceService, offerService, personResourceService, managerResourceService, productsResourcesService, offerUpdateEvent, customerDbConnector, offerDbConnector, customerDbConnector, offerDbConnector)
-        MaintainProductsView maintainProductsView = createMaintainProductsView(viewModel, productsResourcesService, productsDbConnector, productsDbConnector, productsDbConnector)
-        OfferOverviewView overviewView = createOfferOverviewView(viewModel, overviewService, projectResourceService, projectSpaceResourceService, offerUpdateEvent, projectCreatedEvent, projectMainConnector, projectMainConnector, offerDbConnector)
+        CreateAffiliationView createAffiliationView = createCreateAffiliationView(
+                viewModel, 
+                affiliationService, 
+                createAffiliationDataSource)
+        CreateOfferView createOfferView = createCreateOfferView(
+                affiliationService,
+                customerResourceService,
+                personResourceService,
+                managerResourceService,
+                productsResourcesService,
+                offerService,
+                viewModel,
+                createAffiliationDataSource,
+                createPersonDataSource,
+                createOfferDataSource,
+                fetchOfferDataSource)
+        CreatePersonView createPersonView = createCreatePersonView(
+                viewModel,
+                affiliationService,
+                customerResourceService,
+                personResourceService,
+                managerResourceService,
+                createAffiliationDataSource,
+                createPersonDataSource)
+        CreateOfferView updateOfferView = createUpdateOfferView(
+                viewModel,
+                affiliationService,
+                customerResourceService,
+                offerService,
+                personResourceService,
+                managerResourceService,
+                productsResourcesService,
+                offerUpdateEvent,
+                createAffiliationDataSource,
+                createOfferDataSource,
+                createPersonDataSource,
+                fetchOfferDataSource)
+        MaintainProductsView maintainProductsView = createMaintainProductsView(
+                viewModel,
+                productsResourcesService,
+                archiveProductDataSource,
+                createProductDataSource,
+                copyProductDataSource)
+        OfferOverviewView overviewView = createOfferOverviewView(
+                viewModel,
+                overviewService,
+                projectResourceService,
+                projectSpaceResourceService,
+                offerUpdateEvent,
+                projectCreatedEvent,
+                createProjectDataSource,
+                createProjectSpaceDataSource,
+                fetchOfferDataSource)
         SearchAffiliationView searchAffiliationView = createSearchAffiliationView(affiliationService)
-        SearchPersonView searchPersonView = createSearchPersonView(viewModel, affiliationService, customerResourceService, managerResourceService, personResourceService, customerDbConnector, customerDbConnector)
+        SearchPersonView searchPersonView = createSearchPersonView(
+                viewModel,
+                affiliationService,
+                customerResourceService,
+                managerResourceService,
+                personResourceService,
+                createAffiliationDataSource,
+                createPersonDataSource)
 
         AppView portletView = new AppView(this.viewModel,
                 createPersonView,

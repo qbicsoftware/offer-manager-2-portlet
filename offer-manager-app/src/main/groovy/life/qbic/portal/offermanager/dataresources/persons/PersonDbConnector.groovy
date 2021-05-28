@@ -6,6 +6,7 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
 import life.qbic.business.persons.create.CreatePersonDataSource
+import life.qbic.business.persons.list.ListPersonsDataSource
 import life.qbic.business.persons.search.SearchPersonDataSource
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.general.CommonPerson
@@ -28,7 +29,7 @@ import java.sql.Statement
  *
  */
 @Log4j2
-class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
+class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSource, ListPersonsDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
   /**
    * A connection to the customer database used to create queries.
@@ -584,10 +585,20 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   }
 
   /**
+   * Lists all customers
+   * @return a list of customers found
+   * since 1.0.0
+   */
+  @Override
+  List<Customer> listAllCustomers() {
+    return fetchAllCustomers()
+  }
+
+  /**
    * List all available persons.
    * @return A list of persons
    */
-  List<Customer> fetchAllCustomers() {
+  private List<Customer> fetchAllCustomers() {
     List<Customer> customers = []
     String query = PERSON_SELECT_QUERY + " WHERE active = 1"
     Connection connection = connectionProvider.connect()
@@ -602,11 +613,15 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     return customers
   }
 
+  @Override
+  List<Person> listActivePersons() {
+    return fetchAllActivePersons()
+  }
   /**
    * List all available persons that are set to active in the database.
    * @return A list of active persons
    */
-  List<Person> fetchAllActivePersons() {
+  private List<Person> fetchAllActivePersons() {
     List<Person> persons = []
     String query = PERSON_SELECT_QUERY + " WHERE active = 1"
     Connection connection = connectionProvider.connect()
@@ -621,11 +636,16 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     return persons
   }
 
+  @Override
+  List<ProjectManager> listAllProjectManagers() {
+    return fetchAllProjectManagers()
+  }
+
   /**
    * List all available project managers.
    * @return A list of project managers
    */
-  List<ProjectManager> fetchAllProjectManagers() {
+  private List<ProjectManager> fetchAllProjectManagers() {
     List<ProjectManager> pms = []
     String query = PM_SELECT_QUERY + " WHERE active = 1"
     Connection connection = connectionProvider.connect()
