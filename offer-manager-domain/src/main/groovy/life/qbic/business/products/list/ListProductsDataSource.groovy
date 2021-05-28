@@ -21,6 +21,7 @@ interface ListProductsDataSource {
      *
      * @return A list of service {@link Product}.
      * @throws DatabaseQueryException
+     * @since 1.0.0
      */
     List<Product> listProducts() throws DatabaseQueryException
 
