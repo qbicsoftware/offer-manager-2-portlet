@@ -208,6 +208,7 @@ class UpdatePersonView extends CreatePersonView{
         organisationComboBox.selectedItem = organisationComboBox.clear()
         addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
         addressAdditionComboBox.setComponentError(null)
+        organisationComboBox.setComponentError(null)
     }
 
     /**
