@@ -1,6 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.products
 
-
+import life.qbic.business.products.list.ListProductsDataSource
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
@@ -17,7 +17,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  */
 class ProductsResourcesService implements ResourcesService<Product> {
 
-    private final ProductsDbConnector dbConnector
+    private final ListProductsDataSource listProductsDataSource
     private final List<Product> products
     /**
      * EventEmitter for products. Fires every time the resources are reloaded
@@ -28,10 +28,10 @@ class ProductsResourcesService implements ResourcesService<Product> {
 
     /**
      * Constructor expecting a customer database connector
-     * @param dbConnector
+     * @param listProductsDataSource
      */
-    ProductsResourcesService(ProductsDbConnector dbConnector) {
-        this.dbConnector = dbConnector
+    ProductsResourcesService(ListProductsDataSource listProductsDataSource) {
+        this.listProductsDataSource = listProductsDataSource
         this.products = new LinkedList<>()
         this.productEventEmitter = new EventEmitter<>()
         populateResources()
@@ -41,11 +41,11 @@ class ProductsResourcesService implements ResourcesService<Product> {
     @Deprecated
     void reloadResources() {
         this.products.clear()
-        this.products.addAll(dbConnector.findAllAvailableProducts())
+        this.products.addAll(listProductsDataSource.listProducts())
     }
 
     private void populateResources() {
-        this.products.addAll(dbConnector.findAllAvailableProducts())
+        this.products.addAll(listProductsDataSource.listProducts())
     }
 
     @Override

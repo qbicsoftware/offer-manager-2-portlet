@@ -1,20 +1,15 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
 import groovy.util.logging.Log4j2
-import life.qbic.business.offers.fetch.FetchOfferDataSource
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.OfferId
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.create.CreateOfferDataSource
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.business.offers.fetch.FetchOfferDataSource
+import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
-import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
+import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 
 import java.sql.*
@@ -30,7 +25,7 @@ import java.sql.*
  *
  */
 @Log4j2
-class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant{
+class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant, OfferOverviewDataSource{
 
     ConnectionProvider connectionProvider
 
@@ -187,7 +182,12 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
         }
     }
 
-    List<OfferOverview> loadOfferOverview() {
+    @Override
+    List<OfferOverview> listOfferOverviews() {
+        loadOfferOverview()
+    }
+
+    private List<OfferOverview> loadOfferOverview() {
         List<OfferOverview> offerOverviewList = []
 
         String query = "SELECT offerId, creationDate, projectTitle, " +

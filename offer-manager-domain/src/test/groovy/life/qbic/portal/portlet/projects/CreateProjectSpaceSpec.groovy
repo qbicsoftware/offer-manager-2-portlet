@@ -1,16 +1,16 @@
 package life.qbic.portal.portlet.projects
 
 import life.qbic.business.Constants
-import life.qbic.business.projects.spaces.CreateProjectSpace
-import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
-import life.qbic.business.projects.spaces.CreateProjectSpaceOutput
-import life.qbic.business.projects.spaces.ProjectSpaceExistsException
+import life.qbic.business.projects.spaces.create.CreateProjectSpace
+import life.qbic.business.projects.spaces.create.CreateProjectSpaceDataSource
+import life.qbic.business.projects.spaces.create.CreateProjectSpaceOutput
+import life.qbic.business.projects.spaces.create.ProjectSpaceExistsException
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 import spock.lang.Shared
 import spock.lang.Specification
 
 /**
- * <h1>Test the behaviour of {@link life.qbic.business.projects.spaces.CreateProjectSpace}</h1>
+ * <h1>Test the behaviour of {@link CreateProjectSpace}</h1>
  *
  * @since 1.0.0
  */
