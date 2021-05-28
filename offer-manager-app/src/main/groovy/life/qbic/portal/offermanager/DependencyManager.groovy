@@ -91,7 +91,7 @@ import life.qbic.portal.utils.ConfigurationManagerFactory
  * and provide every instance with it's dependencies injected. The class should only be accessed once upon
  * portlet creation and shall not be used later on in the control flow.
  *
- * @since: 1.0.0
+ * @since 1.0.0
  */
 
 @Log4j2
@@ -119,28 +119,27 @@ class DependencyManager {
     private EventEmitter<Project> projectCreatedEvent
 
 
-    //fixme remove comment
-    // offerdbconnector
+    // Implemented by life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
     private CreateOfferDataSource createOfferDataSource
     private FetchOfferDataSource fetchOfferDataSource
-    private ProjectAssistant projectAssistant
     private OfferOverviewDataSource offerOverviewDataSource
-    //persondbconnector
-    private CreatePersonDataSource createPersonDataSource
-    private SearchPersonDataSource searchPersonDataSource
+    private ProjectAssistant projectAssistant
+    // Implemented by life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
     private CreateAffiliationDataSource createAffiliationDataSource
+    private CreatePersonDataSource createPersonDataSource
     private ListAffiliationsDataSource listAffiliationsDataSource
     private ListPersonsDataSource listPersonsDataSource
-    //productsdbconnector
+    private SearchPersonDataSource searchPersonDataSource
+    // Implemented by life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
     private ArchiveProductDataSource archiveProductDataSource
-    private CreateProductDataSource createProductDataSource
     private CopyProductDataSource copyProductDataSource
+    private CreateProductDataSource createProductDataSource
     private ListProductsDataSource listProductsDataSource
-    //projectmainconnector
+    // Implemented by life.qbic.portal.offermanager.dataresources.projects.ProjectMainConnector
     private CreateProjectDataSource createProjectDataSource
     private CreateProjectSpaceDataSource createProjectSpaceDataSource
-    private ListProjectsDataSource listProjectsDataSource
     private ListProjectSpacesDataSource listProjectSpacesDataSource
+    private ListProjectsDataSource listProjectsDataSource
 
     /**
      * Public constructor.
