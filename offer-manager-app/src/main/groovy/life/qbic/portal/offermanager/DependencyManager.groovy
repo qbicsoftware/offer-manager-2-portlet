@@ -114,8 +114,9 @@ class DependencyManager {
     private ResourcesService<ProjectManager> managerResourceService
     private ResourcesService<ProjectSpace> projectSpaceResourceService
 
-    private EventEmitter<Offer> offerUpdateEvent
-    private EventEmitter<Person> personUpdateEvent
+    /**
+     * Projects are emitted after creation and consumed by a service
+     */
     private EventEmitter<Project> projectCreatedEvent
 
 
@@ -154,7 +155,7 @@ class DependencyManager {
     }
 
     private void initializeDependencies() {
-        // The ORDER in which the methods below are called MUST NOT CHANGE
+        // the database connections are needed first
         setupDbConnections()
         setupEventEmitter()
         setupServices()
@@ -250,74 +251,24 @@ class DependencyManager {
     }
 
     private void setupEventEmitter() {
-        this.offerUpdateEvent = new EventEmitter<Offer>()
-        this.personUpdateEvent = new EventEmitter<Person>()
         this.projectCreatedEvent = new EventEmitter<Project>()
     }
 
     private AppView setupAppView() {
-        CreateAffiliationView createAffiliationView = createCreateAffiliationView(
-                viewModel, 
-                affiliationService, 
-                createAffiliationDataSource)
-        CreateOfferView createOfferView = createCreateOfferView(
-                affiliationService,
-                customerResourceService,
-                personResourceService,
-                managerResourceService,
-                productsResourcesService,
-                offerService,
-                viewModel,
-                createAffiliationDataSource,
-                createPersonDataSource,
-                createOfferDataSource,
-                fetchOfferDataSource)
-        CreatePersonView createPersonView = createCreatePersonView(
-                viewModel,
-                affiliationService,
-                customerResourceService,
-                personResourceService,
-                managerResourceService,
-                createAffiliationDataSource,
-                createPersonDataSource)
-        CreateOfferView updateOfferView = createUpdateOfferView(
-                viewModel,
-                affiliationService,
-                customerResourceService,
-                offerService,
-                personResourceService,
-                managerResourceService,
-                productsResourcesService,
-                offerUpdateEvent,
-                createAffiliationDataSource,
-                createOfferDataSource,
-                createPersonDataSource,
-                fetchOfferDataSource)
-        MaintainProductsView maintainProductsView = createMaintainProductsView(
-                viewModel,
-                productsResourcesService,
-                archiveProductDataSource,
-                createProductDataSource,
-                copyProductDataSource)
-        OfferOverviewView overviewView = createOfferOverviewView(
-                viewModel,
-                overviewService,
-                projectResourceService,
-                projectSpaceResourceService,
-                offerUpdateEvent,
-                projectCreatedEvent,
-                createProjectDataSource,
-                createProjectSpaceDataSource,
-                fetchOfferDataSource)
-        SearchAffiliationView searchAffiliationView = createSearchAffiliationView(affiliationService)
-        SearchPersonView searchPersonView = createSearchPersonView(
-                viewModel,
-                affiliationService,
-                customerResourceService,
-                managerResourceService,
-                personResourceService,
-                createAffiliationDataSource,
-                createPersonDataSource)
+
+        CreateAffiliationView createAffiliationView = createCreateAffiliationView()
+        CreateOfferView createOfferView = createCreateOfferView()
+        CreatePersonView createPersonView = createCreatePersonView()
+        MaintainProductsView maintainProductsView = createMaintainProductsView()
+        SearchAffiliationView searchAffiliationView = createSearchAffiliationView()
+        SearchPersonView searchPersonView = createSearchPersonView()
+
+        // Used to emit offers that shall be updated
+        EventEmitter<Offer> offerUpdateEvent = new EventEmitter<Offer>()
+
+        CreateOfferView updateOfferView = createUpdateOfferView(offerUpdateEvent)
+        OfferOverviewView overviewView = createOfferOverviewView(offerUpdateEvent, projectCreatedEvent)
+
 
         AppView portletView = new AppView(this.viewModel,
                 createPersonView,
@@ -333,15 +284,19 @@ class DependencyManager {
     }
 
     /**
-     *
-     * @param sharedViewModel
-     * @param affiliationResourcesService
-     * @param dataSource
-     * @return a new CreateAffiliationView using the provided resources
+     * Creates a new CreateAffiliationView using
+     * <ul>
+     *     <li>{@link #affiliationService}</li>
+     *     <li>{@link #createAffiliationDataSource}</li>
+     *     <li>{@link #viewModel}</li>
+     * </ul>
+     * @return a new CreateAffiliationView
      */
-    private static CreateAffiliationView createCreateAffiliationView(AppViewModel sharedViewModel,
-                                                                     ResourcesService<Affiliation> affiliationResourcesService,
-                                                                     CreateAffiliationDataSource dataSource) {
+    private CreateAffiliationView createCreateAffiliationView() {
+        AppViewModel sharedViewModel = this.viewModel
+        ResourcesService<Affiliation> affiliationResourcesService = this.affiliationService
+        CreateAffiliationDataSource dataSource = this.createAffiliationDataSource
+
         CreateAffiliationViewModel createAffiliationViewModel = new CreateAffiliationViewModel(affiliationResourcesService)
         createAffiliationViewModel.affiliationCategories.addAll(AffiliationCategory.values().collect { it.value })
 
@@ -353,34 +308,43 @@ class DependencyManager {
 
 
     /**
-     *
-     * @param affiliationResourcesService
-     * @return a new SearchAffiliationView using the provided resources
+     * Creates a new SearchAffiliationView using
+     * <ul>
+     *     <li>{@link #affiliationService}</li>
+     * </ul>
+     * @return a new SearchAffiliationView
      */
-    private static SearchAffiliationView createSearchAffiliationView(ResourcesService<Affiliation> affiliationResourcesService) {
+    private SearchAffiliationView createSearchAffiliationView() {
+        ResourcesService<Affiliation> affiliationResourcesService = this.affiliationService
         SearchAffiliationViewModel searchAffiliationViewModel = new SearchAffiliationViewModel(affiliationResourcesService)
         SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel)
         return searchAffiliationView
     }
 
     /**
-     *
-     * @param sharedViewModel
-     * @param affiliationResourcesService
-     * @param customerResourcesService
-     * @param personResourcesService
-     * @param projectManagerResourcesService
-     * @param createAffiliationDataSource
-     * @param createPersonDataSource
-     * @return a new CreatePersonView instance
+     * Creates a new CreatePersonView using fields
+     * <ul>
+     *     <li>{@link #affiliationService}</li>
+     *     <li>{@link #createPersonDataSource}</li>
+     *     <li>{@link #customerResourceService}</li>
+     *     <li>{@link #managerResourceService}</li>
+     *     <li>{@link #personResourceService}</li>
+     *     <li>{@link #viewModel}</li>
+     * </ul>
+     * and additional fields from
+     * <ul>
+     *     <li>{@link #createCreateAffiliationView()}</li>
+     * </ul>
+     * @return
      */
-    private static CreatePersonView createCreatePersonView(AppViewModel sharedViewModel,
-                                                           ResourcesService<Affiliation> affiliationResourcesService,
-                                                           ResourcesService<Customer> customerResourcesService,
-                                                           ResourcesService<Person> personResourcesService,
-                                                           ResourcesService<ProjectManager> projectManagerResourcesService,
-                                                           CreateAffiliationDataSource createAffiliationDataSource,
-                                                           CreatePersonDataSource createPersonDataSource) {
+    private CreatePersonView createCreatePersonView() {
+
+        AppViewModel sharedViewModel = this.viewModel
+        ResourcesService<Affiliation> affiliationResourcesService = this.affiliationService
+        ResourcesService<Customer> customerResourcesService = this.customerResourceService
+        ResourcesService<Person> personResourcesService = this.personResourceService
+        ResourcesService<ProjectManager> projectManagerResourcesService = this.managerResourceService
+        CreatePersonDataSource createPersonDataSource = this.createPersonDataSource
 
         CreatePersonViewModel createPersonViewModel = new CreatePersonViewModel(
                 customerResourcesService,
@@ -394,36 +358,42 @@ class DependencyManager {
         CreatePerson createPerson = new CreatePerson(createPersonPresenter, createPersonDataSource)
         CreatePersonController createPersonController = new CreatePersonController(createPerson)
 
-        CreateAffiliationView createAffiliationView = createCreateAffiliationView(sharedViewModel, affiliationResourcesService, createAffiliationDataSource)
+        CreateAffiliationView createAffiliationView = createCreateAffiliationView()
 
         CreatePersonView createPersonView = new CreatePersonView(createPersonController, sharedViewModel, createPersonViewModel, createAffiliationView)
         return createPersonView
     }
 
+
     /**
+     * Creates a new CreateOfferView using the following fields
+     * <ul>
+     *     <li>{@link #createOfferDataSource}</li>
+     *     <li>{@link #customerResourceService}</li>
+     *     <li>{@link #fetchOfferDataSource}</li>
+     *     <li>{@link #managerResourceService}</li>
+     *     <li>{@link #offerService}</li>
+     *     <li>{@link #productsResourcesService}</li>
+     *     <li>{@link #viewModel}</li>
+     * </ul>
+     * and methods
+     * <ul>
+     *     <li>{@link #createCreateAffiliationView()}</li>
+     *     <li>{@link #createCreatePersonView()}</li>
+     * </ul>
      *
-     * @param affiliationResourcesService
-     * @param customerResourcesService
-     * @param projectManagerResourcesService
-     * @param productResourcesService
-     * @param offerResourcesService
-     * @param sharedViewModel
-     * @param createAffiliationDataSource
-     * @param createOfferDataSource
-     * @param fetchOfferDataSource
-     * @return
+     * @return a new CreateOfferView
      */
-    private static CreateOfferView createCreateOfferView(ResourcesService<Affiliation> affiliationResourcesService,
-                                                         ResourcesService<Customer> customerResourcesService,
-                                                         ResourcesService<Person> personResourcesService,
-                                                         ResourcesService<ProjectManager> projectManagerResourcesService,
-                                                         ResourcesService<Product> productResourcesService,
-                                                         ResourcesService<Offer> offerResourcesService,
-                                                         AppViewModel sharedViewModel,
-                                                         CreateAffiliationDataSource createAffiliationDataSource,
-                                                         CreatePersonDataSource createPersonDataSource,
-                                                         CreateOfferDataSource createOfferDataSource,
-                                                         FetchOfferDataSource fetchOfferDataSource) {
+    private CreateOfferView createCreateOfferView() {
+
+        AppViewModel sharedViewModel = this.viewModel
+        CreateOfferDataSource createOfferDataSource = this.createOfferDataSource
+        FetchOfferDataSource fetchOfferDataSource = this.fetchOfferDataSource
+        ResourcesService<Customer> customerResourcesService = this.customerResourceService
+        ResourcesService<Offer> offerResourcesService = this.offerService
+        ResourcesService<Product> productResourcesService = this.productsResourcesService
+        ResourcesService<ProjectManager> projectManagerResourcesService = this.managerResourceService
+
         CreateOfferViewModel createOfferViewModel = new CreateOfferViewModel(
                 customerResourcesService,
                 projectManagerResourcesService,
@@ -440,21 +410,9 @@ class DependencyManager {
         FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, createOfferPresenter)
         CreateOfferController createOfferController = new CreateOfferController(createOffer, fetchOffer, createOffer)
 
-        CreatePersonView createPersonView = createCreatePersonView(
-                sharedViewModel,
-                affiliationResourcesService,
-                customerResourcesService,
-                personResourcesService,
-                projectManagerResourcesService,
-                createAffiliationDataSource,
-                createPersonDataSource
-        )
+        CreatePersonView createPersonView = createCreatePersonView()
 
-        CreateAffiliationView createAffiliationView = createCreateAffiliationView(
-                sharedViewModel,
-                affiliationResourcesService,
-                createAffiliationDataSource
-        )
+        CreateAffiliationView createAffiliationView = createCreateAffiliationView()
 
         CreateOfferView createOfferView = new CreateOfferView(
                 sharedViewModel,
@@ -467,27 +425,30 @@ class DependencyManager {
     }
 
     /**
-     *
-     * @param sharedViewModel
-     * @param offerOverviewResourcesService a service with offerOverviews should listen to the events emitted in the projectCreatedEvent
-     * @param projectResourcesService
-     * @param projectSpaceResourcesService
-     * @param offerSelectedEvent
-     * @param projectCreatedEvent the event emitter where a project event should be emitted to
-     * @param createProjectDataSource
-     * @param createProjectSpaceDataSource
-     * @param fetchOfferDataSource
-     * @return
+     * Creates a new OfferOverviewView using fields
+     * <ul>
+     *     <li>{@link #createProjectDataSource}</li>
+     *     <li>{@link #createProjectSpaceDataSource}</li>
+     *     <li>{@link #fetchOfferDataSource}</li>
+     *     <li>{@link #overviewService}</li>
+     *     <li>{@link #projectResourceService}</li>
+     *     <li>{@link #projectSpaceResourceService}</li>
+     *     <li>{@link #viewModel}</li>
+     * </ul>
+     * @param offerSelectedEvent used to broadcast an offer being selected for update
+     * @param projectCreatedEvent emits projects that are created successfully
+     * @return a new OfferOverviewView
      */
-    private static OfferOverviewView createOfferOverviewView(AppViewModel sharedViewModel,
-                                                             ResourcesService<OfferOverview> offerOverviewResourcesService,
-                                                             ResourcesService<ProjectIdentifier> projectResourcesService,
-                                                             ResourcesService<ProjectSpace> projectSpaceResourcesService,
-                                                             EventEmitter<Offer> offerSelectedEvent,
-                                                             EventEmitter<Project> projectCreatedEvent,
-                                                             CreateProjectDataSource createProjectDataSource,
-                                                             CreateProjectSpaceDataSource createProjectSpaceDataSource,
-                                                             FetchOfferDataSource fetchOfferDataSource) {
+    private OfferOverviewView createOfferOverviewView(EventEmitter<Offer> offerSelectedEvent,
+                                                      EventEmitter<Project> projectCreatedEvent) {
+
+        AppViewModel sharedViewModel = this.viewModel
+        CreateProjectDataSource createProjectDataSource = this.createProjectDataSource
+        CreateProjectSpaceDataSource createProjectSpaceDataSource = this.createProjectSpaceDataSource
+        FetchOfferDataSource fetchOfferDataSource = this.fetchOfferDataSource
+        ResourcesService<OfferOverview> offerOverviewResourcesService = this.overviewService
+        ResourcesService<ProjectIdentifier> projectResourcesService = this.projectResourceService
+        ResourcesService<ProjectSpace> projectSpaceResourcesService = this.projectSpaceResourceService
 
         OfferOverviewModel offerOverviewViewModel = new OfferOverviewModel(offerOverviewResourcesService, sharedViewModel, offerSelectedEvent)
         OfferOverviewPresenter offerOverviewPresenter = new OfferOverviewPresenter(sharedViewModel, offerOverviewViewModel)
@@ -504,34 +465,35 @@ class DependencyManager {
         return offerOverviewView
     }
 
+
     /**
-     *
-     * @param sharedViewModel
-     * @param affiliationResourcesService
-     * @param customerResourcesService
-     * @param offerResourcesService
-     * @param personResourcesService
-     * @param projectManagerResourcesService
-     * @param productResourcesService
-     * @param offerUpdateEvent
-     * @param createAffiliationDataSource
-     * @param createOfferDataSource
-     * @param createPersonDataSource
-     * @param fetchOfferDataSource
-     * @return
+     * Creates a new update offer view using fields
+     *     <li>{@link #createOfferDataSource}</li>
+     *     <li>{@link #customerResourceService}</li>
+     *     <li>{@link #fetchOfferDataSource}</li>
+     *     <li>{@link #managerResourceService}</li>
+     *     <li>{@link #offerService}</li>
+     *     <li>{@link #productsResourcesService}</li>
+     *     <li>{@link #viewModel}</li>
+     * </ul>
+     * and methods
+     * <ul>
+     *     <li>{@link #createCreatePersonView()}</li>
+     *     <li>{@link #createCreateAffiliationView()}</li>
+     * </ul>
+     * @param offerUpdateEvent emits the offer to be updated
+     * @return a new CreateOfferView to be used as update offer view
      */
-    private static CreateOfferView createUpdateOfferView(AppViewModel sharedViewModel,
-                                                         ResourcesService<Affiliation> affiliationResourcesService,
-                                                         ResourcesService<Customer> customerResourcesService,
-                                                         ResourcesService<Offer> offerResourcesService,
-                                                         ResourcesService<Person> personResourcesService,
-                                                         ResourcesService<ProjectManager> projectManagerResourcesService,
-                                                         ResourcesService<Product> productResourcesService,
-                                                         EventEmitter<Offer> offerUpdateEvent,
-                                                         CreateAffiliationDataSource createAffiliationDataSource,
-                                                         CreateOfferDataSource createOfferDataSource,
-                                                         CreatePersonDataSource createPersonDataSource,
-                                                         FetchOfferDataSource fetchOfferDataSource) {
+    private CreateOfferView createUpdateOfferView(EventEmitter<Offer> offerUpdateEvent) {
+
+        AppViewModel sharedViewModel = this.viewModel
+        ResourcesService<Customer> customerResourcesService = this.customerResourceService
+        ResourcesService<Offer> offerResourcesService = this.offerService
+        ResourcesService<ProjectManager> projectManagerResourcesService = this.managerResourceService
+        ResourcesService<Product> productResourcesService = this.productsResourcesService
+        CreateOfferDataSource createOfferDataSource = this.createOfferDataSource
+        FetchOfferDataSource fetchOfferDataSource = this.fetchOfferDataSource
+
         UpdateOfferViewModel updateOfferViewModel = new UpdateOfferViewModel(
                 customerResourcesService,
                 projectManagerResourcesService,
@@ -541,18 +503,8 @@ class DependencyManager {
         CreateOffer updateOffer = new CreateOffer(createOfferDataSource, updateOfferPresenter)
 
         FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, updateOfferPresenter)
-        CreatePersonView createPersonView = createCreatePersonView(
-                sharedViewModel,
-                affiliationResourcesService,
-                customerResourcesService,
-                personResourcesService,
-                projectManagerResourcesService,
-                createAffiliationDataSource,
-                createPersonDataSource)
-        CreateAffiliationView createAffiliationView = createCreateAffiliationView(
-                sharedViewModel,
-                affiliationResourcesService,
-                createAffiliationDataSource)
+        CreatePersonView createPersonView = createCreatePersonView()
+        CreateAffiliationView createAffiliationView = createCreateAffiliationView()
 
         CreateOfferController updateOfferController = new CreateOfferController(updateOffer, fetchOffer, updateOffer)
         CreateOfferView updateOfferView = new CreateOfferView(
@@ -566,73 +518,63 @@ class DependencyManager {
     }
 
     /**
-     *
-     * @param sharedViewModel
-     * @param affiliationResourcesService
-     * @param customerResourcesService
-     * @param projectManagerResourcesService
-     * @param personResourcesService
-     * @param createAffiliationDataSource
-     * @param createPersonDataSource
+     * Creates a new SearchPersonView using fields
+     * <ul>
+     *     <li>{@link #personResourceService}</li>
+     * </ul>
+     * and methods
+     * <ul>
+     *     <li>{@link #createUpdatePersonView()}</li>
+     * </ul>
      * @return
      */
-    private static SearchPersonView createSearchPersonView(AppViewModel sharedViewModel,
-                                                           ResourcesService<Affiliation> affiliationResourcesService,
-                                                           ResourcesService<Customer> customerResourcesService,
-                                                           ResourcesService<ProjectManager> projectManagerResourcesService,
-                                                           ResourcesService<Person> personResourcesService,
-                                                           CreateAffiliationDataSource createAffiliationDataSource,
-                                                           CreatePersonDataSource createPersonDataSource) {
+    private SearchPersonView createSearchPersonView() {
+
+        ResourcesService<Person> personResourcesService = this.personResourceService
+
         // this event emitter is used to communicate between the search person view and the
-        // update person view
+        // update person view. The SearchPersonView emits persons to be updated. They are consumed
+        // by the UpdatePersonView
         EventEmitter<Person> personSelectEvent = new EventEmitter<Person>()
 
         SearchPersonViewModel searchPersonViewModel = new SearchPersonViewModel(personResourcesService, personSelectEvent)
-        UpdatePersonView updatePersonView = createUpdatePersonView(
-                sharedViewModel,
-                affiliationResourcesService,
-                customerResourcesService,
-                projectManagerResourcesService,
-                personResourcesService,
-                personSelectEvent,
-                createAffiliationDataSource,
-                createPersonDataSource
-        )
+        UpdatePersonView updatePersonView = createUpdatePersonView(personSelectEvent)
         SearchPersonView searchPersonView = new SearchPersonView(searchPersonViewModel, updatePersonView)
         return searchPersonView
     }
 
     /**
-     *
-     * @param sharedViewModel
-     * @param affiliationResourcesService
-     * @param customerResourcesService
-     * @param projectManagerResourcesService
-     * @param personResourcesService
-     * @param personUpdateEvent
-     * @param createAffiliationDataSource
-     * @param createPersonDataSource
-     * @return
+     * Creates a new update person view using fields
+     * <ul>
+     *     <li>{@link #affiliationService}</li>
+     *     <li>{@link #createPersonDataSource}</li>
+     *     <li>{@link #customerResourceService}</li>
+     *     <li>{@link #managerResourceService}</li>
+     *     <li>{@link #personResourceService}</li>
+     *     <li>{@link #viewModel}</li>
+     * </ul>
+     * and methods
+     * <ul>
+     *     <li>{@link #createCreateAffiliationView()}</li>
+     * </ul>
+     * @param personSelectEvent emits the person to be updated
+     * @return a new UpdatePersonView
      */
-    private static UpdatePersonView createUpdatePersonView(AppViewModel sharedViewModel,
-                                                           ResourcesService<Affiliation> affiliationResourcesService,
-                                                           ResourcesService<Customer> customerResourcesService,
-                                                           ResourcesService<ProjectManager> projectManagerResourcesService,
-                                                           ResourcesService<Person> personResourcesService,
-                                                           EventEmitter<Person> personUpdateEvent,
-                                                           CreateAffiliationDataSource createAffiliationDataSource,
-                                                           CreatePersonDataSource createPersonDataSource) {
+    private UpdatePersonView createUpdatePersonView(EventEmitter<Person> personSelectEvent) {
 
-        CreateAffiliationView createAffiliationView = createCreateAffiliationView(
-                sharedViewModel,
-                affiliationResourcesService,
-                createAffiliationDataSource
-        )
+        AppViewModel sharedViewModel = this.viewModel
+        ResourcesService<Affiliation> affiliationResourcesService = this.affiliationService
+        ResourcesService<Customer> customerResourcesService = this.customerResourceService
+        ResourcesService<ProjectManager> projectManagerResourcesService = this.managerResourceService
+        ResourcesService<Person> personResourcesService = this.personResourceService
+        CreatePersonDataSource createPersonDataSource = this.createPersonDataSource
+
+        CreateAffiliationView createAffiliationView = createCreateAffiliationView()
         UpdatePersonViewModel updatePersonViewModel = new UpdatePersonViewModel(
                 customerResourcesService,
                 projectManagerResourcesService,
                 affiliationResourcesService,
-                personUpdateEvent,
+                personSelectEvent,
                 personResourcesService
         )
         updatePersonViewModel.academicTitles.addAll(AcademicTitle.values().collect { it.value })
@@ -652,20 +594,25 @@ class DependencyManager {
     }
 
     /**
-     *
-     * @param sharedViewModel
-     * @param productResourcesService
-     * @param archiveProductDataSource
-     * @param createProductDataSource
-     * @param copyProductDataSource
+     * Creates a new MaintainProductsView using fields
+     * <ul>
+     *     <li>{@link #archiveProductDataSource}</li>
+     *     <li>{@link #copyProductDataSource}</li>
+     *     <li>{@link #createProductDataSource}</li>
+     *     <li>{@link #productsResourcesService}</li>
+     *     <li>{@link #viewModel}</li>
+     * </ul>
      * @return
      */
-    private static MaintainProductsView createMaintainProductsView(AppViewModel sharedViewModel,
-                                                                   ResourcesService<Product> productResourcesService,
-                                                                   ArchiveProductDataSource archiveProductDataSource,
-                                                                   CreateProductDataSource createProductDataSource,
-                                                                   CopyProductDataSource copyProductDataSource) {
-        // used to communicate selection events from the MaintainProducts to CopyProduct
+    private MaintainProductsView createMaintainProductsView() {
+
+        AppViewModel sharedViewModel = this.viewModel
+        ResourcesService<Product> productResourcesService = this.productsResourcesService
+        ArchiveProductDataSource archiveProductDataSource = this.archiveProductDataSource
+        CreateProductDataSource createProductDataSource = this.createProductDataSource
+        CopyProductDataSource copyProductDataSource = this.copyProductDataSource
+
+        // used to communicate products to be copied from the MaintainProducts to CopyProduct
         EventEmitter<Product> productSelectEvent = new EventEmitter<Product>()
 
         MaintainProductsViewModel maintainProductsViewModel = new MaintainProductsViewModel(productResourcesService, productSelectEvent)
