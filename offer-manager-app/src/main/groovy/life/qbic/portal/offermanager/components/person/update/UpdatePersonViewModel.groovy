@@ -3,15 +3,11 @@ package life.qbic.portal.offermanager.components.person.update
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
-
-import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel
-import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
-import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
-
-import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
  * Model with data for updating an existing person.
@@ -24,21 +20,21 @@ import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourc
  *
  * Everytime such an event is emitted, it loads the event data into its properties.
  *
- * @since: 1.0.0
- *
+ * @since 1.0.0
  */
-class UpdatePersonViewModel extends CreatePersonViewModel{
+class UpdatePersonViewModel extends CreatePersonViewModel {
 
     final private EventEmitter<Person> customerUpdate
     ObservableList affiliationList
 
-    @Bindable Boolean personUpdated
+    @Bindable
+    Boolean personUpdated
 
-    UpdatePersonViewModel(CustomerResourceService customerService,
-            ProjectManagerResourceService managerResourceService,
-            AffiliationResourcesService affiliationService,
-            EventEmitter<Person> customerUpdate,
-            PersonResourceService personResourceService) {
+    UpdatePersonViewModel(ResourcesService<Customer> customerService,
+                          ResourcesService<ProjectManager> managerResourceService,
+                          ResourcesService<Affiliation> affiliationService,
+                          EventEmitter<Person> customerUpdate,
+                          ResourcesService<Person> personResourceService) {
         super(customerService, managerResourceService, affiliationService, personResourceService)
         this.customerUpdate = customerUpdate
         affiliationList = new ArrayList<Affiliation>()

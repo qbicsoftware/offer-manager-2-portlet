@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
+import life.qbic.business.projects.list.ListProjectsDataSource
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
@@ -15,16 +16,16 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  */
 class ProjectResourceService implements ResourcesService<ProjectIdentifier>{
 
-    private final ProjectMainConnector projectMainConnector
+    private final ListProjectsDataSource listProjectsDataSource
 
     private final List<ProjectIdentifier> existingProjects
 
     private final EventEmitter<ProjectIdentifier> eventEmitter
 
-    ProjectResourceService(ProjectMainConnector projectMainConnector) {
-        this.projectMainConnector = Objects.requireNonNull(projectMainConnector, "Connector " +
+    ProjectResourceService(ListProjectsDataSource listProjectsDataSource) {
+        this.listProjectsDataSource = Objects.requireNonNull(listProjectsDataSource, "Connector " +
                 "must not be null.")
-        this.existingProjects = projectMainConnector.fetchProjects()
+        this.existingProjects = listProjectsDataSource.listProjects()
         this.eventEmitter = new EventEmitter<>()
     }
 

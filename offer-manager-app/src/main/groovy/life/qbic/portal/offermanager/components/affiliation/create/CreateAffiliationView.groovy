@@ -11,9 +11,9 @@ import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.persons.affiliation.Country
 import life.qbic.datamodel.dtos.business.Affiliation
-
-import java.util.stream.Collectors;
 import life.qbic.portal.offermanager.components.AppViewModel
+
+import java.util.stream.Collectors
 
 /**
  * This class generates a Layout in which the user
@@ -66,7 +66,7 @@ class CreateAffiliationView extends FormLayout {
         this.addressAdditionField = new TextField("Address Addition")
         addressAdditionField.setPlaceholder("Department, Faculty, or other specification of affiliation name")
         addressAdditionField.setDescription("In case the affiliation differs from the organisation you can further specify that here.")
-        
+
         this.streetField = new TextField("Street")
         streetField.setPlaceholder("Street name and street number ")
 
@@ -107,7 +107,7 @@ class CreateAffiliationView extends FormLayout {
         HorizontalLayout row3 = new HorizontalLayout(postalCodeField, cityField)
         row3.setSizeFull()
         row3.setExpandRatio(postalCodeField, 1)
-        row3.setExpandRatio(cityField,3) // leads to it being 3/4 of the width
+        row3.setExpandRatio(cityField, 3) // leads to it being 3/4 of the width
         HorizontalLayout row4 = new HorizontalLayout(countryBox)
         row4.setSizeFull()
 
@@ -130,12 +130,12 @@ class CreateAffiliationView extends FormLayout {
         this.setMargin(false)
     }
 
-    private void fillAffiliationBox(){
+    private void fillAffiliationBox() {
         // we don't need the whole affiliation object, just the unique organization names.
         List<String> organisationNames = createAffiliationViewModel
                 .affiliationService.iterator().toList()
                 .stream()
-                .map( affiliation -> (affiliation as Affiliation).organisation)
+                .map(affiliation -> (affiliation as Affiliation).organisation)
                 .distinct()
                 .collect(Collectors.toList())
 
@@ -174,7 +174,7 @@ class CreateAffiliationView extends FormLayout {
             String newValue = it.newValue as String
             affiliationCategoryField.selectedItem = newValue ?: affiliationCategoryField.emptyValue
         })
-        affiliationCategoryField.addValueChangeListener({createAffiliationViewModel.setAffiliationCategory(it.value)})
+        affiliationCategoryField.addValueChangeListener({ createAffiliationViewModel.setAffiliationCategory(it.value) })
 
         // bind city
         createAffiliationViewModel.addPropertyChangeListener("city", {
@@ -270,14 +270,14 @@ class CreateAffiliationView extends FormLayout {
     }
 
     private void setupFieldValidators() {
-        Validator<String> nonEmptyStringValidator =  Validator.from({ String value -> (value && !value.trim().empty)}, "Empty input not supported.")
-        Validator<? extends Object> selectionValidator = Validator.from({o -> o != null}, "Please make a selection.")
+        Validator<String> nonEmptyStringValidator = Validator.from({ String value -> (value && !value.trim().empty) }, "Empty input not supported.")
+        Validator<? extends Object> selectionValidator = Validator.from({ o -> o != null }, "Please make a selection.")
 
-        this.addressAdditionField.addValueChangeListener({event ->
+        this.addressAdditionField.addValueChangeListener({ event ->
             // we do not require this field
             createAffiliationViewModel.addressAdditionValid = true
         })
-        this.affiliationCategoryField.addValueChangeListener({event ->
+        this.affiliationCategoryField.addValueChangeListener({ event ->
             ValidationResult result = selectionValidator.apply(event.getValue(), new ValueContext(this.affiliationCategoryField))
             if (result.isError()) {
                 createAffiliationViewModel.affiliationCategoryValid = false
@@ -287,7 +287,7 @@ class CreateAffiliationView extends FormLayout {
                 createAffiliationViewModel.affiliationCategoryValid = true
             }
         })
-        this.cityField.addValueChangeListener({event ->
+        this.cityField.addValueChangeListener({ event ->
             ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.cityField))
             if (result.isError()) {
                 createAffiliationViewModel.cityValid = false
@@ -297,7 +297,7 @@ class CreateAffiliationView extends FormLayout {
                 createAffiliationViewModel.cityValid = true
             }
         })
-        this.countryBox.addValueChangeListener({event ->
+        this.countryBox.addValueChangeListener({ event ->
             ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.countryBox))
             if (result.isError()) {
                 createAffiliationViewModel.countryValid = false
@@ -307,7 +307,7 @@ class CreateAffiliationView extends FormLayout {
                 createAffiliationViewModel.countryValid = true
             }
         })
-        this.organisationBox.addValueChangeListener({event ->
+        this.organisationBox.addValueChangeListener({ event ->
             ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.organisationBox))
             if (result.isError()) {
                 createAffiliationViewModel.organisationValid = false
@@ -317,7 +317,7 @@ class CreateAffiliationView extends FormLayout {
                 createAffiliationViewModel.organisationValid = true
             }
         })
-        this.postalCodeField.addValueChangeListener({event ->
+        this.postalCodeField.addValueChangeListener({ event ->
             ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.postalCodeField))
             if (result.isError()) {
                 createAffiliationViewModel.postalCodeValid = false
@@ -327,7 +327,7 @@ class CreateAffiliationView extends FormLayout {
                 createAffiliationViewModel.postalCodeValid = true
             }
         })
-        this.streetField.addValueChangeListener({event ->
+        this.streetField.addValueChangeListener({ event ->
             ValidationResult result = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(this.streetField))
             if (result.isError()) {
                 createAffiliationViewModel.streetValid = false
@@ -341,11 +341,11 @@ class CreateAffiliationView extends FormLayout {
 
     private boolean allValuesValid() {
         return createAffiliationViewModel.affiliationCategoryValid \
-            && createAffiliationViewModel.cityValid \
-            && createAffiliationViewModel.countryValid \
-            && createAffiliationViewModel.organisationValid \
-            && createAffiliationViewModel.postalCodeValid \
-            && createAffiliationViewModel.streetValid
+              && createAffiliationViewModel.cityValid \
+              && createAffiliationViewModel.countryValid \
+              && createAffiliationViewModel.organisationValid \
+              && createAffiliationViewModel.postalCodeValid \
+              && createAffiliationViewModel.streetValid
     }
 
     private void registerListeners() {

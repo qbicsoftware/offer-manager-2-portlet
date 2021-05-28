@@ -19,6 +19,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Deprecated project identifier format assumption leads to failing parsing (`#617 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/617>`_)
 
+* Restructured DependencyManager (`#624 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/624>`_) fixing (`#612 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/612>`_)
 
 **Dependencies**
 

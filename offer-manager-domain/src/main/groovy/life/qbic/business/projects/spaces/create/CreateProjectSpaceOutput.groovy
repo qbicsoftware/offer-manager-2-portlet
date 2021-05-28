@@ -1,4 +1,4 @@
-package life.qbic.business.projects.spaces
+package life.qbic.business.projects.spaces.create
 
 import life.qbic.business.UseCaseFailure
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace

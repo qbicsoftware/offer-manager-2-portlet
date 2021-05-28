@@ -1,6 +1,5 @@
 package life.qbic.portal.offermanager.components.offer.overview
 
-
 import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
@@ -15,7 +14,6 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.offers.Currency
-import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.OfferFileNameFormatter
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
@@ -51,15 +49,17 @@ class OfferOverviewView extends FormLayout {
 
     private Button createProjectButton
 
+    private FormLayout defaultContent
+
     OfferOverviewView(OfferOverviewModel model,
                       OfferOverviewController offerOverviewController,
                       CreateProjectView createProjectView) {
         this.model = model
         this.offerOverviewController = offerOverviewController
         this.overviewGrid = new Grid<>()
-        this.downloadBtn = new Button("Download Offer",VaadinIcons.DOWNLOAD)
-        this.updateOfferBtn = new Button("Update Offer",VaadinIcons.EDIT)
-        this.createProjectButton =  new Button("Create Project", VaadinIcons.PLUS_CIRCLE)
+        this.downloadBtn = new Button("Download Offer", VaadinIcons.DOWNLOAD)
+        this.updateOfferBtn = new Button("Update Offer", VaadinIcons.EDIT)
+        this.createProjectButton = new Button("Create Project", VaadinIcons.PLUS_CIRCLE)
         this.downloadSpinner = new ProgressBar()
         this.createProjectView = createProjectView
 
@@ -69,6 +69,17 @@ class OfferOverviewView extends FormLayout {
     }
 
     private void initLayout() {
+        this.setMargin(false)
+        this.setSpacing(false)
+        this.addComponent(createProjectView)
+        createProjectView.setVisible(false)
+        defaultContent = generateDefaultLayout()
+        this.addComponent(defaultContent)
+        defaultContent.setVisible(true)
+    }
+
+    private FormLayout generateDefaultLayout() {
+        FormLayout defaultContent = new FormLayout()
         /*
         We start with the header, that contains a descriptive
         title of what the view is about.
@@ -79,7 +90,7 @@ class OfferOverviewView extends FormLayout {
         label.addStyleName(ValoTheme.LABEL_HUGE)
         headerRow.addComponent(label)
         headerRow.setMargin(false)
-        this.addComponent(headerRow)
+        defaultContent.addComponent(headerRow)
 
         /*
         Below the header, we create content row with two components.
@@ -106,14 +117,16 @@ class OfferOverviewView extends FormLayout {
                 downloadSpinner)
 
         activityContainer.setMargin(false)
-        headerRow.addComponents(activityContainer,overviewGrid)
+        headerRow.addComponents(activityContainer, overviewGrid)
         headerRow.setSizeFull()
 
-        this.setMargin(false)
-        this.setSpacing(false)
+        defaultContent.setMargin(false)
+        defaultContent.setSpacing(false)
 
-        this.setWidthFull()
+        defaultContent.setWidthFull()
+        return defaultContent
     }
+
 
     private DataProvider setupDataProvider() {
         def dataProvider = new ListDataProvider(model.offerOverviewList)
@@ -122,23 +135,25 @@ class OfferOverviewView extends FormLayout {
     }
 
     private void setupGrid() {
-        Column<Offer, Date> dateColumn = overviewGrid.addColumn({ overview -> overview
-                .getModificationDate() }).setCaption("Creation Date").setId("CreationDate")
-        dateColumn.setRenderer(date -> date,  new DateRenderer('%1$tY-%1$tm-%1$td'))
-        overviewGrid.addColumn({overview -> overview.offerId.toString()})
+        Column<OfferOverview, Date> dateColumn = overviewGrid.addColumn({ overview ->
+            overview
+                    .getModificationDate()
+        }).setCaption("Creation Date").setId("CreationDate")
+        dateColumn.setRenderer(date -> date, new DateRenderer('%1$tY-%1$tm-%1$td'))
+        overviewGrid.addColumn({ overview -> overview.offerId.toString() })
                 .setCaption("Offer ID").setId("OfferId")
-        overviewGrid.addColumn({overview -> overview.getProjectTitle()})
+        overviewGrid.addColumn({ overview -> overview.getProjectTitle() })
                 .setCaption("Project Title").setId("ProjectTitle")
-        overviewGrid.addColumn({overview -> overview.getCustomer()})
+        overviewGrid.addColumn({ overview -> overview.getCustomer() })
                 .setCaption("Customer").setId("Customer")
-        overviewGrid.addColumn({overview -> overview.getProjectManager()})
+        overviewGrid.addColumn({ overview -> overview.getProjectManager() })
                 .setCaption("ProjectManager").setId("ProjectManager")
-        overviewGrid.addColumn({overview -> overview.getAssociatedProject()})
+        overviewGrid.addColumn({ overview -> overview.getAssociatedProject() })
                 .setCaption("Project ID").setId("ProjectID")
-                .setRenderer({maybeIdentifier -> maybeIdentifier.isPresent()? maybeIdentifier.get().toString() : "-"}, new TextRenderer())
+                .setRenderer({ maybeIdentifier -> maybeIdentifier.isPresent() ? maybeIdentifier.get().toString() : "-" }, new TextRenderer())
 
         // Format price by using a column renderer. This way the sorting will happen on the underlying double values, leading to expected behaviour.
-        Column<Offer, Double> priceColumn = overviewGrid.addColumn({overview -> overview.getTotalPrice()}).setCaption("Total Price")
+        Column<OfferOverview, Double> priceColumn = overviewGrid.addColumn({ overview -> overview.getTotalPrice() }).setCaption("Total Price")
         priceColumn.setRenderer(price -> Currency.getFormatterWithSymbol().format(price), new TextRenderer())
 
         overviewGrid.sort(dateColumn, SortDirection.DESCENDING)
@@ -178,9 +193,9 @@ class OfferOverviewView extends FormLayout {
             model.offerEventEmitter.emit(model.getSelectedOffer())
         })
         createProjectButton.addClickListener({
-            this.setVisible(false)
+            defaultContent.setVisible(false)
             createProjectView.setVisible(true)
-            createProjectView.model.startedFromView = Optional.of(this)
+            createProjectView.model.startedFromView = Optional.of(defaultContent)
             createProjectView.model.selectedOffer = Optional.of(model.selectedOffer)
         })
     }
@@ -188,7 +203,7 @@ class OfferOverviewView extends FormLayout {
     private void setupGridListeners() {
         overviewGrid.addSelectionListener(
                 { selection ->
-                    selection.firstSelectedItem.ifPresent({overview ->
+                    selection.firstSelectedItem.ifPresent({ overview ->
                         UI.getCurrent().setPollInterval(50)
                         downloadSpinner.setVisible(true)
                         new LoadOfferInfoThread(UI.getCurrent(), overview).start()
@@ -245,24 +260,24 @@ class OfferOverviewView extends FormLayout {
                 updateOfferBtn.setEnabled(false)
                 createProjectButton.setEnabled(false)
             })
-                offerOverviewController.fetchOffer(offerOverview.offerId)
-                createResourceForDownload()
+            offerOverviewController.fetchOffer(offerOverview.offerId)
+            createResourceForDownload()
 
-                ui.access(() -> {
-                    downloadSpinner.setVisible(false)
-                    overviewGrid.setSelectionMode(Grid.SelectionMode.SINGLE)
-                    // After we have set the single mode to NONE, the listeners seem to be gone
-                    // So we set them again
-                    // IMPORTANT: the selection must be set before we attach the listener,
-                    // otherwise the selection listener gets triggered (LOOP!)
-                    overviewGrid.select(selectedOffer.get())
-                    setupGridListeners()
-                    overviewGrid.setEnabled(true)
-                    downloadBtn.setEnabled(true)
-                    updateOfferBtn.setEnabled(true)
-                    checkProjectCreationAllowed(offerOverview)
-                    ui.setPollInterval(-1)
-                })
+            ui.access(() -> {
+                downloadSpinner.setVisible(false)
+                overviewGrid.setSelectionMode(Grid.SelectionMode.SINGLE)
+                // After we have set the single mode to NONE, the listeners seem to be gone
+                // So we set them again
+                // IMPORTANT: the selection must be set before we attach the listener,
+                // otherwise the selection listener gets triggered (LOOP!)
+                overviewGrid.select(selectedOffer.get())
+                setupGridListeners()
+                overviewGrid.setEnabled(true)
+                downloadBtn.setEnabled(true)
+                updateOfferBtn.setEnabled(true)
+                checkProjectCreationAllowed(offerOverview)
+                ui.setPollInterval(-1)
+            })
         }
     }
 

@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
+import life.qbic.business.persons.list.ListPersonsDataSource
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
@@ -15,22 +16,22 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  */
 class CustomerResourceService implements ResourcesService<Customer>{
 
-    private final PersonDbConnector dbConnector
+    private final ListPersonsDataSource listPersonsDataSource
 
     private final List<Customer> customerList
 
     private final EventEmitter<Customer> eventEmitter
 
-    CustomerResourceService(PersonDbConnector dbConnector) {
-        this.dbConnector = dbConnector
-        this.customerList = dbConnector.fetchAllCustomers()
+    CustomerResourceService(ListPersonsDataSource listPersonsDataSource) {
+        this.listPersonsDataSource = listPersonsDataSource
+        this.customerList = listPersonsDataSource.listAllCustomers()
         this.eventEmitter = new EventEmitter<>()
     }
 
     @Override
     void reloadResources() {
         this.customerList.clear()
-        this.customerList.addAll(dbConnector.fetchAllCustomers())
+        this.customerList.addAll(listPersonsDataSource.listAllCustomers())
     }
 
     @Override

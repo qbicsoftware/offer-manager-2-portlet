@@ -1,17 +1,11 @@
 package life.qbic.portal.offermanager.components.offer.create
 
+
 import groovy.beans.Bindable
-import groovy.transform.CompileStatic
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.OfferId
-import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.*
-import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
-import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
-import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
 import life.qbic.portal.offermanager.communication.Subscription
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
  * A ViewModel holding data that is presented in a
@@ -76,15 +70,15 @@ class CreateOfferViewModel {
 
     Optional<Offer> savedOffer = Optional.empty()
 
-    private final CustomerResourceService customerResourceService
-    private final ProductsResourcesService productsResourcesService
-    private final ProjectManagerResourceService managerResourceService
+    private final ResourcesService<Customer> customerResourceService
+    private final ResourcesService<Product> productsResourcesService
+    private final ResourcesService<ProjectManager> managerResourceService
 
     @Bindable Boolean offerCreatedSuccessfully
 
-    CreateOfferViewModel(CustomerResourceService customerResourceService,
-                         ProjectManagerResourceService managerResourceService,
-                         ProductsResourcesService productsResourcesService) {
+    CreateOfferViewModel(ResourcesService<Customer> customerResourceService,
+                         ResourcesService<ProjectManager> managerResourceService,
+                         ResourcesService<Product> productsResourcesService) {
         this.customerResourceService = customerResourceService
         this.productsResourcesService = productsResourcesService
         this.managerResourceService = managerResourceService
