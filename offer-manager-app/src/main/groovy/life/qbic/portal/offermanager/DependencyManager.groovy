@@ -277,6 +277,7 @@ class DependencyManager {
                 affiliationResourcesService,
                 personResourcesService
         )
+        createPersonViewModel.academicTitles.addAll(AcademicTitle.values().collect { it.value })
 
         CreatePersonPresenter createPersonPresenter = new CreatePersonPresenter(sharedViewModel, createPersonViewModel)
         CreatePerson createPerson = new CreatePerson(createPersonPresenter, createPersonDataSource)
