@@ -229,7 +229,12 @@ class DependencyManager {
      * This method needs the following field to be instantiated
      * <ul>
      *     <li>{@link #listAffiliationsDataSource}</li>
-     *     <li>{@link }</li>
+     *     <li>{@link #listPersonsDataSource}</li>
+     *     <li>{@link #listProductsDataSource}</li>
+     *     <li>{@link #listProjectSpacesDataSource}</li>
+     *     <li>{@link #listProjectsDataSource}</li>
+     *     <li>{@link #offerOverviewDataSource}</li>
+     *     <li>{@link #projectCreatedEvent}</li>
      * </ul>
      */
     private void setupServices() {
