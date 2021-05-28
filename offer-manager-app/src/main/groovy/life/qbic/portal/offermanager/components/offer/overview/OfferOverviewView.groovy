@@ -68,6 +68,16 @@ class OfferOverviewView extends FormLayout {
         setupListeners()
     }
 
+    private void initLayout() {
+        this.setMargin(false)
+        this.setSpacing(false)
+        this.addComponent(createProjectView)
+        createProjectView.setVisible(false)
+        defaultContent = generateDefaultLayout()
+        this.addComponent(defaultContent)
+        defaultContent.setVisible(true)
+    }
+
     private FormLayout generateDefaultLayout() {
         FormLayout defaultContent = new FormLayout()
         /*
@@ -117,15 +127,6 @@ class OfferOverviewView extends FormLayout {
         return defaultContent
     }
 
-    private void initLayout() {
-        this.setMargin(false)
-        this.setSpacing(false)
-        this.addComponent(createProjectView)
-        createProjectView.setVisible(false)
-        defaultContent = generateDefaultLayout()
-        this.addComponent(defaultContent)
-        defaultContent.setVisible(true)
-    }
 
     private DataProvider setupDataProvider() {
         def dataProvider = new ListDataProvider(model.offerOverviewList)
