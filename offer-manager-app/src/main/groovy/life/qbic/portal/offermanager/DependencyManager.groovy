@@ -350,8 +350,7 @@ class DependencyManager {
                 createOfferViewModel,
                 createOfferController,
                 createPersonView,
-                createAffiliationView,
-                offerResourcesService)
+                createAffiliationView)
 
         return createOfferView
     }
@@ -450,8 +449,7 @@ class DependencyManager {
                 updateOfferViewModel,
                 updateOfferController,
                 createPersonView,
-                createAffiliationView,
-                offerResourcesService)
+                createAffiliationView)
 
         return updateOfferView
     }
