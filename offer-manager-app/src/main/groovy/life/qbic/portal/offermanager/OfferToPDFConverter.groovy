@@ -21,7 +21,8 @@ import java.util.concurrent.TimeUnit
  *
  * Implements {@link OfferExporter} and is responsible for converting an offer into PDF Format
  *
- * @since: 1.0.0 @author: Jennifer Bödker
+ * @since 1.0.0 
+ * @author Jennifer Bödker
  *
  */
 @Log4j2
