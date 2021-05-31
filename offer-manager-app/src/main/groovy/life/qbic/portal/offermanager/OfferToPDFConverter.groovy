@@ -398,7 +398,6 @@ class OfferToPDFConverter implements OfferExporter {
                 items.each{ProductItem item ->
                     itemNumber++
                     if (tableItemsCount > maxTableItems) {
-                        //Start new table on next page if maxTableItems are reached
                         ++tableCount
                         htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
                         elementId = "product-items" + "-" + tableCount
