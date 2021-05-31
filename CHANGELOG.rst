@@ -31,6 +31,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Fix validation error being shown after an affiliation is added to a person (`#566 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/566>`_)
 
+* Disable 'Archive Product' button after deselection (`#547 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/547>`_)
+
 **Dependencies**
 
 **Deprecated**
