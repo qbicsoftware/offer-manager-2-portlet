@@ -281,7 +281,8 @@ class CreateOfferViewModel {
         if (this.customer != customer) {
             personUpdateEvent.emit(customer)
         } else {
-            log.warn("Overwrite of equal values. ${this.customer} to be overwritten with $customer.")
+            log.debug("Overwrite of equal values. ${this.customer} to be overwritten with $customer. " +
+                    "No event is fired.")
         }
         this.customer = customer
     }
