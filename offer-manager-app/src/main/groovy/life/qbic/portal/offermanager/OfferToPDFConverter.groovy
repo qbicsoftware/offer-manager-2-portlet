@@ -245,8 +245,7 @@ class OfferToPDFConverter implements OfferExporter {
 
        
         tableItemsCount = 1
-        //The maximum Items is currently set manually and estimated by eye,
-        //since there is no way to properly account for differences of lengths of the productItem description
+        //The maximum number of items per page
         int maxTableItems = 13
 
         //Group ProductItems into Data Generation Data Analysis and Data & Project Management Categories
