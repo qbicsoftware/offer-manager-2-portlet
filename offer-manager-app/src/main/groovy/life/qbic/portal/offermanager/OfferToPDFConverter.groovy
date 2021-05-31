@@ -243,7 +243,7 @@ class OfferToPDFConverter implements OfferExporter {
         //Initialize Number of table
         tableCount = 1
 
-        //Initialize Count which will be used to determine how many Items are stored in the table
+       
         tableItemsCount = 1
         //The maximum Items is currently set manually and estimated by eye,
         //since there is no way to properly account for differences of lengths of the productItem description
