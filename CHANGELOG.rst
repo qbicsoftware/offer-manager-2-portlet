@@ -33,6 +33,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Disable 'Archive Product' button after deselection (`#547 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/547>`_)
 
+* Fix `Copy Product` button being enabled even though the information was not changed (`#568 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/568>`_)
+
 **Dependencies**
 
 **Deprecated**
