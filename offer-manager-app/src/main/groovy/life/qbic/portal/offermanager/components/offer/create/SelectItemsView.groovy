@@ -17,6 +17,7 @@ import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.Resettable
+import life.qbic.portal.offermanager.components.product.ProductIdContainsString
 
 /**
  * This class generates a Layout in which the user
@@ -344,13 +345,16 @@ class SelectItemsView extends VerticalLayout implements Resettable {
 
     private static void setupFilters(ListDataProvider<Product> productListDataProvider,
                                      Grid targetGrid) {
-        HeaderRow customerFilterRow = targetGrid.appendHeaderRow()
+        HeaderRow productFilterRow = targetGrid.appendHeaderRow()
+        GridUtils.setupColumnFilter(productListDataProvider,
+                targetGrid.getColumn("ProductId"), new ProductIdContainsString(),
+                productFilterRow)
         GridUtils.setupColumnFilter(productListDataProvider,
                 targetGrid.getColumn("ProductName"),
-                customerFilterRow)
+                productFilterRow)
         GridUtils.setupColumnFilter(productListDataProvider,
                 targetGrid.getColumn("ProductDescription"),
-                customerFilterRow)
+                productFilterRow)
     }
 
     /**
