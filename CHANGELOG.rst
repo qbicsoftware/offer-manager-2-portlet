@@ -25,6 +25,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Fix sorting by product id for the offer creation process (`#599 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/599>`_)
 
+* Disable empty selection for address addition combobox (`#565 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/565>`_)
+
 **Dependencies**
 
 **Deprecated**
