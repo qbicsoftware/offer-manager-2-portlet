@@ -11,6 +11,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Small modifications for the offer layout  (`#620 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/620>`_)
 
+* Filter for product id in `life.qbic.portal.offermanager.components.offer.create.SelectItemsView` (`#599 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/599>`_)
+
 * Customers can now be updated in the selection step of creating a new offer (`#611 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/611>`_)
 
 **Fixed**
@@ -22,6 +24,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Deprecated project identifier format assumption leads to failing parsing (`#617 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/617>`_)
 
 * Restructured DependencyManager (`#624 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/624>`_) fixing (`#612 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/612>`_)
+
+* Fix sorting by product id for the offer creation process (`#599 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/599>`_)
 
 * Fix validation error being shown after an affiliation is added to a person (`#566 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/566>`_)
 
@@ -57,13 +61,14 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 **Fixed**
 
 * Update and fix broken offer template (`#597 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/597>`_)
+
 * Enumeration of product items increases over all productGroups in Offer PDF (`#562 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/562>`_)
 
 * Improve test description for external non-academic customers (`#605 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/605>`_)
 
 * Tax cost for offers outside of germany is set to 0 (`#575 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/575>`_)
 
-* App won't freeze after creation of mutiple projects (`#558 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/558>`_)
+* App won't freeze after creation of multiple projects (`#558 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/558>`_)
 
 **Dependencies**
 
