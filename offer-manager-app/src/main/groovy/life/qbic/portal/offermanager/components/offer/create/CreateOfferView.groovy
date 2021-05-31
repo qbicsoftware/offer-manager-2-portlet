@@ -5,9 +5,10 @@ import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
+import life.qbic.portal.offermanager.components.person.update.UpdatePersonView
+import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
  * This class generates a Layout in which the user
@@ -33,6 +34,7 @@ class CreateOfferView extends FormLayout{
     private final OfferOverviewView overviewView
 
     private final CreatePersonView createCustomerView
+    private final UpdatePersonView updatePersonView
     private ButtonNavigationView navigationView
     private final CreateAffiliationView createAffiliationView
 
@@ -43,12 +45,14 @@ class CreateOfferView extends FormLayout{
                     CreateOfferViewModel createOfferViewModel,
                     CreateOfferController controller,
                     CreatePersonView createCustomerView,
-                    CreateAffiliationView createAffiliationView) {
+                    CreateAffiliationView createAffiliationView,
+                    UpdatePersonView updatePersonView) {
         super()
         this.sharedViewModel = sharedViewModel
         this.viewModel = createOfferViewModel
         this.controller = controller
         this.createCustomerView = createCustomerView
+        this.updatePersonView = updatePersonView
         this.createAffiliationView = createAffiliationView
         this.projectInformationView = new ProjectInformationView(viewModel)
         this.customerSelectionView = new CustomerSelectionView(viewModel)
@@ -91,6 +95,7 @@ class CreateOfferView extends FormLayout{
                 projectInformationView,
                 customerSelectionView,
                 createCustomerView,
+                updatePersonView,
                 projectManagerSelectionView,
                 selectItemsView,
                 overviewView
@@ -118,13 +123,24 @@ class CreateOfferView extends FormLayout{
             viewHistory.loadNewView(projectInformationView)
             navigationView.showPreviousStep()
         })
-        this.customerSelectionView.createCustomerButton.addClickListener({
-            viewHistory.loadNewView(createCustomerView)
-        })
         this.createCustomerView.abortButton.addClickListener({
             viewHistory.showPrevious()
         })
         this.createCustomerView.submitButton.addClickListener({
+            viewHistory.showPrevious()
+        })
+        this.customerSelectionView.createCustomerButton.addClickListener({
+            viewHistory.loadNewView(createCustomerView)
+        })
+        this.customerSelectionView.updatePerson.addClickListener({
+            viewHistory.loadNewView(updatePersonView)
+        })
+        this.updatePersonView.abortButton.addClickListener({
+            customerSelectionView.reset()
+            viewHistory.showPrevious()
+        })
+        this.updatePersonView.submitButton.addClickListener({
+            customerSelectionView.reset()
             viewHistory.showPrevious()
         })
         this.createAffiliationView.abortButton.addClickListener({
@@ -189,6 +205,7 @@ class CreateOfferView extends FormLayout{
         this.projectInformationView.setVisible(false)
         this.customerSelectionView.setVisible(false)
         this.createCustomerView.setVisible(false)
+        this.updatePersonView.setVisible(false)
         this.createAffiliationView.setVisible(false)
         this.projectManagerSelectionView.setVisible(false)
         this.selectItemsView.setVisible(false)
@@ -200,6 +217,7 @@ class CreateOfferView extends FormLayout{
                 this.projectInformationView,
                 this.customerSelectionView,
                 this.createCustomerView,
+                this.updatePersonView,
                 this.createAffiliationView,
                 this.projectManagerSelectionView,
                 this.selectItemsView,

@@ -1,9 +1,12 @@
 package life.qbic.portal.offermanager.components.offer.create
 
-
 import groovy.beans.Bindable
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.*
+import life.qbic.datamodel.dtos.general.Person
+import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
@@ -17,8 +20,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * This class can contain JavaBean objects to enable views to listen to changes in the values.
  *
- * @since: 0.1.0
- *
+ * @since 0.1.0
  */
 class CreateOfferViewModel {
 
@@ -34,54 +36,90 @@ class CreateOfferViewModel {
     ObservableList foundCustomers = new ObservableList(new ArrayList<Customer>())
     ObservableList availableProjectManagers = new ObservableList(new ArrayList<ProjectManager>())
 
-    @Bindable OfferId offerId
-    @Bindable String projectTitle
-    @Bindable String projectObjective
-    @Bindable String experimentalDesign
-    @Bindable Customer customer
-    @Bindable Affiliation customerAffiliation
-    @Bindable ProjectManager projectManager
-    @Bindable double offerPrice
+    @Bindable
+    OfferId offerId
+    @Bindable
+    String projectTitle
+    @Bindable
+    String projectObjective
+    @Bindable
+    String experimentalDesign
+    @Bindable
+    Customer customer
+    @Bindable
+    Affiliation customerAffiliation
+    @Bindable
+    ProjectManager projectManager
+    @Bindable
+    double offerPrice
 
-    @Bindable Boolean projectTitleValid = false
-    @Bindable Boolean projectObjectiveValid = false
-    @Bindable Boolean experimentalDesignValid = true
+    @Bindable
+    Boolean projectTitleValid = false
+    @Bindable
+    Boolean projectObjectiveValid = false
+    @Bindable
+    Boolean experimentalDesignValid = true
 
-    @Bindable double netPrice = 0
-    @Bindable double taxes = 0
-    @Bindable double overheads = 0
-    @Bindable double totalPrice = 0
+    @Bindable
+    double netPrice = 0
+    @Bindable
+    double taxes = 0
+    @Bindable
+    double overheads = 0
+    @Bindable
+    double totalPrice = 0
 
-    @Bindable Boolean sequencingGridSelected
-    @Bindable Boolean primaryAnalysisGridSelected
-    @Bindable Boolean secondaryAnalysisGridSelected
-    @Bindable Boolean proteomicsAnalysisGridSelected
-    @Bindable Boolean metabolomicsAnalysisGridSelected
-    @Bindable Boolean projectManagementGridSelected
-    @Bindable Boolean storageGridSelected
+    @Bindable
+    Boolean sequencingGridSelected
+    @Bindable
+    Boolean primaryAnalysisGridSelected
+    @Bindable
+    Boolean secondaryAnalysisGridSelected
+    @Bindable
+    Boolean proteomicsAnalysisGridSelected
+    @Bindable
+    Boolean metabolomicsAnalysisGridSelected
+    @Bindable
+    Boolean projectManagementGridSelected
+    @Bindable
+    Boolean storageGridSelected
 
-    @Bindable Boolean sequencingQuantityValid
-    @Bindable Boolean primaryAnalysisQuantityValid
-    @Bindable Boolean secondaryAnalysisQuantityValid
-    @Bindable Boolean proteomicsAnalysisQuantityValid
-    @Bindable Boolean metabolomicsAnalysisQuantityValid
-    @Bindable Boolean projectManagementQuantityValid
-    @Bindable Boolean storageQuantityValid
+    @Bindable
+    Boolean sequencingQuantityValid
+    @Bindable
+    Boolean primaryAnalysisQuantityValid
+    @Bindable
+    Boolean secondaryAnalysisQuantityValid
+    @Bindable
+    Boolean proteomicsAnalysisQuantityValid
+    @Bindable
+    Boolean metabolomicsAnalysisQuantityValid
+    @Bindable
+    Boolean projectManagementQuantityValid
+    @Bindable
+    Boolean storageQuantityValid
 
     Optional<Offer> savedOffer = Optional.empty()
 
     private final ResourcesService<Customer> customerResourceService
     private final ResourcesService<Product> productsResourcesService
     private final ResourcesService<ProjectManager> managerResourceService
+    // where to emit selection for updatable person to
+    private final EventEmitter<Person> personUpdateEvent
 
-    @Bindable Boolean offerCreatedSuccessfully
+    @Bindable
+    Boolean offerCreatedSuccessfully
+
+    private final Logging log = Logger.getLogger(this.class)
 
     CreateOfferViewModel(ResourcesService<Customer> customerResourceService,
                          ResourcesService<ProjectManager> managerResourceService,
-                         ResourcesService<Product> productsResourcesService) {
+                         ResourcesService<Product> productsResourcesService,
+                         EventEmitter<Person> personUpdateEvent) {
         this.customerResourceService = customerResourceService
         this.productsResourcesService = productsResourcesService
         this.managerResourceService = managerResourceService
+        this.personUpdateEvent = personUpdateEvent
 
         offerCreatedSuccessfully = false
         this.addPropertyChangeListener("offerCreatedSuccessfully", {
@@ -100,7 +138,7 @@ class CreateOfferViewModel {
             return
         }
         List<ProductItemViewModel> alreadyExistingItems =
-                productItems.findAll { it.product.productId.equals(item.product.productId)} as List<ProductItemViewModel>
+                productItems.findAll { it.product.productId.equals(item.product.productId) } as List<ProductItemViewModel>
         double totalAmount = item.quantity
         for (ProductItemViewModel currentItem : alreadyExistingItems) {
             totalAmount = totalAmount + currentItem.quantity
@@ -172,7 +210,7 @@ class CreateOfferViewModel {
      * This method will be triggered when a service event is triggered and is intended
      * to refresh the customers shown in the grid with the ones currently stored in tce service
      */
-    protected void refreshCustomers(){
+    protected void refreshCustomers() {
         List<Customer> customers = customerResourceService.iterator().toList()
         this.foundCustomers.clear()
         foundCustomers.addAll(customers)
@@ -184,13 +222,13 @@ class CreateOfferViewModel {
      * This method will be triggered when a service event is triggered and is intended
      * to refresh the project managers shown in the grid with the ones currently stored in the service
      */
-    protected void refreshManagers(){
+    protected void refreshManagers() {
         List<ProjectManager> projectManagers = managerResourceService.iterator().toList()
         this.availableProjectManagers.clear()
         availableProjectManagers.addAll(projectManagers)
     }
 
-    private void refreshProducts(){
+    private void refreshProducts() {
         List<Product> products = productsResourcesService.iterator().toList()
         populateProductLists(products)
     }
@@ -233,5 +271,19 @@ class CreateOfferViewModel {
                     throw new RuntimeException("Unknown product category '${product.getClass().getSimpleName()}'")
             }
         }
+    }
+
+    /**
+     * Sets the customer for the offer. Whenever a change is detected an event is emitted.
+     * @param customer
+     */
+    void setCustomer(Customer customer) {
+        if (this.customer != customer) {
+            personUpdateEvent.emit(customer)
+        } else {
+            log.debug("Overwrite of equal values. ${this.customer} to be overwritten with $customer. " +
+                    "No event is fired.")
+        }
+        this.customer = customer
     }
 }
