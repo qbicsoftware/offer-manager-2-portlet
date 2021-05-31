@@ -13,6 +13,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Filter for product id in `life.qbic.portal.offermanager.components.offer.create.SelectItemsView` (`#599 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/599>`_)
 
+* Customers can now be updated in the selection step of creating a new offer (`#611 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/611>`_)
+
 **Fixed**
 
 * User ID of a person is set in database during person creation/update (`#616 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/616>`_)
@@ -24,6 +26,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Restructured DependencyManager (`#624 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/624>`_) fixing (`#612 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/612>`_)
 
 * Fix sorting by product id for the offer creation process (`#599 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/599>`_)
+
+* Fix validation error being shown after an affiliation is added to a person (`#566 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/566>`_)
 
 **Dependencies**
 

@@ -16,6 +16,7 @@ import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
+import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 
 /**
@@ -29,7 +30,7 @@ import life.qbic.portal.offermanager.components.affiliation.create.CreateAffilia
  */
 
 @Log4j2
-class CreatePersonView extends FormLayout {
+class CreatePersonView extends FormLayout implements Resettable{
     protected final AppViewModel sharedViewModel
     protected final CreatePersonViewModel createPersonViewModel
     final CreatePersonController controller
@@ -409,7 +410,7 @@ class CreatePersonView extends FormLayout {
 
         this.abortButton.addClickListener({ event ->
             try {
-                clearAllFields()
+                reset()
             }
             catch (Exception e) {
                 log.error("Unexpected error aborting the person creation.", e)
@@ -463,13 +464,6 @@ class CreatePersonView extends FormLayout {
         addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
         affiliationDetails.setContent(null)
 
-        createPersonViewModel.academicTitleValid = null
-        createPersonViewModel.firstNameValid = null
-        createPersonViewModel.lastNameValid = null
-        createPersonViewModel.emailValid = null
-        createPersonViewModel.affiliationValid = null
-        createPersonViewModel.outdatedPerson = null
-
     }
 
     /**
@@ -497,5 +491,11 @@ class CreatePersonView extends FormLayout {
             this.createAffiliationView.setVisible(false)
             this.defaultContent.setVisible(true)
         }
+    }
+
+    @Override
+    void reset() {
+        createPersonViewModel.reset()
+        clearAllFields()
     }
 }

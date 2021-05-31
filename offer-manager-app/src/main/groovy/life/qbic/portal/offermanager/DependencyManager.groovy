@@ -98,6 +98,7 @@ import life.qbic.portal.utils.ConfigurationManagerFactory
 class DependencyManager {
 
     private final Role userRole
+
     private ConfigurationManager configurationManager
 
     private AppPresenter presenter
@@ -394,10 +395,13 @@ class DependencyManager {
         ResourcesService<Product> productResourcesService = this.productsResourcesService
         ResourcesService<ProjectManager> projectManagerResourcesService = this.managerResourceService
 
+        EventEmitter<Person> personUpdateEvent = new EventEmitter<>()
+
         CreateOfferViewModel createOfferViewModel = new CreateOfferViewModel(
                 customerResourcesService,
                 projectManagerResourcesService,
-                productResourcesService
+                productResourcesService,
+                personUpdateEvent
         )
 
         CreateOfferPresenter createOfferPresenter = new CreateOfferPresenter(
@@ -411,6 +415,7 @@ class DependencyManager {
         CreateOfferController createOfferController = new CreateOfferController(createOffer, fetchOffer, createOffer)
 
         CreatePersonView createPersonView = createCreatePersonView()
+        UpdatePersonView updatePersonView = createUpdatePersonView(personUpdateEvent)
 
         CreateAffiliationView createAffiliationView = createCreateAffiliationView()
 
@@ -419,7 +424,9 @@ class DependencyManager {
                 createOfferViewModel,
                 createOfferController,
                 createPersonView,
-                createAffiliationView)
+                createAffiliationView,
+                updatePersonView
+        )
 
         return createOfferView
     }
@@ -465,7 +472,6 @@ class DependencyManager {
         return offerOverviewView
     }
 
-
     /**
      * Creates a new update offer view using fields
      *     <li>{@link #createOfferDataSource}</li>
@@ -494,16 +500,21 @@ class DependencyManager {
         CreateOfferDataSource createOfferDataSource = this.createOfferDataSource
         FetchOfferDataSource fetchOfferDataSource = this.fetchOfferDataSource
 
+        EventEmitter<Person> updatePersonEvent = new EventEmitter<Person>()
+
         UpdateOfferViewModel updateOfferViewModel = new UpdateOfferViewModel(
                 customerResourcesService,
                 projectManagerResourcesService,
                 productResourcesService,
-                offerUpdateEvent)
+                updatePersonEvent,
+                offerUpdateEvent
+        )
         CreateOfferPresenter updateOfferPresenter = new CreateOfferPresenter(sharedViewModel, updateOfferViewModel, offerResourcesService)
         CreateOffer updateOffer = new CreateOffer(createOfferDataSource, updateOfferPresenter)
 
         FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, updateOfferPresenter)
         CreatePersonView createPersonView = createCreatePersonView()
+        UpdatePersonView updatePersonView = createUpdatePersonView(updatePersonEvent)
         CreateAffiliationView createAffiliationView = createCreateAffiliationView()
 
         CreateOfferController updateOfferController = new CreateOfferController(updateOffer, fetchOffer, updateOffer)
@@ -512,7 +523,8 @@ class DependencyManager {
                 updateOfferViewModel,
                 updateOfferController,
                 createPersonView,
-                createAffiliationView)
+                createAffiliationView,
+                updatePersonView)
 
         return updateOfferView
     }

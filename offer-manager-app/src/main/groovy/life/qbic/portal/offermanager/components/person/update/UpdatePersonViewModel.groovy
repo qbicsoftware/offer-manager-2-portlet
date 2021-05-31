@@ -5,6 +5,8 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
+import life.qbic.portal.offermanager.components.Resettable
+import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel
 import life.qbic.portal.offermanager.dataresources.ResourcesService
@@ -22,7 +24,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * @since 1.0.0
  */
-class UpdatePersonViewModel extends CreatePersonViewModel {
+class UpdatePersonViewModel extends CreatePersonViewModel implements Resettable{
 
     final private EventEmitter<Person> customerUpdate
     ObservableList affiliationList
@@ -41,8 +43,12 @@ class UpdatePersonViewModel extends CreatePersonViewModel {
         personUpdated = false
 
         this.customerUpdate.register((Person person) -> {
-            setOutdatedPerson(person)
-            loadData(person)
+            if (person) {
+                setOutdatedPerson(person)
+                loadData(person)
+            } else {
+                reset()
+            }
         })
     }
 
@@ -54,5 +60,12 @@ class UpdatePersonViewModel extends CreatePersonViewModel {
         //obtain the affiliations
         affiliationList.clear()
         affiliationList.addAll(person.affiliations)
+    }
+
+    @Override
+    void reset() {
+        super.reset()
+        setOutdatedPerson(null)
+        affiliationList.clear()
     }
 }
