@@ -1,4 +1,4 @@
-package life.qbic.business.projects.spaces
+package life.qbic.business.projects.spaces.create
 
 /**
  * <h1>Exception that indicates violations during the creation af a new project space</h1>

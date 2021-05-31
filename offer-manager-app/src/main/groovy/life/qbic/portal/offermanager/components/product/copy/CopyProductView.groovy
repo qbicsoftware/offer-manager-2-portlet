@@ -1,9 +1,6 @@
 package life.qbic.portal.offermanager.components.product.copy
 
-import com.vaadin.event.MouseEvents
-import com.vaadin.ui.Button
-import life.qbic.datamodel.dtos.business.ProductId
-import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.business.products.Converter
 import life.qbic.portal.offermanager.components.product.MaintainProductsController
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
 
@@ -13,8 +10,7 @@ import life.qbic.portal.offermanager.components.product.create.CreateProductView
  *
  * The view is similar to the {@link CreateProductView} and updates the view to fit the copy product use case
  *
- * @since: 1.0.0
- *
+ * @since 1.0.0
  */
 
 class CopyProductView extends CreateProductView {
@@ -41,6 +37,27 @@ class CopyProductView extends CreateProductView {
             controller.copyProduct(viewModel.productCategory, viewModel.productDescription, viewModel.productName, Double.parseDouble(viewModel.productUnitPrice), viewModel.productUnit, copyProductViewModel.productId)
             clearAllFields()
         })
+    }
+
+    @Override
+    protected boolean allValuesValid() {
+        boolean wasModified = false
+        if (super.allValuesValid()) {
+            if (copyProductViewModel.productName != copyProductViewModel.originalProduct.productName) {
+                wasModified = true
+            } else if (copyProductViewModel.productDescription != copyProductViewModel.originalProduct.description) {
+                wasModified = true
+            } else if (copyProductViewModel.productUnitPrice != copyProductViewModel.originalProduct.unitPrice.toString()) {
+                wasModified = true
+            } else if (copyProductViewModel.productUnit != copyProductViewModel.originalProduct.unit) {
+                wasModified = true
+            } else if (copyProductViewModel.productCategory != Converter.getCategory(copyProductViewModel.originalProduct)) {
+                wasModified = true
+            } else {
+                wasModified = false
+            }
+        }
+        return super.allValuesValid() && wasModified
     }
 
 }

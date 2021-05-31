@@ -2,21 +2,15 @@ package life.qbic.portal.offermanager.dataresources.persons
 
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.AcademicTitleFactory
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.general.CommonPerson
-import life.qbic.datamodel.dtos.general.Person
+import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
 import life.qbic.business.persons.create.CreatePersonDataSource
+import life.qbic.business.persons.list.ListPersonsDataSource
 import life.qbic.business.persons.search.SearchPersonDataSource
-
-import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.datamodel.dtos.business.*
+import life.qbic.datamodel.dtos.general.CommonPerson
+import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
 
@@ -30,12 +24,12 @@ import java.sql.Statement
  *
  * This class implements the data sources of the different use cases and is responsible for transferring data from the database towards them
  *
- * @since: 1.0.0
- * @author: Jennifer Bödker
+ * @since 1.0.0
+ * @author Jennifer Bödker
  *
  */
 @Log4j2
-class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
+class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSource, ListPersonsDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
   /**
    * A connection to the customer database used to create queries.
@@ -57,7 +51,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   PersonDbConnector(ConnectionProvider connectionProvider) {
     this.connectionProvider = connectionProvider
   }
-  
+
   @Override
   @Deprecated
   List<Person> findPerson(String firstName, String lastName) throws DatabaseQueryException {
@@ -77,7 +71,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     }
     return customerList
   }
-  
+
   @Override
   List<Person> findActivePerson(String firstName, String lastName) throws DatabaseQueryException {
     String sqlCondition = "WHERE first_name = ? AND last_name = ? AND active = 1"
@@ -96,17 +90,18 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     }
     return personList
   }
-  
+
   /*
     We want to fetch all affiliations for a given person id.
     As this is a n to m relationship, we need to look-up
     the associated affiliations ids first.
     Then we fetch every affiliation by the associated association ids.
      */
-  private List<Affiliation> fetchAffiliationsForPerson(int personId){
+
+  private List<Affiliation> fetchAffiliationsForPerson(int personId) {
     def affiliations = []
     def affiliationIds = getAffiliationIdsForPerson(personId)
-    affiliationIds.each {affiliationId ->
+    affiliationIds.each { affiliationId ->
       Affiliation affiliation = fetchAffiliation(affiliationId)
       affiliations.add(affiliation)
     }
@@ -144,7 +139,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   private Affiliation fetchAffiliation(int affiliationId) {
     String affiliationProperties = "organization, address_addition, street, postal_code, city, country, category"
     String query = "SELECT ${affiliationProperties} FROM affiliation " +
-    "WHERE id = ?"
+            "WHERE id = ?"
 
     Map row
     Connection connection = connectionProvider.connect()
@@ -184,7 +179,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       Connection connection = connectionProvider.connect()
       connection.setAutoCommit(false)
 
-      connection.withCloseable {it ->
+      connection.withCloseable { it ->
         try {
           int personId = createNewPerson(it, person)
           storeAffiliation(it, personId, person.affiliations)
@@ -223,7 +218,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     }
     return personAlreadyInDb
   }
-  
+
   private static int createNewPerson(Connection connection, Person person) {
     String query = "INSERT INTO person (user_id, first_name, last_name, title, email, active) " +
             "VALUES(?, ?, ?, ?, ?, ?)"
@@ -240,19 +235,19 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     statement.setBoolean(6, true)
     statement.execute()
     def keys = statement.getGeneratedKeys()
-    while (keys.next()){
+    while (keys.next()) {
       generatedKeys.add(keys.getInt(1))
     }
 
     return generatedKeys[0]
   }
-  
+
   private void storeAffiliation(Connection connection, int personId,
                                 List<Affiliation> affiliations) {
     String query = "INSERT INTO person_affiliation (person_id, affiliation_id) " +
             "VALUES(?, ?)"
 
-    affiliations.each {affiliation ->
+    affiliations.each { affiliation ->
       def affiliationId = getAffiliationId(affiliation)
       def statement = connection.prepareStatement(query)
       statement.setInt(1, personId)
@@ -260,7 +255,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       statement.execute()
     }
   }
-  
+
   int getAffiliationId(Affiliation affiliation) {
     String query = "SELECT * FROM affiliation WHERE organization=? " +
             "AND address_addition=? " +
@@ -285,7 +280,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     }
 
 
-    if(affiliationIds.size() > 1) {
+    if (affiliationIds.size() > 1) {
       throw new DatabaseQueryException("More than one entry found for $affiliation.")
     }
     if (affiliationIds.empty) {
@@ -293,40 +288,40 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     }
     return affiliationIds[0]
   }
-  
+
   @Override
   void updatePersonAffiliations(int personId, List<Affiliation> updatedAffiliations) {
     List<Affiliation> existingAffiliations = null
     try {
-      
+
       existingAffiliations = getAffiliationForPersonId(personId)
-      
+
     } catch (Exception e) {
       log.error(e)
       log.error(e.stackTrace.join("\n"))
       throw new DatabaseQueryException("The customer's affiliations could not be updated.")
     }
-    
-    List<Affiliation> newAffiliations = new ArrayList<>();
-    
+
+    List<Affiliation> newAffiliations = new ArrayList<>()
+
     // find added affiliations - could use set operations here, but we have lists...
     updatedAffiliations.each {
-      if(!existingAffiliations.contains(it)) newAffiliations.add(it)
+      if (!existingAffiliations.contains(it)) newAffiliations.add(it)
     }
 
-    if(newAffiliations.isEmpty()) {
+    if (newAffiliations.isEmpty()) {
       throw new DatabaseQueryException("Customer already has provided affiliation(s), no update was necessary.")
     }
 
     Connection connection = connectionProvider.connect()
     connection.setAutoCommit(false)
 
-    connection.withCloseable {it ->
+    connection.withCloseable { it ->
       try {
-       
+
         storeAffiliation(connection, personId, newAffiliations)
         connection.commit()
-    
+
       } catch (Exception e) {
         log.error(e.message)
         log.error(e.stackTrace.join("\n"))
@@ -338,8 +333,8 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   }
 
   private void changePersonActiveFlag(int customerId, boolean active) {
-    String query = "UPDATE person SET active = ? WHERE id = ?";
-    
+    String query = "UPDATE person SET active = ? WHERE id = ?"
+
     Connection connection = connectionProvider.connect()
 
     connection.withCloseable {
@@ -349,7 +344,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       statement.execute()
     }
   }
-  
+
   /**
    * @inheritDoc
    */
@@ -359,21 +354,21 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     if (!getPerson(oldPersonId)) {
       throw new DatabaseQueryException("Person is not in the database and can't be updated.")
     }
-            
+
     Connection connection = connectionProvider.connect()
     connection.setAutoCommit(false)
 
-    connection.withCloseable {it ->
+    connection.withCloseable { it ->
       try {
         int newPersonId = createNewPerson(it, updatedPerson)
         List<Affiliation> allAffiliations = fetchAffiliationsForPerson(oldPersonId)
 
         updatedPerson.affiliations.each {
-          if(!allAffiliations.contains(it)) allAffiliations.add(it)
+          if (!allAffiliations.contains(it)) allAffiliations.add(it)
         }
         storeAffiliation(it, newPersonId, allAffiliations)
         connection.commit()
-          
+
         // if our update is successful we set the old customer inactive
         changePersonActiveFlag(oldPersonId, false)
       } catch (Exception e) {
@@ -394,7 +389,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   List<Affiliation> listAllAffiliations() {
     List<Affiliation> result = []
 
-    List<Map<?,?>> resultRows = new ArrayList()
+    List<Map<?, ?>> resultRows = new ArrayList()
     Connection connection = this.connectionProvider.connect()
 
     connection.withCloseable {
@@ -407,7 +402,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       }
     }
     //TODO separate the part below in static parser
-    resultRows.forEach{ Map row ->
+    resultRows.forEach { Map row ->
       def affiliationBuilder = new Affiliation.Builder(
               row.organisation as String,
               row.street as String,
@@ -432,7 +427,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   }
 
   /**
-   *@inheritDoc
+   * @inheritDoc
    */
   @Override
   void addAffiliation(Affiliation affiliation) {
@@ -443,12 +438,12 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       Connection connection = connectionProvider.connect()
       connection.setAutoCommit(false)
 
-      connection.withCloseable {it ->
+      connection.withCloseable { it ->
         try {
           createNewAffiliation(it, affiliation)
           connection.commit()
         }
-        catch(DatabaseQueryException e) {
+        catch (DatabaseQueryException e) {
           log.error(e.message)
           log.error(e.stackTrace.join("\n"))
           connection.rollback()
@@ -518,7 +513,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     statement.setString(7, affiliation.category.toString())
     statement.execute()
     ResultSet affiliationResultSetKeys = statement.getGeneratedKeys()
-    while (affiliationResultSetKeys.next()){
+    while (affiliationResultSetKeys.next()) {
       generatedKeys.add(affiliationResultSetKeys.getInt(1))
     }
 
@@ -544,7 +539,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       statement.setString(3, person.emailAddress)
 
       ResultSet result = statement.executeQuery()
-      while (result.next()){
+      while (result.next()) {
         personId = result.getInt(1)
       }
     }
@@ -556,7 +551,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     }
     return personId
   }
-  
+
   /**
    * Searches for a person and returns the matching ID from the person table if that person is set to active
    *
@@ -576,7 +571,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       statement.setString(3, person.emailAddress)
 
       ResultSet result = statement.executeQuery()
-      while (result.next()){
+      while (result.next()) {
         personId = result.getInt(1)
       }
     }
@@ -588,57 +583,76 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     }
     return personId
   }
-  
+
+  /**
+   * Lists all customers
+   * @return a list of customers found
+   * since 1.0.0
+   */
+  @Override
+  List<Customer> listAllCustomers() {
+    return fetchAllCustomers()
+  }
+
   /**
    * List all available persons.
    * @return A list of persons
    */
-  List<Customer> fetchAllCustomers() {
+  private List<Customer> fetchAllCustomers() {
     List<Customer> customers = []
     String query = PERSON_SELECT_QUERY + " WHERE active = 1"
     Connection connection = connectionProvider.connect()
     connection.withCloseable {
       def preparedStatement = it.prepareStatement(query)
       ResultSet resultSet = preparedStatement.executeQuery()
-      while(resultSet.next()) {
+      while (resultSet.next()) {
         Customer customer = parseCustomerFromResultSet(resultSet)
         customers.add(customer)
       }
     }
     return customers
   }
-  
+
+  @Override
+  List<Person> listActivePersons() {
+    return fetchAllActivePersons()
+  }
   /**
    * List all available persons that are set to active in the database.
    * @return A list of active persons
    */
-  List<Person> fetchAllActivePersons() {
+  private List<Person> fetchAllActivePersons() {
     List<Person> persons = []
     String query = PERSON_SELECT_QUERY + " WHERE active = 1"
     Connection connection = connectionProvider.connect()
     connection.withCloseable {
       def preparedStatement = it.prepareStatement(query)
       ResultSet resultSet = preparedStatement.executeQuery()
-      while(resultSet.next()) {
+      while (resultSet.next()) {
         Person person = parseCommonPersonFromResultSet(resultSet)
         persons.add(person)
       }
     }
     return persons
   }
-  
+
+  @Override
+  List<ProjectManager> listAllProjectManagers() {
+    return fetchAllProjectManagers()
+  }
+
   /**
    * List all available project managers.
    * @return A list of project managers
    */
-  List<ProjectManager> fetchAllProjectManagers() {
+  private List<ProjectManager> fetchAllProjectManagers() {
     List<ProjectManager> pms = []
     String query = PM_SELECT_QUERY + " WHERE active = 1"
     Connection connection = connectionProvider.connect()
     connection.withCloseable {
       def preparedStatement = it.prepareStatement(query)
       ResultSet resultSet = preparedStatement.executeQuery()
-      while(resultSet.next()) {
+      while (resultSet.next()) {
         ProjectManager projectManager = parseProjectManagerFromResultSet(resultSet)
         pms.add(projectManager)
       }
@@ -732,7 +746,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
   static AffiliationCategory determineAffiliationCategory(String value) {
     def category
-    switch(value.toLowerCase()) {
+    switch (value.toLowerCase()) {
       case "internal":
         category = AffiliationCategory.INTERNAL
         break
@@ -751,23 +765,23 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
   @Override
   CommonPerson getPerson(int personPrimaryId) {
-    String query = PERSON_SELECT_QUERY + " " +"WHERE id=?"
+    String query = PERSON_SELECT_QUERY + " " + "WHERE id=?"
     Connection connection = connectionProvider.connect()
 
     connection.withCloseable {
-     PreparedStatement statement = it.prepareStatement(query)
-     statement.setInt(1, personPrimaryId)
-     ResultSet result = statement.executeQuery()
-     CommonPerson person = null
-     while (result.next()) {
-       person = parseCommonPersonFromResultSet(result)
-     }
-     return person
+      PreparedStatement statement = it.prepareStatement(query)
+      statement.setInt(1, personPrimaryId)
+      ResultSet result = statement.executeQuery()
+      CommonPerson person = null
+      while (result.next()) {
+        person = parseCommonPersonFromResultSet(result)
+      }
+      return person
     }
   }
 
   Customer getCustomer(int personPrimaryId) {
-    String query = PERSON_SELECT_QUERY + " " +"WHERE id=?"
+    String query = PERSON_SELECT_QUERY + " " + "WHERE id=?"
     Connection connection = connectionProvider.connect()
 
     connection.withCloseable {
@@ -788,7 +802,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
     findActivePerson(person.firstName, person.lastName).each { foundCustomer ->
       //todo is the email address sufficient to compare customers for identity?
-      if(foundCustomer.emailAddress == person.emailAddress) personID = getActivePersonId(foundCustomer)
+      if (foundCustomer.emailAddress == person.emailAddress) personID = getActivePersonId(foundCustomer)
     }
 
     return Optional.of(personID)
@@ -829,7 +843,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
         String country = result.getString("country")
         AffiliationCategory category = CATEGORY_FACTORY.getForString(result.getString("category"))
         affiliation = new Affiliation.Builder(organization, street, postalCode, city)
-          .country(country).addressAddition(address_addition).category(category).build()
+                .country(country).addressAddition(address_addition).category(category).build()
       }
       return affiliation
     }

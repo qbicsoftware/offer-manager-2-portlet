@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
+import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
@@ -16,22 +17,22 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  */
 class AffiliationResourcesService implements ResourcesService<Affiliation> {
 
-    private final PersonDbConnector dbConnector
+    private final ListAffiliationsDataSource listAffiliationsDataSource
 
     private final List<Affiliation> availableAffiliations
 
     private final EventEmitter<Affiliation> eventEmitter
 
-    AffiliationResourcesService(PersonDbConnector dbConnector) {
-        this.dbConnector = dbConnector
-        this.availableAffiliations = dbConnector.listAllAffiliations()
+    AffiliationResourcesService(ListAffiliationsDataSource listAffiliationsDataSource) {
+        this.listAffiliationsDataSource = listAffiliationsDataSource
+        this.availableAffiliations = listAffiliationsDataSource.listAllAffiliations()
         this.eventEmitter = new EventEmitter<>()
     }
 
     @Override
     void reloadResources() {
         this.availableAffiliations.clear()
-        this.availableAffiliations.addAll(dbConnector.listAllAffiliations())
+        this.availableAffiliations.addAll(listAffiliationsDataSource.listAllAffiliations())
     }
 
     @Override

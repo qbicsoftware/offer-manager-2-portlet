@@ -158,8 +158,11 @@ class MaintainProductsView extends FormLayout {
             if(it.firstSelectedItem.isPresent()){
                 updateProductDescription(it.firstSelectedItem.get())
                 viewModel.selectedProduct = it.firstSelectedItem
-                checkProductSelected()
             }
+            else{
+                viewModel.selectedProduct = Optional.empty()
+            }
+            checkProductSelected()
         })
 
         addProduct.addClickListener({
@@ -218,7 +221,7 @@ class MaintainProductsView extends FormLayout {
     }
 
     private void checkProductSelected() {
-        if (viewModel.selectedProduct.get()) {
+        if (viewModel.selectedProduct.isPresent()) {
             copyProduct.setEnabled(true)
             archiveProduct.setEnabled(true)
         } else {

@@ -1,25 +1,13 @@
 package life.qbic.portal.offermanager
 
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.business.offers.Currency
 import life.qbic.business.offers.OfferExporter
-import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.ProteomicAnalysis
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Sequencing
+import life.qbic.datamodel.dtos.business.*
+import life.qbic.datamodel.dtos.business.services.*
 import org.jsoup.nodes.Document
+import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
-
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -33,8 +21,8 @@ import java.util.concurrent.TimeUnit
  *
  * Implements {@link OfferExporter} and is responsible for converting an offer into PDF Format
  *
- * @since: 1.0.0
- * @author: Jennifer Bödker
+ * @since 1.0.0
+ * @author Jennifer Bödker
  *
  */
 @Log4j2
@@ -189,7 +177,7 @@ class OfferToPDFConverter implements OfferExporter {
     private void setProjectInformation() {
         htmlContent.getElementById("project-title").text(offer.projectTitle)
         htmlContent.getElementById("project-description").text(offer.projectDescription)
-        if(offer.experimentalDesign.isPresent()) htmlContent.getElementById("experimental-design").text(offer.experimentalDesign.get())
+        if (offer.experimentalDesign.isPresent()) htmlContent.getElementById("experimental-design").text(offer.experimentalDesign.get())
     }
 
     private void setCustomerInformation() {
@@ -235,7 +223,7 @@ class OfferToPDFConverter implements OfferExporter {
         htmlContent.getElementById("product-items-1").empty()
         htmlContent.getElementById("product-items-2").empty()
         // To also remove the styling of the div elements they have to be removed
-        htmlContent.getElementById("grid-table-footer").remove()
+        htmlContent.getElementById("grid-table-footer").empty()
         htmlContent.getElementById("template-page-break").remove()
 
         List<ProductItem> productItems = offer.items
@@ -243,7 +231,7 @@ class OfferToPDFConverter implements OfferExporter {
         //Initialize Number of table
         tableCount = 1
 
-       
+
         tableItemsCount = 1
         //The maximum number of items per page
         int maxTableItems = 13
@@ -263,12 +251,14 @@ class OfferToPDFConverter implements OfferExporter {
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
             htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
         }
-            //Add total pricing to table
-            htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation()))
+            //Add total pricing information to grid-table-footer div in template
+            Element element = htmlContent.getElementById("grid-table-footer").append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation()))
+            //Move template div after item-table-grid
+            htmlContent.getElementById("item-table-grid").after(element)
     }
 
     void setTaxationStatement() {
-        if(!offer.getSelectedCustomerAffiliation().country.equals(countryWithVAT)) {
+        if (!offer.getSelectedCustomerAffiliation().country.equals(countryWithVAT)) {
             htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${countryWithVAT}")
         }
 
@@ -285,7 +275,7 @@ class OfferToPDFConverter implements OfferExporter {
 
     // Apply VAT only if the offer originated from Germany and it's affilation category is non-internal
     static double determineTaxCost(String country, AffiliationCategory category) {
-        if(country.equals(countryWithVAT) && !category.equals(noVatCategory)) {
+        if (country.equals(countryWithVAT) && !category.equals(noVatCategory)) {
             return VAT
         }
         return 0
@@ -337,10 +327,10 @@ class OfferToPDFConverter implements OfferExporter {
         htmlContent.getElementById("offer-date").text(dateFormat.format(offer.modificationDate))
     }
 
-    double calculateNetSum(List<ProductItem> productItems){
+    double calculateNetSum(List<ProductItem> productItems) {
         double netSum = 0
         productItems.each {
-                netSum += it.quantity * it.product.unitPrice
+            netSum += it.quantity * it.product.unitPrice
         }
         return netSum
     }
@@ -378,7 +368,7 @@ class OfferToPDFConverter implements OfferExporter {
     void generateProductTable(Map productItemsMap, int maxTableItems) {
         // Create the items in html in the overview table
         int itemNumber = 0
-        productItemsMap.each {ProductGroups productGroup, List<ProductItem> items ->
+        productItemsMap.each { ProductGroups productGroup, List<ProductItem> items ->
             //Check if there are ProductItems stored in map entry
             if(items){
                 //Each Title will take spacing in the generated table
@@ -533,8 +523,7 @@ class OfferToPDFConverter implements OfferExporter {
             double taxRatio = determineTaxCost(affiliation.country, affiliation.getCategory())
             String taxPercentage = decimalFormat.format(taxRatio)
 
-            return """<div id="grid-table-footer">
-                                     <div class="col-10 cost-summary-field">Overheads (${overheadPercentage})</div>
+            return """<div class="col-10 cost-summary-field">Overheads (${overheadPercentage})</div>
                                      <div class="row sub-total-costs" id="DATA_GENERATION-sub-overhead">
                                         <div class="col-10 cost-summary-field">
                                             Data Generation:
@@ -584,7 +573,6 @@ class OfferToPDFConverter implements OfferExporter {
                                             0.00
                                         </div>
                                      </div>
-                                 </div>
                                  """
         }
 

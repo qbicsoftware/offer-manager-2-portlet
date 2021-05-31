@@ -89,6 +89,11 @@ h2 {
 /*
  Document type display: Quotation or Cost Estimate
 */
+
+.highlight {
+    font-weight: bold;
+}
+
 .doctype-desc {
     grid-column-start: 1;
     grid-column-end: 2;

@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
+import life.qbic.business.persons.list.ListPersonsDataSource
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
@@ -15,16 +16,16 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  */
 class PersonResourceService implements ResourcesService<Person>{
 
-    private final PersonDbConnector personDbConnector
+    private final ListPersonsDataSource listPersonsDataSource
 
     private final List<Person> availablePersonEntries
 
     private final EventEmitter<Person> eventEmitter
 
-    PersonResourceService(PersonDbConnector personDbConnector) {
-        this.personDbConnector = Objects.requireNonNull(personDbConnector, "Database connector " +
+    PersonResourceService(ListPersonsDataSource listPersonsDataSource) {
+        this.listPersonsDataSource = Objects.requireNonNull(listPersonsDataSource, "Database connector " +
                 "must not be null.")
-        this.availablePersonEntries = personDbConnector.fetchAllActivePersons()
+        this.availablePersonEntries = listPersonsDataSource.listActivePersons()
         this.eventEmitter = new EventEmitter<>()
     }
 

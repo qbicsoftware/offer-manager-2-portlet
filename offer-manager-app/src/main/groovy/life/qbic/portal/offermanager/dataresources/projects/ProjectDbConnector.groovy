@@ -1,15 +1,18 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
-import groovy.transform.CompileStatic
+
 import groovy.util.logging.Log4j2
-
-import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
-
-import life.qbic.datamodel.dtos.business.*
-import life.qbic.datamodel.dtos.projectmanagement.*
-import life.qbic.business.projects.create.ProjectExistsException
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.projects.create.ProjectExistsException
+import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.ProjectApplication
+import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.projectmanagement.Project
+import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
+import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
+import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
+import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 
 import java.sql.Connection
 import java.sql.PreparedStatement
@@ -22,7 +25,6 @@ import java.sql.Statement
  * This class is responsible for transferring project data to the project/customer db
  *
  * @since 1.0.0
- *
  */
 @Log4j2
 class ProjectDbConnector {
@@ -50,14 +52,14 @@ class ProjectDbConnector {
     /**
      * parses existing projects from user database, might be needed later if more complex information is to be listed
      */
-     List<ProjectIdentifier> fetchProjects() {
+    List<ProjectIdentifier> fetchProjects() {
         List<ProjectIdentifier> projects = []
         String query = "SELECT openbis_project_identifier from projects"
         Connection connection = connectionProvider.connect()
         connection.withCloseable {
             def preparedStatement = it.prepareStatement(query)
             ResultSet resultSet = preparedStatement.executeQuery()
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 try {
                     String[] tokens = resultSet.getString('openbis_project_identifier').split("/")
                     ProjectSpace space = new ProjectSpace(tokens[1])
@@ -79,8 +81,8 @@ class ProjectDbConnector {
      * @param projectIdentifier a project identifier object denoting the openBIS identifier
      * @param projectApplication a project application object used to add additional metadata
      */
-     Project addProjectAndConnectPersonsInUserDB(ProjectIdentifier projectIdentifier,
-                                                 ProjectApplication projectApplication) {
+    Project addProjectAndConnectPersonsInUserDB(ProjectIdentifier projectIdentifier,
+                                                ProjectApplication projectApplication) {
         //collect infos needed for database
         String projectTitle = projectApplication.getProjectTitle()
         Customer customer = projectApplication.getCustomer()
@@ -93,7 +95,7 @@ class ProjectDbConnector {
         Connection connection = connectionProvider.connect()
         connection.setAutoCommit(false)
 
-        connection.withCloseable {it ->
+        connection.withCloseable { it ->
             try {
                 int projectID = addProjectToDB(it, projectIdentifier.toString(), projectTitle)
                 addPersonToProject(it, projectID, managerID, "Manager")
@@ -120,16 +122,14 @@ class ProjectDbConnector {
             PreparedStatement statement = it.prepareStatement(sql)
             statement.setString(1, projectIdentifier)
             ResultSet rs = statement.executeQuery()
-            if (rs.next()) {
-                return true
-            }
+            return rs.next()
         }
         return false
     }
 
     private int addProjectToDB(Connection connection, String projectIdentifier, String projectName) {
-        if(isProjectInDB(projectIdentifier)) {
-            throw new ProjectExistsException("Project "+projectIdentifier+" is already in the user database")
+        if (isProjectInDB(projectIdentifier)) {
+            throw new ProjectExistsException("Project " + projectIdentifier + " is already in the user database")
         }
         log.debug("Trying to add project " + projectIdentifier + " to the person DB")
         String sql = "INSERT INTO projects (openbis_project_identifier, short_title) VALUES(?, ?)"
@@ -151,7 +151,7 @@ class ProjectDbConnector {
         if (!hasPersonRoleInProject(connection, personID, projectID, role)) {
             log.debug("Trying to add person with role " + role + " to a project.")
             String sql =
-                    "INSERT INTO projects_persons (project_id, person_id, project_role) VALUES(?, ?, ?)";
+                    "INSERT INTO projects_persons (project_id, person_id, project_role) VALUES(?, ?, ?)"
             try (PreparedStatement statement =
                     connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
                 statement.setInt(1, projectID)
