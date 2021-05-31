@@ -7,6 +7,7 @@ import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.data.validator.RegexpValidator
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
+import com.vaadin.shared.data.sort.SortDirection
 import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
@@ -311,7 +312,6 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         this.sequencingGrid.setDataProvider(sequencingProductDataProvider)
         setupFilters(sequencingProductDataProvider, sequencingGrid)
 
-
         ListDataProvider<ProductItemViewModel> managementProductDataProvider = new ListDataProvider(createOfferViewModel.managementProducts)
         this.projectManagementGrid.setDataProvider(managementProductDataProvider)
         setupFilters(managementProductDataProvider, projectManagementGrid)
@@ -378,6 +378,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
             //specify size of grid and layout
             grid.setWidthFull()
             grid.setHeightMode(HeightMode.ROW)
+            grid.sort("ProductId", SortDirection.ASCENDING)
         } catch (Exception e) {
             new Exception("Unexpected exception in building the product item grid", e)
         }
