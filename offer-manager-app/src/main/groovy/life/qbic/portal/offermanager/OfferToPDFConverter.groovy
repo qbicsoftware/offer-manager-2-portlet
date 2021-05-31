@@ -569,7 +569,7 @@ class OfferToPDFConverter implements OfferExporter {
                                         <div class="col-10 cost-summary-field">
                                             Total:
                                         </div>
-                                        <div class="col-2 price-value" id="final-cost-value">
+                                        <div class="col-2 price-value highlight" id="final-cost-value">
                                             0.00
                                         </div>
                                      </div>
