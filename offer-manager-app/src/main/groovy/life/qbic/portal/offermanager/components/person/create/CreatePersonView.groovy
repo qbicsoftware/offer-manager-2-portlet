@@ -105,6 +105,7 @@ class CreatePersonView extends FormLayout {
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
         addressAdditionComboBox.setItemCaptionGenerator({(it.addressAddition == ""|| it.addressAddition == " ")? "no address addition" : it.addressAddition})
         addressAdditionComboBox.setEnabled(false)
+        addressAdditionComboBox.setEmptySelectionAllowed(false)
 
         this.submitButton = new Button("Create Person")
         submitButton.setIcon(VaadinIcons.USER_CHECK)
