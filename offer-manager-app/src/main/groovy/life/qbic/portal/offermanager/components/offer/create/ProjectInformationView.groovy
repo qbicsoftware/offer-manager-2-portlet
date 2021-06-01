@@ -77,6 +77,10 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
         this.createOfferViewModel.projectTitle = null
         this.createOfferViewModel.projectObjective = null
         this.createOfferViewModel.experimentalDesign = null
+
+        this.createOfferViewModel.projectTitleValid = null
+        this.createOfferViewModel.projectObjectiveValid = null
+        this.createOfferViewModel.experimentalDesignValid = null
     }
 
 
