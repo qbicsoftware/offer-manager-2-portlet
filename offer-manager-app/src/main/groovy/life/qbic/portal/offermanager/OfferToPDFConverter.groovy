@@ -332,7 +332,7 @@ class OfferToPDFConverter implements OfferExporter {
         htmlContent.getElementById("overhead-cost-value").text(overheadPrice)
         //Set vat, net and total cost value
         htmlContent.getElementById("total-cost-value-net").text(netPrice)
-        htmlContent.getElementById("vat-percentage-value").text("VAT (${taxPercentage})")
+        htmlContent.getElementById("vat-percentage-value").text("VAT (${taxPercentage}):")
         htmlContent.getElementById("vat-cost-value").text(taxesPrice)
         htmlContent.getElementById("final-cost-value").text(totalPrice)
 
