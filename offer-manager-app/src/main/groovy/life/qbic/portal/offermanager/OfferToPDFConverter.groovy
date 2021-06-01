@@ -232,7 +232,7 @@ class OfferToPDFConverter implements OfferExporter {
         tableCount = 1
 
 
-        tableItemsCount = 1
+        pageItemsCount = 1
         //The maximum number of items per page
         int maxTableItems = 13
 
