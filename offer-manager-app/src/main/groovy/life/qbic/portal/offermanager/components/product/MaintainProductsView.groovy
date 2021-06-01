@@ -58,10 +58,10 @@ class MaintainProductsView extends FormLayout {
         this.createProductView = createProductView
         this.copyProductView = copyProductView
         setupTitle()
-        setupPanel()
         createButtons()
         setupGrid()
         setupOverviewLayout()
+        setupPanel()
         addSubViews()
         setupListeners()
     }
@@ -80,7 +80,7 @@ class MaintainProductsView extends FormLayout {
         copyProduct.setEnabled(false)
         archiveProduct.setEnabled(false)
 
-        buttonLayout = new HorizontalLayout(productDescription, addProduct,copyProduct,archiveProduct)
+        buttonLayout = new HorizontalLayout(addProduct,copyProduct,archiveProduct)
         buttonLayout.setMargin(false)
     }
 
@@ -122,7 +122,12 @@ class MaintainProductsView extends FormLayout {
     }
 
     private void setupPanel(){
+        HorizontalLayout formlayout = new HorizontalLayout()
+        formlayout.setSizeFull()
+        this.addComponent(formlayout)
+
         productDescription = new Panel("Product Description")
+        formlayout.addComponents(productDescription)
     }
 
     private void setupOverviewLayout(){
