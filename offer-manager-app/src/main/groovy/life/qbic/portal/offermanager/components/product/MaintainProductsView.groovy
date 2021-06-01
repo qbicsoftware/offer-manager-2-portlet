@@ -128,9 +128,9 @@ class MaintainProductsView extends FormLayout {
     }
 
     private void setupPanel(){
-        HorizontalLayout formlayout = new HorizontalLayout()
-        formlayout.setSizeFull()
-        this.addComponent(formlayout)
+        HorizontalLayout descriptionLayout = new HorizontalLayout()
+        descriptionLayout.setSizeFull()
+        this.addComponent(descriptionLayout)
 
         productDescription = new Panel("Product Description")
         descriptionLayout.addComponents(productDescription)
