@@ -29,7 +29,7 @@ import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
  * @since 1.0.0
  */
 @Log4j2
-class OfferOverviewView extends FormLayout {
+class OfferOverviewView extends VerticalLayout {
 
     final private OfferOverviewModel model
 
