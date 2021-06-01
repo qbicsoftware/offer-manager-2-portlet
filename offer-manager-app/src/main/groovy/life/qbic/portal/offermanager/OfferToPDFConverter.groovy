@@ -233,7 +233,7 @@ class OfferToPDFConverter implements OfferExporter {
         // Let's clear the existing item template content first
         htmlContent.getElementById("product-items-1").empty()
         htmlContent.getElementById("product-items-2").empty()
-        // To also remove the styling of the div elements they have to be removed
+        //We also need to remove the page break between the tables in the template
         htmlContent.getElementById("template-page-break").remove()
 
         //Initialize Number of table
