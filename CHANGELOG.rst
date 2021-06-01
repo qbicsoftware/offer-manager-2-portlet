@@ -15,6 +15,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Customers can now be updated in the selection step of creating a new offer (`#611 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/611>`_)
 
+* Reorganize MaintainProductView (`#631 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/631>`_)
+
 **Fixed**
 
 * User ID of a person is set in database during person creation/update (`#616 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/616>`_)
