@@ -17,6 +17,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Experimental design description is now added to the detailed project description during offer creation. (`#623 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/623>`_)
 
+* Adapt dynamically generated offer PDF layout to match html template(`#613 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/613>`_)
+
 **Fixed**
 
 * User ID of a person is set in database during person creation/update (`#616 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/616>`_)
