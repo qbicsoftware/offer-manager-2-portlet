@@ -130,7 +130,9 @@ class ProjectDbConnector {
     }
 
     private int addProjectToDB(Connection connection, ProjectApplication projectApplication) {
-        String projectId = projectApplication.projectCode.getCode()
+        String projectId = new ProjectIdentifier(
+                projectApplication.projectSpace,
+                projectApplication.projectCode).toString()
 
         if (isProjectInDB(projectId)) {
             throw new ProjectExistsException("Project " + projectId + " is already in the user database")
