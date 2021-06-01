@@ -40,9 +40,9 @@ class OfferToPDFConverter implements OfferExporter {
     static final CHROMIUM_EXECUTABLE = "CHROMIUM_EXECUTABLE"
 
     /**
-     * Variable used to count the number of productItems in a productTable
+     * Variable used to count the number of Items added to a page
      */
-    private static int tableItemsCount
+    private static int pageItemsCount
 
     /**
      * Variable used to count the number of generated productTables in the Offer PDF
@@ -243,7 +243,7 @@ class OfferToPDFConverter implements OfferExporter {
         generateProductTable(productItemsMap, maxTableItems)
         //Append total cost footer
         String elementId = "product-items" + "-" + tableCount
-        if (tableItemsCount > maxTableItems) {
+        if (pageItemsCount > maxTableItems) {
             //If currentTable is filled with Items generate new one and add total pricing there
             ++tableCount
             htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
@@ -372,32 +372,32 @@ class OfferToPDFConverter implements OfferExporter {
             //Check if there are ProductItems stored in map entry
             if(items){
                 //Each Title will take spacing in the generated table
-                tableItemsCount++
+                pageItemsCount++
                 def elementId = "product-items" + "-" + tableCount
-                if (tableItemsCount > maxTableItems) {
+                if (pageItemsCount > maxTableItems) {
                     //Start new table on next page
                     ++tableCount
                     htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
                     elementId = "product-items" + "-" + tableCount
                     htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
-                    tableItemsCount = 1
+                    pageItemsCount = 1
                 }
                 //Append Table Title and Header
                 htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
                 htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
                 items.each{ProductItem item ->
                     itemNumber++
-                    if (tableItemsCount > maxTableItems) {
+                    if (pageItemsCount > maxTableItems) {
                         ++tableCount
                         htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
                         elementId = "product-items" + "-" + tableCount
                         htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
                         htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
-                        tableItemsCount = 1
+                        pageItemsCount = 1
                     }
                     //add product to current table
                     htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
-                    tableItemsCount++
+                    pageItemsCount++
                 }
                 //add subtotal footer to table
                 htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
@@ -505,7 +505,7 @@ class OfferToPDFConverter implements OfferExporter {
 
         static String subTableFooter(ProductGroups productGroup){
             //Each footer takes up spacing in the current table
-            tableItemsCount++
+            pageItemsCount++
             String footerTitle = productGroup.getAcronym()
             return """<div id="grid-sub-total-footer-${tableCount}" class="grid-sub-total-footer">
                                       <div class="col-6"></div> 
