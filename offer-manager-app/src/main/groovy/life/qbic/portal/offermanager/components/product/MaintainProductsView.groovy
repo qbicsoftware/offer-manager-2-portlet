@@ -86,7 +86,7 @@ class MaintainProductsView extends FormLayout {
         copyProduct.setEnabled(false)
         archiveProduct.setEnabled(false)
 
-        buttonLayout = new HorizontalLayout(addProduct,copyProduct,archiveProduct)
+        buttonLayout = new HorizontalLayout(addProduct, copyProduct, archiveProduct)
         buttonLayout.setMargin(false)
     }
 
