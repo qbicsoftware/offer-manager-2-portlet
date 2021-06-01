@@ -127,11 +127,11 @@ h2 {
 .table-row {
   padding-top: 2px;
   padding-bottom: 2px;
+  white-space:nowrap;
 }
 
 .total-costs-sum-row {
   font-weight: bold;
-  white-space:nowrap;
 }
 
 .signature {

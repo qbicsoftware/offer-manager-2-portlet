@@ -223,7 +223,6 @@ class OfferToPDFConverter implements OfferExporter {
         htmlContent.getElementById("product-items-1").empty()
         htmlContent.getElementById("product-items-2").empty()
         // To also remove the styling of the div elements they have to be removed
-        htmlContent.getElementById("grid-table-footer").empty()
         htmlContent.getElementById("template-page-break").remove()
 
         List<ProductItem> productItems = offer.items
@@ -252,7 +251,8 @@ class OfferToPDFConverter implements OfferExporter {
             htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
         }
             //Add total pricing information to grid-table-footer div in template
-            Element element = htmlContent.getElementById("grid-table-footer").append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation()))
+
+            Element element = htmlContent.getElementById("grid-table-footer")
             //Move template footer div after item-table-grid
             htmlContent.getElementById("item-table-grid").after(element)
     }
@@ -312,11 +312,17 @@ class OfferToPDFConverter implements OfferExporter {
         final taxesPrice = Currency.getFormatterWithoutSymbol().format(offer.taxes)
         final totalPrice = Currency.getFormatterWithoutSymbol().format(offer.totalPrice)
 
+        double taxRatio = determineTaxCost(offer.getSelectedCustomerAffiliation().country, offer.getSelectedCustomerAffiliation().getCategory())
+        String taxPercentage = decimalFormat.format(taxRatio)
+
         // Detailed listing summary
+        htmlContent.getElementById("overhead-percentage-value").text("Overheads (${overheadPercentage})")
+        htmlContent.getElementById("vat-percentage-value").text("VAT (${taxPercentage})")
         htmlContent.getElementById("overhead-cost-value").text(overheadPrice)
         htmlContent.getElementById("total-cost-value-net").text(netPrice)
         htmlContent.getElementById("vat-cost-value").text(taxesPrice)
         htmlContent.getElementById("final-cost-value").text(totalPrice)
+
     }
 
     void setQuotationDetails() {
@@ -516,65 +522,5 @@ class OfferToPDFConverter implements OfferExporter {
                                  </div>
                                  """
         }
-
-        static String tableFooter(double overheadRatio, Affiliation affiliation){
-            DecimalFormat decimalFormat = new DecimalFormat("#%")
-            String overheadPercentage = decimalFormat.format(overheadRatio)
-            double taxRatio = determineTaxCost(affiliation.country, affiliation.getCategory())
-            String taxPercentage = decimalFormat.format(taxRatio)
-
-            return """<div class="col-10 cost-summary-field">Overheads (${overheadPercentage})</div>
-                                     <div class="row sub-total-costs" id="DATA_GENERATION-sub-overhead">
-                                        <div class="col-10 cost-summary-field">
-                                            Data Generation:
-                                        </div>
-                                        <div class="col-2 price-value" id="DATA_GENERATION-overhead-costs-value">
-                                            0.00
-                                        </div>
-                                     </div>
-                                     <div class="row sub-total-costs" id="DATA_ANALYSIS-sub-overhead">
-                                        <div class="col-10 cost-summary-field">
-                                            Data Analysis:
-                                        </div>
-                                        <div class="col-2 price-value" id="DATA_ANALYSIS-overhead-costs-value">
-                                            0.00
-                                        </div>
-                                     </div>
-                                     <div class="row total-costs single-overscore" id = "offer-overhead">
-                                        <div class="col-10 cost-summary-field">
-                                            Overhead total:
-                                        </div>
-                                        <div class="col-2 price-value" id="overhead-cost-value">
-                                            0.00
-                                        </div>
-                                     </div>
-                                     <div class="row total-costs" id = "offer-net">
-                                        <div class="col-6"></div>
-                                        <div class="col-4 cost-summary-field">
-                                            Net:
-                                        </div>
-                                        <div class="col-2 price-value" id="total-cost-value-net">
-                                            0.00
-                                        </div>
-                                     </div>
-                                     <div class="row total-costs" id = "offer-vat">
-                                        <div class="col-10 cost-summary-field">
-                                            VAT (${taxPercentage}):
-                                        </div>
-                                        <div class="col-2 price-value" id="vat-cost-value">
-                                            0.00
-                                        </div>
-                                     </div>
-                                     <div class="row total-costs single-overscore" id ="offer-total">
-                                        <div class="col-10 cost-summary-field">
-                                            Total:
-                                        </div>
-                                        <div class="col-2 price-value highlight" id="final-cost-value">
-                                            0.00
-                                        </div>
-                                     </div>
-                                 """
-        }
-
-        }
+    }
 }
