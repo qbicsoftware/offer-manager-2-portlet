@@ -221,7 +221,8 @@ class UpdatePersonView extends CreatePersonView{
      * @return boolean which indicates if a person update can be triggered
      */
     protected boolean allValuesValid() {
-        return createPersonViewModel.firstNameValid \
+        return createPersonViewModel.academicTitleValid \
+            && createPersonViewModel.firstNameValid
             && createPersonViewModel.lastNameValid \
             && createPersonViewModel.emailValid
             && updatePersonViewModel.personUpdated

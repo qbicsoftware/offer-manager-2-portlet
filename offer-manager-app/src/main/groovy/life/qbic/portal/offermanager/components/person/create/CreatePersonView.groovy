@@ -290,6 +290,16 @@ class CreatePersonView extends FormLayout implements Resettable{
         Validator<? extends Object> selectionValidator = Validator.from({o -> o != null}, "Please make a selection.")
 
         //Add Listeners to all Fields in the Form layout
+        this.titleField.addSelectionListener({ selection ->
+            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.titleField))
+            if (result.isError()) {
+                createPersonViewModel.academicTitleValid = false
+                UserError error = new UserError(result.getErrorMessage())
+                titleField.setComponentError(error)
+            } else {
+                createPersonViewModel.academicTitleValid = true
+            }
+        })
         this.firstNameField.addValueChangeListener({ event ->
             ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.firstNameField))
             if (result.isError()) {
@@ -357,7 +367,7 @@ class CreatePersonView extends FormLayout implements Resettable{
                 new ComboBox<>("Academic Title")
         titleCombobox.setPlaceholder("Select academic title")
         titleCombobox.setItems(academicTitles)
-        titleCombobox.setEmptySelectionAllowed(true)
+        titleCombobox.setEmptySelectionAllowed(false)
         return titleCombobox
     }
 
@@ -367,7 +377,8 @@ class CreatePersonView extends FormLayout implements Resettable{
      * @return
      */
     protected boolean allValuesValid() {
-        return createPersonViewModel.firstNameValid \
+        return createPersonViewModel.academicTitleValid \
+            && createPersonViewModel.firstNameValid  \
             && createPersonViewModel.lastNameValid \
             && createPersonViewModel.emailValid \
             && createPersonViewModel.affiliationValid
