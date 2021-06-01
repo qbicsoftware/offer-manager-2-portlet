@@ -75,8 +75,14 @@ class MaintainProductsView extends FormLayout {
 
     private void createButtons(){
         addProduct = new Button("Add Product", VaadinIcons.PLUS)
+        addProduct.setStyleName(ValoTheme.BUTTON_LARGE)
+
         copyProduct = new Button ("Copy Product", VaadinIcons.COPY)
+        copyProduct.setStyleName(ValoTheme.BUTTON_LARGE)
+
         archiveProduct = new Button("Archive Product", VaadinIcons.ARCHIVE)
+        archiveProduct.setStyleName(ValoTheme.BUTTON_LARGE)
+
         copyProduct.setEnabled(false)
         archiveProduct.setEnabled(false)
 
@@ -131,12 +137,12 @@ class MaintainProductsView extends FormLayout {
     }
 
     private void setupOverviewLayout(){
-        maintenanceLayout = new VerticalLayout(productGrid, buttonLayout)
+        maintenanceLayout = new VerticalLayout(buttonLayout, productGrid)
         maintenanceLayout.setSizeFull()
         maintenanceLayout.setMargin(false)
         maintenanceLayout.addComponents()
 
-        maintenanceLayout.setComponentAlignment(buttonLayout,Alignment.TOP_RIGHT)
+        maintenanceLayout.setComponentAlignment(buttonLayout,Alignment.MIDDLE_LEFT)
         this.addComponents(maintenanceLayout)
     }
 
