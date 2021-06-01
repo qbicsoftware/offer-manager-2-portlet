@@ -233,16 +233,16 @@ class OfferToPDFConverter implements OfferExporter {
 
         pageItemsCount = 1
         //The maximum number of items per page
-        int maxTableItems = 13
+        int maxPageItems = 13
 
         //Group ProductItems into Data Generation Data Analysis and Data & Project Management Categories
         Map productItemsMap = groupItems(productItems)
 
         //Generate Product Table for each Category
-        generateProductTable(productItemsMap, maxTableItems)
+        generateProductTable(productItemsMap, maxPageItems)
         //Append total cost footer
         String elementId = "product-items" + "-" + tableCount
-        if (pageItemsCount > maxTableItems) {
+        if (pageItemsCount > maxPageItems) {
             //If currentTable is filled with Items generate new one and add total pricing there
             ++tableCount
             htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
