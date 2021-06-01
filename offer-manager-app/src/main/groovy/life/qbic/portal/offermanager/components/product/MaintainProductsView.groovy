@@ -133,7 +133,7 @@ class MaintainProductsView extends FormLayout {
         this.addComponent(formlayout)
 
         productDescription = new Panel("Product Description")
-        formlayout.addComponents(productDescription)
+        descriptionLayout.addComponents(productDescription)
     }
 
     private void setupOverviewLayout(){
