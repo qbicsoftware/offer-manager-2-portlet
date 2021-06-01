@@ -126,6 +126,14 @@ class OfferToPDFConverter implements OfferExporter {
      */
     private final Map<ProductGroups, List> productGroupClasses = [:]
 
+    /**
+     * Map ProductItems to Productgroup
+     *
+     * This map represents the grouping of the productItems in the offer to the productGroupClasses
+     *
+     */
+    private Map<ProductGroups, List<ProductItem>> productItemsMap = [:]
+
     OfferToPDFConverter(Offer offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.tempDir = Files.createTempDirectory("offer")
@@ -219,25 +227,22 @@ class OfferToPDFConverter implements OfferExporter {
     }
 
     void setSelectedItems() {
+
+        //Group ProductItems into Data Generation Data Analysis and Data & Project Management Categories
+
         // Let's clear the existing item template content first
         htmlContent.getElementById("product-items-1").empty()
         htmlContent.getElementById("product-items-2").empty()
         // To also remove the styling of the div elements they have to be removed
         htmlContent.getElementById("template-page-break").remove()
 
-        List<ProductItem> productItems = offer.items
-
         //Initialize Number of table
         tableCount = 1
-
-
         pageItemsCount = 1
         //The maximum number of items per page
         int maxPageItems = 13
 
-        //Group ProductItems into Data Generation Data Analysis and Data & Project Management Categories
-        Map productItemsMap = groupItems(productItems)
-
+        groupItems(offer.items)
         //Generate Product Table for each Category
         generateProductTable(productItemsMap, maxPageItems)
         //Append total cost footer
@@ -282,6 +287,7 @@ class OfferToPDFConverter implements OfferExporter {
     }
 
     void setSubTotalPrices(ProductGroups productGroup, List<ProductItem> productItems) {
+
         double netSum = calculateNetSum(productItems)
         final netPrice = Currency.getFormatterWithoutSymbol().format(netSum)
         htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
@@ -300,7 +306,6 @@ class OfferToPDFConverter implements OfferExporter {
 
         // First page summary
         htmlContent.getElementById("ratio-costs-overhead").text("Overheads (${overheadPercentage})")
-
         htmlContent.getElementById("total-costs-net").text(netPriceWithSymbol)
         htmlContent.getElementById("total-costs-overhead").text(overheadPriceWithSymbol)
         htmlContent.getElementById("total-taxes").text(taxesWithSymbol)
@@ -312,17 +317,37 @@ class OfferToPDFConverter implements OfferExporter {
         final taxesPrice = Currency.getFormatterWithoutSymbol().format(offer.taxes)
         final totalPrice = Currency.getFormatterWithoutSymbol().format(offer.totalPrice)
 
+        final overheadDataGenerationPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(productItemsMap[ProductGroups.DATA_GENERATION]))
+        final overheadDataAnalysisPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(productItemsMap[ProductGroups.DATA_ANALYSIS]))
+
         double taxRatio = determineTaxCost(offer.getSelectedCustomerAffiliation().country, offer.getSelectedCustomerAffiliation().getCategory())
         String taxPercentage = decimalFormat.format(taxRatio)
 
         // Detailed listing summary
+
+        // Set overhead cost values
         htmlContent.getElementById("overhead-percentage-value").text("Overheads (${overheadPercentage})")
-        htmlContent.getElementById("vat-percentage-value").text("VAT (${taxPercentage})")
+        htmlContent.getElementById("DATA_GENERATION-overhead-costs-value").text(overheadDataGenerationPrice)
+        htmlContent.getElementById("DATA_ANALYSIS-overhead-costs-value").text(overheadDataAnalysisPrice)
         htmlContent.getElementById("overhead-cost-value").text(overheadPrice)
+        //Set vat, net and total cost value
         htmlContent.getElementById("total-cost-value-net").text(netPrice)
+        htmlContent.getElementById("vat-percentage-value").text("VAT (${taxPercentage})")
         htmlContent.getElementById("vat-cost-value").text(taxesPrice)
         htmlContent.getElementById("final-cost-value").text(totalPrice)
 
+    }
+
+    double calculateOverheadSum(List<ProductItem> productItems) {
+        double overheadSum
+        productItems.each {
+            if (it.product.class in productGroupClasses[ProductGroups.DATA_MANAGEMENT]) {
+                overheadSum = 0
+            } else {
+                overheadSum += it.quantity * it.product.unitPrice * offer.overheadRatio
+            }
+        }
+        return overheadSum
     }
 
     void setQuotationDetails() {
@@ -341,9 +366,7 @@ class OfferToPDFConverter implements OfferExporter {
         return netSum
     }
 
-    Map groupItems(List<ProductItem> productItems) {
-
-        Map<ProductGroups, List<ProductItem>> productItemsMap = [:]
+    void groupItems(List<ProductItem> productItems) {
 
         List<ProductItem> dataGenerationItems = []
         List<ProductItem> dataAnalysisItems = []
@@ -368,7 +391,6 @@ class OfferToPDFConverter implements OfferExporter {
             productItemsMap[ProductGroups.DATA_ANALYSIS] = dataAnalysisItems
             productItemsMap[ProductGroups.DATA_MANAGEMENT] = dataManagementItems
 
-            return productItemsMap
         }
 
     void generateProductTable(Map productItemsMap, int maxTableItems) {
