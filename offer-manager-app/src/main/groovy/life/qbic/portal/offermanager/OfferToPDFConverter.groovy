@@ -111,7 +111,7 @@ class OfferToPDFConverter implements OfferExporter {
         }
 
         String getName() {
-            return this.name;
+            return this.name
         }
 
         String getAcronym() {
