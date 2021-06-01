@@ -97,7 +97,9 @@ class ProjectDbConnector {
 
         connection.withCloseable { it ->
             try {
-                int projectID = addProjectToDB(it, projectIdentifier.toString(), projectTitle)
+                int projectID = addProjectToDB(
+                        it,
+                        projectApplication)
                 addPersonToProject(it, projectID, managerID, "Manager")
                 addPersonToProject(it, projectID, customerID, "PI")
 
@@ -127,16 +129,19 @@ class ProjectDbConnector {
         return false
     }
 
-    private int addProjectToDB(Connection connection, String projectIdentifier, String projectName) {
-        if (isProjectInDB(projectIdentifier)) {
-            throw new ProjectExistsException("Project " + projectIdentifier + " is already in the user database")
+    private int addProjectToDB(Connection connection, ProjectApplication projectApplication) {
+        String projectId = projectApplication.projectCode.getCode()
+
+        if (isProjectInDB(projectId)) {
+            throw new ProjectExistsException("Project " + projectId + " is already in the user database")
         }
-        log.debug("Trying to add project " + projectIdentifier + " to the person DB")
-        String sql = "INSERT INTO projects (openbis_project_identifier, short_title) VALUES(?, ?)"
+        log.debug("Trying to add project " + projectId + " to the person DB")
+        String sql = "INSERT INTO projects (openbis_project_identifier, short_title, long_description) VALUES(?, ?, ?)"
         try (PreparedStatement statement =
                 connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-            statement.setString(1, projectIdentifier)
-            statement.setString(2, projectName)
+            statement.setString(1, projectId)
+            statement.setString(2, projectApplication.projectTitle)
+            statement.setString(3, projectApplication.experimentalDesign)
             statement.execute()
             ResultSet rs = statement.getGeneratedKeys()
             if (rs.next()) {
