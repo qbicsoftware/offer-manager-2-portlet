@@ -253,7 +253,7 @@ class OfferToPDFConverter implements OfferExporter {
         }
             //Add total pricing information to grid-table-footer div in template
             Element element = htmlContent.getElementById("grid-table-footer").append(ItemPrintout.tableFooter(offer.overheadRatio, offer.getSelectedCustomerAffiliation()))
-            //Move template div after item-table-grid
+            //Move template footer div after item-table-grid
             htmlContent.getElementById("item-table-grid").after(element)
     }
 
