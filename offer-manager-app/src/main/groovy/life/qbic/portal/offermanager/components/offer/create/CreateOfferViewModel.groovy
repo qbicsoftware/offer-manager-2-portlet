@@ -151,9 +151,9 @@ class CreateOfferViewModel {
         offerCreatedSuccessfully = false
 
         offerId = null
-        projectTitle = ""
-        projectObjective = ""
-        experimentalDesign = ""
+        projectTitle = null
+        projectObjective = null
+        experimentalDesign = null
         customer = null
         customerAffiliation = null
         projectManager = null

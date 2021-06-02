@@ -58,10 +58,10 @@ class MaintainProductsView extends FormLayout {
         this.createProductView = createProductView
         this.copyProductView = copyProductView
         setupTitle()
-        setupPanel()
         createButtons()
         setupGrid()
         setupOverviewLayout()
+        setupPanel()
         addSubViews()
         setupListeners()
     }
@@ -75,12 +75,18 @@ class MaintainProductsView extends FormLayout {
 
     private void createButtons(){
         addProduct = new Button("Add Product", VaadinIcons.PLUS)
+        addProduct.setStyleName(ValoTheme.BUTTON_LARGE)
+
         copyProduct = new Button ("Copy Product", VaadinIcons.COPY)
+        copyProduct.setStyleName(ValoTheme.BUTTON_LARGE)
+
         archiveProduct = new Button("Archive Product", VaadinIcons.ARCHIVE)
+        archiveProduct.setStyleName(ValoTheme.BUTTON_LARGE)
+
         copyProduct.setEnabled(false)
         archiveProduct.setEnabled(false)
 
-        buttonLayout = new HorizontalLayout(productDescription, addProduct,copyProduct,archiveProduct)
+        buttonLayout = new HorizontalLayout(addProduct, copyProduct, archiveProduct)
         buttonLayout.setMargin(false)
     }
 
@@ -122,16 +128,21 @@ class MaintainProductsView extends FormLayout {
     }
 
     private void setupPanel(){
+        HorizontalLayout descriptionLayout = new HorizontalLayout()
+        descriptionLayout.setSizeFull()
+        this.addComponent(descriptionLayout)
+
         productDescription = new Panel("Product Description")
+        descriptionLayout.addComponents(productDescription)
     }
 
     private void setupOverviewLayout(){
-        maintenanceLayout = new VerticalLayout(productGrid, buttonLayout)
+        maintenanceLayout = new VerticalLayout(buttonLayout, productGrid)
         maintenanceLayout.setSizeFull()
         maintenanceLayout.setMargin(false)
         maintenanceLayout.addComponents()
 
-        maintenanceLayout.setComponentAlignment(buttonLayout,Alignment.TOP_RIGHT)
+        maintenanceLayout.setComponentAlignment(buttonLayout,Alignment.MIDDLE_LEFT)
         this.addComponents(maintenanceLayout)
     }
 

@@ -17,6 +17,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Experimental design description is now added to the detailed project description during offer creation. (`#623 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/623>`_)
 
+* Improve display of product descriptions during product modification (`#631 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/631>`_)
+
 * Adapt dynamically generated offer PDF layout to match html template(`#613 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/613>`_)
 
 **Fixed**
@@ -36,6 +38,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Fix validation error being shown after an affiliation is added to a person (`#566 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/566>`_)
 
 * Disable 'Archive Product' button after deselection (`#547 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/547>`_)
+
+* Fix project information showing a validation error upon successful offer creation (`#633 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/633>`_)
 
 * Fix `Copy Product` button being enabled even though the information was not changed (`#568 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/568>`_)
 
