@@ -463,7 +463,8 @@ class OfferToPDFConverter implements OfferExporter {
         //Remove overhead percentage title when no data generation and data analysis items are stored in the offer
         if (!dataGenerationItemsExists && !dataAnalysisItemsExists) {
             htmlContent.getElementById("overhead-percentage-value").remove()
-            htmlContent.getElementById("offer-overhead").remove()
+            //Remove the overscore, if no overhead cost listing is created
+            htmlContent.getElementById("offer-overhead").removeClass("single-overscore")
         }
     }
     /**
