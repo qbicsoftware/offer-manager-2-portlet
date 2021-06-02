@@ -15,6 +15,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Customers can now be updated in the selection step of creating a new offer (`#611 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/611>`_)
 
+* Experimental design description is now added to the detailed project description during offer creation. (`#623 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/623>`_)
+
 * Improve display of product descriptions during product modification (`#631 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/631>`_)
 
 * Adapt dynamically generated offer PDF layout to match html template(`#613 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/613>`_)
