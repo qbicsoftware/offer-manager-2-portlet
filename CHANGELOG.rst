@@ -43,6 +43,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Fix `Copy Product` button being enabled even though the information was not changed (`#568 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/568>`_)
 
+* Fix the misplaced product description panel (`#640 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/640>`_)
+
 **Dependencies**
 
 **Deprecated**
