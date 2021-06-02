@@ -439,14 +439,14 @@ class OfferToPDFConverter implements OfferExporter {
 
     void clearUnusedProductGroupInformation() {
 
-        boolean dataGenerationItemsExists
-        boolean dataAnalysisItemsExists
+        boolean dataGenerationItemsExists = true
+        boolean dataAnalysisItemsExists = true
         //Remove overhead cost listing of productGroup from grid-table-footer if an offer has no items associated with a productGroup
         productItemsMap.each { ProductGroups key, List<ProductItem> value ->
             if (value.empty) {
                 switch (key) {
                     case ProductGroups.DATA_GENERATION:
-                        dataGenerationItemsExists = false
+                        dataGenerationItemsExists= false
                         htmlContent.getElementById("${key.toString()}-sub-overhead").remove()
                         break
                     case ProductGroups.DATA_ANALYSIS:
@@ -463,6 +463,7 @@ class OfferToPDFConverter implements OfferExporter {
         //Remove overhead percentage title when no data generation and data analysis items are stored in the offer
         if (!dataGenerationItemsExists && !dataAnalysisItemsExists) {
             htmlContent.getElementById("overhead-percentage-value").remove()
+            htmlContent.getElementById("offer-overhead").remove()
         }
     }
     /**
