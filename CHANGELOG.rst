@@ -9,7 +9,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
-* Only list overhead costs of productGroup items present in offer in Offer PDF  (`#642 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/642>`_)
+* Only list overhead costs of productGroup items present in offer in Offer PDF  (`#643 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/643>`_)
 
 * Small modifications for the offer layout  (`#620 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/620>`_)
 
