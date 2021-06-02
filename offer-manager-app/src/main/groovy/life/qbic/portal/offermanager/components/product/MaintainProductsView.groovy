@@ -46,6 +46,7 @@ class MaintainProductsView extends FormLayout {
     private Button archiveProduct
     private Panel productDescription
     private VerticalLayout maintenanceLayout
+    private HorizontalLayout descriptionLayout
 
     CreateProductView createProductView
     CopyProductView copyProductView
@@ -60,8 +61,8 @@ class MaintainProductsView extends FormLayout {
         setupTitle()
         createButtons()
         setupGrid()
-        setupOverviewLayout()
         setupPanel()
+        setupOverviewLayout()
         addSubViews()
         setupListeners()
     }
@@ -128,16 +129,15 @@ class MaintainProductsView extends FormLayout {
     }
 
     private void setupPanel(){
-        HorizontalLayout descriptionLayout = new HorizontalLayout()
+        descriptionLayout = new HorizontalLayout()
         descriptionLayout.setSizeFull()
-        this.addComponent(descriptionLayout)
 
         productDescription = new Panel("Product Description")
         descriptionLayout.addComponents(productDescription)
     }
 
     private void setupOverviewLayout(){
-        maintenanceLayout = new VerticalLayout(buttonLayout, productGrid)
+        maintenanceLayout = new VerticalLayout(buttonLayout, productGrid, descriptionLayout)
         maintenanceLayout.setSizeFull()
         maintenanceLayout.setMargin(false)
         maintenanceLayout.addComponents()
