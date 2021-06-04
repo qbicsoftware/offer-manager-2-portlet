@@ -134,6 +134,11 @@ class MaintainProductsView extends FormLayout {
         descriptionLayout.setSizeFull()
 
         productDescription = new Panel("Product Description")
+        VerticalLayout content = new VerticalLayout()
+        content.setMargin(true)
+        content.setSpacing(false)
+        content.addComponent(new Label("Select a product to see its detailed description."))
+        productDescription.setContent(content)
         descriptionLayout.addComponents(productDescription)
     }
 
