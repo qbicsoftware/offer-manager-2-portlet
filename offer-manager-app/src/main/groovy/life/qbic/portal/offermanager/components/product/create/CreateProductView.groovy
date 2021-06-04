@@ -27,7 +27,7 @@ import life.qbic.portal.offermanager.components.product.MaintainProductsControll
  * @since 1.0.0
  *
 */
-class CreateProductView extends HorizontalLayout{
+class CreateProductView extends VerticalLayout{
 
     protected final CreateProductViewModel viewModel
     protected final MaintainProductsController controller
@@ -65,14 +65,15 @@ class CreateProductView extends HorizontalLayout{
         //add textfields and boxes
         HorizontalLayout sharedLayout = new HorizontalLayout(productUnitPriceField,productUnitComboBox)
         sharedLayout.setWidthFull()
+        sharedLayout.setMargin(false)
         HorizontalLayout buttons = new HorizontalLayout(abortButton,createProductButton)
 
         VerticalLayout sideLayout = new VerticalLayout(titleLabel,productNameField,productDescriptionField,sharedLayout,productCategoryComboBox,buttons)
         sideLayout.setSizeFull()
+        sideLayout.setMargin(false)
         sideLayout.setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT)
 
         this.setMargin(false)
-        this.setSpacing(false)
         this.setSizeFull()
 
         this.addComponents(sideLayout)
