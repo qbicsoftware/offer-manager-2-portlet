@@ -273,6 +273,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         projectManagementLayout.setSizeFull()
 
         HorizontalLayout overview = new HorizontalLayout(overviewGrid)
+        overviewGrid.setHeightByRows(6)
         overview.setSizeFull()
 
 
@@ -285,10 +286,6 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         generateProductGrid(projectManagementGrid)
         // This grid summarises product items selected for this specific offer, so we set quantity = true
         generateItemGrid(overviewGrid)
-
-        //make the overview over selected items grow dynamically
-        overviewGrid.setHeightMode(HeightMode.UNDEFINED)
-
 
         packageAccordion = new TabSheet()
         packageAccordion.addTab(seqLayout, "Sequencing")
