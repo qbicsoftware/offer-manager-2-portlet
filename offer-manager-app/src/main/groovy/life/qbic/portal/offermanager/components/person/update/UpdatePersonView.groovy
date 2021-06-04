@@ -223,10 +223,7 @@ class UpdatePersonView extends CreatePersonView{
      */
     @Override
     protected boolean allValuesValid() {
-        return createPersonViewModel.academicTitleValid \
-            && createPersonViewModel.firstNameValid \
-            && createPersonViewModel.lastNameValid \
-            && createPersonViewModel.emailValid \
-            && updatePersonViewModel.personUpdated
+        return super.allValuesValid()
+                && updatePersonViewModel.personUpdated
     }
 }
