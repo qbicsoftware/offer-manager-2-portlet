@@ -175,6 +175,7 @@ class OfferToPDFConverter implements OfferExporter {
         setTaxationStatement()
         setTaxationRatioInSummary()
         setQuotationDetails()
+        clearUnusedProductGroupInformation()
     }
 
     private void generatePDF() {
@@ -433,6 +434,37 @@ class OfferToPDFConverter implements OfferExporter {
                 // Update footer Prices
                 setSubTotalPrices(productGroup, items)
             }
+        }
+    }
+
+    void clearUnusedProductGroupInformation() {
+
+        boolean dataGenerationItemsExists = true
+        boolean dataAnalysisItemsExists = true
+        //Remove overhead cost listing of productGroup from grid-table-footer if an offer has no items associated with a productGroup
+        productItemsMap.each { ProductGroups key, List<ProductItem> value ->
+            if (value.empty) {
+                switch (key) {
+                    case ProductGroups.DATA_GENERATION:
+                        dataGenerationItemsExists= false
+                        htmlContent.getElementById("${key.toString()}-sub-overhead").remove()
+                        break
+                    case ProductGroups.DATA_ANALYSIS:
+                        dataAnalysisItemsExists = false
+                        htmlContent.getElementById("${key.toString()}-sub-overhead").remove()
+                        break
+                    default:
+                        log.error("Unclassified ProductGroup found")
+                        break
+                }
+            }
+
+        }
+        //Remove overhead percentage title when no data generation and data analysis items are stored in the offer
+        if (!dataGenerationItemsExists && !dataAnalysisItemsExists) {
+            htmlContent.getElementById("overhead-percentage-value").remove()
+            //Remove the overscore, if no overhead cost listing is created
+            htmlContent.getElementById("offer-overhead").removeClass("single-overscore")
         }
     }
     /**
