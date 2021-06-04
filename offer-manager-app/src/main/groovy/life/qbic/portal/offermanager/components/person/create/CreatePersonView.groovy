@@ -379,8 +379,7 @@ class CreatePersonView extends FormLayout implements Resettable{
      * @return
      */
     private void initDefaultValues() {
-        titleField.setSelectedItem(AcademicTitle.NONE.toString())
-        createPersonViewModel.academicTitle = AcademicTitle.NONE
+        createPersonViewModel.academicTitle = AcademicTitle.NONE.toString()
     }
 
     /**
