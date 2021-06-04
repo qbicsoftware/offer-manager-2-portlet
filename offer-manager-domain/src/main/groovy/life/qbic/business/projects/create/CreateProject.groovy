@@ -4,11 +4,11 @@ import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.projects.spaces.CreateProjectSpace
-import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
-import life.qbic.business.projects.spaces.CreateProjectSpaceOutput
-import life.qbic.datamodel.dtos.projectmanagement.Project
+import life.qbic.business.projects.spaces.create.CreateProjectSpace
+import life.qbic.business.projects.spaces.create.CreateProjectSpaceDataSource
+import life.qbic.business.projects.spaces.create.CreateProjectSpaceOutput
 import life.qbic.datamodel.dtos.business.ProjectApplication
+import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 

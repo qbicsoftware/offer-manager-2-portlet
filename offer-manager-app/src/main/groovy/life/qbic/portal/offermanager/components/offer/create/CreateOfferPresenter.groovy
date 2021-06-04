@@ -2,7 +2,7 @@ package life.qbic.portal.offermanager.components.offer.create
 
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.offers.create.CreateOfferOutput
-import life.qbic.portal.offermanager.dataresources.offers.OfferResourcesService
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.business.offers.fetch.FetchOfferOutput
 /**
@@ -16,10 +16,10 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
 
     private final AppViewModel viewModel
     private final CreateOfferViewModel createOfferViewModel
-    private final OfferResourcesService offerService
+    private final ResourcesService<Offer> offerService
 
     CreateOfferPresenter(AppViewModel viewModel, CreateOfferViewModel createOfferViewModel,
-                         OfferResourcesService offerService){
+                         ResourcesService<Offer> offerService){
         this.viewModel = viewModel
         this.createOfferViewModel = createOfferViewModel
         this.offerService = offerService

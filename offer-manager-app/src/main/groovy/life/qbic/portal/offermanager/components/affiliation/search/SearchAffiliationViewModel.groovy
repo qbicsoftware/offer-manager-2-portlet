@@ -2,7 +2,7 @@ package life.qbic.portal.offermanager.components.affiliation.search
 
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
  * <h1>ViewModel for SearchAffiliationView</h1>
@@ -20,9 +20,9 @@ class SearchAffiliationViewModel {
     @Bindable Optional<Affiliation> selectedAffiliation
     @Bindable boolean detailsVisible
 
-    private final AffiliationResourcesService affiliationResourcesService
+    private final ResourcesService<Affiliation> affiliationResourcesService
 
-    SearchAffiliationViewModel(AffiliationResourcesService affiliationResourcesService) {
+    SearchAffiliationViewModel(ResourcesService<Affiliation> affiliationResourcesService) {
         this.affiliationResourcesService = affiliationResourcesService
         this.affiliations = new ObservableList(new ArrayList<Affiliation>())
         resetAffiliations()

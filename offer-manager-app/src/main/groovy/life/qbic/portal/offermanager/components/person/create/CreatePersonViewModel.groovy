@@ -1,13 +1,13 @@
 package life.qbic.portal.offermanager.components.person.create
 
 import groovy.beans.Bindable
+import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
-import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
-import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
-import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
-import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
-
+import life.qbic.portal.offermanager.components.Resettable
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 /**
  * A ViewModel holding data that is presented in a
  * life.qbic.portal.qoffer2.web.viewmodel.CreatePersonViewModel
@@ -20,7 +20,7 @@ import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourc
  *
  * @since: 1.0.0
  */
-class CreatePersonViewModel {
+class CreatePersonViewModel implements Resettable{
     List<String> academicTitles = new ArrayList<>()
     Person outdatedPerson
 
@@ -40,21 +40,21 @@ class CreatePersonViewModel {
 
     ObservableList availableOrganisations
 
-    final CustomerResourceService customerService
-    final ProjectManagerResourceService managerResourceService
-    final AffiliationResourcesService affiliationService
-    final PersonResourceService personResourceService
+    final ResourcesService<Customer> customerService
+    final ResourcesService<ProjectManager> managerResourceService
+    final ResourcesService<Affiliation> affiliationService
+    final ResourcesService<Person> personResourceService
 
-    CreatePersonViewModel(CustomerResourceService customerService,
-                          ProjectManagerResourceService managerResourceService,
-                          AffiliationResourcesService affiliationService,
-                          PersonResourceService personResourceService) {
+    CreatePersonViewModel(ResourcesService<Customer> customerService,
+                          ResourcesService<ProjectManager> managerResourceService,
+                          ResourcesService<Affiliation> affiliationService,
+                          ResourcesService<Person> personResourceService) {
         this.affiliationService = affiliationService
         this.customerService = customerService
         this.managerResourceService = managerResourceService
         this.personResourceService = personResourceService
-        List<Affiliation> affiliations = affiliationService.iterator().collect()
-        availableOrganisations = new ObservableList(new ArrayList<Organisation>(toOrganisation(affiliations)))
+        availableOrganisations = new ObservableList()
+        refreshAvailableOrganizations()
 
         this.affiliationService.subscribe({
             List foundOrganisations = availableOrganisations.findAll(){organisation -> (organisation as Organisation).name == it.organisation}
@@ -68,12 +68,18 @@ class CreatePersonViewModel {
         })
     }
 
+    private void refreshAvailableOrganizations() {
+        availableOrganisations.clear()
+        List<Affiliation> affiliations = affiliationService.iterator().collect()
+        availableOrganisations.addAll(new ArrayList<Organisation>(toOrganisation(affiliations)))
+    }
+
     /**
      * Maps a list of affiliations to organisations
      * @param affiliations A list of affiliations where some have the same organisation
      * @return a list of organisations containing the associated affiliations
      */
-    protected List<Organisation> toOrganisation(List<Affiliation> affiliations){
+    protected static List<Organisation> toOrganisation(List<Affiliation> affiliations){
 
         List<String> organisationNames = affiliations.collect{it.organisation}.toUnique()
         List<Organisation> organisations = []
@@ -90,4 +96,19 @@ class CreatePersonViewModel {
         return organisations
     }
 
+    @Override
+    void reset() {
+        setAcademicTitle(AcademicTitle.NONE.toString())
+        setFirstName(null)
+        setLastName(null)
+        setEmail(null)
+        setAffiliation(null)
+        setAcademicTitleValid(null)
+        setFirstNameValid(null)
+        setLastNameValid(null)
+        setEmailValid(null)
+        setAffiliationValid(null)
+
+        refreshAvailableOrganizations()
+    }
 }

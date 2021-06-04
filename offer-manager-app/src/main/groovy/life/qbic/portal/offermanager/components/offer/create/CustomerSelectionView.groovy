@@ -1,15 +1,9 @@
 package life.qbic.portal.offermanager.components.offer.create
 
-
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.grid.HeightMode
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Button
-import com.vaadin.ui.Grid
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Label
-import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.AcademicTitle
@@ -26,15 +20,16 @@ import life.qbic.portal.offermanager.components.Resettable
  * with the intention of enabling a user the selecting a customer for whom an offer will be created in the
  * QBiC database.
  *
- * @since: 0.1.0
- *
+ * @since 0.1.0
  */
-class CustomerSelectionView extends VerticalLayout implements Resettable{
+class CustomerSelectionView extends VerticalLayout implements Resettable {
 
     private final CreateOfferViewModel viewModel
 
     Button next
     Button previous
+
+    Button updatePerson
 
     HorizontalLayout addButtonsLayout
     Button createCustomerButton
@@ -50,7 +45,7 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
 
     VerticalLayout affiliationSelectionContainer
 
-    CustomerSelectionView(CreateOfferViewModel viewModel){
+    CustomerSelectionView(CreateOfferViewModel viewModel) {
         this.viewModel = viewModel
 
         initLayout()
@@ -62,7 +57,7 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
     /**
      * Initializes the start layout of this view class
      */
-    private void initLayout(){
+    private void initLayout() {
         affiliationLabelLayout = new VerticalLayout()
         Label affiliationLabel = new Label("Select Customer Affiliation")
         affiliationLabelLayout.addComponent(affiliationLabel)
@@ -84,8 +79,8 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
          */
         HorizontalLayout selectedCustomerOverview = new HorizontalLayout()
         def customerFullName =
-                "${ viewModel.customer?.firstName ?: "" } " +
-                "${viewModel.customer?.lastName ?: "" }"
+                "${viewModel.customer?.firstName ?: ""} " +
+                        "${viewModel.customer?.lastName ?: ""}"
         selectedCustomer = new Label(viewModel.customer?.lastName ? customerFullName : "-")
         selectedCustomer.setCaption("Current Customer")
         selectedCustomerOverview.addComponents(selectedCustomer)
@@ -101,11 +96,16 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
          */
         addButtonsLayout = new HorizontalLayout()
         this.createCustomerButton = new Button("Create Customer", VaadinIcons.USER)
+        this.updatePerson = new Button("Update Customer", VaadinIcons.USER)
+        updatePerson.setEnabled(false)
         createCustomerButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
-        addButtonsLayout.addComponent(createCustomerButton)
+        updatePerson.addStyleName(ValoTheme.BUTTON_FRIENDLY)
+        addButtonsLayout.addComponents(createCustomerButton, updatePerson)
         addButtonsLayout.setComponentAlignment(createCustomerButton, Alignment.MIDDLE_RIGHT)
+        addButtonsLayout.setComponentAlignment(updatePerson, Alignment.MIDDLE_RIGHT)
 
-        addButtonsLayout.setSizeFull()
+
+        addButtonsLayout.setHeightFull()
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.setEnabled(false)
@@ -114,7 +114,7 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
         this.previous = new Button(VaadinIcons.CHEVRON_CIRCLE_LEFT)
         previous.addStyleName(ValoTheme.LABEL_LARGE)
 
-        HorizontalLayout buttonLayout = new HorizontalLayout(previous,next)
+        HorizontalLayout buttonLayout = new HorizontalLayout(previous, next)
         buttonLayout.setComponentAlignment(next, Alignment.BOTTOM_RIGHT)
         buttonLayout.setComponentAlignment(previous, Alignment.BOTTOM_LEFT)
         buttonLayout.setSizeFull()
@@ -138,6 +138,7 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
                 affiliationSelectionContainer,
                 buttonLayout)
 
+        this.setComponentAlignment(addButtonsLayout, Alignment.MIDDLE_RIGHT)
         affiliationSelectionContainer.setVisible(false)
 
         this.setMargin(false)
@@ -160,7 +161,8 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
     private def generateCustomerGrid() {
         try {
             this.customerGrid.addColumn({ customer ->
-                customer.title == AcademicTitle.NONE ? "" : customer.title})
+                customer.title == AcademicTitle.NONE ? "" : customer.title
+            })
                     .setCaption("Title").setId("Title")
             this.customerGrid.addColumn({ customer -> customer.firstName })
                     .setCaption("First Name").setId("FirstName")
@@ -218,7 +220,7 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
     private void bindViewModel() {
 
         customerGrid.addSelectionListener({ selection ->
-            if(selection.firstSelectedItem.isPresent()){
+            if (selection.firstSelectedItem.isPresent()) {
                 Customer selectedCustomer = selection.getFirstSelectedItem().get()
                 //vaadin is in single selection mode, selecting the first item will be fine
                 List<Affiliation> affiliations = selectedCustomer.affiliations
@@ -228,18 +230,22 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
                 // must provide it again after changing the customer.
                 viewModel.customerAffiliation = null
 
-                //todo do we need to clear the grid for another selection?
                 affiliationGrid.setItems(affiliations)
 
                 affiliationSelectionContainer.setVisible(true)
-            }else{
+            } else {
                 affiliationSelectionContainer.setVisible(false)
+                //removing selection from view model
+                viewModel.customer = null
+                viewModel.customerAffiliation = null
+                //clear grid on removing the selection
+                affiliationGrid.setItems([])
             }
 
         })
 
         affiliationGrid.addSelectionListener({
-            if(it.firstSelectedItem.isPresent()){
+            if (it.firstSelectedItem.isPresent()) {
                 Affiliation affiliation = it.firstSelectedItem.get()
                 viewModel.customerAffiliation = affiliation
             }
@@ -251,10 +257,16 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
          */
         viewModel.addPropertyChangeListener({
             if (it.propertyName.equals("customer")) {
-                def customerFullName =
-                        "${ viewModel.customer?.firstName ?: "" } " +
-                                "${viewModel.customer?.lastName ?: "" }"
-                selectedCustomer.setValue(customerFullName)
+                if (it.getNewValue()) {
+                    updatePerson.setEnabled(true)
+                    def customerFullName =
+                            "${viewModel.customer?.firstName ?: ""} " +
+                                    "${viewModel.customer?.lastName ?: ""}"
+                    selectedCustomer.setValue(customerFullName)
+                } else {
+                    updatePerson.setEnabled(false)
+                    selectedCustomer.setValue("-")
+                }
             }
             if (it.propertyName.equals("customerAffiliation")) {
                 def affiliationInfo = "${viewModel.customerAffiliation?.organisation ?: "-"}"
@@ -294,7 +306,10 @@ class CustomerSelectionView extends VerticalLayout implements Resettable{
     @Override
     void reset() {
         resetSelection()
+        viewModel.customer = null
+        viewModel.customerAffiliation = null
     }
+
 
     private void resetSelection() {
         selectedCustomer.setValue("-")

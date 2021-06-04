@@ -21,10 +21,9 @@ import life.qbic.portal.offermanager.components.person.create.CreatePersonView
  * <p>Since both views should look the same changes of the {@link CreatePersonView} should also be reflected in the {@link UpdatePersonView}</p>
  *
  * @since 1.0.0
- *
-*/
+ */
 @Log4j2
-class UpdatePersonView extends CreatePersonView{
+class UpdatePersonView extends CreatePersonView {
     private final UpdatePersonViewModel updatePersonViewModel
     private final AppViewModel sharedViewModel
 
@@ -54,17 +53,16 @@ class UpdatePersonView extends CreatePersonView{
         Label currentAffiliationLabel = new Label("Current Affiliations")
         affiliations.setSelectionMode(Grid.SelectionMode.NONE)
         defaultContent.addComponent(currentAffiliationLabel, 3)
-        defaultContent.addComponent(affiliations,4)
+        defaultContent.addComponent(affiliations, 4)
         //add a heading for adding a new affiliation
         Label newAffiliation = new Label("Add a new affiliation")
-        defaultContent.addComponent(newAffiliation,5)
+        defaultContent.addComponent(newAffiliation, 5)
 
         //add the add button
         addAffiliationButton = new Button("Add Affiliation")
         addAffiliationButton.setIcon(VaadinIcons.PLUS)
         addAffiliationButton.setEnabled(false)
-
-        buttonLayout.addComponent(addAffiliationButton,0)
+        buttonLayout.addComponent(addAffiliationButton, 0)
     }
 
     private void generateAffiliationGrid() {
@@ -132,7 +130,7 @@ class UpdatePersonView extends CreatePersonView{
                 personFilterRow)
     }
 
-    private void registerListener(){
+    private void registerListener() {
         submitButtonClickListenerRegistration.remove()
         submitButton.addClickListener({
             try {
@@ -143,7 +141,7 @@ class UpdatePersonView extends CreatePersonView{
                 String email = updatePersonViewModel.email
                 List<Affiliation> affiliations = updatePersonViewModel.affiliationList
 
-                if(updatePersonViewModel.outdatedPerson){
+                if (updatePersonViewModel.outdatedPerson) {
                     controller.updatePerson(updatePersonViewModel.outdatedPerson, firstName, lastName, title, email, affiliations)
                 }
 
@@ -157,28 +155,30 @@ class UpdatePersonView extends CreatePersonView{
             }
         })
 
-        updatePersonViewModel.addPropertyChangeListener("affiliationValid",{
-            if(updatePersonViewModel.affiliationValid){
+        updatePersonViewModel.addPropertyChangeListener("affiliationValid", {
+            if (updatePersonViewModel.affiliationValid || updatePersonViewModel.affiliationValid == null) {
+                organisationComboBox.componentError = null
+                addressAdditionComboBox.componentError = null
                 addAffiliationButton.setEnabled(true)
-            }else{
+            } else {
                 addAffiliationButton.setEnabled(false)
             }
         })
 
         addAffiliationButton.addClickListener({
-            if(!updatePersonViewModel.affiliationList.contains(updatePersonViewModel.affiliation)){
+            if (!updatePersonViewModel.affiliationList.contains(updatePersonViewModel.affiliation)) {
                 updatePersonViewModel.affiliationList << updatePersonViewModel.affiliation
                 affiliations.dataProvider.refreshAll()
                 updatePersonViewModel.personUpdated = true
-            }else{
+            } else {
                 sharedViewModel.failureNotifications.add("Cannot add the selected affiliation. It was already associated with the person.")
                 addAffiliationButton.setEnabled(false)
             }
             resetAffiliation()
         })
 
-        updatePersonViewModel.addPropertyChangeListener({it ->
-            if(updatePersonViewModel.outdatedPerson){
+        updatePersonViewModel.addPropertyChangeListener({ it ->
+            if (updatePersonViewModel.outdatedPerson) {
                 switch (it.propertyName) {
                     case "academicTitle":
                         boolean titleChanged = updatePersonViewModel.academicTitle != updatePersonViewModel.outdatedPerson.title.toString()
@@ -204,10 +204,10 @@ class UpdatePersonView extends CreatePersonView{
         })
     }
 
-    private void resetAffiliation(){
-        organisationComboBox.selectedItem = organisationComboBox.clear()
-        addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
-        addressAdditionComboBox.setComponentError(null)
+    private void resetAffiliation() {
+        organisationComboBox.clear()
+        addressAdditionComboBox.clear()
+        createPersonViewModel.affiliationValid = null
     }
 
     /**
@@ -218,10 +218,9 @@ class UpdatePersonView extends CreatePersonView{
      *
      * @return boolean which indicates if a person update can be triggered
      */
+    @Override
     protected boolean allValuesValid() {
-        return createPersonViewModel.firstNameValid \
-            && createPersonViewModel.lastNameValid \
-            && createPersonViewModel.emailValid
-            && updatePersonViewModel.personUpdated
+        return super.allValuesValid()
+                && updatePersonViewModel.personUpdated
     }
 }

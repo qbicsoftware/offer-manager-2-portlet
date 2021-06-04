@@ -89,6 +89,11 @@ h2 {
 /*
  Document type display: Quotation or Cost Estimate
 */
+
+.highlight {
+    font-weight: bold;
+}
+
 .doctype-desc {
     grid-column-start: 1;
     grid-column-end: 2;
@@ -122,6 +127,7 @@ h2 {
 .table-row {
   padding-top: 2px;
   padding-bottom: 2px;
+  white-space:nowrap;
 }
 
 .total-costs-sum-row {
@@ -206,12 +212,6 @@ h2 {
     margin-right: auto;
     margin-left: 0;
     font-size: 10pt;
-}
-
-#grid-table-header{
-    padding-left: 20px;
-    padding-right: 20px;
-    font-weight: bold;
 }
 
 .product-items{
@@ -337,7 +337,6 @@ footer {
   flex-wrap: wrap;
   /*margin-right: -15px;
   margin-left: -15px;*/
-
   padding-top: 5px;
   padding-bottom: 5px;
 }

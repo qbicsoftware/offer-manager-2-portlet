@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
+import life.qbic.business.persons.list.ListPersonsDataSource
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
@@ -19,8 +20,8 @@ class ProjectManagerResourceService implements ResourcesService<ProjectManager>{
 
     private final EventEmitter<ProjectManager> resourceUpdateEvent
 
-    ProjectManagerResourceService(PersonDbConnector dbConnector) {
-        availableProjectManagers = dbConnector.fetchAllProjectManagers()
+    ProjectManagerResourceService(ListPersonsDataSource listPersonsDataSource) {
+        availableProjectManagers = listPersonsDataSource.listAllProjectManagers()
         resourceUpdateEvent = new EventEmitter<>()
     }
 

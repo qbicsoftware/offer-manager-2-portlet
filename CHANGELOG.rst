@@ -4,8 +4,59 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-1.0.0-rc.1
-----------
+1.0.0
+-----
+
+**Added**
+
+* Only list overhead costs of productGroup items present in offer in Offer PDF  (`#643 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/643>`_)
+
+* A person can now be updated if only the associated academic title is changed (`#567 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/567>`_)
+
+* Small modifications for the offer layout  (`#620 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/620>`_)
+
+* Filter for product id in `life.qbic.portal.offermanager.components.offer.create.SelectItemsView` (`#599 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/599>`_)
+
+* Customers can now be updated in the selection step of creating a new offer (`#611 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/611>`_)
+
+* Experimental design description is now added to the detailed project description during offer creation. (`#623 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/623>`_)
+
+* Improve display of product descriptions during product modification (`#631 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/631>`_)
+
+* Adapt dynamically generated offer PDF layout to match html template (`#613 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/613>`_)
+
+* Limit grid size for offer item overviews while creating an offer (`#646 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/646>`_)
+
+**Fixed**
+
+* User ID of a person is set in database during person creation/update (`#616 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/616>`_)
+
+* Layout of total price row in price summary of offer pdf stays inline (`#615 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/615>`_)
+
+* Deprecated project identifier format assumption leads to failing parsing (`#617 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/617>`_)
+
+* Restructured DependencyManager (`#624 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/624>`_) fixing (`#612 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/612>`_)
+
+* Fix sorting by product id for the offer creation process (`#599 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/599>`_)
+
+* Disable empty selection for address addition combobox (`#565 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/565>`_)
+
+* Fix validation error being shown after an affiliation is added to a person (`#566 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/566>`_)
+
+* Disable 'Archive Product' button after deselection (`#547 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/547>`_)
+
+* Fix project information showing a validation error upon successful offer creation (`#633 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/633>`_)
+
+* Fix `Copy Product` button being enabled even though the information was not changed (`#568 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/568>`_)
+
+* Fix the misplaced product description panel (`#640 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/640>`_)
+
+**Dependencies**
+
+**Deprecated**
+
+1.0.0-rc.1 (2021-04-25)
+-----------------------
 
 **Added**
 
@@ -25,18 +76,21 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Adjust agreement text in offer template and move table header below section/product category title in offer html template (`#606 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/606>`_)
 
+* Move table header below section/product category title in offer html template (`#604 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/604>`_)
+
 * Provide entry point to affiliation creation in CreatePersonView (`#601 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/601>`_)
 
 **Fixed**
 
 * Update and fix broken offer template (`#597 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/597>`_)
+
 * Enumeration of product items increases over all productGroups in Offer PDF (`#562 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/562>`_)
 
 * Improve test description for external non-academic customers (`#605 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/605>`_)
 
 * Tax cost for offers outside of germany is set to 0 (`#575 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/575>`_)
 
-* App won't freeze after creation of mutiple projects (`#558 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/558>`_)
+* App won't freeze after creation of multiple projects (`#558 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/558>`_)
 
 **Dependencies**
 

@@ -5,12 +5,12 @@ import life.qbic.business.projects.create.CreateProject
 import life.qbic.business.projects.create.CreateProjectDataSource
 import life.qbic.business.projects.create.CreateProjectOutput
 import life.qbic.business.projects.create.ProjectExistsException
-import life.qbic.business.projects.spaces.CreateProjectSpaceDataSource
+import life.qbic.business.projects.spaces.create.CreateProjectSpaceDataSource
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.OfferId
+import life.qbic.datamodel.dtos.business.ProjectApplication
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.projectmanagement.Project
-import life.qbic.datamodel.dtos.business.ProjectApplication
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace

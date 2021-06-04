@@ -46,6 +46,7 @@ class MaintainProductsView extends FormLayout {
     private Button archiveProduct
     private Panel productDescription
     private VerticalLayout maintenanceLayout
+    private HorizontalLayout descriptionLayout
 
     CreateProductView createProductView
     CopyProductView copyProductView
@@ -58,9 +59,9 @@ class MaintainProductsView extends FormLayout {
         this.createProductView = createProductView
         this.copyProductView = copyProductView
         setupTitle()
-        setupPanel()
         createButtons()
         setupGrid()
+        setupPanel()
         setupOverviewLayout()
         addSubViews()
         setupListeners()
@@ -75,12 +76,18 @@ class MaintainProductsView extends FormLayout {
 
     private void createButtons(){
         addProduct = new Button("Add Product", VaadinIcons.PLUS)
+        addProduct.setStyleName(ValoTheme.BUTTON_LARGE)
+
         copyProduct = new Button ("Copy Product", VaadinIcons.COPY)
+        copyProduct.setStyleName(ValoTheme.BUTTON_LARGE)
+
         archiveProduct = new Button("Archive Product", VaadinIcons.ARCHIVE)
+        archiveProduct.setStyleName(ValoTheme.BUTTON_LARGE)
+
         copyProduct.setEnabled(false)
         archiveProduct.setEnabled(false)
 
-        buttonLayout = new HorizontalLayout(productDescription, addProduct,copyProduct,archiveProduct)
+        buttonLayout = new HorizontalLayout(addProduct, copyProduct, archiveProduct)
         buttonLayout.setMargin(false)
     }
 
@@ -99,6 +106,7 @@ class MaintainProductsView extends FormLayout {
 
         productGrid.setWidthFull()
         productGrid.sort("ProductId", SortDirection.ASCENDING)
+        productGrid.setHeightByRows(6)
 
         ListDataProvider<Product> productsDataProvider = setupDataProvider()
         setupFilters(productsDataProvider)
@@ -122,16 +130,25 @@ class MaintainProductsView extends FormLayout {
     }
 
     private void setupPanel(){
+        descriptionLayout = new HorizontalLayout()
+        descriptionLayout.setSizeFull()
+
         productDescription = new Panel("Product Description")
+        VerticalLayout content = new VerticalLayout()
+        content.setMargin(true)
+        content.setSpacing(false)
+        content.addComponent(new Label("Select a product to see its detailed description."))
+        productDescription.setContent(content)
+        descriptionLayout.addComponents(productDescription)
     }
 
     private void setupOverviewLayout(){
-        maintenanceLayout = new VerticalLayout(productGrid, buttonLayout)
+        maintenanceLayout = new VerticalLayout(buttonLayout, productGrid, descriptionLayout)
         maintenanceLayout.setSizeFull()
         maintenanceLayout.setMargin(false)
         maintenanceLayout.addComponents()
 
-        maintenanceLayout.setComponentAlignment(buttonLayout,Alignment.TOP_RIGHT)
+        maintenanceLayout.setComponentAlignment(buttonLayout,Alignment.MIDDLE_LEFT)
         this.addComponents(maintenanceLayout)
     }
 
@@ -158,8 +175,11 @@ class MaintainProductsView extends FormLayout {
             if(it.firstSelectedItem.isPresent()){
                 updateProductDescription(it.firstSelectedItem.get())
                 viewModel.selectedProduct = it.firstSelectedItem
-                checkProductSelected()
             }
+            else{
+                viewModel.selectedProduct = Optional.empty()
+            }
+            checkProductSelected()
         })
 
         addProduct.addClickListener({
@@ -218,7 +238,7 @@ class MaintainProductsView extends FormLayout {
     }
 
     private void checkProductSelected() {
-        if (viewModel.selectedProduct.get()) {
+        if (viewModel.selectedProduct.isPresent()) {
             copyProduct.setEnabled(true)
             archiveProduct.setEnabled(true)
         } else {

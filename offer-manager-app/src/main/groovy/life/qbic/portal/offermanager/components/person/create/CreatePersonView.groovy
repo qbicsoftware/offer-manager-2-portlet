@@ -14,8 +14,10 @@ import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
+import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 
 /**
@@ -25,11 +27,11 @@ import life.qbic.portal.offermanager.components.affiliation.create.CreateAffilia
  * CreatePersonViewModel will be integrated into the qOffer 2.0 Portlet and provides an User Interface
  * with the intention of enabling a user the creation of a new person in the QBiC Database
  *
- * @since: 1.0.0
+ * @since 1.0.0
  */
 
 @Log4j2
-class CreatePersonView extends FormLayout {
+class CreatePersonView extends VerticalLayout implements Resettable {
     protected final AppViewModel sharedViewModel
     protected final CreatePersonViewModel createPersonViewModel
     final CreatePersonController controller
@@ -63,6 +65,7 @@ class CreatePersonView extends FormLayout {
         bindViewModel()
         setupFieldValidators()
         registerListeners()
+        initDefaultValues()
     }
 
     private AbstractOrderedLayout generateViewContent() {
@@ -73,6 +76,8 @@ class CreatePersonView extends FormLayout {
         defaultContent.addComponent(viewCaption)
 
         this.titleField = generateTitleSelector(createPersonViewModel.academicTitles)
+        titleField.setRequiredIndicatorVisible(true)
+        titleField.setEmptySelectionAllowed(false)
 
         this.firstNameField = new TextField("First Name")
         firstNameField.setPlaceholder("First name")
@@ -103,8 +108,9 @@ class CreatePersonView extends FormLayout {
 
         this.addressAdditionComboBox = new ComboBox<>("Address Addition")
         addressAdditionComboBox.setRequiredIndicatorVisible(false)
-        addressAdditionComboBox.setItemCaptionGenerator({(it.addressAddition == ""|| it.addressAddition == " ")? "no address addition" : it.addressAddition})
+        addressAdditionComboBox.setItemCaptionGenerator({ (it.addressAddition == "" || it.addressAddition == " ") ? "no address addition" : it.addressAddition })
         addressAdditionComboBox.setEnabled(false)
+        addressAdditionComboBox.setEmptySelectionAllowed(false)
 
         this.submitButton = new Button("Create Person")
         submitButton.setIcon(VaadinIcons.USER_CHECK)
@@ -181,25 +187,25 @@ class CreatePersonView extends FormLayout {
      */
     private void bindViewModel() {
 
-        this.titleField.addValueChangeListener({this.createPersonViewModel.academicTitle = it.value })
+        this.titleField.addValueChangeListener({ this.createPersonViewModel.academicTitle = it.value })
         createPersonViewModel.addPropertyChangeListener("academicTitle", {
             String newValue = it.newValue as String
             titleField.value = newValue ?: titleField.emptyValue
         })
 
-        this.firstNameField.addValueChangeListener({this.createPersonViewModel.firstName = it.value })
+        this.firstNameField.addValueChangeListener({ this.createPersonViewModel.firstName = it.value })
         createPersonViewModel.addPropertyChangeListener("firstName", {
             String newValue = it.newValue as String
             firstNameField.value = newValue ?: firstNameField.emptyValue
         })
 
-        this.lastNameField.addValueChangeListener({this.createPersonViewModel.lastName = it.value })
+        this.lastNameField.addValueChangeListener({ this.createPersonViewModel.lastName = it.value })
         createPersonViewModel.addPropertyChangeListener("lastName", {
             String newValue = it.newValue as String
             lastNameField.value = newValue ?: lastNameField.emptyValue
         })
 
-        this.emailField.addValueChangeListener({this.createPersonViewModel.email = it.value })
+        this.emailField.addValueChangeListener({ this.createPersonViewModel.email = it.value })
         createPersonViewModel.addPropertyChangeListener("email", {
             String newValue = it.newValue as String
             emailField.value = newValue ?: emailField.emptyValue
@@ -216,7 +222,8 @@ class CreatePersonView extends FormLayout {
                 addressAdditionComboBox.value = newValue
             } else {
                 addressAdditionComboBox.value = addressAdditionComboBox.emptyValue
-                organisationComboBox.value = organisationComboBox.emptyValue            }
+                organisationComboBox.value = organisationComboBox.emptyValue
+            }
         })
 
         createPersonViewModel.addPropertyChangeListener("affiliationViewVisible", {
@@ -227,7 +234,7 @@ class CreatePersonView extends FormLayout {
         we listen to the valid properties. whenever the presenter resets values in the viewmodel
         and resets the valid properties the component error on the respective component is removed
         */
-        createPersonViewModel.addPropertyChangeListener({it ->
+        createPersonViewModel.addPropertyChangeListener({ it ->
             switch (it.propertyName) {
                 case "academicTitleValid":
                     if (it.newValue || it.newValue == null) {
@@ -273,7 +280,7 @@ class CreatePersonView extends FormLayout {
 
         ListDataProvider<Affiliation> dataProvider = organisation.affiliations
         this.addressAdditionComboBox.setDataProvider(dataProvider)
-        dataProvider.setSortOrder({it.addressAddition}, SortDirection.ASCENDING)
+        dataProvider.setSortOrder({ it.addressAddition }, SortDirection.ASCENDING)
 
         this.addressAdditionComboBox.setSelectedItem(dataProvider.getItems().getAt(0))
     }
@@ -283,11 +290,21 @@ class CreatePersonView extends FormLayout {
      */
     private void setupFieldValidators() {
 
-        Validator<String> nameValidator =  Validator.from({String value -> (value && !value.trim().empty)}, "Please provide a valid name.")
+        Validator<String> nameValidator = Validator.from({ String value -> (value && !value.trim().empty) }, "Please provide a valid name.")
         Validator<String> emailValidator = new EmailValidator("Please provide a valid email address.")
-        Validator<? extends Object> selectionValidator = Validator.from({o -> o != null}, "Please make a selection.")
+        Validator<? extends Object> selectionValidator = Validator.from({ o -> o != null }, "Please make a selection.")
 
         //Add Listeners to all Fields in the Form layout
+        this.titleField.addSelectionListener({ selection ->
+            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.titleField))
+            if (result.isError()) {
+                createPersonViewModel.academicTitleValid = false
+                UserError error = new UserError(result.getErrorMessage())
+                titleField.setComponentError(error)
+            } else {
+                createPersonViewModel.academicTitleValid = true
+            }
+        })
         this.firstNameField.addValueChangeListener({ event ->
             ValidationResult result = nameValidator.apply(event.getValue(), new ValueContext(this.firstNameField))
             if (result.isError()) {
@@ -339,7 +356,7 @@ class CreatePersonView extends FormLayout {
         ComboBox<Organisation> organisationComboBox =
                 new ComboBox<>("Organisation")
         organisationComboBox.setPlaceholder("Select person affiliation organisation")
-        organisationComboBox.setItemCaptionGenerator({it.name})
+        organisationComboBox.setItemCaptionGenerator({ it.name })
         ListDataProvider<Organisation> dataProvider = new ListDataProvider<>(organisations)
         organisationComboBox.setDataProvider(dataProvider)
         organisationComboBox.setEmptySelectionAllowed(false)
@@ -355,8 +372,16 @@ class CreatePersonView extends FormLayout {
                 new ComboBox<>("Academic Title")
         titleCombobox.setPlaceholder("Select academic title")
         titleCombobox.setItems(academicTitles)
-        titleCombobox.setEmptySelectionAllowed(true)
+        titleCombobox.setEmptySelectionAllowed(false)
         return titleCombobox
+    }
+
+    /**
+     * Initializes the default values to be set in the components of the CreatePersonVieW
+     * @return
+     */
+    private void initDefaultValues() {
+        createPersonViewModel.academicTitle = AcademicTitle.NONE.toString()
     }
 
     /**
@@ -365,10 +390,11 @@ class CreatePersonView extends FormLayout {
      * @return
      */
     protected boolean allValuesValid() {
-        return createPersonViewModel.firstNameValid \
-            && createPersonViewModel.lastNameValid \
-            && createPersonViewModel.emailValid \
-            && createPersonViewModel.affiliationValid
+        return createPersonViewModel.academicTitleValid \
+             && createPersonViewModel.firstNameValid \
+             && createPersonViewModel.lastNameValid \
+             && createPersonViewModel.emailValid \
+             && createPersonViewModel.affiliationValid
     }
 
     private void registerListeners() {
@@ -382,7 +408,7 @@ class CreatePersonView extends FormLayout {
                 List<Affiliation> affiliations = new ArrayList()
                 affiliations.add(createPersonViewModel.affiliation)
 
-                if(!createPersonViewModel.outdatedPerson){
+                if (!createPersonViewModel.outdatedPerson) {
                     controller.createNewPerson(firstName, lastName, title, email, affiliations)
                 }
 
@@ -397,7 +423,7 @@ class CreatePersonView extends FormLayout {
         })
 
         this.organisationComboBox.addSelectionListener({
-            if(it.selectedItem.isPresent()){
+            if (it.selectedItem.isPresent()) {
                 refreshAddressAdditions(it.selectedItem.get())
             }
         })
@@ -409,7 +435,7 @@ class CreatePersonView extends FormLayout {
 
         this.abortButton.addClickListener({ event ->
             try {
-                clearAllFields()
+                reset()
             }
             catch (Exception e) {
                 log.error("Unexpected error aborting the person creation.", e)
@@ -463,13 +489,6 @@ class CreatePersonView extends FormLayout {
         addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
         affiliationDetails.setContent(null)
 
-        createPersonViewModel.academicTitleValid = null
-        createPersonViewModel.firstNameValid = null
-        createPersonViewModel.lastNameValid = null
-        createPersonViewModel.emailValid = null
-        createPersonViewModel.affiliationValid = null
-        createPersonViewModel.outdatedPerson = null
-
     }
 
     /**
@@ -480,7 +499,7 @@ class CreatePersonView extends FormLayout {
     protected Optional<Organisation> findOrganisation(Affiliation affiliation) {
         Optional<Organisation> foundOrganisation = Optional.empty()
         createPersonViewModel.availableOrganisations.each {
-            if(affiliation in (it as Organisation).affiliations) foundOrganisation = Optional.of((it as Organisation))
+            if (affiliation in (it as Organisation).affiliations) foundOrganisation = Optional.of((it as Organisation))
         }
 
         return foundOrganisation
@@ -497,5 +516,12 @@ class CreatePersonView extends FormLayout {
             this.createAffiliationView.setVisible(false)
             this.defaultContent.setVisible(true)
         }
+    }
+
+    @Override
+    void reset() {
+        createPersonViewModel.reset()
+        clearAllFields()
+        initDefaultValues()
     }
 }
