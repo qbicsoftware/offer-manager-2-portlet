@@ -31,7 +31,7 @@ import life.qbic.portal.offermanager.components.affiliation.create.CreateAffilia
  */
 
 @Log4j2
-class CreatePersonView extends FormLayout implements Resettable{
+class CreatePersonView extends VerticalLayout implements Resettable{
     protected final AppViewModel sharedViewModel
     protected final CreatePersonViewModel createPersonViewModel
     final CreatePersonController controller

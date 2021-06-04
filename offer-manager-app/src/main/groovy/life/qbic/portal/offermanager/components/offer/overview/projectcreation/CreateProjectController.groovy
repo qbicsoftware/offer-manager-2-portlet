@@ -54,11 +54,12 @@ class CreateProjectController {
     private static ProjectApplication createApplication(Offer offer,
                                                  ProjectSpace projectSpace,
                                                  ProjectCode projectCode) {
+        def experimentalDesign = offer.experimentalDesign.orElse("No experimental design described.")
         return new ProjectApplication(
                 offer.identifier,
                 offer.projectTitle,
                 offer.projectObjective,
-                "",
+                experimentalDesign,
                 offer.projectManager,
                 projectSpace,
                 offer.customer,
