@@ -14,6 +14,7 @@ import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.Resettable
@@ -64,6 +65,7 @@ class CreatePersonView extends FormLayout implements Resettable{
         bindViewModel()
         setupFieldValidators()
         registerListeners()
+        initDefaultValues()
     }
 
     private AbstractOrderedLayout generateViewContent() {
@@ -74,6 +76,7 @@ class CreatePersonView extends FormLayout implements Resettable{
         defaultContent.addComponent(viewCaption)
 
         this.titleField = generateTitleSelector(createPersonViewModel.academicTitles)
+        titleField.setRequiredIndicatorVisible(true)
 
         this.firstNameField = new TextField("First Name")
         firstNameField.setPlaceholder("First name")
@@ -372,13 +375,22 @@ class CreatePersonView extends FormLayout implements Resettable{
     }
 
     /**
+     * Initializes the default values to be set in the components of the CreatePersonVieW
+     * @return
+     */
+    private void initDefaultValues() {
+        titleField.setSelectedItem(AcademicTitle.NONE.toString())
+        createPersonViewModel.academicTitle = AcademicTitle.NONE
+    }
+
+    /**
      * This is used to indicate whether all fields of this view are filled correctly.
      * It relies on the separate fields for validation.
      * @return
      */
     protected boolean allValuesValid() {
         return createPersonViewModel.academicTitleValid \
-            && createPersonViewModel.firstNameValid  \
+            && createPersonViewModel.firstNameValid \
             && createPersonViewModel.lastNameValid \
             && createPersonViewModel.emailValid \
             && createPersonViewModel.affiliationValid
@@ -509,5 +521,6 @@ class CreatePersonView extends FormLayout implements Resettable{
     void reset() {
         createPersonViewModel.reset()
         clearAllFields()
+        initDefaultValues()
     }
 }

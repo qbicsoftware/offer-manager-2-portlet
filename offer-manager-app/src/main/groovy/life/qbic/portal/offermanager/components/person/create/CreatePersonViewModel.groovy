@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.components.person.create
 
 import groovy.beans.Bindable
+import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
@@ -97,7 +98,7 @@ class CreatePersonViewModel implements Resettable{
 
     @Override
     void reset() {
-        setAcademicTitle(null)
+        setAcademicTitle(AcademicTitle.NONE.toString())
         setFirstName(null)
         setLastName(null)
         setEmail(null)

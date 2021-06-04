@@ -63,7 +63,8 @@ class UpdatePersonView extends CreatePersonView{
         addAffiliationButton = new Button("Add Affiliation")
         addAffiliationButton.setIcon(VaadinIcons.PLUS)
         addAffiliationButton.setEnabled(false)
-
+        titleField.setRequiredIndicatorVisible(true)
+        titleField.setEmptySelectionAllowed(false)
         buttonLayout.addComponent(addAffiliationButton,0)
     }
 
@@ -220,11 +221,12 @@ class UpdatePersonView extends CreatePersonView{
      *
      * @return boolean which indicates if a person update can be triggered
      */
+    @Override
     protected boolean allValuesValid() {
         return createPersonViewModel.academicTitleValid \
-            && createPersonViewModel.firstNameValid
+            && createPersonViewModel.firstNameValid \
             && createPersonViewModel.lastNameValid \
-            && createPersonViewModel.emailValid
+            && createPersonViewModel.emailValid \
             && updatePersonViewModel.personUpdated
     }
 }
