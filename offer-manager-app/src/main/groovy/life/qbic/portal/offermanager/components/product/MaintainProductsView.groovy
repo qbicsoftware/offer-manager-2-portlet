@@ -106,6 +106,7 @@ class MaintainProductsView extends FormLayout {
 
         productGrid.setWidthFull()
         productGrid.sort("ProductId", SortDirection.ASCENDING)
+        productGrid.setHeightByRows(6)
 
         ListDataProvider<Product> productsDataProvider = setupDataProvider()
         setupFilters(productsDataProvider)
