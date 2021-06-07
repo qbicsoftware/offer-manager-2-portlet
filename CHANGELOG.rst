@@ -4,8 +4,23 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-1.0.0
------
+1.0.1 (2020-06-07)
+------------------
+
+**Added**
+
+* More units for the service products
+
+**Fixed**
+
+**Dependencies**
+
+* Bump data model lib 2.7.0 -> 2.8.0 and therefore adds more units for service products
+
+**Deprecated**
+
+1.0.0 (2020-06-04)
+------------------
 
 **Added**
 
