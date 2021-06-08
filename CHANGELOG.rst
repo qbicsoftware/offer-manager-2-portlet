@@ -13,6 +13,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Dependencies**
 
+* ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
+
 **Deprecated**
 
 1.0.1 (2020-06-07)
