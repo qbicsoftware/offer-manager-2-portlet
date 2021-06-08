@@ -15,6 +15,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
 
+* ``org.mariadb.jdbc:mariadb-java-client:2.7.2`` -> ``2.7.3``
+
 **Deprecated**
 
 1.0.1 (2020-06-07)
