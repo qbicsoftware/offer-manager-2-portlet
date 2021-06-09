@@ -280,10 +280,10 @@ class CreatePersonView extends VerticalLayout implements Resettable {
      * refreshes assuming no organisation is selected
      */
     protected void refreshAddressAdditions() {
-        addressAdditionComboBox.setEnabled(false)
-        ListDataProvider<Affiliation> dataProvider = []
+        ListDataProvider<Affiliation> dataProvider = new ListDataProvider<>(new ArrayList<Affiliation>())
         this.addressAdditionComboBox.setDataProvider(dataProvider)
         this.addressAdditionComboBox.value = addressAdditionComboBox.emptyValue
+        addressAdditionComboBox.setEnabled(false)
     }
 
     protected void refreshAddressAdditions(Organisation organisation) {
