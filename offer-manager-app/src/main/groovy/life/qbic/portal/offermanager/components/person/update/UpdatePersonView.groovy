@@ -211,11 +211,13 @@ class UpdatePersonView extends CreatePersonView {
                 //validation
                 updatePersonViewModel.affiliationsValid = ! updatePersonViewModel.affiliationList.isEmpty()
                 if(updatePersonViewModel.outdatedPerson) {
-                    List<Affiliation> originalList = updatePersonViewModel.outdatedPerson?.affiliations
+                    List<Affiliation> originalList = updatePersonViewModel.outdatedPerson.affiliations
                     List<Affiliation> viewModelList = updatePersonViewModel.affiliationList
-                    boolean affiliationsChanged = ((originalList - viewModelList) + (viewModelList - originalList))
+                    boolean affiliationsChanged = ! (originalList == viewModelList)
                     // set the changed needs to be triggered after the validity update
                     updatePersonViewModel.personUpdated = updatePersonViewModel.affiliationsValid && affiliationsChanged
+                } else {
+                    log.warn("Tried to check for person affiliation changes. There is no person to update.")
                 }
             })
         })
