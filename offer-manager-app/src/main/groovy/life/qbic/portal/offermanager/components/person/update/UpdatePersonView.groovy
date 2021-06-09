@@ -155,13 +155,10 @@ class UpdatePersonView extends CreatePersonView {
             }
         })
 
-        updatePersonViewModel.addPropertyChangeListener("affiliationValid", {
-            if (updatePersonViewModel.affiliationValid || updatePersonViewModel.affiliationValid == null) {
-                organisationComboBox.componentError = null
-                addressAdditionComboBox.componentError = null
-                addAffiliationButton.setEnabled(true)
-            } else {
-                addAffiliationButton.setEnabled(false)
+        updatePersonViewModel.addPropertyChangeListener({
+            if (it.propertyName == "affiliation" || it.propertyName == "affiliationValid") {
+                boolean buttonEnabled = updatePersonViewModel.affiliation && updatePersonViewModel.affiliationValid
+                addAffiliationButton.setEnabled(buttonEnabled)
             }
         })
 
