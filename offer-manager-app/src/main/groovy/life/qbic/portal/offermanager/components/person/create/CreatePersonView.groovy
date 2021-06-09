@@ -221,6 +221,7 @@ class CreatePersonView extends VerticalLayout implements Resettable {
                 organisationComboBox.value = findOrganisation(newValue).get()
                 addressAdditionComboBox.value = newValue
             } else {
+                refreshAddressAdditions()
                 addressAdditionComboBox.value = addressAdditionComboBox.emptyValue
                 organisationComboBox.value = organisationComboBox.emptyValue
             }
@@ -273,6 +274,16 @@ class CreatePersonView extends VerticalLayout implements Resettable {
         createPersonViewModel.availableOrganisations.addPropertyChangeListener({
             organisationComboBox.getDataProvider().refreshAll()
         })
+    }
+
+    /**
+     * refreshes assuming no organisation is selected
+     */
+    protected void refreshAddressAdditions() {
+        addressAdditionComboBox.setEnabled(false)
+        ListDataProvider<Affiliation> dataProvider = []
+        this.addressAdditionComboBox.setDataProvider(dataProvider)
+        this.addressAdditionComboBox.value = addressAdditionComboBox.emptyValue
     }
 
     protected void refreshAddressAdditions(Organisation organisation) {
