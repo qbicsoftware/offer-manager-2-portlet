@@ -6,7 +6,6 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.Resettable
-import life.qbic.portal.offermanager.dataresources.persons.PersonResourceService
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel
 import life.qbic.portal.offermanager.dataresources.ResourcesService
@@ -32,6 +31,9 @@ class UpdatePersonViewModel extends CreatePersonViewModel implements Resettable{
     @Bindable
     Boolean personUpdated
 
+    @Bindable
+    Boolean affiliationsValid
+
     UpdatePersonViewModel(ResourcesService<Customer> customerService,
                           ResourcesService<ProjectManager> managerResourceService,
                           ResourcesService<Affiliation> affiliationService,
@@ -39,7 +41,7 @@ class UpdatePersonViewModel extends CreatePersonViewModel implements Resettable{
                           ResourcesService<Person> personResourceService) {
         super(customerService, managerResourceService, affiliationService, personResourceService)
         this.customerUpdate = customerUpdate
-        affiliationList = new ArrayList<Affiliation>()
+        affiliationList = new ObservableList(new ArrayList<Affiliation>())
         personUpdated = false
 
         this.customerUpdate.register((Person person) -> {

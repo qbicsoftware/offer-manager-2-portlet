@@ -44,6 +44,11 @@ class UpdatePersonView extends CreatePersonView {
         submitButton.caption = "Update Person"
         abortButton.caption = "Abort Person Update"
 
+        // remove required indicator since affiliationValid is no longer required to update
+        // it is replaced by affiliationsValid
+        organisationComboBox.setRequiredIndicatorVisible(false)
+        addressAdditionComboBox.setRequiredIndicatorVisible(false)
+
         //be careful when adding new components to the view
         //it is based on the CreatePersonView, you might disrupt the view when adding new components to the wrong position
 
@@ -201,6 +206,18 @@ class UpdatePersonView extends CreatePersonView {
                 }
                 submitButton.enabled = allValuesValid()
             }
+
+            updatePersonViewModel.affiliationList.addPropertyChangeListener({
+                //validation
+                updatePersonViewModel.affiliationsValid = ! updatePersonViewModel.affiliationList.isEmpty()
+                if(updatePersonViewModel.outdatedPerson) {
+                    List<Affiliation> originalList = updatePersonViewModel.outdatedPerson?.affiliations
+                    List<Affiliation> viewModelList = updatePersonViewModel.affiliationList
+                    boolean affiliationsChanged = ((originalList - viewModelList) + (viewModelList - originalList))
+                    // set the changed needs to be triggered after the validity update
+                    updatePersonViewModel.personUpdated = updatePersonViewModel.affiliationsValid && affiliationsChanged
+                }
+            })
         })
     }
 
@@ -220,7 +237,11 @@ class UpdatePersonView extends CreatePersonView {
      */
     @Override
     protected boolean allValuesValid() {
-        return super.allValuesValid()
-                && updatePersonViewModel.personUpdated
+        return createPersonViewModel.academicTitleValid \
+             && createPersonViewModel.firstNameValid \
+             && createPersonViewModel.lastNameValid \
+             && createPersonViewModel.emailValid \
+             && updatePersonViewModel.personUpdated \
+             && updatePersonViewModel.affiliationsValid
     }
 }
