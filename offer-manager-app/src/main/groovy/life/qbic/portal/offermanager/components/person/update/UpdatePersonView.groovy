@@ -156,7 +156,7 @@ class UpdatePersonView extends CreatePersonView {
         })
 
         updatePersonViewModel.addPropertyChangeListener("affiliationValid", {
-            if (updatePersonViewModel.affiliationValid || updatePersonViewModel.affiliationValid == null) {
+            if (updatePersonViewModel.affiliationValid) {
                 organisationComboBox.componentError = null
                 addressAdditionComboBox.componentError = null
                 addAffiliationButton.setEnabled(true)
