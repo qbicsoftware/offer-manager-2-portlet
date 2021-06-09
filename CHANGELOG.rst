@@ -13,6 +13,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Update of person entries is no longer blocked by ignored affiliation selection (`#654 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/654>`_)
 
+* Disable the affiliation attachment during person update if no affiliation is selected (`#656 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/656>`_)
+
 **Dependencies**
 
 **Deprecated**
