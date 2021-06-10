@@ -222,8 +222,8 @@ class OfferToPDFConverter implements OfferExporter {
 
     void setProductGroupMapping() {
 
-        productGroupClasses[ProductGroups.DATA_GENERATION] = [Sequencing]
-        productGroupClasses[ProductGroups.DATA_ANALYSIS] = [PrimaryAnalysis, SecondaryAnalysis, ProteomicAnalysis, MetabolomicAnalysis]
+        productGroupClasses[ProductGroups.DATA_GENERATION] = [Sequencing, ProteomicAnalysis, MetabolomicAnalysis]
+        productGroupClasses[ProductGroups.DATA_ANALYSIS] = [PrimaryAnalysis, SecondaryAnalysis]
         productGroupClasses[ProductGroups.DATA_MANAGEMENT] = [ProjectManagement, DataStorage]
     }
 
