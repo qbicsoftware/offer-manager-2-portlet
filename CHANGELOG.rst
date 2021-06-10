@@ -4,6 +4,19 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.0.3 (2021-06-10)
+------------------
+
+**Added**
+
+**Fixed**
+
+* Assign proteomic and metabolomic products to product group data generation (`#660 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/660>`_)
+
+**Dependencies**
+
+**Deprecated**
+
 1.0.2 (2021-06-07)
 ------------------
 
