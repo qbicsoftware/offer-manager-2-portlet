@@ -4,6 +4,18 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+
+1.1.0-SNAPSHOT (2020-06-07)
+---------------------------
+
+**Added**
+
+**Fixed**
+
+**Dependencies**
+
+**Deprecated**
+
 1.0.3 (2021-06-10)
 ------------------
 
@@ -33,6 +45,17 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 **Deprecated**
 
 1.0.1 (2021-06-07)
+=======
+**Dependencies**
+
+* ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
+
+* ``org.mariadb.jdbc:mariadb-java-client:2.7.2`` -> ``2.7.3``
+
+**Deprecated**
+
+1.0.1 (2020-06-07)
+>>>>>>> development
 ------------------
 
 **Added**
@@ -47,7 +70,11 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Deprecated**
 
+<<<<<<< HEAD
 1.0.0 (2021-06-04)
+=======
+1.0.0 (2020-06-04)
+>>>>>>> development
 ------------------
 
 **Added**
