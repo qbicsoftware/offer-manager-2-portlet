@@ -11,6 +11,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* Assign proteomic and metabolomic products to product group data generation (`#660 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/660>`_)
+
 **Dependencies**
 
 **Deprecated**
