@@ -44,19 +44,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Deprecated**
 
-1.0.1 (2021-06-07)
-=======
-**Dependencies**
-
-* ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
-
-* ``org.mariadb.jdbc:mariadb-java-client:2.7.2`` -> ``2.7.3``
-
-**Deprecated**
 
 1.0.1 (2020-06-07)
->>>>>>> development
-------------------
+-------------------
 
 **Added**
 
@@ -68,13 +58,13 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Bump data model lib 2.7.0 -> 2.8.0 and therefore adds more units for service products
 
+* ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
+
+* ``org.mariadb.jdbc:mariadb-java-client:2.7.2`` -> ``2.7.3``
+
 **Deprecated**
 
-<<<<<<< HEAD
 1.0.0 (2021-06-04)
-=======
-1.0.0 (2020-06-04)
->>>>>>> development
 ------------------
 
 **Added**
