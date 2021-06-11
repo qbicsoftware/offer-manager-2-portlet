@@ -13,6 +13,10 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Dependencies**
 
+* ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
+
+* ``org.mariadb.jdbc:mariadb-java-client:2.7.2`` -> ``2.7.3``
+
 **Deprecated**
 
 1.0.3 (2021-06-10)
@@ -25,10 +29,6 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Assign proteomic and metabolomic products to product group data generation (`#660 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/660>`_)
 
 **Dependencies**
-
-* ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
-
-* ``org.mariadb.jdbc:mariadb-java-client:2.7.2`` -> ``2.7.3``
 
 **Deprecated**
 
