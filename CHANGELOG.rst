@@ -15,6 +15,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* Renamed ProductGroup.DATA_MANAGEMENT Enum Item to PROJECT_MANAGEMENT_AND_DATA_MANAGEMENT in OfferToPDFConverter to make it more explicit (`#666 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/666>`_)
+
 **Dependencies**
 
 **Deprecated**
