@@ -19,6 +19,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Dependencies**
 
+* Bump data model lib 2.8.0 -> 2.8.1 and therefore adds 'Flow cell' as unit for service products
+
 **Deprecated**
 
 * Deprecate life.qbic.business.offers.Offer.getOverheadItems() since all ProductItems now have an associated overhead cost (`#665 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/665>`_)
