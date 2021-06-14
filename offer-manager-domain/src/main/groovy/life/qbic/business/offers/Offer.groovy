@@ -75,18 +75,22 @@ class Offer {
     /**
      * A list of items for which an overhead cost is applicable
      */
+    @Deprecated
     private List<ProductItem> itemsWithOverhead
     /**
      * A list of items for which an overhead cost is not applicable
      */
+    @Deprecated
     private List<ProductItem> itemsWithoutOverhead
     /**
      * The net price of all items for which an overhead cost is applicable, without overhead and taxes
      */
+    @Deprecated
     private double itemsWithOverheadNetPrice
     /**
      * The net price of all items for which an overhead cost is not applicable, without overhead and taxes
      */
+    @Deprecated
     private double itemsWithoutOverheadNetPrice
 
     /**
@@ -252,20 +256,12 @@ class Offer {
     /**
      * The overhead price amount of all service items without VAT.
      *
-     * Service items of type data storage and project management
-     * are <strong>excluded</strong> from he calculation.
-     *
      * @return The calculated overhead amount of the selected items.
      */
     double getOverheadSum() {
         double overheadSum = 0
         items.each {
-            if (it.product instanceof ProjectManagement || it.product instanceof DataStorage) {
-                // No overheads are assigned for data storage and project management
-            }
-            else {
                 overheadSum += it.quantity * it.product.unitPrice * this.overhead
-            }
         }
         return overheadSum
     }
@@ -276,6 +272,7 @@ class Offer {
      *
      * @return net cost of product items without overhead cost
      */
+    @Deprecated
     double getNoOverheadItemsNet() {
         double costNoOverheadItemsNet = 0
         items.each {
@@ -292,6 +289,7 @@ class Offer {
      *
      * @return net cost of product items with overhead cost
      */
+    @Deprecated
     double getOverheadItemsNet() {
         double costOverheadItemsNet = 0
         items.each {
@@ -326,6 +324,7 @@ class Offer {
      *
      * @return ProductItem list containing all ProductItems with overhead cost
      */
+    @Deprecated
     List<ProductItem> getOverheadItems() {
         List<ProductItem> listOverheadProductItem = []
         items.each {
@@ -344,6 +343,7 @@ class Offer {
      *
      * @return ProductItem list containing all ProductItems without overhead cost
      */
+    @Deprecated
     List<ProductItem> getNoOverheadItems(){
         List<ProductItem> listNoOverheadProductItem = []
         items.each {

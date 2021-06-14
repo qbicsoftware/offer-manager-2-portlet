@@ -4,6 +4,39 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.0.4 (2021-06-14)
+------------------
+
+**Added**
+
+* DataStorage and ProjectManagement ProductItems are now included in the overhead calculation of an Offer Entity (`#665 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/665>`_)
+
+* Offer PDF overhead listing now includes DataStorage and ProjectManagement ProductItems (`#665 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/665>`_)
+
+**Fixed**
+
+* Renamed ProductGroup.DATA_MANAGEMENT Enum Item to PROJECT_MANAGEMENT_AND_DATA_MANAGEMENT in OfferToPDFConverter to make it more explicit (`#666 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/666>`_)
+
+**Dependencies**
+
+**Deprecated**
+
+* Deprecate life.qbic.business.offers.Offer.getOverheadItems() since all ProductItems now have an associated overhead cost (`#665 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/665>`_)
+
+* Deprecate life.qbic.business.offers.Offer.getNoOverheadItems() since all ProductItems now have an associated overhead cost (`#665 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/665>`_)
+
+* Deprecate life.qbic.business.offers.Offer.getOverheadItemsNet() since all ProductItems now have an associated overhead cost (`#665 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/665>`_)
+
+* Deprecate life.qbic.business.offers.Offer.getNoOverheadItemsNet() since all ProductItems now have an associated overhead cost (`#665 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/665>`_)
+
+* Deprecate life.qbic.business.offers.Offer.itemsWithOverheadNetPrice since all ProductItems now have an associated overhead cost (`#665 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/665>`_)
+
+* Deprecate life.qbic.business.offers.Offer.itemsWithoutOverheadNetPrice since all ProductItems now have an associated overhead cost (`#665 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/665>`_)
+
+* Deprecate life.qbic.business.offers.Offer.itemsWithOverheads from Offer entity since all ProductItems now have an associated overhead cost (`#665 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/665>`_)
+
+* Deprecate life.qbic.business.offers.Offer.itemsWithoutOverhead since all ProductItems now have an associated overhead cost (`#665 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/665>`_)
+
 1.0.3 (2021-06-10)
 ------------------
 
