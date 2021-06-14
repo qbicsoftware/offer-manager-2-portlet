@@ -142,7 +142,7 @@ class OfferSpec extends Specification {
 
         then:
         double expectedNetSum = (10.0 + (2 * 1.0))
-        double expectedOverhead = 2 * 1.0 * 0.2
+        double expectedOverhead = (10.0 + (2 * 1.0)) * 0.2
         double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
         offer.items.size() == 2
         netSum == expectedNetSum
@@ -172,7 +172,7 @@ class OfferSpec extends Specification {
 
         then:
         double expectedNetSum = (10.0 + (2 * 1.0))
-        double expectedOverhead = 2 * 1.0 * 0.4
+        double expectedOverhead = (10.0 + (2 * 1.0)) * 0.4
         double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
         offer.items.size() == 2
         netSum == expectedNetSum
@@ -182,7 +182,7 @@ class OfferSpec extends Specification {
         totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes
     }
 
-    def "On data storage and project management service, no overheads shall be calculated"() {
+    def "On data storage and project management service, overhead costs are includes since 1.0.4"() {
         given:
         List<ProductItem> items = [
                 new ProductItem(1, new ProjectManagement("Basic Management",
@@ -197,9 +197,10 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
+        double expectedOverhead = (10.0 + 10.0) * 0.4
 
         then:
-        overhead == 0
+        overhead == expectedOverhead
     }
 
     def "Different offer with updated item list can be differentiated"(){
