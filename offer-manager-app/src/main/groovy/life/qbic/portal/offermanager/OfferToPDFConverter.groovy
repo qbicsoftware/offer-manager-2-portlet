@@ -320,6 +320,7 @@ class OfferToPDFConverter implements OfferExporter {
 
         final overheadDataGenerationPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(productItemsMap[ProductGroups.DATA_GENERATION]))
         final overheadDataAnalysisPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(productItemsMap[ProductGroups.DATA_ANALYSIS]))
+        final overheadDataManagementPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(productItemsMap[ProductGroups.DATA_MANAGEMENT]))
 
         double taxRatio = determineTaxCost(offer.getSelectedCustomerAffiliation().country, offer.getSelectedCustomerAffiliation().getCategory())
         String taxPercentage = decimalFormat.format(taxRatio)
@@ -330,6 +331,7 @@ class OfferToPDFConverter implements OfferExporter {
         htmlContent.getElementById("overhead-percentage-value").text("Overheads (${overheadPercentage})")
         htmlContent.getElementById("DATA_GENERATION-overhead-costs-value").text(overheadDataGenerationPrice)
         htmlContent.getElementById("DATA_ANALYSIS-overhead-costs-value").text(overheadDataAnalysisPrice)
+        htmlContent.getElementById("DATA_MANAGEMENT-overhead-costs-value").text(overheadDataManagementPrice)
         htmlContent.getElementById("overhead-cost-value").text(overheadPrice)
         //Set vat, net and total cost value
         htmlContent.getElementById("total-cost-value-net").text(netPrice)
@@ -342,11 +344,7 @@ class OfferToPDFConverter implements OfferExporter {
     double calculateOverheadSum(List<ProductItem> productItems) {
         double overheadSum
         productItems.each {
-            if (it.product.class in productGroupClasses[ProductGroups.DATA_MANAGEMENT]) {
-                overheadSum = 0
-            } else {
                 overheadSum += it.quantity * it.product.unitPrice * offer.overheadRatio
-            }
         }
         return overheadSum
     }
@@ -441,6 +439,7 @@ class OfferToPDFConverter implements OfferExporter {
 
         boolean dataGenerationItemsExists = true
         boolean dataAnalysisItemsExists = true
+        boolean dataManagementItemsExists = true
         //Remove overhead cost listing of productGroup from grid-table-footer if an offer has no items associated with a productGroup
         productItemsMap.each { ProductGroups key, List<ProductItem> value ->
             if (value.empty) {
@@ -453,18 +452,16 @@ class OfferToPDFConverter implements OfferExporter {
                         dataAnalysisItemsExists = false
                         htmlContent.getElementById("${key.toString()}-sub-overhead").remove()
                         break
+                    case ProductGroups.DATA_MANAGEMENT:
+                        dataManagementItemsExists = false
+                        htmlContent.getElementById("${key.toString()}-sub-overhead").remove()
+                        break
                     default:
                         log.error("Unclassified ProductGroup found")
                         break
                 }
             }
 
-        }
-        //Remove overhead percentage title when no data generation and data analysis items are stored in the offer
-        if (!dataGenerationItemsExists && !dataAnalysisItemsExists) {
-            htmlContent.getElementById("overhead-percentage-value").remove()
-            //Remove the overscore, if no overhead cost listing is created
-            htmlContent.getElementById("offer-overhead").removeClass("single-overscore")
         }
     }
     /**
