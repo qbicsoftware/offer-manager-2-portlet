@@ -4,6 +4,22 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.1.0-SNAPSHOT (2020-06-07)
+---------------------------
+
+**Added**
+
+**Fixed**
+
+**Dependencies**
+
+* ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
+
+* ``org.mariadb.jdbc:mariadb-java-client:2.7.2`` -> ``2.7.3``
+
+**Deprecated**
+
+
 1.0.4 (2021-06-14)
 ------------------
 
@@ -38,6 +54,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Deprecate life.qbic.business.offers.Offer.itemsWithOverheads from Offer entity since all ProductItems now have an associated overhead cost (`#665 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/665>`_)
 
 * Deprecate life.qbic.business.offers.Offer.itemsWithoutOverhead since all ProductItems now have an associated overhead cost (`#665 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/665>`_)
+
 
 1.0.3 (2021-06-10)
 ------------------
