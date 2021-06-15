@@ -134,6 +134,33 @@ class OfferToPDFConverter implements OfferExporter {
      */
     private Map<ProductGroups, List<ProductItem>> productItemsMap = [:]
 
+    /**
+     * Possible product groups
+     *
+     * This enum describes the product groups into which the products of an offer are listed.
+     * It also defines the acronyms used to abbreviate the product groups in the offer listings.
+     */
+    enum ProductPropertySpacing {
+        PRODUCT_NAME(33),
+        PRODUCT_DESCRIPTION(62),
+        PRODUCT_UNIT(15),
+        PRODUCT_UNIT_PRICE(15),
+        PRODUCT_AMOUNT(8),
+        PRODUCT_TOTAL(15)
+
+
+        private int charsLineLimit
+
+        ProductPropertySpacing(int charsLineLimit) {
+            this.charsLineLimit = charsLineLimit
+        }
+
+        int getCharsLineLimit() {
+            return this.charsLineLimit
+        }
+
+    }
+
     OfferToPDFConverter(Offer offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.tempDir = Files.createTempDirectory("offer")
@@ -239,16 +266,17 @@ class OfferToPDFConverter implements OfferExporter {
 
         //Initialize Number of table
         tableCount = 1
-        pageItemsCount = 1
+        pageItemsCount = 3
         //The maximum number of items per page
-        int maxPageItems = 13
+        int maxPageItems = 23
 
         groupItems(offer.items)
         //Generate Product Table for each Category
         generateProductTable(productItemsMap, maxPageItems)
         //Append total cost footer
         String elementId = "product-items" + "-" + tableCount
-        if (pageItemsCount > maxPageItems) {
+        println(pageItemsCount)
+        if (pageItemsCount + 3 > maxPageItems) {
             //If currentTable is filled with Items generate new one and add total pricing there
             ++tableCount
             htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
@@ -257,7 +285,6 @@ class OfferToPDFConverter implements OfferExporter {
             htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
         }
             //Add total pricing information to grid-table-footer div in template
-
             Element element = htmlContent.getElementById("grid-table-footer")
             //Move template footer div after item-table-grid
             htmlContent.getElementById("item-table-grid").after(element)
@@ -411,6 +438,7 @@ class OfferToPDFConverter implements OfferExporter {
                 }
                 //Append Table Title and Header
                 htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
+                pageItemsCount++
                 htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
                 items.each{ProductItem item ->
                     itemNumber++
@@ -424,7 +452,8 @@ class OfferToPDFConverter implements OfferExporter {
                     }
                     //add product to current table
                     htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
-                    pageItemsCount++
+                    int itemSpace = determineItemSpace(item)
+                    pageItemsCount = pageItemsCount + itemSpace
                 }
                 //add subtotal footer to table
                 htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
@@ -463,6 +492,28 @@ class OfferToPDFConverter implements OfferExporter {
             }
 
         }
+    }
+
+    private static int determineItemSpace(ProductItem item) {
+
+        ArrayList<Integer> calculatedSpaces = []
+
+        Product product = item.product
+        String productTotalCost = item.quantity * item.product.unitPrice
+
+        calculatedSpaces.add(calculateItemSpace(product.productName, ProductPropertySpacing.PRODUCT_NAME))
+        calculatedSpaces.add(calculateItemSpace(product.description, ProductPropertySpacing.PRODUCT_DESCRIPTION))
+        calculatedSpaces.add(calculateItemSpace(item.quantity as String, ProductPropertySpacing.PRODUCT_AMOUNT))
+        calculatedSpaces.add(calculateItemSpace(product.unit as String, ProductPropertySpacing.PRODUCT_UNIT))
+        calculatedSpaces.add(calculateItemSpace(product.unitPrice as String, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
+        calculatedSpaces.add(calculateItemSpace(productTotalCost, ProductPropertySpacing.PRODUCT_TOTAL))
+        return calculatedSpaces.max()
+    }
+
+    private static int calculateItemSpace(String productProperty, ProductPropertySpacing productPropertySpacing){
+        int itemSpace = 0
+        itemSpace = (int) itemSpace + Math.ceil(productProperty.length() / productPropertySpacing.getCharsLineLimit())
+        return itemSpace
     }
     /**
      * Small helper class to handle the HTML to PDF conversion.
