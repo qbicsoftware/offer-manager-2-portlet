@@ -390,7 +390,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                     .setCaption("Product Id").setId("ProductId")
             grid.addColumn({ it.product.productName })
                     .setCaption("Product Name").setId("ProductName")
-            Grid.Column<Product,String> descriptionColumn = grid.addColumn({ it.product.description })
+            Grid.Column<ProductItemViewModel,String> descriptionColumn = grid.addColumn({ it.product.description })
                     .setCaption("Product Description").setId("ProductDescription")
             grid.addColumn({ it.product.unitPrice }, new NumberRenderer(Currency
                     .getFormatterWithSymbol()))
