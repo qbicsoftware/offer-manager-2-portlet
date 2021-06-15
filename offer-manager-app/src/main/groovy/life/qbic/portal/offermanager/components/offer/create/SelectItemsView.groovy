@@ -365,7 +365,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                     .setCaption("Product Id").setId("ProductId")
             grid.addColumn({ it.productName })
                     .setCaption("Product Name").setId("ProductName")
-            grid.addColumn({ it.description })
+            Grid.Column<Product,String> descriptionColumn = grid.addColumn({ it.description })
                     .setCaption("Product Description").setId("ProductDescription")
             grid.addColumn({ it.unitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol()))
                     .setCaption("Product Unit Price").setId("ProductUnitPrice")
@@ -374,6 +374,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
 
             //specify size of grid and layout
             grid.setWidthFull()
+            descriptionColumn.setWidth(400)
             grid.setHeightMode(HeightMode.ROW)
             grid.sort("ProductId", SortDirection.ASCENDING)
         } catch (Exception e) {
@@ -389,7 +390,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                     .setCaption("Product Id").setId("ProductId")
             grid.addColumn({ it.product.productName })
                     .setCaption("Product Name").setId("ProductName")
-            grid.addColumn({ it.product.description })
+            Grid.Column<Product,String> descriptionColumn = grid.addColumn({ it.product.description })
                     .setCaption("Product Description").setId("ProductDescription")
             grid.addColumn({ it.product.unitPrice }, new NumberRenderer(Currency
                     .getFormatterWithSymbol()))
@@ -399,6 +400,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
 
             //specify size of grid and layout
             grid.setWidthFull()
+            descriptionColumn.setWidth(400)
             grid.setHeightMode(HeightMode.ROW)
         } catch (Exception e) {
             new Exception("Unexpected exception in building the product item grid", e)
