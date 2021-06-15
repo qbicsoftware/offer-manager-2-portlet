@@ -519,7 +519,7 @@ class OfferToPDFConverter implements OfferExporter {
                     </div>
                     <div class="row product-item">
                         <div class="col-1"></div>
-                        <div class="col-4 item-description">${item.product.description}</div>
+                        <div class="col-7 item-description">${item.product.description}</div>
                         <div class="col-7"></div>
                     </div>
                     """

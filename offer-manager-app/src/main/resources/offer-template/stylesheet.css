@@ -276,6 +276,7 @@ h2 {
 .item-description {
     font-style: italic;
     font-size: 9pt;
+    color: #999999;
 }
 
 #total-costs {
