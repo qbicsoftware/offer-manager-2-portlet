@@ -268,15 +268,14 @@ class OfferToPDFConverter implements OfferExporter {
         tableCount = 1
         pageItemsCount = 3
         //The maximum number of items per page
-        int maxPageItems = 23
+        int maxPageItems = 25
 
         groupItems(offer.items)
         //Generate Product Table for each Category
         generateProductTable(productItemsMap, maxPageItems)
         //Append total cost footer
         String elementId = "product-items" + "-" + tableCount
-        println(pageItemsCount)
-        if (pageItemsCount + 3 > maxPageItems) {
+        if (pageItemsCount > maxPageItems) {
             //If currentTable is filled with Items generate new one and add total pricing there
             ++tableCount
             htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
@@ -501,6 +500,7 @@ class OfferToPDFConverter implements OfferExporter {
         Product product = item.product
         String productTotalCost = item.quantity * item.product.unitPrice
 
+        //Determine amount of spacing necessary from highest itemSpace value of all columns
         calculatedSpaces.add(calculateItemSpace(product.productName, ProductPropertySpacing.PRODUCT_NAME))
         calculatedSpaces.add(calculateItemSpace(product.description, ProductPropertySpacing.PRODUCT_DESCRIPTION))
         calculatedSpaces.add(calculateItemSpace(item.quantity as String, ProductPropertySpacing.PRODUCT_AMOUNT))
@@ -512,6 +512,7 @@ class OfferToPDFConverter implements OfferExporter {
 
     private static int calculateItemSpace(String productProperty, ProductPropertySpacing productPropertySpacing){
         int itemSpace = 0
+        //Helper method to calculate the itemSpace necessary for each column
         itemSpace = (int) itemSpace + Math.ceil(productProperty.length() / productPropertySpacing.getCharsLineLimit())
         return itemSpace
     }
@@ -613,7 +614,7 @@ class OfferToPDFConverter implements OfferExporter {
 
         static String subTableFooter(ProductGroups productGroup){
             //Each footer takes up spacing in the current table
-            pageItemsCount++
+            pageItemsCount = pageItemsCount + 2
             String footerTitle = productGroup.getAcronym()
             return """<div id="grid-sub-total-footer-${tableCount}" class="grid-sub-total-footer">
                                       <div class="col-6"></div> 
