@@ -13,6 +13,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Dependencies**
 
+* Bump data model lib 2.8.1 -> 2.8.2 and therefore adds 'Batch' as unit for service products
+
+
 **Deprecated**
 
 
