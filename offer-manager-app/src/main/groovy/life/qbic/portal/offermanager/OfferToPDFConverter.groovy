@@ -135,10 +135,9 @@ class OfferToPDFConverter implements OfferExporter {
     private Map<ProductGroups, List<ProductItem>> productItemsMap = [:]
 
     /**
-     * Possible product groups
+     * Max number of characters before line breaks in a property column in the productItem table
      *
-     * This enum describes the product groups into which the products of an offer are listed.
-     * It also defines the acronyms used to abbreviate the product groups in the offer listings.
+     * This enum stores the maximum number of characters before a line breaks occurs in product property column in the productItem table
      */
     enum ProductPropertySpacing {
         PRODUCT_NAME(33),
