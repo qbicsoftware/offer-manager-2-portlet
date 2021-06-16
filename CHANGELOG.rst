@@ -9,6 +9,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Increase space allocated for product description in Offer PDF based on the number of characters (`#675 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/675>`_)
+
 **Fixed**
 
 * Limit width of product description columns (`#673 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/673>`_)
