@@ -11,6 +11,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* Limit width of product description columns (`#673 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/673>`_)
+
 **Dependencies**
 
 * Bump data model lib 2.8.1 -> 2.8.2 and therefore adds 'Batch' as unit for service products

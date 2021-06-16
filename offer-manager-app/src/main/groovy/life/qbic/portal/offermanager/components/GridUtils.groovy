@@ -23,6 +23,8 @@ import java.util.function.BiPredicate
 class GridUtils {
 
     private static Logging log = Logger.getLogger(this.class)
+    final static int DESCRIPTION_MAX_WIDTH = 400
+
 
     /**
      * Provides a filter field into a header row of a grid for a given column.
