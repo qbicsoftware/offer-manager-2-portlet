@@ -133,33 +133,7 @@ class OfferToPDFConverter implements OfferExporter {
      *
      */
     private Map<ProductGroups, List<ProductItem>> productItemsMap = [:]
-
-    /**
-     * Max number of characters before line breaks in a property column in the productItem table
-     *
-     * This enum stores the maximum number of characters before a line breaks occurs in product property column in the productItem table
-     */
-    enum ProductPropertySpacing {
-        PRODUCT_NAME(33),
-        PRODUCT_DESCRIPTION(62),
-        PRODUCT_UNIT(15),
-        PRODUCT_UNIT_PRICE(15),
-        PRODUCT_AMOUNT(8),
-        PRODUCT_TOTAL(15)
-
-
-        private int charsLineLimit
-
-        ProductPropertySpacing(int charsLineLimit) {
-            this.charsLineLimit = charsLineLimit
-        }
-
-        int getCharsLineLimit() {
-            return this.charsLineLimit
-        }
-
-    }
-
+    
     OfferToPDFConverter(Offer offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.tempDir = Files.createTempDirectory("offer")
@@ -494,25 +468,32 @@ class OfferToPDFConverter implements OfferExporter {
 
     private static int determineItemSpace(ProductItem item) {
 
+        final int PRODUCT_NAME_CHAR_LIMIT = 33
+        final int PRODUCT_DESCRIPTION_CHAR_LIMIT = 62
+        final int PRODUCT_AMOUNT_CHAR_LIMIT = 15
+        final int PRODUCT_UNIT_CHAR_LIMIT = 15
+        final int PRODUCT_UNITPRICE_CHAR_LIMIT = 8
+        final int PRODUCT_TOTAL_CHAR_LIMIT = 15
+        
         ArrayList<Integer> calculatedSpaces = []
 
         Product product = item.product
         String productTotalCost = item.quantity * item.product.unitPrice
 
         //Determine amount of spacing necessary from highest itemSpace value of all columns
-        calculatedSpaces.add(calculateItemSpace(product.productName, ProductPropertySpacing.PRODUCT_NAME))
-        calculatedSpaces.add(calculateItemSpace(product.description, ProductPropertySpacing.PRODUCT_DESCRIPTION))
-        calculatedSpaces.add(calculateItemSpace(item.quantity as String, ProductPropertySpacing.PRODUCT_AMOUNT))
-        calculatedSpaces.add(calculateItemSpace(product.unit as String, ProductPropertySpacing.PRODUCT_UNIT))
-        calculatedSpaces.add(calculateItemSpace(product.unitPrice as String, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
-        calculatedSpaces.add(calculateItemSpace(productTotalCost, ProductPropertySpacing.PRODUCT_TOTAL))
+        calculatedSpaces.add(calculateItemSpace(product.productName, PRODUCT_NAME_CHAR_LIMIT))
+        calculatedSpaces.add(calculateItemSpace(product.description, PRODUCT_DESCRIPTION_CHAR_LIMIT))
+        calculatedSpaces.add(calculateItemSpace(item.quantity as String, PRODUCT_AMOUNT_CHAR_LIMIT))
+        calculatedSpaces.add(calculateItemSpace(product.unit as String, PRODUCT_UNIT_CHAR_LIMIT))
+        calculatedSpaces.add(calculateItemSpace(product.unitPrice as String, PRODUCT_UNITPRICE_CHAR_LIMIT))
+        calculatedSpaces.add(calculateItemSpace(productTotalCost, PRODUCT_TOTAL_CHAR_LIMIT))
         return calculatedSpaces.max()
     }
 
-    private static int calculateItemSpace(String productProperty, ProductPropertySpacing productPropertySpacing){
+    private static int calculateItemSpace(String productProperty, int productPropertySpacing){
         int itemSpace = 0
         //Helper method to calculate the itemSpace necessary for each column
-        itemSpace = (int) itemSpace + Math.ceil(productProperty.length() / productPropertySpacing.getCharsLineLimit())
+        itemSpace = (int) itemSpace + Math.ceil(productProperty.length() / productPropertySpacing)
         return itemSpace
     }
     /**
