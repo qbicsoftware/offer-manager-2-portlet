@@ -4,6 +4,27 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.0.5 (2021-06-15)
+------------------
+
+**Added**
+
+* Increase Space allocated for product description in Offer PDF (`#675 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/675>`_)
+
+* Allocate space for each productItem dependent on number of characters in each property (`#675 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/675>`_)
+
+**Fixed**
+
+* Limit width of product description columns (`#673 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/673>`_)
+
+**Dependencies**
+
+* Bump data model lib 2.8.1 -> 2.8.2 and therefore adds 'Batch' as unit for service products
+
+
+**Deprecated**
+
+
 1.0.4 (2021-06-14)
 ------------------
 
@@ -18,6 +39,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Renamed ProductGroup.DATA_MANAGEMENT Enum Item to PROJECT_MANAGEMENT_AND_DATA_MANAGEMENT in OfferToPDFConverter to make it more explicit (`#666 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/666>`_)
 
 **Dependencies**
+
+* Bump data model lib 2.8.0 -> 2.8.1 and therefore adds 'Flow cell' as unit for service products
 
 **Deprecated**
 
