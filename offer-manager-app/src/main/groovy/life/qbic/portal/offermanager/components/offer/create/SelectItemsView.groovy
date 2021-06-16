@@ -374,7 +374,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
 
             //specify size of grid and layout
             grid.setWidthFull()
-            descriptionColumn.setWidth(GridUtils.COLUMN_WIDTH_LIMIT)
+            descriptionColumn.setWidth(GridUtils.DESCRIPTION_MAX_WIDTH)
             grid.setHeightMode(HeightMode.ROW)
             grid.sort("ProductId", SortDirection.ASCENDING)
         } catch (Exception e) {
@@ -400,7 +400,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
 
             //specify size of grid and layout
             grid.setWidthFull()
-            descriptionColumn.setWidth(GridUtils.COLUMN_WIDTH_LIMIT)
+            descriptionColumn.setWidth(GridUtils.DESCRIPTION_MAX_WIDTH)
             grid.setHeightMode(HeightMode.ROW)
         } catch (Exception e) {
             new Exception("Unexpected exception in building the product item grid", e)
