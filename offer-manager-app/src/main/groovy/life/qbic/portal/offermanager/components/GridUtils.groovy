@@ -23,7 +23,7 @@ import java.util.function.BiPredicate
 class GridUtils {
 
     private static Logging log = Logger.getLogger(this.class)
-    final static int COLUMN_WIDTH_LIMIT = 400
+    final static int DESCRIPTION_MAX_WIDTH = 400
 
 
     /**
