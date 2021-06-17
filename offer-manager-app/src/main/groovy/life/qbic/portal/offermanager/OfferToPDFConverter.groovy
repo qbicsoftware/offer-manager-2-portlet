@@ -241,7 +241,7 @@ class OfferToPDFConverter implements OfferExporter {
         tableCount = 1
         pageItemsCount = 3
         //The maximum number of items per page
-        int maxPageItems = 24
+        int maxPageItems = 23
 
         groupItems(offer.items)
         //Generate Product Table for each Category
