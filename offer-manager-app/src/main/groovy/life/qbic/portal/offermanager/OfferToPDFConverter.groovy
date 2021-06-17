@@ -133,7 +133,7 @@ class OfferToPDFConverter implements OfferExporter {
      *
      */
     private Map<ProductGroups, List<ProductItem>> productItemsMap = [:]
-
+    
     OfferToPDFConverter(Offer offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.tempDir = Files.createTempDirectory("offer")
@@ -239,9 +239,9 @@ class OfferToPDFConverter implements OfferExporter {
 
         //Initialize Number of table
         tableCount = 1
-        pageItemsCount = 1
+        pageItemsCount = 3
         //The maximum number of items per page
-        int maxPageItems = 13
+        int maxPageItems = 23
 
         groupItems(offer.items)
         //Generate Product Table for each Category
@@ -257,7 +257,6 @@ class OfferToPDFConverter implements OfferExporter {
             htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
         }
             //Add total pricing information to grid-table-footer div in template
-
             Element element = htmlContent.getElementById("grid-table-footer")
             //Move template footer div after item-table-grid
             htmlContent.getElementById("item-table-grid").after(element)
@@ -411,6 +410,7 @@ class OfferToPDFConverter implements OfferExporter {
                 }
                 //Append Table Title and Header
                 htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
+                pageItemsCount++
                 htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
                 items.each{ProductItem item ->
                     itemNumber++
@@ -424,7 +424,8 @@ class OfferToPDFConverter implements OfferExporter {
                     }
                     //add product to current table
                     htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
-                    pageItemsCount++
+                    int itemSpace = determineItemSpace(item)
+                    pageItemsCount = pageItemsCount + itemSpace
                 }
                 //add subtotal footer to table
                 htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
@@ -463,6 +464,37 @@ class OfferToPDFConverter implements OfferExporter {
             }
 
         }
+    }
+
+    private static int determineItemSpace(ProductItem item) {
+
+        final int PRODUCT_NAME_CHAR_LIMIT = 33
+        final int PRODUCT_DESCRIPTION_CHAR_LIMIT = 62
+        final int PRODUCT_AMOUNT_CHAR_LIMIT = 15
+        final int PRODUCT_UNIT_CHAR_LIMIT = 15
+        final int PRODUCT_UNITPRICE_CHAR_LIMIT = 8
+        final int PRODUCT_TOTAL_CHAR_LIMIT = 15
+        
+        ArrayList<Integer> calculatedSpaces = []
+
+        Product product = item.product
+        String productTotalCost = item.quantity * item.product.unitPrice
+
+        //Determine amount of spacing necessary from highest itemSpace value of all columns
+        calculatedSpaces.add(calculateItemSpace(product.productName, PRODUCT_NAME_CHAR_LIMIT))
+        calculatedSpaces.add(calculateItemSpace(product.description, PRODUCT_DESCRIPTION_CHAR_LIMIT))
+        calculatedSpaces.add(calculateItemSpace(item.quantity as String, PRODUCT_AMOUNT_CHAR_LIMIT))
+        calculatedSpaces.add(calculateItemSpace(product.unit as String, PRODUCT_UNIT_CHAR_LIMIT))
+        calculatedSpaces.add(calculateItemSpace(product.unitPrice as String, PRODUCT_UNITPRICE_CHAR_LIMIT))
+        calculatedSpaces.add(calculateItemSpace(productTotalCost, PRODUCT_TOTAL_CHAR_LIMIT))
+        return calculatedSpaces.max()
+    }
+
+    private static int calculateItemSpace(String productProperty, int productPropertySpacing){
+        int itemSpace = 0
+        //Helper method to calculate the itemSpace necessary for each column
+        itemSpace = (int) itemSpace + Math.ceil(productProperty.length() / productPropertySpacing)
+        return itemSpace
     }
     /**
      * Small helper class to handle the HTML to PDF conversion.
@@ -519,7 +551,7 @@ class OfferToPDFConverter implements OfferExporter {
                     </div>
                     <div class="row product-item">
                         <div class="col-1"></div>
-                        <div class="col-4 item-description">${item.product.description}</div>
+                        <div class="col-7 item-description">${item.product.description}</div>
                         <div class="col-7"></div>
                     </div>
                     """
@@ -562,7 +594,7 @@ class OfferToPDFConverter implements OfferExporter {
 
         static String subTableFooter(ProductGroups productGroup){
             //Each footer takes up spacing in the current table
-            pageItemsCount++
+            pageItemsCount = pageItemsCount + 2
             String footerTitle = productGroup.getAcronym()
             return """<div id="grid-sub-total-footer-${tableCount}" class="grid-sub-total-footer">
                                       <div class="col-6"></div> 
