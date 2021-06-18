@@ -32,9 +32,10 @@ class OfferHTMLDocument {
         //calculate price
         //1. fill first page (offeroverview)
         //2. fill item table
+
+
+        return htmlContent
     }
 
-    private void calculateNet(){
 
-    }
 }

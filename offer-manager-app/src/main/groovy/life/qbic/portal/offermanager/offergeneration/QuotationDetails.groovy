@@ -1,4 +1,7 @@
 package life.qbic.portal.offermanager.offergeneration
+
+import life.qbic.datamodel.dtos.business.ProductItem
+
 /**
  * <h1>Describes the quotation details of an offer</h1>
  *
@@ -10,6 +13,33 @@ package life.qbic.portal.offermanager.offergeneration
 */
 class QuotationDetails {
 
-    List<>
+    /*
+     Product group tables
+    */
+    private final List<ProductItem> dataGenerationItems
+    private final List<ProductItem> dataAnalysisItems
+    private final List<ProductItem> dataManagementItems
+
+    QuotationDetails(List<ProductItem> offerItems){
+        //1. group the product items
+        //2. calculate net prices
+        // add final prices
+        //3. add page spacing
+
+    }
+
+    private void groupProductItems(List<ProductItem> offerItems){
+
+
+    }
+
+    String generateProductItemsHTML(){
+
+        return ""
+    }
+
+    private double calculateNet(){
+        return 0
+    }
 
 }
