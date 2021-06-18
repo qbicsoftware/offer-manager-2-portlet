@@ -8,10 +8,18 @@ import life.qbic.datamodel.dtos.business.ProductItem
  * <p>The quotation details section consists of the product items of an offer. It gives an overview of the purchased items and breaks down the total costs.
  * This class solely generates the HTML source code for this section.</p>
  *
+ * <p>General idea: group the product items, generate the td elements.
+ *
+ * Furthermore: This class stores fixed ids (such as QuotationOverview) to quickly access e.g. total costs,....
+ * Also it returns the HTML elements for tables, product group headings,..</p>
  * @since 1.1.0
  *
 */
 class QuotationDetails {
+
+    /**
+
+     */
 
     /*
      Product group tables
@@ -33,7 +41,11 @@ class QuotationDetails {
 
     }
 
-    String generateProductItemsHTML(){
+    /**
+     * This class generates the HTML tds for an item, they only need to be put into a table
+     * @return
+     */
+    String generateProductItemsHTML(ProductItem item){
 
         return ""
     }
