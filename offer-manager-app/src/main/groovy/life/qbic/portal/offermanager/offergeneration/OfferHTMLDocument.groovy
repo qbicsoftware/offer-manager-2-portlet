@@ -3,7 +3,6 @@ package life.qbic.portal.offermanager.offergeneration
 import org.jsoup.nodes.Document
 import life.qbic.datamodel.dtos.business.*
 
-
 /**
  * <h1>Describes the content of an offer HTML</h1>
  *
@@ -22,8 +21,16 @@ class OfferHTMLDocument {
 
     private final Document htmlContent
 
-    OfferHTMLDocument(Document templateHTML){
-        htmlContent = templateHTML
+    private final Offer offer
+
+    QuotationOverview quotationOverview
+
+    QuotationDetails quotationDetails
+
+    OfferHTMLDocument(Document templateHTML, Offer offer){
+        this.htmlContent = Objects.requireNonNull(templateHTML, "htmlContent object must not be a null reference")
+        this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
+        fillTemplateWithOfferContent()
     }
 
     /**
@@ -32,13 +39,10 @@ class OfferHTMLDocument {
      * @param offer The offer object containing the required offer information
      * @return the final offer html
      */
-    Document fillTemplateWithOfferContent(Offer offer){
-        //todo implement me
-        //calculate price
-        //1. fill first page (offeroverview)
-        //2. fill item table
+    Document fillTemplateWithOfferContent(){
 
-
+        quotationOverview = new QuotationOverview(htmlContent, offer)
+        quotationDetails = new QuotationDetails(htmlContent, offer.items)
         return htmlContent
     }
 
