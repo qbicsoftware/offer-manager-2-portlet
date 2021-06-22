@@ -22,8 +22,8 @@ import java.text.DecimalFormat
 */
 class QuotationOverview {
 
-    private static Document htmlContent
-    private static Offer offer
+    private Document htmlContent
+    private Offer offer
 
     /**
      * Holds the current VAT rate
@@ -42,25 +42,26 @@ class QuotationOverview {
 
 
     QuotationOverview(Document htmlContent, Offer offer){
-        Objects.requireNonNull(offer, "Offer object must not be a null reference")
-        Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
+        this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
+        this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
         fillTemplateWithOfferContent()
     }
 
-    private static void fillTemplateWithOfferContent() {
+    void fillTemplateWithOfferContent() {
         setProjectInformation()
         setCustomerInformation()
         setManagerInformation()
         setPriceOverview()
+        setTaxationStatement()
     }
 
-    private static void setProjectInformation() {
+    private void setProjectInformation() {
         htmlContent.getElementById("project-title").text(offer.projectTitle)
         htmlContent.getElementById("project-description").text(offer.projectDescription)
         if (offer.experimentalDesign.isPresent()) htmlContent.getElementById("experimental-design").text(offer.experimentalDesign.get())
     }
 
-    private static void setCustomerInformation() {
+    private void setCustomerInformation() {
         final Customer customer = offer.customer
         final Affiliation affiliation = offer.selectedCustomerAffiliation
         String customerTitle = customer.title == AcademicTitle.NONE ? "" : customer.title
@@ -77,7 +78,7 @@ class QuotationOverview {
 
     }
 
-    private static void setManagerInformation() {
+    private void setManagerInformation() {
         final ProjectManager pm = offer.projectManager
         final Affiliation affiliation = pm.affiliations.get(0)
         String pmTitle = pm.title == AcademicTitle.NONE ? "" : pm.title
@@ -91,7 +92,7 @@ class QuotationOverview {
         htmlContent.getElementById("project-manager-email").text(pm.emailAddress)
     }
 
-    private static void setPriceOverview() {
+    private void setPriceOverview() {
         // Get prices with currency symbol for first page summary
         final totalPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.totalPrice)
         final taxesWithSymbol = Currency.getFormatterWithSymbol().format(offer.taxes)
@@ -113,14 +114,14 @@ class QuotationOverview {
     }
 
     // Apply VAT only if the offer originated from Germany and it's affilation category is non-internal
-    static double determineTaxCost() {
+    private double determineTaxCost() {
         if (offer.getSelectedCustomerAffiliation().country.equals(countryWithVAT) && !offer.getSelectedCustomerAffiliation().getCategory().equals(noVatCategory)) {
             return VAT
         }
         return 0
     }
 
-    static void setTaxationStatement() {
+    private void setTaxationStatement() {
         if (!offer.getSelectedCustomerAffiliation().country.equals(countryWithVAT)) {
             htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${countryWithVAT}")
         }
