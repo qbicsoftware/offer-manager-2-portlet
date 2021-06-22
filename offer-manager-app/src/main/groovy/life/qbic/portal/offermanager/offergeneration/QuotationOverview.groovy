@@ -101,8 +101,10 @@ class QuotationOverview {
 
         DecimalFormat decimalFormat = new DecimalFormat("#%")
         String overheadPercentage = decimalFormat.format(offer.overheadRatio)
+
         double taxRatio = determineTaxCost()
         String taxPercentage = decimalFormat.format(taxRatio)
+
         htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
 
         // First page summary
@@ -115,16 +117,20 @@ class QuotationOverview {
 
     // Apply VAT only if the offer originated from Germany and it's affilation category is non-internal
     private double determineTaxCost() {
-        if (offer.getSelectedCustomerAffiliation().country.equals(countryWithVAT) && !offer.getSelectedCustomerAffiliation().getCategory().equals(noVatCategory)) {
-            return VAT
-        }
-        return 0
+        return isVatCountry() && !isNoVatAffiliation() ? VAT : 0.0
     }
 
     private void setTaxationStatement() {
-        if (!offer.getSelectedCustomerAffiliation().country.equals(countryWithVAT)) {
-            htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${countryWithVAT}")
+        if (!isVatCountry()) {
+            htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${countryWithVAT}.")
         }
+    }
 
+    private boolean isVatCountry(){
+        return offer.getSelectedCustomerAffiliation().country == countryWithVAT
+    }
+
+    private boolean isNoVatAffiliation(){
+        return offer.getSelectedCustomerAffiliation().getCategory() == noVatCategory
     }
 }
