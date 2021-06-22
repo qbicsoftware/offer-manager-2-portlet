@@ -1,7 +1,14 @@
 package life.qbic.portal.offermanager.offergeneration
 
-import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis
+import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
+import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.datamodel.dtos.business.services.ProjectManagement
+import life.qbic.datamodel.dtos.business.services.ProteomicAnalysis
+import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
+import life.qbic.datamodel.dtos.business.services.Sequencing
 import org.jsoup.nodes.Document
 
 /**
@@ -14,6 +21,7 @@ import org.jsoup.nodes.Document
  *
  * Furthermore: This class stores fixed ids (such as QuotationOverview) to quickly access e.g. total costs,....
  * Also it returns the HTML elements for tables, product group headings,..</p>
+ *
  * @since 1.1.0
  *
 */
@@ -26,7 +34,7 @@ class QuotationDetails {
      * This map represents the grouping of the different product categories in the offer pdf
      *
      */
-    private final Map<ProductGroups, List> productGroupClasses = [:]
+    private final Map<ProductGroups, List> productGroupClasses = setProductGroupMapping()
 
     /**
      * Map ProductItems to Productgroup
@@ -76,6 +84,16 @@ class QuotationDetails {
 
     private double calculateNet(){
         return 0
+    }
+
+
+    private static HashMap<ProductGroups,List> setProductGroupMapping() {
+        Map<ProductGroups, List> map = [:]
+        map[ProductGroups.DATA_GENERATION] = [Sequencing, ProteomicAnalysis, MetabolomicAnalysis]
+        map[ProductGroups.DATA_ANALYSIS] = [PrimaryAnalysis, SecondaryAnalysis]
+        map[ProductGroups.PROJECT_AND_DATA_MANAGEMENT] = [ProjectManagement, DataStorage]
+
+        return map
     }
 
     /**
