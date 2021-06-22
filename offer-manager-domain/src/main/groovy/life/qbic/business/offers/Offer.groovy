@@ -402,6 +402,18 @@ class Offer {
         return associatedProject
     }
 
+    static double getVAT() {
+        return VAT
+    }
+
+    static String getCountryWithVat() {
+        return countryWithVat
+    }
+
+    static AffiliationCategory getNoVatCategory() {
+        return noVatCategory
+    }
+
     /**
      * Returns a deep copy of all available offer versions.
      *

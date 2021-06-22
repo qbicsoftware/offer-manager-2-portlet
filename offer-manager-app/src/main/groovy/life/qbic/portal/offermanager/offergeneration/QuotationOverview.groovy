@@ -1,9 +1,9 @@
 package life.qbic.portal.offermanager.offergeneration
 
+import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Currency
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProjectManager
@@ -24,26 +24,12 @@ class QuotationOverview {
 
     private Document htmlContent
     private Offer offer
-
-    /**
-     * Holds the current VAT rate
-     */
-    private static final double VAT = 0.19
-
-    /**
-     * Holds the Country for which the current VAT rate is applicable
-     */
-    private static final String countryWithVAT = "Germany"
-
-    /**
-     * AffiliationCategory for which no tax cost is applied
-     */
-    private static final AffiliationCategory noVatCategory = AffiliationCategory.INTERNAL
-
+    private life.qbic.business.offers.Offer offerEntity
 
     QuotationOverview(Document htmlContent, Offer offer){
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
+        this.offerEntity = Converter.convertDTOToOffer(offer)
         fillTemplateWithOfferContent()
     }
 
@@ -117,20 +103,22 @@ class QuotationOverview {
 
     // Apply VAT only if the offer originated from Germany and it's affilation category is non-internal
     private double determineTaxCost() {
-        return isVatCountry() && !isNoVatAffiliation() ? VAT : 0.0
+        return isVatCountry() && !isNoVatAffiliation() ? offerEntity.VAT : 0.0
     }
 
     private void setTaxationStatement() {
         if (!isVatCountry()) {
-            htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${countryWithVAT}.")
+            htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${offerEntity.getCountryWithVat()}.")
         }
     }
 
     private boolean isVatCountry(){
-        return offer.getSelectedCustomerAffiliation().country == countryWithVAT
+        offerEntity.overheadRatio
+        return offer.getSelectedCustomerAffiliation().getCountry() == offerEntity.getCountryWithVat()
+
     }
 
     private boolean isNoVatAffiliation(){
-        return offer.getSelectedCustomerAffiliation().getCategory() == noVatCategory
+        return offer.getSelectedCustomerAffiliation().getCategory() == offerEntity.getNoVatCategory()
     }
 }
