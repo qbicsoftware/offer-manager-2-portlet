@@ -196,13 +196,9 @@ class OfferToPDFConverter implements OfferExporter {
 
         QuotationOverview overview = new QuotationOverview(htmlContent,offer)
         overview.fillTemplateWithOfferContent()
-        //setProjectInformation()
-        //setCustomerInformation()
-        //setManagerInformation()
         setProductGroupMapping()
         setSelectedItems()
         setTotalPrices()
-        //setTaxationStatement()
         setTaxationRatioInSummary()
         setQuotationDetails()
         clearUnusedProductGroupInformation()
@@ -211,43 +207,6 @@ class OfferToPDFConverter implements OfferExporter {
     private void generatePDF() {
         PdfPrinter pdfPrinter = new PdfPrinter(createdOffer)
         pdfPrinter.print(createdOfferPdf)
-    }
-
-    private void setProjectInformation() {
-        htmlContent.getElementById("project-title").text(offer.projectTitle)
-        htmlContent.getElementById("project-description").text(offer.projectDescription)
-        if (offer.experimentalDesign.isPresent()) htmlContent.getElementById("experimental-design").text(offer.experimentalDesign.get())
-    }
-
-    private void setCustomerInformation() {
-        final Customer customer = offer.customer
-        final Affiliation affiliation = offer.selectedCustomerAffiliation
-        String customerTitle = customer.title == AcademicTitle.NONE ? "" : customer.title
-        htmlContent.getElementById("customer-name").text(String.format(
-                "%s %s %s",
-                customerTitle,
-                customer.firstName,
-                customer.lastName))
-        htmlContent.getElementById("customer-organisation").text(affiliation.organisation)
-        htmlContent.getElementById("customer-street").text(affiliation.street)
-        htmlContent.getElementById("customer-postal-code").text(affiliation.postalCode)
-        htmlContent.getElementById("customer-city").text(affiliation.city)
-        htmlContent.getElementById("customer-country").text(affiliation.country)
-
-    }
-
-    private void setManagerInformation() {
-        final ProjectManager pm = offer.projectManager
-        final Affiliation affiliation = pm.affiliations.get(0)
-        String pmTitle = pm.title == AcademicTitle.NONE ? "" : pm.title
-        htmlContent.getElementById("project-manager-name").text(String.format(
-                "%s %s %s",
-                pmTitle,
-                pm.firstName,
-                pm.lastName))
-        htmlContent.getElementById("project-manager-street").text(affiliation.street)
-        htmlContent.getElementById("project-manager-city").text("${affiliation.postalCode} ${affiliation.city}")
-        htmlContent.getElementById("project-manager-email").text(pm.emailAddress)
     }
 
     void setProductGroupMapping() {
@@ -292,13 +251,6 @@ class OfferToPDFConverter implements OfferExporter {
             htmlContent.getElementById("item-table-grid").after(element)
     }
 
-    void setTaxationStatement() {
-        if (!offer.getSelectedCustomerAffiliation().country.equals(countryWithVAT)) {
-            htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${countryWithVAT}")
-        }
-
-    }
-
     void setTaxationRatioInSummary() {
         DecimalFormat decimalFormat = new DecimalFormat("#%")
         String country = offer.getSelectedCustomerAffiliation().getCountry()
@@ -332,20 +284,6 @@ class OfferToPDFConverter implements OfferExporter {
     }
 
     void setTotalPrices() {
-        /**
-         // Get prices with currency symbol for first page summary
-         final totalPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.totalPrice)
-         final taxesWithSymbol = Currency.getFormatterWithSymbol().format(offer.taxes)
-         final netPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
-         final overheadPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.overheads)
-
-         // First page summary
-         htmlContent.getElementById("ratio-costs-overhead").text("Overheads (${overheadPercentage})")
-         htmlContent.getElementById("total-costs-net").text(netPriceWithSymbol)
-         htmlContent.getElementById("total-costs-overhead").text(overheadPriceWithSymbol)
-         htmlContent.getElementById("total-taxes").text(taxesWithSymbol)
-         htmlContent.getElementById("total-costs-sum").text(totalPriceWithSymbol)
-         */
 
         DecimalFormat decimalFormat = new DecimalFormat("#%")
         String overheadPercentage = decimalFormat.format(offer.overheadRatio)
@@ -362,8 +300,6 @@ class OfferToPDFConverter implements OfferExporter {
 
         double taxRatio = determineTaxCost(offer.getSelectedCustomerAffiliation().country, offer.getSelectedCustomerAffiliation().getCategory())
         String taxPercentage = decimalFormat.format(taxRatio)
-
-        // Detailed listing summary
 
         // Set overhead cost values
         htmlContent.getElementById("overhead-percentage-value").text("Overheads (${overheadPercentage})")
