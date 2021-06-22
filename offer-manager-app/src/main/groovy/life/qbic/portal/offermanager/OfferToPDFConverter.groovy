@@ -5,6 +5,7 @@ import life.qbic.business.offers.Currency
 import life.qbic.business.offers.OfferExporter
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.*
+import life.qbic.portal.offermanager.offergeneration.QuotationOverview
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
@@ -192,13 +193,16 @@ class OfferToPDFConverter implements OfferExporter {
     }
 
     private void fillTemplateWithOfferContent() {
-        setProjectInformation()
-        setCustomerInformation()
-        setManagerInformation()
+
+        QuotationOverview overview = new QuotationOverview(htmlContent,offer)
+        overview.fillTemplateWithOfferContent()
+        //setProjectInformation()
+        //setCustomerInformation()
+        //setManagerInformation()
         setProductGroupMapping()
         setSelectedItems()
         setTotalPrices()
-        setTaxationStatement()
+        //setTaxationStatement()
         setTaxationRatioInSummary()
         setQuotationDetails()
         clearUnusedProductGroupInformation()
@@ -319,23 +323,32 @@ class OfferToPDFConverter implements OfferExporter {
         htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
     }
 
-    void setTotalPrices() {
+    double calculateOverheadSum(List<ProductItem> productItems) {
+        double overheadSum
+        productItems.each {
+                overheadSum += it.quantity * it.product.unitPrice * offer.overheadRatio
+        }
+        return overheadSum
+    }
 
-        // Get prices with currency symbol for first page summary
-        final totalPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.totalPrice)
-        final taxesWithSymbol = Currency.getFormatterWithSymbol().format(offer.taxes)
-        final netPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
-        final overheadPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.overheads)
+    void setTotalPrices() {
+        /**
+         // Get prices with currency symbol for first page summary
+         final totalPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.totalPrice)
+         final taxesWithSymbol = Currency.getFormatterWithSymbol().format(offer.taxes)
+         final netPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
+         final overheadPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.overheads)
+
+         // First page summary
+         htmlContent.getElementById("ratio-costs-overhead").text("Overheads (${overheadPercentage})")
+         htmlContent.getElementById("total-costs-net").text(netPriceWithSymbol)
+         htmlContent.getElementById("total-costs-overhead").text(overheadPriceWithSymbol)
+         htmlContent.getElementById("total-taxes").text(taxesWithSymbol)
+         htmlContent.getElementById("total-costs-sum").text(totalPriceWithSymbol)
+         */
 
         DecimalFormat decimalFormat = new DecimalFormat("#%")
         String overheadPercentage = decimalFormat.format(offer.overheadRatio)
-
-        // First page summary
-        htmlContent.getElementById("ratio-costs-overhead").text("Overheads (${overheadPercentage})")
-        htmlContent.getElementById("total-costs-net").text(netPriceWithSymbol)
-        htmlContent.getElementById("total-costs-overhead").text(overheadPriceWithSymbol)
-        htmlContent.getElementById("total-taxes").text(taxesWithSymbol)
-        htmlContent.getElementById("total-costs-sum").text(totalPriceWithSymbol)
 
         // Get prices without currency symbol for detailed price listing
         final overheadPrice = Currency.getFormatterWithoutSymbol().format(offer.overheads)
@@ -364,14 +377,6 @@ class OfferToPDFConverter implements OfferExporter {
         htmlContent.getElementById("vat-cost-value").text(taxesPrice)
         htmlContent.getElementById("final-cost-value").text(totalPrice)
 
-    }
-
-    double calculateOverheadSum(List<ProductItem> productItems) {
-        double overheadSum
-        productItems.each {
-                overheadSum += it.quantity * it.product.unitPrice * offer.overheadRatio
-        }
-        return overheadSum
     }
 
     void setQuotationDetails() {

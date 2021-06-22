@@ -19,33 +19,7 @@ import org.jsoup.nodes.Document
 */
 class QuotationDetails {
 
-    /**
-     * Possible product groups
-     *
-     * This enum describes the product groups into which the products of an offer are listed.
-     * It also defines the acronyms used to abbreviate the product groups in the offer listings.
-     */
-    enum ProductGroups {
-        DATA_GENERATION("Data generation", "DG"),
-        DATA_ANALYSIS("Data analysis", "DA"),
-        PROJECT_AND_DATA_MANAGEMENT("Project management and data storage", "PM & DS")
 
-        private String name
-        private String acronym
-
-        ProductGroups(String name, String acronym) {
-            this.name = name
-            this.acronym = acronym
-        }
-
-        String getName() {
-            return this.name
-        }
-
-        String getAcronym() {
-            return this.acronym
-        }
-    }
     /**
      * Product group mapping
      *
@@ -102,6 +76,34 @@ class QuotationDetails {
 
     private double calculateNet(){
         return 0
+    }
+
+    /**
+     * Possible product groups
+     *
+     * This enum describes the product groups into which the products of an offer are listed.
+     * It also defines the acronyms used to abbreviate the product groups in the offer listings.
+     */
+    enum ProductGroups {
+        DATA_GENERATION("Data generation", "DG"),
+        DATA_ANALYSIS("Data analysis", "DA"),
+        PROJECT_AND_DATA_MANAGEMENT("Project management & data storage", "PM & DS")
+
+        private String name
+        private String acronym
+
+        ProductGroups(String name, String acronym) {
+            this.name = name
+            this.acronym = acronym
+        }
+
+        String getName() {
+            return this.name
+        }
+
+        String getAcronym() {
+            return this.acronym
+        }
     }
 
 }
