@@ -215,10 +215,7 @@ class QuotationDetails {
     }
 
     private static int calculateItemSpace(String productProperty, ProductPropertySpacing productPropertySpacing) {
-        int itemSpace = 0
-        //Helper method to calculate the itemSpace necessary for each column
-        itemSpace = (int) itemSpace + Math.ceil(productProperty.length() / productPropertySpacing.getCharsLineLimit())
-        return itemSpace
+        return Math.ceil(productProperty.length() / productPropertySpacing.getCharsLineLimit())
     }
 
     private void addTotalPrices() {
