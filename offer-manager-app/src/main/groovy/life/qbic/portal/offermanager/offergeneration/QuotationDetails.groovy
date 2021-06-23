@@ -51,7 +51,6 @@ class QuotationDetails {
      */
     private final Map<ProductGroups, List> productGroupClasses = setProductGroupMapping()
 
-
     private List<ProductItem> dataGenerationItems
 
     private List<ProductItem> dataAnalysisItems
@@ -76,35 +75,7 @@ class QuotationDetails {
         clearUnusedProductGroupInformation()
     }
 
-
-    /**
-     * Max number of characters before line breaks in a property column in the productItem table
-     *
-     * This enum stores the maximum number of characters before a line breaks occurs in product property column in the productItem table
-     */
-    enum ProductPropertySpacing {
-        PRODUCT_NAME(33),
-        PRODUCT_DESCRIPTION(62),
-        PRODUCT_UNIT(15),
-        PRODUCT_UNIT_PRICE(15),
-        PRODUCT_AMOUNT(8),
-        PRODUCT_TOTAL(15)
-
-
-        private int charsLineLimit
-
-        ProductPropertySpacing(int charsLineLimit) {
-            this.charsLineLimit = charsLineLimit
-        }
-
-        int getCharsLineLimit() {
-            return this.charsLineLimit
-        }
-
-    }
-
     private void setSelectedItems() {
-
         //Group ProductItems into Data Generation Data Analysis and Data & Project Management Categories
 
         // Let's clear the existing item template content first
@@ -117,19 +88,17 @@ class QuotationDetails {
         tableCount = 1
         pageItemsCount = 3
 
-
         //Generate Product Table for each Category
         generateProductTable(dataGenerationItems, ProductGroups.DATA_GENERATION)
         generateProductTable(dataAnalysisItems, ProductGroups.DATA_ANALYSIS)
         generateProductTable(dataManagementItems, ProductGroups.PROJECT_AND_DATA_MANAGEMENT)
 
         //Append total cost footer
-        String elementId = "product-items" + "-" + tableCount
-        if (pageItemsCount > maxPageItems) {
+        String elementId = generateElementID(tableCount)
+        if (isOverflowingPage()) {
             //If currentTable is filled with Items generate new one and add total pricing there
-            ++tableCount
             htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
-            elementId = "product-items" + "-" + tableCount
+            elementId =
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
             htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
         }
@@ -142,47 +111,58 @@ class QuotationDetails {
     private void generateProductTable(List<ProductItem> items, ProductGroups productGroup) {
         // Create the items in html in the overview table
         //Check if there are ProductItems stored in list
-        if (items) {
-            //Each Title will take spacing in the generated table
-            pageItemsCount++
-            def elementId = "product-items" + "-" + tableCount
-            if (pageItemsCount > maxPageItems) {
-                //Start new table on next page
-                ++tableCount
-                htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
-                elementId = "product-items" + "-" + tableCount
-                htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
-                pageItemsCount = 1
-            }
-            //Append Table Title and Header
-            htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
-            pageItemsCount++
-            htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
-            items.each { ProductItem item ->
-                itemNumber++
-                if (pageItemsCount > maxPageItems) {
-                    ++tableCount
-                    htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
-                    elementId = "product-items" + "-" + tableCount
-                    htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
-                    htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
-                    pageItemsCount = 1
-                }
-                //add product to current table
-                htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
-                int itemSpace = determineItemSpace(item)
-                pageItemsCount = pageItemsCount + itemSpace
-            }
-            //add subtotal footer to table
-            pageItemsCount = pageItemsCount + 2
-            htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
+        if (!items) return
+        //Each Title will take spacing in the generated table
+        def elementId = generateElementID(tableCount) //todo can this be improved? its the same call always with the appended tablecount
 
-            // Update footer Prices
-            setSubTotalPrices(productGroup, items)
+        if (isOverflowingPage()) {
+            generateHTMLTableOnNextPage(elementId)
+            resetPageItemsCount()
         }
+        //Append Table Title and Header
+        htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
+        htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
+
+        items.each { ProductItem item ->
+            generateItemContent(item, elementId)
+        }
+        //account for spaces of added table elements, footer, totals,...
+        pageItemsCount += 4
+        htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
+
+        // Update footer Prices
+        addSubTotalPrices(productGroup, items)
     }
 
-    private void setSubTotalPrices(ProductGroups productGroup, List<ProductItem> productItems) {
+    private void generateItemContent(ProductItem item, String elementId){
+        itemNumber++
+        if (isOverflowingPage()) {
+            generateHTMLTableOnNextPage(elementId)
+            //repeat table header for next page
+            htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
+            resetPageItemsCount()
+        }
+
+        //add product to current table
+        htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
+        pageItemsCount += determineItemSpace(item)
+    }
+
+    private static String generateElementID(int tableCount){ return "product-items" + "-" + ++tableCount}
+
+    private void resetPageItemsCount(){ pageItemsCount = 1}
+
+    private void generateHTMLTableOnNextPage(String elementId){
+        htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
+        elementId = "product-items" + "-" + ++tableCount
+        htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
+    }
+
+    private boolean isOverflowingPage() {
+        return pageItemsCount > maxPageItems
+    }
+
+    private void addSubTotalPrices(ProductGroups productGroup, List<ProductItem> productItems) {
 
         double netSum = calculateNetSum(productItems)
         final netPrice = Currency.getFormatterWithoutSymbol().format(netSum)
@@ -268,13 +248,13 @@ class QuotationDetails {
     }
 
     void clearUnusedProductGroupInformation() {
-        if(dataGenerationItems.isEmpty()){
+        if (dataGenerationItems.isEmpty()) {
             htmlContent.getElementById("${ProductGroups.DATA_GENERATION}-sub-overhead").remove()
         }
-        if(dataAnalysisItems.isEmpty()){
+        if (dataAnalysisItems.isEmpty()) {
             htmlContent.getElementById("${ProductGroups.DATA_ANALYSIS}-sub-overhead").remove()
         }
-        if(dataManagementItems.isEmpty()){
+        if (dataManagementItems.isEmpty()) {
             htmlContent.getElementById("${ProductGroups.PROJECT_AND_DATA_MANAGEMENT}-sub-overhead").remove()
         }
     }
@@ -334,6 +314,31 @@ class QuotationDetails {
 
         String getAcronym() {
             return this.acronym
+        }
+    }
+
+    /**
+     * Max number of characters before line breaks in a property column in the productItem table
+     *
+     * This enum stores the maximum number of characters before a line breaks occurs in product property column in the productItem table
+     */
+    enum ProductPropertySpacing {
+        PRODUCT_NAME(33),
+        PRODUCT_DESCRIPTION(62),
+        PRODUCT_UNIT(15),
+        PRODUCT_UNIT_PRICE(15),
+        PRODUCT_AMOUNT(8),
+        PRODUCT_TOTAL(15)
+
+
+        private int charsLineLimit
+
+        ProductPropertySpacing(int charsLineLimit) {
+            this.charsLineLimit = charsLineLimit
+        }
+
+        int getCharsLineLimit() {
+            return this.charsLineLimit
         }
     }
 
