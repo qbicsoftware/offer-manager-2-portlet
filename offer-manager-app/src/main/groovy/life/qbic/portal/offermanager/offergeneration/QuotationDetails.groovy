@@ -73,6 +73,7 @@ class QuotationDetails {
         setTaxationRatioInSummary()
         //3. add page spacing
         setSelectedItems()
+        clearUnusedProductGroupInformation()
     }
 
 
@@ -138,21 +139,6 @@ class QuotationDetails {
         htmlContent.getElementById("item-table-grid").after(element)
     }
 
-    private void setSubTotalPrices(ProductGroups productGroup, List<ProductItem> productItems) {
-
-        double netSum = calculateNetSum(productItems)
-        final netPrice = Currency.getFormatterWithoutSymbol().format(netSum)
-        htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
-    }
-
-    private static double calculateNetSum(List<ProductItem> productItems) {
-        double netSum = 0
-        productItems.each {
-            netSum += it.quantity * it.product.unitPrice
-        }
-        return netSum
-    }
-
     private void generateProductTable(List<ProductItem> items, ProductGroups productGroup) {
         // Create the items in html in the overview table
         //Check if there are ProductItems stored in list
@@ -194,6 +180,21 @@ class QuotationDetails {
             // Update footer Prices
             setSubTotalPrices(productGroup, items)
         }
+    }
+
+    private void setSubTotalPrices(ProductGroups productGroup, List<ProductItem> productItems) {
+
+        double netSum = calculateNetSum(productItems)
+        final netPrice = Currency.getFormatterWithoutSymbol().format(netSum)
+        htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
+    }
+
+    private static double calculateNetSum(List<ProductItem> productItems) {
+        double netSum = 0
+        productItems.each {
+            netSum += it.quantity * it.product.unitPrice
+        }
+        return netSum
     }
 
     private static int determineItemSpace(ProductItem item) {
@@ -264,6 +265,18 @@ class QuotationDetails {
         String taxPercentage = decimalFormat.format(taxRatio)
 
         htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
+    }
+
+    void clearUnusedProductGroupInformation() {
+        if(dataGenerationItems.isEmpty()){
+            htmlContent.getElementById("${ProductGroups.DATA_GENERATION}-sub-overhead").remove()
+        }
+        if(dataAnalysisItems.isEmpty()){
+            htmlContent.getElementById("${ProductGroups.DATA_ANALYSIS}-sub-overhead").remove()
+        }
+        if(dataManagementItems.isEmpty()){
+            htmlContent.getElementById("${ProductGroups.PROJECT_AND_DATA_MANAGEMENT}-sub-overhead").remove()
+        }
     }
 
     private void groupProductItems(List<ProductItem> offerItems) {
