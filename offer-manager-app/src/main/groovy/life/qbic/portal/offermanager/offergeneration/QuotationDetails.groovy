@@ -4,14 +4,7 @@ import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Currency
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.ProteomicAnalysis
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Sequencing
+import life.qbic.datamodel.dtos.business.services.*
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -28,9 +21,8 @@ import java.text.DecimalFormat
  * Furthermore: This class stores fixed ids (such as QuotationOverview) to quickly access e.g. total costs,....
  * Also it returns the HTML elements for tables, product group headings,..</p>
  *
- * @since 1.1.0
- *
-*/
+ * @since 1.1.0*
+ */
 class QuotationDetails {
 
     /**
@@ -66,7 +58,7 @@ class QuotationDetails {
 
     private List<ProductItem> dataManagementItems
 
-    QuotationDetails(Document htmlContent, Offer offer){
+    QuotationDetails(Document htmlContent, Offer offer) {
         this.offer = Objects.requireNonNull(offer, "offer object must not be a null reference")
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
         this.offerEntity = Converter.convertDTOToOffer(offer)
@@ -74,7 +66,7 @@ class QuotationDetails {
         groupProductItems(offer.items)
     }
 
-    void fillTemplateWithQuotationDetailsContent(){
+    void fillTemplateWithQuotationDetailsContent() {
         //2. calculate net prices
         // add final prices
         addTotalPrices()
@@ -164,45 +156,45 @@ class QuotationDetails {
 
     private void generateProductTable(List<ProductItem> items, ProductGroups productGroup) {
         // Create the items in html in the overview table
-            //Check if there are ProductItems stored in map entry
-            if(items){
-                //Each Title will take spacing in the generated table
-                pageItemsCount++
-                def elementId = "product-items" + "-" + tableCount
+        //Check if there are ProductItems stored in map entry
+        if (items) {
+            //Each Title will take spacing in the generated table
+            pageItemsCount++
+            def elementId = "product-items" + "-" + tableCount
+            if (pageItemsCount > maxPageItems) {
+                //Start new table on next page
+                ++tableCount
+                htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
+                elementId = "product-items" + "-" + tableCount
+                htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
+                pageItemsCount = 1
+            }
+            //Append Table Title and Header
+            htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
+            pageItemsCount++
+            htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
+            items.each { ProductItem item ->
+                itemNumber++
                 if (pageItemsCount > maxPageItems) {
-                    //Start new table on next page
                     ++tableCount
                     htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
                     elementId = "product-items" + "-" + tableCount
                     htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
+                    htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
                     pageItemsCount = 1
                 }
-                //Append Table Title and Header
-                htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
-                pageItemsCount++
-                htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
-                items.each{ProductItem item ->
-                    itemNumber++
-                    if (pageItemsCount > maxPageItems) {
-                        ++tableCount
-                        htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
-                        elementId = "product-items" + "-" + tableCount
-                        htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
-                        htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
-                        pageItemsCount = 1
-                    }
-                    //add product to current table
-                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
-                    int itemSpace = determineItemSpace(item)
-                    pageItemsCount = pageItemsCount + itemSpace
-                }
-                //add subtotal footer to table
-                pageItemsCount = pageItemsCount + 2
-                htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
-
-                // Update footer Prices
-                setSubTotalPrices(productGroup, items)
+                //add product to current table
+                htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
+                int itemSpace = determineItemSpace(item)
+                pageItemsCount = pageItemsCount + itemSpace
             }
+            //add subtotal footer to table
+            pageItemsCount = pageItemsCount + 2
+            htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
+
+            // Update footer Prices
+            setSubTotalPrices(productGroup, items)
+        }
     }
 
     private static int determineItemSpace(ProductItem item) {
@@ -222,7 +214,7 @@ class QuotationDetails {
         return calculatedSpaces.max()
     }
 
-    private static int calculateItemSpace(String productProperty, ProductPropertySpacing productPropertySpacing){
+    private static int calculateItemSpace(String productProperty, ProductPropertySpacing productPropertySpacing) {
         int itemSpace = 0
         //Helper method to calculate the itemSpace necessary for each column
         itemSpace = (int) itemSpace + Math.ceil(productProperty.length() / productPropertySpacing.getCharsLineLimit())
@@ -278,7 +270,7 @@ class QuotationDetails {
         htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
     }
 
-    private void groupProductItems(List<ProductItem> offerItems){
+    private void groupProductItems(List<ProductItem> offerItems) {
 
         dataGenerationItems = []
         dataAnalysisItems = []
@@ -299,7 +291,7 @@ class QuotationDetails {
         }
     }
 
-    private static HashMap<ProductGroups,List> setProductGroupMapping() {
+    private static HashMap<ProductGroups, List> setProductGroupMapping() {
         Map<ProductGroups, List> map = [:]
         map[ProductGroups.DATA_GENERATION] = [Sequencing, ProteomicAnalysis, MetabolomicAnalysis]
         map[ProductGroups.DATA_ANALYSIS] = [PrimaryAnalysis, SecondaryAnalysis]
@@ -381,9 +373,9 @@ class QuotationDetails {
             """
         }
 
-        static String tableTitle(ProductGroups productGroup){
+        static String tableTitle(ProductGroups productGroup) {
 
-            String tableTitle= productGroup.getName()
+            String tableTitle = productGroup.getName()
             String tableTitleAcronym = productGroup.getAcronym()
 
             return """<div class = "small-spacer"</div>
@@ -391,7 +383,7 @@ class QuotationDetails {
                    """
         }
 
-        static String subTableFooter(ProductGroups productGroup){
+        static String subTableFooter(ProductGroups productGroup) {
             //Each footer takes up spacing in the current table
             String footerTitle = productGroup.getAcronym()
             return """<div id="grid-sub-total-footer-${tableCount}" class="grid-sub-total-footer">
