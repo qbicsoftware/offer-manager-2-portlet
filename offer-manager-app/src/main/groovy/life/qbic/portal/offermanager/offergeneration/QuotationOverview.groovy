@@ -8,6 +8,8 @@ import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import org.jsoup.nodes.Document
+
+import java.text.DateFormat
 import java.text.DecimalFormat
 
 /**
@@ -22,7 +24,7 @@ import java.text.DecimalFormat
 */
 class QuotationOverview {
 
-    private Document htmlContent
+    private final Document htmlContent
     private Offer offer
     private life.qbic.business.offers.Offer offerEntity
 
@@ -30,15 +32,16 @@ class QuotationOverview {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
         this.offerEntity = Converter.convertDTOToOffer(offer)
-        fillTemplateWithOfferContent()
+        fillTemplateWithQuotationOverviewContent()
     }
 
-    void fillTemplateWithOfferContent() {
+    void fillTemplateWithQuotationOverviewContent() {
         setProjectInformation()
         setCustomerInformation()
         setManagerInformation()
         setPriceOverview()
         setTaxationStatement()
+        setQuotationDetails()
     }
 
     private void setProjectInformation() {
@@ -88,7 +91,7 @@ class QuotationOverview {
         DecimalFormat decimalFormat = new DecimalFormat("#%")
         String overheadPercentage = decimalFormat.format(offer.overheadRatio)
 
-        double taxRatio = determineTaxCost()
+        double taxRatio = offerEntity.determineTaxCost()
         String taxPercentage = decimalFormat.format(taxRatio)
 
         htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
@@ -101,24 +104,19 @@ class QuotationOverview {
         htmlContent.getElementById("total-costs-sum").text(totalPriceWithSymbol)
     }
 
-    // Apply VAT only if the offer originated from Germany and it's affilation category is non-internal
-    private double determineTaxCost() {
-        return isVatCountry() && !isNoVatAffiliation() ? offerEntity.VAT : 0.0
+    private void setQuotationDetails() {
+        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.US)
+
+        htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
+        htmlContent.getElementById("offer-expiry-date").text(offer.expirationDate.toLocalDate().toString())
+        htmlContent.getElementById("offer-date").text(dateFormat.format(offer.modificationDate))
     }
 
+
     private void setTaxationStatement() {
-        if (!isVatCountry()) {
+        if (!offerEntity.isVatCountry()) {
             htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${offerEntity.getCountryWithVat()}.")
         }
     }
 
-    private boolean isVatCountry(){
-        offerEntity.overheadRatio
-        return offer.getSelectedCustomerAffiliation().getCountry() == offerEntity.getCountryWithVat()
-
-    }
-
-    private boolean isNoVatAffiliation(){
-        return offer.getSelectedCustomerAffiliation().getCategory() == offerEntity.getNoVatCategory()
-    }
 }

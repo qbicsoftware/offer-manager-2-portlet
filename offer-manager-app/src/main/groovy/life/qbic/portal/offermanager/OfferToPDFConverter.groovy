@@ -5,6 +5,8 @@ import life.qbic.business.offers.Currency
 import life.qbic.business.offers.OfferExporter
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.*
+import life.qbic.portal.offermanager.offergeneration.OfferHTMLDocument
+import life.qbic.portal.offermanager.offergeneration.QuotationDetails
 import life.qbic.portal.offermanager.offergeneration.QuotationOverview
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -194,14 +196,13 @@ class OfferToPDFConverter implements OfferExporter {
 
     private void fillTemplateWithOfferContent() {
 
-        QuotationOverview overview = new QuotationOverview(htmlContent,offer)
-        overview.fillTemplateWithOfferContent()
-        setProductGroupMapping()
+        OfferHTMLDocument htmlDocument = new OfferHTMLDocument(htmlContent,offer)
+        htmlDocument.fillTemplateWithOfferContent()
+
         setSelectedItems()
-        setTotalPrices()
-        setTaxationRatioInSummary()
-        setQuotationDetails()
-        clearUnusedProductGroupInformation()
+        //setTotalPrices()
+        //setTaxationRatioInSummary()
+        //clearUnusedProductGroupInformation()
     }
 
     private void generatePDF() {
@@ -209,12 +210,6 @@ class OfferToPDFConverter implements OfferExporter {
         pdfPrinter.print(createdOfferPdf)
     }
 
-    void setProductGroupMapping() {
-
-        productGroupClasses[ProductGroups.DATA_GENERATION] = [Sequencing, ProteomicAnalysis, MetabolomicAnalysis]
-        productGroupClasses[ProductGroups.DATA_ANALYSIS] = [PrimaryAnalysis, SecondaryAnalysis]
-        productGroupClasses[ProductGroups.PROJECT_AND_DATA_MANAGEMENT] = [ProjectManagement, DataStorage]
-    }
 
     void setSelectedItems() {
 

@@ -18,32 +18,39 @@ import life.qbic.datamodel.dtos.business.*
 */
 class OfferHTMLDocument {
 
-
-    private final Document htmlContent
-
-    private final Offer offer
-
     QuotationOverview quotationOverview
-
     QuotationDetails quotationDetails
 
     OfferHTMLDocument(Document templateHTML, Offer offer){
-        this.htmlContent = Objects.requireNonNull(templateHTML, "htmlContent object must not be a null reference")
-        this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
-        fillTemplateWithOfferContent()
+        quotationOverview = new QuotationOverview(templateHTML, offer)
+        quotationDetails = new QuotationDetails(templateHTML, offer)
+
+        //fillTemplateWithOfferContent()
     }
 
     /**
      * Fills the html template document with the offers content and returns
      * the final offer html
      * @param offer The offer object containing the required offer information
-     * @return the final offer html
      */
-    Document fillTemplateWithOfferContent(){
+    void fillTemplateWithOfferContent(){
+        quotationOverview.fillTemplateWithQuotationOverviewContent()
+        quotationDetails.fillTemplateWithQuotationDetailsContent()
+    }
 
-        quotationOverview = new QuotationOverview(htmlContent, offer)
-        quotationDetails = new QuotationDetails(htmlContent, offer.items)
-        return htmlContent
+
+    // Apply VAT only if the offer originated from Germany and it's affilation category is non-internal
+    private double determineTaxCost() {
+        return isVatCountry() && !isNoVatAffiliation() ? offerEntity.VAT : 0.0
+    }
+
+    private boolean isVatCountry(){
+        return offer.getSelectedCustomerAffiliation().getCountry() == offerEntity.getCountryWithVat()
+
+    }
+
+    private boolean isNoVatAffiliation(){
+        return offer.getSelectedCustomerAffiliation().getCategory() == offerEntity.getNoVatCategory()
     }
 
 

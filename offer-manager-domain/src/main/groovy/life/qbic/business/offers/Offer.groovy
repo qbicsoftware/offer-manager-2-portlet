@@ -478,6 +478,32 @@ class Offer {
         return netPrice + overhead + getTaxCosts()
     }
 
+
+    /**
+     * Calculates the VAT costs of an offer depending on the customers affiliation country and category
+     * @return the vat costs for an offer
+     */
+    double determineTaxCost() {
+        return isVatCountry() && !isNoVatAffiliation() ? VAT : 0.0
+    }
+
+    /**
+     * Determines if the customers affiliation is within germany
+     * @return true if the country of the customer is within
+     */
+    boolean isVatCountry(){
+        return selectedCustomerAffiliation.getCountry() == countryWithVat
+
+    }
+
+    /**
+     * Determines if the customers affiliation is excluded for VAT
+     * @return true if the affiliation category of the customer is internal
+     */
+    private boolean isNoVatAffiliation(){
+        return selectedCustomerAffiliation.getCategory() == noVatCategory
+    }
+
     /**
      * Returns the latest available version for an offer.
      *
