@@ -145,7 +145,7 @@ class QuotationDetails {
         htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
     }
 
-    private double calculateNetSum(List<ProductItem> productItems) {
+    private static double calculateNetSum(List<ProductItem> productItems) {
         double netSum = 0
         productItems.each {
             netSum += it.quantity * it.product.unitPrice
