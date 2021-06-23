@@ -153,10 +153,9 @@ class QuotationDetails {
         return netSum
     }
 
-
     private void generateProductTable(List<ProductItem> items, ProductGroups productGroup) {
         // Create the items in html in the overview table
-        //Check if there are ProductItems stored in map entry
+        //Check if there are ProductItems stored in list
         if (items) {
             //Each Title will take spacing in the generated table
             pageItemsCount++
