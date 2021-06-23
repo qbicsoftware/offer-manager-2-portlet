@@ -1,22 +1,19 @@
 package life.qbic.portal.offermanager
 
 import groovy.util.logging.Log4j2
-import life.qbic.business.offers.Currency
+
 import life.qbic.business.offers.OfferExporter
 import life.qbic.datamodel.dtos.business.*
-import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.portal.offermanager.offergeneration.OfferHTMLDocument
-import life.qbic.portal.offermanager.offergeneration.QuotationDetails
-import life.qbic.portal.offermanager.offergeneration.QuotationOverview
+
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
 import org.jsoup.parser.Parser
+
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-import java.text.DateFormat
-import java.text.DecimalFormat
+
 import java.util.concurrent.TimeUnit
 
 /**
@@ -41,16 +38,6 @@ class OfferToPDFConverter implements OfferExporter {
      * line.
      */
     static final CHROMIUM_EXECUTABLE = "CHROMIUM_EXECUTABLE"
-
-    /**
-     * Variable used to count the number of Items added to a page
-     */
-    private static int pageItemsCount
-
-    /**
-     * Variable used to count the number of generated productTables in the Offer PDF
-     */
-    private static int tableCount
 
     private final Offer offer
 
@@ -79,89 +66,6 @@ class OfferToPDFConverter implements OfferExporter {
                     .getResource("offer-template/stylesheet.css")
                     .toURI())
 
-    /**
-     * Holds the current VAT rate
-     */
-    private static final double VAT = 0.19
-
-    /**
-     * Holds the Country for which the current VAT rate is applicable
-     */
-    private static final String countryWithVAT = "Germany"
-
-    /**
-     * AffiliationCategory for which no tax cost is applied
-     */
-    private static final AffiliationCategory noVatCategory = AffiliationCategory.INTERNAL
-
-    /**
-     * Possible product groups
-     *
-     * This enum describes the product groups into which the products of an offer are listed.
-     * It also defines the acronyms used to abbreviate the product groups in the offer listings.
-     */
-    enum ProductGroups {
-        DATA_GENERATION("Data generation", "DG"),
-        DATA_ANALYSIS("Data analysis", "DA"),
-        PROJECT_AND_DATA_MANAGEMENT("Project management and data storage", "PM & DS")
-
-        private String name
-        private String acronym
-
-        ProductGroups(String name, String acronym) {
-            this.name = name
-            this.acronym = acronym
-        }
-
-        String getName() {
-            return this.name
-        }
-
-        String getAcronym() {
-            return this.acronym
-        }
-    }
-    /**
-     * Product group mapping
-     *
-     * This map represents the grouping of the different product categories in the offer pdf
-     *
-     */
-    private final Map<ProductGroups, List> productGroupClasses = [:]
-
-    /**
-     * Map ProductItems to Productgroup
-     *
-     * This map represents the grouping of the productItems in the offer to the productGroupClasses
-     *
-     */
-    private Map<ProductGroups, List<ProductItem>> productItemsMap = [:]
-
-    /**
-     * Max number of characters before line breaks in a property column in the productItem table
-     *
-     * This enum stores the maximum number of characters before a line breaks occurs in product property column in the productItem table
-     */
-    enum ProductPropertySpacing {
-        PRODUCT_NAME(33),
-        PRODUCT_DESCRIPTION(62),
-        PRODUCT_UNIT(15),
-        PRODUCT_UNIT_PRICE(15),
-        PRODUCT_AMOUNT(8),
-        PRODUCT_TOTAL(15)
-
-
-        private int charsLineLimit
-
-        ProductPropertySpacing(int charsLineLimit) {
-            this.charsLineLimit = charsLineLimit
-        }
-
-        int getCharsLineLimit() {
-            return this.charsLineLimit
-        }
-
-    }
 
     OfferToPDFConverter(Offer offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
@@ -195,14 +99,8 @@ class OfferToPDFConverter implements OfferExporter {
     }
 
     private void fillTemplateWithOfferContent() {
-
-        OfferHTMLDocument htmlDocument = new OfferHTMLDocument(htmlContent,offer)
+        OfferHTMLDocument htmlDocument = new OfferHTMLDocument(htmlContent, offer)
         htmlDocument.fillTemplateWithOfferContent()
-
-        setSelectedItems()
-        //setTotalPrices()
-        //setTaxationRatioInSummary()
-        //clearUnusedProductGroupInformation()
     }
 
     private void generatePDF() {
@@ -210,247 +108,6 @@ class OfferToPDFConverter implements OfferExporter {
         pdfPrinter.print(createdOfferPdf)
     }
 
-
-    void setSelectedItems() {
-
-        //Group ProductItems into Data Generation Data Analysis and Data & Project Management Categories
-
-        // Let's clear the existing item template content first
-        htmlContent.getElementById("product-items-1").empty()
-        htmlContent.getElementById("product-items-2").empty()
-        //We also need to remove the page break between the tables in the template
-        htmlContent.getElementById("template-page-break").remove()
-
-        //Initialize Number of table
-        tableCount = 1
-        pageItemsCount = 3
-        //The maximum number of items per page
-        int maxPageItems = 25
-
-        groupItems(offer.items)
-        //Generate Product Table for each Category
-        generateProductTable(productItemsMap, maxPageItems)
-        //Append total cost footer
-        String elementId = "product-items" + "-" + tableCount
-        if (pageItemsCount > maxPageItems) {
-            //If currentTable is filled with Items generate new one and add total pricing there
-            ++tableCount
-            htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
-            elementId = "product-items" + "-" + tableCount
-            htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
-            htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
-        }
-            //Add total pricing information to grid-table-footer div in template
-            Element element = htmlContent.getElementById("grid-table-footer")
-            //Move template footer div after item-table-grid
-            htmlContent.getElementById("item-table-grid").after(element)
-    }
-
-    void setTaxationRatioInSummary() {
-        DecimalFormat decimalFormat = new DecimalFormat("#%")
-        String country = offer.getSelectedCustomerAffiliation().getCountry()
-        AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory()
-        double taxRatio = determineTaxCost(country, affiliationCategory)
-        String taxPercentage = decimalFormat.format(taxRatio)
-        htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
-    }
-
-    // Apply VAT only if the offer originated from Germany and it's affilation category is non-internal
-    static double determineTaxCost(String country, AffiliationCategory category) {
-        if (country.equals(countryWithVAT) && !category.equals(noVatCategory)) {
-            return VAT
-        }
-        return 0
-    }
-
-    void setSubTotalPrices(ProductGroups productGroup, List<ProductItem> productItems) {
-
-        double netSum = calculateNetSum(productItems)
-        final netPrice = Currency.getFormatterWithoutSymbol().format(netSum)
-        htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
-    }
-
-    double calculateOverheadSum(List<ProductItem> productItems) {
-        double overheadSum
-        productItems.each {
-                overheadSum += it.quantity * it.product.unitPrice * offer.overheadRatio
-        }
-        return overheadSum
-    }
-
-    void setTotalPrices() {
-
-        DecimalFormat decimalFormat = new DecimalFormat("#%")
-        String overheadPercentage = decimalFormat.format(offer.overheadRatio)
-
-        // Get prices without currency symbol for detailed price listing
-        final overheadPrice = Currency.getFormatterWithoutSymbol().format(offer.overheads)
-        final netPrice = Currency.getFormatterWithoutSymbol().format(offer.netPrice)
-        final taxesPrice = Currency.getFormatterWithoutSymbol().format(offer.taxes)
-        final totalPrice = Currency.getFormatterWithoutSymbol().format(offer.totalPrice)
-
-        final overheadDataGenerationPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(productItemsMap[ProductGroups.DATA_GENERATION]))
-        final overheadDataAnalysisPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(productItemsMap[ProductGroups.DATA_ANALYSIS]))
-        final overheadDataManagementPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(productItemsMap[ProductGroups.PROJECT_AND_DATA_MANAGEMENT]))
-
-        double taxRatio = determineTaxCost(offer.getSelectedCustomerAffiliation().country, offer.getSelectedCustomerAffiliation().getCategory())
-        String taxPercentage = decimalFormat.format(taxRatio)
-
-        // Set overhead cost values
-        htmlContent.getElementById("overhead-percentage-value").text("Overheads (${overheadPercentage})")
-        htmlContent.getElementById("DATA_GENERATION-overhead-costs-value").text(overheadDataGenerationPrice)
-        htmlContent.getElementById("DATA_ANALYSIS-overhead-costs-value").text(overheadDataAnalysisPrice)
-        htmlContent.getElementById("PROJECT_AND_DATA_MANAGEMENT-overhead-costs-value").text(overheadDataManagementPrice)
-        htmlContent.getElementById("overhead-cost-value").text(overheadPrice)
-        //Set vat, net and total cost value
-        htmlContent.getElementById("total-cost-value-net").text(netPrice)
-        htmlContent.getElementById("vat-percentage-value").text("VAT (${taxPercentage}):")
-        htmlContent.getElementById("vat-cost-value").text(taxesPrice)
-        htmlContent.getElementById("final-cost-value").text(totalPrice)
-
-    }
-
-    void setQuotationDetails() {
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.US)
-
-        htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
-        htmlContent.getElementById("offer-expiry-date").text(offer.expirationDate.toLocalDate().toString())
-        htmlContent.getElementById("offer-date").text(dateFormat.format(offer.modificationDate))
-    }
-
-    double calculateNetSum(List<ProductItem> productItems) {
-        double netSum = 0
-        productItems.each {
-            netSum += it.quantity * it.product.unitPrice
-        }
-        return netSum
-    }
-
-    void groupItems(List<ProductItem> productItems) {
-
-        List<ProductItem> dataGenerationItems = []
-        List<ProductItem> dataAnalysisItems = []
-        //Project Management and Data Storage are grouped in the same category in the final Offer PDF
-        List<ProductItem> dataManagementItems = []
-
-        // Sort ProductItems into "DataGeneration", "Data Analysis" and "Project & Data Management"
-        productItems.each {
-            if (it.product.class in productGroupClasses[ProductGroups.DATA_GENERATION]) {
-                dataGenerationItems.add(it)
-            }
-            if (it.product.class in productGroupClasses[ProductGroups.DATA_ANALYSIS]) {
-                dataAnalysisItems.add(it)
-            }
-            if (it.product.class in productGroupClasses[ProductGroups.PROJECT_AND_DATA_MANAGEMENT]) {
-                dataManagementItems.add(it)
-            }
-        }
-
-            //Map Lists to the "DataGeneration", "DataAnalysis" and "Project and Data Management"
-            productItemsMap[ProductGroups.DATA_GENERATION] = dataGenerationItems
-            productItemsMap[ProductGroups.DATA_ANALYSIS] = dataAnalysisItems
-            productItemsMap[ProductGroups.PROJECT_AND_DATA_MANAGEMENT] = dataManagementItems
-
-        }
-
-    void generateProductTable(Map productItemsMap, int maxTableItems) {
-        // Create the items in html in the overview table
-        int itemNumber = 0
-        productItemsMap.each { ProductGroups productGroup, List<ProductItem> items ->
-            //Check if there are ProductItems stored in map entry
-            if(items){
-                //Each Title will take spacing in the generated table
-                pageItemsCount++
-                def elementId = "product-items" + "-" + tableCount
-                if (pageItemsCount > maxTableItems) {
-                    //Start new table on next page
-                    ++tableCount
-                    htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
-                    elementId = "product-items" + "-" + tableCount
-                    htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
-                    pageItemsCount = 1
-                }
-                //Append Table Title and Header
-                htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
-                pageItemsCount++
-                htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
-                items.each{ProductItem item ->
-                    itemNumber++
-                    if (pageItemsCount > maxTableItems) {
-                        ++tableCount
-                        htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
-                        elementId = "product-items" + "-" + tableCount
-                        htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
-                        htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
-                        pageItemsCount = 1
-                    }
-                    //add product to current table
-                    htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
-                    int itemSpace = determineItemSpace(item)
-                    pageItemsCount = pageItemsCount + itemSpace
-                }
-                //add subtotal footer to table
-                htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
-
-                // Update footer Prices
-                setSubTotalPrices(productGroup, items)
-            }
-        }
-    }
-
-    void clearUnusedProductGroupInformation() {
-
-        boolean dataGenerationItemsExists = true
-        boolean dataAnalysisItemsExists = true
-        boolean dataManagementItemsExists = true
-        //Remove overhead cost listing of productGroup from grid-table-footer if an offer has no items associated with a productGroup
-        productItemsMap.each { ProductGroups key, List<ProductItem> value ->
-            if (value.empty) {
-                switch (key) {
-                    case ProductGroups.DATA_GENERATION:
-                        dataGenerationItemsExists= false
-                        htmlContent.getElementById("${key.toString()}-sub-overhead").remove()
-                        break
-                    case ProductGroups.DATA_ANALYSIS:
-                        dataAnalysisItemsExists = false
-                        htmlContent.getElementById("${key.toString()}-sub-overhead").remove()
-                        break
-                    case ProductGroups.PROJECT_AND_DATA_MANAGEMENT:
-                        dataManagementItemsExists = false
-                        htmlContent.getElementById("${key.toString()}-sub-overhead").remove()
-                        break
-                    default:
-                        log.error("Unclassified ProductGroup found")
-                        break
-                }
-            }
-
-        }
-    }
-
-    private static int determineItemSpace(ProductItem item) {
-
-        ArrayList<Integer> calculatedSpaces = []
-
-        Product product = item.product
-        String productTotalCost = item.quantity * item.product.unitPrice
-
-        //Determine amount of spacing necessary from highest itemSpace value of all columns
-        calculatedSpaces.add(calculateItemSpace(product.productName, ProductPropertySpacing.PRODUCT_NAME))
-        calculatedSpaces.add(calculateItemSpace(product.description, ProductPropertySpacing.PRODUCT_DESCRIPTION))
-        calculatedSpaces.add(calculateItemSpace(item.quantity as String, ProductPropertySpacing.PRODUCT_AMOUNT))
-        calculatedSpaces.add(calculateItemSpace(product.unit as String, ProductPropertySpacing.PRODUCT_UNIT))
-        calculatedSpaces.add(calculateItemSpace(product.unitPrice as String, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
-        calculatedSpaces.add(calculateItemSpace(productTotalCost, ProductPropertySpacing.PRODUCT_TOTAL))
-        return calculatedSpaces.max()
-    }
-
-    private static int calculateItemSpace(String productProperty, ProductPropertySpacing productPropertySpacing){
-        int itemSpace = 0
-        //Helper method to calculate the itemSpace necessary for each column
-        itemSpace = (int) itemSpace + Math.ceil(productProperty.length() / productPropertySpacing.getCharsLineLimit())
-        return itemSpace
-    }
     /**
      * Small helper class to handle the HTML to PDF conversion.
      */
@@ -485,80 +142,10 @@ class OfferToPDFConverter implements OfferExporter {
             builder.redirectErrorStream(true)
             Process process = builder.start()
             process.waitFor(10, TimeUnit.SECONDS)
-            process.getInputStream().eachLine {log.info(it)}
-            if (! new File(output.toString()).exists()) {
+            process.getInputStream().eachLine { log.info(it) }
+            if (!new File(output.toString()).exists()) {
                 throw new RuntimeException("Offer PDF has not been generated.")
             }
-        }
-    }
-
-    private static class ItemPrintout {
-
-        static String itemInHTML(int offerPosition, ProductItem item) {
-            String totalCost = Currency.getFormatterWithoutSymbol().format(item.quantity * item.product.unitPrice)
-            return """<div class="row product-item">
-                        <div class="col-1">${offerPosition}</div>
-                        <div class="col-4 ">${item.product.productName}</div>
-                        <div class="col-1 price-value">${item.quantity}</div>
-                        <div class="col-2 text-center">${item.product.unit}</div>
-                        <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(item.product.unitPrice)}</div>
-                        <div class="col-2 price-value">${totalCost}</div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">${item.product.description}</div>
-                        <div class="col-7"></div>
-                    </div>
-                    """
-
-        }
-
-        static String pageBreak() {
-
-            return """<div class="pagebreak"></div>
-                   """
-        }
-
-        static String tableHeader() {
-
-            return """<div class="row table-header" id="grid-table-header-${tableCount}">
-                                         <div class="col-1">&#8470;</div>
-                                         <div class="col-4">Service Description</div>
-                                         <div class="col-1 price-value">Amount</div>
-                                         <div class="col-2 text-center">Unit</div>
-                                         <div class="col-2 price-value">Price/Unit (€)</div>
-                                         <div class="col-2 price-value">Total (€)</div>
-                                    </div>
-                                    """
-        }
-
-        static String createNewTable(String elementId) {
-            """<div class="product-items" id="${elementId}"></div>
-            """
-        }
-
-        static String tableTitle(ProductGroups productGroup){
-
-            String tableTitle= productGroup.getName()
-            String tableTitleAcronym = productGroup.getAcronym()
-
-            return """<div class = "small-spacer"</div>
-                    <h3>${tableTitle} (${tableTitleAcronym})</h3>
-                   """
-        }
-
-        static String subTableFooter(ProductGroups productGroup){
-            //Each footer takes up spacing in the current table
-            pageItemsCount = pageItemsCount + 2
-            String footerTitle = productGroup.getAcronym()
-            return """<div id="grid-sub-total-footer-${tableCount}" class="grid-sub-total-footer">
-                                      <div class="col-6"></div> 
-                                     <div class="row sub-total-costs" id = "${productGroup}-sub-net">
-                                         <div class="col-10 cost-summary-field">Net (${footerTitle}):</div>
-                                         <div class="col-2 price-value" id="${productGroup}-net-costs-value">12345</div>
-                                     </div>
-                                 </div>
-                                 """
         }
     }
 }
