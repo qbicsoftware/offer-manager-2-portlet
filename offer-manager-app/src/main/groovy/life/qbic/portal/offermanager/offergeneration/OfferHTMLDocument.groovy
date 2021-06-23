@@ -38,20 +38,4 @@ class OfferHTMLDocument {
         quotationDetails.fillTemplateWithQuotationDetailsContent()
     }
 
-
-    // Apply VAT only if the offer originated from Germany and it's affilation category is non-internal
-    private double determineTaxCost() {
-        return isVatCountry() && !isNoVatAffiliation() ? offerEntity.VAT : 0.0
-    }
-
-    private boolean isVatCountry(){
-        return offer.getSelectedCustomerAffiliation().getCountry() == offerEntity.getCountryWithVat()
-
-    }
-
-    private boolean isNoVatAffiliation(){
-        return offer.getSelectedCustomerAffiliation().getCategory() == offerEntity.getNoVatCategory()
-    }
-
-
 }
