@@ -28,20 +28,25 @@ class QuotationDetails {
     /**
      * Variable used to count the number of Items added to a page
      */
-    private int pageItemsCount
+    private int pageItemsCount = 3
 
     /**
      * Variable used to count the number of generated productTables in the Offer PDF
      */
-    private static int tableCount
+    private static int tableCount = 1
 
+    /**
+     * Counts the number of items and reflects the position item number on the final offer
+     */
     private int itemNumber = 0
-    //The maximum number of items per page
+
+    /**
+     * The maximum number of items per page
+     */
     private final int maxPageItems = 25
 
     private final Document htmlContent
-    private final Offer offer
-    private final life.qbic.business.offers.Offer offerEntity
+    private final life.qbic.business.offers.Offer offer
 
     /**
      * Product group mapping
@@ -58,9 +63,8 @@ class QuotationDetails {
     private List<ProductItem> dataManagementItems
 
     QuotationDetails(Document htmlContent, Offer offer) {
-        this.offer = Objects.requireNonNull(offer, "offer object must not be a null reference")
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
-        this.offerEntity = Converter.convertDTOToOffer(offer)
+        this.offer = Converter.convertDTOToOffer(offer)
 
         groupProductItems(offer.items)
     }
@@ -76,17 +80,11 @@ class QuotationDetails {
     }
 
     private void setSelectedItems() {
-        //Group ProductItems into Data Generation Data Analysis and Data & Project Management Categories
-
         // Let's clear the existing item template content first
         htmlContent.getElementById("product-items-1").empty()
         htmlContent.getElementById("product-items-2").empty()
         //We also need to remove the page break between the tables in the template
         htmlContent.getElementById("template-page-break").remove()
-
-        //Initialize Number of table
-        tableCount = 1
-        pageItemsCount = 3
 
         //Generate Product Table for each Category
         generateProductTable(dataGenerationItems, ProductGroups.DATA_GENERATION)
@@ -213,7 +211,7 @@ class QuotationDetails {
         final overheadDataAnalysisPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(dataAnalysisItems))
         final overheadDataManagementPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(dataManagementItems))
 
-        double taxRatio = offerEntity.determineTaxCost()
+        double taxRatio = offer.determineTaxCost()
         String taxPercentage = decimalFormat.format(taxRatio)
 
         // Set overhead cost values
@@ -241,7 +239,7 @@ class QuotationDetails {
     private void setTaxationRatioInSummary() {
         DecimalFormat decimalFormat = new DecimalFormat("#%")
 
-        double taxRatio = offerEntity.determineTaxCost()
+        double taxRatio = offer.determineTaxCost()
         String taxPercentage = decimalFormat.format(taxRatio)
 
         htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
