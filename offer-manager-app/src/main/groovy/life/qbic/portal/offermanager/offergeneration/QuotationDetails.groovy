@@ -33,7 +33,7 @@ class QuotationDetails {
     /**
      * Variable used to count the number of generated productTables in the Offer PDF
      */
-    private static int tableCount = 1
+    private static int tableCount = 0
 
     /**
      * Counts the number of items and reflects the position item number on the final offer
@@ -76,31 +76,25 @@ class QuotationDetails {
     }
 
     private void setSelectedItems() {
-        // Let's clear the existing item template content first
-        htmlContent.getElementById("product-items-1").empty()
-        htmlContent.getElementById("product-items-2").empty()
-        //We also need to remove the page break between the tables in the template
+        //We need to remove the page break between the tables in the template
         htmlContent.getElementById("template-page-break").remove()
 
         //Generate Product Table for each Category
         generateProductTable(dataGenerationItems, ProductGroups.DATA_GENERATION)
         generateProductTable(dataAnalysisItems, ProductGroups.DATA_ANALYSIS)
         generateProductTable(dataManagementItems, ProductGroups.PROJECT_AND_DATA_MANAGEMENT)
-        //remove unused product group info if on items for this group are selected
-        clearUnusedProductGroupInformation()
 
         //Append total cost footer
         generateTotalCostFooter()
     }
 
     private void generateTotalCostFooter(){
-        String elementId = generateElementID(tableCount)
+
         if (isOverflowingPage()) {
             //If currentTable is filled with Items generate new one and add total pricing there
-            htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
-            elementId =
-                    htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
-            htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
+            htmlContent.getElementById("item-table-grid").append(ItemPrintout.pageBreak())
+            htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable("item-table-grid"))
+            htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader())
         }
         //Add total pricing information to grid-table-footer div in template
         Element element = htmlContent.getElementById("grid-table-footer")
@@ -111,16 +105,19 @@ class QuotationDetails {
     private void generateProductTable(List<ProductItem> items, ProductGroups productGroup) {
         // Create the items in html in the overview table
         //Check if there are ProductItems stored in list
-        if (!items) return
-        //Each Title will take spacing in the generated table
-        def elementId = generateElementID(tableCount) //todo can this be improved? its the same call always with the appended tablecount
+        if (!items) {
+            htmlContent.getElementById("${productGroup.toString()}-table").remove()
+            return
+        }
+        //Clear Template content
+        String elementId = generateElementID(0, productGroup)
+        htmlContent.getElementById(elementId).empty()
 
         if (isOverflowingPage()) {
             generateHTMLTableOnNextPage(elementId)
             resetPageItemsCount()
         }
         //Append Table Title and Header
-        htmlContent.getElementById(elementId).append(ItemPrintout.tableTitle(productGroup))
         htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
 
         items.each { ProductItem item ->
@@ -148,7 +145,8 @@ class QuotationDetails {
         pageItemsCount += determineItemSpace(item)
     }
 
-    private static String generateElementID(int tableCount){ return "product-items" + "-" + ++tableCount}
+    private static String generateElementID(int tableCount, ProductGroups productGroups){
+        return productGroups.toString() + "-" + "product-items" + "-" + ++tableCount}
 
     private void resetPageItemsCount(){ pageItemsCount = 1}
 
@@ -204,10 +202,10 @@ class QuotationDetails {
         String overheadPercentage = decimalFormat.format(offer.overheadRatio)
 
         // Get prices without currency symbol for detailed price listing
-        final overheadPrice = Currency.getFormatterWithoutSymbol().format(offer.overheads)
-        final netPrice = Currency.getFormatterWithoutSymbol().format(offer.netPrice)
-        final taxesPrice = Currency.getFormatterWithoutSymbol().format(offer.taxes)
-        final totalPrice = Currency.getFormatterWithoutSymbol().format(offer.totalPrice)
+        final overheadPrice = Currency.getFormatterWithoutSymbol().format(offer.getOverheadSum())
+        final netPrice = Currency.getFormatterWithoutSymbol().format(offer.getTotalNetPrice())
+        final taxesPrice = Currency.getFormatterWithoutSymbol().format(offer.getTaxCosts())
+        final totalPrice = Currency.getFormatterWithoutSymbol().format(offer.getTotalCosts())
 
         final overheadDataGenerationPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(dataGenerationItems))
         final overheadDataAnalysisPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(dataAnalysisItems))
@@ -233,7 +231,7 @@ class QuotationDetails {
     private double calculateOverheadSum(List<ProductItem> productItems) {
         double overheadSum = 0.0
         productItems.each {
-            overheadSum += it.quantity * it.product.unitPrice * offer.overheadRatio
+            overheadSum += it.quantity * it.product.unitPrice * offer.getOverheadRatio()
         }
         return overheadSum
     }
@@ -245,18 +243,6 @@ class QuotationDetails {
         String taxPercentage = decimalFormat.format(taxRatio)
 
         htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
-    }
-
-    void clearUnusedProductGroupInformation() {
-        if (dataGenerationItems.isEmpty()) {
-            htmlContent.getElementById("${ProductGroups.DATA_GENERATION}-sub-overhead").remove()
-        }
-        if (dataAnalysisItems.isEmpty()) {
-            htmlContent.getElementById("${ProductGroups.DATA_ANALYSIS}-sub-overhead").remove()
-        }
-        if (dataManagementItems.isEmpty()) {
-            htmlContent.getElementById("${ProductGroups.PROJECT_AND_DATA_MANAGEMENT}-sub-overhead").remove()
-        }
     }
 
     private void groupProductItems(List<ProductItem> offerItems) {
@@ -385,16 +371,6 @@ class QuotationDetails {
         static String createNewTable(String elementId) {
             """<div class="product-items" id="${elementId}"></div>
             """
-        }
-
-        static String tableTitle(ProductGroups productGroup) {
-
-            String tableTitle = productGroup.getName()
-            String tableTitleAcronym = productGroup.getAcronym()
-
-            return """<div class = "small-spacer"</div>
-                    <h3>${tableTitle} (${tableTitleAcronym})</h3>
-                   """
         }
 
         static String subTableFooter(ProductGroups productGroup) {
