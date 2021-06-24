@@ -70,13 +70,9 @@ class QuotationDetails {
     }
 
     void fillTemplateWithQuotationDetailsContent() {
-        //2. calculate net prices
-        // add final prices
         addTotalPrices()
         setTaxationRatioInSummary()
-        //3. add page spacing
         setSelectedItems()
-        clearUnusedProductGroupInformation()
     }
 
     private void setSelectedItems() {
@@ -90,14 +86,20 @@ class QuotationDetails {
         generateProductTable(dataGenerationItems, ProductGroups.DATA_GENERATION)
         generateProductTable(dataAnalysisItems, ProductGroups.DATA_ANALYSIS)
         generateProductTable(dataManagementItems, ProductGroups.PROJECT_AND_DATA_MANAGEMENT)
+        //remove unused product group info if on items for this group are selected
+        clearUnusedProductGroupInformation()
 
         //Append total cost footer
+        generateTotalCostFooter()
+    }
+
+    private void generateTotalCostFooter(){
         String elementId = generateElementID(tableCount)
         if (isOverflowingPage()) {
             //If currentTable is filled with Items generate new one and add total pricing there
             htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
             elementId =
-            htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
+                    htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable(elementId))
             htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
         }
         //Add total pricing information to grid-table-footer div in template
