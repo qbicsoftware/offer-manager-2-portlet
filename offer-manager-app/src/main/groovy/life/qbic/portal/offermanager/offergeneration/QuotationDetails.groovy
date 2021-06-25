@@ -96,7 +96,7 @@ class QuotationDetails {
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.pageBreak())
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable("item-table-grid"))
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader())
-            //move footer after table break
+            //move footer after new table
             Element element = htmlContent.getElementById("grid-table-footer")
             htmlContent.getElementById("item-table-grid").after(element)
         }
