@@ -45,22 +45,20 @@ class QuotationDetails {
      */
     private final int maxPageItems = 25
 
-    private final Document htmlContent
-    private final life.qbic.business.offers.Offer offer
-
     /**
      * Product group mapping
      *
      * This map represents the grouping of the different product categories in the offer pdf
      *
      */
-    private final Map<ProductGroups, List> productGroupClasses = setProductGroupMapping()
+    private final Map<ProductGroup, List> productGroupClasses = setProductGroupMapping()
 
     private List<ProductItem> dataGenerationItems
-
     private List<ProductItem> dataAnalysisItems
-
     private List<ProductItem> dataManagementItems
+
+    private final Document htmlContent
+    private final life.qbic.business.offers.Offer offer
 
     QuotationDetails(Document htmlContent, Offer offer) {
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
@@ -79,9 +77,9 @@ class QuotationDetails {
         htmlContent.getElementById("template-page-break").remove()
 
         //Generate Product Table for each Category
-        generateProductTable(dataGenerationItems, ProductGroups.DATA_GENERATION)
-        generateProductTable(dataAnalysisItems, ProductGroups.DATA_ANALYSIS)
-        generateProductTable(dataManagementItems, ProductGroups.PROJECT_AND_DATA_MANAGEMENT)
+        generateProductTable(dataGenerationItems, ProductGroup.DATA_GENERATION)
+        generateProductTable(dataAnalysisItems, ProductGroup.DATA_ANALYSIS)
+        generateProductTable(dataManagementItems, ProductGroup.PROJECT_AND_DATA_MANAGEMENT)
     }
 
     /**
@@ -104,11 +102,11 @@ class QuotationDetails {
     }
 
     /**
-     *
+     * Generates the product table for a given list of items and a product group
      * @param items
      * @param productGroup
      */
-    private void generateProductTable(List<ProductItem> items, ProductGroups productGroup) {
+    private void generateProductTable(List<ProductItem> items, ProductGroup productGroup) {
         // Create the items in html in the overview table
         //Check if there are ProductItems stored in list
         if (!items) {
@@ -137,6 +135,11 @@ class QuotationDetails {
         addSubTotalPrices(productGroup, items)
     }
 
+    /**
+     * Appends an item to a element id, if no space is left on the page a new page is and table start is created
+     * @param item The item place into the HTML document
+     * @param elementId The id references where the item is added
+     */
     private void generateItemContent(ProductItem item, String elementId){
         itemNumber++
         if (isOverflowingPage()) {
@@ -151,11 +154,15 @@ class QuotationDetails {
         pageItemsCount += determineItemSpace(item)
     }
 
-    private static String generateElementID(int tableCount, ProductGroups productGroups){
+    private static String generateElementID(int tableCount, ProductGroup productGroups){
         return productGroups.toString() + "-" + "product-items" + "-" + ++tableCount}
 
     private void resetPageItemsCount(){ pageItemsCount = 1}
 
+    /**
+     * Creates a new table element after a page break
+     * @param elementId The id which will reference the new table
+     */
     private void generateHTMLTableOnNextPage(String elementId){
         htmlContent.getElementById(elementId).append(ItemPrintout.pageBreak())
         elementId = "product-items" + "-" + ++tableCount
@@ -166,10 +173,15 @@ class QuotationDetails {
         return pageItemsCount >= maxPageItems
     }
 
-    private void addSubTotalPrices(ProductGroups productGroup, List<ProductItem> productItems) {
-
+    /**
+     * Adds the subtotal NET price for a product group to the HTML template
+     * @param productGroup The product group for which the subtotal is added
+     * @param productItems The product items for which the NET is calculated
+     */
+    private void addSubTotalPrices(ProductGroup productGroup, List<ProductItem> productItems) {
         double netSum = calculateNetSum(productItems)
         final netPrice = Currency.getFormatterWithoutSymbol().format(netSum)
+
         htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
     }
 
@@ -181,6 +193,11 @@ class QuotationDetails {
         return netSum
     }
 
+    /**
+     * Estimates the space of a product item in the final offer template
+     * @param item The item for which the spacing should be calculated
+     * @return The calculated space in the final offer template that the item requires
+     */
     private static int determineItemSpace(ProductItem item) {
 
         ArrayList<Integer> calculatedSpaces = []
@@ -198,6 +215,12 @@ class QuotationDetails {
         return calculatedSpaces.max()
     }
 
+    /**
+     * Estimates the space required for a given text
+     * @param productProperty A text which should be place on the offer
+     * @param productPropertySpacing A spacing factor assigned for that text
+     * @return An estimation of the space needed for the given text
+     */
     private static int calculateItemSpace(String productProperty, ProductPropertySpacing productPropertySpacing) {
         return Math.ceil(productProperty.length() / productPropertySpacing.getCharsLineLimit())
     }
@@ -237,6 +260,11 @@ class QuotationDetails {
 
     }
 
+    /**
+     * Calculates the overhead sum of all product items
+     * @param productItems Items for which the overheads are calculated
+     * @return The overhead price for all items
+     */
     private double calculateOverheadSum(List<ProductItem> productItems) {
         double overheadSum = 0.0
         productItems.each {
@@ -246,7 +274,10 @@ class QuotationDetails {
     }
 
 
-
+    /**
+     * Adds the product items to the respective product group list
+     * @param offerItems Offer items
+     */
     private void groupProductItems(List<ProductItem> offerItems) {
 
         dataGenerationItems = []
@@ -256,23 +287,27 @@ class QuotationDetails {
 
         // Sort ProductItems into "DataGeneration", "Data Analysis" and "Project & Data Management"
         offerItems.each {
-            if (it.product.class in productGroupClasses[ProductGroups.DATA_GENERATION]) {
+            if (it.product.class in productGroupClasses[ProductGroup.DATA_GENERATION]) {
                 dataGenerationItems.add(it)
             }
-            if (it.product.class in productGroupClasses[ProductGroups.DATA_ANALYSIS]) {
+            if (it.product.class in productGroupClasses[ProductGroup.DATA_ANALYSIS]) {
                 dataAnalysisItems.add(it)
             }
-            if (it.product.class in productGroupClasses[ProductGroups.PROJECT_AND_DATA_MANAGEMENT]) {
+            if (it.product.class in productGroupClasses[ProductGroup.PROJECT_AND_DATA_MANAGEMENT]) {
                 dataManagementItems.add(it)
             }
         }
     }
 
-    private static HashMap<ProductGroups, List> setProductGroupMapping() {
-        Map<ProductGroups, List> map = [:]
-        map[ProductGroups.DATA_GENERATION] = [Sequencing, ProteomicAnalysis, MetabolomicAnalysis]
-        map[ProductGroups.DATA_ANALYSIS] = [PrimaryAnalysis, SecondaryAnalysis]
-        map[ProductGroups.PROJECT_AND_DATA_MANAGEMENT] = [ProjectManagement, DataStorage]
+    /**
+     * Initializes a map with the product groups and maps them to the respective products
+     * @return a map with the products associated with their respective product groups
+     */
+    private static HashMap<ProductGroup, List> setProductGroupMapping() {
+        Map<ProductGroup, List> map = [:]
+        map[ProductGroup.DATA_GENERATION] = [Sequencing, ProteomicAnalysis, MetabolomicAnalysis]
+        map[ProductGroup.DATA_ANALYSIS] = [PrimaryAnalysis, SecondaryAnalysis]
+        map[ProductGroup.PROJECT_AND_DATA_MANAGEMENT] = [ProjectManagement, DataStorage]
 
         return map
     }
@@ -280,10 +315,10 @@ class QuotationDetails {
     /**
      * Possible product groups
      *
-     * This enum describes the product groups into which the products of an offer are listed.
+     * This enum describes the product groups into which the products of an offer are categorized.
      * It also defines the acronyms used to abbreviate the product groups in the offer listings.
      */
-    enum ProductGroups {
+    enum ProductGroup {
         DATA_GENERATION("Data generation", "DG"),
         DATA_ANALYSIS("Data analysis", "DA"),
         PROJECT_AND_DATA_MANAGEMENT("Project management & data storage", "PM & DS")
@@ -291,7 +326,7 @@ class QuotationDetails {
         private String name
         private String acronym
 
-        ProductGroups(String name, String acronym) {
+        ProductGroup(String name, String acronym) {
             this.name = name
             this.acronym = acronym
         }
@@ -319,7 +354,7 @@ class QuotationDetails {
         PRODUCT_TOTAL(15)
 
 
-        private int charsLineLimit
+        private final int charsLineLimit
 
         ProductPropertySpacing(int charsLineLimit) {
             this.charsLineLimit = charsLineLimit
@@ -332,6 +367,12 @@ class QuotationDetails {
 
     private static class ItemPrintout {
 
+        /**
+         * Translates an product item into a HTML row element that can be added to a table
+         * @param offerPosition The item position on the offer
+         * @param item The product item that is put on the offer
+         * @return returns the HTML code as string
+         */
         static String itemInHTML(int offerPosition, ProductItem item) {
             String totalCost = Currency.getFormatterWithoutSymbol().format(item.quantity * item.product.unitPrice)
             return """<div class="row product-item">
@@ -348,15 +389,21 @@ class QuotationDetails {
                         <div class="col-7"></div>
                     </div>
                     """
-
         }
 
+        /**
+         * Creates a page break div
+         * @return the page break div as string
+         */
         static String pageBreak() {
-
             return """<div class="pagebreak"></div>
                    """
         }
 
+        /**
+         * Creates the table header with the column titles
+         * @return a HTML string with the table header content
+         */
         static String tableHeader() {
 
             return """<div class="row table-header" id="grid-table-header-${tableCount}">
@@ -370,12 +417,22 @@ class QuotationDetails {
                                     """
         }
 
+        /**
+         * Creates the HTML snippet for a table
+         * @param elementId The id which can be used to reference the table
+         * @return HTML snippet for a new table
+         */
         static String createNewTable(String elementId) {
             """<div class="product-items" id="${elementId}"></div>
             """
         }
 
-        static String subTableFooter(ProductGroups productGroup) {
+        /**
+         * Creates the HTML snippet for the sub table footer containing the net price of the associated sub table of a product group
+         * @param productGroup The product group for which the footer is created. This will be referenced in the footers text
+         * @return HTML snippet with the product group footer
+         */
+        static String subTableFooter(ProductGroup productGroup) {
             //Each footer takes up spacing in the current table
             String footerTitle = productGroup.getAcronym()
             return """<div id="grid-sub-total-footer-${tableCount}" class="grid-sub-total-footer">
