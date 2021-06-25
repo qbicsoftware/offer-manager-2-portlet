@@ -41,6 +41,7 @@ class QuotationOverview {
         setManagerInformation()
         setPriceOverview()
         setTaxationStatement()
+        setTaxationRatioInSummary()
         setQuotationDetails()
     }
 
@@ -112,11 +113,19 @@ class QuotationOverview {
         htmlContent.getElementById("offer-date").text(dateFormat.format(offer.modificationDate))
     }
 
-
     private void setTaxationStatement() {
         if (!offerEntity.isVatCountry()) {
             htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${offerEntity.getCountryWithVat()}.")
         }
+    }
+
+    private void setTaxationRatioInSummary() {
+        DecimalFormat decimalFormat = new DecimalFormat("#%")
+
+        double taxRatio = offerEntity.determineTaxCost()
+        String taxPercentage = decimalFormat.format(taxRatio)
+
+        htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
     }
 
 }

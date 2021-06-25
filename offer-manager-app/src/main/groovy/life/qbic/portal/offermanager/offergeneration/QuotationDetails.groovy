@@ -71,11 +71,10 @@ class QuotationDetails {
 
     void fillTemplateWithQuotationDetailsContent() {
         addTotalPrices()
-        setTaxationRatioInSummary()
-        setSelectedItems()
+        addSelectedItems()
     }
 
-    private void setSelectedItems() {
+    private void addSelectedItems() {
         //We need to remove the page break between the tables in the template
         htmlContent.getElementById("template-page-break").remove()
 
@@ -88,6 +87,9 @@ class QuotationDetails {
         generateTotalCostFooter()
     }
 
+    /**
+     * Generates the table footer containing the overhead cost summary, the
+     */
     private void generateTotalCostFooter(){
 
         if (isOverflowingPage()) {
@@ -196,6 +198,9 @@ class QuotationDetails {
         return Math.ceil(productProperty.length() / productPropertySpacing.getCharsLineLimit())
     }
 
+    /**
+     * Adds the prices to the table footer. This will add the overhead summary, the net, vat and total costs
+     */
     private void addTotalPrices() {
 
         DecimalFormat decimalFormat = new DecimalFormat("#%")
@@ -236,14 +241,7 @@ class QuotationDetails {
         return overheadSum
     }
 
-    private void setTaxationRatioInSummary() {
-        DecimalFormat decimalFormat = new DecimalFormat("#%")
 
-        double taxRatio = offer.determineTaxCost()
-        String taxPercentage = decimalFormat.format(taxRatio)
-
-        htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
-    }
 
     private void groupProductItems(List<ProductItem> offerItems) {
 
