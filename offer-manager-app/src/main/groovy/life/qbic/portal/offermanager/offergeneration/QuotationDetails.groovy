@@ -70,8 +70,8 @@ class QuotationDetails {
     }
 
     void fillTemplateWithQuotationDetailsContent() {
-        addTotalPrices()
         addSelectedItems()
+        setTotalCostFooter()
     }
 
     private void addSelectedItems() {
@@ -82,28 +82,32 @@ class QuotationDetails {
         generateProductTable(dataGenerationItems, ProductGroups.DATA_GENERATION)
         generateProductTable(dataAnalysisItems, ProductGroups.DATA_ANALYSIS)
         generateProductTable(dataManagementItems, ProductGroups.PROJECT_AND_DATA_MANAGEMENT)
-
-        //Append total cost footer
-        generateTotalCostFooter()
     }
 
     /**
-     * Generates the table footer containing the overhead cost summary, the
+     * Generates the table footer with all prices and moves it to the right position
      */
-    private void generateTotalCostFooter(){
+    private void setTotalCostFooter(){
+        //add prices in the template
+        setTotalPrices()
 
         if (isOverflowingPage()) {
-            //If currentTable is filled with Items generate new one and add total pricing there
+            //If current page is full of items generate new table and add total pricing there
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.pageBreak())
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.createNewTable("item-table-grid"))
             htmlContent.getElementById("item-table-grid").append(ItemPrintout.tableHeader())
+            //move footer after table break
+            Element element = htmlContent.getElementById("grid-table-footer")
+            htmlContent.getElementById("item-table-grid").after(element)
         }
-        //Add total pricing information to grid-table-footer div in template
-        Element element = htmlContent.getElementById("grid-table-footer")
-        //Move template footer div after item-table-grid
-        htmlContent.getElementById("item-table-grid").after(element)
+
     }
 
+    /**
+     *
+     * @param items
+     * @param productGroup
+     */
     private void generateProductTable(List<ProductItem> items, ProductGroups productGroup) {
         // Create the items in html in the overview table
         //Check if there are ProductItems stored in list
@@ -201,7 +205,7 @@ class QuotationDetails {
     /**
      * Adds the prices to the table footer. This will add the overhead summary, the net, vat and total costs
      */
-    private void addTotalPrices() {
+    private void setTotalPrices() {
 
         DecimalFormat decimalFormat = new DecimalFormat("#%")
         String overheadPercentage = decimalFormat.format(offer.overheadRatio)
