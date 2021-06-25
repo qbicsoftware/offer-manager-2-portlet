@@ -28,7 +28,7 @@ class QuotationDetails {
     /**
      * Variable used to count the number of Items added to a page
      */
-    private int pageItemsCount = 3
+    private int pageItemsCount = 6
 
     /**
      * Variable used to count the number of generated productTables in the Offer PDF
@@ -116,7 +116,7 @@ class QuotationDetails {
         htmlContent.getElementById(elementId).empty()
 
         if (isOverflowingPage()) {
-            generateHTMLTableOnNextPage(elementId)
+            generateHTMLTableOnNextPage("${productGroup.toString()}-table")
             resetPageItemsCount()
         }
         //Append Table Title and Header
@@ -159,7 +159,7 @@ class QuotationDetails {
     }
 
     private boolean isOverflowingPage() {
-        return pageItemsCount > maxPageItems
+        return pageItemsCount >= maxPageItems
     }
 
     private void addSubTotalPrices(ProductGroups productGroup, List<ProductItem> productItems) {
