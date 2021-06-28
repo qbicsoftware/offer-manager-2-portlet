@@ -183,7 +183,11 @@ class QuotationDetails {
 
         htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
     }
-
+          /**
+	     * Helper method that calculates the NET price for a list of product items      
+	     * @param productItems The product item list for which the NET is calculated
+	     *  @return The net value for the given list of items 
+	     */
     private static double calculateNetSum(List<ProductItem> productItems) {
         double netSum = 0
         productItems.each {
