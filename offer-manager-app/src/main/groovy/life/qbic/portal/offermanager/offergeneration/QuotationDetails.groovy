@@ -18,10 +18,9 @@ import java.text.DecimalFormat
  *
  * <p>General idea: group the product items, generate the td elements.
  *
- * Furthermore: This class stores fixed ids (such as QuotationOverview) to quickly access e.g. total costs,....
  * Also it returns the HTML elements for tables, product group headings,..</p>
  *
- * @since 1.1.0*
+ * @since 1.1.0
  */
 class QuotationDetails {
 
@@ -107,7 +106,7 @@ class QuotationDetails {
      * @param productGroup
      */
     private void generateProductTable(List<ProductItem> items, ProductGroup productGroup) {
-        // Create the items in html in the overview table
+        //Create the items in html in the overview table
         //Check if there are ProductItems stored in list
         if (!items) {
             htmlContent.getElementById("${productGroup.toString()}-table").remove()
@@ -136,7 +135,7 @@ class QuotationDetails {
     }
 
     /**
-     * Appends an item to a element id, if no space is left on the page a new page is and table start is created
+     * Appends an item to a element id, if no space is left on the page a new page is created onto which a new tableHeader is added
      * @param item The item place into the HTML document
      * @param elementId The id references where the item is added
      */
@@ -276,7 +275,7 @@ class QuotationDetails {
 
     /**
      * Adds the product items to the respective product group list
-     * @param offerItems Offer items
+     * @param offerItems List of productItems contained in offer 
      */
     private void groupProductItems(List<ProductItem> offerItems) {
 
@@ -300,7 +299,7 @@ class QuotationDetails {
     }
 
     /**
-     * Initializes a map with the product groups and maps them to the respective products
+     * Initializes a map with the product groups and maps the products of an offer to to their respective productgroups
      * @return a map with the products associated with their respective product groups
      */
     private static HashMap<ProductGroup, List> setProductGroupMapping() {
@@ -419,7 +418,7 @@ class QuotationDetails {
 
         /**
          * Creates the HTML snippet for a table
-         * @param elementId The id which can be used to reference the table
+         * @param elementId The id which can be used to reference an element in the generated table
          * @return HTML snippet for a new table
          */
         static String createNewTable(String elementId) {
