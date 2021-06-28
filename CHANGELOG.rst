@@ -24,7 +24,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
-* Increase space allocated for product description in Offer PDF based on the number of characters (`#675 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/675>`_)
+* Increase Space allocated for product description in Offer PDF (`#675 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/675>`_)
+
+* Allocate space for each productItem dependent on number of characters in each property (`#675 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/675>`_)
 
 **Fixed**
 
@@ -33,7 +35,6 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 **Dependencies**
 
 * Bump data model lib 2.8.1 -> 2.8.2 and therefore adds 'Batch' as unit for service products
-
 
 **Deprecated**
 
