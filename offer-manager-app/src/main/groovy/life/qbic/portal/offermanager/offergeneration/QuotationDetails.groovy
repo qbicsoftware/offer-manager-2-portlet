@@ -42,7 +42,7 @@ class QuotationDetails {
     /**
      * The maximum number of items per page
      */
-    private final int maxPageItems = 25
+    private final int maxPageItems = 27
 
     /**
      * Product group mapping
