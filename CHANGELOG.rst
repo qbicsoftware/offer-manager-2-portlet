@@ -9,6 +9,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Function to apply the quantitiy discount price (`#707 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/707>`_)
+
 **Fixed**
 
 **Dependencies**
