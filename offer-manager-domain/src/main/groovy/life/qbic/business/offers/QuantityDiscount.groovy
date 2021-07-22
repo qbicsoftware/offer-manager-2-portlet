@@ -93,26 +93,22 @@ class QuantityDiscount implements BiFunction<Integer, Double, Double> {
             case 22:
                 discountFactor= 0.5
                 break
-            case 23:
-            case 24:
+            case { it == 23 || it == 24 }:
                 discountFactor= 0.49
                 break
             case 25:
                 discountFactor= 0.48
                 break
-            case 26:
-            case 27:
+            case { it == 26 || it == 27 }:
                 discountFactor= 0.47
                 break
             case 28:
                 discountFactor= 0.46
                 break
-            case 29:
-            case 30:
+            case { it == 29 || it == 30 }:
                 discountFactor= 0.45
                 break
-            case 31:
-            case 32:
+            case { it == 31 || it == 32 }:
                 discountFactor= 0.44
                 break
             case { it >= 33 && it <= 35 }:
