@@ -32,8 +32,21 @@ class QuantityDiscountSpec extends Specification {
         then: "the discount is applied correctly"
         thrown(Exception)
         where: "the number of samples and the discountable price are as follows"
-        sampleCount << [-1, 0, 1001]
+        sampleCount << [-1, 0]
         discountablePrice = new Double(1.0)
+    }
+
+    def "Apply leads to minimum discount for sample count greater #maxDefinedCount"() {
+        when:"a discount is applied to a discountable price"
+        def function = new QuantityDiscount()
+        double result = function.apply(sampleCount, discountablePrice)
+        double largestDefined = function.apply(maxDefinedCount, discountablePrice)
+        then: "the discount is equal to the discount for #maxDefinedCount samples"
+        result == largestDefined
+        where: "the number of samples is greater then the highest number defined"
+        sampleCount << [1000, 1001, 1002, 200000]
+        discountablePrice = new Double(1.0)
+        maxDefinedCount = 1000
     }
 
     private Map<Integer, Double> readDiscountMapFromFile() {
