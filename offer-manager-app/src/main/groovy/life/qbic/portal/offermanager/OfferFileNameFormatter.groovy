@@ -44,6 +44,8 @@ class OfferFileNameFormatter {
         /**
          * Answers a string containing a concise, human-readable
          * description of the receiver.
+         * The returned format is: 
+         *            <date>_O_<pi-name>_<offer-randid>_<offer-version>.pdf
          *
          * @return String a printable representation for the receiver.
          */
