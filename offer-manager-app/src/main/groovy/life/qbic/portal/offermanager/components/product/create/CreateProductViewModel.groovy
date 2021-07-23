@@ -1,7 +1,9 @@
 package life.qbic.portal.offermanager.components.product.create
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.ProductCategory
+import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 
 
@@ -23,5 +25,7 @@ class CreateProductViewModel {
     @Bindable Boolean productUnitValid
     @Bindable ProductCategory productCategory
     @Bindable Boolean productCategoryValid
+    @Bindable Facility productFacility
+    @Bindable Boolean productFacilityValid
 
 }

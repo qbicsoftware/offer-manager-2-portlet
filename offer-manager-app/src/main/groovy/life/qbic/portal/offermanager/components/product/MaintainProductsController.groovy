@@ -8,6 +8,7 @@ import life.qbic.business.products.copy.CopyProductInput
 import life.qbic.business.products.create.CreateProductInput
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
+import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 
@@ -42,8 +43,31 @@ class MaintainProductsController {
      * @param name The name of the product
      * @param unitPrice The unit price of the product
      * @param unit The unit in which the product is measured
+     * @deprecated please use {@link #createNewProduct(ProductCategory, String, String, double, ProductUnit, Facility)}
      */
+    @Deprecated
     void createNewProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit){
+        try {
+            Product product = ProductConverter.createProduct(category, description, name, unitPrice, unit)
+            createProductInput.create(product)
+        } catch (Exception unexpected) {
+            log.error("unexpected exception during create product call", unexpected)
+            throw new IllegalArgumentException("Could not create products from provided arguments.")
+        }
+    }
+
+    /**
+     * Triggers the creation of a product in the database
+     *
+     * @param category The products category which determines what kind of product is created
+     * @param description The description of the product
+     * @param name The name of the product
+     * @param unitPrice The unit price of the product
+     * @param unit The unit in which the product is measured
+     * @param facility The facility providing the product
+     * @since 1.1.0
+     */
+    void createNewProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit, Facility facility){
         try {
             Product product = ProductConverter.createProduct(category, description, name, unitPrice, unit)
             createProductInput.create(product)
@@ -96,10 +120,27 @@ class MaintainProductsController {
          * @param name The name of the product
          * @param unitPrice The unit price of the product
          * @param unit The unit in which the product is measured
-         * @return
+         * @return a new product dto with the provided arguments
+         * @deprecated please use {@link #createProduct(ProductCategory, String, String, double, ProductUnit, Facility)} instead
          */
         static Product createProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit) {
             return Converter.createProduct(category, name, description, unitPrice, unit)
+        }
+
+        /**
+         * Creates a product DTO based on its products category
+         *
+         * @param category The products category which determines what kind of products is created
+         * @param description The description of the product
+         * @param name The name of the product
+         * @param unitPrice The unit price of the product
+         * @param unit The unit in which the product is measured
+         * @param facility The facility providing the given product
+         * @return a new product dto with the provided arguments
+         * @since 1.1.0
+         */
+        static Product createProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit, Facility facility) {
+            return Converter.createProduct(category, name, description, unitPrice, unit, facility)
         }
 
         /**

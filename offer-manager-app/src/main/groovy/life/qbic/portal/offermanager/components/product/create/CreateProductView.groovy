@@ -16,6 +16,7 @@ import com.vaadin.ui.TextField
 import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductCategory
+import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.portal.offermanager.components.product.MaintainProductsController
 
@@ -38,6 +39,7 @@ class CreateProductView extends VerticalLayout{
 
     ComboBox<String> productUnitComboBox
     ComboBox<String> productCategoryComboBox
+    ComboBox<String> productFacilityComboBox
     Button abortButton
 
     Button createProductButton
@@ -110,6 +112,12 @@ class CreateProductView extends VerticalLayout{
         productCategoryComboBox.setEmptySelectionAllowed(false)
         productCategoryComboBox.setItems(Arrays.asList(ProductCategory.values()) as List<String>)
         productCategoryComboBox.setWidthFull()
+
+        productFacilityComboBox = new ComboBox<>("Facility")
+        productFacilityComboBox.setRequiredIndicatorVisible(true)
+        productFacilityComboBox.setPlaceholder("Select facility that provides the product")
+        productFacilityComboBox.setEmptySelectionAllowed(false)
+        productCategoryComboBox.setItems(Arrays.asList(Facility.values()) as List<String>)
     }
 
     private void initButtons(){
@@ -166,6 +174,20 @@ class CreateProductView extends VerticalLayout{
             viewModel.setProductCategory(it.value as ProductCategory)
         })
 
+
+        viewModel.addPropertyChangeListener("productFacility", {
+            Facility newValue = it.newValue as Facility
+            if (newValue) {
+                productFacilityComboBox.value = newValue
+            } else {
+                productFacilityComboBox.value = productFacilityComboBox.emptyValue
+            }
+        })
+        productFacilityComboBox.addSelectionListener({
+            viewModel.setProductFacility(it.value as Facility)
+        })
+
+
         /*
        We listen to the valid properties. whenever the presenter resets values in the viewmodel
        and resets the valid properties the component error on the respective component is removed
@@ -195,6 +217,11 @@ class CreateProductView extends VerticalLayout{
                 case "productCategoryValid":
                     if (it.newValue || it.newValue == null) {
                         productCategoryComboBox.componentError = null
+                    }
+                    break
+                case "productFacilityValid":
+                    if (it.newValue || it.newValue == null) {
+                        productFacilityComboBox.componentError = null
                     }
                     break
                 default:
@@ -264,6 +291,16 @@ class CreateProductView extends VerticalLayout{
                 viewModel.productCategoryValid = true
             }
         })
+        this.productFacilityComboBox.addSelectionListener({selection ->
+            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.productFacilityComboBox))
+            if (result.isError()) {
+                viewModel.productFacilityValid = false
+                UserError error = new UserError(result.getErrorMessage())
+                productCategoryComboBox.setComponentError(error)
+            } else {
+                viewModel.productFacilityValid = true
+            }
+        })
     }
     /**
      * This is used to indicate whether all fields of this view are filled correctly.
@@ -275,14 +312,15 @@ class CreateProductView extends VerticalLayout{
             && viewModel.productDescriptionValid \
             && viewModel.productUnitValid \
             && viewModel.productUnitPriceValid \
-            && viewModel.productCategoryValid
+            && viewModel.productCategoryValid \
+            && viewModel.productFacilityValid
     }
 
     private void setupListeners(){
 
         abortButton.addClickListener({clearAllFields() })
         createProductButtonRegistration = this.createProductButton.addClickListener({
-            controller.createNewProduct(viewModel.productCategory, viewModel.productDescription,viewModel.productName, Double.parseDouble(viewModel.productUnitPrice),viewModel.productUnit)
+            controller.createNewProduct(viewModel.productCategory, viewModel.productDescription,viewModel.productName, Double.parseDouble(viewModel.productUnitPrice),viewModel.productUnit, viewModel.productFacility)
             clearAllFields()
         })
 
