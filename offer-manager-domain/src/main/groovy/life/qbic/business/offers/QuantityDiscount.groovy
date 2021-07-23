@@ -27,6 +27,9 @@ class QuantityDiscount implements BiFunction<Integer, Double, Double> {
     private static double getDiscountFactor(int sampleCount) {
         double discountFactor
         switch (sampleCount) {
+            case {it < 1 || it > 1000}:
+                throw new UndefinedFunctionException(sampleCount)
+                break
             case 1:
                 discountFactor= 1
                 break
@@ -190,9 +193,19 @@ class QuantityDiscount implements BiFunction<Integer, Double, Double> {
                 discountFactor= 0.18
                 break
             default:
-                throw new IllegalArgumentException("Cannot determine discount for $sampleCount samples.")
+                throw new UndefinedFunctionException(sampleCount)
                 break
         }
         return discountFactor
+    }
+
+    /**
+     * This function is not defined for the arguments provided.
+     * @since 1.1.0
+     */
+    private static class UndefinedFunctionException extends IllegalArgumentException {
+        UndefinedFunctionException(int sampleCount) {
+            super("Cannot determine discount for $sampleCount samples.")
+        }
     }
 }
