@@ -28,7 +28,7 @@ class QuantityDiscount implements BiFunction<Integer, Double, Double> {
     private static double getDiscountFactor(int sampleCount) {
         double discountFactor
         switch (sampleCount) {
-            case {it < 1 || it > 1000}:
+            case {it < 1 }:
                 throw new UndefinedFunctionException(sampleCount)
                 break
             case 1:
@@ -192,6 +192,9 @@ class QuantityDiscount implements BiFunction<Integer, Double, Double> {
                 break
             case { it >= 841 && it <= 1000 }:
                 discountFactor= 0.18
+                break
+            case { it > 1000 }:
+                discountFactor=0.18
                 break
             default:
                 throw new UndefinedFunctionException(sampleCount)
