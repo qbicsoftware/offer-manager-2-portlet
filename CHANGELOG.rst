@@ -11,6 +11,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* Include Offer ID Prefix in Offer PDF filename (`#685 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/685>`_)
+
 **Dependencies**
 
 * ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
