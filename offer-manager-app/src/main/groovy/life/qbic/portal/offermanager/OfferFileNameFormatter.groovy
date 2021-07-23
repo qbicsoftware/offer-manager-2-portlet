@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager
 
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.OfferId
 
 import java.time.LocalDate
 
@@ -23,13 +24,35 @@ class OfferFileNameFormatter {
      */
     static String getFileNameForOffer(Offer offer) {
         LocalDate date = offer.modificationDate.toLocalDate()
-        String dateString = createDateString(date)
-        String typePrefix = "O"
-        return "${dateString}_${typePrefix}_${offer.identifier.projectConservedPart}_${offer.identifier.randomPart}_${offer.identifier.version}.pdf"
+        OfferFileName fileName = new OfferFileName(date, offer.getIdentifier())
+        return fileName.toString()
     }
 
-    private static String createDateString(LocalDate date) {
-        return String.format("%04d_%02d_%02d", date.getYear(), date.getMonthValue(), date.getDayOfMonth())
+    private static class OfferFileName {
+        LocalDate date
+        OfferId offerId
+
+        OfferFileName(LocalDate date, OfferId offerId) {
+            this.date = date
+            this.offerId = offerId
+        }
+
+        private static String createDateString(LocalDate date) {
+            return String.format("%04d_%02d_%02d", date.getYear(), date.getMonthValue(), date.getDayOfMonth())
+        }
+
+        /**
+         * Answers a string containing a concise, human-readable
+         * description of the receiver.
+         *
+         * @return String a printable representation for the receiver.
+         */
+        @Override
+        String toString() {
+            return "${createDateString(this.date)}_O_" +
+                    "${offerId.projectConservedPart}_${offerId.randomPart}_${offerId.version}" +
+                    ".pdf"
+        }
     }
 
 }
