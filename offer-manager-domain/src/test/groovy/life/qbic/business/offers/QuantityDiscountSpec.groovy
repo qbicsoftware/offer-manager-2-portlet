@@ -4,11 +4,9 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 /**
- * <b><short description></b>
+ * <p>Verifies that the QuantityDiscount function works as expected</p>
  *
- * <p><detailed description></p>
- *
- * @since <versiontag>
+ * @since 1.1.0
  */
 class QuantityDiscountSpec extends Specification {
     @Shared
