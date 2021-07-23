@@ -17,6 +17,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * ``org.mariadb.jdbc:mariadb-java-client:2.7.2`` -> ``2.7.3``
 
+* ``life.qbic:data-model-lib:2.8.2`` -> ``2.11.0-SNAPSHOT``
+
 **Deprecated**
 
 1.0.5 (2021-06-15)
