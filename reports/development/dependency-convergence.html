@@ -87,13 +87,13 @@ The new offer manager
 <td>8</td></tr>
 <tr class="b">
 <th>Number of SNAPSHOT artifacts (NOS):</th>
-<td>0</td></tr>
+<td>1</td></tr>
 <tr class="a">
 <th>Convergence (NOD/NOA):</th>
 <td><img alt="[Error]" src="images/icon_error_sml.gif" />&#160;<b>91 %</b></td></tr>
 <tr class="b">
 <th>Ready for release (100% convergence and no SNAPSHOTS):</th>
-<td><img alt="[Error]" src="images/icon_error_sml.gif" />&#160;<b>Error</b><br />You do not have 100% convergence.</td></tr></table></div>
+<td><img alt="[Error]" src="images/icon_error_sml.gif" />&#160;<b>Error</b><br />You do not have 100% convergence.<br />You have SNAPSHOT dependencies.</td></tr></table></div>
 <div class="section">
 <h3><a name="Dependencies_used_in_modules"></a>Dependencies used in modules</h3>
 <div class="section">
@@ -107,7 +107,7 @@ The new offer manager
 <td width="25%">3.7</td>
 <td>
 <ol style="list-style-type: decimal">
-<li>life.qbic:offer-manager-app:war:1.1.0-SNAPSHOT<br />+-&#160;life.qbic:data-model-lib:jar:2.8.2:compile<br />|&#160;&#160;\-&#160;life.qbic:xml-manager-lib:jar:1.6.0:compile<br />|&#160;&#160;&#160;&#160;&#160;\-&#160;(org.apache.commons:commons-lang3:jar:3.7:compile - omitted for duplicate)<br />\-&#160;life.qbic:portal-utils-lib:jar:2.2.1:compile<br />&#160;&#160;&#160;+-&#160;org.apache.commons:commons-lang3:jar:3.7:compile<br />&#160;&#160;&#160;\-&#160;org.apache.commons:commons-text:jar:1.3:compile<br />&#160;&#160;&#160;&#160;&#160;&#160;\-&#160;(org.apache.commons:commons-lang3:jar:3.7:compile - omitted for duplicate)<br /></li><br /></ol></td></tr>
+<li>life.qbic:offer-manager-app:war:1.1.0-SNAPSHOT<br />+-&#160;life.qbic:data-model-lib:jar:2.11.0-SNAPSHOT:compile<br />|&#160;&#160;\-&#160;life.qbic:xml-manager-lib:jar:1.6.0:compile<br />|&#160;&#160;&#160;&#160;&#160;\-&#160;(org.apache.commons:commons-lang3:jar:3.7:compile - omitted for duplicate)<br />\-&#160;life.qbic:portal-utils-lib:jar:2.2.1:compile<br />&#160;&#160;&#160;+-&#160;org.apache.commons:commons-lang3:jar:3.7:compile<br />&#160;&#160;&#160;\-&#160;org.apache.commons:commons-text:jar:1.3:compile<br />&#160;&#160;&#160;&#160;&#160;&#160;\-&#160;(org.apache.commons:commons-lang3:jar:3.7:compile - omitted for duplicate)<br /></li><br /></ol></td></tr>
 <tr class="a">
 <td width="25%">3.8.1</td>
 <td>
@@ -248,7 +248,19 @@ The new offer manager
 <td width="25%">1.7.2</td>
 <td>
 <ol style="list-style-type: decimal">
-<li>life.qbic:offer-manager:pom:1.1.0-SNAPSHOT<br />+-&#160;org.codehaus.groovy:groovy-all:pom:3.0.8:compile<br />|&#160;&#160;\-&#160;org.codehaus.groovy:groovy-test-junit5:jar:3.0.8:compile<br />|&#160;&#160;&#160;&#160;&#160;\-&#160;org.junit.platform:junit-platform-launcher:jar:1.7.0:runtime<br />|&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;\-&#160;org.junit.platform:junit-platform-engine:jar:1.7.2:runtime<br />\-&#160;org.spockframework:spock-core:jar:2.0-groovy-3.0:test<br />&#160;&#160;&#160;\-&#160;(org.junit.platform:junit-platform-engine:jar:1.7.2:runtime - scope updated from test; omitted for duplicate)<br /></li><br /></ol></td></tr></table></td></tr></table></div></div>
+<li>life.qbic:offer-manager:pom:1.1.0-SNAPSHOT<br />+-&#160;org.codehaus.groovy:groovy-all:pom:3.0.8:compile<br />|&#160;&#160;\-&#160;org.codehaus.groovy:groovy-test-junit5:jar:3.0.8:compile<br />|&#160;&#160;&#160;&#160;&#160;\-&#160;org.junit.platform:junit-platform-launcher:jar:1.7.0:runtime<br />|&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;\-&#160;org.junit.platform:junit-platform-engine:jar:1.7.2:runtime<br />\-&#160;org.spockframework:spock-core:jar:2.0-groovy-3.0:test<br />&#160;&#160;&#160;\-&#160;(org.junit.platform:junit-platform-engine:jar:1.7.2:runtime - scope updated from test; omitted for duplicate)<br /></li><br /></ol></td></tr></table></td></tr></table></div>
+<div class="section">
+<h4><a name="life.qbic:data-model-lib"></a>life.qbic:data-model-lib</h4>
+<table border="0" class="bodyTable">
+<tr class="b">
+<td><img alt="[Error]" src="images/icon_error_sml.gif" /></td>
+<td>
+<table border="0" class="bodyTable">
+<tr class="a">
+<td width="25%">2.11.0-SNAPSHOT</td>
+<td>
+<ol style="list-style-type: decimal">
+<li>life.qbic:offer-manager-domain:jar:1.1.0-SNAPSHOT<br />\-&#160;life.qbic:data-model-lib:jar:2.11.0-SNAPSHOT:compile<br /></li><br /></ol></td></tr></table></td></tr></table></div></div>
       </div>
     </div>
     <div class="clear">
