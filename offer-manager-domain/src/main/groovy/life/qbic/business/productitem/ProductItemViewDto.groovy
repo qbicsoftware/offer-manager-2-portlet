@@ -1,6 +1,7 @@
 package life.qbic.business.productitem
 
 import life.qbic.datamodel.dtos.business.ProductCategory
+import life.qbic.datamodel.dtos.business.facilities.Facility
 
 /**
  * <b>Information about a offer position that should be visible to the application</b>
@@ -24,6 +25,11 @@ class ProductItemViewDto {
      * Provides a more detailed description of the product
      */
     final String description
+
+    /**
+     * The facility providing this service
+     */
+    final Facility facility
 
     /**
      * The name of the product
@@ -55,10 +61,11 @@ class ProductItemViewDto {
      */
     final double quantityDiscount
 
-    ProductItemViewDto(ProductCategory productCategory, Currency currency, String description, String productName, Double unitPrice, String unit, double quantity, double amount, double quantityDiscount) {
+    ProductItemViewDto(ProductCategory productCategory, Currency currency, String description, String productName, Facility facility, Double unitPrice, String unit, double quantity, double amount, double quantityDiscount) {
         this.productCategory = productCategory
         this.currency = currency
         this.description = description
+        this.facility = facility
         this.productName = productName
         this.unitPrice = unitPrice
         this.unit = unit
