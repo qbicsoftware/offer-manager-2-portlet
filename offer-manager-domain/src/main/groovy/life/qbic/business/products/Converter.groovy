@@ -3,6 +3,7 @@ package life.qbic.business.products
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.datamodel.dtos.business.ProductCategory
+import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
@@ -21,7 +22,7 @@ import life.qbic.datamodel.dtos.business.services.Sequencing
  *
  * @since 1.0.0
  *
-*/
+ */
 class Converter {
 
     private static final Logging log = Logger.getLogger(this.class)
@@ -34,11 +35,31 @@ class Converter {
      * @param name The name of the product
      * @param unitPrice The unit price of the product
      * @param unit The unit in which the product is measured
-     * @return
+     * @return a product
+     * @deprecated please us {@link life.qbic.business.products.Converter#createProduct(life.qbic.datamodel.dtos.business.ProductCategory, java.lang.String, java.lang.String, double, double, life.qbic.datamodel.dtos.business.services.ProductUnit, life.qbic.datamodel.dtos.business.facilities.Facility)} instead
      */
+    @Deprecated
     static Product createProduct(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit){
         long runningNumber = 0 //todo it should be possible to create products without a running number
         return createProductWithVersion(category,name,description,unitPrice,unit,runningNumber)
+    }
+
+    /**
+     * Creates a product DTO based on its products category without a version
+     *
+     * @param category The products category which determines what kind of products is created
+     * @param description The description of the product
+     * @param name The name of the product
+     * @param internalUnitPrice The unit price for internal customers
+     * @param externalUnitPrice The unit price for external customers
+     * @param unit The unit in which the product is measured
+     * @param facility The facility providing the product
+     * @return a new product
+     * @since 1.1.0
+     */
+    static Product createProduct(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility facility){
+        long runningNumber = 0 //todo it should be possible to create products without a running number
+        return createProductWithVersion(category, name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
     }
 
     /**
@@ -50,8 +71,10 @@ class Converter {
      * @param unitPrice The unit price of the product
      * @param unit The unit in which the product is measured
      * @param runningNumber The running version number of the product
-     * @return
+     * @return a product
+     * @deprecated please use {@link life.qbic.business.products.Converter#createProductWithVersion(life.qbic.datamodel.dtos.business.ProductCategory, java.lang.String, java.lang.String, double, double, life.qbic.datamodel.dtos.business.services.ProductUnit, long, life.qbic.datamodel.dtos.business.facilities.Facility) } instead
      */
+    @Deprecated
     static Product createProductWithVersion(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit, long runningNumber){
         Product product = null
         switch (category) {
@@ -84,6 +107,50 @@ class Converter {
     }
 
     /**
+     * Creates a product DTO based on its products category with a version
+     *
+     * @param category The products category which determines what kind of products is created
+     * @param description The description of the product
+     * @param name The name of the product
+     * @param internalUnitPrice The unit price of the product
+     * @param unit The unit in which the product is measured
+     * @param runningNumber The running version number of the product
+     * @param facility The facility providing the product
+     * @return a product
+     * @since 1.1.0
+     */
+    static Product createProductWithVersion(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, long runningNumber, Facility facility){
+        Product product = null
+        switch (category) {
+            case ProductCategory.DATA_STORAGE:
+                product = new DataStorage(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                break
+            case ProductCategory.PRIMARY_BIOINFO:
+                product = new PrimaryAnalysis(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                break
+            case ProductCategory.PROJECT_MANAGEMENT:
+                product = new ProjectManagement(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                break
+            case ProductCategory.SECONDARY_BIOINFO:
+                product = new SecondaryAnalysis(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                break
+            case ProductCategory.SEQUENCING:
+                product = new Sequencing(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                break
+            case ProductCategory.PROTEOMIC:
+                product = new ProteomicAnalysis(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                break
+            case ProductCategory.METABOLOMIC:
+                product = new MetabolomicAnalysis(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                break
+            default:
+                log.warn("Unknown product category $category")
+        }
+        if(!product) throw new IllegalArgumentException("Cannot parse product")
+        return product
+    }
+
+    /**
      * Retrieves the category of the given product
      * @param product The product of a specific product category
      * @return the product category of the given product
@@ -103,11 +170,11 @@ class Converter {
     static life.qbic.business.products.Product convertDTOtoProduct(Product product){
         ProductCategory category = getCategory(product)
         return new life.qbic.business.products.Product.Builder(category,
-                                                                product.productName,
-                                                                product.description,
-                                                                product.unitPrice,
-                                                                product.unit)
-                                                                .build()
+                product.productName,
+                product.description,
+                product.unitPrice,
+                product.unit)
+                .build()
 
     }
 

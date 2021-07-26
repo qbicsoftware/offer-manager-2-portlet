@@ -20,6 +20,8 @@ class Product {
     private String name
     private String description
     private double unitPrice
+    private double internalUnitPrice
+    private double externalUnitPrice
     private ProductUnit unit
     private ProductId id
 
@@ -28,6 +30,8 @@ class Product {
         String name
         String description
         double unitPrice
+        double internalUnitPrice
+        double externalUnitPrice
         ProductUnit unit
         ProductId id
 
@@ -36,6 +40,18 @@ class Product {
             this.name = Objects.requireNonNull(name)
             this.description = Objects.requireNonNull(description)
             this.unitPrice = Objects.requireNonNull(unitPrice)
+            this.internalUnitPrice = 0.0
+            this.externalUnitPrice = 0.0
+            this.unit = Objects.requireNonNull(unit)
+        }
+
+        Builder(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit){
+            this.category = Objects.requireNonNull(category)
+            this.name = Objects.requireNonNull(name)
+            this.description = Objects.requireNonNull(description)
+            this.internalUnitPrice = Objects.requireNonNull(internalUnitPrice)
+            this.externalUnitPrice = Objects.requireNonNull(externalUnitPrice)
+            this.unitPrice = 0.0
             this.unit = Objects.requireNonNull(unit)
         }
 
