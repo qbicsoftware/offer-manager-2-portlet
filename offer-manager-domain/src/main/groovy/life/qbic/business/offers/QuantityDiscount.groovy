@@ -12,17 +12,17 @@ import java.util.function.BiFunction
 class QuantityDiscount implements BiFunction<Integer, Double, Double> {
 
     /**
-     * Applies a quantity discount to the discountable price depending on the number of samples.
+     * Computes a quantity discount of the full price depending on the number of samples.
      * It is defined for all positive natural numbers greater than 0
-     *
+     * <p>The function returns the discount for the discountable price. For a discount of 20% and a discountable price of 100$, the return value would be 20$.</p>
      * @param sampleCount the number of samples
-     * @param discountablePrice the price that should be discounted
-     * @return the function the discountablePrice with discounts applied to it
+     * @param fullPrice the price that should be discounted, before discounts are applied
+     * @return the size of the discount
      * @since 1.1.0
      */
     @Override
-    Double apply(Integer sampleCount, Double discountablePrice) {
-        return getDiscountFactor(sampleCount) * discountablePrice
+    Double apply(Integer sampleCount, Double fullPrice) {
+        return getDiscountFactor(sampleCount) * fullPrice
     }
 
     private static double getDiscountFactor(int sampleCount) {
@@ -200,7 +200,7 @@ class QuantityDiscount implements BiFunction<Integer, Double, Double> {
                 throw new UndefinedFunctionException(sampleCount)
                 break
         }
-        return discountFactor
+        return 1.0 - discountFactor
     }
 
     /**
