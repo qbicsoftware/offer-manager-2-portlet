@@ -163,24 +163,14 @@ class Converter {
 
     static life.qbic.business.products.Product convertDTOtoProduct(Product product){
         ProductCategory category = getCategory(product)
-        if (product.internalUnitPrice == 0 && product.externalUnitPrice == 0 && product.unitPrice != 0) { // we used an old constructor
+        if (! usesInternalAndExternalPricing(product)) { // we used an old constructor
             return new life.qbic.business.products.Product.Builder(category,
                     product.productName,
                     product.description,
                     product.unitPrice,
                     product.unit)
                     .build()
-        } else if ((product.internalUnitPrice != 0 || product.externalUnitPrice != 0) && product.unitPrice == 0) { // we used the new constructor
-            return new life.qbic.business.products.Product.Builder(category,
-                    product.productName,
-                    product.description,
-                    product.internalUnitPrice,
-                    product.externalUnitPrice,
-                    product.unit,
-                    product.serviceProvider)
-                    .build()
-        } else { // we cannot determine which product version this is
-            // we use the new product version
+        } else {
             return new life.qbic.business.products.Product.Builder(category,
                     product.productName,
                     product.description,
@@ -196,13 +186,19 @@ class Converter {
     static Product convertProductToDTO(life.qbic.business.products.Product product){
         Product result
 
-        if (product.internalUnitPrice == 0 && product.externalUnitPrice == 0 && product.unitPrice != 0) { // we used an old constructor
+        if (! usesInternalAndExternalPricing(product)) { // we used an old constructor
             result = createProductWithVersion(product.category,product.name, product.description, product.unitPrice, product.unit, product.id.uniqueId)
-        } else if ((product.internalUnitPrice != 0 || product.externalUnitPrice != 0) && product.unitPrice == 0) { // we used the new constructor
-            result = createProductWithVersion(product.category,product.name, product.description, product.internalUnitPrice, product.externalUnitPrice, product.unit, product.id.uniqueId, product.serviceProvider)
-        } else { // we cannot determine which product version this is
+        } else { // we used the new constructor
             result = createProductWithVersion(product.category,product.name, product.description, product.internalUnitPrice, product.externalUnitPrice, product.unit, product.id.uniqueId, product.serviceProvider)
         }
         return result
+    }
+
+    private static boolean usesInternalAndExternalPricing(life.qbic.business.products.Product product) {
+        return ((product.internalUnitPrice != 0 || product.externalUnitPrice != 0) && product.unitPrice == 0)
+    }
+
+    private static boolean usesInternalAndExternalPricing(Product product) {
+        return ((product.internalUnitPrice != 0 || product.externalUnitPrice != 0) && product.unitPrice == 0)
     }
 }
