@@ -2,6 +2,7 @@ package life.qbic.business.products
 
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
+import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 
 import java.nio.charset.StandardCharsets
@@ -24,6 +25,7 @@ class Product {
     private double externalUnitPrice
     private ProductUnit unit
     private ProductId id
+    private Facility facility
 
     static class Builder{
         ProductCategory category
@@ -34,6 +36,7 @@ class Product {
         double externalUnitPrice
         ProductUnit unit
         ProductId id
+        Facility facility
 
         Builder(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit){
             this.category = Objects.requireNonNull(category)
@@ -43,9 +46,10 @@ class Product {
             this.internalUnitPrice = 0.0
             this.externalUnitPrice = 0.0
             this.unit = Objects.requireNonNull(unit)
+            this.facility = Facility.QBIC
         }
 
-        Builder(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit){
+        Builder(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility facility){
             this.category = Objects.requireNonNull(category)
             this.name = Objects.requireNonNull(name)
             this.description = Objects.requireNonNull(description)
@@ -53,10 +57,16 @@ class Product {
             this.externalUnitPrice = Objects.requireNonNull(externalUnitPrice)
             this.unitPrice = 0.0
             this.unit = Objects.requireNonNull(unit)
+            this.facility = facility
         }
 
         Builder id(ProductId id){
             this.id = id
+            return this
+        }
+
+        Builder facility(Facility facility) {
+            this.facility = facility
             return this
         }
 
@@ -67,10 +77,13 @@ class Product {
 
     Product(Builder builder){
         this.category = builder.category
-        this.name = builder.name
         this.description = builder.description
-        this.unitPrice = builder.unitPrice
+        this.externalUnitPrice = builder.externalUnitPrice
+        this.facility = builder.facility
+        this.internalUnitPrice = builder.internalUnitPrice
+        this.name = builder.name
         this.unit = builder.unit
+        this.unitPrice = builder.unitPrice
     }
 
     /**
@@ -98,9 +111,13 @@ class Product {
 
         digest.update(product.description.getBytes(StandardCharsets.UTF_8))
 
+        digest.update(product.category.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(product.externalUnitPrice.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(product.facility.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(product.internalUnitPrice.toString().getBytes(StandardCharsets.UTF_8))
         digest.update(product.unit.value.getBytes(StandardCharsets.UTF_8))
         digest.update(product.unitPrice.toString().getBytes(StandardCharsets.UTF_8))
-        digest.update(product.category.toString().getBytes(StandardCharsets.UTF_8))
+
 
         //Get the hash's bytes
         byte[] bytes = digest.digest()
@@ -110,7 +127,7 @@ class Product {
         StringBuilder sb = new StringBuilder()
         for(int i=0; i< bytes.length ;i++)
         {
-            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1))
         }
 
         //return complete hash
