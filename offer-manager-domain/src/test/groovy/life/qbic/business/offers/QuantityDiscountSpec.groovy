@@ -22,7 +22,7 @@ class QuantityDiscountSpec extends Specification {
         result == ( 1 - discountMap.get(sampleCount) )* discountablePrice
         where: "the number of samples and the discountable price are as follows"
         sampleCount << discountMap.keySet().iterator()
-        discountablePrice = new Double(1.0)
+        discountablePrice = new Double(42.5)
     }
 
     def "Apply leads Exception in case of unspecified behaviour"() {
@@ -33,7 +33,7 @@ class QuantityDiscountSpec extends Specification {
         thrown(Exception)
         where: "the number of samples and the discountable price are as follows"
         sampleCount << [-1, 0]
-        discountablePrice = new Double(1.0)
+        discountablePrice = new Double(42.5)
     }
 
     def "Apply leads to minimum discount for sample count greater #maxDefinedCount"() {
@@ -45,7 +45,7 @@ class QuantityDiscountSpec extends Specification {
         result == largestDefined
         where: "the number of samples is greater then the highest number defined"
         sampleCount << [1000, 1001, 1002, 200000]
-        discountablePrice = new Double(1.0)
+        discountablePrice = new Double(42.5)
         maxDefinedCount = 1000
     }
 
