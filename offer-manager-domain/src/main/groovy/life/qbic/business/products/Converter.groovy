@@ -4,15 +4,7 @@ import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.facilities.Facility
-import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.ProteomicAnalysis
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Sequencing
+import life.qbic.datamodel.dtos.business.services.*
 
 /**
  * <h1>Converter for {@link life.qbic.datamodel.dtos.business.services.Product}</h1>
@@ -169,16 +161,46 @@ class Converter {
 
     static life.qbic.business.products.Product convertDTOtoProduct(Product product){
         ProductCategory category = getCategory(product)
-        return new life.qbic.business.products.Product.Builder(category,
-                product.productName,
-                product.description,
-                product.unitPrice,
-                product.unit)
-                .build()
+        if (product.internalUnitPrice == 0 && product.externalUnitPrice == 0 && product.unitPrice != 0) { // we used an old constructor
+            return new life.qbic.business.products.Product.Builder(category,
+                    product.productName,
+                    product.description,
+                    product.unitPrice,
+                    product.unit)
+                    .build()
+        } else if ((product.internalUnitPrice != 0 || product.externalUnitPrice != 0) && product.unitPrice == 0) { // we used the new constructor
+            return new life.qbic.business.products.Product.Builder(category,
+                    product.productName,
+                    product.description,
+                    product.internalUnitPrice,
+                    product.externalUnitPrice,
+                    product.unit,
+                    product.serviceProvider)
+                    .build()
+        } else if (product.internalUnitPrice == 0 && product.externalUnitPrice == 0 && product.unitPrice == 0) { // we cannot determine which product version this is
+            // we use the new product version
+            return new life.qbic.business.products.Product.Builder(category,
+                    product.productName,
+                    product.description,
+                    product.internalUnitPrice,
+                    product.externalUnitPrice,
+                    product.unit,
+                    product.serviceProvider)
+                    .build()
+        }
 
     }
 
     static Product convertProductToDTO(life.qbic.business.products.Product product){
-        return createProductWithVersion(product.category,product.name, product.description, product.unitPrice, product.unit, product.id.uniqueId)
+        Product result
+
+        if (product.internalUnitPrice == 0 && product.externalUnitPrice == 0 && product.unitPrice != 0) { // we used an old constructor
+            result = createProductWithVersion(product.category,product.name, product.description, product.unitPrice, product.unit, product.id.uniqueId)
+        } else if ((product.internalUnitPrice != 0 || product.externalUnitPrice != 0) && product.unitPrice == 0) { // we used the new constructor
+            result = createProductWithVersion(product.category,product.name, product.description, product.internalUnitPrice, product.externalUnitPrice, product.unit, product.id.uniqueId, product.facility)
+        } else { // we cannot determine which product version this is
+            result = createProductWithVersion(product.category,product.name, product.description, product.internalUnitPrice, product.externalUnitPrice, product.unit, product.id.uniqueId, product.facility)
+        }
+        return result
     }
 }
