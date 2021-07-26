@@ -19,7 +19,7 @@ class QuantityDiscountSpec extends Specification {
         def function = new QuantityDiscount()
         double result = function.apply(sampleCount, discountablePrice)
         then: "the discount is applied correctly"
-        result == 1-discountMap.get(sampleCount) * discountablePrice
+        result == ( 1 - discountMap.get(sampleCount) )* discountablePrice
         where: "the number of samples and the discountable price are as follows"
         sampleCount << discountMap.keySet().iterator()
         discountablePrice = new Double(1.0)
