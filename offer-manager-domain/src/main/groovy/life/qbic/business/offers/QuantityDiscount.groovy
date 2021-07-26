@@ -16,7 +16,7 @@ class QuantityDiscount implements BiFunction<Integer, Double, Double> {
      * It is defined for all positive natural numbers greater than 0
      *
      * @param sampleCount the number of samples
-     * @param fullPrice the price that should be discounted, before discounts are apploed
+     * @param fullPrice the price that should be discounted, before discounts are applied
      * @return the size of the discount
      * @since 1.1.0
      */
