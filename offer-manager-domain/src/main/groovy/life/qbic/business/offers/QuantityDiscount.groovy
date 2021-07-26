@@ -200,7 +200,7 @@ class QuantityDiscount implements BiFunction<Integer, Double, Double> {
                 throw new UndefinedFunctionException(sampleCount)
                 break
         }
-        return 1.0-discountFactor
+        return 1.0 - discountFactor
     }
 
     /**
