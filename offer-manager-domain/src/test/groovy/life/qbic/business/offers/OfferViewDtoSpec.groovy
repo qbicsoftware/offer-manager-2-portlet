@@ -10,7 +10,7 @@ import spock.lang.Specification
  */
 class OfferViewDtoSpec extends Specification {
 
-    def "equality is correct for equal offer vies"() {
+    def "equality is correct for equal offer views"() {
         //TODO
     }
 
