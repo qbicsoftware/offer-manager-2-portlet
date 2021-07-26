@@ -30,7 +30,7 @@ class Converter {
      * @param unitPrice The unit price of the product
      * @param unit The unit in which the product is measured
      * @return a product
-     * @deprecated please us {@link life.qbic.business.products.Converter#createProduct(life.qbic.datamodel.dtos.business.ProductCategory, java.lang.String, java.lang.String, double, double, life.qbic.datamodel.dtos.business.services.ProductUnit, life.qbic.datamodel.dtos.business.facilities.Facility)} instead
+     * @deprecated please use {@link life.qbic.business.products.Converter#createProduct(life.qbic.datamodel.dtos.business.ProductCategory, java.lang.String, java.lang.String, double, double, life.qbic.datamodel.dtos.business.services.ProductUnit, life.qbic.datamodel.dtos.business.facilities.Facility)} instead
      */
     @Deprecated
     static Product createProduct(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit){
