@@ -5,6 +5,8 @@ import life.qbic.business.logging.Logging
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.*
+import life.qbic.datamodel.dtos.business.services.Product
+
 
 /**
  * <h1>Converter for {@link life.qbic.datamodel.dtos.business.services.Product}</h1>
@@ -177,7 +179,7 @@ class Converter {
                     product.unit,
                     product.serviceProvider)
                     .build()
-        } else if (product.internalUnitPrice == 0 && product.externalUnitPrice == 0 && product.unitPrice == 0) { // we cannot determine which product version this is
+        } else { // we cannot determine which product version this is
             // we use the new product version
             return new life.qbic.business.products.Product.Builder(category,
                     product.productName,
