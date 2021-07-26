@@ -1,5 +1,6 @@
 package life.qbic.business.productitem
 
+import groovy.transform.EqualsAndHashCode
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.facilities.Facility
 
@@ -9,6 +10,7 @@ import life.qbic.datamodel.dtos.business.facilities.Facility
  *
  * @since 1.1.0
  */
+@EqualsAndHashCode
 class ProductItemViewDto {
 
     /**

@@ -1,5 +1,6 @@
 package life.qbic.business.offers
 
+import groovy.transform.EqualsAndHashCode
 import life.qbic.business.productitem.ProductItemViewDto
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
@@ -16,7 +17,7 @@ import java.time.Instant
  *
  * @since 1.1.0
  */
-
+@EqualsAndHashCode
 class OfferViewDto {
 
   /**
