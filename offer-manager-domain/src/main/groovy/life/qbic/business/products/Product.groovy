@@ -150,6 +150,18 @@ class Product {
         return unitPrice
     }
 
+    double getInternalUnitPrice() {
+        return internalUnitPrice
+    }
+
+    double getExternalUnitPrice() {
+        return externalUnitPrice
+    }
+
+    Facility getFacility() {
+        return facility
+    }
+
     ProductUnit getUnit() {
         return unit
     }
