@@ -47,13 +47,13 @@ class Converter {
      * @param internalUnitPrice The unit price for internal customers
      * @param externalUnitPrice The unit price for external customers
      * @param unit The unit in which the product is measured
-     * @param facility The facility providing the product
+     * @param serviceProvider The serviceProvider providing the product
      * @return a new product
      * @since 1.1.0
      */
-    static Product createProduct(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility facility){
+    static Product createProduct(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility serviceProvider){
         long runningNumber = 0 //todo it should be possible to create products without a running number
-        return createProductWithVersion(category, name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+        return createProductWithVersion(category, name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, serviceProvider)
     }
 
     /**
@@ -109,33 +109,33 @@ class Converter {
      * @param internalUnitPrice The unit price of the product
      * @param unit The unit in which the product is measured
      * @param runningNumber The running version number of the product
-     * @param facility The facility providing the product
+     * @param serviceProvider The serviceProvider providing the product
      * @return a product
      * @since 1.1.0
      */
-    static Product createProductWithVersion(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, long runningNumber, Facility facility){
+    static Product createProductWithVersion(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, long runningNumber, Facility serviceProvider){
         Product product = null
         switch (category) {
             case ProductCategory.DATA_STORAGE:
-                product = new DataStorage(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                product = new DataStorage(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, serviceProvider)
                 break
             case ProductCategory.PRIMARY_BIOINFO:
-                product = new PrimaryAnalysis(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                product = new PrimaryAnalysis(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, serviceProvider)
                 break
             case ProductCategory.PROJECT_MANAGEMENT:
-                product = new ProjectManagement(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                product = new ProjectManagement(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, serviceProvider)
                 break
             case ProductCategory.SECONDARY_BIOINFO:
-                product = new SecondaryAnalysis(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                product = new SecondaryAnalysis(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, serviceProvider)
                 break
             case ProductCategory.SEQUENCING:
-                product = new Sequencing(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                product = new Sequencing(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, serviceProvider)
                 break
             case ProductCategory.PROTEOMIC:
-                product = new ProteomicAnalysis(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                product = new ProteomicAnalysis(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, serviceProvider)
                 break
             case ProductCategory.METABOLOMIC:
-                product = new MetabolomicAnalysis(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, facility)
+                product = new MetabolomicAnalysis(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, serviceProvider)
                 break
             default:
                 log.warn("Unknown product category $category")
@@ -199,9 +199,9 @@ class Converter {
         if (product.internalUnitPrice == 0 && product.externalUnitPrice == 0 && product.unitPrice != 0) { // we used an old constructor
             result = createProductWithVersion(product.category,product.name, product.description, product.unitPrice, product.unit, product.id.uniqueId)
         } else if ((product.internalUnitPrice != 0 || product.externalUnitPrice != 0) && product.unitPrice == 0) { // we used the new constructor
-            result = createProductWithVersion(product.category,product.name, product.description, product.internalUnitPrice, product.externalUnitPrice, product.unit, product.id.uniqueId, product.facility)
+            result = createProductWithVersion(product.category,product.name, product.description, product.internalUnitPrice, product.externalUnitPrice, product.unit, product.id.uniqueId, product.serviceProvider)
         } else { // we cannot determine which product version this is
-            result = createProductWithVersion(product.category,product.name, product.description, product.internalUnitPrice, product.externalUnitPrice, product.unit, product.id.uniqueId, product.facility)
+            result = createProductWithVersion(product.category,product.name, product.description, product.internalUnitPrice, product.externalUnitPrice, product.unit, product.id.uniqueId, product.serviceProvider)
         }
         return result
     }

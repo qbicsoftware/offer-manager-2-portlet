@@ -25,7 +25,7 @@ class Product {
     private double externalUnitPrice
     private ProductUnit unit
     private ProductId id
-    private Facility facility
+    private Facility serviceProvider
 
     static class Builder{
         ProductCategory category
@@ -36,7 +36,7 @@ class Product {
         double externalUnitPrice
         ProductUnit unit
         ProductId id
-        Facility facility
+        Facility serviceProvider
 
         Builder(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit){
             this.category = Objects.requireNonNull(category)
@@ -46,10 +46,10 @@ class Product {
             this.internalUnitPrice = 0.0
             this.externalUnitPrice = 0.0
             this.unit = Objects.requireNonNull(unit)
-            this.facility = Facility.QBIC
+            this.serviceProvider = Facility.QBIC
         }
 
-        Builder(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility facility){
+        Builder(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility serviceProvider){
             this.category = Objects.requireNonNull(category)
             this.name = Objects.requireNonNull(name)
             this.description = Objects.requireNonNull(description)
@@ -57,7 +57,7 @@ class Product {
             this.externalUnitPrice = Objects.requireNonNull(externalUnitPrice)
             this.unitPrice = 0.0
             this.unit = Objects.requireNonNull(unit)
-            this.facility = facility
+            this.serviceProvider = serviceProvider
         }
 
         Builder id(ProductId id){
@@ -65,8 +65,8 @@ class Product {
             return this
         }
 
-        Builder facility(Facility facility) {
-            this.facility = facility
+        Builder serviceProvider(Facility serviceProvider) {
+            this.serviceProvider = serviceProvider
             return this
         }
 
@@ -79,7 +79,7 @@ class Product {
         this.category = builder.category
         this.description = builder.description
         this.externalUnitPrice = builder.externalUnitPrice
-        this.facility = builder.facility
+        this.serviceProvider = builder.serviceProvider
         this.internalUnitPrice = builder.internalUnitPrice
         this.name = builder.name
         this.unit = builder.unit
@@ -113,7 +113,7 @@ class Product {
 
         digest.update(product.category.toString().getBytes(StandardCharsets.UTF_8))
         digest.update(product.externalUnitPrice.toString().getBytes(StandardCharsets.UTF_8))
-        digest.update(product.facility.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(product.serviceProvider.toString().getBytes(StandardCharsets.UTF_8))
         digest.update(product.internalUnitPrice.toString().getBytes(StandardCharsets.UTF_8))
         digest.update(product.unit.value.getBytes(StandardCharsets.UTF_8))
         digest.update(product.unitPrice.toString().getBytes(StandardCharsets.UTF_8))
@@ -158,8 +158,8 @@ class Product {
         return externalUnitPrice
     }
 
-    Facility getFacility() {
-        return facility
+    Facility getServiceProvider() {
+        return serviceProvider
     }
 
     ProductUnit getUnit() {
