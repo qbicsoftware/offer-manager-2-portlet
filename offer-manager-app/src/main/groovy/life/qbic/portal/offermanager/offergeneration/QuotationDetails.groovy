@@ -294,14 +294,23 @@ class QuotationDetails {
          * @return returns the HTML code as string
          */
         static String itemInHTML(int offerPosition, ProductItem item) {
-            String totalCost = Currency.getFormatterWithoutSymbol().format(item.quantity * item.product.unitPrice)
+            String totalCost = Currency.getFormatterWithoutSymbol().format(item.getTotalCost())
+            String unitPrice = item.product.externalUnitPrice
+            if(offer.isInternal()) {
+              unitPrice = item.product.internalUnitPrice
+            }
+            String discountRow = ""
+            if(item.product.discount > 0) {
+              discountRow = """<div class="col-2 price-value">${-Currency.getFormatterWithoutSymbol().format(item.product.discount)}</div>"""
+            }
             return """<div class="row product-item">
                         <div class="col-1">${offerPosition}</div>
                         <div class="col-4 ">${item.product.productName}</div>
                         <div class="col-1 price-value">${item.quantity}</div>
                         <div class="col-2 text-center">${item.product.unit}</div>
-                        <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(item.product.unitPrice)}</div>
-                        <div class="col-2 price-value">${totalCost}</div>
+                        <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(unitPrice)}</div>"""
+                        + discountRow +
+                        """<div class="col-2 price-value">${totalCost}</div>
                     </div>
                     <div class="row product-item">
                         <div class="col-1"></div>
