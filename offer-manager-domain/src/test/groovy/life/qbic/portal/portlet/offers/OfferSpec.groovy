@@ -346,6 +346,9 @@ class OfferSpec extends Specification {
 
     }
 
+    /**
+     * @since 1.1.0
+     */
     def "the total net costs are computed with the correct external prices"() {
         given: "a list of product items with internal and external base prices"
         ProductItem primaryAnalysis = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
