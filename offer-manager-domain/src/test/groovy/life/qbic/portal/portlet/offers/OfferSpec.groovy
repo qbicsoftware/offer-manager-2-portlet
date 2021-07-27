@@ -5,17 +5,9 @@ import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
 import life.qbic.business.offers.identifier.Version
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
-import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Sequencing
+import life.qbic.datamodel.dtos.business.*
+import life.qbic.datamodel.dtos.business.facilities.Facility
+import life.qbic.datamodel.dtos.business.services.*
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -283,6 +275,7 @@ class OfferSpec extends Specification {
         !res
     }
 
+    //TODO do we still need/want this??
     def "An Offer will provide methods to distinct between ProductItems associated with overhead costs and calculate their net sum"() {
         given:
         ProductItem primaryAnalysis = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
@@ -317,6 +310,68 @@ class OfferSpec extends Specification {
         itemsWithoutOverhead == expectedItemsWithoutOverhead
         expectedItemsWithOverheadNetPrice == itemsWithOverheadNetPrice
         expectedItemsWithoutOverheadNetPrice == itemsWithoutOverheadNetPrice
+
+    }
+
+    /**
+     * @since 1.1.0
+     */
+    def "the total net costs are computed with the correct internal prices"() {
+        given: "a list of product items with internal and external base prices"
+        ProductItem primaryAnalysis = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                " example primary analysis", 2.5, 3.5, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+        ProductItem secondaryAnalysis = new ProductItem(1, new SecondaryAnalysis("Basic RNAsq", "Just an" +
+                " example secondary analysis", 2.4, 42.56, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+        ProductItem sequencing = new ProductItem(3, new Sequencing("Basic Sequencing", "Just an" +
+                "example sequencing", 3.0, 4.6, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+        ProductItem projectManagement = new ProductItem(1, new ProjectManagement("Basic Management",
+                "Just an example", 10.0, 11.26, ProductUnit.PER_DATASET, 1, Facility.QBIC))
+        ProductItem dataStorage = new ProductItem(2, new DataStorage("Data Storage",
+                "Just an example", 20.0, 23, ProductUnit.PER_DATASET, 1, Facility.QBIC))
+        and: "an offer with these items"
+        List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, affiliation).build()
+        double netPrice
+
+        when: "the net price is calculated"
+        netPrice = offer.getTotalNetPrice()
+
+        then: "the correct prices are taken into account"
+        assert offer.selectedCustomerAffiliation == affiliation
+        netPrice == items.sum {(it.quantity * it.product.internalUnitPrice) as double}
+
+        where: "the affiliation is"
+        affiliation << [internalAffiliation]
+
+    }
+
+    def "the total net costs are computed with the correct external prices"() {
+        given: "a list of product items with internal and external base prices"
+        ProductItem primaryAnalysis = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                " example primary analysis", 2.5, 3.5, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+        ProductItem secondaryAnalysis = new ProductItem(1, new SecondaryAnalysis("Basic RNAsq", "Just an" +
+                " example secondary analysis", 2.4, 42.56, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+        ProductItem sequencing = new ProductItem(3, new Sequencing("Basic Sequencing", "Just an" +
+                "example sequencing", 3.0, 4.6, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+        ProductItem projectManagement = new ProductItem(1, new ProjectManagement("Basic Management",
+                "Just an example", 10.0, 11.26, ProductUnit.PER_DATASET, 1, Facility.QBIC))
+        ProductItem dataStorage = new ProductItem(2, new DataStorage("Data Storage",
+                "Just an example", 20.0, 23, ProductUnit.PER_DATASET, 1, Facility.QBIC))
+        and: "an offer with these items"
+        List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, affiliation).build()
+        double netPrice
+
+        when: "the net price is calculated"
+        netPrice = offer.getTotalNetPrice()
+
+        then: "the correct prices are taken into account"
+        netPrice == items.sum {(it.quantity * it.product.externalUnitPrice) as double}
+
+        where: "the affiliation is"
+        affiliation << [externalAffiliation, externalAcademicAffiliation]
 
     }
 }

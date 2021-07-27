@@ -445,7 +445,7 @@ class Offer {
 
     private double calculateNetPrice() {
         double netPrice
-        switch (selectedCustomerAffiliation) {
+        switch (selectedCustomerAffiliation.category) {
             case AffiliationCategory.INTERNAL:
                 netPrice = calculateInternalNetPrice()
                 break
