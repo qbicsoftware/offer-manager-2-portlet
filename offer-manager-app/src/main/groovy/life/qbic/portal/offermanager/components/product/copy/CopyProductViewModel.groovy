@@ -32,7 +32,7 @@ class CopyProductViewModel extends CreateProductViewModel {
         productName = product.productName
         productDescription = product.description
         productUnit = product.unit
-        productUnitPrice = product.unitPrice
+        internalUnitPrice = product.unitPrice
         productCategory = Converter.getCategory(product)
         productId = product.productId
     }
