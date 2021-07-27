@@ -444,14 +444,18 @@ class Offer {
     }
 
     private double calculateNetPrice() {
+        double netPrice
         switch (selectedCustomerAffiliation) {
             case AffiliationCategory.INTERNAL:
-                return calculateInternalNetPrice()
+                netPrice = calculateInternalNetPrice()
                 break
             default:
-                return calculateExternalNetPrice()
+                netPrice = calculateExternalNetPrice()
                 break
         }
+        // for backwards compatibility, we need to add the product item cost of product items that have no internal or external costs
+        netPrice += items.collect {it.product.unitPrice * it.quantity}.sum() as double
+        return netPrice
     }
 
     /**
