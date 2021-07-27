@@ -9,15 +9,23 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Function to apply the quantity discount price (`#707 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/707>`_)
+
 **Fixed**
 
+* Invert quantity discount in order to be able to display size of discount (`#710 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/710>`_
+
 * Include Offer ID Prefix in Offer PDF filename (`#685 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/685>`_)
+
+* Include internal and external prices as well as facilities in the products (`#712 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/712>`_)
 
 **Dependencies**
 
 * ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
 
 * ``org.mariadb.jdbc:mariadb-java-client:2.7.2`` -> ``2.7.3``
+
+* ``life.qbic:data-model-lib:2.8.2`` -> ``2.11.0-SNAPSHOT``
 
 **Deprecated**
 
