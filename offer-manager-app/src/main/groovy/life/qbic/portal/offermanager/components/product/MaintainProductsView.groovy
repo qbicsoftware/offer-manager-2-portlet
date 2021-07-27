@@ -103,6 +103,8 @@ class MaintainProductsView extends FormLayout {
         priceColumn.setRenderer(price -> Currency.getFormatterWithSymbol().format(price), new TextRenderer())
         productGrid.addColumn({ product -> product.unit.value})
                 .setCaption("Unit").setId("ProductUnit")
+        productGrid.addColumn({ product -> product.serviceProvider})
+                .setCaption("Facility").setId("Facility")
 
         productGrid.setWidthFull()
         productGrid.sort("ProductId", SortDirection.ASCENDING)
