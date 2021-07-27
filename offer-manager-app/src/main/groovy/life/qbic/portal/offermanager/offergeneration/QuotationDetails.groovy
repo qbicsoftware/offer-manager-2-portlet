@@ -295,7 +295,7 @@ class QuotationDetails {
          */
         static String itemInHTML(int offerPosition, ProductItem item) {
             String totalCost = Currency.getFormatterWithoutSymbol().format(item.getTotalCost())
-            String unitPrice = item.product.externalUnitPrice
+            double unitPrice = item.product.externalUnitPrice
             if(offer.isInternal()) {
               unitPrice = item.product.internalUnitPrice
             }
