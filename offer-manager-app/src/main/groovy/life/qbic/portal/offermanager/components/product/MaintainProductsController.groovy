@@ -41,35 +41,15 @@ class MaintainProductsController {
      * @param category The products category which determines what kind of product is created
      * @param description The description of the product
      * @param name The name of the product
-     * @param unitPrice The unit price of the product
-     * @param unit The unit in which the product is measured
-     * @deprecated please use {@link #createNewProduct(ProductCategory, String, String, double, ProductUnit, Facility)}
-     */
-    @Deprecated
-    void createNewProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit){
-        try {
-            Product product = ProductConverter.createProduct(category, description, name, unitPrice, unit)
-            createProductInput.create(product)
-        } catch (Exception unexpected) {
-            log.error("unexpected exception during create product call", unexpected)
-            throw new IllegalArgumentException("Could not create products from provided arguments.")
-        }
-    }
-
-    /**
-     * Triggers the creation of a product in the database
-     *
-     * @param category The products category which determines what kind of product is created
-     * @param description The description of the product
-     * @param name The name of the product
-     * @param unitPrice The unit price of the product
+     * @param internalUnitPrice The unit price of the product for internal affiliations
+     * @param externalUnitPrice The unit price of the product for external affiliations
      * @param unit The unit in which the product is measured
      * @param facility The facility providing the product
      * @since 1.1.0
      */
-    void createNewProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit, Facility facility){
+    void createNewProduct(ProductCategory category, String description, String name, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility facility){
         try {
-            Product product = ProductConverter.createProduct(category, description, name, unitPrice, unit)
+            Product product = Converter.createProduct(category, description, name, internalUnitPrice, externalUnitPrice, unit, facility)
             createProductInput.create(product)
         } catch (Exception unexpected) {
             log.error("unexpected exception during create product call", unexpected)
@@ -96,66 +76,19 @@ class MaintainProductsController {
      * @param category The products category which determines what kind of product is created
      * @param description The description of the product
      * @param name The name of the product
-     * @param unitPrice The unit price of the product
+     * @param internalUnitPrice The unit price of the product
+     * @param externalUnitPrice The unit price of the product
      * @param unit The unit in which the product is measured
      * @param productId the productId of the to be copied product
+     * @param serviceProvider the facility providing this product
      */
-    void copyProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit, ProductId productId){
+    void copyProduct(ProductCategory category, String description, String name, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, ProductId productId, Facility serviceProvider){
         try{
-            Product product = ProductConverter.createProductWithVersion(category, description, name, unitPrice, unit, productId.uniqueId)
+            Product product = Converter.createProductWithVersion(category, description, name, internalUnitPrice, externalUnitPrice, unit, productId.uniqueId, serviceProvider)
             copyProductInput.copyModified(product)
         }catch(Exception unexpected){
             log.error("Unexpected exception at copy product call", unexpected)
             throw new IllegalArgumentException("Could not copy product from provided arguments.")
-        }
-    }
-
-    private static class ProductConverter {
-
-        /**
-         * Creates a product DTO based on its products category
-         *
-         * @param category The products category which determines what kind of products is created
-         * @param description The description of the product
-         * @param name The name of the product
-         * @param unitPrice The unit price of the product
-         * @param unit The unit in which the product is measured
-         * @return a new product dto with the provided arguments
-         * @deprecated please use {@link #createProduct(ProductCategory, String, String, double, ProductUnit, Facility)} instead
-         */
-        static Product createProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit) {
-            return Converter.createProduct(category, name, description, unitPrice, unit)
-        }
-
-        /**
-         * Creates a product DTO based on its products category
-         *
-         * @param category The products category which determines what kind of products is created
-         * @param description The description of the product
-         * @param name The name of the product
-         * @param unitPrice The unit price of the product
-         * @param unit The unit in which the product is measured
-         * @param facility The facility providing the given product
-         * @return a new product dto with the provided arguments
-         * @since 1.1.0
-         */
-        static Product createProduct(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit, Facility facility) {
-            return Converter.createProduct(category, name, description, unitPrice, unit, facility)
-        }
-
-        /**
-         * Creates a product DTO based on its products category and its ProductID
-         *
-         * @param category The products category which determines what kind of products is created
-         * @param description The description of the product
-         * @param name The name of the product
-         * @param unitPrice The unit price of the product
-         * @param unit The unit in which the product is measured
-         * @param productId the productID of the previous selected product
-         * @return
-         */
-        static Product createProductWithVersion(ProductCategory category, String description, String name, double unitPrice, ProductUnit unit, long runningNumber) {
-            return Converter.createProductWithVersion(category, name, description, unitPrice, unit, runningNumber)
         }
     }
 }
