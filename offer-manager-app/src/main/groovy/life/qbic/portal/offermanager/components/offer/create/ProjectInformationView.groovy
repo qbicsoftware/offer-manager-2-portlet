@@ -8,6 +8,7 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
+import groovy.beans.Bindable
 import life.qbic.portal.offermanager.components.Resettable
 
 /**
@@ -26,6 +27,8 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
 
     TextField projectTitle
     TextArea projectObjective
+
+    @Bindable
     TextArea experimentalDesign
     Button next
 
@@ -74,13 +77,7 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
     }
 
     private void resetContent() {
-        this.createOfferViewModel.projectTitle = null
-        this.createOfferViewModel.projectObjective = null
-        this.createOfferViewModel.experimentalDesign = null
-
-        this.createOfferViewModel.projectTitleValid = null
-        this.createOfferViewModel.projectObjectiveValid = null
-        this.createOfferViewModel.experimentalDesignValid = null
+        this.createOfferViewModel.resetModel()
     }
 
 
@@ -140,7 +137,7 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
                 default:
                     break
             }
-            next.enabled = allValuesValid()
+            next.setEnabled(allValuesValid())
         })
     }
 

@@ -168,6 +168,10 @@ class CreateOfferViewModel {
         overheads = 0
         totalPrice = 0
 
+        projectTitleValid = false
+        projectObjectiveValid = false
+        experimentalDesignValid = true
+
         productItems.clear()
     }
 
