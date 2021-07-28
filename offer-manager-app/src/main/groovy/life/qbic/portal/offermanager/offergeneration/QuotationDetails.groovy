@@ -136,11 +136,7 @@ class QuotationDetails {
         }
         //add product to current table
         htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item, offer.isInternal()))
-        //if there is a quantity discount, add line for that
-        if(item.getDiscount() > 0) {
-            htmlContent.getElementById(elementId).append(ItemPrintout.discountItemInHTML(item))
-            //TODO how will pageItemsCount change due to discount row?
-        }
+
         pageItemsCount += determineItemSpace(item)
     }
 
@@ -316,24 +312,6 @@ class QuotationDetails {
                         <div class="col-1"></div>
                         <div class="col-7 item-description">${item.product.description}</div>
                         <div class="col-7"></div>
-                    </div>
-                    """
-        }
-        
-        /**
-         * Translates discount for a product item into a HTML row element that can be added to a table
-         * @param item The product item that is put on the offer
-         * @return returns the HTML code as string
-         */
-        static String discountItemInHTML(ProductItem item) {
-            String totalDiscount = Currency.getFormatterWithoutSymbol().format(item.getDiscount())
-            return """<div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-4 ">${item.product.productName} - Discount</div>
-                        <div class="col-1 price-value">${item.quantity}</div>
-                        <div class="col-2 text-center"></div>
-                        <div class="col-2 price-value"></div>
-                        <div class="col-2 price-value">-${totalDiscount}</div>
                     </div>
                     """
         }
