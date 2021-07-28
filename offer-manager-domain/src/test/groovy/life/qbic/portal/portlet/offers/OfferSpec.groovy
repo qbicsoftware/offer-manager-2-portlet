@@ -392,18 +392,17 @@ class OfferSpec extends Specification {
                 "Just an example", 10.0, 11.26, ProductUnit.PER_DATASET, 1, Facility.QBIC))
         ProductItem dataStorage = new ProductItem(2, new DataStorage("Data Storage",
                 "Just an example", 20.0, 23, ProductUnit.PER_DATASET, 1, Facility.QBIC))
-        and: "an offer with these items"
         List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, affiliation).build()
-        def netPrice
+        def overheadSum = 0
 
         when: "the net price is calculated"
-        netPrice = offer.getOverheadSum()
+        overheadSum = offer.getOverheadSum()
 
         then: "the correct prices are taken into account"
         assert offer.selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL
-        netPrice == items.sum {(it.quantity * it.product.internalUnitPrice)} as double * overheadRatio
+        overheadSum == items.collect {return it.quantity * it.product.internalUnitPrice}.sum() * overheadRatio
 
         where: "the affiliation is"
         affiliation << [internalAffiliation]
@@ -430,14 +429,14 @@ class OfferSpec extends Specification {
         List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, affiliation).build()
-        def netPrice
+        def overheadSum = 0
 
         when: "the net price is calculated"
-        netPrice = offer.getOverheadSum()
+        overheadSum = offer.getOverheadSum()
 
         then: "the correct prices are taken into account"
-        assert offer.selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL
-        netPrice == items.sum {(it.quantity * it.product.externalUnitPrice)} as double * overheadRatio
+        assert offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL || offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL_ACADEMIC
+        overheadSum == items.collect {return it.quantity * it.product.externalUnitPrice}.sum() * overheadRatio
 
         where: "the affiliation is"
         affiliation | overheadRatio

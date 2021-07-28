@@ -299,7 +299,7 @@ class Offer {
                 // No overheads are assigned for data storage and project management
             }
             else {
-                costOverheadItemsNet += calculateItemOverhead(it)
+                costOverheadItemsNet += calculateItemNet(it)
             }
         }
         return costOverheadItemsNet
