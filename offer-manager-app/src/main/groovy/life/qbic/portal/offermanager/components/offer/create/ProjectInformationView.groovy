@@ -28,7 +28,6 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
     TextField projectTitle
     TextArea projectObjective
 
-    @Bindable
     TextArea experimentalDesign
     Button next
 
