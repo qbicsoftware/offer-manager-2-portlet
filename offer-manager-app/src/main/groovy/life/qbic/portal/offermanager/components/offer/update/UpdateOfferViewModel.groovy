@@ -41,6 +41,7 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
     }
 
     private void loadData(Offer offer) {
+        super.resetViewRequired.emit("reset")
         super.offerId = offer.identifier
         super.projectTitle = offer.projectTitle
         super.projectObjective = offer.projectObjective

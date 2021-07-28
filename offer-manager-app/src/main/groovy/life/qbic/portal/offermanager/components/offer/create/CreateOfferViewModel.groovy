@@ -99,6 +99,9 @@ class CreateOfferViewModel {
     @Bindable
     Boolean storageQuantityValid
 
+    @Bindable
+    EventEmitter<String> resetViewRequired
+
     Optional<Offer> savedOffer = Optional.empty()
 
     private final ResourcesService<Customer> customerResourceService
@@ -121,6 +124,7 @@ class CreateOfferViewModel {
         this.managerResourceService = managerResourceService
         this.personUpdateEvent = personUpdateEvent
 
+        resetViewRequired = new EventEmitter<>()
         offerCreatedSuccessfully = false
         this.addPropertyChangeListener("offerCreatedSuccessfully", {
             if (it.newValue as Boolean)
