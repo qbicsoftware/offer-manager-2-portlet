@@ -3,6 +3,7 @@ package life.qbic.portal.qoffer2.products
 import groovy.sql.GroovyRowResult
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.datamodel.dtos.business.ProductId
+import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
@@ -54,8 +55,8 @@ class ProductsDbConnectorSpec extends Specification {
     given: "some expected query results"
     GroovyMock(SqlExtensions, global: true)
     SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(
-        ["id":id, "category":category, "description":description, "productName": productName,
-         "unitPrice": unitPrice, "unit": unit, "productId": productId])
+        ["id"       :id, "category":category, "description":description, "productName": productName,
+         "internalUnitPrice": internalUnitPrice, "externalUnitPrice": externalUnitPrice, "unit": unit, "productId": productId, "serviceProvider": serviceProvider])
     ResultSet resultSet = Stub(ResultSet, {
       it.next() >>> [true, false]
     })
@@ -77,14 +78,14 @@ class ProductsDbConnectorSpec extends Specification {
     result.get(0).description == "Sample QC with report"
 
     where: "available products information is as follows"
-    id | category | description | productName | unitPrice | unit | productId
-    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample" | "DS_1"
+    id | category | description | productName | internalUnitPrice |externalUnitPrice | unit | productId | serviceProvider
+    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | 49.99 | "Sample" | "DS_1" | "QBIC"
   }
 
   def "Returns correct id for a given product"() {
     given: "some expected query results"
     String query = "SELECT id FROM product "+
-            "WHERE category = ? AND description = ? AND productName = ? AND unitPrice = ? AND unit = ?"
+            "WHERE category = ? AND description = ? AND productName = ? AND internalUnitPrice = ? AND externalUnitPrice = ? AND unit = ? AND serviceProvider = ?"
 
     and: "a connection returning the id of the product if it was found"
     GroovyMock(SqlExtensions, global: true)
@@ -94,8 +95,10 @@ class ProductsDbConnectorSpec extends Specification {
       it.setString(1, category) >> _
       it.setString(2, description) >> _
       it.setString(3, productName) >> _
-      it.setDouble(4, unitPrice) >> _
-      it.setString(5, unit.value) >> _
+      it.setDouble(4, internalUnitPrice) >> _
+      it.setDouble(5, externalUnitPrice) >> _
+      it.setString(6, unit.value) >> _
+      it.setString(7, serviceProvider.name()) >> _
 
       it.executeQuery() >> Stub(ResultSet,{it.next() >>> [true, false]})
     })
@@ -111,14 +114,14 @@ class ProductsDbConnectorSpec extends Specification {
     ProductsDbConnector dataSource = new ProductsDbConnector(connectionProvider)
 
     when:
-    int resultId = dataSource.findProductId(new PrimaryAnalysis(productName,description,unitPrice, unit, identifier))
+    int resultId = dataSource.findProductId(new PrimaryAnalysis(productName,description,internalUnitPrice, externalUnitPrice, unit, identifier, serviceProvider))
 
     then:
     resultId == id
 
     where: "available products information is as follows"
-    id | category | description | productName | unitPrice | unit | identifier
-    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | ProductUnit.PER_SAMPLE | "1"
+    id | category | description | productName | internalUnitPrice | externalUnitPrice | unit | identifier |serviceProvider
+    0 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | 49.99 | ProductUnit.PER_SAMPLE | 1 | Facility.QBIC
 
   }
 
@@ -126,8 +129,8 @@ class ProductsDbConnectorSpec extends Specification {
     given: "some expected query results"
     GroovyMock(SqlExtensions, global: true)
     SqlExtensions.toRowResult(_ as ResultSet) >> new GroovyRowResult(
-            ["id":id, "category":category, "description":description, "productName": productName,
-             "unitPrice": unitPrice, "unit": unit, "productId": productId])
+            ["id"       :id, "category":category, "description":description, "productName": productName,
+             "internalUnitPrice": internalUnitPrice, "externalUnitPrice": externalUnitPrice, "unit": unit, "productId": productId, "serviceProvider": serviceProvider])
 
     and: "a result set containing only 6 rows"
     ResultSet resultSet = Stub(ResultSet, {
@@ -149,11 +152,11 @@ class ProductsDbConnectorSpec extends Specification {
     ! result.isPresent()
 
     where: "available products information is as follows"
-    id | category | description | productName | unitPrice | unit | productId
-    0 | "Unknown category" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample" | "DS_1"
-    1 | "Primary Bioinformatics" | null | "Sample QC with report" | 49.99 | "Sample" | "DS_1"
-    2 | "Primary Bioinformatics" | "Sample QC with report" | null | 49.99 | "Sample" | "DS_1"
-    4 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Unknown Unit" | "DS_1"
-    5 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | "Sample" | "This is some random string. Lorem ipsum"
+    id | category | description | productName | internalUnitPrice | externalUnitPrice | unit | productId | serviceProvider
+    0 | "Unknown category" | "Sample QC with report" | "Sample QC" | 49.99 | 49.99 | "Sample" | "DS_1" | "QBIC"
+    1 | "Primary Bioinformatics" | null | "Sample QC with report" | 49.99 | 49.99 | "Sample" | "DS_1" | "QBIC"
+    2 | "Primary Bioinformatics" | "Sample QC with report" | null | 49.99 | 49.99 | "Sample" | "DS_1" | "QBIC"
+    4 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" |  49.99 |49.99 | "Unknown Unit" | "DS_1" | "QBIC"
+    5 | "Primary Bioinformatics" | "Sample QC with report" | "Sample QC" | 49.99 | 49.99 | "Sample" | "This is some random string. Lorem ipsum" | "QBIC"
   }
 }

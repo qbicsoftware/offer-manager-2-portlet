@@ -2,7 +2,7 @@ package life.qbic.business.products
 
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.products.Product
+import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.*
