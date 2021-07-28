@@ -1,17 +1,14 @@
 package life.qbic.business.offers
 
 import groovy.time.TimeCategory
+import life.qbic.business.offers.Offer
+import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
 import life.qbic.business.offers.identifier.Version
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.business.offers.identifier.OfferId
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
@@ -259,11 +256,16 @@ class Offer {
      * @return The calculated overhead amount of the selected items.
      */
     double getOverheadSum() {
-        double overheadSum = 0
-        items.each {
-                overheadSum += it.quantity * it.product.unitPrice * this.overhead
-        }
-        return overheadSum
+        return items.sum {calculateItemOverhead(it)} as double
+    }
+
+    private double calculateItemNet(ProductItem item) {
+        double unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
+        return unitPrice * item.quantity
+    }
+
+    private double calculateItemOverhead(ProductItem item) {
+        return calculateItemNet(item) * overhead
     }
 
 
@@ -278,7 +280,7 @@ class Offer {
         items.each {
             // No overheads are assigned for data storage and project management
             if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
-                costNoOverheadItemsNet += it.quantity * it.product.unitPrice
+                costNoOverheadItemsNet += calculateItemNet(it)
             }
         }
         return costNoOverheadItemsNet
@@ -297,7 +299,7 @@ class Offer {
                 // No overheads are assigned for data storage and project management
             }
             else {
-                costOverheadItemsNet += it.quantity * it.product.unitPrice
+                costOverheadItemsNet += calculateItemNet(it)
             }
         }
         return costOverheadItemsNet
@@ -447,11 +449,7 @@ class Offer {
     }
 
     private double calculateNetPrice() {
-        double netSum = 0.0
-        for (item in items) {
-            netSum += item.quantity * item.product.unitPrice
-        }
-        return netSum
+        return items.sum {calculateItemNet(it)} as double
     }
 
     private double determineOverhead() {
@@ -561,7 +559,7 @@ class Offer {
         StringBuilder sb = new StringBuilder()
         for(int i=0; i< bytes.length ;i++)
         {
-            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1))
         }
 
         //return complete hash
