@@ -57,8 +57,6 @@ class CreateOfferViewModel {
     Boolean projectTitleValid = false
     @Bindable
     Boolean projectObjectiveValid = false
-    @Bindable
-    Boolean experimentalDesignValid = true
 
     @Bindable
     double netPrice = 0
@@ -170,7 +168,6 @@ class CreateOfferViewModel {
 
         projectTitleValid = false
         projectObjectiveValid = false
-        experimentalDesignValid = true
 
         productItems.clear()
     }

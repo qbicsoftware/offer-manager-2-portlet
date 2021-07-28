@@ -128,11 +128,6 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
                         projectObjective.componentError = null
                     }
                     break
-                case "experimentalDesignValid":
-                    if (it.newValue || it.newValue == null) {
-                        experimentalDesign.componentError = null
-                    }
-                    break
                 default:
                     break
             }
@@ -143,12 +138,10 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
     private boolean allValuesValid() {
 
         return createOfferViewModel.projectTitleValid &&
-                createOfferViewModel.projectObjectiveValid &&
-                createOfferViewModel.experimentalDesignValid
+                createOfferViewModel.projectObjectiveValid
     }
 
     private void setupValidators() {
-        Validator<String> notNullValidator = Validator.from({ String value -> (value != null) }, "Please provide a valid description.")
         Validator<String> notEmptyValidator = Validator.from({ String value -> (value && !value.trim().empty) }, "Please provide a valid description.")
 
 
@@ -172,17 +165,6 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
                 projectObjective.setComponentError(error)
             } else {
                 createOfferViewModel.projectObjectiveValid = true
-            }
-        })
-
-        this.experimentalDesign.addValueChangeListener({ event ->
-            ValidationResult result = notNullValidator.apply(event.getValue(), new ValueContext(this.experimentalDesign))
-            if (result.isError()) {
-                createOfferViewModel.experimentalDesignValid = false
-                UserError error = new UserError(result.getErrorMessage())
-                experimentalDesign.setComponentError(error)
-            } else {
-                createOfferViewModel.experimentalDesignValid = true
             }
         })
 
