@@ -256,11 +256,16 @@ class Offer {
      * @return The calculated overhead amount of the selected items.
      */
     double getOverheadSum() {
-        double overheadSum = 0
-        items.each {
-                overheadSum += it.quantity * it.product.unitPrice * this.overhead
-        }
-        return overheadSum
+        return items.sum {calculateItemOverhead(it)} as double
+    }
+
+    private double calculateItemNet(ProductItem item) {
+        double unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
+        return unitPrice * item.quantity
+    }
+
+    private double calculateItemOverhead(ProductItem item) {
+        return calculateItemNet(item) * overhead
     }
 
 
@@ -275,7 +280,7 @@ class Offer {
         items.each {
             // No overheads are assigned for data storage and project management
             if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
-                costNoOverheadItemsNet += it.quantity * it.product.unitPrice
+                costNoOverheadItemsNet += calculateItemNet(it)
             }
         }
         return costNoOverheadItemsNet
@@ -294,7 +299,7 @@ class Offer {
                 // No overheads are assigned for data storage and project management
             }
             else {
-                costOverheadItemsNet += it.quantity * it.product.unitPrice
+                costOverheadItemsNet += calculateItemOverhead(it)
             }
         }
         return costOverheadItemsNet
@@ -444,32 +449,7 @@ class Offer {
     }
 
     private double calculateNetPrice() {
-        double netPrice
-        switch (selectedCustomerAffiliation.category) {
-            case AffiliationCategory.INTERNAL:
-                netPrice = calculateInternalNetPrice()
-                break
-            default:
-                netPrice = calculateExternalNetPrice()
-                break
-        }
-        return netPrice
-    }
-
-    /**
-     * Calculates the net price based on the internal unit prices of the products in this offer
-     * @return the net price of the offer items
-     */
-    private double calculateInternalNetPrice() {
-        items.sum {item -> item.quantity * item.product.internalUnitPrice} as double
-    }
-
-    /**
-     * Calculates the net price based on the external unit prices of the products in this offer
-     * @return the net price of the offer items
-     */
-    private double calculateExternalNetPrice() {
-        items.sum {item -> item.quantity * item.product.externalUnitPrice} as double
+        return items.sum {calculateItemNet(it)} as double
     }
 
     private double determineOverhead() {
