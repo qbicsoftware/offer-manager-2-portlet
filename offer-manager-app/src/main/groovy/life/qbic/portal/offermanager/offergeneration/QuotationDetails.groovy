@@ -335,11 +335,6 @@ class QuotationDetails {
                         <div class="col-2 price-value"></div>
                         <div class="col-2 price-value">-${totalDiscount}</div>
                     </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description"></div>
-                        <div class="col-7"></div>
-                    </div>
                     """
         }
         
