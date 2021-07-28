@@ -135,7 +135,12 @@ class QuotationDetails {
             resetPageItemsCount()
         }
         //add product to current table
-        htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
+        htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item, offer.isInternal()))
+        //if there is a quantity discount, add line for that
+        if(item.getDiscount() > 0) {
+            htmlContent.getElementById(elementId).append(ItemPrintout.discountItemInHTML(item))
+            //TODO how will pageItemsCount change due to discount row?
+        }
         pageItemsCount += determineItemSpace(item)
     }
 
@@ -293,24 +298,19 @@ class QuotationDetails {
          * @param item The product item that is put on the offer
          * @return returns the HTML code as string
          */
-        static String itemInHTML(int offerPosition, ProductItem item) {
+        static String itemInHTML(int offerPosition, ProductItem item, boolean internalOffer) {
             String totalCost = Currency.getFormatterWithoutSymbol().format(item.getTotalCost())
             double unitPrice = item.product.externalUnitPrice
-            if(offer.isInternal()) {
+            if(internalOffer) {
               unitPrice = item.product.internalUnitPrice
-            }
-            String discountRow = ""
-            if(item.product.discount > 0) {
-              discountRow = """<div class="col-2 price-value">${-Currency.getFormatterWithoutSymbol().format(item.product.discount)}</div>"""
             }
             return """<div class="row product-item">
                         <div class="col-1">${offerPosition}</div>
                         <div class="col-4 ">${item.product.productName}</div>
                         <div class="col-1 price-value">${item.quantity}</div>
                         <div class="col-2 text-center">${item.product.unit}</div>
-                        <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(unitPrice)}</div>"""
-                        + discountRow +
-                        """<div class="col-2 price-value">${totalCost}</div>
+                        <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(unitPrice)}</div>
+                        <div class="col-2 price-value">${totalCost}</div>
                     </div>
                     <div class="row product-item">
                         <div class="col-1"></div>
@@ -319,7 +319,30 @@ class QuotationDetails {
                     </div>
                     """
         }
-
+        
+        /**
+         * Translates discount for a product item into a HTML row element that can be added to a table
+         * @param item The product item that is put on the offer
+         * @return returns the HTML code as string
+         */
+        static String discountItemInHTML(ProductItem item) {
+            String totalDiscount = Currency.getFormatterWithoutSymbol().format(item.getDiscount())
+            return """<div class="row product-item">
+                        <div class="col-1"></div>
+                        <div class="col-4 ">${item.product.productName} - Discount</div>
+                        <div class="col-1 price-value">${item.quantity}</div>
+                        <div class="col-2 text-center"></div>
+                        <div class="col-2 price-value"></div>
+                        <div class="col-2 price-value">-${totalDiscount}</div>
+                    </div>
+                    <div class="row product-item">
+                        <div class="col-1"></div>
+                        <div class="col-7 item-description"></div>
+                        <div class="col-7"></div>
+                    </div>
+                    """
+        }
+        
         /**
          * Creates a page break div
          * @return the page break div as string
