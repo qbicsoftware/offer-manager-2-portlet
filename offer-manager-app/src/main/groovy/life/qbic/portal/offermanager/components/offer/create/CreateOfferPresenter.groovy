@@ -48,6 +48,12 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
     }
 
     @Override
+    void calculatedPrice(double netPrice, double taxes, double overheads, double totalPrice, double totalDiscountAmount) {
+        this.calculatedPrice(netPrice, taxes, overheads, totalPrice)
+        this.createOfferViewModel.totalDiscountAmount = totalDiscountAmount
+    }
+
+    @Override
     void failNotification(String notification) {
        this.viewModel.failureNotifications.add(notification)
     }

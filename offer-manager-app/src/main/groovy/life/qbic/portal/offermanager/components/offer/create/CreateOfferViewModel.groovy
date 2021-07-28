@@ -68,6 +68,8 @@ class CreateOfferViewModel {
     double overheads = 0
     @Bindable
     double totalPrice = 0
+    @Bindable
+    double totalDiscountAmount = 0
 
     @Bindable
     Boolean sequencingGridSelected
@@ -163,6 +165,7 @@ class CreateOfferViewModel {
         taxes = 0
         overheads = 0
         totalPrice = 0
+        totalDiscountAmount = 0
 
         productItems.clear()
     }
