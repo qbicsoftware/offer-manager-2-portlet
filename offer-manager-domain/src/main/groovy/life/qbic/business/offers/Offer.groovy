@@ -9,6 +9,7 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.business.services.AtomicProduct
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.business.offers.identifier.OfferId
@@ -131,6 +132,8 @@ class Offer {
             return date + 90.days
         }
     }
+
+    private static final QuantityDiscount = new QuantityDiscount()
 
     static class Builder {
 
@@ -444,6 +447,27 @@ class Offer {
         identifier = getLatestVersion()
         identifier.increaseVersion()
         this.availableVersions.addAll(copyIdentifier, this.identifier)
+    }
+
+    /**
+     * This method returns the total discount amount that was applied the offer.
+     *
+     * It is expected to return the sum of all individual item discount amounts that have been
+     * determined by the number of samples an individual data analysis service has been provided for.
+     *
+     * @return the total discount amount applied in the offer
+     * @since 1.1.0
+     */
+    double getTotalDiscountAmount(){
+        return calculateTotalDiscountAmount()
+    }
+
+    private double calculateTotalDiscountAmount() {
+        return 0
+    }
+
+    private discountAmountForProductItem(ProductItem productItem) {
+        new QuantityDiscount().apply(productItem.quantity, productItem.totalPrice)
     }
 
     private double calculateNetPrice() {

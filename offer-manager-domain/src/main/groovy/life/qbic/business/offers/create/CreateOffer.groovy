@@ -96,6 +96,7 @@ class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput
     @Override
     void calculatePrice(List<ProductItem> items, Affiliation affiliation) {
         life.qbic.business.offers.Offer offer = Converter.buildOfferForCostCalculation(items, affiliation)
+        // TODO return total discount as well
         output.calculatedPrice(
                 offer.getTotalNetPrice(),
                 offer.getTaxCosts(),
