@@ -7,7 +7,8 @@ import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
 import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
-import life.qbic.datamodel.dtos.business.services.*
+import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
@@ -24,8 +25,6 @@ import java.security.MessageDigest
  * @since 0.1.0
  */
 class Offer {
-    private static final QuantityDiscount QUANTITY_DISCOUNT = new QuantityDiscount();
-
     /**
      * Holds all available versions of an existing offer
      */
@@ -199,7 +198,8 @@ class Offer {
     private Offer(Builder builder) {
         this.customer = builder.customer
         this.identifier = builder.identifier
-        importItems(builder.items)
+        this.items = []
+        builder.items.each {this.items.add(it)}
         this.expirationDate = calculateExpirationDate(builder.creationDate)
         this.creationDate = builder.creationDate
         this.projectManager = builder.projectManager
@@ -486,14 +486,6 @@ class Offer {
     }
 
     /**
-     * Returns the sum of quantity discounts applied over all the items on this offer
-     * @return
-     */
-    double getQuantityDiscountSum() {
-        return items.collect {it.quantityDiscount}.sum() as double
-    }
-
-    /**
      * Determines if the customers affiliation is within germany
      * @return true if the country of the customer is within
      */
@@ -572,65 +564,5 @@ class Offer {
 
         //return complete hash
         return sb.toString()
-    }
-
-    private void importItems(List<ProductItem> items) {
-        this.items.each {importItem(it)}
-    }
-
-    /**
-     * This method creates a new item based on the information in the provided item
-     * @param item
-     */
-    private void importItem(ProductItem item) {
-        ProductItem productItem = updateProductItem(item)
-        items.add(productItem)
-    }
-
-    /**
-     * This method calculates the quantity discount and total net price and returns an item with the associated information
-     * @param item
-     * @return a new item with additional information on discount and total net price
-     */
-    private ProductItem updateProductItem(ProductItem item) {
-        double totalPrice = calculateItemNet(item)
-        double quantityDiscount = 0.0
-        if (item.class in ProductGroup.DATA_ANALYSIS.associatedClasses) {
-            //assertion: quantity is integer
-            int quantity = item.quantity as int
-            quantityDiscount = QUANTITY_DISCOUNT.apply(quantity, totalPrice)
-        }
-        ProductItem productItem = new ProductItem(item.quantity, item.product, totalPrice, quantityDiscount)
-        return productItem
-    }
-
-    /**
-     * Possible product groups
-     *
-     * This enum describes the product groups into which the products of an offer are categorized.
-     * It also defines the acronyms used to abbreviate the product groups in the offer listings.
-     */
-    enum ProductGroup {
-        DATA_GENERATION("Data generation", "DG", [Sequencing, ProteomicAnalysis, MetabolomicAnalysis]),
-        DATA_ANALYSIS("Data analysis", "DA", [PrimaryAnalysis, SecondaryAnalysis]),
-        PROJECT_AND_DATA_MANAGEMENT("Project management & data storage", "PM & DS", [ProjectManagement, DataStorage])
-
-        private String groupName
-        private String acronym
-        private List<Class> associatedClasses
-
-        ProductGroup(String groupName, String acronym, List<Class> associatedClasses) {
-            this.groupName = groupName
-            this.acronym = acronym
-            this.associatedClasses = associatedClasses
-        }
-
-        String getName() {
-            return this.groupName
-        }
-
-        String getAcronym() {
-            return this.acronym
-        }
     }
 }
