@@ -7,15 +7,10 @@ import com.vaadin.data.validator.RegexpValidator
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
 import com.vaadin.shared.Registration
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Button
-import com.vaadin.ui.ComboBox
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Label
-import com.vaadin.ui.TextField
-import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductCategory
+import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.portal.offermanager.components.product.MaintainProductsController
 
@@ -34,10 +29,12 @@ class CreateProductView extends VerticalLayout{
 
     TextField productNameField
     TextField productDescriptionField
-    TextField productUnitPriceField
+    TextField internalUnitPriceField
+    TextField externalUnitPriceField
 
     ComboBox<String> productUnitComboBox
     ComboBox<String> productCategoryComboBox
+    ComboBox<String> productFacilityComboBox
     Button abortButton
 
     Button createProductButton
@@ -63,12 +60,12 @@ class CreateProductView extends VerticalLayout{
         this.addComponent(titleLabel)
 
         //add textfields and boxes
-        HorizontalLayout sharedLayout = new HorizontalLayout(productUnitPriceField,productUnitComboBox)
+        HorizontalLayout sharedLayout = new HorizontalLayout(internalUnitPriceField, externalUnitPriceField, productUnitComboBox)
         sharedLayout.setWidthFull()
         sharedLayout.setMargin(false)
         HorizontalLayout buttons = new HorizontalLayout(abortButton,createProductButton)
 
-        VerticalLayout sideLayout = new VerticalLayout(titleLabel,productNameField,productDescriptionField,sharedLayout,productCategoryComboBox,buttons)
+        VerticalLayout sideLayout = new VerticalLayout(titleLabel,productNameField,productDescriptionField,sharedLayout,productCategoryComboBox, productFacilityComboBox, buttons)
         sideLayout.setSizeFull()
         sideLayout.setMargin(false)
         sideLayout.setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT)
@@ -90,10 +87,15 @@ class CreateProductView extends VerticalLayout{
         productDescriptionField.setRequiredIndicatorVisible(true)
         productDescriptionField.setWidthFull()
 
-        productUnitPriceField = new TextField("Product Unit Price")
-        productUnitPriceField.setPlaceholder("00.00")
-        productUnitPriceField.setRequiredIndicatorVisible(true)
-        productUnitPriceField.setWidthFull()
+        internalUnitPriceField = new TextField("Internal Unit Price")
+        internalUnitPriceField.setPlaceholder("00.00")
+        internalUnitPriceField.setRequiredIndicatorVisible(true)
+        internalUnitPriceField.setWidthFull()
+
+        externalUnitPriceField = new TextField("External Unit Price")
+        externalUnitPriceField.setPlaceholder("00.00")
+        externalUnitPriceField.setRequiredIndicatorVisible(true)
+        externalUnitPriceField.setWidthFull()
     }
 
     private void initComboBoxes(){
@@ -110,6 +112,13 @@ class CreateProductView extends VerticalLayout{
         productCategoryComboBox.setEmptySelectionAllowed(false)
         productCategoryComboBox.setItems(Arrays.asList(ProductCategory.values()) as List<String>)
         productCategoryComboBox.setWidthFull()
+
+        productFacilityComboBox = new ComboBox<>("Facility")
+        productFacilityComboBox.setRequiredIndicatorVisible(true)
+        productFacilityComboBox.setPlaceholder("Select facility that provides the product")
+        productFacilityComboBox.setEmptySelectionAllowed(false)
+        productFacilityComboBox.setItems(Arrays.asList(Facility.values()) as List<String>)
+        productFacilityComboBox.setWidthFull()
     }
 
     private void initButtons(){
@@ -134,11 +143,18 @@ class CreateProductView extends VerticalLayout{
             productDescriptionField.value = newValue ?: productDescriptionField.emptyValue
         })
 
-        this.productUnitPriceField.addValueChangeListener({this.viewModel.productUnitPrice = it.value})
+        this.internalUnitPriceField.addValueChangeListener({this.viewModel.internalUnitPrice = it.value})
 
-        viewModel.addPropertyChangeListener("productUnitPrice", {
+        viewModel.addPropertyChangeListener("internalUnitPrice", {
             String newValue = it.newValue as String
-            productUnitPriceField.value = newValue ?: productUnitPriceField.emptyValue
+            internalUnitPriceField.value = newValue ?: internalUnitPriceField.emptyValue
+        })
+
+        this.externalUnitPriceField.addValueChangeListener({this.viewModel.externalUnitPrice = it.value})
+
+        viewModel.addPropertyChangeListener("externalUnitPrice", {
+            String newValue = it.newValue as String
+            externalUnitPriceField.value = newValue ?: externalUnitPriceField.emptyValue
         })
 
         //bind combo boxes
@@ -166,6 +182,20 @@ class CreateProductView extends VerticalLayout{
             viewModel.setProductCategory(it.value as ProductCategory)
         })
 
+
+        viewModel.addPropertyChangeListener("productFacility", {
+            Facility newValue = it.newValue as Facility
+            if (newValue) {
+                productFacilityComboBox.value = newValue
+            } else {
+                productFacilityComboBox.value = productFacilityComboBox.emptyValue
+            }
+        })
+        productFacilityComboBox.addSelectionListener({
+            viewModel.setProductFacility(it.value as Facility)
+        })
+
+
         /*
        We listen to the valid properties. whenever the presenter resets values in the viewmodel
        and resets the valid properties the component error on the respective component is removed
@@ -182,9 +212,14 @@ class CreateProductView extends VerticalLayout{
                         productDescriptionField.componentError = null
                     }
                     break
-                case "productUnitPriceValid":
+                case "internalUnitPriceValid":
                     if (it.newValue || it.newValue == null) {
-                        productUnitPriceField.componentError = null
+                        internalUnitPriceField.componentError = null
+                    }
+                    break
+                case "externalUnitPriceValid":
+                    if (it.newValue || it.newValue == null) {
+                        externalUnitPriceField.componentError = null
                     }
                     break
                 case "productUnitValid":
@@ -195,6 +230,11 @@ class CreateProductView extends VerticalLayout{
                 case "productCategoryValid":
                     if (it.newValue || it.newValue == null) {
                         productCategoryComboBox.componentError = null
+                    }
+                    break
+                case "productFacilityValid":
+                    if (it.newValue || it.newValue == null) {
+                        productFacilityComboBox.componentError = null
                     }
                     break
                 default:
@@ -234,14 +274,24 @@ class CreateProductView extends VerticalLayout{
                 viewModel.productDescriptionValid = true
             }
         })
-        this.productUnitPriceField.addValueChangeListener({ event ->
-            ValidationResult result = numberValidator.apply(event.getValue(), new ValueContext(this.productUnitPriceField))
+        this.internalUnitPriceField.addValueChangeListener({ event ->
+            ValidationResult result = numberValidator.apply(event.getValue(), new ValueContext(this.internalUnitPriceField))
             if (result.isError()) {
-                viewModel.productUnitPriceValid = false
+                viewModel.internalUnitPriceValid = false
                 UserError error = new UserError(result.getErrorMessage())
-                productUnitPriceField.setComponentError(error)
+                internalUnitPriceField.setComponentError(error)
             } else {
-                viewModel.productUnitPriceValid = true
+                viewModel.internalUnitPriceValid = true
+            }
+        })
+        this.externalUnitPriceField.addValueChangeListener({ event ->
+            ValidationResult result = numberValidator.apply(event.getValue(), new ValueContext(this.externalUnitPriceField))
+            if (result.isError()) {
+                viewModel.externalUnitPriceValid = false
+                UserError error = new UserError(result.getErrorMessage())
+                externalUnitPriceField.setComponentError(error)
+            } else {
+                viewModel.externalUnitPriceValid = true
             }
         })
         this.productUnitComboBox.addSelectionListener({selection ->
@@ -264,6 +314,16 @@ class CreateProductView extends VerticalLayout{
                 viewModel.productCategoryValid = true
             }
         })
+        this.productFacilityComboBox.addSelectionListener({selection ->
+            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.productFacilityComboBox))
+            if (result.isError()) {
+                viewModel.productFacilityValid = false
+                UserError error = new UserError(result.getErrorMessage())
+                productCategoryComboBox.setComponentError(error)
+            } else {
+                viewModel.productFacilityValid = true
+            }
+        })
     }
     /**
      * This is used to indicate whether all fields of this view are filled correctly.
@@ -274,15 +334,17 @@ class CreateProductView extends VerticalLayout{
         return viewModel.productNameValid \
             && viewModel.productDescriptionValid \
             && viewModel.productUnitValid \
-            && viewModel.productUnitPriceValid \
-            && viewModel.productCategoryValid
+            && viewModel.internalUnitPriceValid \
+            && viewModel.externalUnitPriceValid \
+            && viewModel.productCategoryValid \
+            && viewModel.productFacilityValid
     }
 
     private void setupListeners(){
 
         abortButton.addClickListener({clearAllFields() })
         createProductButtonRegistration = this.createProductButton.addClickListener({
-            controller.createNewProduct(viewModel.productCategory, viewModel.productDescription,viewModel.productName, Double.parseDouble(viewModel.productUnitPrice),viewModel.productUnit)
+            controller.createNewProduct(viewModel.productCategory, viewModel.productDescription,viewModel.productName, Double.parseDouble(viewModel.internalUnitPrice), Double.parseDouble(viewModel.externalUnitPrice), viewModel.productUnit, viewModel.productFacility)
             clearAllFields()
         })
 
@@ -295,13 +357,15 @@ class CreateProductView extends VerticalLayout{
 
         productNameField.clear()
         productDescriptionField.clear()
-        productUnitPriceField.clear()
+        internalUnitPriceField.clear()
+        externalUnitPriceField.clear()
         productCategoryComboBox.selectedItem = productCategoryComboBox.clear()
         productUnitComboBox.selectedItem = productUnitComboBox.clear()
 
         viewModel.productNameValid = null
         viewModel.productDescriptionValid = null
-        viewModel.productUnitPriceValid = null
+        viewModel.internalUnitPriceValid = null
+        viewModel.externalUnitPriceValid = null
         viewModel.productCategoryValid = null
         viewModel.productUnitValid = null
     }
