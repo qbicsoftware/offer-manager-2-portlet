@@ -65,7 +65,7 @@ class CreateProductView extends VerticalLayout{
         sharedLayout.setMargin(false)
         HorizontalLayout buttons = new HorizontalLayout(abortButton,createProductButton)
 
-        VerticalLayout sideLayout = new VerticalLayout(titleLabel,productNameField,productDescriptionField,sharedLayout,productCategoryComboBox,buttons)
+        VerticalLayout sideLayout = new VerticalLayout(titleLabel,productNameField,productDescriptionField,sharedLayout,productCategoryComboBox, productFacilityComboBox, buttons)
         sideLayout.setSizeFull()
         sideLayout.setMargin(false)
         sideLayout.setComponentAlignment(buttons, Alignment.BOTTOM_RIGHT)
@@ -117,7 +117,8 @@ class CreateProductView extends VerticalLayout{
         productFacilityComboBox.setRequiredIndicatorVisible(true)
         productFacilityComboBox.setPlaceholder("Select facility that provides the product")
         productFacilityComboBox.setEmptySelectionAllowed(false)
-        productCategoryComboBox.setItems(Arrays.asList(Facility.values()) as List<String>)
+        productFacilityComboBox.setItems(Arrays.asList(Facility.values()) as List<String>)
+        productFacilityComboBox.setWidthFull()
     }
 
     private void initButtons(){
