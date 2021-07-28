@@ -19,6 +19,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Differentiate between internal and external product unit prices (`#713 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/713>`_)
 
+* Include internal and external prices as well as facilities in the products (`#712 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/712>`_)
+
+
 **Dependencies**
 
 * ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
