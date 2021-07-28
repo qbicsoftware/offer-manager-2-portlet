@@ -486,6 +486,14 @@ class Offer {
     }
 
     /**
+     * Returns the sum of quantity discounts applied over all the items on this offer
+     * @return
+     */
+    double getQuantityDiscountSum() {
+        return items.collect {it.quantityDiscount}.sum() as double
+    }
+
+    /**
      * Determines if the customers affiliation is within germany
      * @return true if the country of the customer is within
      */
