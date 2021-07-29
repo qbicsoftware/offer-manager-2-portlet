@@ -32,11 +32,12 @@ class OfferContentSpec extends Specification{
     @Shared
     ProjectManager projectManager2
 
-    final List<ProductItem> items = [
-            new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                    " example", 1.0, ProductUnit.PER_SAMPLE, "1")),
-            new ProductItem(1, new ProjectManagement("Basic Management",
-                    "Just an example", 10.0, ProductUnit.PER_DATASET, "1"))
+    final List<OfferItem> items = [
+            new OfferItem.Builder(2, "Just an example", "Basic RNAsq", 1.0, 1,
+                    "QBiC","Sample", 1).build(),
+            new OfferItem.Builder(2, "Just an example", "Basic RNAsq", 1.0, 1,
+                    "QBiC","Dataset", 1).build(),
+
     ]
 
     def setup() {
