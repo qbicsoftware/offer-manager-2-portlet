@@ -466,7 +466,8 @@ class Offer {
     }
 
     private double calculateTotalDiscountAmount() {
-        return items.stream().map({it.quantityDiscount})
+        return items.stream()
+                .map({it.quantityDiscount})
                 .reduce(0, (a,b)-> a + b)
     }
 
