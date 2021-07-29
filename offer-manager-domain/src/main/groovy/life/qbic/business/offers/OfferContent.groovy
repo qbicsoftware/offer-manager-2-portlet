@@ -1,5 +1,6 @@
 package life.qbic.business.offers
 
+import groovy.transform.EqualsAndHashCode
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
@@ -16,6 +17,8 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
  * @since 1.1.0
  *
 */
+
+@EqualsAndHashCode
 class OfferContent {
 
     /*Person Information*/
