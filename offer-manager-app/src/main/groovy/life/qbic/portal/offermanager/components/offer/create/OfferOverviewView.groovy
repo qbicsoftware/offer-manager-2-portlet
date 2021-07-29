@@ -2,7 +2,6 @@ package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
-import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
@@ -97,7 +96,8 @@ class OfferOverviewView extends VerticalLayout {
                     .setCaption("Product Name").setId("ProductName")
             grid.addColumn({ productItem -> productItem.product.description })
                     .setCaption("Product Description").setId("ProductDescription")
-            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol())).setCaption("Product Unit Price")
+            grid.addColumn({ productItem -> productItem.product.internalUnitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol())).setCaption("Internal Unit Price")
+            grid.addColumn({ productItem -> productItem.product.externalUnitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol())).setCaption("External Unit Price")
             grid.addColumn({ productItem -> productItem.product.unit }).setCaption("Product Unit")
 
 
