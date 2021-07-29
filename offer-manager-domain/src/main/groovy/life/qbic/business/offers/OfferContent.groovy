@@ -4,7 +4,6 @@ import groovy.transform.EqualsAndHashCode
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 
 /**
@@ -98,7 +97,7 @@ class OfferContent {
     /**
      * The overhead costs for the project management and data storage items
      */
-    final double overheadsPMandDS
+    final double overheadsProjectManagementAndDataStorage
 
     /*Prices*/
     /**
@@ -158,7 +157,7 @@ class OfferContent {
         Double overheadTotal
         Double overheadsDataGeneration
         Double overheadsDataAnalysis
-        Double overheadsPMandDS
+        Double overheadsProjectManagementAndDataStorage
 
         /*Prices*/
         Double netDataGeneration
@@ -221,8 +220,8 @@ class OfferContent {
             this.overheadsDataAnalysis = overheadDA
             return this
         }
-        Builder overheadsPMandDS(double overheadPMandDS){
-            this.overheadsPMandDS = overheadPMandDS
+        Builder overheadsProjectManagementAndDataStorage(double overheadsProjectManagementAndDataStorage){
+            this.overheadsProjectManagementAndDataStorage = overheadsProjectManagementAndDataStorage
             return this
         }
         Builder netDataGeneration(double net){
@@ -258,7 +257,7 @@ class OfferContent {
             if(overheadTotal == null) throw new NullPointerException("Missing overhead total costs")
             if(overheadsDataAnalysis == null) throw new NullPointerException("Missing data analysis overhead costs")
             if(overheadsDataGeneration == null) throw new NullPointerException("Missing data generation overhead costs")
-            if(overheadsPMandDS == null) throw new NullPointerException("Missing project management and data storage overhead costs")
+            if(overheadsProjectManagementAndDataStorage == null) throw new NullPointerException("Missing project management and data storage overhead costs")
             if(netDataGeneration == null) throw new NullPointerException("Missing net data generation costs")
             if(netDataAnalysis == null) throw new NullPointerException("Missing net data analysis costs")
             if(netPMandDS == null) throw new NullPointerException("Missing net project management and data storage costs")
@@ -305,7 +304,7 @@ class OfferContent {
         overheadTotal = builder.overheadTotal
         overheadsDataGeneration = builder.overheadsDataGeneration
         overheadsDataAnalysis = builder.overheadsDataAnalysis
-        overheadsPMandDS = builder.overheadsPMandDS
+        overheadsProjectManagementAndDataStorage = builder.overheadsProjectManagementAndDataStorage
 
         /*Prices*/
         netDataGeneration = builder.netDataGeneration

@@ -1,11 +1,6 @@
 package life.qbic.business.offers
 
-import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.AcademicTitleFactory
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.business.*
 import spock.lang.Specification
 import spock.lang.Unroll
 
@@ -63,7 +58,7 @@ class OfferContentSpec extends Specification{
         .netDataAnalysis(111)
         .netDataGeneration(222)
         .netProjectManagementAndDataStorage(2)
-        .overheadsPMandDS(33)
+        .overheadsProjectManagementAndDataStorage(33)
         .overheadsDataGeneration(444)
         .overheadsDataAnalysis(33)
         .overheadTotal(333)
@@ -81,7 +76,7 @@ class OfferContentSpec extends Specification{
                 .netDataAnalysis(111)
                 .netDataGeneration(222)
                 .netProjectManagementAndDataStorage(2)
-                .overheadsPMandDS(33)
+                .overheadsProjectManagementAndDataStorage(33)
                 .overheadsDataGeneration(444)
                 .overheadsDataAnalysis(33)
                 .overheadTotal(333)
@@ -113,7 +108,7 @@ class OfferContentSpec extends Specification{
                 .overheadTotal(333)
                 .overheadsDataGeneration(444)
                 .overheadsDataAnalysis(444)
-                .overheadsPMandDS(444)
+                .overheadsProjectManagementAndDataStorage(444)
                 .netDataGeneration(444)
                 .netDataAnalysis(444)
                 .netProjectManagementAndDataStorage(444)
@@ -139,7 +134,7 @@ class OfferContentSpec extends Specification{
                 .overheadTotal(overheadTotal)
                 .overheadsDataGeneration(overheadsDataGeneration)
                 .overheadsDataAnalysis(overheadsDataAnalysis)
-                .overheadsPMandDS(overheadsPMandDS)
+                .overheadsProjectManagementAndDataStorage(overheadsPMandDS)
                 .netDataGeneration(netDataGeneration)
                 .netDataAnalysis(netDataAnalysis)
                 .netProjectManagementAndDataStorage(netPMandDS)
@@ -168,7 +163,7 @@ class OfferContentSpec extends Specification{
         "overheadTotal" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items |  0  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
         "overheadsDataGeneration" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  |  0   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
         "overheadsDataAnalysis" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   |  0   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "overheadsPMandDS" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   |  0  | 444  | 444  | 444 | 444 | 444 | 444
+        "overheadsProjectManagementAndDataStorage" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   |  0  | 444  | 444  | 444 | 444 | 444 | 444
         "netDataGeneration" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  |  0  | 444  | 444 | 444 | 444 | 444
         "netDataAnalysis" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  |  0  | 444 | 444 | 444 | 444
         "netPMandDS" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  |  0 | 444 | 444 | 444
