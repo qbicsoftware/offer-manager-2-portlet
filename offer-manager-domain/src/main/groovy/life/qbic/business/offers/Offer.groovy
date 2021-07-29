@@ -507,7 +507,6 @@ class Offer {
     private ProductItem finaliseProductItem(ProductItem item) {
         BigDecimal totalItemCosts = calculateItemNet(item)
         BigDecimal totalItemQuantityDiscount = discountAmountForProductItem(item)
-        println "Discount:" + totalItemQuantityDiscount
         return new ProductItem(item.quantity, item.product, totalItemCosts, totalItemQuantityDiscount)
     }
 
