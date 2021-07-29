@@ -9,7 +9,9 @@ import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
 
 import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
+import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
@@ -202,7 +204,7 @@ class Offer {
         this.customer = builder.customer
         this.identifier = builder.identifier
         this.items = []
-        builder.items.each {this.items.add(it)}
+        builder.items.each {this.items.add(finaliseProductItem(it))}
         this.expirationDate = calculateExpirationDate(builder.creationDate)
         this.creationDate = builder.creationDate
         this.projectManager = builder.projectManager
@@ -465,11 +467,18 @@ class Offer {
     }
 
     private double calculateTotalDiscountAmount() {
-        return 0
+        List<ProductItem> dataAnalysisItems = items.findAll({it.product instanceof PrimaryAnalysis
+                || it.product instanceof SecondaryAnalysis})
+        println dataAnalysisItems
+        return dataAnalysisItems.stream()
+                .map({discountAmountForProductItem(it)})
+                .reduce(0, (a,b) -> a + b)
+
     }
 
-    private discountAmountForProductItem(ProductItem productItem) {
-        new QuantityDiscount().apply(productItem.quantity, productItem.totalPrice)
+    private static double discountAmountForProductItem(ProductItem productItem) {
+        println new QuantityDiscount().apply(productItem.quantity as Integer, productItem.quantity)
+        return new QuantityDiscount().apply(productItem.quantity as Integer, productItem.totalPrice)
     }
 
     private double calculateNetPrice() {
@@ -498,6 +507,14 @@ class Offer {
         final double netPrice = calculateNetPrice()
         final double overhead = getOverheadSum()
         return netPrice + overhead + getTaxCosts()
+    }
+
+    private ProductItem finaliseProductItem(ProductItem item) {
+        double totalItemCosts = calculateItemNet(item)
+        println totalItemCosts
+        double totalItemQuantityDiscount = discountAmountForProductItem(item)
+        println totalItemQuantityDiscount
+        return new ProductItem(item.quantity, item.product, totalItemCosts, totalItemQuantityDiscount)
     }
 
 
