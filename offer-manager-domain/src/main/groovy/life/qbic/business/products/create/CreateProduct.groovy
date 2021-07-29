@@ -34,7 +34,7 @@ class CreateProduct implements CreateProductInput {
             ProductId createdProductId = dataSource.store(product)
             //create product with new product ID
             ProductCategory category = Converter.getCategory(product)
-            Product storedProduct = Converter.createProductWithVersion(category,product.productName,product.description,product.unitPrice, product.unit, createdProductId.uniqueId)
+            Product storedProduct = Converter.createProductWithVersion(category,product.productName,product.description,product.internalUnitPrice, product.externalUnitPrice, product.unit, createdProductId.uniqueId, product.serviceProvider)
 
             output.created(storedProduct)
         } catch(DatabaseQueryException databaseQueryException) {

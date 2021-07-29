@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.offergeneration
 
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Currency
+import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
@@ -22,8 +23,8 @@ import java.text.DecimalFormat
  *
  * @since 1.1.0
  */
+//FIXME Remove price calculation from this class!
 class QuotationDetails {
-
     /**
      * Variable used to count the number of Items added to a page
      */
@@ -47,9 +48,12 @@ class QuotationDetails {
     private final Document htmlContent
     private final life.qbic.business.offers.Offer offer
 
+    protected final AffiliationCategory affiliationCategory
+
     QuotationDetails(Document htmlContent, Offer offer) {
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
         this.offer = Converter.convertDTOToOffer(offer)
+        this.affiliationCategory = offer.selectedCustomerAffiliation.getCategory()
     }
 
     void fillTemplateWithQuotationDetailsContent() {
@@ -135,8 +139,7 @@ class QuotationDetails {
             resetPageItemsCount()
         }
         //add product to current table
-        htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item, offer.isInternal()))
-
+        htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item, affiliationCategory))
         pageItemsCount += determineItemSpace(item)
     }
 
@@ -170,23 +173,39 @@ class QuotationDetails {
         htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
     }
 
+          /**
+	     * Helper method that calculates the NET price for a list of product items      
+	     * @param productItems The product item list for which the NET is calculated
+	     *  @return The net value for the given list of items 
+	     */
+    private double calculateNetSum(List<ProductItem> productItems) {
+        double netSum = 0
+        productItems.each {
+            double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? it.product.internalUnitPrice : it.product.externalUnitPrice
+            netSum += it.quantity * unitPrice
+        }
+        return netSum
+    }
+
     /**
      * Estimates the space of a product item in the final offer template
      * @param item The item for which the spacing should be calculated
      * @return The calculated space in the final offer template that the item requires
      */
     private static int determineItemSpace(ProductItem item) {
+
         ArrayList<Integer> calculatedSpaces = []
 
         Product product = item.product
-        String productTotalCost = item.quantity * item.product.unitPrice
+        double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? item.product.internalUnitPrice : item.product.externalUnitPrice
+        String productTotalCost = item.quantity * unitPrice
 
         //Determine amount of spacing necessary from highest itemSpace value of all columns
         calculatedSpaces.add(calculateItemSpace(product.productName, ProductPropertySpacing.PRODUCT_NAME))
         calculatedSpaces.add(calculateItemSpace(product.description, ProductPropertySpacing.PRODUCT_DESCRIPTION))
         calculatedSpaces.add(calculateItemSpace(item.quantity as String, ProductPropertySpacing.PRODUCT_AMOUNT))
         calculatedSpaces.add(calculateItemSpace(product.unit as String, ProductPropertySpacing.PRODUCT_UNIT))
-        calculatedSpaces.add(calculateItemSpace(product.unitPrice as String, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
+        calculatedSpaces.add(calculateItemSpace(unitPrice as String, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
         calculatedSpaces.add(calculateItemSpace(productTotalCost, ProductPropertySpacing.PRODUCT_TOTAL))
         return calculatedSpaces.max()
     }
@@ -292,14 +311,12 @@ class QuotationDetails {
          * Translates an product item into a HTML row element that can be added to a table
          * @param offerPosition The item position on the offer
          * @param item The product item that is put on the offer
+         * @param affiliationCategory the category of the affiliation
          * @return returns the HTML code as string
          */
-        static String itemInHTML(int offerPosition, ProductItem item, boolean internalOffer) {
-            String totalCost = Currency.getFormatterWithoutSymbol().format(item.getTotalCost())
-            double unitPrice = item.product.externalUnitPrice
-            if(internalOffer) {
-              unitPrice = item.product.internalUnitPrice
-            }
+        static String itemInHTML(int offerPosition, ProductItem item, AffiliationCategory affiliationCategory) {
+            double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? item.product.internalUnitPrice : item.product.externalUnitPrice
+            String totalCost = Currency.getFormatterWithoutSymbol().format(item.quantity * unitPrice)
             return """<div class="row product-item">
                         <div class="col-1">${offerPosition}</div>
                         <div class="col-4 ">${item.product.productName}</div>
