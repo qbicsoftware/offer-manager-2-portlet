@@ -316,4 +316,15 @@ class OfferContent {
         totalVat = builder.totalVat
     }
 
+    List<OfferItem> getDataGenerationItems() {
+        return Collections.unmodifiableList(dataGenerationItems)
+    }
+
+    List<OfferItem> getDataAnalysisItems() {
+        return Collections.unmodifiableList(dataAnalysisItems)
+    }
+
+    List<OfferItem> getDataManagementItems() {
+        return Collections.unmodifiableList(dataManagementItems)
+    }
 }
