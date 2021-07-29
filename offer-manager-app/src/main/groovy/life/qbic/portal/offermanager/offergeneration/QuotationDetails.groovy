@@ -24,6 +24,8 @@ import java.text.DecimalFormat
  * @since 1.1.0
  */
 class QuotationDetails {
+    private final ItemPrintout itemPrintout = new ItemPrintout()
+
 
     /**
      * Variable used to count the number of Items added to a page
@@ -132,7 +134,7 @@ class QuotationDetails {
         }
         //account for spaces of added table elements, footer, totals,...
         pageItemsCount += 4
-        htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
+        htmlContent.getElementById(elementId).append(itemPrintout.subTableFooter(productGroup))
 
         // Update footer Prices
         addSubTotalPrices(productGroup, items)
@@ -153,7 +155,7 @@ class QuotationDetails {
         }
 
         //add product to current table
-        htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item, affiliationCategory))
+        htmlContent.getElementById(elementId).append(itemPrintout.itemInHTML(itemNumber, item, affiliationCategory))
         pageItemsCount += determineItemSpace(item)
     }
 
@@ -385,7 +387,7 @@ class QuotationDetails {
          * @return returns the HTML code as string
          */
         String itemInHTML(int offerPosition, ProductItem item, AffiliationCategory affiliationCategory) {
-            double unitPrice = affiliationCategory == AffiliationCategory.INTERNAL ? it.product.internalUnitPrice : it.product.externalUnitPrice
+            double unitPrice = affiliationCategory == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
             String totalCost = Currency.getFormatterWithoutSymbol().format(item.quantity * unitPrice)
             return """<div class="row product-item">
                         <div class="col-1">${offerPosition}</div>
