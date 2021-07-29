@@ -1,12 +1,13 @@
 package life.qbic.business.offers
 
+import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
-import spock.lang.Shared
 import spock.lang.Specification
+import spock.lang.Unroll
 
 /**
  * <h1>Tests for the offercontent dto</h1>
@@ -17,19 +18,23 @@ import spock.lang.Specification
 class OfferContentSpec extends Specification{
 
     AcademicTitleFactory factory = new AcademicTitleFactory()
-
-    @Shared
-    Affiliation externalAcademicAffiliation
-    @Shared
-    Affiliation externalAffiliation
-    @Shared
-    Affiliation internalAffiliation
-    @Shared
-    Customer customerWithAllAffiliations
-    @Shared
-    ProjectManager projectManager
-    @Shared
-    ProjectManager projectManager2
+    static Customer simpleCustomer = new Customer.Builder("Tom", "Sawyer", "tom@sawy.er").build()
+    static Affiliation internalAffiliation = new Affiliation.Builder("Uni Tübingen", "Auf der " +
+            "Morgenstelle 10", "72076", "Tuebingen").category(AffiliationCategory.INTERNAL).build()
+    static Affiliation externalAcademicAffiliation = new Affiliation.Builder("Uni Frankfurt",
+            "Irgendwo im Nirgendwo 20", "12345", "Frankfurt").category(AffiliationCategory
+            .EXTERNAL_ACADEMIC)
+            .build()
+    static Affiliation externalAffiliation = new Affiliation.Builder("Company Frankfurt",
+            "Irgendwo " +
+                    "im Nirgendwo 20", "12345", "Frankfurt").category(AffiliationCategory.EXTERNAL)
+            .build()
+    static Customer customerWithAllAffiliations = new Customer.Builder("Max", "Mustermann", "max" +
+            ".mustermann@qbic.uni-tuebingen.de").affiliations([internalAffiliation, externalAcademicAffiliation]).build()
+    static ProjectManager projectManager1 = new ProjectManager.Builder("Maxime", "Musterfrau", "max" +
+            ".musterfrau@qbic.uni-tuebingen.de").build()
+    static ProjectManager projectManager2 = new ProjectManager.Builder("Max", "Mustermann", "max" +
+            ".mustermann@qbic.uni-tuebingen.de").build()
 
     final static List<OfferItem> items = [
             new OfferItem.Builder(2, "Just an example", "Basic RNAsq", 1.0, 1,
@@ -47,28 +52,9 @@ class OfferContentSpec extends Specification{
 
     ]
 
-    def setup() {
-        internalAffiliation = new Affiliation.Builder("Uni Tübingen", "Auf der " +
-                "Morgenstelle 10", "72076", "Tuebingen").category(AffiliationCategory.INTERNAL).build()
-        externalAcademicAffiliation = new Affiliation.Builder("Uni Frankfurt",
-                "Irgendwo im Nirgendwo 20", "12345", "Frankfurt").category(AffiliationCategory
-                .EXTERNAL_ACADEMIC)
-                .build()
-        externalAffiliation = new Affiliation.Builder("Company Frankfurt",
-                "Irgendwo " +
-                        "im Nirgendwo 20", "12345", "Frankfurt").category(AffiliationCategory.EXTERNAL)
-                .build()
-        customerWithAllAffiliations = new Customer.Builder("Max", "Mustermann", "max" +
-                ".mustermann@qbic.uni-tuebingen.de").affiliations([internalAffiliation, externalAcademicAffiliation]).build()
-        projectManager  = new ProjectManager.Builder("Maxime", "Musterfrau", "max" +
-                ".musterfrau@qbic.uni-tuebingen.de").build()
-        projectManager2  = new ProjectManager.Builder("Max", "Mustermann", "max" +
-                ".mustermann@qbic.uni-tuebingen.de").build()
-    }
-
     def "An OfferContent with equal content is equal"(){
         when: "two offercontents with the exact same content"
-        OfferContent one = new OfferContent.Builder(customerWithAllAffiliations,externalAcademicAffiliation,projectManager,
+        OfferContent offerContent1 = new OfferContent.Builder(customerWithAllAffiliations,externalAcademicAffiliation,projectManager1,
                 "2021-10-11","2022-10-11","title","description",
                 "experimental design","O_greiner_ksma_1")
         .totalVat(3333)
@@ -86,7 +72,7 @@ class OfferContentSpec extends Specification{
         .dataGenerationItems(items)
         .build()
 
-        OfferContent two = new OfferContent.Builder(customerWithAllAffiliations,externalAcademicAffiliation,projectManager,
+        OfferContent offerContent2 = new OfferContent.Builder(customerWithAllAffiliations,externalAcademicAffiliation,projectManager1,
                 "2021-10-11","2022-10-11","title","description",
                 "experimental design","O_greiner_ksma_1")
                 .totalVat(3333)
@@ -105,284 +91,90 @@ class OfferContentSpec extends Specification{
                 .build()
 
         then: "both are equal"
-        one == two
-        one.customerFirstName == two.customerFirstName
-        one.customerLastName == two.customerLastName
-        one.customerTitle == two.customerTitle
-
-        one.customerOrganisation == two.customerOrganisation
-        one.customerStreet == two.customerStreet
-        one.customerPostalCode == two.customerPostalCode
-        one.customerCity == two.customerCity
-        one.customerCountry == two.customerCountry
-        /*Projectmanager*/
-        one.projectManagerFirstName == two.projectManagerFirstName
-        one.projectManagerLastName == two.projectManagerLastName
-        one.projectManagerTitle == two.projectManagerTitle
-        one.projectManagerEmail == two.projectManagerEmail
-
-        /*Project Information*/
-        one.creationDate == two.creationDate
-        one.expirationDate == two.expirationDate
-        one.projectTitle == two.projectTitle
-        one.projectObjective == two.projectObjective
-        one.experimentalDesign == two.experimentalDesign
-        one.offerIdentifier == two.offerIdentifier
-
-        /*Items*/
-        one.dataGenerationItems == two.dataGenerationItems
-        one.dataAnalysisItems == two.dataAnalysisItems
-        one.dataManagementItems == two.dataManagementItems
-
-        /*Overheads*/
-        one.overheadTotal == two.overheadTotal
-        one.overheadsDataGeneration == two.overheadsDataGeneration
-        one.overheadsDataAnalysis == two.overheadsDataGeneration
-        one.overheadsPMandDS == two.overheadsPMandDS
-
-        /*Prices*/
-        one.netDataGeneration == two.netDataGeneration
-        one.netDataAnalysis == two.netDataAnalysis
-        one.netPMandDS == two.netPMandDS
-        one.totalCost == two.totalCost
-        one.netCost == two.netCost
-        one.totalVat == two.totalVat
+        offerContent1 == offerContent2
     }
 
-    def "An OfferContent with different content are not equal"(){
-        when: "two offercontents with the exact same content"
-
-        internalAffiliation = new Affiliation.Builder("Uni Tübingen", "Auf der " +
-                "Morgenstelle 10", "72076", "Tuebingen").category(AffiliationCategory.INTERNAL).build()
-        externalAcademicAffiliation = new Affiliation.Builder("organisation",
-                "street", "77777", "City").category(AffiliationCategory
-                .EXTERNAL_ACADEMIC)
-                .build()
-        customerWithAllAffiliations = new Customer.Builder("name", "last", "mail@i.de")
-                .affiliations([internalAffiliation, externalAcademicAffiliation])
-                .title(factory.getForString("Dr."))
-                .build()
-        projectManager  = new ProjectManager.Builder("pm name", "pm last", "mail@i.de")
-                .title(factory.getForString("None"))
-                .build()
-
-        OfferContent one = new OfferContent.Builder(customerWithAllAffiliations,externalAcademicAffiliation,projectManager,
-                "2021-10-11","2022-10-11","title","description",
-                "experimental design","oabcd1")
-                .totalVat(3333)
-                .netCost(222)
-                .totalCost(111)
-                .netDataAnalysis(111)
-                .netDataGeneration(222)
-                .netProjectManagementAndDataStorage(2)
-                .overheadsPMandDS(33)
-                .overheadsDataGeneration(444)
-                .overheadsDataAnalysis(33)
-                .overheadTotal(333)
-                .dataManagementItems(items)
-                .dataAnalysisItems(items)
+    @Unroll
+    def "An OfferContent with different content are not equal for different #argumentName"(){
+        given: "a reference offer content"
+        OfferContent reference = new OfferContent.Builder(
+                customerWithAllAffiliations,
+                internalAffiliation,
+                projectManager1,
+                "2021-10-11",
+                "2022-10-11",
+                "title",
+                "description",
+                "experimental design",
+                "oabcd1")
                 .dataGenerationItems(items)
+                .dataAnalysisItems(items)
+                .dataManagementItems(items)
+                .overheadTotal(333)
+                .overheadsDataGeneration(444)
+                .overheadsDataAnalysis(444)
+                .overheadsPMandDS(444)
+                .netDataGeneration(444)
+                .netDataAnalysis(444)
+                .netProjectManagementAndDataStorage(444)
+                .totalCost(444)
+                .netCost(444)
+                .totalVat(444)
                 .build()
 
-
-        Affiliation internalAffiliation = new Affiliation.Builder("Uni Tübingen", "Auf der " +
-                "Morgenstelle 10", "72076", "Tuebingen").category(AffiliationCategory.INTERNAL).build()
-        Affiliation externalAcademicAffiliation2 = new Affiliation.Builder(customerOrganisation,
-                customerStreet, customerPostalCode, customerCity).category(AffiliationCategory
-                .EXTERNAL_ACADEMIC)
-                .build()
-        Customer customerWithAllAffiliations2 = new Customer.Builder(customerFirstName, customerLastName, "mail@i.de")
-                .affiliations([internalAffiliation, externalAcademicAffiliation2])
-                .title(factory.getForString(projectManagerTitle)).build()
-        ProjectManager projectManager2  = new ProjectManager.Builder(projectManagerFirstName, projectManagerLastName, projectManagerEmail)
-                .title(factory.getForString(projectManagerTitle)).build()
-
-        OfferContent two = new OfferContent.Builder(customerWithAllAffiliations2,externalAcademicAffiliation2,projectManager2,
-                creationDate,expirationDate,projectTitle,projectObjective,
-                experimentalDesign,offerIdentifier)
-                .totalVat(totalVat)
-                .netCost(netCost)
-                .totalCost(totalCost)
-                .netDataAnalysis(netDataAnalysis)
-                .netDataGeneration(netDataGeneration)
-                .netProjectManagementAndDataStorage(netPMandDS)
-                .overheadsPMandDS(overheadsPMandDS)
+        when: "two offercontents different"
+        OfferContent differentContent = new OfferContent.Builder(
+                customer as Customer,
+                affiliation as Affiliation,
+                projectManager as ProjectManager,
+                creationDate,
+                expirationDate,
+                projectTitle,
+                projectObjective,
+                experimentalDesign,
+                offerIdentifier)
+                .dataGenerationItems(dataGenerationItems)
+                .dataAnalysisItems(dataAnalysisItems)
+                .dataManagementItems(dataManagementItems)
+                .overheadTotal(overheadTotal)
                 .overheadsDataGeneration(overheadsDataGeneration)
                 .overheadsDataAnalysis(overheadsDataAnalysis)
-                .overheadTotal(overheadTotal)
-                .dataManagementItems(dataManagementItems)
-                .dataAnalysisItems(dataAnalysisItems)
-                .dataGenerationItems(dataGenerationItems)
+                .overheadsPMandDS(overheadsPMandDS)
+                .netDataGeneration(netDataGeneration)
+                .netDataAnalysis(netDataAnalysis)
+                .netProjectManagementAndDataStorage(netPMandDS)
+                .totalCost(totalCost)
+                .netCost(netCost)
+                .totalVat(totalVat)
                 .build()
 
-        then: "both are equal"
-        one != two
+        then: "both are not equal"
+        differentContent != reference
 
         where:
-        customerFirstName | customerLastName | customerTitle | customerOrganisation | customerStreet | customerPostalCode |customerCity
-        |customerCountry | projectManagerFirstName | projectManagerLastName | projectManagerTitle | projectManagerEmail | creationDate
-        | expirationDate | projectTitle | projectObjective | experimentalDesign | offerIdentifier | dataGenerationItems |dataAnalysisItems
-        | dataManagementItems | overheadTotal | overheadsDataGeneration | overheadsDataAnalysis | overheadsPMandDS | netDataGeneration
-        | netDataAnalysis | netPMandDS | totalCost | netCost | totalVat
-        "name_" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last_" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "None" | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "orga" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "Strasse" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "55555" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "Tübingen"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Germany" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "Dr." | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail2@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-12-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2023-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "Title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "Objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "experimental design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "Oabcd2" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | [] |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name_" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items | []
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items2 | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 3331 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 4444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 0 | 444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 4444 | 444
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 4464
-                | 444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 4444 | 444 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 4441 | 444 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 4441 | 444 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 4441 | 444
-        "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
-                | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 444 | 444 | 444
-                | 444 | 444 | 444 | 444 | 4441
+        argumentName | customer | affiliation | projectManager | creationDate | expirationDate | projectTitle | projectObjective | experimentalDesign | offerIdentifier | dataGenerationItems |dataAnalysisItems | dataManagementItems | overheadTotal | overheadsDataGeneration | overheadsDataAnalysis | overheadsPMandDS | netDataGeneration | netDataAnalysis | netPMandDS | totalCost | netCost | totalVat
+        "customer" | simpleCustomer | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "affiliation" | customerWithAllAffiliations | externalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "projectManager" | customerWithAllAffiliations | internalAffiliation | projectManager2 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "creationDate" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "9999-99-99" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "expirationDate" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "9999-99-99" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "projectTitle" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "OFFER" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "projectObjective" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "SOME TEXT  " | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "experimentalDesign" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "THERE IS NO DESIGN!" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "offerIdentifier" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "ODCBA2" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "dataGenerationItems" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | [] |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "dataAnalysisItems"| customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |[] | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "dataManagementItems" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | [] | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "overheadTotal" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items |  0  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "overheadsDataGeneration" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  |  0   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "overheadsDataAnalysis" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   |  0   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "overheadsPMandDS" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   |  0  | 444  | 444  | 444 | 444 | 444 | 444
+        "netDataGeneration" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  |  0  | 444  | 444 | 444 | 444 | 444
+        "netDataAnalysis" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  |  0  | 444 | 444 | 444 | 444
+        "netPMandDS" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  |  0 | 444 | 444 | 444
+        "totalCost" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 |  0 | 444 | 444
+        "netCost" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 |  0 | 444
+        "totalVat" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 |  0
+        "NONE" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
     }
 }
