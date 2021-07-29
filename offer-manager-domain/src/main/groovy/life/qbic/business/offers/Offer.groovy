@@ -204,7 +204,7 @@ class Offer {
         this.customer = builder.customer
         this.identifier = builder.identifier
         this.items = []
-        builder.items.each {this.items.add(finaliseProductItem(it))}
+        //builder.items.each {this.items.add(it)}
         this.expirationDate = calculateExpirationDate(builder.creationDate)
         this.creationDate = builder.creationDate
         this.projectManager = builder.projectManager
@@ -233,6 +233,7 @@ class Offer {
         } else {
             this.associatedProject = Optional.empty()
         }
+        builder.items.each {this.items.add(finaliseProductItem(it))}
     }
 
     /**
@@ -477,8 +478,7 @@ class Offer {
     }
 
     private static double discountAmountForProductItem(ProductItem productItem) {
-        println new QuantityDiscount().apply(productItem.quantity as Integer, productItem.quantity)
-        return new QuantityDiscount().apply(productItem.quantity as Integer, productItem.totalPrice)
+        return new QuantityDiscount().apply(productItem.quantity as Integer, productItem.quantity * productItem.product.unitPrice)
     }
 
     private double calculateNetPrice() {
