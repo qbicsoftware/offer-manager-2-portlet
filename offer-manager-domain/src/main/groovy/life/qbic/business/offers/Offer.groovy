@@ -504,7 +504,7 @@ class Offer {
     private double calculateTotalCosts(){
         final double netPrice = calculateNetPrice()
         final double overhead = getOverheadSum()
-        return netPrice + overhead + getTaxCosts()
+        return netPrice + overhead + getTaxCosts() - getTotalDiscountAmount()
     }
 
     private ProductItem finaliseProductItem(ProductItem item) {

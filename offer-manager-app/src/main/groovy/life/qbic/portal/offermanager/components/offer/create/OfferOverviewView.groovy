@@ -191,7 +191,7 @@ class OfferOverviewView extends VerticalLayout {
                 new PriceField("Net Price", createOfferViewModel.netPrice),
                 new PriceField("Overheads", createOfferViewModel.overheads),
                 new PriceField("Taxes", createOfferViewModel.taxes),
-                new PriceField("Included total discount", createOfferViewModel.totalDiscountAmount*-1),
+                new PriceField("Total Discount", createOfferViewModel.totalDiscountAmount*-1),
                 new PriceField("Total Price", createOfferViewModel.totalPrice)
         ])
         gridLayout.addColumn(PriceField::getName)
