@@ -4,18 +4,13 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.fetch.FetchOffer
 import life.qbic.business.offers.fetch.FetchOfferDataSource
 import life.qbic.business.offers.fetch.FetchOfferOutput
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.OfferId
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.business.*
+import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import spock.lang.Shared
 import spock.lang.Specification
-
 
 /**
  * This test class tests for the {@link life.qbic.business.offers.fetch.FetchOffer} use case functionality
@@ -56,9 +51,9 @@ class FetchOfferSpec extends Specification {
         projectDescription = "Cartoon Series"
         items = [
                 new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                        " example", 1.0, ProductUnit.PER_SAMPLE, "1")),
+                        " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC)),
                 new ProductItem(1, new ProjectManagement("Basic Management",
-                        "Just an example", 10.0, ProductUnit.PER_DATASET, "1"))
+                        "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.QBIC))
         ]
         offerId = new OfferId("Conserved", "abcd", "2")
     }
