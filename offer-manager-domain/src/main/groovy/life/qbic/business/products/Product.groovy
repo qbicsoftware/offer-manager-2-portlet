@@ -20,7 +20,6 @@ class Product {
     private ProductCategory category
     private String name
     private String description
-    private double unitPrice
     private double internalUnitPrice
     private double externalUnitPrice
     private ProductUnit unit
@@ -31,18 +30,16 @@ class Product {
         ProductCategory category
         String name
         String description
-        double unitPrice
         double internalUnitPrice
         double externalUnitPrice
         ProductUnit unit
         ProductId id
         Facility serviceProvider
 
-        Builder(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit){
+        Builder(ProductCategory category, String name, String description, ProductUnit unit){
             this.category = Objects.requireNonNull(category)
             this.name = Objects.requireNonNull(name)
             this.description = Objects.requireNonNull(description)
-            this.unitPrice = Objects.requireNonNull(unitPrice)
             this.internalUnitPrice = 0.0
             this.externalUnitPrice = 0.0
             this.unit = Objects.requireNonNull(unit)
@@ -55,7 +52,6 @@ class Product {
             this.description = Objects.requireNonNull(description)
             this.internalUnitPrice = Objects.requireNonNull(internalUnitPrice)
             this.externalUnitPrice = Objects.requireNonNull(externalUnitPrice)
-            this.unitPrice = 0.0
             this.unit = Objects.requireNonNull(unit)
             this.serviceProvider = serviceProvider
         }
@@ -83,7 +79,6 @@ class Product {
         this.internalUnitPrice = builder.internalUnitPrice
         this.name = builder.name
         this.unit = builder.unit
-        this.unitPrice = builder.unitPrice
     }
 
     /**
@@ -116,7 +111,6 @@ class Product {
         digest.update(product.serviceProvider.toString().getBytes(StandardCharsets.UTF_8))
         digest.update(product.internalUnitPrice.toString().getBytes(StandardCharsets.UTF_8))
         digest.update(product.unit.value.getBytes(StandardCharsets.UTF_8))
-        digest.update(product.unitPrice.toString().getBytes(StandardCharsets.UTF_8))
 
 
         //Get the hash's bytes
@@ -144,10 +138,6 @@ class Product {
 
     String getDescription() {
         return description
-    }
-
-    double getUnitPrice() {
-        return unitPrice
     }
 
     double getInternalUnitPrice() {

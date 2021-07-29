@@ -3,18 +3,11 @@ package life.qbic.portal.offermanager.components.product
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.data.sort.SortDirection
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Button
-import com.vaadin.ui.FormLayout
-import com.vaadin.ui.Grid
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Label
-import com.vaadin.ui.Panel
-import com.vaadin.ui.VerticalLayout
-import com.vaadin.ui.components.grid.HeaderRow
-import com.vaadin.ui.themes.ValoTheme
+import com.vaadin.ui.*
 import com.vaadin.ui.Grid.Column
+import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.TextRenderer
+import com.vaadin.ui.themes.ValoTheme
 import life.qbic.business.offers.Currency
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.ConfirmationDialog
@@ -99,8 +92,10 @@ class MaintainProductsView extends FormLayout {
         productGrid.addColumn({ product -> product.productName })
                 .setCaption("Name").setId("ProductName")
         // Format price by using a column renderer. This way the sorting will happen on the underlying double values, leading to expected behaviour.
-        Column<Product, Double> priceColumn = productGrid.addColumn({product -> product.unitPrice}).setCaption("Price").setId("UnitPrice")
-        priceColumn.setRenderer(price -> Currency.getFormatterWithSymbol().format(price), new TextRenderer())
+        Column<Product, Double> internalPriceColumn = productGrid.addColumn({product -> product.internalUnitPrice}).setCaption("Internal Price").setId("InternalUnitPrice")
+        internalPriceColumn.setRenderer(price -> Currency.getFormatterWithSymbol().format(price), new TextRenderer())
+        Column<Product, Double> externalPriceColumn = productGrid.addColumn({product -> product.externalUnitPrice}).setCaption("External Price").setId("ExternalUnitPrice")
+        externalPriceColumn.setRenderer(price -> Currency.getFormatterWithSymbol().format(price), new TextRenderer())
         productGrid.addColumn({ product -> product.unit.value})
                 .setCaption("Unit").setId("ProductUnit")
         productGrid.addColumn({ product -> product.serviceProvider})
