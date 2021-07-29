@@ -13,6 +13,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Adds a new DTO OfferItem which represents an item on the offer (`#728 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/728>`_)
 
+* Display total quantity discount included in the offer in the offer overview (`#686 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/686>`_)
+
 **Fixed**
 
 * Invert quantity discount in order to be able to display size of discount (`#710 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/710>`_
