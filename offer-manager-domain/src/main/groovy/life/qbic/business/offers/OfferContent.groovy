@@ -252,19 +252,19 @@ class OfferContent {
 
         OfferContent build(){
             //require all fields to be set before the object can be created
-            if(dataGenerationItems == null) throw new IllegalArgumentException("Missing data generation items")
-            if(dataAnalysisItems == null) throw new IllegalArgumentException("Missing data analysis items")
-            if(dataManagementItems == null) throw new IllegalArgumentException("Missing data management items")
-            if(overheadTotal == null) throw new IllegalArgumentException("Missing overhead total costs")
-            if(overheadsDataAnalysis == null) throw new IllegalArgumentException("Missing data analysis overhead costs")
-            if(overheadsDataGeneration == null) throw new IllegalArgumentException("Missing data generation overhead costs")
-            if(overheadsPMandDS == null) throw new IllegalArgumentException("Missing project management and data storage overhead costs")
-            if(netDataGeneration == null) throw new IllegalArgumentException("Missing net data generation costs")
-            if(netDataAnalysis == null) throw new IllegalArgumentException("Missing net data analysis costs")
-            if(netPMandDS == null) throw new IllegalArgumentException("Missing net project management and data storage costs")
-            if(totalCost == null) throw new IllegalArgumentException("Missing total costs")
-            if(netCost == null) throw new IllegalArgumentException("Missing net costs")
-            if(totalVat == null) throw new IllegalArgumentException("Missing total vat costs")
+            if(dataGenerationItems == null) throw new NullPointerException("Missing data generation items")
+            if(dataAnalysisItems == null) throw new NullPointerException("Missing data analysis items")
+            if(dataManagementItems == null) throw new NullPointerException("Missing data management items")
+            if(overheadTotal == null) throw new NullPointerException("Missing overhead total costs")
+            if(overheadsDataAnalysis == null) throw new NullPointerException("Missing data analysis overhead costs")
+            if(overheadsDataGeneration == null) throw new NullPointerException("Missing data generation overhead costs")
+            if(overheadsPMandDS == null) throw new NullPointerException("Missing project management and data storage overhead costs")
+            if(netDataGeneration == null) throw new NullPointerException("Missing net data generation costs")
+            if(netDataAnalysis == null) throw new NullPointerException("Missing net data analysis costs")
+            if(netPMandDS == null) throw new NullPointerException("Missing net project management and data storage costs")
+            if(totalCost == null) throw new NullPointerException("Missing total costs")
+            if(netCost == null) throw new NullPointerException("Missing net costs")
+            if(totalVat == null) throw new NullPointerException("Missing total vat costs")
 
             return new OfferContent(this)
         }
