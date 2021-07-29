@@ -432,4 +432,32 @@ class OfferSpec extends Specification {
         100 | 0.3
 
     }
+
+    def "Given data analysis service items and data generation items, calculate the correct amount of sample-dependent discount"() {
+        given: "an offer with one primary analysis service product of N samples"
+        PrimaryAnalysis primaryAnalysis1 = new PrimaryAnalysis("Test Bioinformatics", "Testing", 10, 10, ProductUnit.PER_SAMPLE, 1L, Facility.QBIC)
+        PrimaryAnalysis primaryAnalysis2 = new PrimaryAnalysis("Test Bioinformatics 2", "Testing", 10, 10, ProductUnit.PER_SAMPLE, 1L, Facility.QBIC)
+        Sequencing dataGeneration = new Sequencing("Test Sequencing 2", "Testing", 10, 10, ProductUnit.PER_SAMPLE, 1L, Facility.QBIC)
+
+        ProductItem item1 = new ProductItem(samples as Double, primaryAnalysis1)
+        ProductItem item2 = new ProductItem(samples as Double, primaryAnalysis2)
+        ProductItem item3 = new ProductItem(samples as Double, dataGeneration)
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager,  "", "", [item1, item2, item3], internalAffiliation).build()
+
+        when: "we request the total discount amount"
+        double totalDiscountAmount = offer.getTotalDiscountAmount()
+
+        then: "the total discount amount has to increase with the number of samples the service is applied to"
+        double expectedTotalDiscount = 10 * samples * (1-discountFactor) + 10 * samples * (1-discountFactor)
+        totalDiscountAmount == expectedTotalDiscount
+
+        where:
+        samples | discountFactor
+        1 | 1
+        2 | 0.98
+        10 | 0.67
+        100 | 0.3
+
+    }
 }

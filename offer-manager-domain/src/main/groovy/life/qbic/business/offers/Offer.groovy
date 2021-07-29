@@ -7,7 +7,9 @@ import life.qbic.business.offers.identifier.RandomPart
 import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
+import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
@@ -469,7 +471,12 @@ class Offer {
     }
 
     private BigDecimal discountAmountForProductItem(ProductItem productItem) {
-        return quantityDiscount.apply(productItem.quantity as Integer, calculateItemNet(productItem))
+        BigDecimal discount = 0
+        if (productItem.product instanceof PrimaryAnalysis
+                || productItem.product instanceof SecondaryAnalysis) {
+            discount = quantityDiscount.apply(productItem.quantity as Integer, calculateItemNet(productItem))
+        }
+        return discount
     }
 
     private double calculateNetPrice() {
