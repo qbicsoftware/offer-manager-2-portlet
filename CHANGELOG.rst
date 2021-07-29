@@ -11,15 +11,21 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Function to apply the quantity discount price (`#707 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/707>`_)
 
-* Add the product facility to the offer pdf (`#722 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/722>`_)
-
 **Fixed**
 
 * Invert quantity discount in order to be able to display size of discount (`#710 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/710>`_
 
 * Include Offer ID Prefix in Offer PDF filename (`#685 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/685>`_)
 
+* Differentiate between internal and external product unit prices (`#713 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/713>`_)
+
 * Include internal and external prices as well as facilities in the products (`#712 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/712>`_)
+
+* The internal and external product unit prices are shown in the user interface (`#723 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/723>`_)
+
+* Reset the offer update view, when a new offer is selected in the offer overview (`#716 <https://github.com/qbicsoftware/offer-manager-2-portlet/issue/716>`_)
+
+* Offers without an experimental design can now be updated (`#726 <https://github.com/qbicsoftware/offer-manager-2-portlet/issue/726>`_)
 
 **Dependencies**
 

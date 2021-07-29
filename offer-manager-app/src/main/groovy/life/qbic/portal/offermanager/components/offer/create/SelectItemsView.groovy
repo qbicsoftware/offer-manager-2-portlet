@@ -367,8 +367,10 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                     .setCaption("Product Name").setId("ProductName")
             Grid.Column<Product,String> descriptionColumn = grid.addColumn({ it.description })
                     .setCaption("Product Description").setId("ProductDescription").setDescriptionGenerator({it.description})
-            grid.addColumn({ it.unitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol()))
-                    .setCaption("Product Unit Price").setId("ProductUnitPrice")
+            grid.addColumn({ it.internalUnitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol()))
+                    .setCaption("Internal Unit Price").setId("InternalUnitPrice")
+            grid.addColumn({ it.externalUnitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol()))
+                    .setCaption("External Unit Price").setId("ExternalUnitPrice")
             grid.addColumn({ it.unit.value })
                     .setCaption("Product Unit").setId("ProductUnit")
 
@@ -392,9 +394,12 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                     .setCaption("Product Name").setId("ProductName")
             Grid.Column<ProductItemViewModel,String> descriptionColumn = grid.addColumn({ it.product.description })
                     .setCaption("Product Description").setId("ProductDescription").setDescriptionGenerator({it.product.description})
-            grid.addColumn({ it.product.unitPrice }, new NumberRenderer(Currency
+            grid.addColumn({ it.product.internalUnitPrice }, new NumberRenderer(Currency
                     .getFormatterWithSymbol()))
-                    .setCaption("Product Unit Price").setId("ProductUnitPrice")
+                    .setCaption("Internal Unit Price").setId("InternalUnitPrice")
+            grid.addColumn({ it.product.externalUnitPrice }, new NumberRenderer(Currency
+                    .getFormatterWithSymbol()))
+                    .setCaption("External Unit Price").setId("ExternalUnitPrice")
             grid.addColumn({ it.product.unit.value })
                     .setCaption("Product Unit").setId("ProductUnit")
 

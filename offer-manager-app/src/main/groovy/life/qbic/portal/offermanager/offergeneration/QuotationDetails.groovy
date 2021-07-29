@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.offergeneration
 
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Currency
+import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
@@ -22,8 +23,8 @@ import java.text.DecimalFormat
  *
  * @since 1.1.0
  */
+//FIXME Remove price calculation from this class!
 class QuotationDetails {
-
     /**
      * Variable used to count the number of Items added to a page
      */
@@ -59,9 +60,12 @@ class QuotationDetails {
     private final Document htmlContent
     private final life.qbic.business.offers.Offer offer
 
+    protected final AffiliationCategory affiliationCategory
+
     QuotationDetails(Document htmlContent, Offer offer) {
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
         this.offer = Converter.convertDTOToOffer(offer)
+        this.affiliationCategory = offer.selectedCustomerAffiliation.getCategory()
 
         groupProductItems(offer.items)
     }
@@ -149,7 +153,7 @@ class QuotationDetails {
         }
 
         //add product to current table
-        htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
+        htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item, affiliationCategory))
         pageItemsCount += determineItemSpace(item)
     }
 
@@ -188,10 +192,11 @@ class QuotationDetails {
 	     * @param productItems The product item list for which the NET is calculated
 	     *  @return The net value for the given list of items 
 	     */
-    private static double calculateNetSum(List<ProductItem> productItems) {
+    private double calculateNetSum(List<ProductItem> productItems) {
         double netSum = 0
         productItems.each {
-            netSum += it.quantity * it.product.unitPrice
+            double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? it.product.internalUnitPrice : it.product.externalUnitPrice
+            netSum += it.quantity * unitPrice
         }
         return netSum
     }
@@ -201,20 +206,21 @@ class QuotationDetails {
      * @param item The item for which the spacing should be calculated
      * @return The calculated space in the final offer template that the item requires
      */
-    private static int determineItemSpace(ProductItem item) {
+    private int determineItemSpace(ProductItem item) {
 
         ArrayList<Integer> calculatedSpaces = []
 
         Product product = item.product
+        double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? item.product.internalUnitPrice : item.product.externalUnitPrice
         //todo this should not happen here
-        String productTotalCost = item.quantity * item.product.unitPrice
+        String productTotalCost = item.quantity * unitPrice
 
         //Determine amount of spacing necessary from highest itemSpace value of all columns
         calculatedSpaces.add(calculateItemSpace(product.productName, ProductPropertySpacing.PRODUCT_NAME))
         calculatedSpaces.add(calculateItemSpace(product.description, ProductPropertySpacing.PRODUCT_DESCRIPTION))
         calculatedSpaces.add(calculateItemSpace(item.quantity as String, ProductPropertySpacing.PRODUCT_AMOUNT))
         calculatedSpaces.add(calculateItemSpace(product.unit as String, ProductPropertySpacing.PRODUCT_UNIT))
-        calculatedSpaces.add(calculateItemSpace(product.unitPrice as String, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
+        calculatedSpaces.add(calculateItemSpace(unitPrice as String, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
         calculatedSpaces.add(calculateItemSpace(productTotalCost, ProductPropertySpacing.PRODUCT_TOTAL))
         calculatedSpaces.add(calculateItemSpace("Service Provider: "+product.serviceProvider.name(), ProductPropertySpacing.PRODUCT_FACILITY))
         return calculatedSpaces.max()
@@ -273,7 +279,8 @@ class QuotationDetails {
     private double calculateOverheadSum(List<ProductItem> productItems) {
         double overheadSum = 0.0
         productItems.each {
-            overheadSum += it.quantity * it.product.unitPrice * offer.getOverheadRatio()
+            double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? it.product.internalUnitPrice : it.product.externalUnitPrice
+            overheadSum += it.quantity * unitPrice * offer.getOverheadRatio()
         }
         return overheadSum
     }
@@ -359,7 +366,6 @@ class QuotationDetails {
         PRODUCT_TOTAL(15),
         PRODUCT_FACILITY(62)
 
-
         private final int charsLineLimit
 
         ProductPropertySpacing(int charsLineLimit) {
@@ -379,14 +385,15 @@ class QuotationDetails {
          * @param item The product item that is put on the offer
          * @return returns the HTML code as string
          */
-        static String itemInHTML(int offerPosition, ProductItem item) {
-            String totalCost = Currency.getFormatterWithoutSymbol().format(item.quantity * item.product.unitPrice)
+        static String itemInHTML(int offerPosition, ProductItem item, AffiliationCategory affiliationCategory) {
+            double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? item.product.internalUnitPrice : item.product.externalUnitPrice
+            String totalCost = Currency.getFormatterWithoutSymbol().format(item.quantity * unitPrice)
             return """<div class="row product-item">
                         <div class="col-1">${offerPosition}</div>
                         <div class="col-4 ">${item.product.productName}</div>
                         <div class="col-1 price-value">${item.quantity}</div>
                         <div class="col-2 text-center">${item.product.unit}</div>
-                        <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(item.product.unitPrice)}</div>
+                        <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(unitPrice)}</div>
                         <div class="col-2 price-value">${totalCost}</div>
                     </div>
                     <div class="row product-item">

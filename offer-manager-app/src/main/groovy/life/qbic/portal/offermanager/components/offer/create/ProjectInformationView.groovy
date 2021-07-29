@@ -8,6 +8,7 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
+import groovy.beans.Bindable
 import life.qbic.portal.offermanager.components.Resettable
 
 /**
@@ -26,6 +27,7 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
 
     TextField projectTitle
     TextArea projectObjective
+
     TextArea experimentalDesign
     Button next
 
@@ -74,13 +76,7 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
     }
 
     private void resetContent() {
-        this.createOfferViewModel.projectTitle = null
-        this.createOfferViewModel.projectObjective = null
-        this.createOfferViewModel.experimentalDesign = null
-
-        this.createOfferViewModel.projectTitleValid = null
-        this.createOfferViewModel.projectObjectiveValid = null
-        this.createOfferViewModel.experimentalDesignValid = null
+        this.createOfferViewModel.resetModel()
     }
 
 
@@ -132,27 +128,20 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
                         projectObjective.componentError = null
                     }
                     break
-                case "experimentalDesignValid":
-                    if (it.newValue || it.newValue == null) {
-                        experimentalDesign.componentError = null
-                    }
-                    break
                 default:
                     break
             }
-            next.enabled = allValuesValid()
+            next.setEnabled(allValuesValid())
         })
     }
 
     private boolean allValuesValid() {
 
         return createOfferViewModel.projectTitleValid &&
-                createOfferViewModel.projectObjectiveValid &&
-                createOfferViewModel.experimentalDesignValid
+                createOfferViewModel.projectObjectiveValid
     }
 
     private void setupValidators() {
-        Validator<String> notNullValidator = Validator.from({ String value -> (value != null) }, "Please provide a valid description.")
         Validator<String> notEmptyValidator = Validator.from({ String value -> (value && !value.trim().empty) }, "Please provide a valid description.")
 
 
@@ -176,17 +165,6 @@ class ProjectInformationView extends VerticalLayout implements Resettable {
                 projectObjective.setComponentError(error)
             } else {
                 createOfferViewModel.projectObjectiveValid = true
-            }
-        })
-
-        this.experimentalDesign.addValueChangeListener({ event ->
-            ValidationResult result = notNullValidator.apply(event.getValue(), new ValueContext(this.experimentalDesign))
-            if (result.isError()) {
-                createOfferViewModel.experimentalDesignValid = false
-                UserError error = new UserError(result.getErrorMessage())
-                experimentalDesign.setComponentError(error)
-            } else {
-                createOfferViewModel.experimentalDesignValid = true
             }
         })
 
