@@ -10,7 +10,7 @@ import groovy.transform.EqualsAndHashCode
  * @since 1.1.0
  *
 */
-@EqualsAndHashCode
+@EqualsAndHashCode(includeFields = true)
 class OfferItem {
     private double quantity
     private String productDescription
