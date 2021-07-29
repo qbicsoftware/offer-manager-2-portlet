@@ -99,6 +99,47 @@ class OfferContentSpec extends Specification{
 
         then: "both are equal"
         one == two
+        one.customerFirstName == two.customerFirstName
+        one.customerLastName == two.customerLastName
+        one.customerTitle == two.customerTitle
+
+        one.customerOrganisation == two.customerOrganisation
+        one.customerStreet == two.customerStreet
+        one.customerPostalCode == two.customerPostalCode
+        one.customerCity == two.customerCity
+        one.customerCountry == two.customerCountry
+        /*Projectmanager*/
+        one.projectManagerFirstName == two.projectManagerFirstName
+        one.projectManagerLastName == two.projectManagerLastName
+        one.projectManagerTitle == two.projectManagerTitle
+        one.projectManagerEmail == two.projectManagerEmail
+
+        /*Project Information*/
+        one.creationDate == two.creationDate
+        one.expirationDate == two.expirationDate
+        one.projectTitle == two.projectTitle
+        one.projectObjective == two.projectObjective
+        one.experimentalDesign == two.experimentalDesign
+        one.offerIdentifier == two.offerIdentifier
+
+        /*Items*/
+        one.dataGenerationItems == two.dataGenerationItems
+        one.dataAnalysisItems == two.dataAnalysisItems
+        one.dataManagementItems == two.dataManagementItems
+
+        /*Overheads*/
+        one.overheadTotal == two.overheadTotal
+        one.overheadsDataGeneration == two.overheadsDataGeneration
+        one.overheadsDataAnalysis == two.overheadsDataGeneration
+        one.overheadsPMandDS == two.overheadsPMandDS
+
+        /*Prices*/
+        one.netDataGeneration == two.netDataGeneration
+        one.netDataAnalysis == two.netDataAnalysis
+        one.netPMandDS == two.netPMandDS
+        one.totalCost == two.totalCost
+        one.netCost == two.netCost
+        one.totalVat == two.totalVat
     }
 
     def "An OfferContent with different content are not equal"(){
@@ -141,5 +182,47 @@ class OfferContentSpec extends Specification{
 
         then: "both are equal"
         one != two
+
+        one.customerFirstName == two.customerFirstName
+        one.customerLastName == two.customerLastName
+        one.customerTitle == two.customerTitle
+
+        one.customerOrganisation == two.customerOrganisation
+        one.customerStreet == two.customerStreet
+        one.customerPostalCode == two.customerPostalCode
+        one.customerCity == two.customerCity
+        one.customerCountry == two.customerCountry
+        /*Projectmanager*/
+        one.projectManagerFirstName == two.projectManagerFirstName
+        one.projectManagerLastName == two.projectManagerLastName
+        one.projectManagerTitle == two.projectManagerTitle
+        one.projectManagerEmail == two.projectManagerEmail
+
+        /*Project Information*/
+        one.creationDate == two.creationDate
+        one.expirationDate == two.expirationDate
+        one.projectTitle == two.projectTitle
+        one.projectObjective == two.projectObjective
+        one.experimentalDesign == two.experimentalDesign
+        one.offerIdentifier == two.offerIdentifier
+
+        /*Items*/
+        one.dataGenerationItems != two.dataGenerationItems
+        one.dataAnalysisItems == two.dataAnalysisItems
+        one.dataManagementItems == two.dataManagementItems
+
+        /*Overheads*/
+        one.overheadTotal == two.overheadTotal
+        one.overheadsDataGeneration == two.overheadsDataGeneration
+        one.overheadsDataAnalysis == two.overheadsDataGeneration
+        one.overheadsPMandDS == two.overheadsPMandDS
+
+        /*Prices*/
+        one.netDataGeneration == two.netDataGeneration
+        one.netDataAnalysis == two.netDataAnalysis
+        one.netPMandDS != two.netPMandDS
+        one.totalCost != two.totalCost
+        one.netCost == two.netCost
+        one.totalVat == two.totalVat
     }
 }

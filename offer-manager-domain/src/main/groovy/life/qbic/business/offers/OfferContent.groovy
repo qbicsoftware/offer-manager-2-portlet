@@ -198,7 +198,7 @@ class OfferContent {
 
         }
         Builder dataGenerationItems(List<OfferItem> dataGenerationItems){
-            this.dataGenerationItems = dataManagementItems
+            this.dataGenerationItems = dataGenerationItems
             return this
         }
         Builder dataAnalysisItems(List<OfferItem> dataAnalysisItems){
