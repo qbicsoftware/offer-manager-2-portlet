@@ -9,7 +9,7 @@ import java.util.function.BiFunction
  *
  * @since 1.1.0
  */
-class QuantityDiscount implements BiFunction<Integer, Double, Double> {
+class QuantityDiscount implements BiFunction<Integer, BigDecimal, BigDecimal> {
 
     /**
      * Computes a quantity discount of the full price depending on the number of samples.
@@ -21,7 +21,7 @@ class QuantityDiscount implements BiFunction<Integer, Double, Double> {
      * @since 1.1.0
      */
     @Override
-    Double apply(Integer sampleCount, Double fullPrice) {
+    BigDecimal apply(Integer sampleCount, BigDecimal fullPrice) {
         return getDiscountFactor(sampleCount) * fullPrice
     }
 
