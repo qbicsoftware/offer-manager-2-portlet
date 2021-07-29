@@ -232,7 +232,7 @@ class OfferContent {
             this.netDataAnalysis = net
             return this
         }
-        Builder netPMandDS(double net){
+        Builder netProjectManagementAndDataStorage(double net){
             this.netPMandDS = net
             return this
         }
