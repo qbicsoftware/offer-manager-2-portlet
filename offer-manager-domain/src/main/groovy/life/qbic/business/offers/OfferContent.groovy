@@ -25,108 +25,109 @@ class OfferContent {
     /**
      * The information for the customer for which this offer was created
      */
-    private String customerFirstName
-    private String customerLastName
-    private String customerTitle
+    private final String customerFirstName
+    private final String customerLastName
+    private final String customerTitle
     /**
      * The information for the affiliation of the customer selected for this offer
      */
-    private String customerOrganisation
-    private String customerStreet
-    private String customerPostalCode
-    private String customerCity
-    private String customerCountry
+    private final String customerOrganisation
+    private final String customerStreet
+    private final String customerPostalCode
+    private final String customerCity
+    private final String customerCountry
     /**
      * The information for the QBiC project manager who was assigned to the project
      */
-    private String projectManagerFirstName
-    private String projectManagerLastName
-    private String projectManagerTitle
-    private String projectManagerEmail
+    private final String projectManagerFirstName
+    private final String projectManagerLastName
+    private final String projectManagerTitle
+    private final String projectManagerEmail
 
     /*Project Information*/
     /**
      * Date on which the offer was lastly modified
      */
-    private String creationDate
+    private final String creationDate
     /**
      * The date on which the offer expires
      */
-    private String expirationDate
+    private final String expirationDate
     /**
      * The title of the project
      */
-    private String projectTitle
+    private final String projectTitle
     /**
      * A short objective of the project
      */
-    private String projectObjective
+    private final String projectObjective
     /**
      * A short description of the experimental design of the project
      */
-    private String experimentalDesign
+    private final String experimentalDesign
     /**
      * The identifier for the offer which makes it distinguishable from other offers
      */
-    private String offerIdentifier
+    private final String offerIdentifier
 
     /*Items*/
+    //todo add the offeritem here!!
     /**
      * The items assigned to data generation section of the offer
      */
-    private List<ProductItem> dataGenerationItems
+    private final List<ProductItem> dataGenerationItems
     /**
      * The items assigned to data analysis section of the offer
      */
-    private List<ProductItem> dataAnalysisItems
+    private final List<ProductItem> dataAnalysisItems
     /**
      * The items assigned to project management and data storage section of the offer
      */
-    private List<ProductItem> dataManagementItems
+    private final List<ProductItem> dataManagementItems
 
     /*Overheads*/
     /**
      * The total overhead costs
      */
-    private double overheadTotal
+    private final double overheadTotal
     /**
      * The overhead costs for the data generation items
      */
-    private double overheadsDataGeneration
+    private final double overheadsDataGeneration
     /**
      * The overhead costs for the data analysis items
      */
-    private double overheadsDataAnalysis
+    private final double overheadsDataAnalysis
     /**
      * The overhead costs for the project management and data storage items
      */
-    private double overheadsPMandDS
+    private final double overheadsPMandDS
 
     /*Prices*/
     /**
      * The net costs for the data generation section on the offer
      */
-    private double netDataGeneration
+    private final double netDataGeneration
     /**
      * The net costs for the data analysis section on the offer
      */
-    private double netDataAnalysis
+    private final double netDataAnalysis
     /**
      * The net costs for the project management and data storage section on the offer
      */
-    private double netPMandDS
+    private final double netPMandDS
     /**
      * The total costs of the offer
      */
-    private double totalCost
+    private final double totalCost
     /**
      * The net costs of the offer
      */
-    private double netCost
+    private final double netCost
     /**
      * The total VAT costs of the offer
      */
-    private double totalVat
+    private final double totalVat
 
     static class Builder {
         /*Person Information*/
@@ -173,27 +174,30 @@ class OfferContent {
         Builder(Customer customer, Affiliation customerAffiliation, ProjectManager projectManager, String creationDate, String expirationDate, String projectTitle,
         String projectObjective, String experimentalDesign, String offerIdentifier){
             /*Customer*/
-            customerFirstName = customer.firstName
-            customerLastName = customer.lastName
-            customerTitle = customer.title == AcademicTitle.NONE ? "" : customer.title
-            customerOrganisation = customerAffiliation.organisation
-            customerStreet = customerAffiliation.street
-            customerPostalCode = customerAffiliation.postalCode
-            customerCity = customerAffiliation.city
-            customerCountry = customerAffiliation.country
+            customerFirstName = Objects.requireNonNull(customer.firstName,"Customer must not be null")
+            customerLastName = Objects.requireNonNull(customer.lastName, "Customer must not be null")
+            String customerTitle = customer.title == AcademicTitle.NONE ? "" : customer.title
+            this.customerTitle = Objects.requireNonNull(customerTitle, "Customer must not be null")
+
+            customerOrganisation = Objects.requireNonNull(customerAffiliation.organisation, "Customer affiliation must not be null")
+            customerStreet = Objects.requireNonNull(customerAffiliation.street, "Customer affiliation must not be null")
+            customerPostalCode = Objects.requireNonNull(customerAffiliation.postalCode, "Customer affiliation  must not be null")
+            customerCity = Objects.requireNonNull(customerAffiliation.city, "Customer affiliation must not be null")
+            customerCountry = Objects.requireNonNull(customerAffiliation.country, "Customer affiliation must not be null")
             /*Projectmanager*/
-            projectManagerFirstName = projectManager.firstName
-            projectManagerLastName = projectManager.lastName
-            projectManagerTitle = projectManager.title == AcademicTitle.NONE ? "" : projectManager.title
-            projectManagerEmail = projectManager.emailAddress
+            projectManagerFirstName = Objects.requireNonNull(projectManager.firstName, "Projectmanager musst not be null")
+            projectManagerLastName = Objects.requireNonNull(projectManager.lastName, "Projectmanager must not be null")
+            String projectManagerTitle = projectManager.title == AcademicTitle.NONE ? "" : projectManager.title
+            this.projectManagerTitle = Objects.requireNonNull(projectManagerTitle, "Projectmanager must not be null")
+            projectManagerEmail = Objects.requireNonNull(projectManager.emailAddress, "Projectmanager must not be null")
 
             /*Projectinformation*/
-            this.creationDate = creationDate
-            this.expirationDate = expirationDate
-            this.projectTitle = projectTitle
-            this.projectObjective = projectObjective
-            this.experimentalDesign = experimentalDesign
-            this.offerIdentifier = offerIdentifier
+            this.creationDate = Objects.requireNonNull(creationDate, "Creation date must not be null")
+            this.expirationDate = Objects.requireNonNull(expirationDate, "Expiration date must not be null")
+            this.projectTitle = Objects.requireNonNull(projectTitle, "Project title must not be null")
+            this.projectObjective = Objects.requireNonNull(projectObjective, "Project objective must not be null")
+            this.experimentalDesign = Objects.requireNonNull(experimentalDesign, "Experimental design must not be  null")
+            this.offerIdentifier = Objects.requireNonNull(offerIdentifier, "Offer identifier must not be null")
 
         }
         Builder dataGenerationItems(List<ProductItem> dataGenerationItems){
