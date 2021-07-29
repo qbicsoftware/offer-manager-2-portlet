@@ -10,16 +10,16 @@ import groovy.transform.EqualsAndHashCode
  * @since 1.1.0
  *
 */
-@EqualsAndHashCode(includeFields = true)
+@EqualsAndHashCode
 class OfferItem {
-    private double quantity
-    private String productDescription
-    private String productName
-    private double unitPrice
-    private double quantityDiscount
-    private String serviceProvider
-    private String unit
-    private double itemTotal
+    final double quantity
+    final String productDescription
+    final String productName
+    final double unitPrice
+    final double quantityDiscount
+    final String serviceProvider
+    final String unit
+    final double itemTotal
 
     static class Builder {
         double quantity
@@ -53,7 +53,7 @@ class OfferItem {
         this.productDescription = builder.productDescription
         this.productName = builder.productName
         this.unitPrice = builder.unitPrice
-        this.quantityDiscount = quantityDiscount
+        this.quantityDiscount = builder.quantityDiscount
         this.serviceProvider = builder.serviceProvider
         this.unit = builder.unit
         this.itemTotal = builder.itemTotal
