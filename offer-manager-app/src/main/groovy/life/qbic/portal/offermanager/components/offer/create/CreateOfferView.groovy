@@ -186,6 +186,9 @@ class CreateOfferView extends FormLayout{
         this.viewModel.addPropertyChangeListener("offerCreatedSuccessfully", {
             resetViewContent()
         })
+        this.viewModel.resetViewRequired.register({
+            resetViewContent()
+        })
     }
 
     /**
