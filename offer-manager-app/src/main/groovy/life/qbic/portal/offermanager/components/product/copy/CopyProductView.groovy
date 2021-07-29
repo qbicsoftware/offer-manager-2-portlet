@@ -34,7 +34,7 @@ class CopyProductView extends CreateProductView {
     private void adaptListener() {
         createProductButtonRegistration.remove()
         this.createProductButton.addClickListener({
-            controller.copyProduct(viewModel.productCategory, viewModel.productDescription, viewModel.productName, Double.parseDouble(viewModel.productUnitPrice), viewModel.productUnit, copyProductViewModel.productId)
+            controller.copyProduct(viewModel.productCategory, viewModel.productDescription, viewModel.productName, Double.parseDouble(viewModel.internalUnitPrice), Double.parseDouble(viewModel.externalUnitPrice), viewModel.productUnit, copyProductViewModel.productId, viewModel.productFacility)
             clearAllFields()
         })
     }
@@ -47,13 +47,17 @@ class CopyProductView extends CreateProductView {
                 wasModified = true
             } else if (copyProductViewModel.productDescription != copyProductViewModel.originalProduct.description) {
                 wasModified = true
-            } else if (copyProductViewModel.productUnitPrice != copyProductViewModel.originalProduct.unitPrice.toString()) {
+            } else if (copyProductViewModel.internalUnitPrice != copyProductViewModel.originalProduct.internalUnitPrice.toString()) {
+                wasModified = true
+            } else if (copyProductViewModel.externalUnitPrice != copyProductViewModel.originalProduct.externalUnitPrice.toString()) {
                 wasModified = true
             } else if (copyProductViewModel.productUnit != copyProductViewModel.originalProduct.unit) {
                 wasModified = true
             } else if (copyProductViewModel.productCategory != Converter.getCategory(copyProductViewModel.originalProduct)) {
                 wasModified = true
-            } else {
+            }  else if (copyProductViewModel.productFacility != copyProductViewModel.originalProduct.serviceProvider) {
+                wasModified = true
+            }else {
                 wasModified = false
             }
         }
