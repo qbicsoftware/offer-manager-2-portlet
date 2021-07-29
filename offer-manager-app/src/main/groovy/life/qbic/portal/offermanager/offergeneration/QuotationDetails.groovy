@@ -42,7 +42,7 @@ class QuotationDetails {
     /**
      * The maximum number of items per page
      */
-    private final int maxPageItems = 21
+    private final int maxPageItems = 17
 
     /**
      * Product group mapping
@@ -216,7 +216,7 @@ class QuotationDetails {
         calculatedSpaces.add(calculateItemSpace(product.unit as String, ProductPropertySpacing.PRODUCT_UNIT))
         calculatedSpaces.add(calculateItemSpace(product.unitPrice as String, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
         calculatedSpaces.add(calculateItemSpace(productTotalCost, ProductPropertySpacing.PRODUCT_TOTAL))
-        calculatedSpaces.add(calculateItemSpace(product.serviceProvider.name(), ProductPropertySpacing.PRODUCT_FACILITY))
+        calculatedSpaces.add(calculateItemSpace("Service Provider: "+product.serviceProvider.name(), ProductPropertySpacing.PRODUCT_FACILITY))
         return calculatedSpaces.max()
     }
 
