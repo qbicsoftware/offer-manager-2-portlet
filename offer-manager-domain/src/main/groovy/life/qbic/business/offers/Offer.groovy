@@ -1,7 +1,6 @@
 package life.qbic.business.offers
 
 import groovy.time.TimeCategory
-import life.qbic.business.offers.Offer
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
@@ -129,7 +128,7 @@ class Offer {
         }
     }
 
-    private static final QuantityDiscount = new QuantityDiscount()
+    private static final quantityDiscount = new QuantityDiscount()
 
     static class Builder {
 
@@ -470,7 +469,7 @@ class Offer {
     }
 
     private BigDecimal discountAmountForProductItem(ProductItem productItem) {
-        return new QuantityDiscount().apply(productItem.quantity as Integer, calculateItemNet(productItem))
+        return quantityDiscount.apply(productItem.quantity as Integer, calculateItemNet(productItem))
     }
 
     private double calculateNetPrice() {
