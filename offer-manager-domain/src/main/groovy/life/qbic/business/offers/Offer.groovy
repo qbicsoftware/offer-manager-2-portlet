@@ -468,17 +468,11 @@ class Offer {
     }
 
     private double calculateTotalDiscountAmount() {
-        List<ProductItem> dataAnalysisItems = items.findAll({it.product instanceof PrimaryAnalysis
-                || it.product instanceof SecondaryAnalysis})
-        println dataAnalysisItems
-        return dataAnalysisItems.stream()
-                .map({discountAmountForProductItem(it)})
-                .reduce(0, (a,b) -> a + b)
-
+        return items.stream().map({it.quantityDiscount}).reduce(0, (a,b)-> a + b)
     }
 
-    private static double discountAmountForProductItem(ProductItem productItem) {
-        return new QuantityDiscount().apply(productItem.quantity as Integer, productItem.quantity * productItem.product.unitPrice)
+    private double discountAmountForProductItem(ProductItem productItem) {
+        return new QuantityDiscount().apply(productItem.quantity as Integer, calculateItemNet(productItem))
     }
 
     private double calculateNetPrice() {
@@ -513,7 +507,7 @@ class Offer {
         double totalItemCosts = calculateItemNet(item)
         println totalItemCosts
         double totalItemQuantityDiscount = discountAmountForProductItem(item)
-        println totalItemQuantityDiscount
+        println "Discount:" + totalItemQuantityDiscount
         return new ProductItem(item.quantity, item.product, totalItemCosts, totalItemQuantityDiscount)
     }
 
