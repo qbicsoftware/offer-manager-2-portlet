@@ -326,7 +326,7 @@ class OfferContentSpec extends Specification{
                 | 444 | 444 | 444 | 444 | 444
         "name_" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
                 | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
-                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items2
+                | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items | []
                 | items | 333 | 444 | 444 | 444 | 444
                 | 444 | 444 | 444 | 444 | 444
         "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
@@ -347,7 +347,7 @@ class OfferContentSpec extends Specification{
         "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
                 | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
                 | "2022-11-11" | "title" | "objective" | "design" | "oabcd1" | items |items
-                | items | 333 | 444 | 4544 | 444 | 444
+                | items | 333 | 444 | 0 | 444 | 444
                 | 444 | 444 | 444 | 444 | 444
         "name" | "last" | "Dr." | "organisation" | "street" | "77777" | "City"
                 | "Country" | "pm name" | "pm last" | "None" | "mail@i.de" | "2021-11-11"
