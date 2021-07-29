@@ -1,13 +1,11 @@
 package life.qbic.business.offers
 
 import groovy.transform.EqualsAndHashCode
-import life.qbic.business.offers.identifier.OfferId
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 
 /**
  * <h1>A DTO containing the fields required in the offer pdf</h1>
@@ -25,109 +23,109 @@ class OfferContent {
     /**
      * The information for the customer for which this offer was created
      */
-    private final String customerFirstName
-    private final String customerLastName
-    private final String customerTitle
+    final String customerFirstName
+    final String customerLastName
+    final String customerTitle
     /**
      * The information for the affiliation of the customer selected for this offer
      */
-    private final String customerOrganisation
-    private final String customerStreet
-    private final String customerPostalCode
-    private final String customerCity
-    private final String customerCountry
+    final String customerOrganisation
+    final String customerStreet
+    final String customerPostalCode
+    final String customerCity
+    final String customerCountry
     /**
      * The information for the QBiC project manager who was assigned to the project
      */
-    private final String projectManagerFirstName
-    private final String projectManagerLastName
-    private final String projectManagerTitle
-    private final String projectManagerEmail
+    final String projectManagerFirstName
+    final String projectManagerLastName
+    final String projectManagerTitle
+    final String projectManagerEmail
 
     /*Project Information*/
     /**
      * Date on which the offer was lastly modified
      */
-    private final String creationDate
+    final String creationDate
     /**
      * The date on which the offer expires
      */
-    private final String expirationDate
+    final String expirationDate
     /**
      * The title of the project
      */
-    private final String projectTitle
+    final String projectTitle
     /**
      * A short objective of the project
      */
-    private final String projectObjective
+    final String projectObjective
     /**
      * A short description of the experimental design of the project
      */
-    private final String experimentalDesign
+    final String experimentalDesign
     /**
      * The identifier for the offer which makes it distinguishable from other offers
      */
-    private final String offerIdentifier
+    final String offerIdentifier
 
     /*Items*/
     //todo add the offeritem here!!
     /**
      * The items assigned to data generation section of the offer
      */
-    private final List<ProductItem> dataGenerationItems
+    final List<ProductItem> dataGenerationItems
     /**
      * The items assigned to data analysis section of the offer
      */
-    private final List<ProductItem> dataAnalysisItems
+    final List<ProductItem> dataAnalysisItems
     /**
      * The items assigned to project management and data storage section of the offer
      */
-    private final List<ProductItem> dataManagementItems
+    final List<ProductItem> dataManagementItems
 
     /*Overheads*/
     /**
      * The total overhead costs
      */
-    private final double overheadTotal
+    final double overheadTotal
     /**
      * The overhead costs for the data generation items
      */
-    private final double overheadsDataGeneration
+    final double overheadsDataGeneration
     /**
      * The overhead costs for the data analysis items
      */
-    private final double overheadsDataAnalysis
+    final double overheadsDataAnalysis
     /**
      * The overhead costs for the project management and data storage items
      */
-    private final double overheadsPMandDS
+    final double overheadsPMandDS
 
     /*Prices*/
     /**
      * The net costs for the data generation section on the offer
      */
-    private final double netDataGeneration
+    final double netDataGeneration
     /**
      * The net costs for the data analysis section on the offer
      */
-    private final double netDataAnalysis
+    final double netDataAnalysis
     /**
      * The net costs for the project management and data storage section on the offer
      */
-    private final double netPMandDS
+    final double netPMandDS
     /**
      * The total costs of the offer
      */
-    private final double totalCost
+    final double totalCost
     /**
      * The net costs of the offer
      */
-    private final double netCost
+    final double netCost
     /**
      * The total VAT costs of the offer
      */
-    private final double totalVat
+    final double totalVat
 
     static class Builder {
         /*Person Information*/
@@ -159,18 +157,19 @@ class OfferContent {
         List<ProductItem> dataManagementItems
 
         /*Overheads*/
-        double overheadTotal
-        double overheadsDataGeneration
-        double overheadsDataAnalysis
-        double overheadsPMandDS
+        Double overheadTotal
+        Double overheadsDataGeneration
+        Double overheadsDataAnalysis
+        Double overheadsPMandDS
 
         /*Prices*/
-        double netDataGeneration
-        double netDataAnalysis
-        double netPMandDS
-        double totalCost
-        double netCost
-        double totalVat
+        Double netDataGeneration
+        Double netDataAnalysis
+        Double netPMandDS
+        Double totalCost
+        Double netCost
+        Double totalVat
+
         Builder(Customer customer, Affiliation customerAffiliation, ProjectManager projectManager, String creationDate, String expirationDate, String projectTitle,
         String projectObjective, String experimentalDesign, String offerIdentifier){
             /*Customer*/
@@ -220,7 +219,7 @@ class OfferContent {
             this.overheadsDataGeneration = overheadDG
             return this
         }
-        Builder overheadDataAnalysis(double overheadDA){
+        Builder overheadsDataAnalysis(double overheadDA){
             this.overheadsDataAnalysis = overheadDA
             return this
         }
@@ -254,6 +253,21 @@ class OfferContent {
         }
 
         OfferContent build(){
+            //require all fields to be set before the object can be created
+            if(dataGenerationItems == null) throw new IllegalArgumentException("Missing data generation items")
+            if(dataAnalysisItems == null) throw new IllegalArgumentException("Missing data analysis items")
+            if(dataManagementItems == null) throw new IllegalArgumentException("Missing data management items")
+            if(overheadTotal == null) throw new IllegalArgumentException("Missing overhead total costs")
+            if(overheadsDataAnalysis == null) throw new IllegalArgumentException("Missing data analysis overhead costs")
+            if(overheadsDataGeneration == null) throw new IllegalArgumentException("Missing data generation overhead costs")
+            if(overheadsPMandDS == null) throw new IllegalArgumentException("Missing project management and data storage overhead costs")
+            if(netDataGeneration == null) throw new IllegalArgumentException("Missing net data generation costs")
+            if(netDataAnalysis == null) throw new IllegalArgumentException("Missing net data analysis costs")
+            if(netPMandDS == null) throw new IllegalArgumentException("Missing net project management and data storage costs")
+            if(totalCost == null) throw new IllegalArgumentException("Missing total costs")
+            if(netCost == null) throw new IllegalArgumentException("Missing net costs")
+            if(totalVat == null) throw new IllegalArgumentException("Missing total vat costs")
+
             return new OfferContent(this)
         }
     }
