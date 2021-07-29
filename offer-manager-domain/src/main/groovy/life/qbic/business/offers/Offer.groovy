@@ -265,8 +265,8 @@ class Offer {
         return items.sum {calculateItemOverhead(it)} as double
     }
 
-    private double calculateItemNet(ProductItem item) {
-        double unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
+    private BigDecimal calculateItemNet(ProductItem item) {
+        BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
         return unitPrice * item.quantity
     }
 
@@ -471,8 +471,9 @@ class Offer {
         return items.stream().map({it.quantityDiscount}).reduce(0, (a,b)-> a + b)
     }
 
-    private double discountAmountForProductItem(ProductItem productItem) {
+    private BigDecimal discountAmountForProductItem(ProductItem productItem) {
         println "he: " + new QuantityDiscount().apply(productItem.quantity as Integer, calculateItemNet(productItem))
+        println "net: " + calculateItemNet(productItem)
         return new QuantityDiscount().apply(productItem.quantity as Integer, calculateItemNet(productItem))
     }
 
@@ -505,8 +506,8 @@ class Offer {
     }
 
     private ProductItem finaliseProductItem(ProductItem item) {
-        double totalItemCosts = calculateItemNet(item)
-        double totalItemQuantityDiscount = discountAmountForProductItem(item)
+        BigDecimal totalItemCosts = calculateItemNet(item)
+        BigDecimal totalItemQuantityDiscount = discountAmountForProductItem(item)
         println "Discount:" + totalItemQuantityDiscount
         return new ProductItem(item.quantity, item.product, totalItemCosts, totalItemQuantityDiscount)
     }
