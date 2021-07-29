@@ -192,10 +192,10 @@ class QuotationDetails {
 	     * @param productItems The product item list for which the NET is calculated
 	     *  @return The net value for the given list of items 
 	     */
-    private static double calculateNetSum(List<ProductItem> productItems) {
+    private double calculateNetSum(List<ProductItem> productItems) {
         double netSum = 0
         productItems.each {
-            double unitPrice = affiliationCategory == AffiliationCategory.INTERNAL ? it.product.internalUnitPrice : it.product.externalUnitPrice
+            double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? it.product.internalUnitPrice : it.product.externalUnitPrice
             netSum += it.quantity * unitPrice
         }
         return netSum
@@ -211,7 +211,7 @@ class QuotationDetails {
         ArrayList<Integer> calculatedSpaces = []
 
         Product product = item.product
-        double unitPrice = affiliationCategory == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
+        double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? item.product.internalUnitPrice : item.product.externalUnitPrice
         String productTotalCost = item.quantity * unitPrice
 
         //Determine amount of spacing necessary from highest itemSpace value of all columns
@@ -277,7 +277,7 @@ class QuotationDetails {
     private double calculateOverheadSum(List<ProductItem> productItems) {
         double overheadSum = 0.0
         productItems.each {
-            double unitPrice = affiliationCategory == AffiliationCategory.INTERNAL ? it.product.internalUnitPrice : it.product.externalUnitPrice
+            double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? it.product.internalUnitPrice : it.product.externalUnitPrice
             overheadSum += it.quantity * unitPrice * offer.getOverheadRatio()
         }
         return overheadSum
@@ -385,7 +385,7 @@ class QuotationDetails {
          * @return returns the HTML code as string
          */
         static String itemInHTML(int offerPosition, ProductItem item, AffiliationCategory affiliationCategory) {
-            double unitPrice = affiliationCategory == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
+            double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? item.product.internalUnitPrice : item.product.externalUnitPrice
             String totalCost = Currency.getFormatterWithoutSymbol().format(item.quantity * unitPrice)
             return """<div class="row product-item">
                         <div class="col-1">${offerPosition}</div>
