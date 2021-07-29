@@ -69,19 +69,18 @@ class OfferContent {
     final String offerIdentifier
 
     /*Items*/
-    //todo add the offeritem here!!
     /**
      * The items assigned to data generation section of the offer
      */
-    final List<ProductItem> dataGenerationItems
+    final List<OfferItem> dataGenerationItems
     /**
      * The items assigned to data analysis section of the offer
      */
-    final List<ProductItem> dataAnalysisItems
+    final List<OfferItem> dataAnalysisItems
     /**
      * The items assigned to project management and data storage section of the offer
      */
-    final List<ProductItem> dataManagementItems
+    final List<OfferItem> dataManagementItems
 
     /*Overheads*/
     /**
@@ -151,10 +150,9 @@ class OfferContent {
         String offerIdentifier
 
         /*Items*/
-        //todo use offeritem
-        List<ProductItem> dataGenerationItems
-        List<ProductItem> dataAnalysisItems
-        List<ProductItem> dataManagementItems
+        List<OfferItem> dataGenerationItems
+        List<OfferItem> dataAnalysisItems
+        List<OfferItem> dataManagementItems
 
         /*Overheads*/
         Double overheadTotal
@@ -199,15 +197,15 @@ class OfferContent {
             this.offerIdentifier = Objects.requireNonNull(offerIdentifier, "Offer identifier must not be null")
 
         }
-        Builder dataGenerationItems(List<ProductItem> dataGenerationItems){
+        Builder dataGenerationItems(List<OfferItem> dataGenerationItems){
             this.dataGenerationItems = dataManagementItems
             return this
         }
-        Builder dataAnalysisItems(List<ProductItem> dataAnalysisItems){
+        Builder dataAnalysisItems(List<OfferItem> dataAnalysisItems){
             this.dataAnalysisItems = dataAnalysisItems
             return this
         }
-        Builder dataManagementItems(List<ProductItem> dataManagementItems){
+        Builder dataManagementItems(List<OfferItem> dataManagementItems){
             this.dataManagementItems = dataManagementItems
             return this
         }
