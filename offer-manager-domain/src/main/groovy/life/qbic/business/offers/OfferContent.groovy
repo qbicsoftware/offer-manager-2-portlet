@@ -304,7 +304,7 @@ class OfferContent {
         /*Overheads*/
         overheadTotal = builder.overheadTotal
         overheadsDataGeneration = builder.overheadsDataGeneration
-        overheadsDataAnalysis = builder.overheadsDataGeneration
+        overheadsDataAnalysis = builder.overheadsDataAnalysis
         overheadsPMandDS = builder.overheadsPMandDS
 
         /*Prices*/
