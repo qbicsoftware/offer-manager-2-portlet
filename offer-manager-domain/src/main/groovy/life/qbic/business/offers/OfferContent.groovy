@@ -317,14 +317,14 @@ class OfferContent {
     }
 
     List<OfferItem> getDataGenerationItems() {
-        return Collections.unmodifiableList(dataGenerationItems)
+        return dataGenerationItems.collect()
     }
 
     List<OfferItem> getDataAnalysisItems() {
-        return Collections.unmodifiableList(dataAnalysisItems)
+        return dataAnalysisItems.collect()
     }
 
     List<OfferItem> getDataManagementItems() {
-        return Collections.unmodifiableList(dataManagementItems)
+        return dataManagementItems.collect()
     }
 }
