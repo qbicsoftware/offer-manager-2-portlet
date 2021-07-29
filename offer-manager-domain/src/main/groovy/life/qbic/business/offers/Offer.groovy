@@ -472,6 +472,7 @@ class Offer {
     }
 
     private double discountAmountForProductItem(ProductItem productItem) {
+        println "he: " + new QuantityDiscount().apply(productItem.quantity as Integer, calculateItemNet(productItem))
         return new QuantityDiscount().apply(productItem.quantity as Integer, calculateItemNet(productItem))
     }
 
@@ -505,7 +506,6 @@ class Offer {
 
     private ProductItem finaliseProductItem(ProductItem item) {
         double totalItemCosts = calculateItemNet(item)
-        println totalItemCosts
         double totalItemQuantityDiscount = discountAmountForProductItem(item)
         println "Discount:" + totalItemQuantityDiscount
         return new ProductItem(item.quantity, item.product, totalItemCosts, totalItemQuantityDiscount)

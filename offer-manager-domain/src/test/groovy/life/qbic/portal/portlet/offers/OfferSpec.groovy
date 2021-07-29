@@ -279,15 +279,15 @@ class OfferSpec extends Specification {
     def "An Offer will provide methods to distinct between ProductItems associated with overhead costs and calculate their net sum"() {
         given:
         ProductItem primaryAnalysis = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                " example primary analysis", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+                " example primary analysis", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC), 2.0, 0)
         ProductItem secondaryAnalysis = new ProductItem(1, new SecondaryAnalysis("Basic RNAsq", "Just an" +
-                " example secondary analysis", 2.0, 2.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+                " example secondary analysis", 2.0, 2.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC), 2.0, 0)
         ProductItem sequencing = new ProductItem(3, new Sequencing("Basic Sequencing", "Just an" +
-                "example sequencing", 3.0, 3.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+                "example sequencing", 3.0, 3.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC), 2.0, 0)
         ProductItem projectManagement = new ProductItem(1, new ProjectManagement("Basic Management",
-                "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.QBIC))
+                "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.QBIC), 2.0, 0)
         ProductItem dataStorage = new ProductItem(2, new DataStorage("Data Storage",
-                "Just an example", 20.0, 20.0, ProductUnit.PER_DATASET, 1, Facility.QBIC))
+                "Just an example", 20.0, 20.0, ProductUnit.PER_DATASET, 1, Facility.QBIC), 2.0, 0)
 
         List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
