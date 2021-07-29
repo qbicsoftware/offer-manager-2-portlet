@@ -7,11 +7,8 @@ import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
 import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
-
 import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
