@@ -23,8 +23,8 @@ import java.text.DecimalFormat
  *
  * @since 1.1.0
  */
+//FIXME Remove price calculation from this class!
 class QuotationDetails {
-
     /**
      * Variable used to count the number of Items added to a page
      */
@@ -60,12 +60,12 @@ class QuotationDetails {
     private final Document htmlContent
     private final life.qbic.business.offers.Offer offer
 
-    private final AffiliationCategory affiliationCategory
+    protected final AffiliationCategory affiliationCategory
 
     QuotationDetails(Document htmlContent, Offer offer) {
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
         this.offer = Converter.convertDTOToOffer(offer)
-        this.affiliationCategory = offer.selectedCustomerAffiliation.category
+        this.affiliationCategory = offer.selectedCustomerAffiliation.getCategory()
 
         groupProductItems(offer.items)
     }
