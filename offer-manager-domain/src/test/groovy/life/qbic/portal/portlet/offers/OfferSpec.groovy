@@ -189,7 +189,7 @@ class OfferSpec extends Specification {
         totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes - totalDiscount
     }
 
-    def "On #classWithOverheads, overhead costs are includes since 1.0.4"() {
+    def "On #className, overhead costs are includes since 1.0.4"() {
         given:
         double internalUnitPrice = 8.0
         double externalUnitPrice = 10.0
@@ -212,10 +212,11 @@ class OfferSpec extends Specification {
         overhead == expectedOverhead
 
         where:
-        classWithOverheads << [DataStorage, ProjectManagement]
+        classWithOverheads << [DataStorage, ProjectManagement, PrimaryAnalysis]
+        className = classWithOverheads.getSimpleName()
     }
 
-    def "No overheads are applied to #productClass"() {
+    def "No overheads are applied to #className"() {
         given:
         Product product = ProductFactory.createProduct(productClass, "desc", "test", 0.5, 0.6, Facility.QBIC)
         Product product2 = ProductFactory.createProduct(productClass, "desc", "test2", 20, 25, Facility.QBIC)
@@ -235,7 +236,8 @@ class OfferSpec extends Specification {
         overhead == 0
 
         where:
-        productClass << [MetabolomicAnalysis, PrimaryAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing]
+        productClass << [MetabolomicAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing]
+        className = productClass.getSimpleName()
     }
 
     def "Different offer with updated item list can be differentiated"(){
