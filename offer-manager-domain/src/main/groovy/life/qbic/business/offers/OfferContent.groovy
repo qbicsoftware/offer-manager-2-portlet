@@ -94,10 +94,7 @@ class OfferContent {
      * The overhead costs for the data analysis items
      */
     final double overheadsDataAnalysis
-    /**
-     * The overhead costs for the project management and data storage items
-     */
-    final double overheadsProjectManagementAndDataStorage
+
 
     /*Prices*/
     /**
@@ -124,6 +121,11 @@ class OfferContent {
      * The total VAT costs of the offer
      */
     final double totalVat
+    /**
+     * The ratio/percentage of vat applied in the offer
+     */
+    final double vatRatio
+
 
     static class Builder {
         /*Person Information*/
@@ -157,7 +159,6 @@ class OfferContent {
         Double overheadTotal
         Double overheadsDataGeneration
         Double overheadsDataAnalysis
-        Double overheadsProjectManagementAndDataStorage
 
         /*Prices*/
         Double netDataGeneration
@@ -166,6 +167,7 @@ class OfferContent {
         Double totalCost
         Double netCost
         Double totalVat
+        Double vatRatio
 
         Builder(Customer customer, Affiliation customerAffiliation, ProjectManager projectManager, String creationDate, String expirationDate, String projectTitle,
         String projectObjective, String experimentalDesign, String offerIdentifier){
@@ -220,10 +222,7 @@ class OfferContent {
             this.overheadsDataAnalysis = overheadDA
             return this
         }
-        Builder overheadsProjectManagementAndDataStorage(double overheadsProjectManagementAndDataStorage){
-            this.overheadsProjectManagementAndDataStorage = overheadsProjectManagementAndDataStorage
-            return this
-        }
+
         Builder netDataGeneration(double net){
             this.netDataGeneration = net
             return this
@@ -248,6 +247,10 @@ class OfferContent {
             this.totalVat = vat
             return this
         }
+        Builder vatRatio(double vat){
+            this.vatRatio = vat
+            return this
+        }
 
         OfferContent build(){
             //require all fields to be set before the object can be created
@@ -257,13 +260,13 @@ class OfferContent {
             if(overheadTotal == null) throw new NullPointerException("Missing overhead total costs")
             if(overheadsDataAnalysis == null) throw new NullPointerException("Missing data analysis overhead costs")
             if(overheadsDataGeneration == null) throw new NullPointerException("Missing data generation overhead costs")
-            if(overheadsProjectManagementAndDataStorage == null) throw new NullPointerException("Missing project management and data storage overhead costs")
             if(netDataGeneration == null) throw new NullPointerException("Missing net data generation costs")
             if(netDataAnalysis == null) throw new NullPointerException("Missing net data analysis costs")
             if(netPMandDS == null) throw new NullPointerException("Missing net project management and data storage costs")
             if(totalCost == null) throw new NullPointerException("Missing total costs")
             if(netCost == null) throw new NullPointerException("Missing net costs")
             if(totalVat == null) throw new NullPointerException("Missing total vat costs")
+            if(vatRatio == null) throw new NullPointerException("Missing vat ratio")
 
             return new OfferContent(this)
         }
@@ -304,7 +307,6 @@ class OfferContent {
         overheadTotal = builder.overheadTotal
         overheadsDataGeneration = builder.overheadsDataGeneration
         overheadsDataAnalysis = builder.overheadsDataAnalysis
-        overheadsProjectManagementAndDataStorage = builder.overheadsProjectManagementAndDataStorage
 
         /*Prices*/
         netDataGeneration = builder.netDataGeneration
