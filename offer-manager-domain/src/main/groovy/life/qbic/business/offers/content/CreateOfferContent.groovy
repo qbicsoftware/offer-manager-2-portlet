@@ -144,10 +144,9 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
     private OfferItem createProductItemToOfferItem(ProductItem productItem){
         Product product = productItem.product
         double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? product.internalUnitPrice : product.externalUnitPrice
-        double totalCost = unitPrice * productItem.quantity
 
         OfferItem offerItem = new OfferItem.Builder(productItem.quantity, product.description, product.productName, unitPrice, productItem.quantityDiscount,
-                product.serviceProvider.name(), product.unit.name(),totalCost).build()
+                product.serviceProvider.name(), product.unit.name(), productItem.totalPrice).build()
 
         return offerItem
     }
