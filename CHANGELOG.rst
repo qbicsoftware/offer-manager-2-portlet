@@ -33,6 +33,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Offers without an experimental design can now be updated (`#726 <https://github.com/qbicsoftware/offer-manager-2-portlet/issue/726>`_)
 
+* Creating a product switches name and description (`#731 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/731>`_)
+
 **Dependencies**
 
 * ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
