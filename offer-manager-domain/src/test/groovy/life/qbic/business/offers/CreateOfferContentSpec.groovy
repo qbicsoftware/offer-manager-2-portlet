@@ -89,6 +89,30 @@ class CreateOfferContentSpec extends Specification{
         }
     }
 
+    def "Net costs for product groups are correctly set"(){
+        given: "the create offer content use case"
+        FetchOfferDataSource ds = Stub(FetchOfferDataSource.class)
+
+        CreateOfferContentOutput output = Stub()
+        CreateOfferContent createOfferContent = new CreateOfferContent(output,ds)
+
+        and: "a mocked offer, that is returned upon the FetchOffer use case"
+        ds.getOffer(_ as OfferId) >> Optional.of(new life.qbic.datamodel.dtos.business.Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
+                .modificationDate(date).expirationDate(date).items(items).identifier(offerId)
+                .build())
+
+        when: "the offer content creation is triggered"
+        createOfferContent.createOfferContent(offerId)
+
+        then: "the overheads for the product groups are set correctly"
+        output.createdOfferContent(_ as OfferContent) >> { arguments ->
+            final OfferContent offerContent = arguments.get(0)
+            assert offerContent.netDataAnalysis  == (2 * 1) as double
+            assert offerContent.netDataGeneration == 0
+            assert offerContent.netPMandDS == (1 * 10) as double
+        }
+    }
+
     def "Unknown OfferId triggers the failedNotification() method"(){
         given: "the create offer content use case"
         FetchOfferDataSource ds = Stub(FetchOfferDataSource.class)
