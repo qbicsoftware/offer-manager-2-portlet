@@ -508,10 +508,10 @@ class OfferSpec extends Specification {
     }
 
     static class ProductFactory {
-        static <T extends Product> T createProduct(Class T, String description, String name, double internalPrice, double externalPrice, Facility serviceProvider) {
+        static <T extends Product> T createProduct(Class clazz, String description, String name, double internalPrice, double externalPrice, Facility serviceProvider) {
             int runningNumber = 1
             ProductUnit productUnit = ProductUnit.PER_SAMPLE
-            switch (T) {
+            switch (clazz) {
                 case DataStorage:
                     return new DataStorage(name,
                             description,
