@@ -23,7 +23,6 @@ import java.text.DecimalFormat
  *
  * @since 1.1.0
  */
-//FIXME Remove price calculation from this class!
 class QuotationDetails {
     /**
      * Variable used to count the number of Items added to a page
