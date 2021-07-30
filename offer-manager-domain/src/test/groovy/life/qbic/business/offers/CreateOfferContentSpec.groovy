@@ -74,7 +74,7 @@ class CreateOfferContentSpec extends Specification{
 
         and: "a mocked offer, that is returned upon the FetchOffer use case"
         ds.getOffer(_ as OfferId) >> Optional.of(new life.qbic.datamodel.dtos.business.Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
-                .modificationDate(date).expirationDate(date).items([items[0]]).identifier(offerId)
+                .modificationDate(date).expirationDate(date).items(items).identifier(offerId)
                 .build())
 
         when: "the offer content creation is triggered"
@@ -85,7 +85,7 @@ class CreateOfferContentSpec extends Specification{
             final OfferContent offerContent = arguments.get(0)
             assert offerContent.overheadsDataAnalysis  == (2 * 1 * 0.4) as double
             assert offerContent.overheadsDataGeneration == 0
-            assert offerContent.overheadsProjectManagementAndDataStorage == 0 //zero for now (1 * 10 * 0.4) as double
+            assert offerContent.overheadsProjectManagementAndDataStorage == (1 * 10 * 0.4) as double
         }
     }
 
@@ -107,7 +107,22 @@ class CreateOfferContentSpec extends Specification{
     }
 
     def "A successful use case results in an OfferContent DTO"(){
+        given: "the create offer content use case"
+        FetchOfferDataSource ds = Stub(FetchOfferDataSource.class)
 
+        CreateOfferContentOutput output = Mock()
+        CreateOfferContent createOfferContent = new CreateOfferContent(output,ds)
+
+        and: "a mocked offer, that is returned upon the FetchOffer use case"
+        ds.getOffer(_ as OfferId) >> Optional.of(new life.qbic.datamodel.dtos.business.Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
+                .modificationDate(date).expirationDate(date).items([items[0]]).identifier(offerId)
+                .build())
+
+        when: "the offer content creation is triggered"
+        createOfferContent.createOfferContent(offerId)
+
+        then: "the overheads for the product groups are set correctly"
+        1 * output.createdOfferContent(_ as OfferContent)
     }
 
 }
