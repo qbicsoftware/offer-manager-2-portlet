@@ -186,11 +186,12 @@ class OfferOverviewView extends VerticalLayout {
         final Panel panel = new Panel("Cost Overview")
         panel.setSizeUndefined()
         Grid<PriceField> gridLayout = new Grid<>()
-        gridLayout.setHeightByRows(4)
+        gridLayout.setHeightByRows(5)
         gridLayout.setItems([
                 new PriceField("Net Price", createOfferViewModel.netPrice),
                 new PriceField("Overheads", createOfferViewModel.overheads),
                 new PriceField("Taxes", createOfferViewModel.taxes),
+                new PriceField("Total Discount", createOfferViewModel.totalDiscountAmount*-1),
                 new PriceField("Total Price", createOfferViewModel.totalPrice)
         ])
         gridLayout.addColumn(PriceField::getName)
