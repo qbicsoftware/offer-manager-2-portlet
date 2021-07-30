@@ -187,6 +187,8 @@ class QuotationDetails {
 
         htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
     }
+
+    //todo remove from here
           /**
 	     * Helper method that calculates the NET price for a list of product items      
 	     * @param productItems The product item list for which the NET is calculated
@@ -269,6 +271,7 @@ class QuotationDetails {
 
     }
 
+    //todo remove from here
     /**
      * Calculates the overhead sum of all product items
      * @param productItems Items for which the overheads are calculated
