@@ -422,7 +422,7 @@ class OfferSpec extends Specification {
 
     }
 
-    def "Given data analysis service items, calculate the correct amount of sample-dependent discount"() {
+    def "Given #samples data analysis service items, calculate the correct amount of sample-dependent discount with factor #discountFactor"() {
         given: "an offer with one primary analysis service product of N samples"
         PrimaryAnalysis primaryAnalysis1 = new PrimaryAnalysis("Test Bioinformatics", "Testing", 10, 10, ProductUnit.PER_SAMPLE, 1L, Facility.QBIC)
         PrimaryAnalysis primaryAnalysis2 = new PrimaryAnalysis("Test Bioinformatics 2", "Testing", 10, 10, ProductUnit.PER_SAMPLE, 1L, Facility.QBIC)
@@ -448,7 +448,8 @@ class OfferSpec extends Specification {
 
     }
 
-    def "Given data analysis service items and data generation items, calculate the correct amount of sample-dependent discount"() {
+    def "Given #samples data analysis service items and data generation items, calculate the correct amount of sample-dependent discount with factor #discountFactor"() {
+
         given: "an offer with one primary analysis service product of N samples"
         PrimaryAnalysis primaryAnalysis1 = new PrimaryAnalysis("Test Bioinformatics", "Testing", 10, 10, ProductUnit.PER_SAMPLE, 1L, Facility.QBIC)
         PrimaryAnalysis primaryAnalysis2 = new PrimaryAnalysis("Test Bioinformatics 2", "Testing", 10, 10, ProductUnit.PER_SAMPLE, 1L, Facility.QBIC)
