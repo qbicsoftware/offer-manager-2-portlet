@@ -23,10 +23,10 @@ import life.qbic.datamodel.dtos.business.services.Sequencing
 import java.text.DateFormat
 
 /**
- * <h1>Creates the content for an offer printout</h1>
+ * <h1>Creates the content for an offer export</h1>
  *
  * <p>This use case aggregates all information that needs to be present in an offer. This use case should be called to forward the offer information
- * to the offer pdf creator class</p>
+ * </p>
  *
  * @since 1.1.0
  *
