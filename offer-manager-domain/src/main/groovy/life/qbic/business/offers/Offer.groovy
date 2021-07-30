@@ -465,9 +465,7 @@ class Offer {
     }
 
     private double calculateTotalDiscountAmount() {
-        return items.stream()
-                .map({it.quantityDiscount})
-                .reduce(0, (a,b)-> a + b)
+        return items.sum{ it.quantityDiscount }
     }
 
     private BigDecimal discountAmountForProductItem(ProductItem productItem) {
