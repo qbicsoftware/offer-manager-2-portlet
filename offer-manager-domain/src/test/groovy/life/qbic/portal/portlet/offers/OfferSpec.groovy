@@ -1,6 +1,7 @@
 package life.qbic.portal.portlet.offers
 
 import life.qbic.business.offers.Offer
+import life.qbic.business.offers.QuantityDiscount
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
@@ -116,9 +117,10 @@ class OfferSpec extends Specification {
 
     def "A customer with an external academic affiliation shall pay 20% overheads and 19% VAT"() {
         given:
+        ProductItem primaryAnalysisItem = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))
         List<ProductItem> items = [
-                new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG)),
+                primaryAnalysisItem,
                 new ProductItem(1, new ProjectManagement("Basic Management",
                "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.IMGAG))
         ]
@@ -136,12 +138,16 @@ class OfferSpec extends Specification {
         double expectedNetSum = (10.0 + (2 * 1.0))
         double expectedOverhead = (10.0 + (2 * 1.0)) * 0.2
         double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
+        double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
+                (primaryAnalysisItem.product.unitPrice * primaryAnalysisItem.quantity) as BigDecimal)
+
         offer.items.size() == 2
         netSum == expectedNetSum
         overhead == expectedOverhead
         taxes == expectedTaxes
+        totalDiscount == offer.totalDiscountAmount
 
-        totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes
+        totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes - totalDiscount
     }
 
     def "A customer with an external (non-academic) affiliation shall pay 40% overheads and 19% VAT"() {
