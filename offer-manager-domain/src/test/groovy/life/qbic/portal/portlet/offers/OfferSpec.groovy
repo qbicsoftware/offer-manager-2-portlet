@@ -195,6 +195,29 @@ class OfferSpec extends Specification {
         overhead == expectedOverhead
     }
 
+    def "No overheads are applied to #productClass"() {
+        given:
+        Product product = ProductFactory.createProduct(productClass, "desc", "test", 0.5, 0.6, Facility.QBIC)
+        Product product2 = ProductFactory.createProduct(productClass, "desc", "test2", 20, 25, Facility.QBIC)
+        List<ProductItem> items = [
+                new ProductItem(1, product),
+                new ProductItem(1, product2)
+
+        ]
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, externalAffiliation).build()
+
+        when:
+        double overhead = offer.getOverheadSum()
+
+        then:
+        overhead == 0
+
+        where:
+        productClass << [DataStorage, MetabolomicAnalysis, PrimaryAnalysis, ProjectManagement, ProteomicAnalysis, SecondaryAnalysis, Sequencing]
+    }
+
     def "Different offer with updated item list can be differentiated"(){
         given:
         List<ProductItem> items = [
@@ -443,5 +466,43 @@ class OfferSpec extends Specification {
         externalAffiliation | 0.4
         externalAcademicAffiliation | 0.2
 
+    }
+
+    def "test product factory"() {
+        when:
+        Product product = ProductFactory.createProduct(Sequencing.class, "desc", "test", 0.5, 0.6, Facility.QBIC)
+        then:
+        product instanceof Sequencing
+        println(product)
+    }
+
+    static class ProductFactory {
+        static <T extends Product> T createProduct(Class T, String description, String name, double internalPrice, double externalPrice, Facility serviceProvider) {
+            int runningNumber = 1
+            ProductUnit productUnit = ProductUnit.PER_SAMPLE
+            switch (T) {
+                case DataStorage:
+                    return new DataStorage(name, description, internalPrice, externalPrice, productUnit, runningNumber, serviceProvider) as T
+                    break
+                case MetabolomicAnalysis:
+                    return new MetabolomicAnalysis(name, description, internalPrice, externalPrice, productUnit, runningNumber, serviceProvider) as T
+                    break
+                case PrimaryAnalysis:
+                    return new PrimaryAnalysis(name, description, internalPrice, externalPrice, productUnit, runningNumber, serviceProvider) as T
+                    break
+                case ProjectManagement:
+                    return new ProjectManagement(name, description, internalPrice, externalPrice, productUnit, runningNumber, serviceProvider) as T
+                    break
+                case ProteomicAnalysis:
+                    return new ProteomicAnalysis(name, description, internalPrice, externalPrice, productUnit, runningNumber, serviceProvider) as T
+                    break
+                case SecondaryAnalysis:
+                    return new SecondaryAnalysis(name, description, internalPrice, externalPrice, productUnit, runningNumber, serviceProvider) as T
+                    break
+                case Sequencing:
+                    return new Sequencing(name, description, internalPrice, externalPrice, productUnit, runningNumber, serviceProvider) as T
+                    break
+            }
+        }
     }
 }
