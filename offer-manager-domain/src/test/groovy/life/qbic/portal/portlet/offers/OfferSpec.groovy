@@ -189,14 +189,16 @@ class OfferSpec extends Specification {
         totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes - totalDiscount
     }
 
-    def "On data storage and project management service, overhead costs are includes since 1.0.4"() {
+    def "On #classWithOverheads, overhead costs are includes since 1.0.4"() {
         given:
-        List<ProductItem> items = [
-                new ProductItem(1, new ProjectManagement("Basic Management",
-                        "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.QBIC)),
-                new ProductItem(1, new DataStorage("Basic Management",
-                        "Just an example", 10.0, 10.0, ProductUnit.PER_GIGABYTE, 1, Facility.QBIC))
+        double internalUnitPrice = 8.0
+        double externalUnitPrice = 10.0
+        Product item1 = ProductFactory.createProduct(classWithOverheads, "Just an example", "Product name", internalUnitPrice, externalUnitPrice, Facility.QBIC)
+        Product item2 = ProductFactory.createProduct(classWithOverheads, "Just an example", "Product name", internalUnitPrice, externalUnitPrice, Facility.QBIC)
 
+        List<ProductItem> items = [
+                new ProductItem(1, item1),
+                new ProductItem(1, item2)
         ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
@@ -204,10 +206,13 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double expectedOverhead = (10.0 + 10.0) * 0.4
+        double expectedOverhead = (externalUnitPrice * items.size()) * 0.4
 
         then:
         overhead == expectedOverhead
+
+        where:
+        classWithOverheads << [DataStorage, ProjectManagement]
     }
 
     def "No overheads are applied to #productClass"() {
@@ -230,7 +235,7 @@ class OfferSpec extends Specification {
         overhead == 0
 
         where:
-        productClass << [DataStorage, MetabolomicAnalysis, PrimaryAnalysis, ProjectManagement, ProteomicAnalysis, SecondaryAnalysis, Sequencing]
+        productClass << [MetabolomicAnalysis, PrimaryAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing]
     }
 
     def "Different offer with updated item list can be differentiated"(){
