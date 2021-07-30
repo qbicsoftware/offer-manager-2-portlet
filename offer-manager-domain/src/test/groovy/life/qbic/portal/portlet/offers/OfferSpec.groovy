@@ -1,6 +1,7 @@
 package life.qbic.portal.portlet.offers
 
 import life.qbic.business.offers.Offer
+import life.qbic.business.offers.QuantityDiscount
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
@@ -91,9 +92,10 @@ class OfferSpec extends Specification {
 
     def "A customer with an internal affiliation shall pay no overheads"() {
         given: "A list of product items"
+        ProductItem primaryAnalysisItem = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))
         List<ProductItem> items = [
-                new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                        " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC)),
+                primaryAnalysisItem,
                 new ProductItem(1, new ProjectManagement("Basic Management",
                         "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.QBIC))
         ]
@@ -105,20 +107,25 @@ class OfferSpec extends Specification {
         when: "the Offer object is tasked with calculating the total costs and the total net price"
         double totalCosts = offer.getTotalCosts()
         double netPrice = offer.getTotalNetPrice()
+        double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
+                (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
 
         then:
         double expectedNetPrice = (double) 10.0 + 2 * 1.0
         double expectedTotalPrice = expectedNetPrice
         netPrice == expectedNetPrice
-        totalCosts == expectedTotalPrice
+        totalCosts == expectedTotalPrice - totalDiscount
+        totalDiscount == offer.getTotalDiscountAmount()
+
 
     }
 
     def "A customer with an external academic affiliation shall pay 20% overheads and 19% VAT"() {
         given:
+        ProductItem primaryAnalysisItem = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))
         List<ProductItem> items = [
-                new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG)),
+                primaryAnalysisItem,
                 new ProductItem(1, new ProjectManagement("Basic Management",
                "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.IMGAG))
         ]
@@ -136,19 +143,24 @@ class OfferSpec extends Specification {
         double expectedNetSum = (10.0 + (2 * 1.0))
         double expectedOverhead = (10.0 + (2 * 1.0)) * 0.2
         double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
+        double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
+                (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
+
         offer.items.size() == 2
         netSum == expectedNetSum
         overhead == expectedOverhead
         taxes == expectedTaxes
+        totalDiscount == offer.totalDiscountAmount
 
-        totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes
+        totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes - totalDiscount
     }
 
     def "A customer with an external (non-academic) affiliation shall pay 40% overheads and 19% VAT"() {
         given:
+        ProductItem primaryAnalysisItem = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))
         List<ProductItem> items = [
-                new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                        " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.PCT)),
+                primaryAnalysisItem,
                 new ProductItem(1, new ProjectManagement("Basic Management",
                         "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.PCT))
         ]
@@ -161,6 +173,8 @@ class OfferSpec extends Specification {
         double taxes = offer.getTaxCosts()
         double totalCosts = offer.getTotalCosts()
         double netSum = offer.getTotalNetPrice()
+        double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
+                (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
 
         then:
         double expectedNetSum = (10.0 + (2 * 1.0))
@@ -170,8 +184,9 @@ class OfferSpec extends Specification {
         netSum == expectedNetSum
         overhead == expectedOverhead
         taxes == expectedTaxes
+        totalDiscount == offer.getTotalDiscountAmount()
 
-        totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes
+        totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes - totalDiscount
     }
 
     def "On data storage and project management service, overhead costs are includes since 1.0.4"() {
@@ -273,44 +288,6 @@ class OfferSpec extends Specification {
 
         then:
         !res
-    }
-
-    //TODO do we still need/want this??
-    def "An Offer will provide methods to distinct between ProductItems associated with overhead costs and calculate their net sum"() {
-        given:
-        ProductItem primaryAnalysis = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                " example primary analysis", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
-        ProductItem secondaryAnalysis = new ProductItem(1, new SecondaryAnalysis("Basic RNAsq", "Just an" +
-                " example secondary analysis", 2.0, 2.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
-        ProductItem sequencing = new ProductItem(3, new Sequencing("Basic Sequencing", "Just an" +
-                "example sequencing", 3.0, 3.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
-        ProductItem projectManagement = new ProductItem(1, new ProjectManagement("Basic Management",
-                "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.QBIC))
-        ProductItem dataStorage = new ProductItem(2, new DataStorage("Data Storage",
-                "Just an example", 20.0, 20.0, ProductUnit.PER_DATASET, 1, Facility.QBIC))
-
-        List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
-        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
-                "awesome project", items, externalAffiliation).build()
-
-
-        when:
-        List<ProductItem> itemsWithoutOverhead = offer.getNoOverheadItems()
-        List<ProductItem> itemsWithOverhead = offer.getOverheadItems()
-        double itemsWithoutOverheadNetPrice = offer.getNoOverheadItemsNet()
-        double itemsWithOverheadNetPrice = offer.getOverheadItemsNet()
-
-        then:
-
-        double expectedItemsWithOverheadNetPrice = 2 * 1.0 + 1 * 2.0 + 3 * 3.0
-        double expectedItemsWithoutOverheadNetPrice = 1 * 10 + 2 * 20
-        List<ProductItem> expectedItemsWithOverhead = [primaryAnalysis, sequencing, secondaryAnalysis]
-        List<ProductItem> expectedItemsWithoutOverhead = [projectManagement, dataStorage]
-        itemsWithOverhead == expectedItemsWithOverhead
-        itemsWithoutOverhead == expectedItemsWithoutOverhead
-        expectedItemsWithOverheadNetPrice == itemsWithOverheadNetPrice
-        expectedItemsWithoutOverheadNetPrice == itemsWithoutOverheadNetPrice
-
     }
 
     /**
@@ -442,6 +419,61 @@ class OfferSpec extends Specification {
         affiliation | overheadRatio
         externalAffiliation | 0.4
         externalAcademicAffiliation | 0.2
+
+    }
+
+    def "Given #samples data analysis service items, calculate the correct amount of sample-dependent discount with factor #discountFactor"() {
+        given: "an offer with one primary analysis service product of N samples"
+        PrimaryAnalysis primaryAnalysis1 = new PrimaryAnalysis("Test Bioinformatics", "Testing", 10, 10, ProductUnit.PER_SAMPLE, 1L, Facility.QBIC)
+        PrimaryAnalysis primaryAnalysis2 = new PrimaryAnalysis("Test Bioinformatics 2", "Testing", 10, 10, ProductUnit.PER_SAMPLE, 1L, Facility.QBIC)
+
+        ProductItem item1 = new ProductItem(samples as Double, primaryAnalysis1)
+        ProductItem item2 = new ProductItem(samples as Double, primaryAnalysis2)
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager,  "", "", [item1, item2], internalAffiliation).build()
+
+        when: "we request the total discount amount"
+        double totalDiscountAmount = offer.getTotalDiscountAmount()
+
+        then: "the total discount amount has to increase with the number of samples the service is applied to"
+        double expectedTotalDiscount = 10 * samples * (1-discountFactor) + 10 * samples * (1-discountFactor)
+        totalDiscountAmount == expectedTotalDiscount
+
+        where:
+        samples | discountFactor
+        1 | 1
+        2 | 0.98
+        10 | 0.67
+        100 | 0.3
+
+    }
+
+    def "Given #samples data analysis service items and data generation items, calculate the correct amount of sample-dependent discount with factor #discountFactor"() {
+
+        given: "an offer with one primary analysis service product of N samples"
+        PrimaryAnalysis primaryAnalysis1 = new PrimaryAnalysis("Test Bioinformatics", "Testing", 10, 10, ProductUnit.PER_SAMPLE, 1L, Facility.QBIC)
+        PrimaryAnalysis primaryAnalysis2 = new PrimaryAnalysis("Test Bioinformatics 2", "Testing", 10, 10, ProductUnit.PER_SAMPLE, 1L, Facility.QBIC)
+        Sequencing dataGeneration = new Sequencing("Test Sequencing 2", "Testing", 10, 10, ProductUnit.PER_SAMPLE, 1L, Facility.QBIC)
+
+        ProductItem item1 = new ProductItem(samples as Double, primaryAnalysis1)
+        ProductItem item2 = new ProductItem(samples as Double, primaryAnalysis2)
+        ProductItem item3 = new ProductItem(samples as Double, dataGeneration)
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager,  "", "", [item1, item2, item3], internalAffiliation).build()
+
+        when: "we request the total discount amount"
+        double totalDiscountAmount = offer.getTotalDiscountAmount()
+
+        then: "the total discount amount has to increase with the number of samples the service is applied to"
+        double expectedTotalDiscount = 10 * samples * (1-discountFactor) + 10 * samples * (1-discountFactor)
+        totalDiscountAmount == expectedTotalDiscount
+
+        where:
+        samples | discountFactor
+        1 | 1
+        2 | 0.98
+        10 | 0.67
+        100 | 0.3
 
     }
 }
