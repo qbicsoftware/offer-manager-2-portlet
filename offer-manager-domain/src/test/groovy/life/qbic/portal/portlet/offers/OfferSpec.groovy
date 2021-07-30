@@ -9,6 +9,7 @@ import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.*
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -189,13 +190,107 @@ class OfferSpec extends Specification {
         totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes - totalDiscount
     }
 
-    def "On data storage and project management service, overhead costs are includes since 1.0.4"() {
+
+    def "Given an external (non-academic) affiliation, #className have #overheadPercent overhead costs"() {
         given:
+        double internalUnitPrice = 8.0
+        double externalUnitPrice = 10.0
+        Product item1 = ProductFactory.createProduct(classWithOverheads, "Just an example", "Product name", internalUnitPrice, externalUnitPrice, Facility.QBIC)
+        Product item2 = ProductFactory.createProduct(classWithOverheads, "Just an example", "Product name", internalUnitPrice, externalUnitPrice, Facility.QBIC)
+
         List<ProductItem> items = [
-                new ProductItem(1, new ProjectManagement("Basic Management",
-                        "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.QBIC)),
-                new ProductItem(1, new DataStorage("Basic Management",
-                        "Just an example", 10.0, 10.0, ProductUnit.PER_GIGABYTE, 1, Facility.QBIC))
+                new ProductItem(1, item1),
+                new ProductItem(1, item2)
+        ]
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, externalAffiliation).build()
+
+        when:
+        double overhead = offer.getOverheadSum()
+        double expectedOverhead = (externalUnitPrice * items.size()) * overheadRatio
+
+        then:
+        overhead == expectedOverhead
+
+        where:
+        classWithOverheads << [DataStorage, ProjectManagement, PrimaryAnalysis,MetabolomicAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing]
+        className = classWithOverheads.getSimpleName()
+        overheadRatio = 0.4
+        overheadPercent = "${overheadRatio * 100}%"
+    }
+
+    def "Given an external-academic affiliation, #className have #overheadPercent overhead costs"() {
+        given:
+        double internalUnitPrice = 8.0
+        double externalUnitPrice = 10.0
+        Product item1 = ProductFactory.createProduct(classWithOverheads, "Just an example", "Product name", internalUnitPrice, externalUnitPrice, Facility.QBIC)
+        Product item2 = ProductFactory.createProduct(classWithOverheads, "Just an example", "Product name", internalUnitPrice, externalUnitPrice, Facility.QBIC)
+
+        List<ProductItem> items = [
+                new ProductItem(1, item1),
+                new ProductItem(1, item2)
+        ]
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, externalAcademicAffiliation).build()
+
+        when:
+        double overhead = offer.getOverheadSum()
+        double expectedOverhead = (externalUnitPrice * items.size()) * overheadRatio
+
+        then:
+        overhead == expectedOverhead
+
+        where:
+        classWithOverheads << [DataStorage, ProjectManagement, PrimaryAnalysis,MetabolomicAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing]
+        className = classWithOverheads.getSimpleName()
+        overheadRatio = 0.2
+        overheadPercent = "${overheadRatio * 100}%"
+    }
+
+    def "Given an internal affiliation, #className have #overheadPercent overhead costs"() {
+        given:
+        double internalUnitPrice = 8.0
+        double externalUnitPrice = 10.0
+        Product item1 = ProductFactory.createProduct(classWithOverheads, "Just an example", "Product name", internalUnitPrice, externalUnitPrice, Facility.QBIC)
+        Product item2 = ProductFactory.createProduct(classWithOverheads, "Just an example", "Product name", internalUnitPrice, externalUnitPrice, Facility.QBIC)
+
+        List<ProductItem> items = [
+                new ProductItem(1, item1),
+                new ProductItem(1, item2)
+        ]
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, internalAffiliation).build()
+
+        when:
+        double overhead = offer.getOverheadSum()
+        double expectedOverhead = (internalUnitPrice * items.size()) * overheadRatio
+
+        then:
+        overhead == expectedOverhead
+
+        where:
+        classWithOverheads << [DataStorage, ProjectManagement, PrimaryAnalysis,MetabolomicAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing]
+        className = classWithOverheads.getSimpleName()
+        overheadRatio = 0.0
+        overheadPercent = "${overheadRatio * 100}%"
+    }
+
+    /**
+     * Checks for specific classes that no overheads are applied.
+     * <p>This is currently ignored because overheads are applied on all classes</p>
+     * @since 1.1.0
+     */
+    @Ignore
+    def "No overheads are applied to #className"() {
+        given:
+        Product product = ProductFactory.createProduct(productClass, "desc", "test", 0.5, 0.6, Facility.QBIC)
+        Product product2 = ProductFactory.createProduct(productClass, "desc", "test2", 20, 25, Facility.QBIC)
+        List<ProductItem> items = [
+                new ProductItem(1, product),
+                new ProductItem(1, product2)
 
         ]
 
@@ -204,10 +299,13 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double expectedOverhead = (10.0 + 10.0) * 0.4
 
         then:
-        overhead == expectedOverhead
+        overhead == 0
+
+        where:
+        productClass << []
+        className = productClass.getSimpleName()
     }
 
     def "Different offer with updated item list can be differentiated"(){
@@ -475,5 +573,77 @@ class OfferSpec extends Specification {
         10 | 0.67
         100 | 0.3
 
+    }
+
+    static class ProductFactory {
+        static <T extends Product> T createProduct(Class clazz, String description, String name, double internalPrice, double externalPrice, Facility serviceProvider) {
+            int runningNumber = 1
+            ProductUnit productUnit = ProductUnit.PER_SAMPLE
+            switch (clazz) {
+                case DataStorage:
+                    return new DataStorage(name,
+                            description,
+                            internalPrice,
+                            externalPrice,
+                            productUnit,
+                            runningNumber,
+                            serviceProvider) as T
+                    break
+                case MetabolomicAnalysis:
+                    return new MetabolomicAnalysis(name,
+                            description,
+                            internalPrice,
+                            externalPrice,
+                            productUnit,
+                            runningNumber,
+                            serviceProvider) as T
+                    break
+                case PrimaryAnalysis:
+                    return new PrimaryAnalysis(name,
+                            description,
+                            internalPrice,
+                            externalPrice,
+                            productUnit,
+                            runningNumber,
+                            serviceProvider) as T
+                    break
+                case ProjectManagement:
+                    return new ProjectManagement(name,
+                            description,
+                            internalPrice,
+                            externalPrice,
+                            productUnit,
+                            runningNumber,
+                            serviceProvider) as T
+                    break
+                case ProteomicAnalysis:
+                    return new ProteomicAnalysis(name,
+                            description,
+                            internalPrice,
+                            externalPrice,
+                            productUnit,
+                            runningNumber,
+                            serviceProvider) as T
+                    break
+                case SecondaryAnalysis:
+                    return new SecondaryAnalysis(name,
+                            description,
+                            internalPrice,
+                            externalPrice,
+                            productUnit,
+                            runningNumber,
+                            serviceProvider) as T
+                    break
+                case Sequencing:
+                    return new Sequencing(name,
+                            description,
+                            internalPrice,
+                            externalPrice,
+                            productUnit,
+                            runningNumber,
+                            serviceProvider) as T
+                    break
+            }
+        }
     }
 }
