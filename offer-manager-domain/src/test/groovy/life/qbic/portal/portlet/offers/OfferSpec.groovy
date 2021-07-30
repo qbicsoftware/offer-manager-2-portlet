@@ -9,6 +9,7 @@ import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.*
+import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -189,7 +190,8 @@ class OfferSpec extends Specification {
         totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes - totalDiscount
     }
 
-    def "On #className, overhead costs are includes since 1.0.4"() {
+
+    def "On #className, overhead costs are included"() {
         given:
         double internalUnitPrice = 8.0
         double externalUnitPrice = 10.0
@@ -212,10 +214,16 @@ class OfferSpec extends Specification {
         overhead == expectedOverhead
 
         where:
-        classWithOverheads << [DataStorage, ProjectManagement, PrimaryAnalysis]
+        classWithOverheads << [DataStorage, ProjectManagement, PrimaryAnalysis,MetabolomicAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing]
         className = classWithOverheads.getSimpleName()
     }
 
+    /**
+     * Checks for specific classes that no overheads are applied.
+     * <p>This is currently ignored because overheads are applied on all classes</p>
+     * @since 1.1.0
+     */
+    @Ignore
     def "No overheads are applied to #className"() {
         given:
         Product product = ProductFactory.createProduct(productClass, "desc", "test", 0.5, 0.6, Facility.QBIC)
@@ -236,7 +244,7 @@ class OfferSpec extends Specification {
         overhead == 0
 
         where:
-        productClass << [MetabolomicAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing]
+        productClass << []
         className = productClass.getSimpleName()
     }
 
