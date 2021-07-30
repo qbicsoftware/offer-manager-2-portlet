@@ -35,7 +35,7 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
     }
 
     /**
-     * @inheritDocs
+     * {@inheritDoc}
      */
     @Override
     void calculatedPrice(double price) {
@@ -43,7 +43,7 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
     }
 
     /**
-     * @inheritDocs
+     * {@inheritDoc}
      */
     @Override
     void calculatedPrice(double netPrice, double taxes, double overheads, double totalPrice) {
@@ -54,7 +54,7 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
     }
 
     /**
-     * @inheritDocs
+     * {@inheritDoc}
      */
     @Override
     void calculatedPrice(double netPrice, double taxes, double overheads, double totalPrice, double totalDiscountAmount) {
@@ -63,7 +63,7 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
     }
 
     /**
-     * @inheritDocs
+     * {@inheritDoc}
      */
     @Override
     void failNotification(String notification) {
@@ -71,7 +71,7 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
     }
 
     /**
-     * @inheritDocs
+     * {@inheritDoc}
      */
     @Override
     void fetchedOffer(Offer fetchedOffer) {
