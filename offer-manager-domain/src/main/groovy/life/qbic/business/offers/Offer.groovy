@@ -202,7 +202,6 @@ class Offer {
         this.customer = builder.customer
         this.identifier = builder.identifier
         this.items = []
-        //builder.items.each {this.items.add(it)}
         this.expirationDate = calculateExpirationDate(builder.creationDate)
         this.creationDate = builder.creationDate
         this.projectManager = builder.projectManager
