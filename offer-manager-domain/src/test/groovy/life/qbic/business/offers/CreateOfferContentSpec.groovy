@@ -78,7 +78,6 @@ class CreateOfferContentSpec extends Specification{
         ds.getOffer(_ as OfferId) >> Optional.of(new life.qbic.datamodel.dtos.business.Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
                 .modificationDate(date).expirationDate(date).items([items[0]]).identifier(offerId)
                 .build())
-        createOfferContent
 
         when: "the offer content creation is triggered"
         createOfferContent.createOfferContent(offerId)
@@ -89,12 +88,26 @@ class CreateOfferContentSpec extends Specification{
             assert offerContent.overheadsDataAnalysis  == (2 * 1 * 0.4) as double
             assert offerContent.overheadsDataGeneration == 0
             assert offerContent.overheadsProjectManagementAndDataStorage == (1 * 10 * 0.4) as double
-
         }
     }
 
     def "Unknown OfferId triggers the failedNotification() method"(){
+        given: "the create offer content use case"
+        FetchOfferOutput fetchOfferOutput = Mock()
+        FetchOfferDataSource ds = Stub(FetchOfferDataSource.class)
+        FetchOffer fetchOffer = new FetchOffer(ds, fetchOfferOutput)
 
+        CreateOfferContentOutput output = Mock()
+        CreateOfferContent createOfferContent = new CreateOfferContent(output,fetchOffer)
+
+        and: "no offer is found for the given id"
+        ds.getOffer(_ as OfferId) >> Optional.empty()
+
+        when: "the offer content creation is triggered"
+        createOfferContent.createOfferContent(offerId)
+
+        then: "failed use case"
+        1 * output.failNotification(_)
     }
 
     def "A successful use case results in an OfferContent DTO"(){
