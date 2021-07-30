@@ -49,7 +49,7 @@ class MaintainProductsController {
      */
     void createNewProduct(ProductCategory category, String description, String name, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility facility){
         try {
-            Product product = Converter.createProduct(category, description, name, internalUnitPrice, externalUnitPrice, unit, facility)
+            Product product = Converter.createProduct(category, name, description, internalUnitPrice, externalUnitPrice, unit, facility)
             createProductInput.create(product)
         } catch (Exception unexpected) {
             log.error("unexpected exception during create product call", unexpected)
@@ -84,7 +84,7 @@ class MaintainProductsController {
      */
     void copyProduct(ProductCategory category, String description, String name, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, ProductId productId, Facility serviceProvider){
         try{
-            Product product = Converter.createProductWithVersion(category, description, name, internalUnitPrice, externalUnitPrice, unit, productId.uniqueId, serviceProvider)
+            Product product = Converter.createProductWithVersion(category, name, description, internalUnitPrice, externalUnitPrice, unit, productId.uniqueId, serviceProvider)
             copyProductInput.copyModified(product)
         }catch(Exception unexpected){
             log.error("Unexpected exception at copy product call", unexpected)

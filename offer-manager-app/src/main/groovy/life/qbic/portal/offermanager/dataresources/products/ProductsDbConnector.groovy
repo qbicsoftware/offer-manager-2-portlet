@@ -13,6 +13,7 @@ import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductCategoryFactory
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
@@ -109,15 +110,20 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       long productId = parseProductId(row.productId as String)
       String productName = row.productName
       ProductUnit productUnit = productUnitFactory.getForString(row.unit as String)
-      double unitPrice = row.unitPrice
+      double internalUnitPrice = row.internalUnitPrice
+      double externalUnitPrice = row.externalUnitPrice
+      Facility serviceProvider = Facility.valueOf(row.serviceProvider as String)
+
 
       product = Converter.createProductWithVersion(
               productCategory,
               productName,
               description,
-              unitPrice,
+              internalUnitPrice,
+              externalUnitPrice,
               productUnit,
-              productId)
+              productId,
+              serviceProvider)
 
     } catch (NullPointerException | IllegalArgumentException illegalArgument) {
       throw new IllegalArgumentException("Could not parse product from provided information.", illegalArgument)
@@ -158,7 +164,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    */
   int findProductId(Product product) {
     String query = "SELECT id FROM product "+
-            "WHERE category = ? AND description = ? AND productName = ? AND unitPrice = ? AND unit = ?"
+            "WHERE category = ? AND description = ? AND productName = ? AND internalUnitPrice = ? AND externalUnitPrice = ? AND unit = ? AND serviceProvider = ?"
 
     List<Integer> foundId = []
 
@@ -167,8 +173,11 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       preparedStatement.setString(1, getProductType(product))
       preparedStatement.setString(2,product.description)
       preparedStatement.setString(3,product.productName)
-      preparedStatement.setDouble(4,product.unitPrice)
-      preparedStatement.setString(5,product.unit.value)
+      preparedStatement.setDouble(4,product.internalUnitPrice)
+      preparedStatement.setDouble(5,product.externalUnitPrice)
+      preparedStatement.setString(6,product.unit.value)
+      preparedStatement.setString(7,product.serviceProvider.name())
+
       ResultSet result = preparedStatement.executeQuery()
 
       while (result.next()){
@@ -302,9 +311,11 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       preparedStatement.setString(1, getProductType(product))
       preparedStatement.setString(2, product.description)
       preparedStatement.setString(3, product.productName)
-      preparedStatement.setDouble(4, product.unitPrice)
-      preparedStatement.setString(5, product.unit.value)
-      preparedStatement.setString(6, productId.toString())
+      preparedStatement.setDouble(4, product.internalUnitPrice)
+      preparedStatement.setDouble(5, product.externalUnitPrice)
+      preparedStatement.setString(6, product.unit.value)
+      preparedStatement.setString(7, productId.toString())
+      preparedStatement.setString(8, product.serviceProvider.name())
 
       preparedStatement.execute()
     }
@@ -352,7 +363,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     /**
      * Query for inserting a product.
      */
-    final static String INSERT_PRODUCT = "INSERT INTO product (category, description, productName, unitPrice, unit, productId) VALUES (?, ?, ?, ?, ?, ?)"
+    final static String INSERT_PRODUCT = "INSERT INTO product (category, description, productName, internalUnitPrice, externalUnitPrice, unit, productId, serviceProvider) VALUES (?, ?, ?, ?, ?, ?, ?, ?)"
 
     /**
      * Inactivate a product

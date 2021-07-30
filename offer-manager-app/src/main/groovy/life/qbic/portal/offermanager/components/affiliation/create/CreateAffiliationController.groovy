@@ -41,11 +41,8 @@ class CreateAffiliationController {
         AffiliationCategoryFactory categoryFactory = new AffiliationCategoryFactory()
 
         AffiliationCategory affiliationCategory
-        if (!category || category?.isEmpty()) {
-            affiliationCategory = AffiliationCategory.UNKNOWN
-        } else {
-            affiliationCategory = categoryFactory.getForString(category)
-        }
+        assert category && ! category.isEmpty()
+        affiliationCategory = categoryFactory.getForString(category)
         affiliationBuilder.setCategory(affiliationCategory)
         Affiliation affiliation = affiliationBuilder.build()
         useCaseInput.createAffiliation(affiliation)

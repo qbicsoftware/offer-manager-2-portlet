@@ -87,7 +87,7 @@ class CreateOfferSpec extends Specification {
                 .category(AffiliationCategory.INTERNAL).build())
 
         then:
-        1 * output.calculatedPrice(2.8, 0, 0, 2.8)
+        1 * output.calculatedPrice(2.8, 0, 0, 2.8, _)
     }
 
     def "Taxes for Affilations outside of Germany are set to 0"(){
@@ -103,7 +103,7 @@ class CreateOfferSpec extends Specification {
                 .category(AffiliationCategory.EXTERNAL).build())
 
         then:
-        1 * output.calculatedPrice(8.0, 0, 3.2, 11.2)
+        1 * output.calculatedPrice(8.0, 0, 3.2, 11.2, _)
     }
 
 
