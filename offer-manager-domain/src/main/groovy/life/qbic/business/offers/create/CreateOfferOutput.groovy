@@ -23,7 +23,7 @@ interface CreateOfferOutput extends UseCaseFailure {
 
   /**
    * Transfers the calculated price to an implementing class
-   * @param price
+   * @param price The total price
    * @deprecated Please use {@link #calculatedPrice(double, double, double, double)}
    * @since 1.0.0
    */
@@ -38,7 +38,9 @@ interface CreateOfferOutput extends UseCaseFailure {
    * @param overheads The amount of overheads for the requested services
    * @param totalPrice The total price for the requested services, includes taxes and overheads
    * @since 1.0.0
+   * @deprecated since 1.1.0, please use {@link #calculatedPrice(double, double, double, double, double)}
    */
+  @Deprecated
   void calculatedPrice(double netPrice, double taxes, double overheads, double totalPrice)
 
   /**
