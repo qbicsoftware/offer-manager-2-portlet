@@ -125,10 +125,10 @@ class CreateProjectViewModel {
         try {
             ProjectSpace space = new ProjectSpace(desiredSpaceName)
             this.setResultingSpaceName(space.name)
-            this.setSpaceIsValid(true)
+            this.setSpaceNameIsValid(true)
             this.setSpaceNameValidationResult("Space name is valid.")
         } catch (IllegalArgumentException e) {
-            this.setSpaceIsValid(false)
+            this.setSpaceNameIsValid(false)
             this.setSpaceNameValidationResult("${desiredSpaceName} is not a valid " +
                     "space name. Spaces are only allowed to contain alphanumeric characters, underscore (_) and minus (-).")
         }
