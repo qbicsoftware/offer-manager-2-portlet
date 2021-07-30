@@ -38,14 +38,10 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
 
     private AffiliationCategory affiliationCategory
     private double overheadRatio
+    private static List<Class> DATA_GENERATION = [Sequencing, ProteomicAnalysis, MetabolomicAnalysis]
+    private static List<Class> DATA_ANALYSIS = [PrimaryAnalysis, SecondaryAnalysis]
+    private static List<Class> PROJECT_AND_DATA_MANAGEMENT = [ProjectManagement, DataStorage]
 
-    /**
-     * Product group mapping
-     *
-     * This map represents the grouping of the different product categories in the offer pdf
-     *
-     */
-    private final Map<ProductGroup, List> productGroupClasses = setProductGroupMapping()
 
     private List<ProductItem> dataGenerationItems
     private List<ProductItem> dataAnalysisItems
@@ -85,9 +81,9 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
 
         //collect productitems and convert to offeritems
         groupProductItems(offer.items)
-        List<OfferItem> dataManagementOfferItems = dataManagementItems.collect{createProductItemToOfferItem(it)}
-        List<OfferItem> dataAnalysisOfferItems = dataAnalysisItems.collect{createProductItemToOfferItem(it)}
-        List<OfferItem> dataGenerationOfferItems = dataGenerationItems.collect{createProductItemToOfferItem(it)}
+        List<OfferItem> dataManagementOfferItems = dataManagementItems.collect{createOfferItem(it)}
+        List<OfferItem> dataAnalysisOfferItems = dataAnalysisItems.collect{createOfferItem(it)}
+        List<OfferItem> dataGenerationOfferItems = dataGenerationItems.collect{createOfferItem(it)}
 
         offerContent.dataGenerationItems(dataGenerationOfferItems)
         .dataAnalysisItems(dataAnalysisOfferItems)
@@ -143,7 +139,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
     }
 
 
-    private OfferItem createProductItemToOfferItem(ProductItem productItem){
+    private OfferItem createOfferItem(ProductItem productItem){
         Product product = productItem.product
         double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? product.internalUnitPrice : product.externalUnitPrice
 
@@ -166,45 +162,15 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
 
         // Sort ProductItems into "DataGeneration", "Data Analysis" and "Project & Data Management"
         offerItems.each {
-            if (it.product.class in productGroupClasses[ProductGroup.DATA_GENERATION]) {
+            if (it.product.class in DATA_GENERATION) {
                 dataGenerationItems.add(it)
             }
-            if (it.product.class in productGroupClasses[ProductGroup.DATA_ANALYSIS]) {
+            if (it.product.class in DATA_ANALYSIS) {
                 dataAnalysisItems.add(it)
             }
-            if (it.product.class in productGroupClasses[ProductGroup.PROJECT_AND_DATA_MANAGEMENT]) {
+            if (it.product.class in PROJECT_AND_DATA_MANAGEMENT) {
                 dataManagementItems.add(it)
             }
-        }
-    }
-
-    private static HashMap<ProductGroup, List> setProductGroupMapping() {
-        Map<ProductGroup, List> map = [:]
-        map[ProductGroup.DATA_GENERATION] = [Sequencing, ProteomicAnalysis, MetabolomicAnalysis]
-        map[ProductGroup.DATA_ANALYSIS] = [PrimaryAnalysis, SecondaryAnalysis]
-        map[ProductGroup.PROJECT_AND_DATA_MANAGEMENT] = [ProjectManagement, DataStorage]
-
-        return map
-    }
-
-    /**
-     * Possible product groups
-     *
-     * This enum describes the product groups into which the products of an offer are categorized.
-     */
-    enum ProductGroup {
-        DATA_GENERATION("Data generation"),
-        DATA_ANALYSIS("Data analysis"),
-        PROJECT_AND_DATA_MANAGEMENT("Project management & data storage")
-
-        private String name
-
-        ProductGroup(String name) {
-            this.name = name
-        }
-
-        String getName() {
-            return this.name
         }
     }
 }
