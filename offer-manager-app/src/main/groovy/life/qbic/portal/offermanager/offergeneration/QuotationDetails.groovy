@@ -383,6 +383,7 @@ class QuotationDetails {
          * Translates an product item into a HTML row element that can be added to a table
          * @param offerPosition The item position on the offer
          * @param item The product item that is put on the offer
+         * @param affiliationCategory the category of the affiliation
          * @return returns the HTML code as string
          */
         static String itemInHTML(int offerPosition, ProductItem item, AffiliationCategory affiliationCategory) {
