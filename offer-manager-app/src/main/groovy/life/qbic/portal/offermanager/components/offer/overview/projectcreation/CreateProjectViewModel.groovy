@@ -61,8 +61,12 @@ class CreateProjectViewModel {
     List<ProjectCode> existingProjects
 
     @Bindable String projectCodeValidationResult
+    
+    @Bindable String spaceNameValidationResult
 
-    @Bindable Boolean codeIsValid
+    @Bindable Boolean spaceNameIsValid
+    
+    @Bindable Boolean projectCodeIsValid
 
     private final ResourcesService<ProjectSpace> projectSpaceResourceService
 
@@ -105,7 +109,9 @@ class CreateProjectViewModel {
         desiredProjectCode = ""
         resultingProjectCode = ""
         projectCodeValidationResult = ""
-        codeIsValid = false
+        projectCodeIsValid = false
+        spaceNameValidationResult = ""
+        spaceNameIsValid = false
         createProjectEnabled = false
         projectCreated = false
         selectedOffer = Optional.empty()
@@ -119,20 +125,12 @@ class CreateProjectViewModel {
         try {
             ProjectSpace space = new ProjectSpace(desiredSpaceName)
             this.setResultingSpaceName(space.name)
-            ProjectCode code = new ProjectCode(desiredProjectCode.toUpperCase())
-            this.setResultingProjectCode(code.code)
-            if (code in existingProjects) {
-                this.setCodeIsValid(false)
-                this.setProjectCodeValidationResult("Project with code $resultingProjectCode " +
-                        "already exists.")
-            } else {
-                this.setCodeIsValid(true)
-                this.setProjectCodeValidationResult("Project code is valid.")
-            }
+            this.setSpaceIsValid(true)
+            this.setSpaceNameValidationResult("Space name is valid.")
         } catch (IllegalArgumentException e) {
-            this.setCodeIsValid(false)
-            this.setProjectCodeValidationResult("${desiredProjectCode} is not a valid QBiC " +
-                    "project code.")
+            this.setSpaceIsValid(false)
+            this.setSpaceNameValidationResult("${desiredSpaceName} is not a valid " +
+                    "space name. Spaces are only allowed to contain alphanumeric characters, underscore (_) and minus (-).")
         }
     }
   
@@ -156,6 +154,6 @@ class CreateProjectViewModel {
     }
 
     private void evaluateProjectCreation() {
-        this.setCreateProjectEnabled(codeIsValid && resultingSpaceName)
+        this.setCreateProjectEnabled(codeIsValid && spaceNameIsValid)
     }
 }
