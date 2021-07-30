@@ -266,7 +266,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double expectedOverhead = (externalUnitPrice * items.size()) * overheadRatio
+        double expectedOverhead = (internalUnitPrice * items.size()) * overheadRatio
 
         then:
         overhead == expectedOverhead
