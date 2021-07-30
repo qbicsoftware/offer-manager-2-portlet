@@ -191,7 +191,7 @@ class OfferSpec extends Specification {
     }
 
 
-    def "On #className, overhead costs are included"() {
+    def "Given an external (non-academic) affiliation, #className have #overheadPercent overhead costs"() {
         given:
         double internalUnitPrice = 8.0
         double externalUnitPrice = 10.0
@@ -208,7 +208,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double expectedOverhead = (externalUnitPrice * items.size()) * 0.4
+        double expectedOverhead = (externalUnitPrice * items.size()) * overheadRatio
 
         then:
         overhead == expectedOverhead
@@ -216,6 +216,66 @@ class OfferSpec extends Specification {
         where:
         classWithOverheads << [DataStorage, ProjectManagement, PrimaryAnalysis,MetabolomicAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing]
         className = classWithOverheads.getSimpleName()
+        overheadRatio = 0.4
+        overheadPercent = "${overheadRatio * 100}%"
+    }
+
+    def "Given an external-academic affiliation, #className have #overheadPercent overhead costs"() {
+        given:
+        double internalUnitPrice = 8.0
+        double externalUnitPrice = 10.0
+        Product item1 = ProductFactory.createProduct(classWithOverheads, "Just an example", "Product name", internalUnitPrice, externalUnitPrice, Facility.QBIC)
+        Product item2 = ProductFactory.createProduct(classWithOverheads, "Just an example", "Product name", internalUnitPrice, externalUnitPrice, Facility.QBIC)
+
+        List<ProductItem> items = [
+                new ProductItem(1, item1),
+                new ProductItem(1, item2)
+        ]
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, externalAcademicAffiliation).build()
+
+        when:
+        double overhead = offer.getOverheadSum()
+        double expectedOverhead = (externalUnitPrice * items.size()) * overheadRatio
+
+        then:
+        overhead == expectedOverhead
+
+        where:
+        classWithOverheads << [DataStorage, ProjectManagement, PrimaryAnalysis,MetabolomicAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing]
+        className = classWithOverheads.getSimpleName()
+        overheadRatio = 0.2
+        overheadPercent = "${overheadRatio * 100}%"
+    }
+
+    def "Given an internal affiliation, #className have #overheadPercent overhead costs"() {
+        given:
+        double internalUnitPrice = 8.0
+        double externalUnitPrice = 10.0
+        Product item1 = ProductFactory.createProduct(classWithOverheads, "Just an example", "Product name", internalUnitPrice, externalUnitPrice, Facility.QBIC)
+        Product item2 = ProductFactory.createProduct(classWithOverheads, "Just an example", "Product name", internalUnitPrice, externalUnitPrice, Facility.QBIC)
+
+        List<ProductItem> items = [
+                new ProductItem(1, item1),
+                new ProductItem(1, item2)
+        ]
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, internalAffiliation).build()
+
+        when:
+        double overhead = offer.getOverheadSum()
+        double expectedOverhead = (externalUnitPrice * items.size()) * overheadRatio
+
+        then:
+        overhead == expectedOverhead
+
+        where:
+        classWithOverheads << [DataStorage, ProjectManagement, PrimaryAnalysis,MetabolomicAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing]
+        className = classWithOverheads.getSimpleName()
+        overheadRatio = 0.0
+        overheadPercent = "${overheadRatio * 100}%"
     }
 
     /**
