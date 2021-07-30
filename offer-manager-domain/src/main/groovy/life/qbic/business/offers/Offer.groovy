@@ -1,14 +1,15 @@
 package life.qbic.business.offers
 
 import groovy.time.TimeCategory
-import life.qbic.business.offers.Offer
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
 import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
+import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
@@ -129,6 +130,8 @@ class Offer {
         }
     }
 
+    private static final quantityDiscount = new QuantityDiscount()
+
     static class Builder {
 
         Date creationDate
@@ -199,7 +202,6 @@ class Offer {
         this.customer = builder.customer
         this.identifier = builder.identifier
         this.items = []
-        builder.items.each {this.items.add(it)}
         this.expirationDate = calculateExpirationDate(builder.creationDate)
         this.creationDate = builder.creationDate
         this.projectManager = builder.projectManager
@@ -228,6 +230,7 @@ class Offer {
         } else {
             this.associatedProject = Optional.empty()
         }
+        builder.items.each {this.items.add(finaliseProductItem(it))}
     }
 
     /**
@@ -259,8 +262,8 @@ class Offer {
         return items.sum {calculateItemOverhead(it)} as double
     }
 
-    private double calculateItemNet(ProductItem item) {
-        double unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
+    private BigDecimal calculateItemNet(ProductItem item) {
+        BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
         return unitPrice * item.quantity
     }
 
@@ -448,6 +451,32 @@ class Offer {
         this.availableVersions.addAll(copyIdentifier, this.identifier)
     }
 
+    /**
+     * This method returns the total discount amount that was applied the offer.
+     *
+     * It is expected to return the sum of all individual item discount amounts that have been
+     * determined by the number of samples an individual data analysis service has been provided for.
+     *
+     * @return the total discount amount applied in the offer
+     * @since 1.1.0
+     */
+    double getTotalDiscountAmount(){
+        return calculateTotalDiscountAmount()
+    }
+
+    private double calculateTotalDiscountAmount() {
+        return items.sum{ it.quantityDiscount }
+    }
+
+    private BigDecimal discountAmountForProductItem(ProductItem productItem) {
+        BigDecimal discount = 0
+        if (productItem.product instanceof PrimaryAnalysis
+                || productItem.product instanceof SecondaryAnalysis) {
+            discount = quantityDiscount.apply(productItem.quantity as Integer, calculateItemNet(productItem))
+        }
+        return discount
+    }
+
     private double calculateNetPrice() {
         return items.sum {calculateItemNet(it)} as double
     }
@@ -473,7 +502,13 @@ class Offer {
     private double calculateTotalCosts(){
         final double netPrice = calculateNetPrice()
         final double overhead = getOverheadSum()
-        return netPrice + overhead + getTaxCosts()
+        return netPrice + overhead + getTaxCosts() - getTotalDiscountAmount()
+    }
+
+    private ProductItem finaliseProductItem(ProductItem item) {
+        BigDecimal totalItemCosts = calculateItemNet(item)
+        BigDecimal totalItemQuantityDiscount = discountAmountForProductItem(item)
+        return new ProductItem(item.quantity, item.product, totalItemCosts, totalItemQuantityDiscount)
     }
 
 
