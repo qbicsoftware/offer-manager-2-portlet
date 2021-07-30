@@ -3,8 +3,8 @@ package life.qbic.portal.offermanager.offergeneration
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Currency
 import life.qbic.business.offers.OfferContent
+import life.qbic.business.offers.OfferItem
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -23,7 +23,6 @@ import java.text.DecimalFormat
  *
  * @since 1.1.0
  */
-//FIXME Remove price calculation from this class!
 class QuotationDetails {
     /**
      * Variable used to count the number of Items added to a page
@@ -48,12 +47,9 @@ class QuotationDetails {
     private final Document htmlContent
     private final OfferContent offer
 
-    protected final AffiliationCategory affiliationCategory
-
     QuotationDetails(Document htmlContent, OfferContent offer) {
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
-        this.offer = offer)
-        this.affiliationCategory = offer.selectedCustomerAffiliation.getCategory()
+        this.offer = offer
     }
 
     void fillTemplateWithQuotationDetailsContent() {
@@ -66,9 +62,9 @@ class QuotationDetails {
         htmlContent.getElementById("template-page-break").remove()
 
         //Generate Product Table for each Category
-        generateProductTable(offer.getDataGenerationItems(), ProductGroup.DATA_GENERATION, offer.getDataGenerationSubTotal())
-        generateProductTable(offer.getDataAnalysisItems(), ProductGroup.DATA_ANALYSIS, offer.getDataAnalysisSubTotal())
-        generateProductTable(offer.getDataManagementItems(), ProductGroup.PROJECT_AND_DATA_MANAGEMENT, offer.getDataManagementSubTotal())
+        generateProductTable(offer.getDataGenerationItems(), ProductGroup.DATA_GENERATION, offer.netDataGeneration)
+        generateProductTable(offer.getDataAnalysisItems(), ProductGroup.DATA_ANALYSIS, offer.netDataAnalysis)
+        generateProductTable(offer.getDataManagementItems(), ProductGroup.PROJECT_AND_DATA_MANAGEMENT, offer.netPMandDS)
     }
 
     /**
@@ -96,7 +92,7 @@ class QuotationDetails {
      * @param productGroup
      * @param subTotal the NET price for the provided product group
      */
-    private void generateProductTable(List<ProductItem> items, ProductGroup productGroup, double subTotal) {
+    private void generateProductTable(List<OfferItem> items, ProductGroup productGroup, double subTotal) {
         //Create the items in html in the overview table
         //Check if there are ProductItems stored in list
         if (!items) {
@@ -114,7 +110,7 @@ class QuotationDetails {
         //Append Table Title and Header
         htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
 
-        items.each { ProductItem item ->
+        items.each { OfferItem item ->
             generateItemContent(item, elementId)
         }
         //account for spaces of added table elements, footer, totals,...
@@ -122,7 +118,7 @@ class QuotationDetails {
         htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
 
         // Update footer Prices
-        addSubTotalPrices(productGroup, items, subTotal)
+        addSubTotalPrices(productGroup, subTotal)
     }
 
     /**
@@ -130,7 +126,7 @@ class QuotationDetails {
      * @param item The item place into the HTML document
      * @param elementId The id references where the item is added
      */
-    private void generateItemContent(ProductItem item, String elementId){
+    private void generateItemContent(OfferItem item, String elementId){
         itemNumber++
         if (isOverflowingPage()) {
             generateHTMLTableOnNextPage(elementId)
@@ -139,6 +135,7 @@ class QuotationDetails {
             resetPageItemsCount()
         }
         //add product to current table
+        AffiliationCategory affiliationCategory = offer.selectedCustomerAffiliation.getCategory()
         htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item, affiliationCategory))
         pageItemsCount += determineItemSpace(item, affiliationCategory)
     }
@@ -178,7 +175,7 @@ class QuotationDetails {
      * @param item The item for which the spacing should be calculated
      * @return The calculated space in the final offer template that the item requires
      */
-    private static int determineItemSpace(ProductItem item, AffiliationCategory affiliationCategory) {
+    private static int determineItemSpace(OfferItem item, AffiliationCategory affiliationCategory) {
 
         ArrayList<Integer> calculatedSpaces = []
 
@@ -300,7 +297,7 @@ class QuotationDetails {
          * @param affiliationCategory the category of the affiliation
          * @return returns the HTML code as string
          */
-        static String itemInHTML(int offerPosition, ProductItem item, AffiliationCategory affiliationCategory) {
+        static String itemInHTML(int offerPosition, OfferItem item, AffiliationCategory affiliationCategory) {
             double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? item.product.internalUnitPrice : item.product.externalUnitPrice
             String totalCost = Currency.getFormatterWithoutSymbol().format(item.quantity * unitPrice)
             return """<div class="row product-item">
