@@ -100,7 +100,8 @@ class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput
                 offer.getTotalNetPrice(),
                 offer.getTaxCosts(),
                 offer.getOverheadSum(),
-                offer.getTotalCosts())
+                offer.getTotalCosts(),
+                offer.getTotalDiscountAmount())
     }
 
     @Override
