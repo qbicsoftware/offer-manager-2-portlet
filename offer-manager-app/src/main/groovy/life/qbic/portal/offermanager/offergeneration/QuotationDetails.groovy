@@ -52,7 +52,7 @@ class QuotationDetails {
 
     QuotationDetails(Document htmlContent, OfferContent offer) {
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
-        this.offer = Converter.convertDTOToOffer(offer)
+        this.offer = offer)
         this.affiliationCategory = offer.selectedCustomerAffiliation.getCategory()
     }
 
