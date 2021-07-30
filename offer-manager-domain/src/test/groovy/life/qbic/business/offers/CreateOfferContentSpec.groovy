@@ -67,12 +67,10 @@ class CreateOfferContentSpec extends Specification{
 
     def "Overhead costs for product groups are correctly set"(){
         given: "the create offer content use case"
-        FetchOfferOutput fetchOfferOutput = Mock()
         FetchOfferDataSource ds = Stub(FetchOfferDataSource.class)
-        FetchOffer fetchOffer = new FetchOffer(ds, fetchOfferOutput)
 
         CreateOfferContentOutput output = Stub()
-        CreateOfferContent createOfferContent = new CreateOfferContent(output,fetchOffer)
+        CreateOfferContent createOfferContent = new CreateOfferContent(output,ds)
 
         and: "a mocked offer, that is returned upon the FetchOffer use case"
         ds.getOffer(_ as OfferId) >> Optional.of(new life.qbic.datamodel.dtos.business.Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
@@ -87,18 +85,16 @@ class CreateOfferContentSpec extends Specification{
             final OfferContent offerContent = arguments.get(0)
             assert offerContent.overheadsDataAnalysis  == (2 * 1 * 0.4) as double
             assert offerContent.overheadsDataGeneration == 0
-            assert offerContent.overheadsProjectManagementAndDataStorage == (1 * 10 * 0.4) as double
+            assert offerContent.overheadsProjectManagementAndDataStorage == 0 //zero for now (1 * 10 * 0.4) as double
         }
     }
 
     def "Unknown OfferId triggers the failedNotification() method"(){
         given: "the create offer content use case"
-        FetchOfferOutput fetchOfferOutput = Mock()
         FetchOfferDataSource ds = Stub(FetchOfferDataSource.class)
-        FetchOffer fetchOffer = new FetchOffer(ds, fetchOfferOutput)
 
         CreateOfferContentOutput output = Mock()
-        CreateOfferContent createOfferContent = new CreateOfferContent(output,fetchOffer)
+        CreateOfferContent createOfferContent = new CreateOfferContent(output,ds)
 
         and: "no offer is found for the given id"
         ds.getOffer(_ as OfferId) >> Optional.empty()

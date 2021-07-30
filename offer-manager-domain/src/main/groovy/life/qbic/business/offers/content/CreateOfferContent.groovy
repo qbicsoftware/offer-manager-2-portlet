@@ -3,6 +3,8 @@ package life.qbic.business.offers.content
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.OfferContent
 import life.qbic.business.offers.OfferItem
+import life.qbic.business.offers.fetch.FetchOffer
+import life.qbic.business.offers.fetch.FetchOfferDataSource
 import life.qbic.business.offers.fetch.FetchOfferInput
 import life.qbic.business.offers.fetch.FetchOfferOutput
 import life.qbic.datamodel.dtos.business.AffiliationCategory
@@ -50,9 +52,9 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
     private List<ProductItem> dataManagementItems
 
 
-    CreateOfferContent(CreateOfferContentOutput output, FetchOfferInput fetchOfferInput){
+    CreateOfferContent(CreateOfferContentOutput output, FetchOfferDataSource fetchOfferDataSource){
         this.output = output
-        this.fetchOfferInput = fetchOfferInput
+        this.fetchOfferInput = new FetchOffer(fetchOfferDataSource,this)
     }
 
     @Override
