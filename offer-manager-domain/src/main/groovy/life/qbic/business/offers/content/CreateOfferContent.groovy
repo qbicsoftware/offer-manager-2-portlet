@@ -93,10 +93,12 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
 
         double overheadsDA = calculateOverheadSum(dataAnalysisOfferItems)
         double overheadsDG = calculateOverheadSum(dataGenerationOfferItems)
+        double overheadsPMandDS = calculateOverheadSum(dataManagementOfferItems)
 
         offerContent.overheadsDataAnalysis(overheadsDA)
         .overheadsDataGeneration(overheadsDG)
-        .overheadTotal(overheadsDA + overheadsDG)
+        .overheadsProjectManagementAndDataStorage(overheadsPMandDS)
+        .overheadTotal(offer.overheadSum)
 
         offerContent.netDataAnalysis(calculateNetSum(dataAnalysisOfferItems))
         .netDataGeneration(calculateNetSum(dataGenerationOfferItems))
