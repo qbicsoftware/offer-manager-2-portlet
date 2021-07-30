@@ -2,8 +2,8 @@ package life.qbic.portal.offermanager.offergeneration
 
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Currency
+import life.qbic.business.offers.OfferContent
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
 import org.jsoup.nodes.Document
@@ -46,11 +46,11 @@ class QuotationDetails {
     private final int maxPageItems = 27
 
     private final Document htmlContent
-    private final life.qbic.business.offers.Offer offer
+    private final OfferContent offer
 
     protected final AffiliationCategory affiliationCategory
 
-    QuotationDetails(Document htmlContent, Offer offer) {
+    QuotationDetails(Document htmlContent, OfferContent offer) {
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
         this.offer = Converter.convertDTOToOffer(offer)
         this.affiliationCategory = offer.selectedCustomerAffiliation.getCategory()
@@ -140,7 +140,7 @@ class QuotationDetails {
         }
         //add product to current table
         htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item, affiliationCategory))
-        pageItemsCount += determineItemSpace(item)
+        pageItemsCount += determineItemSpace(item, affiliationCategory)
     }
 
     private static String generateElementID(int tableCount, ProductGroup productGroups){
@@ -173,26 +173,12 @@ class QuotationDetails {
         htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
     }
 
-          /**
-	     * Helper method that calculates the NET price for a list of product items      
-	     * @param productItems The product item list for which the NET is calculated
-	     *  @return The net value for the given list of items 
-	     */
-    private double calculateNetSum(List<ProductItem> productItems) {
-        double netSum = 0
-        productItems.each {
-            double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? it.product.internalUnitPrice : it.product.externalUnitPrice
-            netSum += it.quantity * unitPrice
-        }
-        return netSum
-    }
-
     /**
      * Estimates the space of a product item in the final offer template
      * @param item The item for which the spacing should be calculated
      * @return The calculated space in the final offer template that the item requires
      */
-    private static int determineItemSpace(ProductItem item) {
+    private static int determineItemSpace(ProductItem item, AffiliationCategory affiliationCategory) {
 
         ArrayList<Integer> calculatedSpaces = []
 
