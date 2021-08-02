@@ -42,11 +42,19 @@ class OfferToPDFConverter implements OfferExporter, CreateOfferContentOutput {
      */
     static final CHROMIUM_EXECUTABLE = "CHROMIUM_EXECUTABLE"
 
+    /**
+     * @deprecated as of release 1.1.0
+     */
     @Deprecated
     private final Offer offer
 
+    private CreateOfferContent createOfferContent
+
     private final Path tempDir
 
+    /**
+     * @deprecated as of release 1.1.0
+     */
     @Deprecated
     private final Document htmlContent
 
@@ -71,6 +79,9 @@ class OfferToPDFConverter implements OfferExporter, CreateOfferContentOutput {
                     .getResource("offer-template/stylesheet.css")
                     .toURI())
 
+    /**
+     * @deprecated as of release 1.1.0
+     */
     @Deprecated
     OfferToPDFConverter(Offer offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
