@@ -50,4 +50,9 @@ class Version {
         def comparedVersion = (Version) otherVersion
         return this.getRawValue() == comparedVersion.getRawValue()
     }
+
+    @Override
+    String toString() {
+        return "v$version"
+    }
 }

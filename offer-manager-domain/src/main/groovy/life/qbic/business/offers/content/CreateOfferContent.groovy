@@ -75,7 +75,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         Date creationDate = offer.modificationDate
         Date expirationDate = offer.expirationDate
         groupProductItems(offer.items)
-
+        String id = offer.identifier.toString()
         def offerContentBuilder = new OfferContent.Builder(offer.customer,offer.selectedCustomerAffiliation,offer.projectManager,creationDate,expirationDate,offer.projectTitle
         ,offer.projectObjective, offer.experimentalDesign.orElse(""),offer.identifier.toString())
 

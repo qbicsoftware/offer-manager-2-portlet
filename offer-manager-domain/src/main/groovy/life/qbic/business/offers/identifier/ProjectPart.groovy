@@ -26,4 +26,9 @@ class ProjectPart {
     String getValue() {
         this.value
     }
+
+    @Override
+    String toString() {
+        return this.value
+    }
 }

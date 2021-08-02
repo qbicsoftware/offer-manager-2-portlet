@@ -252,6 +252,7 @@ class QuotationDetails {
         final overheadDataGenerationPrice = Currency.getFormatterWithoutSymbol().format(offer.getOverheadsDataGeneration())
         final overheadDataAnalysisPrice = Currency.getFormatterWithoutSymbol().format(offer.getOverheadsDataAnalysis())
         final overheadDataManagementPrice = Currency.getFormatterWithoutSymbol().format(offer.getOverheadsProjectManagementAndDataStorage())
+        final totalDiscountAmount = Currency.getFormatterWithoutSymbol().format(-1 * offer.getTotalDiscountAmount())
 
         double taxRatio = offer.getVatRatio()
         String taxPercentage = decimalFormat.format(taxRatio)
@@ -267,6 +268,7 @@ class QuotationDetails {
         htmlContent.getElementById("vat-percentage-value").text("VAT (${taxPercentage}):")
         htmlContent.getElementById("vat-cost-value").text(taxesPrice)
         htmlContent.getElementById("final-cost-value").text(totalPrice)
+        htmlContent.getElementById("total-discount-value").text(totalDiscountAmount)
 
     }
 
@@ -337,7 +339,7 @@ class QuotationDetails {
                         <div class="col-1 price-value">${item.getQuantity()}</div>
                         <div class="col-2 text-center">${item.getUnit()}</div>
                         <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(item.getUnitPrice())}</div>
-                        <div class="col-2 price-value">${item.getItemTotal()}</div>
+                        <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(item.getItemTotal())}</div>
                     </div>
                     <div class="row product-item">
                         <div class="col-1"></div>
@@ -354,7 +356,7 @@ class QuotationDetails {
                         <div class="col-1 price-value">-</div>
                         <div class="col-2 text-center">-</div>
                         <div class="col-2 price-value">-</div>
-                        <div class="col-2 price-value">${discountAmount}</div>
+                        <div class="col-2 price-value">-${Currency.getFormatterWithoutSymbol().format(discountAmount)}</div>
                     </div>
                     <div class="row product-item">
                         <div class="col-1"></div>

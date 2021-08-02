@@ -110,7 +110,7 @@ class QuotationOverview {
 
     private void setTaxationStatement() {
         if (!(offer.getCustomerCountry().toLowerCase() == "germany")) {
-            htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${offerEntity.getCountryWithVat()}.")
+            htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${"Germany"}.")
         }
     }
 
