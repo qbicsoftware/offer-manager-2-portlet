@@ -4,6 +4,9 @@ import life.qbic.datamodel.dtos.business.*
 import spock.lang.Specification
 import spock.lang.Unroll
 
+import java.text.SimpleDateFormat
+import java.time.Instant
+
 /**
  * <h1>Tests for the offercontent dto</h1>
  *
@@ -12,7 +15,6 @@ import spock.lang.Unroll
 */
 class OfferContentSpec extends Specification{
 
-    AcademicTitleFactory factory = new AcademicTitleFactory()
     static Customer simpleCustomer = new Customer.Builder("Tom", "Sawyer", "tom@sawy.er").build()
     static Affiliation internalAffiliation = new Affiliation.Builder("Uni Tübingen", "Auf der " +
             "Morgenstelle 10", "72076", "Tuebingen").category(AffiliationCategory.INTERNAL).build()
@@ -27,9 +29,12 @@ class OfferContentSpec extends Specification{
     static Customer customerWithAllAffiliations = new Customer.Builder("Max", "Mustermann", "max" +
             ".mustermann@qbic.uni-tuebingen.de").affiliations([internalAffiliation, externalAcademicAffiliation]).build()
     static ProjectManager projectManager1 = new ProjectManager.Builder("Maxime", "Musterfrau", "max" +
-            ".musterfrau@qbic.uni-tuebingen.de").build()
+            ".musterfrau@qbic.uni-tuebingen.de").affiliations([internalAffiliation]).build()
     static ProjectManager projectManager2 = new ProjectManager.Builder("Max", "Mustermann", "max" +
-            ".mustermann@qbic.uni-tuebingen.de").build()
+            ".mustermann@qbic.uni-tuebingen.de").affiliations([internalAffiliation]).build()
+
+    static Instant creationDate = new SimpleDateFormat("yyyy-MM-dd").parse("2021-10-11").toInstant()
+    static Instant expirationDate = new SimpleDateFormat("yyyy-MM-dd").parse("2022-10-11").toInstant()
 
     final static List<OfferItem> items = [
             new OfferItem.Builder(2, "Just an example", "Basic RNAsq", 1.0, 1,
@@ -50,7 +55,7 @@ class OfferContentSpec extends Specification{
     def "An OfferContent with equal content is equal"(){
         when: "two offercontents with the exact same content"
         OfferContent offerContent1 = new OfferContent.Builder(customerWithAllAffiliations,externalAcademicAffiliation,projectManager1,
-                "2021-10-11","2022-10-11","title","description",
+                creationDate, expirationDate,"title","description",
                 "experimental design","O_greiner_ksma_1")
         .totalVat(3333)
         .netCost(222)
@@ -62,13 +67,15 @@ class OfferContentSpec extends Specification{
         .overheadsDataGeneration(444)
         .overheadsDataAnalysis(33)
         .overheadTotal(333)
+        .overheadRatio(0.2)
         .dataManagementItems(items)
         .dataAnalysisItems([])
         .dataGenerationItems(items)
+        .vatRatio(19)
         .build()
 
         OfferContent offerContent2 = new OfferContent.Builder(customerWithAllAffiliations,externalAcademicAffiliation,projectManager1,
-                "2021-10-11","2022-10-11","title","description",
+                creationDate, expirationDate,"title","description",
                 "experimental design","O_greiner_ksma_1")
                 .totalVat(3333)
                 .netCost(222)
@@ -80,9 +87,11 @@ class OfferContentSpec extends Specification{
                 .overheadsDataGeneration(444)
                 .overheadsDataAnalysis(33)
                 .overheadTotal(333)
+                .overheadRatio(0.2)
                 .dataManagementItems(items)
                 .dataAnalysisItems([])
                 .dataGenerationItems(items)
+                .vatRatio(19)
                 .build()
 
         then: "both are equal"
@@ -96,8 +105,8 @@ class OfferContentSpec extends Specification{
                 customerWithAllAffiliations,
                 internalAffiliation,
                 projectManager1,
-                "2021-10-11",
-                "2022-10-11",
+                creationDate,
+                expirationDate,
                 "title",
                 "description",
                 "experimental design",
@@ -106,6 +115,7 @@ class OfferContentSpec extends Specification{
                 .dataAnalysisItems(items)
                 .dataManagementItems(items)
                 .overheadTotal(333)
+                .overheadRatio(0.2)
                 .overheadsDataGeneration(444)
                 .overheadsDataAnalysis(444)
                 .overheadsProjectManagementAndDataStorage(444)
@@ -115,6 +125,7 @@ class OfferContentSpec extends Specification{
                 .totalCost(444)
                 .netCost(444)
                 .totalVat(444)
+                .vatRatio(19)
                 .build()
 
         when: "two offercontents different"
@@ -122,8 +133,8 @@ class OfferContentSpec extends Specification{
                 customer as Customer,
                 affiliation as Affiliation,
                 projectManager as ProjectManager,
-                creationDate,
-                expirationDate,
+                creationDate_ as Instant,
+                expirationDate_ as Instant,
                 projectTitle,
                 projectObjective,
                 experimentalDesign,
@@ -132,6 +143,7 @@ class OfferContentSpec extends Specification{
                 .dataAnalysisItems(dataAnalysisItems)
                 .dataManagementItems(dataManagementItems)
                 .overheadTotal(overheadTotal)
+                .overheadRatio(overheadRatio)
                 .overheadsDataGeneration(overheadsDataGeneration)
                 .overheadsDataAnalysis(overheadsDataAnalysis)
                 .overheadsProjectManagementAndDataStorage(overheadsPMandDS)
@@ -141,38 +153,54 @@ class OfferContentSpec extends Specification{
                 .totalCost(totalCost)
                 .netCost(netCost)
                 .totalVat(totalVat)
+                .vatRatio(vatRatio)
                 .build()
 
         then: "both are not equal"
         differentContent != reference
 
         where:
-        argumentName | customer | affiliation | projectManager | creationDate | expirationDate | projectTitle | projectObjective | experimentalDesign | offerIdentifier | dataGenerationItems |dataAnalysisItems | dataManagementItems | overheadTotal | overheadsDataGeneration | overheadsDataAnalysis | overheadsPMandDS | netDataGeneration | netDataAnalysis | netPMandDS | totalCost | netCost | totalVat
-        "customer" | simpleCustomer | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "affiliation" | customerWithAllAffiliations | externalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "projectManager" | customerWithAllAffiliations | internalAffiliation | projectManager2 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "creationDate" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "9999-99-99" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "expirationDate" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "9999-99-99" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "projectTitle" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "OFFER" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "projectObjective" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "SOME TEXT  " | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "experimentalDesign" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "THERE IS NO DESIGN!" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "offerIdentifier" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "ODCBA2" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "dataGenerationItems" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | [] |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "dataAnalysisItems"| customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |[] | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "dataManagementItems" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | [] | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "overheadTotal" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items |  0  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "overheadsDataGeneration" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  |  0   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "overheadsDataAnalysis" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   |  0   | 444  | 444  | 444  | 444 | 444 | 444 | 444
-        "overheadsProjectManagementAndDataStorage" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   |  0  | 444  | 444  | 444 | 444 | 444 | 444
-        "netDataGeneration" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  |  0  | 444  | 444 | 444 | 444 | 444
-        "netDataAnalysis" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  |  0  | 444 | 444 | 444 | 444
-        "netPMandDS" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  |  0 | 444 | 444 | 444
-        "totalCost" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 |  0 | 444 | 444
-        "netCost" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 |  0 | 444
-        "totalVat" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 |  0
+        argumentName | customer | affiliation | projectManager | creationDate_ | expirationDate_ | projectTitle | projectObjective | experimentalDesign | offerIdentifier | dataGenerationItems |dataAnalysisItems | dataManagementItems | overheadTotal | overheadsDataGeneration | overheadsDataAnalysis | overheadsPMandDS | netDataGeneration | netDataAnalysis | netPMandDS | totalCost | netCost | totalVat | vatRatio
+        "customer" | simpleCustomer | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "affiliation" | customerWithAllAffiliations | externalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "projectManager" | customerWithAllAffiliations | internalAffiliation | projectManager2 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "creationDate" | customerWithAllAffiliations | internalAffiliation | projectManager1 | expirationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333 | 444 | 444 | 444 | 444 | 444 | 444 | 444 | 444 | 444 | 19
+        "expirationDate" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | creationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "projectTitle" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "OFFER" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "projectObjective" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "SOME TEXT  " | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "experimentalDesign" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "THERE IS NO DESIGN!" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "offerIdentifier" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "ODCBA2" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "dataGenerationItems" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | [] |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "dataAnalysisItems"| customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |[] | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "dataManagementItems" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | [] | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "overheadTotal" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items |  0  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "overheadsDataGeneration" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  |  0   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "overheadsDataAnalysis" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   |  0   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "overheadsProjectManagementAndDataStorage" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   |  0  | 444  | 444  | 444 | 444 | 444 | 444 | 19
+        "netDataGeneration" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  |  0  | 444  | 444 | 444 | 444 | 444 | 19
+        "netDataAnalysis" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  |  0  | 444 | 444 | 444 | 444 | 19
+        "netPMandDS" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  |  0 | 444 | 444 | 444 | 19
+        "totalCost" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 |  0 | 444 | 444 | 19
+        "netCost" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 |  0 | 444 | 19
+        "totalVat" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 |  0 | 19
+        "vatRatio" | customerWithAllAffiliations | internalAffiliation | projectManager1 | creationDate | expirationDate | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 |  444 | 0
+
         /* this row produces an OfferContent that should be equal to the reference letting the test fail
          * It can be used to test that the reference was created as expected
-        "NONE" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444
+        "NONE" | customerWithAllAffiliations | internalAffiliation | projectManager1 | "2021-10-11" | "2022-10-11" | "title" | "description" | "experimental design" | "oabcd1" | items |items | items | 333  | 444   | 444   | 444  | 444  | 444  | 444 | 444 | 444 | 444 | 19
         */
+        and: "the overhead ratio is correct for the selected affiliation"
+        overheadRatio = determineOverheadRatio(affiliation.getCategory())
+
+    }
+
+    private static def determineOverheadRatio(AffiliationCategory category) {
+        if (category == AffiliationCategory.INTERNAL) {
+            return 0.0
+        } else if (category == AffiliationCategory.EXTERNAL_ACADEMIC) {
+            return 0.2
+        } else if (category == AffiliationCategory.EXTERNAL) {
+            return 0.4
+        }
     }
 }

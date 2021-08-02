@@ -19,6 +19,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Uses new DTOs instead of performing unnecessary computations in PDF creation (`#725 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/725>`_)
 
+* Adds the CreateOfferContent use case (`#735 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/735>`_)
+
 **Fixed**
 
 * Invert quantity discount in order to be able to display size of discount (`#710 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/710>`_

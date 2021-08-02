@@ -39,7 +39,7 @@ class Converter {
                 .modificationDate(offer.modificationDate)
                 .expirationDate(offer.expirationDate)
                 .checksum(offer.checksum())
-                .itemsWithOverhead(offer.overheadItems)
+                .itemsWithOverhead(offer.overheadItems) //todo Achtung! it sets values that are not in use anymore
                 .itemsWithoutOverhead(offer.noOverheadItems)
                 .itemsWithOverheadNet(offer.overheadItemsNet)
                 .itemsWithoutOverheadNet(offer.noOverheadItemsNet)

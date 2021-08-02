@@ -6,6 +6,8 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 
+import java.time.Instant
+
 /**
  * <h1>A DTO containing the fields required in the offer pdf</h1>
  *
@@ -40,14 +42,22 @@ class OfferContent {
     final String projectManagerLastName
     final String projectManagerTitle
     final String projectManagerEmail
+    /**
+     * The information for the affiliation of the project manager selected for this offer
+     */
+    final String projectManagerOrganisation
+    final String projectManagerStreet
+    final String projectManagerPostalCode
+    final String projectManagerCity
+    final String projectManagerCountry
 
     /*Project Information*/
     /**
      * Date on which the offer was lastly modified
      */
-    final String creationDate
+    final Instant creationDate
     /**
-     * The date on which the offer expires
+     * The Instant on which the offer expires
      */
     final String expirationDate
     /**
@@ -87,6 +97,10 @@ class OfferContent {
      */
     final double overheadTotal
     /**
+     * The overhead ratio applied to calculate the overhead costs
+     */
+    final double overheadRatio
+    /**
      * The overhead costs for the data generation items
      */
     final double overheadsDataGeneration
@@ -98,6 +112,7 @@ class OfferContent {
      * The overhead costs for the project management and data storage items
      */
     final double overheadsProjectManagementAndDataStorage
+
 
     /*Prices*/
     /**
@@ -124,6 +139,11 @@ class OfferContent {
      * The total VAT costs of the offer
      */
     final double totalVat
+    /**
+     * The ratio/percentage of vat applied in the offer
+     */
+    final double vatRatio
+
 
     static class Builder {
         /*Person Information*/
@@ -139,10 +159,15 @@ class OfferContent {
         String projectManagerLastName
         String projectManagerTitle
         String projectManagerEmail
+        String projectManagerOrganisation
+        String projectManagerStreet
+        String projectManagerPostalCode
+        String projectManagerCity
+        String projectManagerCountry
 
         /*Project Information*/
-        String creationDate
-        String expirationDate
+        Instant creationDate
+        Instant expirationDate
         String projectTitle
         String projectObjective
         String experimentalDesign
@@ -158,6 +183,7 @@ class OfferContent {
         Double overheadsDataGeneration
         Double overheadsDataAnalysis
         Double overheadsProjectManagementAndDataStorage
+        Double overheadRatio
 
         /*Prices*/
         Double netDataGeneration
@@ -166,8 +192,9 @@ class OfferContent {
         Double totalCost
         Double netCost
         Double totalVat
+        Double vatRatio
 
-        Builder(Customer customer, Affiliation customerAffiliation, ProjectManager projectManager, String creationDate, String expirationDate, String projectTitle,
+        Builder(Customer customer, Affiliation customerAffiliation, ProjectManager projectManager, Instant creationDate, Instant expirationDate, String projectTitle,
         String projectObjective, String experimentalDesign, String offerIdentifier){
             /*Customer*/
             customerFirstName = Objects.requireNonNull(customer.firstName,"Customer must not be null")
@@ -181,11 +208,18 @@ class OfferContent {
             customerCity = Objects.requireNonNull(customerAffiliation.city, "Customer affiliation must not be null")
             customerCountry = Objects.requireNonNull(customerAffiliation.country, "Customer affiliation must not be null")
             /*Projectmanager*/
-            projectManagerFirstName = Objects.requireNonNull(projectManager.firstName, "Projectmanager musst not be null")
+            projectManagerFirstName = Objects.requireNonNull(projectManager.firstName, "Projectmanager must not be null")
             projectManagerLastName = Objects.requireNonNull(projectManager.lastName, "Projectmanager must not be null")
             String projectManagerTitle = projectManager.title == AcademicTitle.NONE ? "" : projectManager.title
             this.projectManagerTitle = Objects.requireNonNull(projectManagerTitle, "Projectmanager must not be null")
             projectManagerEmail = Objects.requireNonNull(projectManager.emailAddress, "Projectmanager must not be null")
+
+            Affiliation pmAffiliation = projectManager.affiliations.get(0)
+            projectManagerOrganisation = Objects.requireNonNull(pmAffiliation.organisation, "Projectmanager affiliation must not be null")
+            projectManagerStreet = Objects.requireNonNull(pmAffiliation.street, "Projectmanager affiliation must not be null")
+            projectManagerPostalCode = Objects.requireNonNull(pmAffiliation.postalCode, "Projectmanager affiliation  must not be null")
+            projectManagerCity = Objects.requireNonNull(pmAffiliation.city, "Projectmanager affiliation must not be null")
+            projectManagerCountry = Objects.requireNonNull(pmAffiliation.country, "Projectmanager affiliation must not be null")
 
             /*Projectinformation*/
             this.creationDate = Objects.requireNonNull(creationDate, "Creation date must not be null")
@@ -212,6 +246,10 @@ class OfferContent {
             this.overheadTotal = overheadTotal
             return this
         }
+        Builder overheadRatio(double overheadRatio){
+            this.overheadRatio = overheadRatio
+            return this
+        }
         Builder overheadsDataGeneration(double overheadDG){
             this.overheadsDataGeneration = overheadDG
             return this
@@ -220,8 +258,8 @@ class OfferContent {
             this.overheadsDataAnalysis = overheadDA
             return this
         }
-        Builder overheadsProjectManagementAndDataStorage(double overheadsProjectManagementAndDataStorage){
-            this.overheadsProjectManagementAndDataStorage = overheadsProjectManagementAndDataStorage
+        Builder overheadsProjectManagementAndDataStorage(double overheadPmAndDs){
+            this.overheadsProjectManagementAndDataStorage = overheadPmAndDs
             return this
         }
         Builder netDataGeneration(double net){
@@ -248,6 +286,10 @@ class OfferContent {
             this.totalVat = vat
             return this
         }
+        Builder vatRatio(double vat){
+            this.vatRatio = vat
+            return this
+        }
 
         OfferContent build(){
             //require all fields to be set before the object can be created
@@ -255,6 +297,7 @@ class OfferContent {
             if(dataAnalysisItems == null) throw new NullPointerException("Missing data analysis items")
             if(dataManagementItems == null) throw new NullPointerException("Missing data management items")
             if(overheadTotal == null) throw new NullPointerException("Missing overhead total costs")
+            if(overheadRatio == null) throw new NullPointerException("Missing overhead ratio")
             if(overheadsDataAnalysis == null) throw new NullPointerException("Missing data analysis overhead costs")
             if(overheadsDataGeneration == null) throw new NullPointerException("Missing data generation overhead costs")
             if(overheadsProjectManagementAndDataStorage == null) throw new NullPointerException("Missing project management and data storage overhead costs")
@@ -264,6 +307,7 @@ class OfferContent {
             if(totalCost == null) throw new NullPointerException("Missing total costs")
             if(netCost == null) throw new NullPointerException("Missing net costs")
             if(totalVat == null) throw new NullPointerException("Missing total vat costs")
+            if(vatRatio == null) throw new NullPointerException("Missing vat ratio")
 
             return new OfferContent(this)
         }
@@ -286,6 +330,11 @@ class OfferContent {
         projectManagerLastName = builder.projectManagerLastName
         projectManagerTitle = builder.projectManagerTitle
         projectManagerEmail = builder.projectManagerEmail
+        projectManagerOrganisation = builder.projectManagerOrganisation
+        projectManagerStreet = builder.projectManagerStreet
+        projectManagerPostalCode = builder.projectManagerPostalCode
+        projectManagerCity = builder.projectManagerCity
+        projectManagerCountry = builder.projectManagerCountry
 
         /*Project Information*/
         creationDate = builder.creationDate
@@ -302,6 +351,7 @@ class OfferContent {
 
         /*Overheads*/
         overheadTotal = builder.overheadTotal
+        overheadRatio = builder.overheadRatio
         overheadsDataGeneration = builder.overheadsDataGeneration
         overheadsDataAnalysis = builder.overheadsDataAnalysis
         overheadsProjectManagementAndDataStorage = builder.overheadsProjectManagementAndDataStorage
@@ -313,6 +363,7 @@ class OfferContent {
         totalCost = builder.totalCost
         netCost = builder.netCost
         totalVat = builder.totalVat
+        vatRatio = builder.vatRatio
     }
 
     List<OfferItem> getDataGenerationItems() {

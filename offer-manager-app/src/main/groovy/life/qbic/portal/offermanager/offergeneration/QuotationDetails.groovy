@@ -241,7 +241,7 @@ class QuotationDetails {
      */
     private void setTotalPrices() {
         DecimalFormat decimalFormat = new DecimalFormat("#%")
-        String overheadPercentage = decimalFormat.format(offer.getOverheadRatio)
+        String overheadPercentage = decimalFormat.format(offer.getOverheadRatio())
 
         // Get prices without currency symbol for detailed price listing
         final overheadPrice = Currency.getFormatterWithoutSymbol().format(offer.getOverheadTotal())
@@ -253,7 +253,7 @@ class QuotationDetails {
         final overheadDataAnalysisPrice = Currency.getFormatterWithoutSymbol().format(offer.getOverheadsDataAnalysis())
         final overheadDataManagementPrice = Currency.getFormatterWithoutSymbol().format(offer.getOverheadsProjectManagementAndDataStorage())
 
-        double taxRatio = offer.getTaxRatio()
+        double taxRatio = offer.getVatRatio()
         String taxPercentage = decimalFormat.format(taxRatio)
 
         // Set overhead cost values
@@ -267,6 +267,7 @@ class QuotationDetails {
         htmlContent.getElementById("vat-percentage-value").text("VAT (${taxPercentage}):")
         htmlContent.getElementById("vat-cost-value").text(taxesPrice)
         htmlContent.getElementById("final-cost-value").text(totalPrice)
+
     }
 
     /**
