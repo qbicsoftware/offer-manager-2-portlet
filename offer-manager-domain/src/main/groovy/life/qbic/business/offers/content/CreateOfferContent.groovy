@@ -107,6 +107,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         offerContentBuilder.totalVat(offer.taxCosts)
         .vatRatio(offer.determineTaxCost())
         .totalCost(offer.totalCosts)
+        .totalDiscountAmount(offer.totalDiscountAmount)
 
         OfferContent offerContent = offerContentBuilder.build()
 

@@ -141,7 +141,10 @@ class OfferContent {
      * The ratio/percentage of vat applied in the offer
      */
     final double vatRatio
-
+    /**
+     * The total discount amount that has been applied in the offer
+     */
+    final Double totalDiscountAmount
 
     static class Builder {
         /*Person Information*/
@@ -289,6 +292,10 @@ class OfferContent {
             this.vatRatio = vat
             return this
         }
+        Builder totalDiscountAmount(double totalDiscount){
+            this.totalDiscountAmount = totalDiscount
+            return this
+        }
 
         OfferContent build(){
             //require all fields to be set before the object can be created
@@ -307,6 +314,7 @@ class OfferContent {
             if(netCost == null) throw new NullPointerException("Missing net costs")
             if(totalVat == null) throw new NullPointerException("Missing total vat costs")
             if(vatRatio == null) throw new NullPointerException("Missing vat ratio")
+            if(totalDiscountAmount == null) throw new NullPointerException("Missing total discount amount")
 
             return new OfferContent(this)
         }
@@ -363,6 +371,7 @@ class OfferContent {
         netCost = builder.netCost
         totalVat = builder.totalVat
         vatRatio = builder.vatRatio
+        totalDiscountAmount = builder.totalDiscountAmount
     }
 
     List<OfferItem> getDataGenerationItems() {
