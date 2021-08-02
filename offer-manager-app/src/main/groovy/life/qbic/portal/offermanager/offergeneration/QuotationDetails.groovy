@@ -2,9 +2,9 @@ package life.qbic.portal.offermanager.offergeneration
 
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Currency
+import life.qbic.business.offers.OfferContent
+import life.qbic.business.offers.OfferItem
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
@@ -23,7 +23,6 @@ import java.text.DecimalFormat
  *
  * @since 1.1.0
  */
-//FIXME Remove price calculation from this class!
 class QuotationDetails {
     /**
      * Variable used to count the number of Items added to a page
@@ -45,29 +44,12 @@ class QuotationDetails {
      */
     private final int maxPageItems = 27
 
-    /**
-     * Product group mapping
-     *
-     * This map represents the grouping of the different product categories in the offer pdf
-     *
-     */
-    private final Map<ProductGroup, List> productGroupClasses = setProductGroupMapping()
-
-    private List<ProductItem> dataGenerationItems
-    private List<ProductItem> dataAnalysisItems
-    private List<ProductItem> dataManagementItems
-
     private final Document htmlContent
-    private final life.qbic.business.offers.Offer offer
+    private final OfferContent offer
 
-    protected final AffiliationCategory affiliationCategory
-
-    QuotationDetails(Document htmlContent, Offer offer) {
+    QuotationDetails(Document htmlContent, OfferContent offer) {
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
-        this.offer = Converter.convertDTOToOffer(offer)
-        this.affiliationCategory = offer.selectedCustomerAffiliation.getCategory()
-
-        groupProductItems(offer.items)
+        this.offer = offer
     }
 
     void fillTemplateWithQuotationDetailsContent() {
@@ -80,9 +62,9 @@ class QuotationDetails {
         htmlContent.getElementById("template-page-break").remove()
 
         //Generate Product Table for each Category
-        generateProductTable(dataGenerationItems, ProductGroup.DATA_GENERATION)
-        generateProductTable(dataAnalysisItems, ProductGroup.DATA_ANALYSIS)
-        generateProductTable(dataManagementItems, ProductGroup.PROJECT_AND_DATA_MANAGEMENT)
+        generateProductTable(offer.getDataGenerationItems(), ProductGroup.DATA_GENERATION, offer.netDataGeneration)
+        generateProductTable(offer.getDataAnalysisItems(), ProductGroup.DATA_ANALYSIS, offer.netDataAnalysis)
+        generateProductTable(offer.getDataManagementItems(), ProductGroup.PROJECT_AND_DATA_MANAGEMENT, offer.netPMandDS)
     }
 
     /**
@@ -108,8 +90,9 @@ class QuotationDetails {
      * Generates the product table for a given list of items and a product group
      * @param items
      * @param productGroup
+     * @param subTotal the NET price for the provided product group
      */
-    private void generateProductTable(List<ProductItem> items, ProductGroup productGroup) {
+    private void generateProductTable(List<OfferItem> items, ProductGroup productGroup, double subTotal) {
         //Create the items in html in the overview table
         //Check if there are ProductItems stored in list
         if (!items) {
@@ -127,7 +110,7 @@ class QuotationDetails {
         //Append Table Title and Header
         htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
 
-        items.each { ProductItem item ->
+        items.each { OfferItem item ->
             generateItemContent(item, elementId)
         }
         //account for spaces of added table elements, footer, totals,...
@@ -135,7 +118,7 @@ class QuotationDetails {
         htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
 
         // Update footer Prices
-        addSubTotalPrices(productGroup, items)
+        addSubTotalPrices(productGroup, subTotal)
     }
 
     /**
@@ -143,7 +126,7 @@ class QuotationDetails {
      * @param item The item place into the HTML document
      * @param elementId The id references where the item is added
      */
-    private void generateItemContent(ProductItem item, String elementId){
+    private void generateItemContent(OfferItem item, String elementId){
         itemNumber++
         if (isOverflowingPage()) {
             generateHTMLTableOnNextPage(elementId)
@@ -151,10 +134,10 @@ class QuotationDetails {
             htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
             resetPageItemsCount()
         }
-
         //add product to current table
+        AffiliationCategory affiliationCategory = offer.selectedCustomerAffiliation.getCategory()
         htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item, affiliationCategory))
-        pageItemsCount += determineItemSpace(item)
+        pageItemsCount += determineItemSpace(item, affiliationCategory)
     }
 
     private static String generateElementID(int tableCount, ProductGroup productGroups){
@@ -179,26 +162,12 @@ class QuotationDetails {
     /**
      * Adds the subtotal NET price for a product group to the HTML template
      * @param productGroup The product group for which the subtotal is added
-     * @param productItems The product items for which the NET is calculated
+     * @param subTotal the NET price for the provided product group
      */
-    private void addSubTotalPrices(ProductGroup productGroup, List<ProductItem> productItems) {
-        double netSum = calculateNetSum(productItems)
-        final netPrice = Currency.getFormatterWithoutSymbol().format(netSum)
+    private void addSubTotalPrices(ProductGroup productGroup, double subTotal) {
+        final netPrice = Currency.getFormatterWithoutSymbol().format(subTotal)
 
         htmlContent.getElementById("${productGroup}-net-costs-value").text(netPrice)
-    }
-          /**
-	     * Helper method that calculates the NET price for a list of product items      
-	     * @param productItems The product item list for which the NET is calculated
-	     *  @return The net value for the given list of items 
-	     */
-    private double calculateNetSum(List<ProductItem> productItems) {
-        double netSum = 0
-        productItems.each {
-            double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? it.product.internalUnitPrice : it.product.externalUnitPrice
-            netSum += it.quantity * unitPrice
-        }
-        return netSum
     }
 
     /**
@@ -206,7 +175,7 @@ class QuotationDetails {
      * @param item The item for which the spacing should be calculated
      * @return The calculated space in the final offer template that the item requires
      */
-    private int determineItemSpace(ProductItem item) {
+    private static int determineItemSpace(OfferItem item, AffiliationCategory affiliationCategory) {
 
         ArrayList<Integer> calculatedSpaces = []
 
@@ -238,7 +207,6 @@ class QuotationDetails {
      * Adds the prices to the table footer. This will add the overhead summary, the net, vat and total costs
      */
     private void setTotalPrices() {
-
         DecimalFormat decimalFormat = new DecimalFormat("#%")
         String overheadPercentage = decimalFormat.format(offer.overheadRatio)
 
@@ -248,9 +216,9 @@ class QuotationDetails {
         final taxesPrice = Currency.getFormatterWithoutSymbol().format(offer.getTaxCosts())
         final totalPrice = Currency.getFormatterWithoutSymbol().format(offer.getTotalCosts())
 
-        final overheadDataGenerationPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(dataGenerationItems))
-        final overheadDataAnalysisPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(dataAnalysisItems))
-        final overheadDataManagementPrice = Currency.getFormatterWithoutSymbol().format(calculateOverheadSum(dataManagementItems))
+        final overheadDataGenerationPrice = Currency.getFormatterWithoutSymbol().format(offer.getDataGenerationOverheadSum())
+        final overheadDataAnalysisPrice = Currency.getFormatterWithoutSymbol().format(offer.getDataAnalysisOverheadSum())
+        final overheadDataManagementPrice = Currency.getFormatterWithoutSymbol().format(ofer.getDataManagementOverheadSum())
 
         double taxRatio = offer.determineTaxCost()
         String taxPercentage = decimalFormat.format(taxRatio)
@@ -266,60 +234,6 @@ class QuotationDetails {
         htmlContent.getElementById("vat-percentage-value").text("VAT (${taxPercentage}):")
         htmlContent.getElementById("vat-cost-value").text(taxesPrice)
         htmlContent.getElementById("final-cost-value").text(totalPrice)
-
-    }
-
-    /**
-     * Calculates the overhead sum of all product items
-     * @param productItems Items for which the overheads are calculated
-     * @return The overhead price for all items
-     */
-    private double calculateOverheadSum(List<ProductItem> productItems) {
-        double overheadSum = 0.0
-        productItems.each {
-            double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? it.product.internalUnitPrice : it.product.externalUnitPrice
-            overheadSum += it.quantity * unitPrice * offer.getOverheadRatio()
-        }
-        return overheadSum
-    }
-
-
-    /**
-     * Adds the product items to the respective product group list
-     * @param offerItems List of productItems contained in offer 
-     */
-    private void groupProductItems(List<ProductItem> offerItems) {
-
-        dataGenerationItems = []
-        dataAnalysisItems = []
-        //Project Management and Data Storage are grouped in the same category in the final Offer PDF
-        dataManagementItems = []
-
-        // Sort ProductItems into "DataGeneration", "Data Analysis" and "Project & Data Management"
-        offerItems.each {
-            if (it.product.class in productGroupClasses[ProductGroup.DATA_GENERATION]) {
-                dataGenerationItems.add(it)
-            }
-            if (it.product.class in productGroupClasses[ProductGroup.DATA_ANALYSIS]) {
-                dataAnalysisItems.add(it)
-            }
-            if (it.product.class in productGroupClasses[ProductGroup.PROJECT_AND_DATA_MANAGEMENT]) {
-                dataManagementItems.add(it)
-            }
-        }
-    }
-
-    /**
-     * Initializes a map with the product groups and maps the products of an offer to to their respective productgroups
-     * @return a map with the products associated with their respective product groups
-     */
-    private static HashMap<ProductGroup, List> setProductGroupMapping() {
-        Map<ProductGroup, List> map = [:]
-        map[ProductGroup.DATA_GENERATION] = [Sequencing, ProteomicAnalysis, MetabolomicAnalysis]
-        map[ProductGroup.DATA_ANALYSIS] = [PrimaryAnalysis, SecondaryAnalysis]
-        map[ProductGroup.PROJECT_AND_DATA_MANAGEMENT] = [ProjectManagement, DataStorage]
-
-        return map
     }
 
     /**
@@ -363,7 +277,6 @@ class QuotationDetails {
         PRODUCT_AMOUNT(8),
         PRODUCT_TOTAL(15)
 
-
         private final int charsLineLimit
 
         ProductPropertySpacing(int charsLineLimit) {
@@ -384,7 +297,7 @@ class QuotationDetails {
          * @param affiliationCategory the category of the affiliation
          * @return returns the HTML code as string
          */
-        static String itemInHTML(int offerPosition, ProductItem item, AffiliationCategory affiliationCategory) {
+        static String itemInHTML(int offerPosition, OfferItem item, AffiliationCategory affiliationCategory) {
             double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? item.product.internalUnitPrice : item.product.externalUnitPrice
             String totalCost = Currency.getFormatterWithoutSymbol().format(item.quantity * unitPrice)
             return """<div class="row product-item">
@@ -402,7 +315,7 @@ class QuotationDetails {
                     </div>
                     """
         }
-
+        
         /**
          * Creates a page break div
          * @return the page break div as string
