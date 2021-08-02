@@ -6,6 +6,8 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 
+import java.time.Instant
+
 /**
  * <h1>A DTO containing the fields required in the offer pdf</h1>
  *
@@ -53,9 +55,9 @@ class OfferContent {
     /**
      * Date on which the offer was lastly modified
      */
-    final String creationDate
+    final Instant creationDate
     /**
-     * The date on which the offer expires
+     * The Instant on which the offer expires
      */
     final String expirationDate
     /**
@@ -164,8 +166,8 @@ class OfferContent {
         String projectManagerCountry
 
         /*Project Information*/
-        String creationDate
-        String expirationDate
+        Instant creationDate
+        Instant expirationDate
         String projectTitle
         String projectObjective
         String experimentalDesign
@@ -192,7 +194,7 @@ class OfferContent {
         Double totalVat
         Double vatRatio
 
-        Builder(Customer customer, Affiliation customerAffiliation, ProjectManager projectManager, String creationDate, String expirationDate, String projectTitle,
+        Builder(Customer customer, Affiliation customerAffiliation, ProjectManager projectManager, Date creationDate, Date expirationDate, String projectTitle,
         String projectObjective, String experimentalDesign, String offerIdentifier){
             /*Customer*/
             customerFirstName = Objects.requireNonNull(customer.firstName,"Customer must not be null")
@@ -220,8 +222,8 @@ class OfferContent {
             projectManagerCountry = Objects.requireNonNull(pmAffiliation.country, "Projectmanager affiliation must not be null")
 
             /*Projectinformation*/
-            this.creationDate = Objects.requireNonNull(creationDate, "Creation date must not be null")
-            this.expirationDate = Objects.requireNonNull(expirationDate, "Expiration date must not be null")
+            this.creationDate = Objects.requireNonNull(creationDate.toInstant(), "Creation date must not be null")
+            this.expirationDate = Objects.requireNonNull(expirationDate.toInstant(), "Expiration date must not be null")
             this.projectTitle = Objects.requireNonNull(projectTitle, "Project title must not be null")
             this.projectObjective = Objects.requireNonNull(projectObjective, "Project objective must not be null")
             this.experimentalDesign = Objects.requireNonNull(experimentalDesign, "Experimental design must not be  null")
