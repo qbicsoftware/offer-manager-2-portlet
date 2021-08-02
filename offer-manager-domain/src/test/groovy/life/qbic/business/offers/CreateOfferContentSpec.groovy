@@ -159,8 +159,8 @@ class CreateOfferContentSpec extends Specification{
         output.createdOfferContent(_ as OfferContent) >> { arguments ->
             final OfferContent offerContent = arguments.get(0)
             assert offerContent.netDataAnalysis  == 2 * unitPrice - quantityDiscount.apply(2, 2*unitPrice)
-            assert offerContent.netDataGeneration == 3 * unitPrice - quantityDiscount.apply(2, 3*unitPrice)
-            assert offerContent.netPMandDS == 4 * unitPrice - quantityDiscount.apply(2, 4*unitPrice)
+            assert offerContent.netDataGeneration == 3 * unitPrice
+            assert offerContent.netPMandDS == 4 * unitPrice
         }
 
         where:
