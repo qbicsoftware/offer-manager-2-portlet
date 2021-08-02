@@ -95,6 +95,10 @@ class OfferContent {
      */
     final double overheadTotal
     /**
+     * The overhead ratio applied to calculate the overhead costs
+     */
+    final double overheadRatio
+    /**
      * The overhead costs for the data generation items
      */
     final double overheadsDataGeneration
@@ -177,6 +181,7 @@ class OfferContent {
         Double overheadsDataGeneration
         Double overheadsDataAnalysis
         Double overheadsProjectManagementAndDataStorage
+        Double overheadRatio
 
         /*Prices*/
         Double netDataGeneration
@@ -239,6 +244,10 @@ class OfferContent {
             this.overheadTotal = overheadTotal
             return this
         }
+        Builder overheadRatio(double overheadRatio){
+            this.overheadRatio = overheadRatio
+            return this
+        }
         Builder overheadsDataGeneration(double overheadDG){
             this.overheadsDataGeneration = overheadDG
             return this
@@ -286,6 +295,7 @@ class OfferContent {
             if(dataAnalysisItems == null) throw new NullPointerException("Missing data analysis items")
             if(dataManagementItems == null) throw new NullPointerException("Missing data management items")
             if(overheadTotal == null) throw new NullPointerException("Missing overhead total costs")
+            if(overheadRatio == null) throw new NullPointerException("Missing overhead ratio")
             if(overheadsDataAnalysis == null) throw new NullPointerException("Missing data analysis overhead costs")
             if(overheadsDataGeneration == null) throw new NullPointerException("Missing data generation overhead costs")
             if(overheadsProjectManagementAndDataStorage == null) throw new NullPointerException("Missing project management and data storage overhead costs")
@@ -339,6 +349,7 @@ class OfferContent {
 
         /*Overheads*/
         overheadTotal = builder.overheadTotal
+        overheadRatio = builder.overheadRatio
         overheadsDataGeneration = builder.overheadsDataGeneration
         overheadsDataAnalysis = builder.overheadsDataAnalysis
         overheadsProjectManagementAndDataStorage = builder.overheadsProjectManagementAndDataStorage
