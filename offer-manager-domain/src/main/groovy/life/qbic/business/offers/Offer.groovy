@@ -259,6 +259,9 @@ class Offer {
      * @return The calculated overhead amount of the selected items.
      */
     double getOverheadSum() {
+        if (items.empty) {
+            return 0
+        }
         return items.sum {calculateItemOverhead(it)} as double
     }
 
@@ -478,6 +481,9 @@ class Offer {
     }
 
     private double calculateNetPrice() {
+        if (items.empty) {
+            return 0
+        }
         return items.sum {calculateItemNet(it)} as double
     }
 
