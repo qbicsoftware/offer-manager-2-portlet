@@ -76,7 +76,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         String expirationDate = offer.expirationDate.toLocalDate().toString()
         groupProductItems(offer.items)
 
-        def offerContent = new OfferContent.Builder(offer.customer,offer.selectedCustomerAffiliation,offer.projectManager,creationDate,expirationDate,offer.projectTitle
+        def offerContentBuilder = new OfferContent.Builder(offer.customer,offer.selectedCustomerAffiliation,offer.projectManager,creationDate,expirationDate,offer.projectTitle
         ,offer.projectObjective, offer.experimentalDesign.orElse(""),offer.identifier.toString())
 
         //collect productitems and convert to offeritems
