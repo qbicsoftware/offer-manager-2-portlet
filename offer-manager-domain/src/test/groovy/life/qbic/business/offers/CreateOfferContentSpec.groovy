@@ -46,13 +46,13 @@ class CreateOfferContentSpec extends Specification{
 
     def setup() {
         date = new Date(1000, 10, 10)
-        customer = new Customer.Builder("Max", "Mustermann", "").build()
         selectedAffiliation = new Affiliation.Builder("Universität Tübingen",
                 "Auf der Morgenstelle 10",
                 "72076",
                 "Tübingen")
                 .category(AffiliationCategory.EXTERNAL)
                 .build()
+        customer = new Customer.Builder("Max", "Mustermann", "").affiliation(selectedAffiliation).build()
         projectManager = new ProjectManager.Builder("Max", "Mustermann", "").affiliation(selectedAffiliation).build()
         projectTitle = "Archer"
         projectDescription = "Cartoon Series"
@@ -124,7 +124,7 @@ class CreateOfferContentSpec extends Specification{
         ds.getOffer(_ as OfferId) >> Optional.empty()
 
         when: "the offer content creation is triggered"
-        createOfferContent.createOfferContent(offerId)
+        def result = createOfferContent.createOfferContent(offerId)
 
         then: "failed use case"
         1 * output.failNotification(_)
@@ -143,10 +143,11 @@ class CreateOfferContentSpec extends Specification{
                 .build())
 
         when: "the offer content creation is triggered"
-        createOfferContent.createOfferContent(offerId)
+        def result = createOfferContent.createOfferContent(offerId)
 
         then: "the overheads for the product groups are set correctly"
         1 * output.createdOfferContent(_ as OfferContent)
+
     }
 
 }
