@@ -119,11 +119,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
      *  @return The net value for the given list of items
      */
     private static double calculateNetSum(List<OfferItem> offerItems) {
-        double netSum = 0
-        offerItems.each {
-            netSum += it.quantity * it.unitPrice
-        }
-        return netSum
+        return offerItems.sum { it.quantity * it.unitPrice }
     }
 
     /**
@@ -132,11 +128,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
      * @return The overhead price for all items
      */
     private double calculateOverheadSum(List<OfferItem> offerItems) {
-        double overheadSum = 0.0
-        offerItems.each {
-            overheadSum += it.quantity * it.unitPrice * overheadRatio
-        }
-        return overheadSum
+        return offerItems.sum { it.quantity * it.unitPrice * overheadRatio }
     }
 
 
