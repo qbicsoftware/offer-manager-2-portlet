@@ -278,6 +278,21 @@ class OfferSpec extends Specification {
         overheadPercent = "${overheadRatio * 100}%"
     }
 
+    def "Given an no productItems, the overhead cost is 0"() {
+        given:
+        List<ProductItem> items = []
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, internalAffiliation).build()
+
+        when:
+        double overhead = offer.getOverheadSum()
+        double expectedOverhead = 0
+
+        then:
+        overhead == expectedOverhead
+    }
+
     /**
      * Checks for specific classes that no overheads are applied.
      * <p>This is currently ignored because overheads are applied on all classes</p>
@@ -482,6 +497,22 @@ class OfferSpec extends Specification {
         where: "the affiliation is"
         affiliation << [internalAffiliation]
         overheadRatio = 0.0
+
+    }
+
+    def "Given no productItems the net costs are 0"() {
+        given:
+        List<ProductItem> items = []
+
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, internalAffiliation).build()
+
+        when:
+        double netTotal = offer.getTotalNetPrice()
+        double expectedNetTotal = 0
+
+        then:
+        netTotal == expectedNetTotal
 
     }
 
