@@ -456,8 +456,9 @@ class DependencyManager {
         ResourcesService<OfferOverview> offerOverviewResourcesService = this.overviewService
         ResourcesService<ProjectIdentifier> projectResourcesService = this.projectResourceService
         ResourcesService<ProjectSpace> projectSpaceResourcesService = this.projectSpaceResourceService
+        OfferToPDFConverter offerToPDFConverter = new OfferToPDFConverter(fetchOfferDataSource)
 
-        OfferOverviewModel offerOverviewViewModel = new OfferOverviewModel(offerOverviewResourcesService, sharedViewModel, offerSelectedEvent)
+        OfferOverviewModel offerOverviewViewModel = new OfferOverviewModel(offerOverviewResourcesService, sharedViewModel, offerSelectedEvent, offerToPDFConverter)
         OfferOverviewPresenter offerOverviewPresenter = new OfferOverviewPresenter(sharedViewModel, offerOverviewViewModel)
         FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, offerOverviewPresenter)
         OfferOverviewController offerOverviewController = new OfferOverviewController(fetchOffer)

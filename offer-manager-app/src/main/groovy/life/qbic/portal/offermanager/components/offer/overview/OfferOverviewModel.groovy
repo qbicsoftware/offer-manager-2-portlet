@@ -44,9 +44,12 @@ class OfferOverviewModel {
 
     EventEmitter offerEventEmitter
 
+    private final OfferToPDFConverter offerToPDFConverter
+
     OfferOverviewModel(ResourcesService<OfferOverview> service,
                        AppViewModel viewModel,
-                       EventEmitter<Offer> offerEventEmitter) {
+                       EventEmitter<Offer> offerEventEmitter,
+                        OfferToPDFConverter offerToPDFConverter) {
         this.service = service
         this.offerOverviewList = new ObservableList(new ArrayList(service.iterator().toList()))
         this.selectedOffer = Optional.empty()
@@ -54,6 +57,7 @@ class OfferOverviewModel {
         this.downloadButtonActive = false
         this.displaySpinner = false
         this.offerEventEmitter = offerEventEmitter
+        this.offerToPDFConverter = offerToPDFConverter
         subscribeToOverviewService()
     }
 
@@ -81,8 +85,7 @@ class OfferOverviewModel {
      */
     InputStream getOfferAsPdf() throws RuntimeException {
         offer.map({
-            OfferToPDFConverter converter = new OfferToPDFConverter(it)
-            return converter.getOfferAsPdf()
+            return offerToPDFConverter.convertOfferToPDF(it.identifier)
         }).orElseThrow({new RuntimeException("The offer content seems to be empty, nothing to " +
                 "convert.")})
     }
