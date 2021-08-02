@@ -42,12 +42,12 @@ class OfferToPDFConverter implements OfferExporter, CreateOfferContentOutput {
      */
     static final CHROMIUM_EXECUTABLE = "CHROMIUM_EXECUTABLE"
 
+    @Deprecated
     private final Offer offer
-
-    private final CreateOfferContent createOfferContent
 
     private final Path tempDir
 
+    @Deprecated
     private final Document htmlContent
 
     private final Path createdOffer
