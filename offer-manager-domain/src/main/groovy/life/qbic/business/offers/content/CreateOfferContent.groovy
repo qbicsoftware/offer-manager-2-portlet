@@ -21,6 +21,7 @@ import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Sequencing
 
 import java.text.DateFormat
+import java.time.Instant
 
 /**
  * <h1>Creates the content for an offer export</h1>
@@ -71,9 +72,8 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         overheadRatio = offer.getOverheadRatio()
 
         //collect the content for the offerpdf
-        DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.US)
-        String creationDate = dateFormat.format(offer.modificationDate)
-        String expirationDate = offer.expirationDate.toLocalDate().toString()
+        Instant creationDate = offer.modificationDate.toInstant()
+        Instant expirationDate = offer.expirationDate.toInstant()
         groupProductItems(offer.items)
 
         def offerContentBuilder = new OfferContent.Builder(offer.customer,offer.selectedCustomerAffiliation,offer.projectManager,creationDate,expirationDate,offer.projectTitle
