@@ -43,7 +43,7 @@ class QuotationDetails {
     /**
      * The maximum number of items per page
      */
-    private final int maxPageItems = 27
+    private final int maxPageItems = 17
 
     /**
      * Product group mapping
@@ -214,6 +214,7 @@ class QuotationDetails {
 
         Product product = item.product
         double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? item.product.internalUnitPrice : item.product.externalUnitPrice
+        //todo this should not happen here
         String productTotalCost = item.quantity * unitPrice
 
         //Determine amount of spacing necessary from highest itemSpace value of all columns
@@ -223,6 +224,7 @@ class QuotationDetails {
         calculatedSpaces.add(calculateItemSpace(product.unit as String, ProductPropertySpacing.PRODUCT_UNIT))
         calculatedSpaces.add(calculateItemSpace(unitPrice as String, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
         calculatedSpaces.add(calculateItemSpace(productTotalCost, ProductPropertySpacing.PRODUCT_TOTAL))
+        calculatedSpaces.add(calculateItemSpace("Service Provider: "+product.serviceProvider.name(), ProductPropertySpacing.PRODUCT_FACILITY))
         return calculatedSpaces.max()
     }
 
@@ -364,8 +366,8 @@ class QuotationDetails {
         PRODUCT_UNIT(15),
         PRODUCT_UNIT_PRICE(15),
         PRODUCT_AMOUNT(8),
-        PRODUCT_TOTAL(15)
-
+        PRODUCT_TOTAL(15),
+        PRODUCT_FACILITY(62)
 
         private final int charsLineLimit
 
@@ -401,7 +403,12 @@ class QuotationDetails {
                     <div class="row product-item">
                         <div class="col-1"></div>
                         <div class="col-7 item-description">${item.product.description}</div>
-                        <div class="col-7"></div>
+                        <div class="col-4"></div>
+                    </div>
+                    <div class="row product-item">
+                        <div class="col-1"></div>
+                        <div class="col-7 item-description"> Service Provider: ${item.product.serviceProvider.name()}</div>
+                        <div class="col-4"></div>
                     </div>
                     """
         }
