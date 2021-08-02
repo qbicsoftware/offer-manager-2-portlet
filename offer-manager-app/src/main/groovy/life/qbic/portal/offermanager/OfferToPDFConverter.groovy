@@ -1,7 +1,7 @@
 package life.qbic.portal.offermanager
 
 import groovy.util.logging.Log4j2
-
+import life.qbic.business.offers.OfferContent
 import life.qbic.business.offers.OfferExporter
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.portal.offermanager.offergeneration.OfferHTMLDocument
@@ -39,7 +39,7 @@ class OfferToPDFConverter implements OfferExporter {
      */
     static final CHROMIUM_EXECUTABLE = "CHROMIUM_EXECUTABLE"
 
-    private final Offer offer
+    private final OfferContent offer
 
     private final Path tempDir
 
@@ -67,7 +67,7 @@ class OfferToPDFConverter implements OfferExporter {
                     .toURI())
 
 
-    OfferToPDFConverter(Offer offer) {
+    OfferToPDFConverter(OfferContent offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.tempDir = Files.createTempDirectory("offer")
         this.createdOffer = Paths.get(tempDir.toString(), "offer.html")

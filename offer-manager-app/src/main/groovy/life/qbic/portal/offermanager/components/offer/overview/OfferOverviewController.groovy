@@ -1,6 +1,8 @@
 package life.qbic.portal.offermanager.components.offer.overview
 
 import groovy.util.logging.Log4j2
+import life.qbic.business.offers.content.CreateOfferContent
+import life.qbic.business.offers.content.CreateOfferContentInput
 import life.qbic.business.offers.fetch.FetchOfferInput
 import life.qbic.datamodel.dtos.business.OfferId
 
@@ -17,8 +19,11 @@ class OfferOverviewController {
 
     private final FetchOfferInput input
 
-    OfferOverviewController(FetchOfferInput input){
+    private final CreateOfferContentInput offerContentInput
+
+    OfferOverviewController(FetchOfferInput input, CreateOfferContentInput offerContentInput){
         this.input = input
+        this.offerContentInput = offerContentInput
     }
 
     /**
@@ -28,5 +33,6 @@ class OfferOverviewController {
      */
     void fetchOffer(OfferId offerId){
         this.input.fetchOffer(offerId)
+        this.offerContentInput.createOfferContent(offerId)
     }
 }
