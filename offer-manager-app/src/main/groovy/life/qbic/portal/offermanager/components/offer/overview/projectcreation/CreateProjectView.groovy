@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.offer.overview.projectcreation
 
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.ContentMode
+import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.GridLayout
@@ -164,6 +165,7 @@ class CreateProjectView extends VerticalLayout{
 
         // Case A: A new space needs to be created
         customSpaceLayout = new HorizontalLayout()
+        customSpaceLayout.setMargin(false)
         desiredSpaceName = new TextField("New Space Name")
         desiredSpaceName.setPlaceholder("Your space name")
         desiredSpaceName.setWidth(300, Unit.PIXELS)
@@ -173,6 +175,7 @@ class CreateProjectView extends VerticalLayout{
         customSpaceLayout.addComponent(container)
         spaceAvailability = new HorizontalLayout()
         customSpaceLayout.addComponent(spaceAvailability)
+        customSpaceLayout.setComponentAlignment(spaceAvailability, Alignment.BOTTOM_CENTER)
         this.inputFields.addComponent(customSpaceLayout)
 
         // Case B: An existing space is selected
