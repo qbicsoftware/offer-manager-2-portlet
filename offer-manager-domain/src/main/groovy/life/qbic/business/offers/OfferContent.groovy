@@ -40,6 +40,14 @@ class OfferContent {
     final String projectManagerLastName
     final String projectManagerTitle
     final String projectManagerEmail
+    /**
+     * The information for the affiliation of the project manager selected for this offer
+     */
+    final String projectManagerOrganisation
+    final String projectManagerStreet
+    final String projectManagerPostalCode
+    final String projectManagerCity
+    final String projectManagerCountry
 
     /*Project Information*/
     /**
@@ -145,6 +153,11 @@ class OfferContent {
         String projectManagerLastName
         String projectManagerTitle
         String projectManagerEmail
+        String projectManagerOrganisation
+        String projectManagerStreet
+        String projectManagerPostalCode
+        String projectManagerCity
+        String projectManagerCountry
 
         /*Project Information*/
         String creationDate
@@ -188,11 +201,18 @@ class OfferContent {
             customerCity = Objects.requireNonNull(customerAffiliation.city, "Customer affiliation must not be null")
             customerCountry = Objects.requireNonNull(customerAffiliation.country, "Customer affiliation must not be null")
             /*Projectmanager*/
-            projectManagerFirstName = Objects.requireNonNull(projectManager.firstName, "Projectmanager musst not be null")
+            projectManagerFirstName = Objects.requireNonNull(projectManager.firstName, "Projectmanager must not be null")
             projectManagerLastName = Objects.requireNonNull(projectManager.lastName, "Projectmanager must not be null")
             String projectManagerTitle = projectManager.title == AcademicTitle.NONE ? "" : projectManager.title
             this.projectManagerTitle = Objects.requireNonNull(projectManagerTitle, "Projectmanager must not be null")
             projectManagerEmail = Objects.requireNonNull(projectManager.emailAddress, "Projectmanager must not be null")
+
+            Affiliation pmAffiliation = projectManager.affiliations.get(0)
+            projectManagerOrganisation = Objects.requireNonNull(pmAffiliation.organisation, "Projectmanager affiliation must not be null")
+            projectManagerStreet = Objects.requireNonNull(pmAffiliation.street, "Projectmanager affiliation must not be null")
+            projectManagerPostalCode = Objects.requireNonNull(pmAffiliation.postalCode, "Projectmanager affiliation  must not be null")
+            projectManagerCity = Objects.requireNonNull(pmAffiliation.city, "Projectmanager affiliation must not be null")
+            projectManagerCountry = Objects.requireNonNull(pmAffiliation.country, "Projectmanager affiliation must not be null")
 
             /*Projectinformation*/
             this.creationDate = Objects.requireNonNull(creationDate, "Creation date must not be null")
@@ -298,6 +318,11 @@ class OfferContent {
         projectManagerLastName = builder.projectManagerLastName
         projectManagerTitle = builder.projectManagerTitle
         projectManagerEmail = builder.projectManagerEmail
+        projectManagerOrganisation = builder.projectManagerOrganisation
+        projectManagerStreet = builder.projectManagerStreet
+        projectManagerPostalCode = builder.projectManagerPostalCode
+        projectManagerCity = builder.projectManagerCity
+        projectManagerCountry = builder.projectManagerCountry
 
         /*Project Information*/
         creationDate = builder.creationDate
