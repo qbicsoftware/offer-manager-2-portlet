@@ -47,13 +47,13 @@ class CreateOfferContentSpec extends Specification{
     def setup() {
         date = new Date(1000, 10, 10)
         customer = new Customer.Builder("Max", "Mustermann", "").build()
-        projectManager = new ProjectManager.Builder("Max", "Mustermann", "").build()
         selectedAffiliation = new Affiliation.Builder("Universität Tübingen",
                 "Auf der Morgenstelle 10",
                 "72076",
                 "Tübingen")
                 .category(AffiliationCategory.EXTERNAL)
                 .build()
+        projectManager = new ProjectManager.Builder("Max", "Mustermann", "").affiliation(selectedAffiliation).build()
         projectTitle = "Archer"
         projectDescription = "Cartoon Series"
         items = [
