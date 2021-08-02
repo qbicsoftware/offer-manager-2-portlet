@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.offergeneration
 
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Currency
+import life.qbic.business.offers.OfferContent
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
@@ -28,7 +29,7 @@ class QuotationOverview {
     private Offer offer
     private life.qbic.business.offers.Offer offerEntity
 
-    QuotationOverview(Document htmlContent, Offer offer){
+    QuotationOverview(Document htmlContent, OfferContent offer){
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
         this.offerEntity = Converter.convertDTOToOffer(offer)
