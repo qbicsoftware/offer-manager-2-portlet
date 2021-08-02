@@ -72,8 +72,8 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         overheadRatio = offer.getOverheadRatio()
 
         //collect the content for the offerpdf
-        Instant creationDate = offer.modificationDate.toInstant()
-        Instant expirationDate = offer.expirationDate.toInstant()
+        Date creationDate = offer.modificationDate
+        Date expirationDate = offer.expirationDate
         groupProductItems(offer.items)
 
         def offerContentBuilder = new OfferContent.Builder(offer.customer,offer.selectedCustomerAffiliation,offer.projectManager,creationDate,expirationDate,offer.projectTitle

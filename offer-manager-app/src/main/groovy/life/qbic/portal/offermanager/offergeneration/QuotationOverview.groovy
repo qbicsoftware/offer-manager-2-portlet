@@ -72,8 +72,8 @@ class QuotationOverview {
                 offer.getProjectManagerTitle(),
                 offer.getProjectManagerFirstName(),
                 offer.getProjectManagerLastName()))
-        htmlContent.getElementById("project-manager-street").text(offer.getProject.street)
-        htmlContent.getElementById("project-manager-city").text("${affiliation.postalCode} ${affiliation.city}")
+        htmlContent.getElementById("project-manager-street").text(offer.getProjectManagerStreet())
+        htmlContent.getElementById("project-manager-city").text("${offer.getProjectManagerPostalCode()} ${offer.getProjectManagerCity()}")
         htmlContent.getElementById("project-manager-email").text(offer.getProjectManagerEmail())
     }
 
@@ -85,9 +85,9 @@ class QuotationOverview {
         final overheadPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.getOverheadTotal())
 
         DecimalFormat decimalFormat = new DecimalFormat("#%")
-        String overheadPercentage = decimalFormat.format(offer.getOverheadPercentage)
+        String overheadPercentage = decimalFormat.format(offer.getOverheadRatio())
 
-        double taxRatio = offerEntity.determineTaxCost()
+        double taxRatio = offer.getVatRatio()
         String taxPercentage = decimalFormat.format(taxRatio)
 
         htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")
@@ -104,12 +104,12 @@ class QuotationOverview {
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.US)
 
         htmlContent.getElementById("offer-identifier").text(offer.getOfferIdentifier().toString())
-        htmlContent.getElementById("offer-expiry-date").text(offer.getExpirationDate())
+        htmlContent.getElementById("offer-expiry-date").text(dateFormat.format(offer.getExpirationDate()))
         htmlContent.getElementById("offer-date").text(dateFormat.format(offer.getCreationDate()))
     }
 
     private void setTaxationStatement() {
-        if (!offerEntity.isVatCountry()) {
+        if (!(offer.getCustomerCountry().toLowerCase() == "germany")) {
             htmlContent.getElementById("vat-cost-applicable").text("Taxation is not applied to offers outside of ${offerEntity.getCountryWithVat()}.")
         }
     }
@@ -117,7 +117,7 @@ class QuotationOverview {
     private void setTaxationRatioInSummary() {
         DecimalFormat decimalFormat = new DecimalFormat("#%")
 
-        double taxRatio = offerEntity.determineTaxCost()
+        double taxRatio = offer.getVatRatio()
         String taxPercentage = decimalFormat.format(taxRatio)
 
         htmlContent.getElementById("total-taxes-ratio").text("VAT (${taxPercentage})")

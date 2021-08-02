@@ -6,8 +6,6 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 
-import java.time.Instant
-
 /**
  * <h1>A DTO containing the fields required in the offer pdf</h1>
  *
@@ -55,11 +53,11 @@ class OfferContent {
     /**
      * Date on which the offer was lastly modified
      */
-    final Instant creationDate
+    final Date creationDate
     /**
-     * The Instant on which the offer expires
+     * The date on which the offer expires
      */
-    final String expirationDate
+    final Date expirationDate
     /**
      * The title of the project
      */
@@ -166,8 +164,8 @@ class OfferContent {
         String projectManagerCountry
 
         /*Project Information*/
-        Instant creationDate
-        Instant expirationDate
+        Date creationDate
+        Date expirationDate
         String projectTitle
         String projectObjective
         String experimentalDesign
@@ -193,8 +191,9 @@ class OfferContent {
         Double netCost
         Double totalVat
         Double vatRatio
+        Double totalDiscountAmount
 
-        Builder(Customer customer, Affiliation customerAffiliation, ProjectManager projectManager, Instant creationDate, Instant expirationDate, String projectTitle,
+        Builder(Customer customer, Affiliation customerAffiliation, ProjectManager projectManager, Date creationDate, Date expirationDate, String projectTitle,
         String projectObjective, String experimentalDesign, String offerIdentifier){
             /*Customer*/
             customerFirstName = Objects.requireNonNull(customer.firstName,"Customer must not be null")
