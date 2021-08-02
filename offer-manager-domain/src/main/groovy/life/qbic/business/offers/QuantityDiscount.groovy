@@ -25,8 +25,8 @@ class QuantityDiscount implements BiFunction<Integer, BigDecimal, BigDecimal> {
         return getDiscountFactor(sampleCount) * fullPrice
     }
 
-    private static double getDiscountFactor(int sampleCount) {
-        double discountFactor
+    private static BigDecimal getDiscountFactor(int sampleCount) {
+        BigDecimal discountFactor
         switch (sampleCount) {
             case {it < 1 }:
                 throw new UndefinedFunctionException(sampleCount)

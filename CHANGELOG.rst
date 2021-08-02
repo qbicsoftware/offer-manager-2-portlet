@@ -11,6 +11,12 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Function to apply the quantity discount price (`#707 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/707>`_)
 
+* Adds a new DTO OfferItem which represents an item on the offer (`#728 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/728>`_)
+
+* Display total quantity discount included in the offer in the offer overview (`#686 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/686>`_)
+
+* Adds a new DTO OfferContent which represents the content of an offer (`#724 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/724>`_)
+
 **Fixed**
 
 * Invert quantity discount in order to be able to display size of discount (`#710 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/710>`_
@@ -26,6 +32,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Reset the offer update view, when a new offer is selected in the offer overview (`#716 <https://github.com/qbicsoftware/offer-manager-2-portlet/issue/716>`_)
 
 * Offers without an experimental design can now be updated (`#726 <https://github.com/qbicsoftware/offer-manager-2-portlet/issue/726>`_)
+
+* Creating a product switches name and description (`#731 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/731>`_)
 
 **Dependencies**
 
