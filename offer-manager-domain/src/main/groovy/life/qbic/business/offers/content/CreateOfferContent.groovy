@@ -108,9 +108,9 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         .vatRatio(offer.determineTaxCost())
         .totalCost(offer.totalCosts)
 
-        OfferContent offerContentFinal = offerContentBuilder.build()
+        OfferContent offerContent = offerContentBuilder.build()
 
-        output.createdOfferContent(offerContentFinal)
+        output.createdOfferContent(offerContent)
     }
 
     /**
