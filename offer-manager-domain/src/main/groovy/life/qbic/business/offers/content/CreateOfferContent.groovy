@@ -85,7 +85,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         List<OfferItem> dataAnalysisOfferItems = dataAnalysisItems.collect{createOfferItem(it)}
         List<OfferItem> dataGenerationOfferItems = dataGenerationItems.collect{createOfferItem(it)}
 
-        offerContent.dataGenerationItems(dataGenerationOfferItems)
+        offerContentBuilder.dataGenerationItems(dataGenerationOfferItems)
         .dataAnalysisItems(dataAnalysisOfferItems)
         .dataManagementItems(dataManagementOfferItems)
 
@@ -93,22 +93,22 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         double overheadsDG = calculateOverheadSum(dataGenerationOfferItems)
         double overheadsPMandDS = calculateOverheadSum(dataManagementOfferItems)
 
-        offerContent.overheadsDataAnalysis(overheadsDA)
+        offerContentBuilder.overheadsDataAnalysis(overheadsDA)
         .overheadsDataGeneration(overheadsDG)
         .overheadsProjectManagementAndDataStorage(overheadsPMandDS)
         .overheadTotal(offer.overheadSum)
         .overheadRatio(offer.overheadRatio)
 
-        offerContent.netDataAnalysis(calculateNetSum(dataAnalysisOfferItems))
+        offerContentBuilder.netDataAnalysis(calculateNetSum(dataAnalysisOfferItems))
         .netDataGeneration(calculateNetSum(dataGenerationOfferItems))
         .netProjectManagementAndDataStorage(calculateNetSum(dataManagementOfferItems))
         .netCost(offer.totalNetPrice)
 
-        offerContent.totalVat(offer.taxCosts)
+        offerContentBuilder.totalVat(offer.taxCosts)
         .vatRatio(offer.determineTaxCost())
         .totalCost(offer.totalCosts)
 
-        OfferContent offerContentFinal = offerContent.build()
+        OfferContent offerContentFinal = offerContentBuilder.build()
 
         output.createdOfferContent(offerContentFinal)
     }
