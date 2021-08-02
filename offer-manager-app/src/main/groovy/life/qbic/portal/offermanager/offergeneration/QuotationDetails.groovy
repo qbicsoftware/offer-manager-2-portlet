@@ -43,7 +43,7 @@ class QuotationDetails {
     /**
      * The maximum number of items per page
      */
-    private final int maxPageItems = 27
+    private final int maxPageItems = 17
 
     private final Document htmlContent
     private final OfferContent offer
@@ -209,9 +209,12 @@ class QuotationDetails {
         calculatedSpaces.add(calculateItemSpace(item.productName, ProductPropertySpacing.PRODUCT_NAME))
         calculatedSpaces.add(calculateItemSpace(item.productDescription, ProductPropertySpacing.PRODUCT_DESCRIPTION))
         calculatedSpaces.add(calculateItemSpace(item.quantity as String, ProductPropertySpacing.PRODUCT_AMOUNT))
+
         calculatedSpaces.add(calculateItemSpace(item.unit, ProductPropertySpacing.PRODUCT_UNIT))
         calculatedSpaces.add(calculateItemSpace(item.unitPrice as String, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
         calculatedSpaces.add(calculateItemSpace(item.getItemTotal() as String, ProductPropertySpacing.PRODUCT_TOTAL))
+        calculatedSpaces.add(calculateItemSpace("Service Provider: "+item.getServiceProvider(), ProductPropertySpacing.PRODUCT_FACILITY))
+
         return calculatedSpaces.max()
     }
 
@@ -223,6 +226,7 @@ class QuotationDetails {
         calculatedSpaces.add(calculateItemSpace(productName, ProductPropertySpacing.PRODUCT_NAME))
         calculatedSpaces.add(calculateItemSpace(productDescription, ProductPropertySpacing.PRODUCT_DESCRIPTION))
         calculatedSpaces.add(calculateItemSpace(itemTotalCosts as String, ProductPropertySpacing.PRODUCT_TOTAL))
+
         return calculatedSpaces.max()
     }
 
@@ -311,7 +315,8 @@ class QuotationDetails {
         PRODUCT_UNIT(15),
         PRODUCT_UNIT_PRICE(15),
         PRODUCT_AMOUNT(8),
-        PRODUCT_TOTAL(15)
+        PRODUCT_TOTAL(15),
+        PRODUCT_FACILITY(62)
 
         private final int charsLineLimit
 
@@ -343,8 +348,18 @@ class QuotationDetails {
                     </div>
                     <div class="row product-item">
                         <div class="col-1"></div>
+<<<<<<< HEAD
                         <div class="col-7 item-description">${item.getProductDescription()}</div>
                         <div class="col-7"></div>
+=======
+                        <div class="col-7 item-description">${item.product.description}</div>
+                        <div class="col-4"></div>
+                    </div>
+                    <div class="row product-item">
+                        <div class="col-1"></div>
+                        <div class="col-7 item-description"> Service Provider: ${item.product.serviceProvider.name()}</div>
+                        <div class="col-4"></div>
+>>>>>>> development
                     </div>
                     """
         }
