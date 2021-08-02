@@ -26,13 +26,12 @@ import java.text.DecimalFormat
 class QuotationOverview {
 
     private final Document htmlContent
-    private Offer offer
+    private OfferContent offer
     private life.qbic.business.offers.Offer offerEntity
 
     QuotationOverview(Document htmlContent, OfferContent offer){
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.htmlContent = Objects.requireNonNull(htmlContent, "htmlContent object must not be a null reference")
-        this.offerEntity = Converter.convertDTOToOffer(offer)
         fillTemplateWithQuotationOverviewContent()
     }
 
@@ -48,50 +47,45 @@ class QuotationOverview {
 
     private void setProjectInformation() {
         htmlContent.getElementById("project-title").text(offer.projectTitle)
-        htmlContent.getElementById("project-description").text(offer.projectDescription)
-        if (offer.experimentalDesign.isPresent()) htmlContent.getElementById("experimental-design").text(offer.experimentalDesign.get())
+        htmlContent.getElementById("project-description").text(offer.projectObjective)
+        if (offer.getExperimentalDesign()) htmlContent.getElementById("experimental-design").text(offer.getExperimentalDesign())
     }
 
     private void setCustomerInformation() {
-        final Customer customer = offer.customer
-        final Affiliation affiliation = offer.selectedCustomerAffiliation
-        String customerTitle = customer.title == AcademicTitle.NONE ? "" : customer.title
+        String customerTitle = offer.customerTitle
         htmlContent.getElementById("customer-name").text(String.format(
                 "%s %s %s",
                 customerTitle,
-                customer.firstName,
-                customer.lastName))
-        htmlContent.getElementById("customer-organisation").text(affiliation.organisation)
-        htmlContent.getElementById("customer-street").text(affiliation.street)
-        htmlContent.getElementById("customer-postal-code").text(affiliation.postalCode)
-        htmlContent.getElementById("customer-city").text(affiliation.city)
-        htmlContent.getElementById("customer-country").text(affiliation.country)
+                offer.getCustomerFirstName(),
+                offer.getCustomerLastName()))
+        htmlContent.getElementById("customer-organisation").text(offer.getCustomerOrganisation())
+        htmlContent.getElementById("customer-street").text(offer.getCustomerStreet())
+        htmlContent.getElementById("customer-postal-code").text(offer.getCustomerPostalCode())
+        htmlContent.getElementById("customer-city").text(offer.getCustomerCity())
+        htmlContent.getElementById("customer-country").text(offer.getCustomerCountry())
 
     }
 
     private void setManagerInformation() {
-        final ProjectManager pm = offer.projectManager
-        final Affiliation affiliation = pm.affiliations.get(0)
-        String pmTitle = pm.title == AcademicTitle.NONE ? "" : pm.title
         htmlContent.getElementById("project-manager-name").text(String.format(
                 "%s %s %s",
-                pmTitle,
-                pm.firstName,
-                pm.lastName))
-        htmlContent.getElementById("project-manager-street").text(affiliation.street)
+                offer.getProjectManagerTitle(),
+                offer.getProjectManagerFirstName(),
+                offer.getProjectManagerLastName()))
+        htmlContent.getElementById("project-manager-street").text(offer.getProject.street)
         htmlContent.getElementById("project-manager-city").text("${affiliation.postalCode} ${affiliation.city}")
-        htmlContent.getElementById("project-manager-email").text(pm.emailAddress)
+        htmlContent.getElementById("project-manager-email").text(offer.getProjectManagerEmail())
     }
 
     private void setPriceOverview() {
         // Get prices with currency symbol for first page summary
-        final totalPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.totalPrice)
-        final taxesWithSymbol = Currency.getFormatterWithSymbol().format(offer.taxes)
-        final netPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.netPrice)
-        final overheadPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.overheads)
+        final totalPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.getTotalCost())
+        final taxesWithSymbol = Currency.getFormatterWithSymbol().format(offer.getTotalVat())
+        final netPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.getNetCost())
+        final overheadPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.getOverheadTotal())
 
         DecimalFormat decimalFormat = new DecimalFormat("#%")
-        String overheadPercentage = decimalFormat.format(offer.overheadRatio)
+        String overheadPercentage = decimalFormat.format(offer.getOverheadPercentage)
 
         double taxRatio = offerEntity.determineTaxCost()
         String taxPercentage = decimalFormat.format(taxRatio)
@@ -109,9 +103,9 @@ class QuotationOverview {
     private void setQuotationDetails() {
         DateFormat dateFormat = DateFormat.getDateInstance(DateFormat.LONG, Locale.US)
 
-        htmlContent.getElementById("offer-identifier").text(offer.identifier.toString())
-        htmlContent.getElementById("offer-expiry-date").text(offer.expirationDate.toLocalDate().toString())
-        htmlContent.getElementById("offer-date").text(dateFormat.format(offer.modificationDate))
+        htmlContent.getElementById("offer-identifier").text(offer.getOfferIdentifier().toString())
+        htmlContent.getElementById("offer-expiry-date").text(offer.getExpirationDate())
+        htmlContent.getElementById("offer-date").text(dateFormat.format(offer.getCreationDate()))
     }
 
     private void setTaxationStatement() {
