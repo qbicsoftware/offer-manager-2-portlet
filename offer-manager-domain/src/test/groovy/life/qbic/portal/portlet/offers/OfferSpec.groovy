@@ -201,7 +201,7 @@ class OfferSpec extends Specification {
 
         List<ProductItem> items = [
                 new ProductItem(1, item1),
-                new ProductItem(1, item2)
+                new ProductItem(400, item2)
         ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
@@ -209,7 +209,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double expectedOverhead = (externalUnitPrice * items.size()) * overheadRatio
+        double expectedOverhead = (offer.getTotalNetPrice() - offer.getTotalDiscountAmount()) * overheadRatio
 
         then:
         overhead == expectedOverhead
@@ -230,7 +230,7 @@ class OfferSpec extends Specification {
 
         List<ProductItem> items = [
                 new ProductItem(1, item1),
-                new ProductItem(1, item2)
+                new ProductItem(400, item2)
         ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
@@ -238,7 +238,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double expectedOverhead = (externalUnitPrice * items.size()) * overheadRatio
+        double expectedOverhead = (offer.getTotalNetPrice() - offer.getTotalDiscountAmount()) * overheadRatio
 
         then:
         overhead == expectedOverhead
@@ -259,7 +259,7 @@ class OfferSpec extends Specification {
 
         List<ProductItem> items = [
                 new ProductItem(1, item1),
-                new ProductItem(1, item2)
+                new ProductItem(400, item2)
         ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
@@ -267,7 +267,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double expectedOverhead = (internalUnitPrice * items.size()) * overheadRatio
+        double expectedOverhead = (offer.getTotalNetPrice() - offer.getTotalDiscountAmount()) * overheadRatio
 
         then:
         overhead == expectedOverhead
