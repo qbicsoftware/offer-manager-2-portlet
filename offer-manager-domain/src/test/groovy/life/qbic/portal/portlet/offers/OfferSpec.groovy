@@ -544,7 +544,7 @@ class OfferSpec extends Specification {
 
         then: "the correct prices are taken into account"
         assert offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL || offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL_ACADEMIC
-        overheadSum == items.collect {return it.quantity * it.product.externalUnitPrice}.sum() * overheadRatio
+        overheadSum == offer.getItems().collect {it.totalPrice - it.quantityDiscount}.sum()  * overheadRatio
 
         where: "the affiliation is"
         affiliation | overheadRatio
