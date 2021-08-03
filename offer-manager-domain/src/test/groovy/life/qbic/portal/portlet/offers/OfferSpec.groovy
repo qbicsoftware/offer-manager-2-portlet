@@ -94,7 +94,7 @@ class OfferSpec extends Specification {
 
     def "A customer with an internal affiliation shall pay no overheads"() {
         given: "A list of product items"
-        ProductItem primaryAnalysisItem = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+        ProductItem primaryAnalysisItem = new ProductItem(400, new PrimaryAnalysis("Basic RNAsq", "Just an" +
                 " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))
         List<ProductItem> items = [
                 primaryAnalysisItem,
@@ -113,18 +113,19 @@ class OfferSpec extends Specification {
                 (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
 
         then:
-        double expectedNetPrice = (double) 10.0 + 2 * 1.0
+        double expectedNetPrice = (double) 10.0 + 400 * 1.0
         double expectedTotalPrice = expectedNetPrice
         netPrice == expectedNetPrice
         totalCosts == expectedTotalPrice - totalDiscount
         totalDiscount == offer.getTotalDiscountAmount()
+        offer.getOverheadSum() == 0
 
 
     }
 
     def "A customer with an external academic affiliation shall pay 20% overheads and 19% VAT"() {
         given:
-        ProductItem primaryAnalysisItem = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+        ProductItem primaryAnalysisItem = new ProductItem(400, new PrimaryAnalysis("Basic RNAsq", "Just an" +
                 " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))
         List<ProductItem> items = [
                 primaryAnalysisItem,
@@ -141,13 +142,13 @@ class OfferSpec extends Specification {
         double totalCosts = offer.getTotalCosts()
         double netSum = offer.getTotalNetPrice()
 
+
         then:
-        double expectedNetSum = (10.0 + (2 * 1.0))
-        double expectedOverhead = (10.0 + (2 * 1.0)) * 0.2
-        double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
         double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
                 (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
-
+        double expectedNetSum = (10.0 + (400 * 1.0))
+        double expectedOverhead = (10.0 + (400 * 1.0) - totalDiscount) * 0.2
+        double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
         offer.items.size() == 2
         netSum == expectedNetSum
         overhead == expectedOverhead
@@ -159,7 +160,7 @@ class OfferSpec extends Specification {
 
     def "A customer with an external (non-academic) affiliation shall pay 40% overheads and 19% VAT"() {
         given:
-        ProductItem primaryAnalysisItem = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+        ProductItem primaryAnalysisItem = new ProductItem(400, new PrimaryAnalysis("Basic RNAsq", "Just an" +
                 " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))
         List<ProductItem> items = [
                 primaryAnalysisItem,
@@ -179,8 +180,8 @@ class OfferSpec extends Specification {
                 (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
 
         then:
-        double expectedNetSum = (10.0 + (2 * 1.0))
-        double expectedOverhead = (10.0 + (2 * 1.0)) * 0.4
+        double expectedNetSum = (10.0 + (400 * 1.0))
+        double expectedOverhead = (10.0 + (400 * 1.0) - totalDiscount) * 0.4
         double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
         offer.items.size() == 2
         netSum == expectedNetSum
@@ -201,7 +202,7 @@ class OfferSpec extends Specification {
 
         List<ProductItem> items = [
                 new ProductItem(1, item1),
-                new ProductItem(1, item2)
+                new ProductItem(400, item2)
         ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
@@ -209,7 +210,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double expectedOverhead = (externalUnitPrice * items.size()) * overheadRatio
+        double expectedOverhead = (offer.getTotalNetPrice() - offer.getTotalDiscountAmount()) * overheadRatio
 
         then:
         overhead == expectedOverhead
@@ -230,7 +231,7 @@ class OfferSpec extends Specification {
 
         List<ProductItem> items = [
                 new ProductItem(1, item1),
-                new ProductItem(1, item2)
+                new ProductItem(400, item2)
         ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
@@ -238,7 +239,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double expectedOverhead = (externalUnitPrice * items.size()) * overheadRatio
+        double expectedOverhead = (offer.getTotalNetPrice() - offer.getTotalDiscountAmount()) * overheadRatio
 
         then:
         overhead == expectedOverhead
@@ -259,7 +260,7 @@ class OfferSpec extends Specification {
 
         List<ProductItem> items = [
                 new ProductItem(1, item1),
-                new ProductItem(1, item2)
+                new ProductItem(400, item2)
         ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
@@ -267,7 +268,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double expectedOverhead = (internalUnitPrice * items.size()) * overheadRatio
+        double expectedOverhead = (offer.getTotalNetPrice() - offer.getTotalDiscountAmount()) * overheadRatio
 
         then:
         overhead == expectedOverhead
@@ -543,7 +544,7 @@ class OfferSpec extends Specification {
 
         then: "the correct prices are taken into account"
         assert offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL || offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL_ACADEMIC
-        overheadSum == items.collect {return it.quantity * it.product.externalUnitPrice}.sum() * overheadRatio
+        overheadSum == offer.getItems().collect {it.totalPrice - it.quantityDiscount}.sum()  * overheadRatio
 
         where: "the affiliation is"
         affiliation | overheadRatio

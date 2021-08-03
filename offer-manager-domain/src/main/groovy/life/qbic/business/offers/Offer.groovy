@@ -271,7 +271,7 @@ class Offer {
     }
 
     private double calculateItemOverhead(ProductItem item) {
-        return calculateItemNet(item) * overhead
+        return (calculateItemNet(item) - item.quantityDiscount) * overhead
     }
 
 
