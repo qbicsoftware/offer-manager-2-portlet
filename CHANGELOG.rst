@@ -71,6 +71,25 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 **Deprecated**
 
 
+1.0.5 (2021-06-15)
+------------------
+
+**Added**
+
+* Increase space allocated for product description in Offer PDF based on the number of characters (`#675 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/675>`_)
+
+**Fixed**
+
+* Limit width of product description columns (`#673 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/673>`_)
+
+**Dependencies**
+
+* Bump data model lib 2.8.1 -> 2.8.2 and therefore adds 'Batch' as unit for service products
+
+
+**Deprecated**
+
+
 1.0.4 (2021-06-14)
 ------------------
 
@@ -442,6 +461,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 
 1.0.0-SNAPSHOT (2020-11-09)
+
 
 * Create project with QUBE
 
