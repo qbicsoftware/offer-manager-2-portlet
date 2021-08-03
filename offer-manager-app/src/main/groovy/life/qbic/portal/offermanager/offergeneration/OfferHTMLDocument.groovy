@@ -1,7 +1,7 @@
 package life.qbic.portal.offermanager.offergeneration
 
+import life.qbic.business.offers.OfferContent
 import org.jsoup.nodes.Document
-import life.qbic.datamodel.dtos.business.*
 
 /**
  * <h1>Describes the content of an offer HTML</h1>
@@ -20,9 +20,9 @@ class OfferHTMLDocument {
     QuotationOverview quotationOverview
     QuotationDetails quotationDetails
 
-    OfferHTMLDocument(Document templateHTML, Offer offer){
-        quotationOverview = new QuotationOverview(templateHTML, offer)
-        quotationDetails = new QuotationDetails(templateHTML, offer)
+    OfferHTMLDocument(Document templateHTML, OfferContent offerContent){
+        quotationOverview = new QuotationOverview(templateHTML, offerContent)
+        quotationDetails = new QuotationDetails(templateHTML, offerContent)
 
     }
 

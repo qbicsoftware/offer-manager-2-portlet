@@ -72,10 +72,10 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         overheadRatio = offer.getOverheadRatio()
 
         //collect the content for the offerpdf
-        Instant creationDate = offer.modificationDate.toInstant()
-        Instant expirationDate = offer.expirationDate.toInstant()
+        Date creationDate = offer.modificationDate
+        Date expirationDate = offer.expirationDate
         groupProductItems(offer.items)
-
+        String id = offer.identifier.toString()
         def offerContentBuilder = new OfferContent.Builder(offer.customer,offer.selectedCustomerAffiliation,offer.projectManager,creationDate,expirationDate,offer.projectTitle
         ,offer.projectObjective, offer.experimentalDesign.orElse(""),offer.identifier.toString())
 
@@ -107,6 +107,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         offerContentBuilder.totalVat(offer.taxCosts)
         .vatRatio(offer.determineTaxCost())
         .totalCost(offer.totalCosts)
+        .totalDiscountAmount(offer.totalDiscountAmount)
 
         OfferContent offerContent = offerContentBuilder.build()
 
@@ -149,7 +150,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? product.internalUnitPrice : product.externalUnitPrice
 
         OfferItem offerItem = new OfferItem.Builder(productItem.quantity, product.description, product.productName, unitPrice, productItem.quantityDiscount,
-                product.serviceProvider.name(), product.unit.name(), productItem.totalPrice).build()
+                product.serviceProvider.name(), product.unit.value, productItem.totalPrice).build()
 
         return offerItem
     }

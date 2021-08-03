@@ -6,8 +6,6 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 
-import java.time.Instant
-
 /**
  * <h1>A DTO containing the fields required in the offer pdf</h1>
  *
@@ -55,11 +53,11 @@ class OfferContent {
     /**
      * Date on which the offer was lastly modified
      */
-    final Instant creationDate
+    final Date creationDate
     /**
-     * The Instant on which the offer expires
+     * The date on which the offer expires
      */
-    final String expirationDate
+    final Date expirationDate
     /**
      * The title of the project
      */
@@ -143,7 +141,10 @@ class OfferContent {
      * The ratio/percentage of vat applied in the offer
      */
     final double vatRatio
-
+    /**
+     * The total discount amount that has been applied in the offer
+     */
+    final Double totalDiscountAmount
 
     static class Builder {
         /*Person Information*/
@@ -166,8 +167,8 @@ class OfferContent {
         String projectManagerCountry
 
         /*Project Information*/
-        Instant creationDate
-        Instant expirationDate
+        Date creationDate
+        Date expirationDate
         String projectTitle
         String projectObjective
         String experimentalDesign
@@ -193,8 +194,9 @@ class OfferContent {
         Double netCost
         Double totalVat
         Double vatRatio
+        Double totalDiscountAmount
 
-        Builder(Customer customer, Affiliation customerAffiliation, ProjectManager projectManager, Instant creationDate, Instant expirationDate, String projectTitle,
+        Builder(Customer customer, Affiliation customerAffiliation, ProjectManager projectManager, Date creationDate, Date expirationDate, String projectTitle,
         String projectObjective, String experimentalDesign, String offerIdentifier){
             /*Customer*/
             customerFirstName = Objects.requireNonNull(customer.firstName,"Customer must not be null")
@@ -290,6 +292,10 @@ class OfferContent {
             this.vatRatio = vat
             return this
         }
+        Builder totalDiscountAmount(double totalDiscount){
+            this.totalDiscountAmount = totalDiscount
+            return this
+        }
 
         OfferContent build(){
             //require all fields to be set before the object can be created
@@ -308,6 +314,7 @@ class OfferContent {
             if(netCost == null) throw new NullPointerException("Missing net costs")
             if(totalVat == null) throw new NullPointerException("Missing total vat costs")
             if(vatRatio == null) throw new NullPointerException("Missing vat ratio")
+            if(totalDiscountAmount == null) throw new NullPointerException("Missing total discount amount")
 
             return new OfferContent(this)
         }
@@ -364,6 +371,7 @@ class OfferContent {
         netCost = builder.netCost
         totalVat = builder.totalVat
         vatRatio = builder.vatRatio
+        totalDiscountAmount = builder.totalDiscountAmount
     }
 
     List<OfferItem> getDataGenerationItems() {

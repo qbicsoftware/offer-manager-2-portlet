@@ -41,4 +41,9 @@ class RandomPart {
         }
         return randomString.toString()
     }
+
+    @Override
+    String toString() {
+        return this.value
+    }
 }

@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.components.offer.overview
 
 import groovy.beans.Bindable
+import life.qbic.business.offers.OfferContent
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.AppViewModel
@@ -34,6 +35,8 @@ class OfferOverviewModel {
 
     Optional<Offer> offer
 
+    Optional<OfferContent> offerContent
+
     private final ResourcesService<OfferOverview> service
 
     private final AppViewModel viewModel
@@ -50,6 +53,7 @@ class OfferOverviewModel {
         this.service = service
         this.offerOverviewList = new ObservableList(new ArrayList(service.iterator().toList()))
         this.selectedOffer = Optional.empty()
+        this.offerContent = Optional.empty()
         this.viewModel = viewModel
         this.downloadButtonActive = false
         this.displaySpinner = false
@@ -80,7 +84,7 @@ class OfferOverviewModel {
      * @throws RuntimeException if the offer cannot be converted to PDF
      */
     InputStream getOfferAsPdf() throws RuntimeException {
-        offer.map({
+        offerContent.map({
             OfferToPDFConverter converter = new OfferToPDFConverter(it)
             return converter.getOfferAsPdf()
         }).orElseThrow({new RuntimeException("The offer content seems to be empty, nothing to " +

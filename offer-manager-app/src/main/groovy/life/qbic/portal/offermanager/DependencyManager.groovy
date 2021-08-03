@@ -1,6 +1,8 @@
 package life.qbic.portal.offermanager
 
 import groovy.util.logging.Log4j2
+import life.qbic.business.offers.OfferContent
+import life.qbic.business.offers.content.CreateOfferContent
 import life.qbic.business.offers.create.CreateOffer
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.fetch.FetchOffer
@@ -460,7 +462,8 @@ class DependencyManager {
         OfferOverviewModel offerOverviewViewModel = new OfferOverviewModel(offerOverviewResourcesService, sharedViewModel, offerSelectedEvent)
         OfferOverviewPresenter offerOverviewPresenter = new OfferOverviewPresenter(sharedViewModel, offerOverviewViewModel)
         FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, offerOverviewPresenter)
-        OfferOverviewController offerOverviewController = new OfferOverviewController(fetchOffer)
+        CreateOfferContent createOfferContent = new CreateOfferContent(offerOverviewPresenter, fetchOfferDataSource)
+        OfferOverviewController offerOverviewController = new OfferOverviewController(fetchOffer, createOfferContent)
 
         CreateProjectViewModel createProjectViewModel = new CreateProjectViewModel(projectSpaceResourcesService, projectResourcesService)
         CreateProjectPresenter createProjectPresenter = new CreateProjectPresenter(createProjectViewModel, sharedViewModel, projectCreatedEvent)
