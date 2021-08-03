@@ -1,12 +1,9 @@
 package life.qbic.portal.offermanager.offergeneration
 
-import life.qbic.business.offers.Converter
+
 import life.qbic.business.offers.Currency
 import life.qbic.business.offers.OfferContent
 import life.qbic.business.offers.OfferItem
-import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.services.*
 import org.jsoup.nodes.Document
 import org.jsoup.nodes.Element
 
@@ -114,7 +111,7 @@ class QuotationDetails {
         items.each { OfferItem item ->
             generateItemContent(item, elementId)
             if (item.quantityDiscount != 0) {
-                String discountDescription = createDiscountDescription(item)
+                String discountDescription = createDiscountDescription()
                 generateDiscountItemContent(discountDescription, item.quantityDiscount, elementId)
             }
         }
@@ -126,8 +123,8 @@ class QuotationDetails {
         addSubTotalPrices(productGroup, subTotal)
     }
 
-    private static String createDiscountDescription(OfferItem item) {
-        return "Automatically generated discount message."
+    private static String createDiscountDescription() {
+        return "Quantity discount."
     }
 
     /**
