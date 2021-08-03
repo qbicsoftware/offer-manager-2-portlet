@@ -113,11 +113,12 @@ class OfferSpec extends Specification {
                 (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
 
         then:
-        double expectedNetPrice = (double) 10.0 + 400 * 1.0 - totalDiscount
+        double expectedNetPrice = (double) 10.0 + 400 * 1.0
         double expectedTotalPrice = expectedNetPrice
         netPrice == expectedNetPrice
         totalCosts == expectedTotalPrice - totalDiscount
         totalDiscount == offer.getTotalDiscountAmount()
+        offer.getOverheadSum() == 0
 
 
     }
