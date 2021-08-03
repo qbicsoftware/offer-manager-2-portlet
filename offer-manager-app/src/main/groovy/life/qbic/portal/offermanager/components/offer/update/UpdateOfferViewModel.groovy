@@ -53,5 +53,11 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
         super.productItems.addAll(offer.items.collect {
             new ProductItemViewModel(it.quantity, it.product)})
         super.savedOffer = Optional.of(offer)
+        validateProjectInformation()
+    }
+
+    private void validateProjectInformation() {
+        super.projectTitleValid = !super.projectTitle.trim().empty
+        super.projectObjectiveValid = !super.projectObjective.trim().empty
     }
 }
