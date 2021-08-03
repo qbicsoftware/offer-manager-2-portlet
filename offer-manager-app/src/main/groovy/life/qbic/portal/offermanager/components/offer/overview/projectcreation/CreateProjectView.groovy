@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.offer.overview.projectcreation
 
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.ContentMode
+import com.vaadin.ui.Alignment
 import com.vaadin.ui.Button
 import com.vaadin.ui.ComboBox
 import com.vaadin.ui.GridLayout
@@ -65,6 +66,8 @@ class CreateProjectView extends VerticalLayout{
     private TextField resultingProjectCode
 
     private HorizontalLayout projectAvailability
+
+    private HorizontalLayout spaceAvailability
 
     private Button createProjectButton
 
@@ -162,10 +165,17 @@ class CreateProjectView extends VerticalLayout{
 
         // Case A: A new space needs to be created
         customSpaceLayout = new HorizontalLayout()
+        customSpaceLayout.setMargin(false)
         desiredSpaceName = new TextField("New Space Name")
         desiredSpaceName.setPlaceholder("Your space name")
         desiredSpaceName.setWidth(300, Unit.PIXELS)
-        customSpaceLayout.addComponents(desiredSpaceName)
+        // We also define some dynamic validation place holder
+        def container = new HorizontalLayout()
+        container.addComponents(desiredSpaceName)
+        customSpaceLayout.addComponent(container)
+        spaceAvailability = new HorizontalLayout()
+        customSpaceLayout.addComponent(spaceAvailability)
+        customSpaceLayout.setComponentAlignment(spaceAvailability, Alignment.BOTTOM_CENTER)
         this.inputFields.addComponent(customSpaceLayout)
 
         // Case B: An existing space is selected
@@ -254,7 +264,7 @@ class CreateProjectView extends VerticalLayout{
         this.model.addPropertyChangeListener("projectCodeValidationResult", {
             this.projectAvailability.removeAllComponents()
             this.resultingProjectCode.setValue(model.resultingProjectCode)
-            if (model.codeIsValid) {
+            if (model.projectCodeIsValid) {
                 // If the project code is valid, we display some nice success label
                 def label = new Label(model.projectCodeValidationResult)
                 label.setStyleName(ValoTheme.LABEL_SUCCESS)
@@ -264,6 +274,22 @@ class CreateProjectView extends VerticalLayout{
                 def label = new Label(model.projectCodeValidationResult)
                 label.setStyleName(ValoTheme.LABEL_FAILURE)
                 this.projectAvailability.addComponent(label)
+            }
+        })
+        // Whenever new project code validation messages are available, we update the view
+        this.model.addPropertyChangeListener("spaceNameValidationResult", {
+            this.spaceAvailability.removeAllComponents()
+            this.resultingSpaceName.setValue(model.resultingSpaceName)
+            if (model.spaceNameIsValid) {
+                // If the project code is valid, we display some nice success label
+                def label = new Label(model.spaceNameValidationResult)
+                label.setStyleName(ValoTheme.LABEL_SUCCESS)
+                this.spaceAvailability.addComponent(label)
+            } else {
+                // otherwise we inform the user with a formatted failure label
+                def label = new Label(model.spaceNameValidationResult)
+                label.setStyleName(ValoTheme.LABEL_FAILURE)
+                this.spaceAvailability.addComponent(label)
             }
         })
         // Whenever all validation is fine, we enable the button to create a project
