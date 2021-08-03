@@ -94,7 +94,7 @@ class OfferSpec extends Specification {
 
     def "A customer with an internal affiliation shall pay no overheads"() {
         given: "A list of product items"
-        ProductItem primaryAnalysisItem = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+        ProductItem primaryAnalysisItem = new ProductItem(400, new PrimaryAnalysis("Basic RNAsq", "Just an" +
                 " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))
         List<ProductItem> items = [
                 primaryAnalysisItem,
@@ -113,7 +113,7 @@ class OfferSpec extends Specification {
                 (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
 
         then:
-        double expectedNetPrice = (double) 10.0 + 2 * 1.0
+        double expectedNetPrice = (double) 10.0 + 400 * 1.0 - totalDiscount
         double expectedTotalPrice = expectedNetPrice
         netPrice == expectedNetPrice
         totalCosts == expectedTotalPrice - totalDiscount
@@ -124,7 +124,7 @@ class OfferSpec extends Specification {
 
     def "A customer with an external academic affiliation shall pay 20% overheads and 19% VAT"() {
         given:
-        ProductItem primaryAnalysisItem = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+        ProductItem primaryAnalysisItem = new ProductItem(400, new PrimaryAnalysis("Basic RNAsq", "Just an" +
                 " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))
         List<ProductItem> items = [
                 primaryAnalysisItem,
@@ -141,13 +141,13 @@ class OfferSpec extends Specification {
         double totalCosts = offer.getTotalCosts()
         double netSum = offer.getTotalNetPrice()
 
+
         then:
-        double expectedNetSum = (10.0 + (2 * 1.0))
-        double expectedOverhead = (10.0 + (2 * 1.0)) * 0.2
-        double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
         double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
                 (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
-
+        double expectedNetSum = (10.0 + (400 * 1.0))
+        double expectedOverhead = (10.0 + (400 * 1.0) - totalDiscount) * 0.2
+        double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
         offer.items.size() == 2
         netSum == expectedNetSum
         overhead == expectedOverhead
@@ -159,7 +159,7 @@ class OfferSpec extends Specification {
 
     def "A customer with an external (non-academic) affiliation shall pay 40% overheads and 19% VAT"() {
         given:
-        ProductItem primaryAnalysisItem = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+        ProductItem primaryAnalysisItem = new ProductItem(400, new PrimaryAnalysis("Basic RNAsq", "Just an" +
                 " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))
         List<ProductItem> items = [
                 primaryAnalysisItem,
@@ -179,8 +179,8 @@ class OfferSpec extends Specification {
                 (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
 
         then:
-        double expectedNetSum = (10.0 + (2 * 1.0))
-        double expectedOverhead = (10.0 + (2 * 1.0)) * 0.4
+        double expectedNetSum = (10.0 + (400 * 1.0))
+        double expectedOverhead = (10.0 + (400 * 1.0) - totalDiscount) * 0.4
         double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
         offer.items.size() == 2
         netSum == expectedNetSum
