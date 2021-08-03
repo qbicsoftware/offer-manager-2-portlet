@@ -61,8 +61,12 @@ class CreateProjectViewModel {
     List<ProjectCode> existingProjects
 
     @Bindable String projectCodeValidationResult
+    
+    @Bindable String spaceNameValidationResult
 
-    @Bindable Boolean codeIsValid
+    @Bindable Boolean spaceNameIsValid
+    
+    @Bindable Boolean projectCodeIsValid
 
     private final ResourcesService<ProjectSpace> projectSpaceResourceService
 
@@ -85,8 +89,7 @@ class CreateProjectViewModel {
 
     private void setupListeners() {
         this.addPropertyChangeListener("desiredSpaceName", {
-            ProjectSpace space = new ProjectSpace(desiredSpaceName)
-            this.setResultingSpaceName(space.name)
+            validateSpaceName()
         })
         this.addPropertyChangeListener("desiredProjectCode", {
             validateProjectCode()
@@ -106,7 +109,9 @@ class CreateProjectViewModel {
         desiredProjectCode = ""
         resultingProjectCode = ""
         projectCodeValidationResult = ""
-        codeIsValid = false
+        projectCodeIsValid = false
+        spaceNameValidationResult = ""
+        spaceNameIsValid = false
         createProjectEnabled = false
         projectCreated = false
         selectedOffer = Optional.empty()
@@ -115,27 +120,39 @@ class CreateProjectViewModel {
     private void resetModel() {
         initFields()
     }
-
+    
+    private void validateSpaceName() {
+        try {
+            ProjectSpace space = new ProjectSpace(desiredSpaceName)
+            this.setResultingSpaceName(space.name)
+            this.setSpaceNameIsValid(true)
+            this.setSpaceNameValidationResult("Space name is valid.")
+        } catch (IllegalArgumentException e) {
+            this.setSpaceNameIsValid(false)
+            this.setSpaceNameValidationResult("${desiredSpaceName} is not a valid QBiC  space name.")
+        }
+    }
+  
     private void validateProjectCode() {
         try {
             ProjectCode code = new ProjectCode(desiredProjectCode.toUpperCase())
             this.setResultingProjectCode(code.code)
             if (code in existingProjects) {
-                this.setCodeIsValid(false)
+                this.setProjectCodeIsValid(false)
                 this.setProjectCodeValidationResult("Project with code $resultingProjectCode " +
                         "already exists.")
             } else {
-                this.setCodeIsValid(true)
+                this.setProjectCodeIsValid(true)
                 this.setProjectCodeValidationResult("Project code is valid.")
             }
         } catch (IllegalArgumentException e) {
-            this.setCodeIsValid(false)
+            this.setProjectCodeIsValid(false)
             this.setProjectCodeValidationResult("${desiredProjectCode} is not a valid QBiC " +
                     "project code.")
         }
     }
 
     private void evaluateProjectCreation() {
-        this.setCreateProjectEnabled(codeIsValid && resultingSpaceName)
+        this.setCreateProjectEnabled(projectCodeIsValid && spaceNameIsValid)
     }
 }

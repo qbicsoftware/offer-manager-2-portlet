@@ -37,6 +37,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Creating a product switches name and description (`#731 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/731>`_)
 
+* Space names are now validated (`#736 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/736>`_)
+
 **Dependencies**
 
 * ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
