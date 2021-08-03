@@ -207,7 +207,7 @@ class QuotationDetails {
         calculatedSpaces.add(calculateItemSpace(item.productDescription, ProductPropertySpacing.PRODUCT_DESCRIPTION))
         calculatedSpaces.add(calculateItemSpace(item.quantity as String, ProductPropertySpacing.PRODUCT_AMOUNT))
 
-        calculatedSpaces.add(calculateItemSpace(item.unit, ProductPropertySpacing.PRODUCT_UNIT))
+        calculatedSpaces.add(calculateItemSpace(item.unit as String, ProductPropertySpacing.PRODUCT_UNIT))
         calculatedSpaces.add(calculateItemSpace(item.unitPrice as String, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
         calculatedSpaces.add(calculateItemSpace(item.getItemTotal() as String, ProductPropertySpacing.PRODUCT_TOTAL))
         calculatedSpaces.add(calculateItemSpace("Service Provider: "+item.getServiceProvider(), ProductPropertySpacing.PRODUCT_FACILITY))
