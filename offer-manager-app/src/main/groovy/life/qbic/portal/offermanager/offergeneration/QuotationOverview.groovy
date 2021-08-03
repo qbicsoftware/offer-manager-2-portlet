@@ -83,6 +83,7 @@ class QuotationOverview {
         final taxesWithSymbol = Currency.getFormatterWithSymbol().format(offer.getTotalVat())
         final netPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.getNetCost())
         final overheadPriceWithSymbol = Currency.getFormatterWithSymbol().format(offer.getOverheadTotal())
+        final totalDiscountWithSymbol = Currency.getFormatterWithSymbol().format(-1 * offer.getTotalDiscountAmount())
 
         DecimalFormat decimalFormat = new DecimalFormat("#%")
         String overheadPercentage = decimalFormat.format(offer.getOverheadRatio())
@@ -95,6 +96,7 @@ class QuotationOverview {
         // First page summary
         htmlContent.getElementById("ratio-costs-overhead").text("Overheads (${overheadPercentage})")
         htmlContent.getElementById("total-costs-net").text(netPriceWithSymbol)
+        htmlContent.getElementById("total-discount").text(totalDiscountWithSymbol)
         htmlContent.getElementById("total-costs-overhead").text(overheadPriceWithSymbol)
         htmlContent.getElementById("total-taxes").text(taxesWithSymbol)
         htmlContent.getElementById("total-costs-sum").text(totalPriceWithSymbol)
