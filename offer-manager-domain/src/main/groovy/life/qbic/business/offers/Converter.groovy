@@ -36,6 +36,7 @@ class Converter {
                 .taxes(offer.getTaxCosts())
                 .overheads(offer.getOverheadSum())
                 .totalPrice(offer.getTotalCosts())
+                .totalDiscountPrice(offer.totalDiscountAmount)
                 .modificationDate(offer.modificationDate)
                 .expirationDate(offer.expirationDate)
                 .checksum(offer.checksum())
