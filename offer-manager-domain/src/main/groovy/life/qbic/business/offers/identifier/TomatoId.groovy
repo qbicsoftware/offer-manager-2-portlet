@@ -46,7 +46,7 @@ class TomatoId implements Comparable<TomatoId>{
 
     @Override
     String toString() {
-        return "${randomPart}-${projectPart}-${version}"
+        return "${randomPart.toString()}-${projectPart.toString()}-${version.toString()}"
     }
 
     @Override

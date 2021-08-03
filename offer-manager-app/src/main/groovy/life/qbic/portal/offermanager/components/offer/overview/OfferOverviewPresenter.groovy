@@ -1,5 +1,7 @@
 package life.qbic.portal.offermanager.components.offer.overview
 
+import life.qbic.business.offers.OfferContent
+import life.qbic.business.offers.content.CreateOfferContentOutput
 import life.qbic.business.offers.fetch.FetchOfferOutput
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.components.AppViewModel
@@ -12,7 +14,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
  *
  * @since: 1.0.0
  */
-class OfferOverviewPresenter implements FetchOfferOutput {
+class OfferOverviewPresenter implements FetchOfferOutput, CreateOfferContentOutput {
 
     private final AppViewModel viewModel
     private final OfferOverviewModel offerOverviewModel
@@ -25,6 +27,11 @@ class OfferOverviewPresenter implements FetchOfferOutput {
     @Override
     void fetchedOffer(Offer fetchedOffer) {
         this.offerOverviewModel.offer = Optional.ofNullable(fetchedOffer)
+    }
+
+    @Override
+    void createdOfferContent(OfferContent offerContent) {
+        this.offerOverviewModel.offerContent = Optional.ofNullable(offerContent)
     }
 
     @Override

@@ -34,11 +34,17 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
         this.createOfferViewModel.setOfferCreatedSuccessfully(true)
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     void calculatedPrice(double price) {
         this.createOfferViewModel.offerPrice = price
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     void calculatedPrice(double netPrice, double taxes, double overheads, double totalPrice) {
         this.createOfferViewModel.netPrice = netPrice
@@ -47,11 +53,26 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
         this.createOfferViewModel.totalPrice = totalPrice
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    void calculatedPrice(double netPrice, double taxes, double overheads, double totalPrice, double totalDiscountAmount) {
+        this.calculatedPrice(netPrice, taxes, overheads, totalPrice)
+        this.createOfferViewModel.totalDiscountAmount = totalDiscountAmount
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
     void failNotification(String notification) {
        this.viewModel.failureNotifications.add(notification)
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     void fetchedOffer(Offer fetchedOffer) {
         this.createOfferViewModel.savedOffer = Optional.of(fetchedOffer)

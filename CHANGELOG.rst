@@ -4,6 +4,73 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.1.0 (2021-08-02)
+------------------
+
+**Added**
+
+* Function to apply the quantity discount price (`#707 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/707>`_)
+
+* Adds a new DTO OfferItem which represents an item on the offer (`#728 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/728>`_)
+
+* Display total quantity discount included in the offer in the offer overview (`#686 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/686>`_)
+
+* Adds a new DTO OfferContent which represents the content of an offer (`#724 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/724>`_)
+
+* Uses new DTOs instead of performing unnecessary computations in PDF creation (`#725 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/725>`_)
+
+* Adds the CreateOfferContent use case (`#735 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/735>`_)
+
+**Fixed**
+
+* Invert quantity discount in order to be able to display size of discount (`#710 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/710>`_
+
+* Include Offer ID Prefix in Offer PDF filename (`#685 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/685>`_)
+
+* Differentiate between internal and external product unit prices (`#713 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/713>`_)
+
+* Include internal and external prices as well as facilities in the products (`#712 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/712>`_)
+
+* The internal and external product unit prices are shown in the user interface (`#723 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/723>`_)
+
+* Reset the offer update view, when a new offer is selected in the offer overview (`#716 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/716>`_)
+
+* Offers without an experimental design can now be updated (`#726 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/726>`_)
+
+* Creating a product switches name and description (`#731 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/731>`_)
+
+* Space names are now validated (`#736 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/736>`_)
+
+**Dependencies**
+
+* ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
+
+* ``org.mariadb.jdbc:mariadb-java-client:2.7.2`` -> ``2.7.3``
+
+* ``life.qbic:data-model-lib:2.8.2`` -> ``2.11.0-SNAPSHOT``
+
+**Deprecated**
+
+1.0.5 (2021-06-15)
+------------------
+
+**Added**
+
+* Increase Space allocated for product description in Offer PDF (`#675 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/675>`_)
+
+* Allocate space for each productItem dependent on number of characters in each property (`#675 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/675>`_)
+
+**Fixed**
+
+* Limit width of product description columns (`#673 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/673>`_)
+
+**Dependencies**
+
+* Bump data model lib 2.8.1 -> 2.8.2 and therefore adds 'Batch' as unit for service products
+
+**Deprecated**
+
+
 1.0.5 (2021-06-15)
 ------------------
 

@@ -7,19 +7,9 @@ import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
 import life.qbic.business.offers.identifier.Version
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.OfferId
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
-import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Sequencing
+import life.qbic.datamodel.dtos.business.*
+import life.qbic.datamodel.dtos.business.facilities.Facility
+import life.qbic.datamodel.dtos.business.services.*
 import spock.lang.Shared
 import spock.lang.Specification
 
@@ -70,7 +60,7 @@ class CreateOfferSpec extends Specification {
                 new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
                         " example", 1.0, ProductUnit.PER_SAMPLE, "1")),
                 new ProductItem(1, new ProjectManagement("Basic Management",
-                        "Just an example", 10.0, ProductUnit.PER_DATASET, "1"))
+                        "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.QBIC))
         ]
 
         Offer offer = new Offer.Builder(customer, projectManager, projectTitle, projectDescription, selectedAffiliation)
@@ -90,14 +80,14 @@ class CreateOfferSpec extends Specification {
         CreateOffer createOffer = new CreateOffer(Stub(CreateOfferDataSource),output)
 
         and:
-        List<ProductItem> items = [new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE, "1")),
-                                   new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, ProductUnit.PER_SAMPLE, "1"))]
+        List<ProductItem> items = [new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, 1.4, ProductUnit.PER_SAMPLE, 1, Facility.QBIC)),
+                                   new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",1.4, 1.4, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))]
         when:
         createOffer.calculatePrice(items, new Affiliation.Builder("Test", "", "", "")
                 .category(AffiliationCategory.INTERNAL).build())
 
         then:
-        1 * output.calculatedPrice(2.8, 0, 0, 2.8)
+        1 * output.calculatedPrice(2.8, 0, 0, 2.8, _)
     }
 
     def "Taxes for Affilations outside of Germany are set to 0"(){
@@ -106,29 +96,29 @@ class CreateOfferSpec extends Specification {
         CreateOffer createOffer = new CreateOffer(Stub(CreateOfferDataSource),output)
 
         and:
-        List<ProductItem> items = [new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",4, ProductUnit.PER_SAMPLE, "1")),
-                                   new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",4, ProductUnit.PER_SAMPLE, "1"))]
+        List<ProductItem> items = [new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",4, 4, ProductUnit.PER_SAMPLE, 1, Facility.QBIC)),
+                                   new ProductItem(1,new Sequencing("This is a sequencing package", "a short description",4, 4, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))]
         when:
         createOffer.calculatePrice(items, new Affiliation.Builder("Test", "", "", "").country("France")
                 .category(AffiliationCategory.EXTERNAL).build())
 
         then:
-        1 * output.calculatedPrice(8.0, 0, 3.2, 11.2)
+        1 * output.calculatedPrice(8.0, 0, 3.2, 11.2, _)
     }
 
 
     def "Creating an Offer DTO from the Offer Entity works correctly"() {
         given:
         ProductItem primaryAnalysis = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                " example primary analysis", 1.0, ProductUnit.PER_SAMPLE, "1"))
+                " example primary analysis", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
         ProductItem secondaryAnalysis = new ProductItem(1, new SecondaryAnalysis("Basic RNAsq", "Just an" +
-                " example secondary analysis", 2.0, ProductUnit.PER_SAMPLE, "1"))
+                " example secondary analysis", 2.0, 2.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
         ProductItem sequencing = new ProductItem(3, new Sequencing("Basic Sequencing", "Just an" +
-                "example sequencing", 3.0, ProductUnit.PER_SAMPLE, "1"))
+                "example sequencing", 3.0, 3.0, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
         ProductItem projectManagement = new ProductItem(1, new ProjectManagement("Basic Management",
-                "Just an example", 10.0, ProductUnit.PER_DATASET, "1"))
+                "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.QBIC))
         ProductItem dataStorage = new ProductItem(2, new DataStorage("Data Storage",
-                "Just an example", 20.0, ProductUnit.PER_DATASET, "1"))
+                "Just an example", 20.0, 20.0, ProductUnit.PER_DATASET, 1, Facility.QBIC))
         List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
         life.qbic.business.offers.identifier.OfferId offerId = new life.qbic.business.offers.identifier.OfferId (new RandomPart(), new ProjectPart("test"), new Version(0))
         and:

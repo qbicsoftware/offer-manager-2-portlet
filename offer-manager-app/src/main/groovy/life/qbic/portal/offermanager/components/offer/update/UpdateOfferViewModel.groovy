@@ -5,21 +5,10 @@ import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.general.Person
-import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.offermanager.communication.EventEmitter
-import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
-import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
-import life.qbic.portal.offermanager.dataresources.ResourcesService
-import life.qbic.portal.offermanager.dataresources.persons.CustomerResourceService
-import life.qbic.portal.offermanager.dataresources.ResourcesService
-import life.qbic.portal.offermanager.dataresources.persons.ProjectManagerResourceService
-import life.qbic.portal.offermanager.dataresources.products.ProductsResourcesService
-
 import life.qbic.portal.offermanager.components.offer.create.ProductItemViewModel
-
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
  * Model with data for updating an existing offer.
@@ -52,6 +41,7 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
     }
 
     private void loadData(Offer offer) {
+        super.resetViewRequired.emit("reset")
         super.offerId = offer.identifier
         super.projectTitle = offer.projectTitle
         super.projectObjective = offer.projectObjective
@@ -63,5 +53,11 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
         super.productItems.addAll(offer.items.collect {
             new ProductItemViewModel(it.quantity, it.product)})
         super.savedOffer = Optional.of(offer)
+        validateProjectInformation()
+    }
+
+    private void validateProjectInformation() {
+        super.projectTitleValid = !super.projectTitle.trim().empty
+        super.projectObjectiveValid = !super.projectObjective.trim().empty
     }
 }

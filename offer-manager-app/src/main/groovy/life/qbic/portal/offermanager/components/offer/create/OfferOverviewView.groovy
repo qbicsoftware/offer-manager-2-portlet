@@ -2,7 +2,6 @@ package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
-import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
@@ -97,7 +96,8 @@ class OfferOverviewView extends VerticalLayout {
                     .setCaption("Product Name").setId("ProductName")
             grid.addColumn({ productItem -> productItem.product.description })
                     .setCaption("Product Description").setId("ProductDescription")
-            grid.addColumn({ productItem -> productItem.product.unitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol())).setCaption("Product Unit Price")
+            grid.addColumn({ productItem -> productItem.product.internalUnitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol())).setCaption("Internal Unit Price")
+            grid.addColumn({ productItem -> productItem.product.externalUnitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol())).setCaption("External Unit Price")
             grid.addColumn({ productItem -> productItem.product.unit }).setCaption("Product Unit")
 
 
@@ -186,11 +186,12 @@ class OfferOverviewView extends VerticalLayout {
         final Panel panel = new Panel("Cost Overview")
         panel.setSizeUndefined()
         Grid<PriceField> gridLayout = new Grid<>()
-        gridLayout.setHeightByRows(4)
+        gridLayout.setHeightByRows(5)
         gridLayout.setItems([
                 new PriceField("Net Price", createOfferViewModel.netPrice),
                 new PriceField("Overheads", createOfferViewModel.overheads),
                 new PriceField("Taxes", createOfferViewModel.taxes),
+                new PriceField("Total Discount", createOfferViewModel.totalDiscountAmount*-1),
                 new PriceField("Total Price", createOfferViewModel.totalPrice)
         ])
         gridLayout.addColumn(PriceField::getName)

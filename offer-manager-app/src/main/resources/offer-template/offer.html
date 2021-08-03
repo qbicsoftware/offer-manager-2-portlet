@@ -74,6 +74,10 @@
                     <td class="table-row">Net</td>
                     <td id ="total-costs-net" class="right-align table-row">€ 1,000.00</td>
                 </tr>
+                <tr class="table-row">
+                    <td class="table-row">Discount</td>
+                    <td id ="total-discount" class="right-align table-row">-€ 1,000.00</td>
+                </tr>
                 <tr>
                     <td class="table-row" id="ratio-costs-overhead">Overheads (0%)</td>
                     <td id ="total-costs-overhead" class="right-align table-row">€ 190.00</td>
@@ -141,9 +145,9 @@
 
         <div class="items-overview common-text" id="items-container-table">
             <div class="grid-container-table" id="item-table-grid">
-                <div class="product-items" id="product-items-1">
-                    <div class="small-spacer"></div>
-                    <h4>Data Generation (DG)</h4>
+                <div id = "DATA_GENERATION-table">
+                    <div class ="product-items" id="DATA_GENERATION-title"><h4>Data Generation (DG)</h4></div>
+                <div class="product-items" id="DATA_GENERATION-product-items-1">
                     <div class="row table-header" id="grid-table-header-1">
                         <div class="col-1">
                             &#8470;
@@ -364,7 +368,11 @@
                             </div>
                         </div>
                     </div>
-                    <h4>Data Analysis (DA)</h4>
+                </div>
+                </div>
+                    <div id = "DATA_ANALYSIS-table">
+                        <div class ="product-items" id= "DATA_ANALYSIS-title"><h4>Data Analysis (DA)</h4></div>
+                        <div class="product-items" id="DATA_ANALYSIS-product-items-1">
                     <div class="row table-header" id="grid-table-header-2">
                         <div class="col-1">
                             &#8470;
@@ -424,10 +432,11 @@
                         </div>
                     </div>
                 </div>
+                    </div>
                 <div id="template-page-break" class="pagebreak"></div>
-                <div class="product-items" id="product-items-2">
-                    <div class="small-spacer"></div>
-                    <h4>Project Management & Data Storage (PM & DS)</h4>
+                <div id = "PROJECT_AND_DATA_MANAGEMENT-table">
+                    <div class ="product-items" id= "PROJECT_AND_DATA_MANAGEMENT-title"><h4>Project Management & Data Storage (PM & DS)</h4></div>
+                    <div class="product-items" id="PROJECT_AND_DATA_MANAGEMENT-product-items-1">
                     <div class="row table-header" id="grid-table-header-3">
                         <div class="col-1">
                             &#8470;
@@ -514,6 +523,7 @@
                         </div>
                     </div>
                 </div>
+                </div>
                 <div id="grid-table-footer">
                     <div class="col-10 cost-summary-field" id="overhead-percentage-value">Overheads (20%)</div>
                     <div class="row sub-total-costs" id="DATA_GENERATION-sub-overhead">
@@ -558,6 +568,15 @@
                             5,690.00
                         </div>
                     </div>
+                    <div class="row total-costs" id="offer-discount">
+                        <div class="col-6"></div>
+                        <div class="col-4 cost-summary-field">
+                            Discount:
+                        </div>
+                        <div class="col-2 price-value" id="total-discount-value">
+                            -1,690.00
+                        </div>
+                    </div>
                     <div class="row total-costs" id="offer-vat">
                         <div class="col-10 cost-summary-field" id="vat-percentage-value">
                             VAT (19%):
@@ -575,8 +594,8 @@
                         </div>
                     </div>
                 </div>
-            </div>
         </div>
+    </div>
     </div>
     <div class="pagebreak"> </div>
 

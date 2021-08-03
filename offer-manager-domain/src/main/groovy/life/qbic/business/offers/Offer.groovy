@@ -1,17 +1,15 @@
 package life.qbic.business.offers
 
 import groovy.time.TimeCategory
+import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
 import life.qbic.business.offers.identifier.Version
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.business.offers.identifier.OfferId
+import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
@@ -132,6 +130,8 @@ class Offer {
         }
     }
 
+    private static final quantityDiscount = new QuantityDiscount()
+
     static class Builder {
 
         Date creationDate
@@ -202,7 +202,6 @@ class Offer {
         this.customer = builder.customer
         this.identifier = builder.identifier
         this.items = []
-        builder.items.each {this.items.add(it)}
         this.expirationDate = calculateExpirationDate(builder.creationDate)
         this.creationDate = builder.creationDate
         this.projectManager = builder.projectManager
@@ -231,6 +230,7 @@ class Offer {
         } else {
             this.associatedProject = Optional.empty()
         }
+        builder.items.each {this.items.add(finaliseProductItem(it))}
     }
 
     /**
@@ -259,11 +259,19 @@ class Offer {
      * @return The calculated overhead amount of the selected items.
      */
     double getOverheadSum() {
-        double overheadSum = 0
-        items.each {
-                overheadSum += it.quantity * it.product.unitPrice * this.overhead
+        if (items.empty) {
+            return 0
         }
-        return overheadSum
+        return items.sum {calculateItemOverhead(it)} as double
+    }
+
+    private BigDecimal calculateItemNet(ProductItem item) {
+        BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
+        return unitPrice * item.quantity
+    }
+
+    private double calculateItemOverhead(ProductItem item) {
+        return (calculateItemNet(item) - item.quantityDiscount) * overhead
     }
 
 
@@ -278,7 +286,7 @@ class Offer {
         items.each {
             // No overheads are assigned for data storage and project management
             if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
-                costNoOverheadItemsNet += it.quantity * it.product.unitPrice
+                costNoOverheadItemsNet += calculateItemNet(it)
             }
         }
         return costNoOverheadItemsNet
@@ -297,7 +305,7 @@ class Offer {
                 // No overheads are assigned for data storage and project management
             }
             else {
-                costOverheadItemsNet += it.quantity * it.product.unitPrice
+                costOverheadItemsNet += calculateItemNet(it)
             }
         }
         return costOverheadItemsNet
@@ -402,6 +410,18 @@ class Offer {
         return associatedProject
     }
 
+    static double getVAT() {
+        return VAT
+    }
+
+    static String getCountryWithVat() {
+        return countryWithVat
+    }
+
+    static AffiliationCategory getNoVatCategory() {
+        return noVatCategory
+    }
+
     /**
      * Returns a deep copy of all available offer versions.
      *
@@ -434,12 +454,37 @@ class Offer {
         this.availableVersions.addAll(copyIdentifier, this.identifier)
     }
 
-    private double calculateNetPrice() {
-        double netSum = 0.0
-        for (item in items) {
-            netSum += item.quantity * item.product.unitPrice
+    /**
+     * This method returns the total discount amount that was applied the offer.
+     *
+     * It is expected to return the sum of all individual item discount amounts that have been
+     * determined by the number of samples an individual data analysis service has been provided for.
+     *
+     * @return the total discount amount applied in the offer
+     * @since 1.1.0
+     */
+    double getTotalDiscountAmount(){
+        return calculateTotalDiscountAmount()
+    }
+
+    private double calculateTotalDiscountAmount() {
+        return items.sum{ it.quantityDiscount }
+    }
+
+    private BigDecimal discountAmountForProductItem(ProductItem productItem) {
+        BigDecimal discount = 0
+        if (productItem.product instanceof PrimaryAnalysis
+                || productItem.product instanceof SecondaryAnalysis) {
+            discount = quantityDiscount.apply(productItem.quantity as Integer, calculateItemNet(productItem))
         }
-        return netSum
+        return discount
+    }
+
+    private double calculateNetPrice() {
+        if (items.empty) {
+            return 0
+        }
+        return items.sum {calculateItemNet(it)} as double
     }
 
     private double determineOverhead() {
@@ -463,7 +508,39 @@ class Offer {
     private double calculateTotalCosts(){
         final double netPrice = calculateNetPrice()
         final double overhead = getOverheadSum()
-        return netPrice + overhead + getTaxCosts()
+        return netPrice + overhead + getTaxCosts() - getTotalDiscountAmount()
+    }
+
+    private ProductItem finaliseProductItem(ProductItem item) {
+        BigDecimal totalItemCosts = calculateItemNet(item)
+        BigDecimal totalItemQuantityDiscount = discountAmountForProductItem(item)
+        return new ProductItem(item.quantity, item.product, totalItemCosts, totalItemQuantityDiscount)
+    }
+
+
+    /**
+     * Calculates the VAT costs of an offer depending on the customers affiliation country and category
+     * @return the vat costs for an offer
+     */
+    double determineTaxCost() {
+        return isVatCountry() && !isNoVatAffiliation() ? VAT : 0.0
+    }
+
+    /**
+     * Determines if the customers affiliation is within germany
+     * @return true if the country of the customer is within
+     */
+    boolean isVatCountry(){
+        return selectedCustomerAffiliation.getCountry() == countryWithVat
+
+    }
+
+    /**
+     * Determines if the customers affiliation is excluded for VAT
+     * @return true if the affiliation category of the customer is internal
+     */
+    private boolean isNoVatAffiliation(){
+        return selectedCustomerAffiliation.getCategory() == noVatCategory
     }
 
     /**
@@ -523,7 +600,7 @@ class Offer {
         StringBuilder sb = new StringBuilder()
         for(int i=0; i< bytes.length ;i++)
         {
-            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1))
         }
 
         //return complete hash

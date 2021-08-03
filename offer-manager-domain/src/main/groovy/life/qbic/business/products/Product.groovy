@@ -2,6 +2,7 @@ package life.qbic.business.products
 
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
+import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 
 import java.nio.charset.StandardCharsets
@@ -19,28 +20,49 @@ class Product {
     private ProductCategory category
     private String name
     private String description
-    private double unitPrice
+    private double internalUnitPrice
+    private double externalUnitPrice
     private ProductUnit unit
     private ProductId id
+    private Facility serviceProvider
 
     static class Builder{
         ProductCategory category
         String name
         String description
-        double unitPrice
+        double internalUnitPrice
+        double externalUnitPrice
         ProductUnit unit
         ProductId id
+        Facility serviceProvider
 
-        Builder(ProductCategory category, String name, String description, double unitPrice, ProductUnit unit){
+        Builder(ProductCategory category, String name, String description, ProductUnit unit){
             this.category = Objects.requireNonNull(category)
             this.name = Objects.requireNonNull(name)
             this.description = Objects.requireNonNull(description)
-            this.unitPrice = Objects.requireNonNull(unitPrice)
+            this.internalUnitPrice = 0.0
+            this.externalUnitPrice = 0.0
             this.unit = Objects.requireNonNull(unit)
+            this.serviceProvider = Facility.QBIC
+        }
+
+        Builder(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility serviceProvider){
+            this.category = Objects.requireNonNull(category)
+            this.name = Objects.requireNonNull(name)
+            this.description = Objects.requireNonNull(description)
+            this.internalUnitPrice = Objects.requireNonNull(internalUnitPrice)
+            this.externalUnitPrice = Objects.requireNonNull(externalUnitPrice)
+            this.unit = Objects.requireNonNull(unit)
+            this.serviceProvider = serviceProvider
         }
 
         Builder id(ProductId id){
             this.id = id
+            return this
+        }
+
+        Builder serviceProvider(Facility serviceProvider) {
+            this.serviceProvider = serviceProvider
             return this
         }
 
@@ -51,9 +73,11 @@ class Product {
 
     Product(Builder builder){
         this.category = builder.category
-        this.name = builder.name
         this.description = builder.description
-        this.unitPrice = builder.unitPrice
+        this.externalUnitPrice = builder.externalUnitPrice
+        this.serviceProvider = builder.serviceProvider
+        this.internalUnitPrice = builder.internalUnitPrice
+        this.name = builder.name
         this.unit = builder.unit
     }
 
@@ -82,9 +106,12 @@ class Product {
 
         digest.update(product.description.getBytes(StandardCharsets.UTF_8))
 
-        digest.update(product.unit.value.getBytes(StandardCharsets.UTF_8))
-        digest.update(product.unitPrice.toString().getBytes(StandardCharsets.UTF_8))
         digest.update(product.category.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(product.externalUnitPrice.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(product.serviceProvider.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(product.internalUnitPrice.toString().getBytes(StandardCharsets.UTF_8))
+        digest.update(product.unit.value.getBytes(StandardCharsets.UTF_8))
+
 
         //Get the hash's bytes
         byte[] bytes = digest.digest()
@@ -94,7 +121,7 @@ class Product {
         StringBuilder sb = new StringBuilder()
         for(int i=0; i< bytes.length ;i++)
         {
-            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
+            sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1))
         }
 
         //return complete hash
@@ -113,8 +140,16 @@ class Product {
         return description
     }
 
-    double getUnitPrice() {
-        return unitPrice
+    double getInternalUnitPrice() {
+        return internalUnitPrice
+    }
+
+    double getExternalUnitPrice() {
+        return externalUnitPrice
+    }
+
+    Facility getServiceProvider() {
+        return serviceProvider
     }
 
     ProductUnit getUnit() {
