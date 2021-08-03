@@ -31,9 +31,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * The internal and external product unit prices are shown in the user interface (`#723 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/723>`_)
 
-* Reset the offer update view, when a new offer is selected in the offer overview (`#716 <https://github.com/qbicsoftware/offer-manager-2-portlet/issue/716>`_)
+* Reset the offer update view, when a new offer is selected in the offer overview (`#716 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/716>`_)
 
-* Offers without an experimental design can now be updated (`#726 <https://github.com/qbicsoftware/offer-manager-2-portlet/issue/726>`_)
+* Offers without an experimental design can now be updated (`#726 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/726>`_)
 
 * Creating a product switches name and description (`#731 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/731>`_)
 
