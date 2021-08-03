@@ -150,7 +150,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? product.internalUnitPrice : product.externalUnitPrice
 
         OfferItem offerItem = new OfferItem.Builder(productItem.quantity, product.description, product.productName, unitPrice, productItem.quantityDiscount,
-                product.serviceProvider.name(), product.unit.name(), productItem.totalPrice).build()
+                product.serviceProvider.name(), product.unit.value, productItem.totalPrice).build()
 
         return offerItem
     }
