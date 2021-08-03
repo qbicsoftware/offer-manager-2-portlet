@@ -38,7 +38,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             "checksum, experimentalDesign)"
 
     private static final String OFFER_SELECT_QUERY = "SELECT offerId, creationDate, expirationDate, customerId, projectManagerId, projectTitle," +
-                                                        "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, experimentalDesign FROM offer"
+                                                        "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, totalDiscount, experimentalDesign FROM offer"
 
 
     OfferDbConnector(ConnectionProvider connectionProvider, PersonDbConnector personDbConnector, ProductsDbConnector productsDbConnector){
@@ -146,7 +146,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
      * @return the id of the stored offer in the database
      */
     private int storeOffer(Offer offer, int projectManagerId, int customerId, int affiliationId){
-        String sqlValues = "VALUE(?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
+        String sqlValues = "VALUE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
         String queryTemplate = OFFER_INSERT_QUERY + " " + sqlValues
         def identifier = offer.identifier
         List<Integer> generatedKeys = []
@@ -167,8 +167,9 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             preparedStatement.setDouble(10, offer.taxes)
             preparedStatement.setDouble(11, offer.netPrice)
             preparedStatement.setDouble(12, offer.overheads)
-            preparedStatement.setString(13, offer.checksum)
-            preparedStatement.setString(14, experimentalDesign)
+            preparedStatement.setDouble(13,offer.totalDiscountPrice)
+            preparedStatement.setString(14, offer.checksum)
+            preparedStatement.setString(15, experimentalDesign)
 
 
             preparedStatement.execute()
