@@ -1,5 +1,6 @@
 package life.qbic.portal.portlet.offers
 
+import life.qbic.business.ProductFactory
 import life.qbic.business.offers.Offer
 import life.qbic.business.offers.QuantityDiscount
 import life.qbic.business.offers.identifier.OfferId
@@ -605,77 +606,5 @@ class OfferSpec extends Specification {
         10 | 0.67
         100 | 0.3
 
-    }
-
-    static class ProductFactory {
-        static <T extends Product> T createProduct(Class clazz, String description, String name, double internalPrice, double externalPrice, Facility serviceProvider) {
-            int runningNumber = 1
-            ProductUnit productUnit = ProductUnit.PER_SAMPLE
-            switch (clazz) {
-                case DataStorage:
-                    return new DataStorage(name,
-                            description,
-                            internalPrice,
-                            externalPrice,
-                            productUnit,
-                            runningNumber,
-                            serviceProvider) as T
-                    break
-                case MetabolomicAnalysis:
-                    return new MetabolomicAnalysis(name,
-                            description,
-                            internalPrice,
-                            externalPrice,
-                            productUnit,
-                            runningNumber,
-                            serviceProvider) as T
-                    break
-                case PrimaryAnalysis:
-                    return new PrimaryAnalysis(name,
-                            description,
-                            internalPrice,
-                            externalPrice,
-                            productUnit,
-                            runningNumber,
-                            serviceProvider) as T
-                    break
-                case ProjectManagement:
-                    return new ProjectManagement(name,
-                            description,
-                            internalPrice,
-                            externalPrice,
-                            productUnit,
-                            runningNumber,
-                            serviceProvider) as T
-                    break
-                case ProteomicAnalysis:
-                    return new ProteomicAnalysis(name,
-                            description,
-                            internalPrice,
-                            externalPrice,
-                            productUnit,
-                            runningNumber,
-                            serviceProvider) as T
-                    break
-                case SecondaryAnalysis:
-                    return new SecondaryAnalysis(name,
-                            description,
-                            internalPrice,
-                            externalPrice,
-                            productUnit,
-                            runningNumber,
-                            serviceProvider) as T
-                    break
-                case Sequencing:
-                    return new Sequencing(name,
-                            description,
-                            internalPrice,
-                            externalPrice,
-                            productUnit,
-                            runningNumber,
-                            serviceProvider) as T
-                    break
-            }
-        }
     }
 }

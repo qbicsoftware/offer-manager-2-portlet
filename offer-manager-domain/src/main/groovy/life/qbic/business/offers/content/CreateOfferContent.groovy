@@ -124,7 +124,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
             return 0
         } else {
             return offerItems.sum {
-                it.quantity * it.unitPrice
+                it.itemTotal -it.quantityDiscount
             } as double
         }
     }
@@ -139,7 +139,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
             return 0
         } else {
             return offerItems.sum {
-                it.quantity * it.unitPrice * overheadRatio
+                (it.itemTotal - it.quantityDiscount ) * overheadRatio
             } as double
         }
     }
