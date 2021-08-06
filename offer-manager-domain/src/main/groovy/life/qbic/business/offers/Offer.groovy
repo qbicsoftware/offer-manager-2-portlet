@@ -261,7 +261,7 @@ class Offer {
      * @return The net offer price including overheads
      */
     double getTotalNetPriceWithOverheads() {
-        return calculateNetPrice() + getOverheadSum()
+        return calculateNetPrice() - getTotalDiscountAmount() + getOverheadSum()
     }
 
     /**
