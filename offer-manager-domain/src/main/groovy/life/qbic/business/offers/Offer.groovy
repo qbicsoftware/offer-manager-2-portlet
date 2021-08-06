@@ -254,6 +254,17 @@ class Offer {
     }
 
     /**
+     * The total net price for the current offer including overheads.
+     *
+     * Note: Does <strong>not include</strong> taxes.
+     *
+     * @return The net offer price including overheads
+     */
+    double getTotalNetPriceWithOverheads() {
+        return calculateNetPrice() + getOverheadSum()
+    }
+
+    /**
      * The overhead price amount of all service items without VAT.
      *
      * @return The calculated overhead amount of the selected items.
