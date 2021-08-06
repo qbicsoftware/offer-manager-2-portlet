@@ -4,6 +4,19 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.2.0 (2021-08-
+------------------
+
+**Added**
+
+* Adds discount percentage and discount per unit to the DTO OfferItem (`#753 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/753>`_)
+
+**Fixed**
+
+**Dependencies**
+
+**Deprecated**
+
 1.1.0 (2021-08-02)
 ------------------
 
