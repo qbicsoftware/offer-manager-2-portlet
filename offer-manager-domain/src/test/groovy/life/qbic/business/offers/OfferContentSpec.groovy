@@ -37,17 +37,17 @@ class OfferContentSpec extends Specification{
     static Date expirationDate = new SimpleDateFormat("yyyy-MM-dd").parse("2022-10-11")
 
     final static List<OfferItem> items = [
-            new OfferItem.Builder(2, "Just an example", "Basic RNAsq", 1.0, 1,
+            new OfferItem.Builder(2, "Just an example", "Basic RNAsq", 1.0, 1, 0.2, 0.1,
                     "QBiC","Sample", 1).build(),
-            new OfferItem.Builder(2, "Just an example", "Basic RNAsq", 1.0, 1,
+            new OfferItem.Builder(2, "Just an example", "Basic RNAsq", 1.0, 1, 0.2, 0.1,
                     "QBiC","Dataset", 1).build(),
 
     ]
 
     final static List<OfferItem> items2 = [
-            new OfferItem.Builder(4, "Just an example", "Basic RNAsq", 1.0, 1,
+            new OfferItem.Builder(4, "Just an example", "Basic RNAsq", 1.0, 1, 0.2, 0.1,
                     "QBiC","Sample", 1).build(),
-            new OfferItem.Builder(2, "Just an example", "Basic RNAsq", 1.0, 1,
+            new OfferItem.Builder(2, "Just an example", "Basic RNAsq", 1.0, 1, 0.2, 0.1,
                     "QBiC","Dataset", 6).build(),
 
     ]
