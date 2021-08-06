@@ -486,7 +486,7 @@ class OfferSpec extends Specification {
         List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, affiliation).build()
-        double expectedResult = items.sum {(it.quantity * it.product.internalUnitPrice) as double} + offer.getOverheadSum()
+        double expectedResult = items.sum {(it.quantity * it.product.internalUnitPrice) as BigDecimal} - offer.getTotalDiscountAmount() + offer.getOverheadSum()
 
         expect: "the calculated costs equal the expected costs"
         offer.getTotalNetPriceWithOverheads() == expectedResult
@@ -515,7 +515,7 @@ class OfferSpec extends Specification {
         List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, affiliation).build()
-        double expectedResult = items.sum {(it.quantity * it.product.externalUnitPrice) as double} + offer.getOverheadSum()
+        double expectedResult = items.sum {(it.quantity * it.product.externalUnitPrice) as double} - offer.getTotalDiscountAmount() + offer.getOverheadSum()
 
         expect: "the calculated costs equal the expected costs"
         offer.getTotalNetPriceWithOverheads() == expectedResult
