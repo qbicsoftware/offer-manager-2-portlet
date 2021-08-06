@@ -4,8 +4,8 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-1.1.0-SNAPSHOT (2020-06-07)
----------------------------
+1.1.0 (2021-08-02)
+------------------
 
 **Added**
 
@@ -33,9 +33,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * The internal and external product unit prices are shown in the user interface (`#723 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/723>`_)
 
-* Reset the offer update view, when a new offer is selected in the offer overview (`#716 <https://github.com/qbicsoftware/offer-manager-2-portlet/issue/716>`_)
+* Reset the offer update view, when a new offer is selected in the offer overview (`#716 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/716>`_)
 
-* Offers without an experimental design can now be updated (`#726 <https://github.com/qbicsoftware/offer-manager-2-portlet/issue/726>`_)
+* Offers without an experimental design can now be updated (`#726 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/726>`_)
 
 * Creating a product switches name and description (`#731 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/731>`_)
 
@@ -47,7 +47,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * ``org.mariadb.jdbc:mariadb-java-client:2.7.2`` -> ``2.7.3``
 
-* ``life.qbic:data-model-lib:2.8.2`` -> ``2.11.0-SNAPSHOT``
+* ``life.qbic:data-model-lib:2.8.2`` -> ``2.11.0``
 
 **Deprecated**
 
@@ -67,6 +67,25 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 **Dependencies**
 
 * Bump data model lib 2.8.1 -> 2.8.2 and therefore adds 'Batch' as unit for service products
+
+**Deprecated**
+
+
+1.0.5 (2021-06-15)
+------------------
+
+**Added**
+
+* Increase space allocated for product description in Offer PDF based on the number of characters (`#675 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/675>`_)
+
+**Fixed**
+
+* Limit width of product description columns (`#673 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/673>`_)
+
+**Dependencies**
+
+* Bump data model lib 2.8.1 -> 2.8.2 and therefore adds 'Batch' as unit for service products
+
 
 **Deprecated**
 
