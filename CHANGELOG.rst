@@ -21,6 +21,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Adds the CreateOfferContent use case (`#735 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/735>`_)
 
+* Adds the total price before VAT is applied to an offer (`#754 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/754>`_)
+
 **Fixed**
 
 * Invert quantity discount in order to be able to display size of discount (`#710 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/710>`_
