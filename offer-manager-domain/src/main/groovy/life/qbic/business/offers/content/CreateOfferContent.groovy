@@ -145,14 +145,33 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
     }
 
 
-    private OfferItem createOfferItem(ProductItem productItem){
+    private OfferItem createOfferItem(ProductItem productItem) {
         Product product = productItem.product
         double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? product.internalUnitPrice : product.externalUnitPrice
-        //TODO
         OfferItem offerItem = new OfferItem.Builder(productItem.quantity, product.description, product.productName, unitPrice, productItem.quantityDiscount,
-                0.0,0.0,product.serviceProvider.name(), product.unit.value, productItem.totalPrice).build()
+                calculateDiscountPerUnit(productItem),calculateDiscountPercentage(productItem),product.serviceProvider.name(), product.unit.value, productItem.totalPrice).build()
 
         return offerItem
+    }
+    
+    
+    /**
+     * Calculates the discount percentage for a product item. Note that this is not a ratio, but a number between 0 and 100.
+     * @param offerItem item for which the discount percentage should be calculated
+     * @return the discount percentage based on quantity discount and item total cost
+     */
+    private double calculateDiscountPercentage(ProductItem productItem) {
+        return 100.0*productItem.quantityDiscount / productItem.totalPrice
+    }
+    
+    
+    /**
+     * Calculates the discount per unit for a product item
+     * @param offerItem item for which the discount per unit should be calculated
+     * @return the discount per unit, if applicable, 0 otherwise
+     */
+    private double calculateDiscountPerUnit(ProductItem productItem) {
+        return productItem.quantityDiscount / productItem.quantity
     }
 
 
