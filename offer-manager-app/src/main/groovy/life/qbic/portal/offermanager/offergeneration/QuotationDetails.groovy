@@ -124,7 +124,9 @@ class QuotationDetails {
     }
 
     private String createDiscountDescription(double quantity, String unit, double discountPercentage) {
-        return "Discount on ${quantity} ${unit} based on item no ${itemNumber}. ${discountPercentage}% discount applied"
+        String unitName = unit.toString().toLowerCase()
+        unitName = quantity != 1 : unitName + "s" : unitName
+        return "Discount on ${quantity} ${unitName} based on item no ${itemNumber}. ${discountPercentage}% discount applied"
     }
 
     /**
