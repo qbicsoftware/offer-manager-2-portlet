@@ -23,6 +23,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Add discount unit and percentage to discount items, specify the discount item description (`#755 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/755>`_)
 
+* Adds the total price before VAT is applied to an offer (`#754 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/754>`_)
+
 **Fixed**
 
 * Invert quantity discount in order to be able to display size of discount (`#710 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/710>`_

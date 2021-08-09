@@ -251,6 +251,7 @@ class QuotationDetails {
         final netPrice = Currency.getFormatterWithoutSymbol().format(offer.getNetCost())
         final taxesPrice = Currency.getFormatterWithoutSymbol().format(offer.getTotalVat())
         final totalPrice = Currency.getFormatterWithoutSymbol().format(offer.getTotalCost())
+        final totalBeforeVat = Currency.getFormatterWithoutSymbol().format(offer.getNetCostsWithOverheads())
 
         final overheadDataGenerationPrice = Currency.getFormatterWithoutSymbol().format(offer.getOverheadsDataGeneration())
         final overheadDataAnalysisPrice = Currency.getFormatterWithoutSymbol().format(offer.getOverheadsDataAnalysis())
@@ -268,6 +269,7 @@ class QuotationDetails {
         htmlContent.getElementById("overhead-cost-value").text(overheadPrice)
         //Set vat, net and total cost value
         htmlContent.getElementById("total-cost-value-net").text(netPrice)
+        htmlContent.getElementById("total-before-vat-value").text(totalBeforeVat)
         htmlContent.getElementById("vat-percentage-value").text("VAT (${taxPercentage}):")
         htmlContent.getElementById("vat-cost-value").text(taxesPrice)
         htmlContent.getElementById("final-cost-value").text(totalPrice)

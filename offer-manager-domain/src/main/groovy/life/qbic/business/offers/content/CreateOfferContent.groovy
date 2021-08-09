@@ -77,7 +77,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         groupProductItems(offer.items)
         String id = offer.identifier.toString()
         def offerContentBuilder = new OfferContent.Builder(offer.customer,offer.selectedCustomerAffiliation,offer.projectManager,creationDate,expirationDate,offer.projectTitle
-        ,offer.projectObjective, offer.experimentalDesign.orElse(""),offer.identifier.toString())
+        ,offer.projectObjective, offer.experimentalDesign.orElse(""),offer.identifier.toString(), offer.getTotalNetPriceWithOverheads())
 
         //collect productitems and convert to offeritems
         groupProductItems(offer.items)
