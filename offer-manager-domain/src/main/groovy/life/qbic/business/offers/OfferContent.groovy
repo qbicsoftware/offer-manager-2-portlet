@@ -134,6 +134,10 @@ class OfferContent {
      */
     final double netCost
     /**
+     * The net costs of the offer
+     */
+    final double netCostsWithOverheads
+    /**
      * The total VAT costs of the offer
      */
     final double totalVat
@@ -191,13 +195,14 @@ class OfferContent {
         Double netDataAnalysis
         Double netPMandDS
         Double totalCost
+        Double netCostsWithOverheads
         Double netCost
         Double totalVat
         Double vatRatio
         Double totalDiscountAmount
 
         Builder(Customer customer, Affiliation customerAffiliation, ProjectManager projectManager, Date creationDate, Date expirationDate, String projectTitle,
-        String projectObjective, String experimentalDesign, String offerIdentifier){
+        String projectObjective, String experimentalDesign, String offerIdentifier, double netCostsWithOverheads){
             /*Customer*/
             customerFirstName = Objects.requireNonNull(customer.firstName,"Customer must not be null")
             customerLastName = Objects.requireNonNull(customer.lastName, "Customer must not be null")
@@ -231,6 +236,8 @@ class OfferContent {
             this.experimentalDesign = Objects.requireNonNull(experimentalDesign, "Experimental design must not be  null")
             this.offerIdentifier = Objects.requireNonNull(offerIdentifier, "Offer identifier must not be null")
 
+            /*costs*/
+            this.netCostsWithOverheads = Objects.requireNonNull(netCostsWithOverheads, "Net costs with overheads must not be null")
         }
         Builder dataGenerationItems(List<OfferItem> dataGenerationItems){
             this.dataGenerationItems = dataGenerationItems
@@ -369,6 +376,7 @@ class OfferContent {
         netPMandDS = builder.netPMandDS
         totalCost = builder.totalCost
         netCost = builder.netCost
+        netCostsWithOverheads = builder.netCostsWithOverheads
         totalVat = builder.totalVat
         vatRatio = builder.vatRatio
         totalDiscountAmount = builder.totalDiscountAmount

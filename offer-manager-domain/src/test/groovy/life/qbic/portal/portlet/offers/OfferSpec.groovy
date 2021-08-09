@@ -457,13 +457,68 @@ class OfferSpec extends Specification {
         List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, affiliation).build()
-        double netPrice
+        double expectedResult = items.sum {(it.quantity * it.product.externalUnitPrice) as double}
 
-        when: "the net price is calculated"
-        netPrice = offer.getTotalNetPrice()
+        expect: "the calculated costs equal the expected costs"
+        offer.getTotalNetPrice() == expectedResult
 
-        then: "the correct prices are taken into account"
-        netPrice == items.sum {(it.quantity * it.product.externalUnitPrice) as double}
+        where: "the affiliation is"
+        affiliation << [externalAffiliation, externalAcademicAffiliation]
+    }
+
+
+    /**
+     * @since 1.1.0
+     */
+    def "the total net costs with overheads are computed with the correct internal prices"() {
+        given: "a list of product items with internal and external base prices"
+        ProductItem primaryAnalysis = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                " example primary analysis", 2.5, 3.5, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+        ProductItem secondaryAnalysis = new ProductItem(1, new SecondaryAnalysis("Basic RNAsq", "Just an" +
+                " example secondary analysis", 2.4, 42.56, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+        ProductItem sequencing = new ProductItem(3, new Sequencing("Basic Sequencing", "Just an" +
+                "example sequencing", 3.0, 4.6, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+        ProductItem projectManagement = new ProductItem(1, new ProjectManagement("Basic Management",
+                "Just an example", 10.0, 11.26, ProductUnit.PER_DATASET, 1, Facility.QBIC))
+        ProductItem dataStorage = new ProductItem(2, new DataStorage("Data Storage",
+                "Just an example", 20.0, 23, ProductUnit.PER_DATASET, 1, Facility.QBIC))
+        and: "an offer with these items"
+        List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, affiliation).build()
+        double expectedResult = items.sum {(it.quantity * it.product.internalUnitPrice) as BigDecimal} - offer.getTotalDiscountAmount() + offer.getOverheadSum()
+
+        expect: "the calculated costs equal the expected costs"
+        offer.getTotalNetPriceWithOverheads() == expectedResult
+
+        where: "the affiliation is"
+        affiliation << [internalAffiliation]
+
+    }
+
+    /**
+     * @since 1.1.0
+     */
+    def "the total net costs with overheads are computed with the correct external prices"() {
+        given: "a list of product items with internal and external base prices"
+        ProductItem primaryAnalysis = new ProductItem(2, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                " example primary analysis", 2.5, 3.5, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+        ProductItem secondaryAnalysis = new ProductItem(1, new SecondaryAnalysis("Basic RNAsq", "Just an" +
+                " example secondary analysis", 2.4, 42.56, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+        ProductItem sequencing = new ProductItem(3, new Sequencing("Basic Sequencing", "Just an" +
+                "example sequencing", 3.0, 4.6, ProductUnit.PER_SAMPLE, 1, Facility.QBIC))
+        ProductItem projectManagement = new ProductItem(1, new ProjectManagement("Basic Management",
+                "Just an example", 10.0, 11.26, ProductUnit.PER_DATASET, 1, Facility.QBIC))
+        ProductItem dataStorage = new ProductItem(2, new DataStorage("Data Storage",
+                "Just an example", 20.0, 23, ProductUnit.PER_DATASET, 1, Facility.QBIC))
+        and: "an offer with these items"
+        List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, affiliation).build()
+        double expectedResult = items.sum {(it.quantity * it.product.externalUnitPrice) as double} - offer.getTotalDiscountAmount() + offer.getOverheadSum()
+
+        expect: "the calculated costs equal the expected costs"
+        offer.getTotalNetPriceWithOverheads() == expectedResult
 
         where: "the affiliation is"
         affiliation << [externalAffiliation, externalAcademicAffiliation]
