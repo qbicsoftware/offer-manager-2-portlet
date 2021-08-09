@@ -111,8 +111,8 @@ class QuotationDetails {
         items.each { OfferItem item ->
             generateItemContent(item, elementId)
             if (item.quantityDiscount != 0) {
-                String discountDescription = createDiscountDescription()
-                generateDiscountItemContent(discountDescription, item.quantityDiscount, elementId)
+                String discountDescription = createDiscountDescription(item.quantity,item.unit, item.discountPercentage)
+                generateDiscountItemContent(discountDescription, elementId, item)
             }
         }
         //account for spaces of added table elements, footer, totals,...
@@ -123,8 +123,10 @@ class QuotationDetails {
         addSubTotalPrices(productGroup, subTotal)
     }
 
-    private static String createDiscountDescription() {
-        return "Quantity discount."
+    private String createDiscountDescription(double quantity, String unit, double discountPercentage) {
+        String unitName = unit.toString().toLowerCase()
+        unitName = (quantity != 1)?  unitName + "s" : unitName
+        return "Discount on ${quantity} ${unitName} based on item no ${itemNumber}. ${discountPercentage}% discount applied"
     }
 
     /**
@@ -151,7 +153,7 @@ class QuotationDetails {
      * @param discountAmount The discount amount
      * @param elementId The id references where the item is added
      */
-    private void generateDiscountItemContent(String description, double discountAmount, String elementId){
+    private void generateDiscountItemContent(String description, String elementId, OfferItem item){
         itemNumber++
         if (isOverflowingPage()) {
             generateHTMLTableOnNextPage(elementId)
@@ -159,8 +161,8 @@ class QuotationDetails {
             htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
             resetPageItemsCount()
         }
-        htmlContent.getElementById(elementId).append(ItemPrintout.discountItemInHTML(itemNumber, description, discountAmount))
-        pageItemsCount += determineItemSpace("Discount", description, discountAmount)
+        htmlContent.getElementById(elementId).append(ItemPrintout.discountItemInHTML(itemNumber, description, item))
+        pageItemsCount += determineItemSpace("Discount", description, item.quantityDiscount)
     }
 
     private static String generateElementID(int tableCount, ProductGroup productGroups){
@@ -360,14 +362,14 @@ class QuotationDetails {
                     """
         }
 
-        static String discountItemInHTML(int offerPosition, String description, double discountAmount) {
+        static String discountItemInHTML(int offerPosition, String description, OfferItem offerItem) {
             return """<div class="row product-item">
                         <div class="col-1">${offerPosition}</div>
                         <div class="col-4 ">Discount</div>
-                        <div class="col-1 price-value">-</div>
-                        <div class="col-2 text-center">-</div>
-                        <div class="col-2 price-value">-</div>
-                        <div class="col-2 price-value">-${Currency.getFormatterWithoutSymbol().format(discountAmount)}</div>
+                        <div class="col-1 price-value">${offerItem.getQuantity()}</div>
+                        <div class="col-2 text-center">${offerItem.getUnit()}</div>
+                        <div class="col-2 price-value">${offerItem.getDiscountPerUnit()}</div>
+                        <div class="col-2 price-value">-${Currency.getFormatterWithoutSymbol().format(offerItem.getQuantityDiscount())}</div>
                     </div>
                     <div class="row product-item">
                         <div class="col-1"></div>
