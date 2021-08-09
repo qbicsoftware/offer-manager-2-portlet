@@ -112,7 +112,7 @@ class QuotationDetails {
             generateItemContent(item, elementId)
             if (item.quantityDiscount != 0) {
                 String discountDescription = createDiscountDescription(item.quantity,item.unit, item.discountPercentage)
-                generateDiscountItemContent(discountDescription, item.quantityDiscount, elementId, item)
+                generateDiscountItemContent(discountDescription, elementId, item)
             }
         }
         //account for spaces of added table elements, footer, totals,...
@@ -151,7 +151,7 @@ class QuotationDetails {
      * @param discountAmount The discount amount
      * @param elementId The id references where the item is added
      */
-    private void generateDiscountItemContent(String description, double discountAmount, String elementId, OfferItem item){
+    private void generateDiscountItemContent(String description, String elementId, OfferItem item){
         itemNumber++
         if (isOverflowingPage()) {
             generateHTMLTableOnNextPage(elementId)
@@ -160,7 +160,7 @@ class QuotationDetails {
             resetPageItemsCount()
         }
         htmlContent.getElementById(elementId).append(ItemPrintout.discountItemInHTML(itemNumber, description, item))
-        pageItemsCount += determineItemSpace("Discount", description, discountAmount)
+        pageItemsCount += determineItemSpace("Discount", description, item.quantityDiscount)
     }
 
     private static String generateElementID(int tableCount, ProductGroup productGroups){
@@ -365,7 +365,7 @@ class QuotationDetails {
                         <div class="col-1 price-value">${offerItem.getQuantity()}</div>
                         <div class="col-2 text-center">${offerItem.getUnit()}</div>
                         <div class="col-2 price-value">${offerItem.getDiscountPerUnit()}</div>
-                        <div class="col-2 price-value">-${Currency.getFormatterWithoutSymbol().format(offerItem.quantityDiscount)}</div>
+                        <div class="col-2 price-value">-${Currency.getFormatterWithoutSymbol().format(offerItem.getQuantityDiscount())}</div>
                     </div>
                     <div class="row product-item">
                         <div class="col-1"></div>
