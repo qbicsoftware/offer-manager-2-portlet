@@ -368,7 +368,7 @@ class QuotationDetails {
                         <div class="col-4 ">Discount</div>
                         <div class="col-1 price-value">${offerItem.getQuantity()}</div>
                         <div class="col-2 text-center">${offerItem.getUnit()}</div>
-                        <div class="col-2 price-value">${offerItem.getDiscountPerUnit()}</div>
+                        <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(offerItem.getDiscountPerUnit())}</div>
                         <div class="col-2 price-value">-${Currency.getFormatterWithoutSymbol().format(offerItem.getQuantityDiscount())}</div>
                     </div>
                     <div class="row product-item">
