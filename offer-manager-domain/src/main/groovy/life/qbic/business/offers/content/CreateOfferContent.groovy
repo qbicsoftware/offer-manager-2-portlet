@@ -161,7 +161,8 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
      * @return the discount percentage based on quantity discount and item total cost
      */
     private double calculateDiscountPercentage(ProductItem productItem) {
-        return 100.0*productItem.quantityDiscount / productItem.totalPrice
+        BigDecimal result = 100.0.toBigDecimal() * productItem.quantityDiscount.toBigDecimal() / productItem.totalPrice.toBigDecimal()
+        return result.doubleValue()
     }
     
     
@@ -171,7 +172,8 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
      * @return the discount per unit, if applicable, 0 otherwise
      */
     private double calculateDiscountPerUnit(ProductItem productItem) {
-        return productItem.quantityDiscount / productItem.quantity
+        BigDecimal result = productItem.quantityDiscount.toBigDecimal() / productItem.quantity.toBigDecimal()
+        return result.doubleValue()
     }
 
 
