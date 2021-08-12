@@ -25,7 +25,7 @@ class QuotationDetails {
     /**
      * Variable used to count the number of Items added to a page
      */
-    private int pageItemsCount = 6
+    private double pageItemsCount = 3
 
     /**
      * Variable used to count the number of generated productTables in the Offer PDF
@@ -40,7 +40,7 @@ class QuotationDetails {
     /**
      * The maximum number of items per page
      */
-    private final int maxPageItems = 17
+    private final int maxPageItems = 13
 
     private final Document htmlContent
     private final OfferContent offer
@@ -101,11 +101,24 @@ class QuotationDetails {
         String elementId = generateElementID(0, productGroup)
         htmlContent.getElementById(elementId).empty()
 
+        //Allocate space for title
+        pageItemsCount += 0.25
+
+        //Allocate space for header
+        pageItemsCount += 0.33
+
         if (isOverflowingPage()) {
             generateHTMLTableOnNextPage("${productGroup.toString()}-table")
             resetPageItemsCount()
+
+            //Allocate space for header
+            pageItemsCount += 0.25
+
+            //Allocate space for title
+            pageItemsCount += 0.33
         }
-        //Append Table Title and Header
+
+        //Append Table header
         htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
 
         items.each { OfferItem item ->
@@ -115,9 +128,11 @@ class QuotationDetails {
                 generateDiscountItemContent(discountDescription, elementId, item)
             }
         }
-        //account for spaces of added table elements, footer, totals,...
-        pageItemsCount += 4
+
         htmlContent.getElementById(elementId).append(ItemPrintout.subTableFooter(productGroup))
+
+        //Allocate space for subTotalFooter
+        pageItemsCount += 0.25
 
         // Update footer Prices
         addSubTotalPrices(productGroup, subTotal)
@@ -136,6 +151,7 @@ class QuotationDetails {
      */
     private void generateItemContent(OfferItem item, String elementId){
         itemNumber++
+        println("PageItemCount Before item: " + pageItemsCount)
         if (isOverflowingPage()) {
             generateHTMLTableOnNextPage(elementId)
             //repeat table header for next page
@@ -145,6 +161,7 @@ class QuotationDetails {
         //add product to current table
         htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
         pageItemsCount += determineItemSpace(item)
+        println("Current item: " + item.productName + " " + determineItemSpace(item).toString())
     }
 
     /**
@@ -161,8 +178,14 @@ class QuotationDetails {
             htmlContent.getElementById(elementId).append(ItemPrintout.tableHeader())
             resetPageItemsCount()
         }
-        htmlContent.getElementById(elementId).append(ItemPrintout.discountItemInHTML(itemNumber, description, item))
-        pageItemsCount += determineItemSpace("Discount", description, item.quantityDiscount)
+
+        String quantity = item.quantity as String
+        String unit = item.unit as String
+        String unitDiscount = Currency.getFormatterWithoutSymbol().format(item.getDiscountPerUnit())
+        String discountQuantity = Currency.getFormatterWithoutSymbol().format(item.getDiscountPerUnit())
+
+        htmlContent.getElementById(elementId).append(ItemPrintout.discountItemInHTML(itemNumber, description, quantity, unit, unitDiscount, discountQuantity))
+        pageItemsCount += determineItemSpace("Discount", description, quantity, unit, unitDiscount, discountQuantity)
     }
 
     private static String generateElementID(int tableCount, ProductGroup productGroups){
@@ -200,31 +223,39 @@ class QuotationDetails {
      * @param item The item for which the spacing should be calculated
      * @return The calculated space in the final offer template that the item requires
      */
-    private static int determineItemSpace(OfferItem item) {
+    private static double determineItemSpace(OfferItem item) {
 
-        ArrayList<Integer> calculatedSpaces = []
+        ArrayList<Double> calculatedSpaces = []
 
         //Determine amount of spacing necessary from highest itemSpace value of all columns
         calculatedSpaces.add(calculateItemSpace(item.productName, ProductPropertySpacing.PRODUCT_NAME))
-        calculatedSpaces.add(calculateItemSpace(item.productDescription, ProductPropertySpacing.PRODUCT_DESCRIPTION))
         calculatedSpaces.add(calculateItemSpace(item.quantity as String, ProductPropertySpacing.PRODUCT_AMOUNT))
-
         calculatedSpaces.add(calculateItemSpace(item.unit as String, ProductPropertySpacing.PRODUCT_UNIT))
         calculatedSpaces.add(calculateItemSpace(item.unitPrice as String, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
         calculatedSpaces.add(calculateItemSpace(item.getItemTotal() as String, ProductPropertySpacing.PRODUCT_TOTAL))
-        calculatedSpaces.add(calculateItemSpace("Service Provider: "+item.getServiceProvider(), ProductPropertySpacing.PRODUCT_FACILITY))
+
+        //since product facility is listed below the product description their allocated spacing needs to be combined
+        double descriptionPageSpace = calculateItemSpace(item.productDescription, ProductPropertySpacing.PRODUCT_DESCRIPTION)
+        double facilityPageSpace= calculateItemSpace("Service Provider: "+ item.getServiceProvider(), ProductPropertySpacing.PRODUCT_FACILITY)
+        double combinedPageSpace = descriptionPageSpace + facilityPageSpace
+        calculatedSpaces.add(combinedPageSpace)
 
         return calculatedSpaces.max()
     }
 
-    private static int determineItemSpace(String productName, String productDescription, double itemTotalCosts) {
+    private static double determineItemSpace(String productName, String productDescription, String itemTotalCosts, String quantity, String unit, String unitPrice) {
 
-        ArrayList<Integer> calculatedSpaces = []
+        ArrayList<Double> calculatedSpaces = []
 
         //Determine amount of spacing necessary from highest itemSpace value of all columns
         calculatedSpaces.add(calculateItemSpace(productName, ProductPropertySpacing.PRODUCT_NAME))
         calculatedSpaces.add(calculateItemSpace(productDescription, ProductPropertySpacing.PRODUCT_DESCRIPTION))
-        calculatedSpaces.add(calculateItemSpace(itemTotalCosts as String, ProductPropertySpacing.PRODUCT_TOTAL))
+        calculatedSpaces.add(calculateItemSpace(quantity, ProductPropertySpacing.PRODUCT_AMOUNT))
+        calculatedSpaces.add(calculateItemSpace(unit, ProductPropertySpacing.PRODUCT_UNIT))
+        calculatedSpaces.add(calculateItemSpace(unitPrice, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
+        calculatedSpaces.add(calculateItemSpace(itemTotalCosts, ProductPropertySpacing.PRODUCT_TOTAL))
+
+        println(productName + " " + calculatedSpaces.max())
 
         return calculatedSpaces.max()
     }
@@ -235,8 +266,8 @@ class QuotationDetails {
      * @param productPropertySpacing A spacing factor assigned for that text
      * @return An estimation of the space needed for the given text
      */
-    private static int calculateItemSpace(String productProperty, ProductPropertySpacing productPropertySpacing) {
-        return Math.ceil(productProperty.length() / productPropertySpacing.getCharsLineLimit())
+    private static double calculateItemSpace(String productProperty, ProductPropertySpacing productPropertySpacing) {
+        return productProperty.length() / productPropertySpacing.getCharsLineLimit()
     }
 
     /**
@@ -312,12 +343,12 @@ class QuotationDetails {
      */
     enum ProductPropertySpacing {
         PRODUCT_NAME(33),
-        PRODUCT_DESCRIPTION(62),
+        PRODUCT_DESCRIPTION(93),
         PRODUCT_UNIT(15),
         PRODUCT_UNIT_PRICE(15),
         PRODUCT_AMOUNT(8),
         PRODUCT_TOTAL(15),
-        PRODUCT_FACILITY(62)
+        PRODUCT_FACILITY(93)
 
         private final int charsLineLimit
 
@@ -362,14 +393,14 @@ class QuotationDetails {
                     """
         }
 
-        static String discountItemInHTML(int offerPosition, String description, OfferItem offerItem) {
+        static String discountItemInHTML(int offerPosition, String description, String quantity, String unit, String discountPerUnit, String quantityDiscount) {
             return """<div class="row product-item">
                         <div class="col-1">${offerPosition}</div>
                         <div class="col-4 ">Discount</div>
-                        <div class="col-1 price-value">${offerItem.getQuantity()}</div>
-                        <div class="col-2 text-center">${offerItem.getUnit()}</div>
-                        <div class="col-2 price-value">${Currency.getFormatterWithoutSymbol().format(offerItem.getDiscountPerUnit())}</div>
-                        <div class="col-2 price-value">-${Currency.getFormatterWithoutSymbol().format(offerItem.getQuantityDiscount())}</div>
+                        <div class="col-1 price-value">${quantity}</div>
+                        <div class="col-2 text-center">${unit}</div>
+                        <div class="col-2 price-value">${discountPerUnit}</div>
+                        <div class="col-2 price-value">-${quantityDiscount}</div>
                     </div>
                     <div class="row product-item">
                         <div class="col-1"></div>
@@ -423,6 +454,7 @@ class QuotationDetails {
         static String subTableFooter(ProductGroup productGroup) {
             //Each footer takes up spacing in the current table
             String footerTitle = productGroup.getAcronym()
+            //ToDo this tableCount can be replaced by a simple iterator?
             return """<div id="grid-sub-total-footer-${tableCount}" class="grid-sub-total-footer">
                                       <div class="col-6"></div> 
                                      <div class="row sub-total-costs" id = "${productGroup}-sub-net">
