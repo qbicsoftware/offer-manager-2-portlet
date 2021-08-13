@@ -144,6 +144,7 @@ section#first-page {
 #front-page-summary {
     display: grid;
     grid-template-columns: auto auto  20%;
+    page-break-inside: avoid;
 }
 .cost-summary {
     grid-column-start: 1;
@@ -191,7 +192,7 @@ section#first-page {
 .cost-summary tr {
     padding-top: 2px;
     padding-bottom: 2px;
-    white-space:nowrap;
+    white-space: nowrap;
 }
 .summation-row {
     border-top: var(--small-line) solid black;
@@ -213,6 +214,7 @@ section#first-page {
 /* product-tables */
 
 section#quotation-details {
+    page-break-inside: avoid;
 }
 table.product-table {
     width: 100%;
