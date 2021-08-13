@@ -1,0 +1,299 @@
+
+/**
+ * This document is structured in the following way: ;
+ *  1. general settings
+ *  2. settings for multi-page print
+ *  3. settings for the header & footer
+ *  4. settings for the first page
+ *  5. settings for the quotation details
+ *  6. settings for the agreement declaration 
+ */
+
+
+/* general-settings */
+:root {
+    --footer-height : calc(10*10pt);
+    --margin-top : 10mm;
+    --margin-right : 20mm;
+    --margin-bottom:  10mm;
+    --margin-left:  15mm;
+    --small-line: 0.25mm;
+    --border-color:  #bbb;
+}
+
+/* general font style */
+body {
+    font-family: Roboto, Helvetica;
+    font-size: 10pt;
+    line-height: 1.3;
+}
+/* headings on level 2 should be 12pt big and bold */
+h2 {
+   font-size: 12pt;
+   font-weight: bold;
+}
+/* small text has a size of 8pt */
+p.small {
+    font-size: 8pt;
+}
+/* class for alignment */
+.align-left {
+    text-align: left;
+}
+.align-right {
+    text-align: right;
+}
+.align-center {
+    text-align: center;
+}
+
+/* screen padding */
+/* this wrapper simulates an a4 column */
+#wrapper {
+    padding-top : var(--margin-top);
+    padding-right : var(--margin-right);
+    padding-bottom:  var(--margin-bottom);
+    padding-left:  var(--margin-left);
+    width: 21cm;
+    background-color: white;
+    border: solid;
+}
+
+/* multi-page */
+/* allow for multi-page header and footer
+ * this is necessary due to chrome only supporting margins on @page */
+table#multipage-content {
+    table-layout: fixed;
+    width: 100%;
+    height: auto;
+}
+/* we have to remove the defauld padding on the multi-page content */
+table#multipage-content > td {
+    padding: 0; /* defaults to 1px */
+}
+tfoot#page-footer {
+    display: table-footer-group;
+}
+thead#page-header {
+    display: table-row;
+}
+
+/* page-header */
+#page-header img {
+    width: 100%;
+    text-align: center;
+}
+
+/* page-footer */
+#page-footer {
+    color: #bbbbbb;
+    height: var(--footer-height);
+}
+#page-footer-content .footer-columns {
+    display: grid;
+    grid-template-columns: 20% 20% 20% 20% 20%;
+}
+#page-footer-content hr {
+    size: 1;
+    column-span: all;
+}
+#page-footer-content div {
+    /* alignment */
+    align-content: center;
+    padding: 0px 5px 0px 5px;
+    /* font styling */
+    font-family: Open Sans;
+    font-size: 7pt;
+}
+
+/**
+ * first-page
+ */
+section#first-page {
+    page-break-after: always;
+    page-break-inside: avoid;
+}
+/* layout of the first page */
+#first-page {
+    width: 100%;
+}
+/* the letter head */
+ #letter-head{
+    display: grid;
+    grid-template-columns: 50mm auto 50mm;
+    grid-row-gap: 2mm;
+ }
+ #customer {
+    grid-column-start: 1;
+    grid-column-end: 2;
+ }
+ #project-manager {
+    grid-column-start: 3;
+    grid-column-end: 4;
+ }
+#doctype-desc {
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+#offer-date {
+    grid-column-start: 3;
+    grid-column-end: 4;
+}
+
+/* the summary grid */
+#front-page-summary {
+    display: grid;
+    grid-template-columns: auto auto  20%;
+}
+.cost-summary {
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+#signature {
+    grid-column-start: 4;
+    grid-column-end: 5;
+}
+
+/* styling for the firt page */
+#customer, #project-manager {
+    font-size: 9pt;
+    padding-top: 5mm;
+    padding-bottom: 5mm;
+}
+#project-manager .info-title {
+    margin-top: 5mm;
+}
+#qbic-ad, #project-manager-city {
+    margin-bottom: 5mm;
+}
+.info-title {
+    font-weight: bold;
+}
+#doctype-desc {
+    font-size: 12pt;
+}
+
+#signature {
+    padding-top:  29mm;
+}
+#signature-text {
+    border-top: var(--small-line) solid black;
+}
+
+.cost-summary table{
+    border-collapse: collapse;
+    padding-bottom: 5mm;
+    border-spacing: 5mm;
+    table-layout: fixed;
+    width: 100%;
+    page-break-inside: avoid;
+}
+.cost-summary tr {
+    padding-top: 2px;
+    padding-bottom: 2px;
+    white-space:nowrap;
+}
+.summation-row {
+    border-top: var(--small-line) solid black;
+    font-weight: bold;
+}
+
+/* quotation tables styling */
+#quotation-details tbody td {
+    padding-top: 1.25mm;
+    padding-bottom: 1.25mm;
+    vertical-align: top;
+}
+#quotation-details thead tr:nth-last-of-type(1) {
+    /* add top border to the header */
+    border-top: var(--small-line) solid var(--border-color);
+    border-bottom: var(--small-line) solid var(--border-color);
+}
+
+/* product-tables */
+
+section#quotation-details {
+}
+table.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 1em;
+    page-break-inside: auto;
+}
+.product-table thead {
+    /* Specify that the header of a product table is always shown */
+    display: table-header-group !important;
+}
+.product-table tfoot {
+    /* the footer of a product table is shown where it is in the html document */
+    display: table-row-group;
+    /* show a border before the footer of the table */
+    border-top: var(--small-line) solid var(--border-color);
+    font-weight: bold;
+}
+.product-table tbody {
+    page-break-inside: avoid;
+}
+
+.product-table th {
+    padding-top: 2mm;
+    padding-bottom: 2mm;
+    font-weight: normal;
+}
+
+/* item number column */
+.item-number-column {
+    text-align: left;
+    width: calc(100% / 12);
+}
+/* item description column */
+.item-description-column {
+    text-align: left;
+    width: calc(100% / 3);
+}
+/* item unit column */
+.item-unit-column {
+    text-align: center;
+    width: calc(100% / 6);
+    padding-left: 1mm;
+    padding-right: 1mm;
+}
+/* item amount column */
+.item-amount-column {
+    text-align: right;
+    width: calc(100% / 12);
+}
+/* item unit price column */
+.item-unit-price-column {
+    text-align: right;
+    width: calc(100% / 6);
+}
+/* item total */
+.item-total-column {
+    text-align: right;
+    width: calc(100% / 6);
+}
+
+/* item styling */
+.item-description {
+    font-style: italic;
+    font-size: 9pt;
+    color: #666;
+}
+
+#overheads table {
+    table-layout: fixed;
+}
+.overhead-category-column {
+}
+.overhead-total-column {
+    width: calc(100% / 6) ;
+    text-align: right;
+}
+
+
+
+/* agreement declaration */
+section#agreement-declaration {
+    page-break-before: always;
+}
