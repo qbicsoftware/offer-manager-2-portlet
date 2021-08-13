@@ -186,10 +186,7 @@ class QuotationDetails {
         }
         //add product to current table
         htmlContent.getElementById(elementId).append(ItemPrintout.itemInHTML(itemNumber, item))
-        println("Current allocated Space" + consumedPageSpace)
-        println("Current item: " + item.productName + " " + determineItemSpace(item).toString())
         consumedPageSpace += determineItemSpace(item)
-        println("Space after Current Item" + consumedPageSpace)
     }
 
     /**
@@ -225,10 +222,7 @@ class QuotationDetails {
         String discountQuantity = Currency.getFormatterWithoutSymbol().format(item.getDiscountPerUnit())
 
         htmlContent.getElementById(elementId).append(ItemPrintout.discountItemInHTML(itemNumber, description, quantity, unit, unitDiscount, discountQuantity))
-        println("Current allocated Space" + consumedPageSpace)
-        println("Discount for: " + item.productName + " " + determineItemSpace("Discount", description, quantity, unit, unitDiscount, discountQuantity))
         consumedPageSpace += determineItemSpace("Discount", description, quantity, unit, unitDiscount, discountQuantity)
-        println("Space after Current Item" + consumedPageSpace)
     }
 
     private static String generateElementID(int tableCount, ProductGroup productGroups){
@@ -285,7 +279,6 @@ class QuotationDetails {
         double combinedPageSpace = descriptionPageSpace + facilityPageSpace
         calculatedSpaces.add(combinedPageSpace)
 
-        println(item.productName + " " +calculatedSpaces)
         return calculatedSpaces.max()
     }
 
@@ -304,7 +297,6 @@ class QuotationDetails {
         calculatedSpaces.add(minimalLineSpace + calculateItemSpace(unitPrice, ProductPropertySpacing.PRODUCT_UNIT_PRICE))
         calculatedSpaces.add(minimalLineSpace + calculateItemSpace(itemTotalCosts, ProductPropertySpacing.PRODUCT_TOTAL))
 
-        println(productName + " " + calculatedSpaces)
         return calculatedSpaces.max()
     }
 
