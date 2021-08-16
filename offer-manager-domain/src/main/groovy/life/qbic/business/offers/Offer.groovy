@@ -331,7 +331,7 @@ class Offer {
      */
     double getTaxCosts() {
         if (!selectedCustomerAffiliation.category.equals(noVatCategory) && selectedCustomerAffiliation.country.equals(countryWithVat)) {
-            return (calculateNetPrice() + getOverheadSum()) * VAT
+            return (calculateNetPrice() + getOverheadSum() - getTotalDiscountAmount()) * VAT
         }
         else {
             return 0
