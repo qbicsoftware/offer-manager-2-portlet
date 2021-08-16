@@ -290,10 +290,10 @@ class QuotationDetails {
     private static double calculateItemSpace(String productProperty, ProductPropertySpacing productPropertySpacing) {
 
         //minimal lineSpace allocated for the item and the space underneath before any linebreaks occur
-        double minimalLineSpace = 0.5
+        double minimalItemLineSpace = 0.5
 
         // As soon as the PropertySpacing limit is reached a line break will occur
-        return minimalLineSpace + (Math.ceil(productProperty.length() / productPropertySpacing.getCharsLineLimit()) * lineSpace)
+        return minimalItemLineSpace + (Math.ceil(productProperty.length() / productPropertySpacing.getCharsLineLimit()) * lineSpace)
     }
 
     /**
