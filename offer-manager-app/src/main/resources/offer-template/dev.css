@@ -106,6 +106,57 @@ thead#page-header {
     font-size: 7pt;
 }
 
+/* reused components */
+.currency-symbol {
+    display: inline;
+}
+.vat-percentage::after {
+    content: "%";
+}
+.overheads-percentage::after {
+    content: "%";
+}
+.costs {
+    text-align: right;
+}
+.cost-summary-container {
+    border-top: var(--small-line) solid black;
+    border-bottom: var(--small-line) solid black;
+}
+.cost-summary {
+    /* we do not want the cost summary to be broken up */
+    page-break-inside: avoid;
+    text-align: left;
+}
+.cost-summary .cost-section {
+    border-bottom: var(--small-line) solid var(--border-color);
+    /* make the cost summary a grid */
+    display: grid; 
+    grid-template-columns: auto auto;  
+}
+
+/* select the last cost-section in the cost summary */
+.cost-summary :nth-last-of-type(2) {
+    /* the border is provided by the totals-section */
+    border-bottom: none;
+}
+
+.cost-summary .totals-section {
+    border-top: var(--small-line) solid black;
+    font-weight: bold;
+    display: grid; 
+    grid-template-columns: auto auto; 
+}
+.cost-summary .costs {
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+.totals-section .costs {
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+
+
 /**
  * first-page
  */
@@ -146,7 +197,7 @@ section#first-page {
     grid-template-columns: auto auto  20%;
     page-break-inside: avoid;
 }
-.cost-summary {
+#front-page-summary .cost-summary-container {
     grid-column-start: 1;
     grid-column-end: 2;
 }
@@ -181,22 +232,15 @@ section#first-page {
     border-top: var(--small-line) solid black;
 }
 
-.cost-summary table{
-    border-collapse: collapse;
-    padding-bottom: 5mm;
-    border-spacing: 5mm;
-    table-layout: fixed;
-    width: 100%;
-    page-break-inside: avoid;
+#front-page-summary .cost-summary-container {
+    border-top: none;
+    border-bottom: none;
 }
-.cost-summary tr {
-    padding-top: 2px;
+#front-page-summary .cost-section {
+    border-top: none;
+    border-bottom: none;
     padding-bottom: 2px;
-    white-space: nowrap;
-}
-.summation-row {
-    border-top: var(--small-line) solid black;
-    font-weight: bold;
+
 }
 
 /* quotation tables styling */
@@ -283,14 +327,11 @@ table.product-table {
     color: #666;
 }
 
-#overheads table {
-    table-layout: fixed;
-}
-.overhead-category-column {
-}
-.overhead-total-column {
-    width: calc(100% / 6) ;
-    text-align: right;
+/* cost summary in quotation details section */
+#quotation-details .cost-summary {
+    width: calc(100% / 3);
+    margin-left: auto;
+    margin-right: 0;
 }
 
 

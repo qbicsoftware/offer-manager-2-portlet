@@ -1,0 +1,69 @@
+/* this document documents all css selectors that are filled in the offer creation process */
+--- overall document
+.currency-symbol
+.vat-percentage
+.overheads-percentage
+
+--- customer
+#customer-name
+#customer-organisation
+#customer-street
+#customer-postal-code
+#customer-city
+#customer-country
+
+--- project-manager
+#qbic-ad
+#project-manager-name
+#project-manager-street
+#project-manager-city
+#project-manager-email
+
+--- offer information
+#doctype-desc
+#offer-date
+#offer-identifier
+#offer-expiry-date
+#project-title
+#project-description
+#experimental-design
+
+--- cost values
+.overheads  .data-generation  > .costs
+.overheads  .data-analysis  > .costs
+.overheads  .data-storage > .costs
+.overheads  > .totals-section  > .costs
+.total-costs .net > .costs
+.total-costs .discounts > .costs
+.total-costs .overheads > .costs
+.total-costs .vat > .costs
+.total-costs > .totals-section > .costs
+
+--- tables
+#data-generation-items
+#data-generation-items > tfoot .costs
+#data-analysis-items
+#data-analysis-items > tfoot .costs
+data-management-items
+data-management-items > tfoot .costs
+
+/* to be filled with the following html:
+<tr>
+  <td class="item-number-column">1</td>
+  <td class="item-description-column">
+    <div class="item-title">Awesome product</div>
+  </td>
+  <td class="item-amount-column">5.00</td>
+  <td class="item-unit-column">Samples</td>
+  <td class="item-unit-price-column">1.00</td>
+  <td class="item-total-column">5.00</td>
+</tr>
+<tr>
+  <td class="item-number-column"></td>
+  <td class="item-description-column" colspan="3">
+    <div class="item-description">
+      This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+    </div>
+  </td>
+</tr>
+*/
