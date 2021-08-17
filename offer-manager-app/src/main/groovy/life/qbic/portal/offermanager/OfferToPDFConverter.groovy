@@ -3,17 +3,15 @@ package life.qbic.portal.offermanager
 import groovy.util.logging.Log4j2
 import life.qbic.business.offers.OfferContent
 import life.qbic.business.offers.OfferExporter
-import life.qbic.datamodel.dtos.business.*
-import life.qbic.portal.offermanager.offergeneration.OfferHTMLDocument
-
+import life.qbic.portal.offermanager.offergeneration.OfferTemplate
+import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.parser.Parser
 
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-
+import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
 /**
@@ -53,10 +51,12 @@ class OfferToPDFConverter implements OfferExporter {
 
     private final Path newOfferStyle
 
+    private final Path newOfferPrintStyle
+
+    private static final URI OFFER_HTML_TEMPLATE_URI = OfferToPDFConverter.class.getClassLoader()
+            .getResource("offer-template/offer.html").toURI()
     private static final Path OFFER_HTML_TEMPLATE =
-            Paths.get(OfferToPDFConverter.class.getClassLoader()
-                    .getResource("offer-template/offer.html")
-                    .toURI())
+            Paths.get(OFFER_HTML_TEMPLATE_URI)
     private static final Path OFFER_HEADER_IMAGE =
             Paths.get(OfferToPDFConverter.class.getClassLoader()
                     .getResource("offer-template/offer_header.png")
@@ -65,6 +65,12 @@ class OfferToPDFConverter implements OfferExporter {
             Paths.get(OfferToPDFConverter.class.getClassLoader()
                     .getResource("offer-template/stylesheet.css")
                     .toURI())
+    public static final Path OFFER_PRINT_CSS =
+            Paths.get(OfferToPDFConverter.class.getClassLoader()
+                    .getResource("offer-template/print.css")
+                    .toURI())
+
+    private static final OfferTemplate TEMPLATE = new OfferTemplate(Jsoup.parse(new File(OFFER_HTML_TEMPLATE_URI),"UTF-8"))
 
 
     OfferToPDFConverter(OfferContent offer) {
@@ -73,22 +79,32 @@ class OfferToPDFConverter implements OfferExporter {
         this.createdOffer = Paths.get(tempDir.toString(), "offer.html")
         this.newOfferImage = Paths.get(tempDir.toString(), "offer_header.png")
         this.newOfferStyle = Paths.get(tempDir.toString(), "stylesheet.css")
+        this.newOfferPrintStyle = Paths.get(tempDir.toString(), "print.css")
         this.createdOfferPdf = Paths.get(tempDir.toString(), "offer.pdf")
-        importTemplate()
-        this.htmlContent = Parser.xmlParser().parseInput(new File(this.createdOffer.toUri()).text, "")
-        fillTemplateWithOfferContent()
+
+        importTemplateResources()
+        this.htmlContent = TEMPLATE.fill(offer)
+        this.htmlContent.setBaseUri(this.createdOffer.toUri().toString())
+        setHtmlTitle()
         writeHTMLContentToFile(this.createdOffer, this.htmlContent)
         generatePDF()
+    }
+
+    private void setHtmlTitle() {
+        // TODO this could be replaced by refactoring the OfferFileNameFormatter.
+        LocalDate offerDate = offer.getCreationDate().toLocalDate()
+        String dateString =String.format("%04d_%02d_%02d", offerDate.getYear(), offerDate.getMonthValue(), offerDate.getDayOfMonth())
+        this.htmlContent.title("${dateString}_${offer.getOfferIdentifier()}")
     }
 
     InputStream getOfferAsPdf() {
         return new BufferedInputStream(new FileInputStream(new File(createdOfferPdf.toString())))
     }
 
-    private void importTemplate() {
-        Files.copy(OFFER_HTML_TEMPLATE, createdOffer, StandardCopyOption.REPLACE_EXISTING)
+    private void importTemplateResources() {
         Files.copy(OFFER_HEADER_IMAGE, newOfferImage, StandardCopyOption.REPLACE_EXISTING)
         Files.copy(OFFER_STYLESHEET, newOfferStyle, StandardCopyOption.REPLACE_EXISTING)
+        Files.copy(OFFER_PRINT_CSS, newOfferPrintStyle, StandardCopyOption.REPLACE_EXISTING)
     }
 
     private static void writeHTMLContentToFile(Path fileLocation, Document htmlContent) {
@@ -96,11 +112,6 @@ class OfferToPDFConverter implements OfferExporter {
             it.write(htmlContent.toString())
             it.flush()
         }
-    }
-
-    private void fillTemplateWithOfferContent() {
-        OfferHTMLDocument htmlDocument = new OfferHTMLDocument(htmlContent, offer)
-        htmlDocument.fillTemplateWithOfferContent()
     }
 
     private void generatePDF() {
