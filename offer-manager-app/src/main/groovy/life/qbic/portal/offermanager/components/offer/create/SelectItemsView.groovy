@@ -367,8 +367,6 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                     .setCaption("Product Name").setId("ProductName")
             Grid.Column<Product,String> descriptionColumn = grid.addColumn({ it.description })
                     .setCaption("Product Description").setId("ProductDescription").setDescriptionGenerator({it.description})
-            grid.addColumn({ it.unitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol()))
-                    .setCaption("Product Unit Price").setId("ProductUnitPrice")
             grid.addColumn({ it.internalUnitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol()))
                     .setCaption("Internal Unit Price").setId("InternalUnitPrice")
             grid.addColumn({ it.externalUnitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol()))

@@ -4,7 +4,7 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-1.1.0 (2021-08-02)
+1.1.0 (2021-08-17)
 ------------------
 
 **Added**
@@ -20,6 +20,10 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Uses new DTOs instead of performing unnecessary computations in PDF creation (`#725 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/725>`_)
 
 * Adds the CreateOfferContent use case (`#735 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/735>`_)
+
+* Add discount unit and percentage to discount items, specify the discount item description (`#755 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/755>`_)
+
+* Adds the total price before VAT is applied to an offer (`#754 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/754>`_)
 
 **Fixed**
 
@@ -47,7 +51,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * ``org.mariadb.jdbc:mariadb-java-client:2.7.2`` -> ``2.7.3``
 
-* ``life.qbic:data-model-lib:2.8.2`` -> ``2.11.0-SNAPSHOT``
+* ``life.qbic:data-model-lib:2.8.2`` -> ``2.11.0``
 
 **Deprecated**
 

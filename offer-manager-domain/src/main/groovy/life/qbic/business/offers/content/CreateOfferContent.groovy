@@ -77,7 +77,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         groupProductItems(offer.items)
         String id = offer.identifier.toString()
         def offerContentBuilder = new OfferContent.Builder(offer.customer,offer.selectedCustomerAffiliation,offer.projectManager,creationDate,expirationDate,offer.projectTitle
-        ,offer.projectObjective, offer.experimentalDesign.orElse(""),offer.identifier.toString())
+        ,offer.projectObjective, offer.experimentalDesign.orElse(""),offer.identifier.toString(), offer.getTotalNetPriceWithOverheads())
 
         //collect productitems and convert to offeritems
         groupProductItems(offer.items)
@@ -124,7 +124,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
             return 0
         } else {
             return offerItems.sum {
-                it.quantity * it.unitPrice
+                it.itemTotal -it.quantityDiscount
             } as double
         }
     }
@@ -139,20 +139,41 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
             return 0
         } else {
             return offerItems.sum {
-                it.quantity * it.unitPrice * overheadRatio
+                (it.itemTotal - it.quantityDiscount ) * overheadRatio
             } as double
         }
     }
 
 
-    private OfferItem createOfferItem(ProductItem productItem){
+    private OfferItem createOfferItem(ProductItem productItem) {
         Product product = productItem.product
         double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? product.internalUnitPrice : product.externalUnitPrice
-
         OfferItem offerItem = new OfferItem.Builder(productItem.quantity, product.description, product.productName, unitPrice, productItem.quantityDiscount,
-                product.serviceProvider.name(), product.unit.value, productItem.totalPrice).build()
+                calculateDiscountPerUnit(productItem),calculateDiscountPercentage(productItem),product.serviceProvider.name(), product.unit.value, productItem.totalPrice).build()
 
         return offerItem
+    }
+    
+    
+    /**
+     * Calculates the discount percentage for a product item. Note that this is not a ratio, but a number between 0 and 100.
+     * @param offerItem item for which the discount percentage should be calculated
+     * @return the discount percentage based on quantity discount and item total cost
+     */
+    private double calculateDiscountPercentage(ProductItem productItem) {
+        BigDecimal result = 100.0.toBigDecimal() * productItem.quantityDiscount.toBigDecimal() / productItem.totalPrice.toBigDecimal()
+        return result.doubleValue()
+    }
+    
+    
+    /**
+     * Calculates the discount per unit for a product item
+     * @param offerItem item for which the discount per unit should be calculated
+     * @return the discount per unit, if applicable, 0 otherwise
+     */
+    private double calculateDiscountPerUnit(ProductItem productItem) {
+        BigDecimal result = productItem.quantityDiscount.toBigDecimal() / productItem.quantity.toBigDecimal()
+        return result.doubleValue()
     }
 
 
