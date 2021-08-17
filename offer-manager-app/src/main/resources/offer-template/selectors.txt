@@ -31,7 +31,7 @@
 --- cost values
 .overheads  .data-generation  > .costs
 .overheads  .data-analysis  > .costs
-.overheads  .data-storage > .costs
+.overheads  .data-management > .costs
 .overheads  > .totals-section  > .costs
 .total-costs .net > .costs
 .total-costs .discounts > .costs
