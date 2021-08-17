@@ -110,12 +110,6 @@ thead#page-header {
 .currency-symbol {
     display: inline;
 }
-.vat-percentage::after {
-    content: "%";
-}
-.overheads-percentage::after {
-    content: "%";
-}
 .costs {
     text-align: right;
 }

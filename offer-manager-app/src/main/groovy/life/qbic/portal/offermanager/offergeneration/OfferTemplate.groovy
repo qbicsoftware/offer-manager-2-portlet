@@ -59,8 +59,8 @@ class OfferTemplate {
      *  <li>#data-generation-items > tfoot .costs</li>
      *  <li>#data-analysis-items</li>
      *  <li>#data-analysis-items > tfoot .costs</li>
-     *  <li>data-management-items</li>
-     *  <li>data-management-items > tfoot .costs</li>
+     *  <li>#data-management-items</li>
+     *  <li>#data-management-items > tfoot .costs</li>
      * </ul>
      * @param document the template document
      * @since 1.0.0
