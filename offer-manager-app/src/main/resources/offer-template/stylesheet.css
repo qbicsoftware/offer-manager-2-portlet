@@ -88,8 +88,6 @@ thead#page-header {
 #page-footer {
     color: #bbbbbb;
     height: var(--footer-height);
-    font-family: Open Sans;
-    font-size: 7pt;
 }
 #page-footer-content .footer-columns {
     display: grid;
