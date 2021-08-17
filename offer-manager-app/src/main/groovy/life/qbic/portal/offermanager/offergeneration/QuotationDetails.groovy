@@ -206,7 +206,7 @@ class QuotationDetails {
         String quantity = item.quantity as String
         String unit = item.unit as String
         String unitDiscount = Currency.getFormatterWithoutSymbol().format(item.getDiscountPerUnit())
-        String discountQuantity = Currency.getFormatterWithoutSymbol().format(item.getDiscountPerUnit())
+        String discountQuantity = Currency.getFormatterWithoutSymbol().format(item.getQuantityDiscount())
 
         htmlContent.getElementById(elementId).append(ItemPrintout.discountItemInHTML(itemNumber, description, quantity, unit, unitDiscount, discountQuantity))
         consumedPageSpace += determineItemSpace("Discount", description, quantity, unit, unitDiscount, discountQuantity)
@@ -447,7 +447,7 @@ class QuotationDetails {
                         <div class="col-4 ">Discount</div>
                         <div class="col-1 price-value">${quantity}</div>
                         <div class="col-2 text-center">${unit}</div>
-                        <div class="col-2 price-value">${discountPerUnit}</div>
+                        <div class="col-2 price-value">-${discountPerUnit}</div>
                         <div class="col-2 price-value">-${quantityDiscount}</div>
                     </div>
                     <div class="row product-item">
