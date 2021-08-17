@@ -119,6 +119,7 @@ thead#page-header {
 }
 .cost-summary {
     /* we do not want the cost summary to be broken up */
+    break-inside: avoid;
     page-break-inside: avoid;
     text-align: left;
 }
@@ -161,7 +162,9 @@ thead#page-header {
  */
 section#first-page {
     page-break-after: always;
+    break-after: always;
     page-break-inside: avoid;
+    break-inside: avoid;
 }
 /* layout of the first page */
 #first-page {
@@ -195,6 +198,7 @@ section#first-page {
     display: grid;
     grid-template-columns: auto auto  20%;
     page-break-inside: avoid;
+    break-inside: avoid;
 }
 #front-page-summary .cost-summary-container {
     grid-column-start: 1;
@@ -263,12 +267,14 @@ section#first-page {
 
 section#quotation-details {
     page-break-inside: avoid;
+    break-inside: avoid;
 }
 table.product-table {
     width: 100%;
     border-collapse: collapse;
     border-spacing: 1em;
     page-break-inside: auto;
+    break-inside: auto;
 }
 .product-table thead {
     /* Specify that the header of a product table is always shown */
@@ -283,6 +289,7 @@ table.product-table {
 }
 .product-table tbody {
     page-break-inside: avoid;
+    break-inside: avoid;
 }
 
 .product-table th {
@@ -343,4 +350,5 @@ table.product-table {
 /* agreement declaration */
 section#agreement-declaration {
     page-break-before: always;
+    break-before: always;
 }
