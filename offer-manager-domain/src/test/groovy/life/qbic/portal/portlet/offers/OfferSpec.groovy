@@ -147,8 +147,8 @@ class OfferSpec extends Specification {
         double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
                 (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
         double expectedNetSum = (10.0 + (400 * 1.0))
-        double expectedOverhead = (10.0 + (400 * 1.0) - totalDiscount) * 0.2
-        double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
+        double expectedOverhead = (expectedNetSum - totalDiscount) * 0.2
+        double expectedTaxes = (expectedNetSum + expectedOverhead - totalDiscount) * 0.19
         offer.items.size() == 2
         netSum == expectedNetSum
         overhead == expectedOverhead
@@ -182,7 +182,7 @@ class OfferSpec extends Specification {
         then:
         double expectedNetSum = (10.0 + (400 * 1.0))
         double expectedOverhead = (10.0 + (400 * 1.0) - totalDiscount) * 0.4
-        double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
+        double expectedTaxes = (expectedNetSum + expectedOverhead - totalDiscount) * 0.19
         offer.items.size() == 2
         netSum == expectedNetSum
         overhead == expectedOverhead
