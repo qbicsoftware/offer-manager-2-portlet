@@ -184,6 +184,20 @@ class OfferTemplate {
         }
     }
 
+    private static void appendOfferItems(Element tableBody, List<OfferItem> offerItems) {
+        int position = 1
+        for (OfferItem offerItem : offerItems) {
+            OfferPosition offerPosition = OfferPosition.createProductItem(position, offerItem)
+            tableBody.append(offerPosition.outerHtml())
+            position++
+            if (offerItem.getQuantityDiscount() > 0) {
+                OfferPosition discountPosition = OfferPosition.createDiscount(position, position - 1, offerItem)
+                tableBody.append(discountPosition.outerHtml())
+                position++
+            }
+        }
+    }
+
     private static void fillDataGenerationItems(Document document, OfferContent offer) {
         Element dataGenerationTable = document.getElementById("data-generation-items")
 
@@ -197,18 +211,8 @@ class OfferTemplate {
             element.remove()
         }
         // fill the table
-        int position = 1
         Element tableBody = dataGenerationTable.selectFirst("tbody")
-        for (OfferItem offerItem in offer.getDataGenerationItems()) {
-            OfferPosition offerPosition = OfferPosition.createProductItem(position, offerItem)
-            tableBody.append(offerPosition.outerHtml())
-            position++
-            if (offerItem.getQuantityDiscount() > 0) {
-                OfferPosition discountPosition = OfferPosition.createDiscount(position, position - 1, offerItem)
-                tableBody.append(discountPosition.outerHtml())
-                position++
-            }
-        }
+        appendOfferItems(tableBody, offer.getDataGenerationItems())
         // set the footer
         String netCosts = Currency.format(offer.getNetDataGeneration())
         dataGenerationTable.select("> tfoot .costs").first().text(netCosts)
@@ -225,18 +229,8 @@ class OfferTemplate {
             element.remove()
         }
         // fill the table
-        int position = 1
         Element tableBody = dataAnalysisTable.selectFirst("tbody")
-        for (OfferItem offerItem in offer.getDataAnalysisItems()) {
-            OfferPosition offerPosition = OfferPosition.createProductItem(position, offerItem)
-            tableBody.append(offerPosition.outerHtml())
-            position++
-            if (offerItem.getQuantityDiscount() > 0) {
-                OfferPosition discountPosition = OfferPosition.createDiscount(position, position - 1, offerItem)
-                tableBody.append(discountPosition.outerHtml())
-                position++
-            }
-        }
+        appendOfferItems(tableBody, offer.getDataAnalysisItems())
         // set the footer
         String netCosts = Currency.format(offer.getNetDataAnalysis())
         dataAnalysisTable.select(" > tfoot .costs").first().text(netCosts)
@@ -253,18 +247,8 @@ class OfferTemplate {
             element.remove()
         }
         // fill the table
-        int position = 1
         Element tableBody = dataManagementTable.selectFirst("tbody")
-        for (OfferItem offerItem in offer.getDataManagementItems()) {
-            OfferPosition offerPosition = OfferPosition.createProductItem(position, offerItem)
-            tableBody.append(offerPosition.outerHtml())
-            position++
-            if (offerItem.getQuantityDiscount() > 0) {
-                OfferPosition discountPosition = OfferPosition.createDiscount(position, position - 1, offerItem)
-                tableBody.append(discountPosition.outerHtml())
-                position++
-            }
-        }
+        appendOfferItems(tableBody, offer.getDataManagementItems())
         // set the footer
         String netCosts = Currency.format(offer.getNetPMandDS())
         document.select("#data-management-items > tfoot .costs").first().text(netCosts)
