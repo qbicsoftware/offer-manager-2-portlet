@@ -135,7 +135,6 @@ thead#page-header {
   font-weight: bold;
 }
 .cost-summary .cost-section {
-    border-bottom: var(--small-line) solid var(--border-color);
     /* make the cost summary a grid */
     display: grid; 
     grid-template-columns: auto auto;  
