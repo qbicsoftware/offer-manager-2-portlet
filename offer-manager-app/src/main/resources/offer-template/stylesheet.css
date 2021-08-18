@@ -279,6 +279,7 @@ table.product-table {
 .product-table thead {
     /* Specify that the header of a product table is always shown */
     display: table-header-group !important;
+    page-break-inside: avoid;
 }
 .product-table tfoot {
     /* the footer of a product table is shown where it is in the html document */
@@ -286,6 +287,7 @@ table.product-table {
     /* show a border before the footer of the table */
     border-top: var(--small-line) solid var(--border-color);
     font-weight: bold;
+    page-break-inside: avoid;
 }
 .product-table tbody {
     page-break-inside: avoid;
@@ -336,6 +338,9 @@ table.product-table {
     font-style: italic;
     font-size: 9pt;
     color: #666;
+}
+.item-description p {
+    margin: 0;
 }
 
 /* cost summary in quotation details section */

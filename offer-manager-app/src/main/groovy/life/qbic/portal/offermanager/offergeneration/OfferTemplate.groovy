@@ -171,7 +171,7 @@ class OfferTemplate {
             element.text(Currency.format(offer.getNetCost()))
         }
         document.select(".total-costs .discounts > .costs").each {element ->
-            element.text(Currency.format(offer.getTotalDiscountAmount()))
+            element.text(Currency.format(offer.getTotalDiscountAmount() * (-1)))
         }
         document.select(".total-costs .overheads > .costs").each {element ->
             element.text(Currency.format(offer.getOverheadTotal()))
@@ -281,7 +281,7 @@ class OfferTemplate {
 
         static OfferPosition createProductItem(int position, OfferItem offerItem) {
             String name = offerItem.getProductName()
-            String description = offerItem.getProductDescription()
+            String description = createProductItemDescription(offerItem.getProductDescription(), offerItem.getServiceProvider())
             double quantity = offerItem.getQuantity()
             double unitPrice = offerItem.getUnitPrice()
             double total = offerItem.getItemTotal()
@@ -342,6 +342,14 @@ class OfferTemplate {
             return html
         }
 
+        private static String createProductItemDescription(String productDescription, String serviceProvider) {
+            String description = """\
+                <p>${productDescription}</p>
+                <p>Service Provider: ${serviceProvider}</p>
+                \
+                """.stripIndent()
+            return description
+        }
         private static String createDiscountDescription(int discountedPosition, double quantity, String unit, double discountPercentage) {
             String unitName = unit.toString().toLowerCase()
             unitName = (quantity != 1)?  unitName + "s" : unitName
