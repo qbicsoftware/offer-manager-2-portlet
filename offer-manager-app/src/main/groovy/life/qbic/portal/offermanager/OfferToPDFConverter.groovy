@@ -70,6 +70,7 @@ class OfferToPDFConverter implements OfferExporter {
     OfferToPDFConverter(OfferContent offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.tempDir = Files.createTempDirectory("offer")
+        this.tempDir.toFile().deleteOnExit()
         this.createdOffer = Paths.get(tempDir.toString(), "offer.html")
         this.newOfferImage = Paths.get(tempDir.toString(), "offer_header.png")
         this.newOfferStyle = Paths.get(tempDir.toString(), "stylesheet.css")
