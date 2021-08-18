@@ -245,7 +245,7 @@ class OfferTemplate {
         appendOfferItems(tableBody, offer.getDataManagementItems())
         // set the footer
         String netCosts = Currency.format(offer.getNetPMandDS())
-        document.select("#data-management-items > tfoot .costs").first().text(netCosts)
+        dataManagementTable.select(" > tfoot .costs").first().text(netCosts)
     }
 
     private static class OfferPosition {
