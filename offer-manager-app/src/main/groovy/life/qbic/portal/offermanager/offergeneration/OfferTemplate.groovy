@@ -85,7 +85,6 @@ class OfferTemplate {
         fillDataGenerationItems(result, content)
         fillDataAnalysisItems(result, content)
         fillDataManagementItems(result, content)
-        // fill general information
         fillGeneralInformation(result, content)
         return result
     }
