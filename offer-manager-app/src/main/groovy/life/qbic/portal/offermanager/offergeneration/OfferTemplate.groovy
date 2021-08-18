@@ -80,7 +80,6 @@ class OfferTemplate {
         Document result = this.document.clone()
         fillCustomerInformation(result, content)
         fillProjectManagerInformation(result, content)
-        // fill offer information
         fillOfferInformation(result, content)
         // fill cost summaries
         fillCostSummary(result, content)
