@@ -86,7 +86,6 @@ class OfferTemplate {
         fillOfferInformation(result, content)
         // fill cost summaries
         fillCostSummary(result, content)
-        // fill tables table
         fillDataGenerationItems(result, content)
         fillDataAnalysisItems(result, content)
         fillDataManagementItems(result, content)
