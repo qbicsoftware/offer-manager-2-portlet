@@ -32,6 +32,12 @@ h2 {
    font-size: 12pt;
    font-weight: bold;
 }
+
+thead, tfoot {
+  page-break-inside: avoid;
+  break-inside: avoid;
+}
+
 /* small text has a size of 8pt */
 p.small {
     font-size: 8pt;
