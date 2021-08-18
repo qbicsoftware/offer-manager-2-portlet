@@ -55,8 +55,6 @@ class OfferToPDFConverter implements OfferExporter {
 
     private static final URI OFFER_HTML_TEMPLATE_URI = OfferToPDFConverter.class.getClassLoader()
             .getResource("offer-template/offer.html").toURI()
-    private static final Path OFFER_HTML_TEMPLATE =
-            Paths.get(OFFER_HTML_TEMPLATE_URI)
     private static final Path OFFER_HEADER_IMAGE =
             Paths.get(OfferToPDFConverter.class.getClassLoader()
                     .getResource("offer-template/offer_header.png")
