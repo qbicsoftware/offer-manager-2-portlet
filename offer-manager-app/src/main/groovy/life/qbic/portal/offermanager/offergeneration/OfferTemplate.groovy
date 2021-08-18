@@ -78,19 +78,13 @@ class OfferTemplate {
     Document fill(OfferContent content) {
         // make a copy of the template
         Document result = this.document.clone()
-        // fill customer information
         fillCustomerInformation(result, content)
-        // fill project manager information
         fillProjectManagerInformation(result, content)
-        // fill offer information
         fillOfferInformation(result, content)
-        // fill cost summaries
         fillCostSummary(result, content)
-        // fill tables table
         fillDataGenerationItems(result, content)
         fillDataAnalysisItems(result, content)
         fillDataManagementItems(result, content)
-        // fill general information
         fillGeneralInformation(result, content)
         return result
     }
