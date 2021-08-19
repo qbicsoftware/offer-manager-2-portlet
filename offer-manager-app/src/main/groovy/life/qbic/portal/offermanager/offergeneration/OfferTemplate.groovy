@@ -78,6 +78,8 @@ class OfferTemplate {
     Document fill(OfferContent content) {
         // make a copy of the template
         Document result = this.document.clone()
+        fillOverheadPercentage(result, content)
+        fillVatPercentage(result, content)
         fillCustomerInformation(result, content)
         fillProjectManagerInformation(result, content)
         fillOfferInformation(result, content)
@@ -85,24 +87,30 @@ class OfferTemplate {
         fillDataGenerationItems(result, content)
         fillDataAnalysisItems(result, content)
         fillDataManagementItems(result, content)
-        fillGeneralInformation(result, content)
+        appendCurrencySymbol(result)
         return result
     }
 
-    private static void fillGeneralInformation(Document document, OfferContent offer) {
+    private static void appendCurrencySymbol(Document document) {
         document.getElementsByClass("currency-symbol").each {
             it.text(Currency.SYMBOL)
         }
         document.select("#front-page-summary .cost-summary .costs").each {
             it.appendText(" " + Currency.SYMBOL)
         }
-        document.getElementsByClass("vat-percentage").each {
-            String vatPercentage = PERCENTAGE_FORMATTER.format(offer.getVatRatio())
-            it.text(vatPercentage)
-        }
+    }
+
+    private static void fillOverheadPercentage(Document document, OfferContent offer) {
         document.getElementsByClass("overheads-percentage").each {
             String overheadPercentage = PERCENTAGE_FORMATTER.format(offer.getOverheadRatio())
             it.text(overheadPercentage)
+        }
+    }
+
+    private static void fillVatPercentage(Document document, OfferContent offer) {
+        document.getElementsByClass("vat-percentage").each {
+            String vatPercentage = PERCENTAGE_FORMATTER.format(offer.getVatRatio())
+            it.text(vatPercentage)
         }
     }
 
