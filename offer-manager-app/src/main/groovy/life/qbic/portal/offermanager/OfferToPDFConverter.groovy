@@ -70,7 +70,19 @@ class OfferToPDFConverter implements OfferExporter {
     OfferToPDFConverter(OfferContent offer) {
         this.offer = Objects.requireNonNull(offer, "Offer object must not be a null reference")
         this.tempDir = Files.createTempDirectory("offer")
-        this.tempDir.toFile().deleteOnExit()
+        // instruct the deletion of created files on shutdown
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            /**
+             * Calls the <code>run()</code> method of the Runnable object the receiver holds.
+             * If no Runnable is set, does nothing.
+             *
+             * @see Thread#start
+             */
+            @Override
+            void run() {
+                tempDir.deleteDir()
+            }
+        })
         this.createdOffer = Paths.get(tempDir.toString(), "offer.html")
         this.newOfferImage = Paths.get(tempDir.toString(), "offer_header.png")
         this.newOfferStyle = Paths.get(tempDir.toString(), "stylesheet.css")
