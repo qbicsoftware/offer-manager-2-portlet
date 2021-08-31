@@ -21,6 +21,6 @@ class OfferId extends TomatoId{
 
     @Override
     String toString() {
-        return "O-${super.randomPart}-${super.projectPart}-${super.version}"
+        return "O-${super.projectPart}-${super.randomPart}-${super.version}"
     }
 }
