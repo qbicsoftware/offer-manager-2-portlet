@@ -15,28 +15,18 @@ class DataStorageDiscount implements Function<BigDecimal, BigDecimal> {
     private final static BigDecimal DISCOUNT_RATIO = 1.0
 
     /**
-     * <p>Calculates the absolute discount amount for a given data store cost value.</p>
+     * <p>Calculates the absolute discount amount for a non-negative given data store cost value.</p>
      *
      * <p>For example a data management cost value of 20.00€ will return the discount amount in xx.xx€.</p>
-     * @param dataStoragePrice the storage price value the discount shall be calculated for
+     * @param dataStoragePrice the storage price value the discount shall be calculated for, must be not negative
      * @return The discount amount value
      * @since 1.1.0
      */
     @Override
     BigDecimal apply(BigDecimal dataStoragePrice) {
         if (dataStoragePrice < 0) {
-            throw new UndefinedFunctionException()
+            throw new IllegalArgumentException("Cannot determine discount for negative price values.")
         }
         return DISCOUNT_RATIO * dataStoragePrice
-    }
-
-    /**
-     * This function is not defined for the arguments provided.
-     * @since 1.1.0
-     */
-    private static class UndefinedFunctionException extends IllegalArgumentException {
-        UndefinedFunctionException() {
-            super("Cannot determine discount for negative price values.")
-        }
     }
 }
