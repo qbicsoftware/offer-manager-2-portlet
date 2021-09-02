@@ -17,7 +17,7 @@ class DataStorageDiscount implements Function<BigDecimal, BigDecimal> {
     /**
      * <p>Calculates the absolute discount amount for a non-negative given data store cost value.</p>
      *
-     * <p>For example a data management cost value of 20.00€ will return the discount amount in xx.xx€.</p>
+     * <p>For example a data management cost value of 20.00€ will return the discount amount in €.</p>
      * @param dataStoragePrice the storage price value the discount shall be calculated for, must be not negative
      * @return The discount amount value
      * @since 1.1.0
