@@ -486,7 +486,10 @@ class Offer {
         BigDecimal discount = 0
         if (productItem.product instanceof PrimaryAnalysis
                 || productItem.product instanceof SecondaryAnalysis) {
-            discount = quantityDiscount.apply(productItem.quantity as Integer, calculateItemNet(productItem))
+            BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? productItem.product.internalUnitPrice : productItem.product.externalUnitPrice
+            BigDecimal unitPriceDiscount = quantityDiscount.apply(productItem.quantity as Integer, unitPrice)
+            //todo round to
+            discount = (unitPriceDiscount * productItem.quantity as BigDecimal)
         }
         return discount
     }
