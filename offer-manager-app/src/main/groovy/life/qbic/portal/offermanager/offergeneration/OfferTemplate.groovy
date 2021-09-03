@@ -84,9 +84,7 @@ class OfferTemplate {
         fillProjectManagerInformation(result, content)
         fillOfferInformation(result, content)
         fillCostSummary(result, content)
-        fillDataGenerationItems(result, content)
-        fillDataAnalysisItems(result, content)
-        fillDataManagementItems(result, content)
+        fillItems(result, content)
         appendCurrencySymbol(result)
         return result
     }
@@ -186,21 +184,20 @@ class OfferTemplate {
         }
     }
 
-    private static void appendOfferItems(Element tableBody, List<OfferItem> offerItems) {
-        int position = 1
+    private static void appendOfferItems(Element tableBody, List<OfferItem> offerItems, PositionCounter counter) {
         for (OfferItem offerItem : offerItems) {
-            OfferPosition offerPosition = OfferPosition.createProductItem(position, offerItem)
+            OfferPosition offerPosition = OfferPosition.createProductItem(counter.currentPosition, offerItem)
             tableBody.append(offerPosition.outerHtml())
-            position++
+            counter.increase()
             if (offerItem.getQuantityDiscount() > 0) {
-                OfferPosition discountPosition = OfferPosition.createDiscount(position, position - 1, offerItem)
+                OfferPosition discountPosition = OfferPosition.createDiscount(counter.currentPosition, counter.currentPosition - 1, offerItem)
                 tableBody.append(discountPosition.outerHtml())
-                position++
+                counter.increase()
             }
         }
     }
 
-    private static void fillDataGenerationItems(Document document, OfferContent offer) {
+    private static void fillDataGenerationItems(Document document, OfferContent offer, PositionCounter counter) {
         Element dataGenerationTable = document.getElementById("data-generation-items")
 
         // remove table if no items are available
@@ -214,12 +211,12 @@ class OfferTemplate {
         }
         // fill the table
         Element tableBody = dataGenerationTable.selectFirst("tbody")
-        appendOfferItems(tableBody, offer.getDataGenerationItems())
+        appendOfferItems(tableBody, offer.getDataGenerationItems(), counter)
         // set the footer
         String netCosts = Currency.format(offer.getNetDataGeneration())
         dataGenerationTable.select("> tfoot .costs").first().text(netCosts)
     }
-    private static void fillDataAnalysisItems(Document document, OfferContent offer) {
+    private static void fillDataAnalysisItems(Document document, OfferContent offer, PositionCounter counter) {
         Element dataAnalysisTable = document.getElementById("data-analysis-items")
         // remove table if no items are available
         if (offer.getDataAnalysisItems().isEmpty()) {
@@ -232,12 +229,12 @@ class OfferTemplate {
         }
         // fill the table
         Element tableBody = dataAnalysisTable.selectFirst("tbody")
-        appendOfferItems(tableBody, offer.getDataAnalysisItems())
+        appendOfferItems(tableBody, offer.getDataAnalysisItems(), counter)
         // set the footer
         String netCosts = Currency.format(offer.getNetDataAnalysis())
         dataAnalysisTable.select(" > tfoot .costs").first().text(netCosts)
     }
-    private static void fillDataManagementItems(Document document, OfferContent offer) {
+    private static void fillDataManagementItems(Document document, OfferContent offer, PositionCounter counter) {
         Element dataManagementTable = document.getElementById("data-management-items")
         // remove table if no items are available
         if (offer.getDataManagementItems().isEmpty()) {
@@ -250,10 +247,17 @@ class OfferTemplate {
         }
         // fill the table
         Element tableBody = dataManagementTable.selectFirst("tbody")
-        appendOfferItems(tableBody, offer.getDataManagementItems())
+        appendOfferItems(tableBody, offer.getDataManagementItems(), counter)
         // set the footer
         String netCosts = Currency.format(offer.getNetPMandDS())
         dataManagementTable.select(" > tfoot .costs").first().text(netCosts)
+    }
+
+    void fillItems(Document document, OfferContent offerContent) {
+        PositionCounter counter = new PositionCounter()
+        fillDataGenerationItems(document, offerContent, counter)
+        fillDataAnalysisItems(document, offerContent, counter)
+        fillDataManagementItems(document, offerContent, counter)
     }
 
     private static class OfferPosition {
@@ -351,6 +355,15 @@ class OfferTemplate {
         @Override
         String toString() {
             return outerHtml()
+        }
+
+    }
+
+    private class PositionCounter {
+        int currentPosition
+
+        void increase() {
+            currentPosition++
         }
     }
 }
