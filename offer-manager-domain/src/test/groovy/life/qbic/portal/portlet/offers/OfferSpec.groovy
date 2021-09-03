@@ -14,6 +14,9 @@ import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
+import java.math.MathContext
+import java.math.RoundingMode
+
 /**
  * Test for the business rules in offer calculus at QBiC.
  *
@@ -63,6 +66,29 @@ class OfferSpec extends Specification {
                 .map( version -> new OfferId(new RandomPart(), projectConservedPart,
                 new Version(version)))
                 .collect()
+    }
+
+    def "The item discount is calculated based on the rounded discount unit price"(){
+        given: "an offer with discountable items"
+        List<ProductItem> items = [new ProductItem(42, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                " example", 83.33, 83.33, ProductUnit.PER_SAMPLE, 1, Facility.CFMB))]
+
+        life.qbic.business.offers.Offer.Builder offer = new life.qbic.business.offers.Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, internalAffiliation)
+                .experimentalDesign(Optional.of("this is a design"))
+
+        when: "the offer is build and the price calculation is triggered"
+        offer.build()
+
+        and: "the expected calculation"
+        MathContext rounding = new MathContext(2, RoundingMode.CEILING)
+        ProductItem discountedItem = offer.getItems().get(0)
+
+        BigDecimal unitPrice = discountedItem.product.internalUnitPrice.toBigDecimal()
+        def discountedUnitPrice = new QuantityDiscount().apply(42,unitPrice)
+
+        then: "the calculated discount is applied on the unit price"
+        discountedItem.getQuantityDiscount() == (discountedUnitPrice * discountedItem.quantity.toBigDecimal()).round(rounding)
     }
 
     def "An offer with multiple versions shall return the latest version on request"() {
