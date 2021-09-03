@@ -163,9 +163,6 @@ class OfferTemplate {
         document.select(".overheads  .data-management  > .costs").each {element ->
             element.text(Currency.format(offer.getOverheadsProjectManagementAndDataStorage()))
         }
-        document.select(".overheads  > .totals-section  > .costs").each {element ->
-            element.text(Currency.format(offer.getOverheadTotal()))
-        }
         // other fields
         document.select(".total-costs .net > .costs").each {element ->
             element.text(Currency.format(offer.getNetCost()))
@@ -179,7 +176,10 @@ class OfferTemplate {
         document.select(".total-costs .vat > .costs").each {element ->
             element.text(Currency.format(offer.getTotalVat()))
         }
-        document.select(".total-costs > .totals-section > .costs").each {element ->
+        document.select(".total-costs .total-before-vat > .costs").each {element ->
+            element.text(Currency.format(offer.getNetCostsWithOverheads()))
+        }
+        document.select(".total-costs > .totals > .costs").each {element ->
             element.text(Currency.format(offer.getTotalCost()))
         }
     }

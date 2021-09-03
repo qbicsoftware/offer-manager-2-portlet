@@ -121,7 +121,8 @@ thead#page-header {
 }
 .cost-summary-container {
     border-top: var(--small-line) solid black;
-    border-bottom: var(--small-line) solid black;
+    /* This can be used to address https://github.com/qbicsoftware/offer-manager-2-portlet/issues/765*/
+    /*border-bottom: var(--small-line) solid black;*/
 }
 .cost-summary {
     /* we do not want the cost summary to be broken up */
@@ -134,10 +135,17 @@ thead#page-header {
   grid-template-column: 50% 50%;
   font-weight: bold;
 }
+/* This can be used to address https://github.com/qbicsoftware/offer-manager-2-portlet/issues/765
 .cost-summary .cost-section {
-    /* make the cost summary a grid */
-    display: grid; 
+    display: grid;
     grid-template-columns: auto auto;  
+}
+*/
+.cost-summary .cost-section {
+    display: grid;
+    grid-template-columns: auto calc(100%/6);
+    margin-top: 2mm;
+    margin-bottom: 0mm;
 }
 
 /* select the last cost-section in the cost summary */
@@ -146,11 +154,22 @@ thead#page-header {
     border-bottom: none;
 }
 
+/* This can be used to address https://github.com/qbicsoftware/offer-manager-2-portlet/issues/765
 .cost-summary .totals-section {
     border-top: var(--small-line) solid black;
     font-weight: bold;
     display: grid; 
     grid-template-columns: auto auto; 
+}
+*/
+
+.cost-summary .totals-section {
+    border-top: var(--small-line) solid black;
+    font-weight: bold;
+    display: grid;
+    grid-template-columns: auto calc(100%/6);
+    margin-top: 2mm;
+    margin-bottom: 0.5mm;
 }
 .cost-summary .costs {
     grid-column-start: 2;
@@ -348,12 +367,31 @@ table.product-table {
     margin: 0;
 }
 
-/* cost summary in quotation details section */
+#quotation-details .cost-summary {
+    margin-left: auto;
+    margin-right: 0;
+    text-align: right;
+    font-weight: bold;
+}
+
+#quotation-details #lines {
+    padding-top: 3mm;
+    padding-bottom: 3mm;
+}
+#quotation-details #lines hr{
+    margin:0;
+}
+#quotation-details .cost-summary-container {
+    border-top: none;
+}
+
+/* cost summary in quotation details section*/
+/* This can be used to address https://github.com/qbicsoftware/offer-manager-2-portlet/issues/765
 #quotation-details .cost-summary {
     width: calc(100% / 3);
     margin-left: auto;
     margin-right: 0;
-}
+}*/
 
 
 
