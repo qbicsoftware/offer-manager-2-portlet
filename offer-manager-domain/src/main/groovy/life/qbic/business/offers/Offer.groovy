@@ -488,8 +488,7 @@ class Offer {
                 || productItem.product instanceof SecondaryAnalysis) {
             BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? productItem.product.internalUnitPrice : productItem.product.externalUnitPrice
             BigDecimal unitPriceDiscount = quantityDiscount.apply(productItem.quantity as Integer, unitPrice)
-            //todo round to
-            discount = (unitPriceDiscount * productItem.quantity as BigDecimal)
+            discount = Math.ceil(unitPriceDiscount * productItem.quantity as BigDecimal)
         }
         return discount
     }
