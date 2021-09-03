@@ -484,11 +484,14 @@ class Offer {
 
     private BigDecimal discountAmountForProductItem(ProductItem productItem) {
         BigDecimal discount = 0
+        MathContext rounding = new MathContext(2, RoundingMode.CEILING)
         if (productItem.product instanceof PrimaryAnalysis
                 || productItem.product instanceof SecondaryAnalysis) {
             BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? productItem.product.internalUnitPrice : productItem.product.externalUnitPrice
-            BigDecimal unitPriceDiscount = quantityDiscount.apply(productItem.quantity as Integer, unitPrice)
-            discount = Math.ceil(unitPriceDiscount * productItem.quantity as BigDecimal)
+            BigDecimal unitPriceDiscount = quantityDiscount.apply(productItem.quantity as Integer,
+                    unitPrice)
+            discount = unitPriceDiscount * BigDecimal.valueOf(productItem.quantity)
+            discount = discount.round(rounding)
         }
         return discount
     }

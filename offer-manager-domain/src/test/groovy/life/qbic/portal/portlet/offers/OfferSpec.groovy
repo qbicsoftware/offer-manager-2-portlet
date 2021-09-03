@@ -140,6 +140,7 @@ class OfferSpec extends Specification {
         double taxes = offer.getTaxCosts()
         double totalCosts = offer.getTotalCosts()
         double netSum = offer.getTotalNetPrice()
+        double totalDiscount = offer.getTotalDiscountAmount()
 
 
         then:
