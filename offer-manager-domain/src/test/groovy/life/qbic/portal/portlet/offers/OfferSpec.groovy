@@ -113,10 +113,10 @@ class OfferSpec extends Specification {
                 (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
 
         then:
-        double expectedNetPrice = (double) 10.0 + 400 * 1.0
+        double expectedNetPrice = (double) 10.0 + 400 * 1.0 - totalDiscount
         double expectedTotalPrice = expectedNetPrice
         netPrice == expectedNetPrice
-        totalCosts == expectedTotalPrice - totalDiscount
+        totalCosts == expectedTotalPrice
         totalDiscount == offer.getTotalDiscountAmount()
         offer.getOverheadSum() == 0
 
@@ -146,21 +146,21 @@ class OfferSpec extends Specification {
         then:
         double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
                 (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
-        double expectedNetSum = (10.0 + (400 * 1.0))
-        double expectedOverhead = (expectedNetSum - totalDiscount) * 0.2
-        double expectedTaxes = (expectedNetSum + expectedOverhead - totalDiscount) * 0.19
+        double expectedNetSum = (10.0 + (400 * 1.0) - totalDiscount)
+        double expectedOverhead = (expectedNetSum) * 0.2
+        double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
         offer.items.size() == 2
         netSum == expectedNetSum
         overhead == expectedOverhead
         taxes == expectedTaxes
         totalDiscount == offer.totalDiscountAmount
 
-        totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes - totalDiscount
+        totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes
     }
 
     def "A customer with an external (non-academic) affiliation shall pay 40% overheads and 19% VAT"() {
         given:
-        ProductItem primaryAnalysisItem = new ProductItem(400, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+        ProductItem primaryAnalysisItem = new ProductItem(1200.0, new PrimaryAnalysis("Basic RNAsq", "Just an" +
                 " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))
         List<ProductItem> items = [
                 primaryAnalysisItem,
@@ -180,16 +180,17 @@ class OfferSpec extends Specification {
                 (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
 
         then:
-        double expectedNetSum = (10.0 + (400 * 1.0))
-        double expectedOverhead = (10.0 + (400 * 1.0) - totalDiscount) * 0.4
-        double expectedTaxes = (expectedNetSum + expectedOverhead - totalDiscount) * 0.19
+        totalDiscount == offer.getTotalDiscountAmount()
+        double expectedNetSum = (10.0 + (1200 * 1.0)) - totalDiscount
+        double expectedOverhead = (10.0 + (1200 * 1.0) - totalDiscount) * 0.4
+        double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
         offer.items.size() == 2
         netSum == expectedNetSum
         overhead == expectedOverhead
         taxes == expectedTaxes
-        totalDiscount == offer.getTotalDiscountAmount()
 
-        totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes - totalDiscount
+
+        totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes
     }
 
 
@@ -210,7 +211,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double expectedOverhead = (offer.getTotalNetPrice() - offer.getTotalDiscountAmount()) * overheadRatio
+        double expectedOverhead = offer.getTotalNetPrice() * overheadRatio
 
         then:
         overhead == expectedOverhead
@@ -239,7 +240,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double expectedOverhead = (offer.getTotalNetPrice() - offer.getTotalDiscountAmount()) * overheadRatio
+        double expectedOverhead = offer.getTotalNetPrice() * overheadRatio
 
         then:
         overhead == expectedOverhead
@@ -268,7 +269,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double expectedOverhead = (offer.getTotalNetPrice() - offer.getTotalDiscountAmount()) * overheadRatio
+        double expectedOverhead = offer.getTotalNetPrice() * overheadRatio
 
         then:
         overhead == expectedOverhead
@@ -421,17 +422,17 @@ class OfferSpec extends Specification {
         ProductItem dataStorage = new ProductItem(2, new DataStorage("Data Storage",
                 "Just an example", 20.0, 23, ProductUnit.PER_DATASET, 1, Facility.QBIC))
         and: "an offer with these items"
-        List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
+        List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing]
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, affiliation).build()
-        double netPrice
+        BigDecimal netPrice
 
         when: "the net price is calculated"
-        netPrice = offer.getTotalNetPrice()
+        netPrice = offer.getTotalNetPrice() as BigDecimal
 
         then: "the correct prices are taken into account"
         assert offer.selectedCustomerAffiliation == affiliation
-        netPrice == items.sum {(it.quantity * it.product.internalUnitPrice) as double}
+        netPrice == (items.sum {(it.quantity * it.product.internalUnitPrice) as BigDecimal} - offer.getTotalDiscountAmount()) as BigDecimal
 
         where: "the affiliation is"
         affiliation << [internalAffiliation]
@@ -453,14 +454,15 @@ class OfferSpec extends Specification {
                 "Just an example", 10.0, 11.26, ProductUnit.PER_DATASET, 1, Facility.QBIC))
         ProductItem dataStorage = new ProductItem(2, new DataStorage("Data Storage",
                 "Just an example", 20.0, 23, ProductUnit.PER_DATASET, 1, Facility.QBIC))
+
         and: "an offer with these items"
         List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, affiliation).build()
-        double expectedResult = items.sum {(it.quantity * it.product.externalUnitPrice) as double}
+        BigDecimal expectedResult = items.sum {(it.quantity * it.product.externalUnitPrice) as BigDecimal} - offer.getTotalDiscountAmount()
 
         expect: "the calculated costs equal the expected costs"
-        offer.getTotalNetPrice() == expectedResult
+        offer.getTotalNetPrice() as BigDecimal == expectedResult
 
         where: "the affiliation is"
         affiliation << [externalAffiliation, externalAcademicAffiliation]
@@ -486,10 +488,10 @@ class OfferSpec extends Specification {
         List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, affiliation).build()
-        double expectedResult = items.sum {(it.quantity * it.product.internalUnitPrice) as BigDecimal} - offer.getTotalDiscountAmount() + offer.getOverheadSum()
+        BigDecimal expectedResult = items.sum {(it.quantity * it.product.internalUnitPrice) as BigDecimal} - (offer.getTotalDiscountAmount() as BigDecimal) + offer.getOverheadSum()
 
         expect: "the calculated costs equal the expected costs"
-        offer.getTotalNetPriceWithOverheads() == expectedResult
+        offer.getTotalNetPriceWithOverheads() as BigDecimal == expectedResult
 
         where: "the affiliation is"
         affiliation << [internalAffiliation]
@@ -599,7 +601,7 @@ class OfferSpec extends Specification {
 
         then: "the correct prices are taken into account"
         assert offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL || offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL_ACADEMIC
-        overheadSum == offer.getItems().collect {it.totalPrice - it.quantityDiscount}.sum()  * overheadRatio
+        overheadSum == offer.getItems().collect {it.totalPrice}.sum()  * overheadRatio
 
         where: "the affiliation is"
         affiliation | overheadRatio
@@ -661,5 +663,21 @@ class OfferSpec extends Specification {
         10 | 0.67
         100 | 0.3
 
+    }
+
+    def "A customer with internal affiliation shall get a 100% discount on data storage service costs"() {
+        given:
+        DataStorage dataStorage = new DataStorage("Data Storage", "Costs for physical storage, backups and redundancy", 10, 10, ProductUnit.PER_GIGABYTE, 1L, Facility.QBIC)
+
+        ProductItem item1 = new ProductItem(20.0, dataStorage)
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager,  "", "", [item1], internalAffiliation).build()
+
+        when:
+        Double totalDiscount = offer.getTotalDiscountAmount()
+        Double totalNetPrice = offer.getTotalNetPrice()
+
+        then:
+        totalDiscount == 20.0 * dataStorage.unitPrice
+        totalNetPrice == 0
     }
 }

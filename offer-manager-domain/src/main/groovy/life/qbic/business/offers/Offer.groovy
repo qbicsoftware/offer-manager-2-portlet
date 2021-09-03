@@ -261,7 +261,7 @@ class Offer {
      * @return The net offer price including overheads
      */
     double getTotalNetPriceWithOverheads() {
-        return calculateNetPrice() - getTotalDiscountAmount() + getOverheadSum()
+        return calculateNetPrice() + getOverheadSum()
     }
 
     /**
@@ -276,13 +276,19 @@ class Offer {
         return items.sum {calculateItemOverhead(it)} as double
     }
 
-    private BigDecimal calculateItemNet(ProductItem item) {
+    private BigDecimal determineUnitPrice(ProductItem item) {
         BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
-        return unitPrice * item.quantity
+        return unitPrice
+    }
+
+    private BigDecimal calculateItemNet(ProductItem item) {
+        BigDecimal unitPrice = determineUnitPrice(item)
+        BigDecimal totalItemPrice = unitPrice * item.quantity
+        return totalItemPrice - discountAmountForProductItem(item)
     }
 
     private double calculateItemOverhead(ProductItem item) {
-        return (calculateItemNet(item) - item.quantityDiscount) * overhead
+        return calculateItemNet(item) * overhead
     }
 
 
@@ -331,7 +337,7 @@ class Offer {
      */
     double getTaxCosts() {
         if (!selectedCustomerAffiliation.category.equals(noVatCategory) && selectedCustomerAffiliation.country.equals(countryWithVat)) {
-            return (calculateNetPrice() + getOverheadSum() - getTotalDiscountAmount()) * VAT
+            return (calculateNetPrice() + getOverheadSum()) * VAT
         }
         else {
             return 0
@@ -486,7 +492,9 @@ class Offer {
         BigDecimal discount = 0
         if (productItem.product instanceof PrimaryAnalysis
                 || productItem.product instanceof SecondaryAnalysis) {
-            discount = quantityDiscount.apply(productItem.quantity as Integer, calculateItemNet(productItem))
+            BigDecimal itemCost = productItem.quantity * determineUnitPrice(productItem)
+            discount = quantityDiscount.apply(productItem.quantity as Integer, itemCost)
+            println(discount)
         }
         return discount
     }
@@ -495,7 +503,7 @@ class Offer {
         if (items.empty) {
             return 0
         }
-        return items.sum {calculateItemNet(it)} as double
+        return items.sum {it.totalPrice} as double
     }
 
     private double determineOverhead() {
@@ -517,14 +525,14 @@ class Offer {
     }
 
     private double calculateTotalCosts(){
-        final double netPrice = calculateNetPrice()
+        double netPrice = calculateNetPrice()
         final double overhead = getOverheadSum()
-        return netPrice + overhead + getTaxCosts() - getTotalDiscountAmount()
+        return netPrice + overhead + getTaxCosts()
     }
 
     private ProductItem finaliseProductItem(ProductItem item) {
-        BigDecimal totalItemCosts = calculateItemNet(item)
         BigDecimal totalItemQuantityDiscount = discountAmountForProductItem(item)
+        BigDecimal totalItemCosts = calculateItemNet(item)
         return new ProductItem(item.quantity, item.product, totalItemCosts, totalItemQuantityDiscount)
     }
 
