@@ -14,6 +14,9 @@ import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
+import java.math.MathContext
+import java.math.RoundingMode
+
 /**
  * Test for the business rules in offer calculus at QBiC.
  *
@@ -65,6 +68,31 @@ class OfferSpec extends Specification {
                 .collect()
     }
 
+    def "The item discount is calculated based on the rounded discount unit price"(){
+        given: "an offer with discountable items"
+        List<ProductItem> items = [new ProductItem(42, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                " example", 83.33, 83.33, ProductUnit.PER_SAMPLE, 1, Facility.CFMB)),
+                                   new ProductItem(400, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                                           " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))]
+
+        Offer.Builder offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, internalAffiliation)
+
+        when: "the offer is build and the price calculation is triggered"
+        Offer finalOffer = offer.build()
+
+        and: "the expected calculation"
+        MathContext rounding = new MathContext(2, RoundingMode.CEILING)
+        ProductItem discountedItem = finalOffer.getItems().get(0)
+        println(discountedItem.totalPrice)
+
+        BigDecimal unitPrice = discountedItem.product.internalUnitPrice.toBigDecimal()
+        def discountedUnitPrice = new QuantityDiscount().apply(42,unitPrice)
+
+        then: "the calculated discount is applied on the unit price"
+        discountedItem.getQuantityDiscount() == (discountedUnitPrice * discountedItem.quantity.toBigDecimal()).round(rounding)
+    }
+
     def "An offer with multiple versions shall return the latest version on request"() {
         given: "An offer id that is not the latest version of the offer"
         OfferId offerId = new OfferId (new RandomPart(), new ProjectPart("test"), new Version(0))
@@ -109,8 +137,7 @@ class OfferSpec extends Specification {
         when: "the Offer object is tasked with calculating the total costs and the total net price"
         double totalCosts = offer.getTotalCosts()
         double netPrice = offer.getTotalNetPrice()
-        double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
-                (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
+        double totalDiscount = offer.getTotalDiscountAmount()
 
         then:
         double expectedNetPrice = (double) 10.0 + 400 * 1.0
@@ -141,11 +168,10 @@ class OfferSpec extends Specification {
         double taxes = offer.getTaxCosts()
         double totalCosts = offer.getTotalCosts()
         double netSum = offer.getTotalNetPrice()
+        double totalDiscount = offer.getTotalDiscountAmount()
 
 
         then:
-        double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
-                (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
         double expectedNetSum = (10.0 + (400 * 1.0))
         double expectedOverhead = (expectedNetSum - totalDiscount) * 0.2
         double expectedTaxes = (expectedNetSum + expectedOverhead - totalDiscount) * 0.19
@@ -176,8 +202,7 @@ class OfferSpec extends Specification {
         double taxes = offer.getTaxCosts()
         double totalCosts = offer.getTotalCosts()
         double netSum = offer.getTotalNetPrice()
-        double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
-                (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
+        double totalDiscount = offer.getTotalDiscountAmount()
 
         then:
         double expectedNetSum = (10.0 + (400 * 1.0))

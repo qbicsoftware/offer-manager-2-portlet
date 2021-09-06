@@ -12,6 +12,8 @@ import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
+import java.math.MathContext
+import java.math.RoundingMode
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 
@@ -277,14 +279,16 @@ class Offer {
     }
 
     private BigDecimal calculateItemNet(ProductItem item) {
-        BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
-        return unitPrice * item.quantity
+        return calculateUnitPrice(item) * item.quantity
     }
 
     private double calculateItemOverhead(ProductItem item) {
         return (calculateItemNet(item) - item.quantityDiscount) * overhead
     }
 
+    private BigDecimal calculateUnitPrice(ProductItem item){
+        return BigDecimal.valueOf(selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice)
+    }
 
     /**
      * This method returns the net cost of all product items for which no overhead cost is calculated
@@ -484,9 +488,14 @@ class Offer {
 
     private BigDecimal discountAmountForProductItem(ProductItem productItem) {
         BigDecimal discount = 0
+        MathContext rounding = new MathContext(2, RoundingMode.CEILING)
         if (productItem.product instanceof PrimaryAnalysis
                 || productItem.product instanceof SecondaryAnalysis) {
-            discount = quantityDiscount.apply(productItem.quantity as Integer, calculateItemNet(productItem))
+            BigDecimal unitPrice = calculateUnitPrice(productItem)
+            BigDecimal unitPriceDiscount = quantityDiscount.apply(productItem.quantity as Integer,
+                    unitPrice)
+            discount = unitPriceDiscount * BigDecimal.valueOf(productItem.quantity)
+            discount = discount.round(rounding)
         }
         return discount
     }
