@@ -261,7 +261,7 @@ class Offer {
      * @return The net offer price including overheads
      */
     double getTotalNetPriceWithOverheads() {
-        return (calculateNetPrice() + getOverheadSum()) as BigDecimal
+        return BigDecimal.valueOf(calculateNetPrice() + getOverheadSum())
     }
 
     /**
@@ -273,7 +273,7 @@ class Offer {
         if (items.empty) {
             return 0
         }
-        return items.sum {calculateItemOverhead(it)} as BigDecimal
+        return items.sum {BigDecimal.valueOf(calculateItemOverhead(it))} as BigDecimal
     }
 
     private BigDecimal determineUnitPrice(ProductItem item) {
@@ -486,11 +486,11 @@ class Offer {
     }
 
     private BigDecimal calculateTotalDiscountAmount() {
-        return items.sum{ it.quantityDiscount } as BigDecimal
+        return items.sum{ BigDecimal.valueOf(it.quantityDiscount) } as BigDecimal
     }
 
     private BigDecimal calculateCataloguePriceForItem(ProductItem item) {
-        return item.quantity * determineUnitPrice(item) as BigDecimal
+        return BigDecimal.valueOf(item.quantity * determineUnitPrice(item)) as BigDecimal
     }
 
     private BigDecimal discountAmountForProductItem(ProductItem productItem) {
@@ -507,7 +507,7 @@ class Offer {
         if (items.empty) {
             return 0
         }
-        return items.sum {it.totalPrice - it.quantityDiscount} as BigDecimal
+        return items.sum {BigDecimal.valueOf(it.totalPrice - it.quantityDiscount)} as BigDecimal
     }
 
     private double determineOverhead() {

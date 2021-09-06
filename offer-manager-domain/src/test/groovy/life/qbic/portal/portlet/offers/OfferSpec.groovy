@@ -38,7 +38,7 @@ class OfferSpec extends Specification {
     /**
      * The maximum  numeric imprecision we allow is 10^-6
      */
-    static MAX_NUMERIC_ERROR = Math.pow(10, -6)
+    static BigDecimal MAX_NUMERIC_ERROR = Math.pow(10, -6)
 
     def setup() {
         internalAffiliation = new Affiliation.Builder("Uni Tübingen", "Auf der " +
@@ -114,7 +114,7 @@ class OfferSpec extends Specification {
         double totalCosts = offer.getTotalCosts()
         double netPrice = offer.getTotalNetPrice()
         double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
-                (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
+                BigDecimal.valueOf(primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity))
 
         then:
         double expectedNetPrice = (double) 10.0 + 400 * 1.0 - totalDiscount
@@ -149,7 +149,7 @@ class OfferSpec extends Specification {
 
         then:
         double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
-                (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
+                BigDecimal.valueOf(primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity))
         double expectedNetSum = (10.0 + (400 * 1.0) - totalDiscount)
         double expectedOverhead = (expectedNetSum) * 0.2
         double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
@@ -181,7 +181,7 @@ class OfferSpec extends Specification {
         double totalCosts = offer.getTotalCosts()
         double netSum = offer.getTotalNetPrice()
         double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
-                (primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity) as BigDecimal)
+                BigDecimal.valueOf(primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity))
 
         then:
         totalDiscount == offer.getTotalDiscountAmount()
@@ -432,11 +432,11 @@ class OfferSpec extends Specification {
         BigDecimal netPrice
 
         when: "the net price is calculated"
-        netPrice = offer.getTotalNetPrice() as BigDecimal
+        netPrice = BigDecimal.valueOf(offer.getTotalNetPrice())
 
         then: "the correct prices are taken into account"
         assert offer.selectedCustomerAffiliation == affiliation
-        netPrice == (items.sum {(it.quantity * it.product.internalUnitPrice) as BigDecimal} - offer.getTotalDiscountAmount()) as BigDecimal
+        netPrice == BigDecimal.valueOf(items.sum {BigDecimal.valueOf(it.quantity * it.product.internalUnitPrice)} - offer.getTotalDiscountAmount())
 
         where: "the affiliation is"
         affiliation << [internalAffiliation]
@@ -463,10 +463,10 @@ class OfferSpec extends Specification {
         List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, affiliation).build()
-        BigDecimal expectedResult = items.sum {(it.quantity * it.product.externalUnitPrice) as BigDecimal} - offer.getTotalDiscountAmount()
+        BigDecimal expectedResult = items.sum {BigDecimal.valueOf(it.quantity * it.product.externalUnitPrice) } - offer.getTotalDiscountAmount()
 
         expect: "the calculated costs equal the expected costs"
-        offer.getTotalNetPrice() as BigDecimal == expectedResult
+        BigDecimal.valueOf(offer.getTotalNetPrice()) == expectedResult
 
         where: "the affiliation is"
         affiliation << [externalAffiliation, externalAcademicAffiliation]
@@ -492,10 +492,10 @@ class OfferSpec extends Specification {
         List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, affiliation).build()
-        BigDecimal expectedResult = items.sum {(it.quantity * it.product.internalUnitPrice) as BigDecimal} - (offer.getTotalDiscountAmount() as BigDecimal) + offer.getOverheadSum()
+        BigDecimal expectedResult = items.sum {BigDecimal.valueOf(it.quantity * it.product.internalUnitPrice)} - BigDecimal.valueOf(offer.getTotalDiscountAmount()) + offer.getOverheadSum()
 
         expect: "the calculated costs equal the expected costs"
-        Math.abs(offer.getTotalNetPriceWithOverheads() as BigDecimal - expectedResult) < MAX_NUMERIC_ERROR
+        Math.abs(BigDecimal.valueOf(offer.getTotalNetPriceWithOverheads()) - expectedResult) < MAX_NUMERIC_ERROR
 
         where: "the affiliation is"
         affiliation << [internalAffiliation]
@@ -605,7 +605,7 @@ class OfferSpec extends Specification {
 
         then: "the correct prices are taken into account"
         assert offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL || offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL_ACADEMIC
-        Math.abs(overheadSum - offer.getItems().collect {it.totalPrice - it.quantityDiscount}.sum()  * overheadRatio as BigDecimal) < MAX_NUMERIC_ERROR
+        Math.abs(BigDecimal.valueOf(overheadSum) - offer.getItems().collect {BigDecimal.valueOf(it.totalPrice - it.quantityDiscount)}.sum()  * BigDecimal.valueOf(overheadRatio)) < MAX_NUMERIC_ERROR
 
         where: "the affiliation is"
         affiliation | overheadRatio
