@@ -279,14 +279,16 @@ class Offer {
     }
 
     private BigDecimal calculateItemNet(ProductItem item) {
-        BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
-        return unitPrice * item.quantity
+        return getUnitPrice(item) * item.quantity
     }
 
     private double calculateItemOverhead(ProductItem item) {
         return (calculateItemNet(item) - item.quantityDiscount) * overhead
     }
 
+    private BigDecimal getUnitPrice(ProductItem item){
+        return selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
+    }
 
     /**
      * This method returns the net cost of all product items for which no overhead cost is calculated
@@ -489,7 +491,7 @@ class Offer {
         MathContext rounding = new MathContext(2, RoundingMode.CEILING)
         if (productItem.product instanceof PrimaryAnalysis
                 || productItem.product instanceof SecondaryAnalysis) {
-            BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? productItem.product.internalUnitPrice : productItem.product.externalUnitPrice
+            BigDecimal unitPrice = getUnitPrice(productItem)
             BigDecimal unitPriceDiscount = quantityDiscount.apply(productItem.quantity as Integer,
                     unitPrice)
             discount = unitPriceDiscount * BigDecimal.valueOf(productItem.quantity)
