@@ -167,9 +167,9 @@ thead#page-header {
     border-top: var(--small-line) solid black;
     font-weight: bold;
     display: grid;
-    grid-template-columns: auto calc(100%/6);
+    grid-template-columns: auto auto;
     margin-top: 2mm;
-    margin-bottom: 0.5mm;
+    margin-bottom: 1.5mm;
 }
 .cost-summary .costs {
     grid-column-start: 2;
@@ -386,6 +386,10 @@ table.product-table {
 }
 
 #quotation-details .cost-summary .cost-section {
+    grid-template-columns: auto calc(100%/6);
+}
+
+#quotation-details .cost-summary .totals-section {
     grid-template-columns: auto calc(100%/6);
 }
 
