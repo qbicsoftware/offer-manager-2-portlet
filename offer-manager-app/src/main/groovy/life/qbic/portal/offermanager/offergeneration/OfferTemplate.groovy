@@ -358,7 +358,7 @@ class OfferTemplate {
     }
 
     private class PositionCounter {
-        int currentPosition
+        int currentPosition = 1
 
         void increase() {
             currentPosition++
