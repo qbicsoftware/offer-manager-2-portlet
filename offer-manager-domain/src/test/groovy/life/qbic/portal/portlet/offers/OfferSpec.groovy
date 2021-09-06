@@ -35,6 +35,10 @@ class OfferSpec extends Specification {
     ProjectManager projectManager2
     @Shared
     List<OfferId> availableTestVersions
+    /**
+     * The maximum  numeric imprecision we allow is 10^-6
+     */
+    static MAX_NUMERIC_ERROR = Math.pow(10, -6)
 
     def setup() {
         internalAffiliation = new Affiliation.Builder("Uni Tübingen", "Auf der " +
@@ -491,7 +495,7 @@ class OfferSpec extends Specification {
         BigDecimal expectedResult = items.sum {(it.quantity * it.product.internalUnitPrice) as BigDecimal} - (offer.getTotalDiscountAmount() as BigDecimal) + offer.getOverheadSum()
 
         expect: "the calculated costs equal the expected costs"
-        offer.getTotalNetPriceWithOverheads() as BigDecimal == expectedResult
+        Math.abs(offer.getTotalNetPriceWithOverheads() as BigDecimal - expectedResult) < MAX_NUMERIC_ERROR
 
         where: "the affiliation is"
         affiliation << [internalAffiliation]
@@ -594,14 +598,14 @@ class OfferSpec extends Specification {
         List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, affiliation).build()
-        def overheadSum = 0
+        BigDecimal overheadSum = 0
 
         when: "the net price is calculated"
         overheadSum = offer.getOverheadSum()
 
         then: "the correct prices are taken into account"
         assert offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL || offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL_ACADEMIC
-        overheadSum == offer.getItems().collect {it.totalPrice}.sum()  * overheadRatio
+        Math.abs(overheadSum - offer.getItems().collect {it.totalPrice - it.quantityDiscount}.sum()  * overheadRatio as BigDecimal) < MAX_NUMERIC_ERROR
 
         where: "the affiliation is"
         affiliation | overheadRatio
@@ -673,11 +677,11 @@ class OfferSpec extends Specification {
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager,  "", "", [item1], internalAffiliation).build()
 
         when:
-        Double totalDiscount = offer.getTotalDiscountAmount()
-        Double totalNetPrice = offer.getTotalNetPrice()
+        BigDecimal totalDiscount = offer.getTotalDiscountAmount()
+        BigDecimal totalNetPrice = offer.getTotalNetPrice()
 
         then:
-        totalDiscount == 20.0 * dataStorage.unitPrice
+        totalDiscount == 20.0 * dataStorage.internalUnitPrice
         totalNetPrice == 0
     }
 }
