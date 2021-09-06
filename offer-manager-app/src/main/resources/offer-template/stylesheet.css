@@ -143,9 +143,9 @@ thead#page-header {
 */
 .cost-summary .cost-section {
     display: grid;
-    grid-template-columns: auto calc(100%/6);
+    grid-template-columns: auto auto;
     margin-top: 2mm;
-    margin-bottom: 0mm;
+    margin-bottom: 1.5mm;
 }
 
 /* select the last cost-section in the cost summary */
@@ -259,7 +259,7 @@ section#first-page {
 }
 
 #signature {
-    padding-top:  38mm;
+    padding-top:  36mm;
 }
 #signature-text {
     border-top: var(--small-line) solid black;
@@ -272,7 +272,6 @@ section#first-page {
 #front-page-summary .cost-section {
     border-top: none;
     border-bottom: none;
-    padding-bottom: 2px;
 }
 
 /* quotation tables styling */
