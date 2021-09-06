@@ -333,12 +333,10 @@ class OfferTemplate {
         }
 
         private static String createProductItemDescription(String productDescription, String serviceProvider) {
-            String description = """\
-                <p>${productDescription}</p>
-                <p>Service Provider: ${serviceProvider}</p>
-                \
-                """.stripIndent()
-            return description
+            String description = productDescription ? "<p>${productDescription}</p><br/>\n" : ""
+            String serviceProviderText = "<p>Service Provider: ${serviceProvider}</p>"
+            String descriptionWithProvider = description + serviceProviderText
+            return descriptionWithProvider
         }
         private static String createDiscountDescription(int discountedPosition, double quantity, String unit, double discountPercentage) {
             String unitName = unit.toString().toLowerCase()
