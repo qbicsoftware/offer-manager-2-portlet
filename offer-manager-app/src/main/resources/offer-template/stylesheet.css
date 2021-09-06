@@ -259,7 +259,7 @@ section#first-page {
 }
 
 #signature {
-    padding-top:  29mm;
+    padding-top:  38mm;
 }
 #signature-text {
     border-top: var(--small-line) solid black;
@@ -376,13 +376,18 @@ table.product-table {
 
 #quotation-details #lines {
     padding-top: 3mm;
-    padding-bottom: 3mm;
+    padding-bottom: 0;
 }
 #quotation-details #lines hr{
     margin:0;
 }
 #quotation-details .cost-summary-container {
-    border-top: none;
+    margin-left: auto;
+    margin-right: 0;
+}
+
+#quotation-details .cost-summary .cost-section {
+    grid-template-columns: auto calc(100%/6);
 }
 
 /* cost summary in quotation details section*/
