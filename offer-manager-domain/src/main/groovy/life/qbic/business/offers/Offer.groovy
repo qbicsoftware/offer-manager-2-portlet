@@ -279,15 +279,15 @@ class Offer {
     }
 
     private BigDecimal calculateItemNet(ProductItem item) {
-        return getUnitPrice(item) * item.quantity
+        return calculateUnitPrice(item) * item.quantity
     }
 
     private double calculateItemOverhead(ProductItem item) {
         return (calculateItemNet(item) - item.quantityDiscount) * overhead
     }
 
-    private BigDecimal getUnitPrice(ProductItem item){
-        return selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
+    private BigDecimal calculateUnitPrice(ProductItem item){
+        return BigDecimal.valueOf(selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice)
     }
 
     /**
@@ -491,7 +491,7 @@ class Offer {
         MathContext rounding = new MathContext(2, RoundingMode.CEILING)
         if (productItem.product instanceof PrimaryAnalysis
                 || productItem.product instanceof SecondaryAnalysis) {
-            BigDecimal unitPrice = getUnitPrice(productItem)
+            BigDecimal unitPrice = calculateUnitPrice(productItem)
             BigDecimal unitPriceDiscount = quantityDiscount.apply(productItem.quantity as Integer,
                     unitPrice)
             discount = unitPriceDiscount * BigDecimal.valueOf(productItem.quantity)
