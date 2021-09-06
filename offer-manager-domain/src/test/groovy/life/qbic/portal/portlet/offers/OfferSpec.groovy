@@ -71,18 +71,20 @@ class OfferSpec extends Specification {
     def "The item discount is calculated based on the rounded discount unit price"(){
         given: "an offer with discountable items"
         List<ProductItem> items = [new ProductItem(42, new PrimaryAnalysis("Basic RNAsq", "Just an" +
-                " example", 83.33, 83.33, ProductUnit.PER_SAMPLE, 1, Facility.CFMB))]
+                " example", 83.33, 83.33, ProductUnit.PER_SAMPLE, 1, Facility.CFMB)),
+                                   new ProductItem(400, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                                           " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))]
 
-        life.qbic.business.offers.Offer.Builder offer = new life.qbic.business.offers.Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+        Offer.Builder offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
                 "awesome project", items, internalAffiliation)
-                .experimentalDesign(Optional.of("this is a design"))
 
         when: "the offer is build and the price calculation is triggered"
-        offer.build()
+        Offer finalOffer = offer.build()
 
         and: "the expected calculation"
         MathContext rounding = new MathContext(2, RoundingMode.CEILING)
-        ProductItem discountedItem = offer.getItems().get(0)
+        ProductItem discountedItem = finalOffer.getItems().get(0)
+        println(discountedItem.totalPrice)
 
         BigDecimal unitPrice = discountedItem.product.internalUnitPrice.toBigDecimal()
         def discountedUnitPrice = new QuantityDiscount().apply(42,unitPrice)
