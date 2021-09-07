@@ -552,7 +552,7 @@ class Offer {
     private BigDecimal storageDiscountAmountForProductItem(ProductItem item) {
         BigDecimal discount = BigDecimal.ZERO
         Predicate<ProductItem> dataStorageApplicable = {
-            item.product instanceof DataStorage && \
+            it.product instanceof DataStorage && \
                     selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL
         }
         if (dataStorageApplicable.test(item)) {
