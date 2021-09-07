@@ -38,7 +38,7 @@ class OfferSpec extends Specification {
     /**
      * The maximum  numeric imprecision we allow is 10^-6
      */
-    static BigDecimal MAX_NUMERIC_ERROR = Math.pow(10, -6)
+    static BigDecimal MAX_NUMERIC_ERROR = new BigDecimal(10, 7)
 
     def setup() {
         internalAffiliation = new Affiliation.Builder("Uni Tübingen", "Auf der " +
