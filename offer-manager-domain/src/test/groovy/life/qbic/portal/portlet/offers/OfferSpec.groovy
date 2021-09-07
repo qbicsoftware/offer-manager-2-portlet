@@ -612,13 +612,6 @@ class OfferSpec extends Specification {
         hasRequiredPrecision(overheadSum, expectedValue)
 
         where: "the affiliation is"
-        overheadSum = offer.getOverheadSum()
-
-        then: "the correct prices are taken into account"
-        assert offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL || offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL_ACADEMIC
-        Math.abs(BigDecimal.valueOf(overheadSum) - offer.getItems().collect {BigDecimal.valueOf(it.totalPrice - it.quantityDiscount)}.sum()  * BigDecimal.valueOf(overheadRatio)) < MAX_NUMERIC_ERROR
-
-        where: "the affiliation is"
         affiliation | overheadRatio
         externalAffiliation | 0.4
         externalAcademicAffiliation | 0.2
@@ -694,5 +687,9 @@ class OfferSpec extends Specification {
         then:
         totalDiscount == 20.0 * dataStorage.internalUnitPrice
         totalNetPrice == 0
+    }
+
+    static boolean hasRequiredPrecision(BigDecimal overheadSum, BigDecimal expectedValue) {
+        return (overheadSum-expectedValue).abs() < MAX_NUMERIC_ERROR
     }
 }
