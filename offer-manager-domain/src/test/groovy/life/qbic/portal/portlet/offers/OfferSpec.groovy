@@ -601,6 +601,17 @@ class OfferSpec extends Specification {
         BigDecimal overheadSum = 0
 
         when: "the net price is calculated"
+        def itemNet =  {
+            BigDecimal.valueOf(it.totalPrice - it.quantityDiscount)
+        }
+        BigDecimal expectedValue = offer.getItems().collect(itemNet).sum() * overheadRatio
+        overheadSum = offer.getOverheadSum()
+
+        then: "the correct prices are taken into account"
+        offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL || offer.selectedCustomerAffiliation.category == AffiliationCategory.EXTERNAL_ACADEMIC
+        hasRequiredPrecision(overheadSum, expectedValue)
+
+        where: "the affiliation is"
         overheadSum = offer.getOverheadSum()
 
         then: "the correct prices are taken into account"
