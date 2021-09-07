@@ -14,8 +14,6 @@ import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
-import java.math.RoundingMode
-
 /**
  * Test for the business rules in offer calculus at QBiC.
  *
@@ -710,32 +708,7 @@ class OfferSpec extends Specification {
         affiliation << [externalAffiliation, externalAcademicAffiliation]
     }
 
-    def "Discounts of more than 100% are not possible"() {
-        given: "an item and an offer with this item only"
-        def item = new ProductItem(quantity, ProductFactory.createProduct(productClass, unitPrice, unitPrice))
-        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager,  "", "", [item], affiliation).build()
-        when: "the total discount is calculated"
-        BigDecimal totalDiscount = offer.getTotalDiscountAmount()
-
-        then: "the total discount is not greater than the listPrice"
-        cutAtRequiredPrecision(listPrice - totalDiscount) >= 0
-        where: "for every possible combination of product class, affiliation, quantity and unitPrice"
-        [productClass, affiliation, quantity, unitPrice] << [
-                [DataStorage, ProjectManagement, PrimaryAnalysis, MetabolomicAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing],
-                [internalAffiliation, externalAffiliation, externalAcademicAffiliation],
-                [1, 10, 100, 1000, 10000, 20, 30, 70, 42],
-                [0.1, 0.01, 0.00, 1, 0.33, 7/9]
-        ].combinations()
-        listPrice = unitPrice * quantity
-
-
-    }
-
     static boolean hasRequiredPrecision(BigDecimal overheadSum, BigDecimal expectedValue) {
         return (overheadSum-expectedValue).abs() < MAX_NUMERIC_ERROR
-    }
-
-    static BigDecimal cutAtRequiredPrecision(BigDecimal bigDecimal) {
-        return bigDecimal.setScale(MAX_NUMERIC_ERROR.scale(), RoundingMode.DOWN)
     }
 }
