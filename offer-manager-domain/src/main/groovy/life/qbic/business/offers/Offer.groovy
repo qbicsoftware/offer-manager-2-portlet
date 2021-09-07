@@ -138,6 +138,11 @@ class Offer {
 
     private final Function<BigDecimal, BigDecimal> dataStorageDiscount = new DataStorageDiscount()
 
+    private final Predicate<ProductItem> dataStorageApplicable = {
+        it.product instanceof DataStorage && \
+                    selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL
+    }
+
     static class Builder {
 
         Date creationDate
@@ -551,10 +556,7 @@ class Offer {
 
     private BigDecimal storageDiscountAmountForProductItem(ProductItem item) {
         BigDecimal discount = BigDecimal.ZERO
-        Predicate<ProductItem> dataStorageApplicable = {
-            it.product instanceof DataStorage && \
-                    selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL
-        }
+
         if (dataStorageApplicable.test(item)) {
             discount = cataloguePrice.andThen(dataStorageDiscount).apply(item)
         }
