@@ -545,7 +545,7 @@ class Offer {
         BigDecimal totalDataStorageDiscount = storageDiscountAmountForProductItem(item)
         BigDecimal totalItemCosts = calculateCataloguePriceForItem(item)
         // we determine the max discount available for the product item and assign it
-        BigDecimal maxDiscount = Math.max(totalItemQuantityDiscount, totalDataStorageDiscount)
+        BigDecimal maxDiscount = totalItemQuantityDiscount.max(totalDataStorageDiscount)
         return new ProductItem(item.quantity, item.product, totalItemCosts, maxDiscount)
     }
 
