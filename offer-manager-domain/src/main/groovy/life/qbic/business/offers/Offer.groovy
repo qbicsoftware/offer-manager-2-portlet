@@ -14,6 +14,8 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import java.util.function.Function
+import java.util.function.Predicate
 
 /**
  * Represents the Offer business model.
@@ -130,7 +132,11 @@ class Offer {
         }
     }
 
-    private static final quantityDiscount = new QuantityDiscount()
+    private final QuantityDiscount quantityDiscount = new QuantityDiscount()
+
+    private final Function<ProductItem, BigDecimal> cataloguePrice = { ProductItem it -> calculateCataloguePriceForItem(it) }
+
+    private final Function<BigDecimal, BigDecimal> dataStorageDiscount = new DataStorageDiscount()
 
     static class Builder {
 
@@ -284,7 +290,7 @@ class Offer {
     private BigDecimal calculateItemNet(ProductItem item) {
         BigDecimal unitPrice = determineUnitPrice(item)
         BigDecimal totalItemPrice = unitPrice * item.quantity
-        return totalItemPrice - Math.max(discountAmountForProductItem(item),
+        return totalItemPrice - Math.max(quantityDiscountAmountForProductItem(item),
                 storageDiscountAmountForProductItem(item))
     }
 
@@ -490,10 +496,10 @@ class Offer {
     }
 
     private BigDecimal calculateCataloguePriceForItem(ProductItem item) {
-        return BigDecimal.valueOf(item.quantity * determineUnitPrice(item)) as BigDecimal
+        return BigDecimal.valueOf(item.quantity * determineUnitPrice(item))
     }
 
-    private BigDecimal discountAmountForProductItem(ProductItem productItem) {
+    private BigDecimal quantityDiscountAmountForProductItem(ProductItem productItem) {
         BigDecimal discount = 0
         if (productItem.product instanceof PrimaryAnalysis
                 || productItem.product instanceof SecondaryAnalysis) {
@@ -535,7 +541,7 @@ class Offer {
     }
 
     private ProductItem finaliseProductItem(ProductItem item) {
-        BigDecimal totalItemQuantityDiscount = discountAmountForProductItem(item)
+        BigDecimal totalItemQuantityDiscount = quantityDiscountAmountForProductItem(item)
         BigDecimal totalDataStorageDiscount = storageDiscountAmountForProductItem(item)
         BigDecimal totalItemCosts = calculateCataloguePriceForItem(item)
         // we determine the max discount available for the product item and assign it
@@ -544,10 +550,13 @@ class Offer {
     }
 
     private BigDecimal storageDiscountAmountForProductItem(ProductItem item) {
-        BigDecimal discount = 0
-        if (item.product instanceof DataStorage && \
-                selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL) {
-            discount = item.quantity * item.product.internalUnitPrice // 100% discount
+        BigDecimal discount = BigDecimal.ZERO
+        Predicate<ProductItem> dataStorageApplicable = {
+            item.product instanceof DataStorage && \
+                    selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL
+        }
+        if (dataStorageApplicable.test(item)) {
+            discount = cataloguePrice.andThen(dataStorageDiscount).apply(item)
         }
         return discount
     }
