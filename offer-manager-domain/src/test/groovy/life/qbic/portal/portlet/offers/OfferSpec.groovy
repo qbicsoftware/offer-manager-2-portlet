@@ -689,6 +689,25 @@ class OfferSpec extends Specification {
         totalNetPrice == 0
     }
 
+    def "A customer with an external affiliation shall not get any discount on data storage service costs"() {
+        given:
+        DataStorage dataStorage = new DataStorage("Data Storage", "Costs for physical storage, backups and redundancy", 10, 10, ProductUnit.PER_GIGABYTE, 1L, Facility.QBIC)
+
+        ProductItem item1 = new ProductItem(20.0, dataStorage)
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager,  "", "", [item1], affiliation).build()
+
+        when:
+        BigDecimal totalDiscount = offer.getTotalDiscountAmount()
+        BigDecimal totalNetPrice = offer.getTotalNetPrice()
+
+        then:
+        totalDiscount == 0
+        totalNetPrice == 20.0 * 10.0
+
+        where:
+        affiliation << [externalAffiliation, externalAcademicAffiliation]
+    }
+
     static boolean hasRequiredPrecision(BigDecimal overheadSum, BigDecimal expectedValue) {
         return (overheadSum-expectedValue).abs() < MAX_NUMERIC_ERROR
     }
