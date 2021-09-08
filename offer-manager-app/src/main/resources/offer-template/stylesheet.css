@@ -254,7 +254,7 @@ section#first-page {
 }
 
 #signature {
-    padding-top:  36mm;
+    padding-top:  32mm;
 }
 #signature-text {
     border-top: var(--small-line) solid black;
