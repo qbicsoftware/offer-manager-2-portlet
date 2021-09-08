@@ -119,11 +119,6 @@ thead#page-header {
 .costs {
     text-align: right;
 }
-.cost-summary-container {
-    border-top: var(--small-line) solid black;
-    /* This can be used to address https://github.com/qbicsoftware/offer-manager-2-portlet/issues/765*/
-    /*border-bottom: var(--small-line) solid black;*/
-}
 .cost-summary {
     /* we do not want the cost summary to be broken up */
     break-inside: avoid;
@@ -144,8 +139,8 @@ thead#page-header {
 .cost-summary .cost-section {
     display: grid;
     grid-template-columns: auto auto;
-    margin-top: 2mm;
-    margin-bottom: 1.5mm;
+    margin-top: 1mm;
+    margin-bottom: 0;
 }
 
 /* select the last cost-section in the cost summary */
@@ -164,12 +159,12 @@ thead#page-header {
 */
 
 .cost-summary .totals-section {
-    border-top: var(--small-line) solid black;
+    border-top: var(--small-line) solid var(--border-color);
     font-weight: bold;
     display: grid;
     grid-template-columns: auto auto;
-    margin-top: 2mm;
-    margin-bottom: 1.5mm;
+    margin-top: 1mm;
+    margin-bottom: 0mm;
 }
 .cost-summary .costs {
     grid-column-start: 2;
@@ -265,10 +260,6 @@ section#first-page {
     border-top: var(--small-line) solid black;
 }
 
-#front-page-summary .cost-summary-container {
-    border-top: none;
-    border-bottom: none;
-}
 #front-page-summary .cost-section {
     border-top: none;
     border-bottom: none;
@@ -370,6 +361,12 @@ table.product-table {
     margin-left: auto;
     margin-right: 0;
     text-align: right;
+    font-weight: bold;
+}
+#quotation-details .cost-summary .cost-section .costs,  #quotation-details .cost-summary .totals-section .costs{
+    font-weight: normal;
+}
+#quotation-details .cost-summary .totals .costs {
     font-weight: bold;
 }
 
