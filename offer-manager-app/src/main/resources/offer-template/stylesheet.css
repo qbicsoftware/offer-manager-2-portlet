@@ -81,7 +81,7 @@ tfoot#page-footer {
     display: table-footer-group;
 }
 thead#page-header {
-    display: table-row;
+    display: table-row-group;
 }
 
 /* page-header */
