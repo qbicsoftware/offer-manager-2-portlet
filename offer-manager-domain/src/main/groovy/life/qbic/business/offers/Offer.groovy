@@ -12,6 +12,8 @@ import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
+import java.math.MathContext
+import java.math.RoundingMode
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.function.Function
@@ -288,7 +290,7 @@ class Offer {
     }
 
     private BigDecimal determineUnitPrice(ProductItem item) {
-        BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
+        BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice as BigDecimal: item.product.externalUnitPrice as BigDecimal
         return unitPrice
     }
 
@@ -302,7 +304,6 @@ class Offer {
     private BigDecimal calculateItemOverhead(ProductItem item) {
         return calculateItemNet(item) * overhead
     }
-
 
     /**
      * This method returns the net cost of all product items for which no overhead cost is calculated
@@ -508,8 +509,11 @@ class Offer {
         BigDecimal discount = 0
         if (productItem.product instanceof PrimaryAnalysis
                 || productItem.product instanceof SecondaryAnalysis) {
-            BigDecimal itemCost = productItem.quantity * determineUnitPrice(productItem)
-            discount = quantityDiscount.apply(productItem.quantity as Integer, itemCost)
+            BigDecimal unitPrice = determineUnitPrice(productItem)
+            BigDecimal unitPriceDiscount = quantityDiscount.apply(productItem.quantity as Integer,
+                    unitPrice)
+            discount = unitPriceDiscount * productItem.quantity
+            discount = discount.round(2)
         }
         return discount
     }
@@ -518,7 +522,7 @@ class Offer {
         if (items.empty) {
             return 0
         }
-        return items.sum {BigDecimal.valueOf(it.totalPrice - it.quantityDiscount)} as BigDecimal
+        return items.sum {BigDecimal.valueOf(it.totalPrice - it.quantityDiscount)}
     }
 
     private double determineOverhead() {

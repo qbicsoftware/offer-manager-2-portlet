@@ -14,6 +14,7 @@ import spock.lang.Ignore
 import spock.lang.Shared
 import spock.lang.Specification
 
+import java.math.MathContext
 import java.math.RoundingMode
 
 /**
@@ -40,7 +41,7 @@ class OfferSpec extends Specification {
     /**
      * The maximum  numeric imprecision we allow is 10^-6
      */
-    static BigDecimal MAX_NUMERIC_ERROR = new BigDecimal(10, 7)
+    static BigDecimal MAX_NUMERIC_ERROR = new BigDecimal(10 as BigInteger, 7)
 
     def setup() {
         internalAffiliation = new Affiliation.Builder("Uni Tübingen", "Auf der " +
@@ -69,6 +70,31 @@ class OfferSpec extends Specification {
                 .map( version -> new OfferId(new RandomPart(), projectConservedPart,
                         new Version(version)))
                 .collect()
+    }
+
+    def "The item discount is calculated based on the rounded discount unit price"(){
+        given: "an offer with discountable items"
+        List<ProductItem> items = [new ProductItem(42, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                " example", 83.33, 83.33, ProductUnit.PER_SAMPLE, 1, Facility.CFMB)),
+                                   new ProductItem(400, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                                           " example", 1.0, 1.0, ProductUnit.PER_SAMPLE, 1, Facility.IMGAG))]
+
+        Offer.Builder offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
+                "awesome project", items, internalAffiliation)
+
+        when: "the offer is build and the price calculation is triggered"
+        Offer finalOffer = offer.build()
+
+        and: "the expected calculation"
+        MathContext rounding = new MathContext(2, RoundingMode.CEILING)
+        ProductItem discountedItem = finalOffer.getItems().get(0)
+        println(discountedItem.totalPrice)
+
+        BigDecimal unitPrice = discountedItem.product.internalUnitPrice.toBigDecimal()
+        def discountedUnitPrice = new QuantityDiscount().apply(42,unitPrice)
+
+        then: "the calculated discount is applied on the unit price"
+        discountedItem.getQuantityDiscount() == (discountedUnitPrice * discountedItem.quantity.toBigDecimal()).round(2)
     }
 
     def "An offer with multiple versions shall return the latest version on request"() {
@@ -115,6 +141,7 @@ class OfferSpec extends Specification {
         when: "the Offer object is tasked with calculating the total costs and the total net price"
         double totalCosts = offer.getTotalCosts()
         double netPrice = offer.getTotalNetPrice()
+
         double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
                 BigDecimal.valueOf(primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity))
 
@@ -151,15 +178,17 @@ class OfferSpec extends Specification {
 
         then:
         double totalDiscount = new QuantityDiscount().apply(primaryAnalysisItem.quantity as Integer,
-                BigDecimal.valueOf(primaryAnalysisItem.product.externalUnitPrice * primaryAnalysisItem.quantity))
+                BigDecimal.valueOf(primaryAnalysisItem.product.externalUnitPrice)) * primaryAnalysisItem.quantity
         double expectedNetSum = (10.0 + (400 * 1.0) - totalDiscount)
         double expectedOverhead = (expectedNetSum) * 0.2
         double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
+
         offer.items.size() == 2
+        totalDiscount == offer.totalDiscountAmount
         netSum == expectedNetSum
         overhead == expectedOverhead
         taxes == expectedTaxes
-        totalDiscount == offer.totalDiscountAmount
+
 
         totalCosts == (double) expectedNetSum + expectedOverhead + expectedTaxes
     }
