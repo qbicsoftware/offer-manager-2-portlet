@@ -18,7 +18,7 @@ class OfferFileNameFormatter {
     /**
      * Returns an offer file name in this schema:
      *
-     * <year>_<month>_<day>_O_<project-conserved-part>_<random-id-part>_<offer-version>.pdf
+     * <p>{@code <year>_<month>_<day>_O_<project-conserved-part>_<random-id-part>_<offer-version>.pdf</code>}</p>
      * @param offer
      * @return
      */
