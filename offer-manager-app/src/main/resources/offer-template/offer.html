@@ -78,23 +78,23 @@
                     <div>Position</div>
                     <div class="costs">Costs (<span class="currency-symbol">€</span>) </div>
                   </div>
-                  <div class="cost-section net">
+                  <div class="cost-item net">
                     <div>Net</div>
                     <div class="costs">50.00</div>
                   </div>
-                  <div class="cost-section discounts">
+                  <div class="cost-item discounts">
                     <div>Discounts</div>
                     <div class="costs">-50.00</div>
                   </div>
-                  <div class="cost-section overheads">
+                  <div class="cost-item overheads">
                     <div>Overheads (<span class="overheads-percentage">20%</span>)</div>
                     <div class="costs">50.00</div>
                   </div>
-                  <div class="cost-section vat">
+                  <div class="cost-item vat">
                     <div>VAT (<span class="vat-percentage">0%</span>)</div>
                     <div class="costs">50.00</div>
                   </div>
-                  <div class="totals-section totals">
+                  <div class="cost-item totals-section totals">
                     <div>Total</div>
                     <div class="costs">50.00</div>
                   </div>
@@ -860,96 +860,52 @@
               <hr/>
             </div>
             <div class="cost-summary-container">
-              <div class="cost-summary overheads">
+              <div class="cost-summary total-costs overheads">
                 <div class="cost-section">
-                  <div>Overheads (<span class="overheads-percentage">0%</span>)</div>
-                  <div class="costs"></div>
+                  <div class="cost-item net">
+                    <div>Net:</div>
+                    <div class="costs">50.00</div>
+                  </div>
                 </div>
-                <div class="cost-section data-generation">
-                  <div>Data Generation:</div>
-                  <div class="costs">50.00</div>
+                <div class="cost-section">
+                  <div class="cost-item">
+                    <div>Overheads (<span class="overheads-percentage">0%</span>)</div>
+                    <div class="costs"></div>
+                  </div>
+                  <div class="cost-item data-generation">
+                    <div>Data Generation:</div>
+                    <div class="costs">50.00</div>
+                  </div>
+                  <div class="cost-item  data-analysis">
+                    <div>Data Analysis:</div>
+                    <div class="costs">50.00</div>
+                  </div>
+                  <div class="cost-item  data-management">
+                    <div>Project management and data storage:</div>
+                    <div class="costs">50.00</div></div>
+                  <div class="cost-item overheads">
+                    <div>Overhead Total:</div>
+                    <div class="costs">50.00</div>
+                  </div>
                 </div>
-                <div class="cost-section  data-analysis">
-                  <div>Data Analysis:</div>
-                  <div class="costs">50.00</div>
-                </div>
-                <div class="cost-section  data-management">
-                  <div>Project management and data storage:</div>
-                  <div class="costs">50.00</div></div>
-              </div>
-            </div>
-            <div class="cost-summary-container">
-              <div class="cost-summary total-costs">
-                <div class="totals-section overheads">
-                  <div>Overhead Total:</div>
-                  <div class="costs">50.00</div>
-                </div>
-                <div class="cost-section net">
-                  <div>Net:</div>
-                  <div class="costs">50.00</div>
-                </div>
-                <div class="cost-section discounts">
-                  <div>Discount:</div>
-                  <div class="costs">-50.00</div>
-                </div>
-                <div class="cost-section total-before-vat">
+                <div class="cost-section">
+                  <div class="cost-item total-before-vat">
                   <div>Total before VAT:</div>
                   <div class="costs">-50.00</div>
+                  </div>
                 </div>
-                <div class="cost-section vat">
-                  <div>VAT (<span class="vat-percentage">0%</span>):</div>
-                  <div class="costs">50.00</div></div>
-                <div class="totals-section totals">
+                <div class="cost-section">
+                  <div class="cost-item vat">
+                    <div>VAT (<span class="vat-percentage">0%</span>):</div>
+                    <div class="costs">50.00</div>
+                  </div>
+                </div>
+                <div class="cost-item totals-section totals">
                   <div>Total:</div>
                   <div class="costs">50.00</div>
                 </div>
               </div>
             </div>
-<!--TODO this can be used to address https://github.com/qbicsoftware/offer-manager-2-portlet/issues/765
-            <div class="cost-summary-container">
-              <div class="cost-summary overheads">
-                <div>Overheads (<span class="overheads-percentage">0%</span>)</div>
-                <div class="cost-section data-generation">
-                  <div>Overheads DG</div>
-                  <div class="costs">50.00</div>
-                </div>
-                <div class="cost-section  data-analysis">
-                  <div>Overheads DA</div>
-                  <div class="costs">50.00</div>
-                </div>
-                <div class="cost-section  data-management">
-                  <div>Overheads PM & DS</div>
-                  <div class="costs">50.00</div></div>
-                <div class="totals-section">
-                  <div>Overheads Total</div>
-                  <div class="costs">50.00</div>
-                </div>
-              </div>
-            </div>
-            <div class="cost-summary-container">
-              <div class="cost-summary total-costs">
-                <div class="cost-section net">
-                  <div>Net</div>
-                  <div class="costs">50.00</div>
-                </div>
-                <div class="cost-section discounts">
-                  <div>Discounts</div>
-                  <div class="costs">-50.00</div>
-                </div>
-                <div class="cost-section overheads">
-                  <div>Overheads (<span class="overheads-percentage">20%</span>)</div>
-                  <div class="costs">50.00</div>
-                </div>
-                <div class="cost-section vat">
-                  <div>VAT (<span class="vat-percentage">0%</span>)</div>
-                  <div class="costs">50.00</div></div>
-                <div class="totals-section">
-                  <div>Total</div>
-                  <div class="costs">50.00</div>
-                </div>
-              </div>
-            </div>
-            -->
           </section>
           <section id="agreement-declaration" class="last-page">
             <h2>Agreement declaration</h2>
