@@ -142,7 +142,10 @@ class QuotationDetails {
         items.each { OfferItem item ->
             generateItemContent(item, elementId)
             if (item.quantityDiscount != 0) {
-                String discountDescription = createDiscountDescription(item.quantity,item.unit, item.discountPercentage)
+                String discountDescription =
+                        (productGroup == ProductGroup.PROJECT_AND_DATA_MANAGEMENT) \
+                            ? createDataStorageDiscountDescription() \
+                            : createQuantityDiscountDescription(item.quantity,item.unit, item.discountPercentage)
                 generateDiscountItemContent(discountDescription, elementId, item)
             }
         }
@@ -161,7 +164,11 @@ class QuotationDetails {
         addSubTotalPrices(productGroup, subTotal)
     }
 
-    private String createDiscountDescription(double quantity, String unit, double discountPercentage) {
+    private String createDataStorageDiscountDescription() {
+        return "Data storage (item no ${itemNumber}) is free of charge due to internal funding."
+    }
+
+    private String createQuantityDiscountDescription(double quantity, String unit, double discountPercentage) {
         String unitName = unit.toString().toLowerCase()
         unitName = (quantity != 1)?  unitName + "s" : unitName
         return "Discount on ${quantity} ${unitName} based on item no ${itemNumber}. ${discountPercentage}% discount applied"
