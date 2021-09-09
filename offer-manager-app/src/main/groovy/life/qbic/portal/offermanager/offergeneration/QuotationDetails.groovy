@@ -165,7 +165,7 @@ class QuotationDetails {
     }
 
     private String createDataStorageDiscountDescription() {
-        return "Data storage (item no ${itemNumber}) is free of charge due to internal funding."
+        return "Data storage on item no ${itemNumber} is free of charge due to internal funding."
     }
 
     private String createQuantityDiscountDescription(double quantity, String unit, double discountPercentage) {
