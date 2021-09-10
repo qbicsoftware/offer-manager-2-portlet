@@ -200,7 +200,7 @@ class OfferSpec extends Specification {
         List<ProductItem> items = [
                 primaryAnalysisItem,
                 new ProductItem(1, new ProjectManagement("Basic Management",
-                        "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.PCT))
+                        "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.CFMB_PCT))
         ]
 
         Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "Awesome Project", "An " +
