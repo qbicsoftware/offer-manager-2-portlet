@@ -11,7 +11,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Function to apply the quantity discount price (`#707 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/707>`_)
 
-* Function to apply the data management discount price (`#783 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/783>`_)
+* Add automatic data management discount generation (`#783 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/783>`_)
 
 * Adds a new DTO OfferItem which represents an item on the offer (`#728 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/728>`_)
 
