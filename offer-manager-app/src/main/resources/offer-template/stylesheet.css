@@ -1,428 +1,397 @@
-/*
- Style sheet for the offer layout.
 
- This document is structured into five main sections:
+/**
+ * This document is structured in the following way: ;
+ *  1. general settings
+ *  2. settings for multi-page print
+ *  3. settings for the header & footer
+ *  4. settings for the first page
+ *  5. settings for the quotation details
+ *  6. settings for the agreement declaration 
+ */
 
-    1. General format definitions
-    2. The header (logo, customer and pm data, ...)
-    3. The project overview
-    4. The items overview
-    5. The agreement
 
-*/
-
-/*
-  1. General format definitions
-*/
-@page {
-    size: A4;
-    margin: 10mm 20mm 10mm 15mm; /* change the margins as you want them to be. */
+/* general-settings */
+:root {
+    --footer-height : calc(10*10pt);
+    --margin-top : 10mm;
+    --margin-right : 20mm;
+    --margin-bottom:  10mm;
+    --margin-left:  15mm;
+    --small-line: 0.25mm;
+    --border-color:  #bbb;
 }
 
-/*
-  The overall font family setting.
-*/
+/* general font style */
 body {
     font-family: Roboto, Helvetica;
+    font-size: 10pt;
+    line-height: 1.3;
 }
-
+/* headings on level 2 should be 12pt big and bold */
 h2 {
    font-size: 12pt;
    font-weight: bold;
 }
 
-/*
-  Text on the offer that has no special highlighting property
-  should inherit this class.
-*/
-.common-text {
-    font-size: 10pt;
-    line-height: 1.3;
+thead, tfoot {
+  page-break-inside: avoid;
+  break-inside: avoid;
 }
 
-.page-layout {
-    position: relative;
-    height: 100vh;
+/* small text has a size of 8pt */
+p.small {
+    font-size: 8pt;
+}
+/* class for alignment */
+.align-left {
+    text-align: left;
+}
+.align-right {
+    text-align: right;
+}
+.align-center {
+    text-align: center;
 }
 
-.pagebreak {
-    clear: both;
-    page-break-after: always;
+/* screen padding */
+/* this wrapper simulates an a4 column */
+#wrapper {
+    padding-top : var(--margin-top);
+    padding-right : var(--margin-right);
+    padding-bottom:  var(--margin-bottom);
+    padding-left:  var(--margin-left);
+    width: 21cm;
+    background-color: white;
+    border: solid;
 }
 
-/*
-  2. The header section
-*/
-.header {
-    grid-column-start: 1;
-    grid-column-end: 4;
+/* multi-page */
+/* allow for multi-page header and footer
+ * this is necessary due to chrome only supporting margins on @page */
+table#multipage-content {
+    table-layout: fixed;
+    width: 100%;
+    height: auto;
+}
+/* we have to remove the defauld padding on the multi-page content */
+table#multipage-content > td {
+    padding: 0; /* defaults to 1px */
+}
+tfoot#page-footer {
+    display: table-footer-group;
+}
+thead#page-header {
+    display: table-row-group;
 }
 
-.header > img {
+/* page-header */
+#page-header img {
     width: 100%;
     text-align: center;
 }
 
-.customer {
-    text-align: left;
-    padding: 20px 20px 20px 0px ;
-    font-size: 9pt;
-    grid-column-start: 1;
-    grid-column-end: 2;
+/* page-footer */
+#page-footer {
+    color: #bbbbbb;
+    height: var(--footer-height);
 }
-
-.project-manager {
-    border:0px solid #aaaaaa;
-    padding: 20px 0px 20px 0px;
-    text-align: left;
-    font-size: 9pt;
-    grid-column-start: 3;
-    grid-column-end: 4;
-}
-
-/* The quotation creation date */
-.date {
-    grid-column-start: 3;
-    grid-column-end: 4;
-}
-
-/*
- Document type display: Quotation or Cost Estimate
-*/
-
-.highlight {
-    font-weight: bold;
-}
-
-.doctype-desc {
-    grid-column-start: 1;
-    grid-column-end: 2;
-}
-
-.reference-number {
-    grid-column-start: 1;
-    grid-column-end: 1;
-}
-
-.valid-until-date {
-    grid-column-start: 2;
-    grid-column-end: 2;
-}
-
-/*
-  3. The project overview
-*/
-.project-section {
-    grid-column-start: 1;
-    grid-column-end: 4;
-}
-
-.cost-summary {
-    grid-column-start: 1;
-    grid-column-end: 2;
-    padding-bottom: 20px;
-    margin: 0 0 0 0;
-}
-
-.table-row {
-  padding-top: 2px;
-  padding-bottom: 2px;
-  white-space:nowrap;
-}
-
-.total-costs-sum-row {
-  font-weight: bold;
-}
-
-.signature {
-    padding-left: 100px;
-    padding-top: 75px;
-    grid-column-start: 2;
-    grid-column-end: 4;
-}
-
-.sub-text {
-    font-size: 8pt;
-}
-
-/*
-==================================
-*/
-
-
-/* Grid container */
-.grid-container {
-    /*max-height: 85vh;*/
-    display: grid;
-    grid-template-columns: 50mm auto 50mm;
-    position: relative;
-}
-
-.grid-container-footer {
+#page-footer-content .footer-columns {
     display: grid;
     grid-template-columns: 20% 20% 20% 20% 20%;
-    color: #bbbbbb;
 }
-
-.grid-container-footer > div {
+#page-footer-content hr {
+    size: 1;
+    column-span: all;
+}
+#page-footer-content div {
+    /* alignment */
     align-content: center;
+    padding: 0px 5px 0px 5px;
+    /* font styling */
     font-family: Open Sans;
     font-size: 7pt;
-    padding: 0px 5px 0px 5px;
 }
 
-.small-spacer {
-    height: 10px;
+/* reused components */
+.currency-symbol {
+    display: inline;
+}
+.costs {
+    text-align: right;
+}
+.cost-summary {
+    /* we do not want the cost summary to be broken up */
+    break-inside: avoid;
+    page-break-inside: avoid;
+    text-align: left;
+}
+.cost-summary .header {
+  display: grid;
+  grid-template-column: 50% 50%;
+  font-weight: bold;
+}
+/* This can be used to address https://github.com/qbicsoftware/offer-manager-2-portlet/issues/765
+.cost-summary .cost-item {
+    display: grid;
+    grid-template-columns: auto auto;  
+}
+*/
+.cost-summary .cost-item {
+    display: grid;
+    grid-template-columns: auto auto;
+    margin-top: 1mm;
+    margin-bottom: 0;
 }
 
-.inline {
-    display: inline-block;
-    margin: 0 0 0 0;
+.cost-summary .cost-section {
+    border-bottom: var(--small-line) solid var(--border-color);
 }
 
+.cost-summary .totals-section {
+    border-top: var(--small-line) solid var(--border-color);
+    font-weight: bold;
+    display: grid;
+    grid-template-columns: auto auto;
+    margin-top: 1mm;
+    margin-bottom: 0mm;
+}
+
+.cost-summary div:nth-last-of-type(2) {
+    /* the border is provided by the totals-section */
+    border-bottom: none;
+}
+
+.cost-summary .costs {
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+.totals-section .costs {
+    grid-column-start: 2;
+    grid-column-end: 3;
+}
+
+
+/**
+ * first-page
+ */
+section#first-page {
+    page-break-after: always;
+    break-after: always;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+/* layout of the first page */
+#first-page {
+    width: 100%;
+}
+/* the letter head */
+ #letter-head{
+    display: grid;
+    grid-template-columns: 50mm auto 50mm;
+    grid-row-gap: 2mm;
+ }
+ #customer {
+    grid-column-start: 1;
+    grid-column-end: 2;
+ }
+ #project-manager {
+    grid-column-start: 3;
+    grid-column-end: 4;
+ }
+#doctype-desc {
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+#offer-date {
+    grid-column-start: 3;
+    grid-column-end: 4;
+}
+
+/* the summary grid */
+#front-page-summary {
+    display: grid;
+    grid-template-columns: auto auto  20%;
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+#front-page-summary .cost-summary-container {
+    grid-column-start: 1;
+    grid-column-end: 2;
+}
+#front-page-summary .cost-summary .header {
+    display: none;
+}
+#signature {
+    grid-column-start: 4;
+    grid-column-end: 5;
+}
+
+/* styling for the firt page */
+#customer, #project-manager {
+    font-size: 9pt;
+    padding-top: 5mm;
+    padding-bottom: 5mm;
+}
+#project-manager .info-title {
+    margin-top: 5mm;
+}
+#qbic-ad{
+    margin-bottom: 5mm;
+}
+#project-manager-email {
+    margin-top: 5mm;
+}
 .info-title {
     font-weight: bold;
 }
-
-.cost-summary {
-    padding-bottom: 20px;
-    margin: 0 0 0 0;
+#doctype-desc {
+    font-size: 12pt;
 }
 
-/* Items introduction and outro text*/
-
-.items-introduction-text {
-    grid-column-start: 1;
-    grid-column-end: 4;
+#signature {
+    padding-top:  32mm;
+}
+#signature-text {
+    border-top: var(--small-line) solid black;
 }
 
-.items-introduction-text p {
-    font-size: 10pt;
-}
-
-.items-outroduction-text {
-    grid-column-start: 1;
-    grid-column-end: 4;
-}
-
-/* Items table*/
-.grid-container-table {
-    width: 100%;
-    padding-right: 15px;
-    margin-right: auto;
-    margin-left: 0;
-    font-size: 10pt;
-}
-
-.product-items{
-    padding-left: 20px;
-    padding-right: 20px;
-}
-
-#grid-table-footer{
-    text-align: right;
-    border-top: 3px double #bbbbbb;
-    border-top-style: double;
-    padding: 10px 20px 2px 20px;
-}
-
- .grid-sub-total-footer{
-    text-align: right;
-    border-top: 1px solid #bbbbbb;
-    padding: 10px 0px 2px 20px;
- }
-
-.text-center{
-    text-align: center;
-}
-
-.table-data {
-    text-align: left;
+/* quotation tables styling */
+#quotation-details tbody td {
+    padding-top: 1.25mm;
+    padding-bottom: 1.25mm;
     vertical-align: top;
-    padding: 10px 2px 0px 2px;
+}
+#quotation-details thead tr:nth-last-of-type(1) {
+    /* add top border to the header */
+    border-top: var(--small-line) solid var(--border-color);
+    border-bottom: var(--small-line) solid var(--border-color);
 }
 
-.table-header {
-    padding: 10px 2px 10px 2px;
-    border-bottom: 1px solid #bbbbbb;
-    border-top: 1px solid #bbbbbb;
+/* product-tables */
+
+section#quotation-details {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+table.product-table {
+    width: 100%;
+    border-collapse: collapse;
+    border-spacing: 1em;
+    page-break-inside: auto;
+    break-inside: auto;
+}
+.product-table thead {
+    /* Specify that the header of a product table is always shown */
+    display: table-header-group !important;
+    page-break-inside: avoid;
+}
+.product-table tfoot {
+    /* the footer of a product table is shown where it is in the html document */
+    display: table-row-group;
+    /* show a border before the footer of the table */
+    border-top: var(--small-line) solid var(--border-color);
+    font-weight: bold;
+    page-break-inside: avoid;
+}
+.product-table tbody {
+    page-break-inside: avoid;
+    break-inside: avoid;
+}
+
+.product-table th {
+    padding-top: 2mm;
+    padding-bottom: 2mm;
+    font-weight: normal;
+}
+
+/* item number column */
+.item-number-column {
     text-align: left;
-    white-space: nowrap;
+    width: calc(100% / 12);
+}
+/* item description column */
+.item-description-column {
+    text-align: left;
+    width: calc(100% / 3);
+}
+/* item unit column */
+.item-unit-column {
+    text-align: center;
+    width: calc(100% / 6);
+    padding-left: 1mm;
+    padding-right: 1mm;
+}
+/* item amount column */
+.item-amount-column {
+    text-align: right;
+    width: calc(100% / 12);
+}
+/* item unit price column */
+.item-unit-price-column {
+    text-align: right;
+    width: calc(100% / 6);
+}
+/* item total */
+.item-total-column {
+    text-align: right;
+    width: calc(100% / 6);
 }
 
-.items-overview {
-    grid-column-start: 1;
-    grid-column-end: 4;
-    padding: 10px 10px 10px 0px;
-    width: 100%;
-    line-height: 1;
-}
-
-.spacer-paragraph{
-    padding-bottom: 60px;
-}
-
-#items-table {
-    width: 100%;
-    font-size: 10pt;
-}
-
-/* table value stylings */
-
-.price-value {
-    text-align: right !important;
-}
-
+/* item styling */
 .item-description {
     font-style: italic;
     font-size: 9pt;
-    color: #999999;
+    color: #666;
+}
+.item-description p {
+    margin: 0;
 }
 
-#total-costs {
-    text-align: left;
+#quotation-details .cost-summary {
+    margin-left: auto;
+    margin-right: 0;
+    text-align: right;
+    font-weight: bold;
 }
-
-.cost-summary-field {
-    text-align: right !important;
+#quotation-details .cost-summary .cost-item .costs,  #quotation-details .cost-summary .costs{
+    font-weight: normal;
+}
+#quotation-details .cost-summary .totals .costs {
     font-weight: bold;
 }
 
-.total-costs > td {
-    border-top: 2px solid #bbbbbb;
+#quotation-details #lines {
+    padding-top: 3mm;
+    padding-bottom: 0;
+}
+#quotation-details #lines hr{
+    margin:0;
+}
+#quotation-details .cost-summary-container {
+    margin-left: auto;
+    margin-right: 0;
 }
 
-.single-underscore {
-    border-bottom: 2px solid #bbbbbb;
+#quotation-details .cost-summary .cost-item {
+    grid-template-columns: auto calc(100%/6);
 }
 
-.single-overscore {
-    border-top: 1px solid #bbbbbb;
+#quotation-details .cost-summary {
+    grid-template-columns: auto calc(100%/6);
 }
 
-.double-underscore {
-border-bottom: 3px double #bbbbbb;
-}
-
-.right-align {
-  text-align: right;
-}
-
-
-/* Agreement Section */
+/* cost summary in quotation details section*/
+/* This can be used to address https://github.com/qbicsoftware/offer-manager-2-portlet/issues/765
+#quotation-details .cost-summary {
+    width: calc(100% / 3);
+    margin-left: auto;
+    margin-right: 0;
+}*/
 
 
 
-.agreement-section {
+/* agreement declaration */
+section#agreement-declaration {
+    page-break-before: always;
     break-before: always;
-    grid-column-start: 1;
-    grid-column-end: 4;
-    clear: both;
-}
-
-/*Footer*/
-
-footer {
-  visibility: visible;
-  page-break-after: always;
-  margin-bottom: 0px;
-  position: fixed;
-  bottom: 0;
-}
-
-/*Bootstrap*/
-.row {
-  display: -ms-flexbox;
-  display: flex;
-  -ms-flex-wrap: wrap;
-  flex-wrap: wrap;
-  /*margin-right: -15px;
-  margin-left: -15px;*/
-  padding-top: 5px;
-  padding-bottom: 5px;
-}
-
-.col {
-  -ms-flex-preferred-size: 0;
-  flex-basis: 0;
-  -ms-flex-positive: 1;
-  flex-grow: 1;
-  max-width: 100%;
-}
-
-.col-1, .col-2, .col-3, .col-4, .col-5, .col-6{
-  position: relative;
-  width: 100%;
-}
-
-.col-1 {
-  -ms-flex: 0 0 8.333333%;
-  flex: 0 0 8.333333%;
-  max-width: 8.333333%;
-}
-
-.col-2 {
-  -ms-flex: 0 0 16.666667%;
-  flex: 0 0 16.666667%;
-  max-width: 16.666667%;
-}
-
-.col-3 {
-  -ms-flex: 0 0 25%;
-  flex: 0 0 25%;
-  max-width: 25%;
-}
-
-.col-4 {
-  -ms-flex: 0 0 33.333333%;
-  flex: 0 0 33.333333%;
-  max-width: 33.333333%;
-}
-
-.col-5 {
-  -ms-flex: 0 0 41.666667%;
-  flex: 0 0 41.666667%;
-  max-width: 41.666667%;
-}
-
-.col-6 {
-  -ms-flex: 0 0 50%;
-  flex: 0 0 50%;
-  max-width: 50%;
-}
-
-.col-7 {
-  -ms-flex: 0 0 58.333333%;
-  flex: 0 0 58.333333%;
-  max-width: 58.333333%;
-}
-
-.col-8 {
-  -ms-flex: 0 0 66.666667%;
-  flex: 0 0 66.666667%;
-  max-width: 66.666667%;
-}
-
-.col-9 {
-  -ms-flex: 0 0 75%;
-  flex: 0 0 75%;
-  max-width: 75%;
-}
-
-.col-10 {
-  -ms-flex: 0 0 83.333333%;
-  flex: 0 0 83.333333%;
-  max-width: 83.333333%;
-}
-
-.col-11 {
-  -ms-flex: 0 0 91.666667%;
-  flex: 0 0 91.666667%;
-  max-width: 91.666667%;
-}
-
-.col-12 {
-  -ms-flex: 0 0 100%;
-  flex: 0 0 100%;
-  max-width: 100%;
 }

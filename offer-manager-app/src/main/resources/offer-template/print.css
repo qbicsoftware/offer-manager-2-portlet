@@ -1,0 +1,30 @@
+
+/* override variables */
+:root {
+    --footer-height : calc( 9 * 10pt);
+    --margin-top : 10mm;
+    --margin-right : 20mm;
+    --margin-bottom:  10mm;
+    --margin-left:  15mm;
+}
+
+@page {
+    size: A4;
+    margin: 10mm 20mm 10mm 15mm; /*please make sure you change the variables in the root accordingly*/
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+/* we skip the wrapper in case we are printing */
+ #wrapper {
+    display: contents;
+}
+
+/* make last page full */
+.last-page {
+    /* 100vh is the printable area in print medium */
+    min-height: calc(100vh - var(--footer-height));
+}

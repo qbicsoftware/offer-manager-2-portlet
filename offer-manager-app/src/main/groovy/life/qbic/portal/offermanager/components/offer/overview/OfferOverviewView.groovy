@@ -231,9 +231,11 @@ class OfferOverviewView extends VerticalLayout {
     }
 
     private void removeExistingResources() {
-        if (fileDownloader) {
-            downloadBtn.removeExtension(fileDownloader)
-        }
+        Optional.ofNullable(fileDownloader).ifPresent({
+            if (downloadBtn.extensions.contains(fileDownloader)) {
+                downloadBtn.removeExtension(fileDownloader)
+            }
+        })
     }
 
     private class LoadOfferInfoThread extends Thread {
