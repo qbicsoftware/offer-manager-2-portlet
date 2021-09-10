@@ -47,6 +47,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Fix rounding issue for discount unit price (`#784 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/784>`_)
 
+* Fix app trying to unregister file downloaders that were not previously registered (`#796 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/796>`_)
+
 **Dependencies**
 
 * ``mysql:mysql-connector-java:8.0.24`` -> ``8.0.25``
