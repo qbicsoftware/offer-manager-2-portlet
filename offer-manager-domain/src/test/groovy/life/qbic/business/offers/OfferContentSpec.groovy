@@ -101,8 +101,8 @@ class OfferContentSpec extends Specification{
         output.createdOfferContent(_ as OfferContent) >> { arguments ->
                 final OfferContent offerContent = arguments.get(0)
                 OfferItem item = offerContent.dataAnalysisItems.get(0)
-                assert item.quantityDiscount == item.quantity * item.discountPerUnit
-                assert item.discountPerUnit.toBigDecimal() == item.quantityDiscount / item.quantity.toBigDecimal()
+                assert item.quantityDiscount == BigDecimal.valueOf(item.quantity * item.discountPerUnit).round(2)
+                assert item.discountPerUnit.toBigDecimal().round(4) == (item.quantityDiscount / item.quantity.toBigDecimal()).round(4)
         }
     }
 

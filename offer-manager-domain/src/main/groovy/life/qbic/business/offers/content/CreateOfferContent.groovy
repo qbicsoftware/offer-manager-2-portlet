@@ -124,7 +124,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
             return 0
         } else {
             return offerItems.sum {
-                it.itemTotal -it.quantityDiscount
+                it.itemTotal - it.quantityDiscount
             } as double
         }
     }
@@ -149,7 +149,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         Product product = productItem.product
         double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL) ? product.internalUnitPrice : product.externalUnitPrice
         OfferItem offerItem = new OfferItem.Builder(productItem.quantity, product.description, product.productName, unitPrice, productItem.quantityDiscount,
-                calculateDiscountPerUnit(productItem),calculateDiscountPercentage(productItem),product.serviceProvider.name(), product.unit.value, productItem.totalPrice).build()
+                calculateDiscountPerUnit(productItem),calculateDiscountPercentage(productItem),product.serviceProvider.getLabel(), product.unit.value, productItem.totalPrice).build()
 
         return offerItem
     }

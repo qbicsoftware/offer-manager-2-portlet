@@ -131,32 +131,21 @@ thead#page-header {
   font-weight: bold;
 }
 /* This can be used to address https://github.com/qbicsoftware/offer-manager-2-portlet/issues/765
-.cost-summary .cost-section {
+.cost-summary .cost-item {
     display: grid;
     grid-template-columns: auto auto;  
 }
 */
-.cost-summary .cost-section {
+.cost-summary .cost-item {
     display: grid;
     grid-template-columns: auto auto;
     margin-top: 1mm;
     margin-bottom: 0;
 }
 
-/* select the last cost-section in the cost summary */
-.cost-summary :nth-last-of-type(2) {
-    /* the border is provided by the totals-section */
-    border-bottom: none;
+.cost-summary .cost-section {
+    border-bottom: var(--small-line) solid var(--border-color);
 }
-
-/* This can be used to address https://github.com/qbicsoftware/offer-manager-2-portlet/issues/765
-.cost-summary .totals-section {
-    border-top: var(--small-line) solid black;
-    font-weight: bold;
-    display: grid; 
-    grid-template-columns: auto auto; 
-}
-*/
 
 .cost-summary .totals-section {
     border-top: var(--small-line) solid var(--border-color);
@@ -166,6 +155,12 @@ thead#page-header {
     margin-top: 1mm;
     margin-bottom: 0mm;
 }
+
+.cost-summary div:nth-last-of-type(2) {
+    /* the border is provided by the totals-section */
+    border-bottom: none;
+}
+
 .cost-summary .costs {
     grid-column-start: 2;
     grid-column-end: 3;
@@ -258,11 +253,6 @@ section#first-page {
 }
 #signature-text {
     border-top: var(--small-line) solid black;
-}
-
-#front-page-summary .cost-section {
-    border-top: none;
-    border-bottom: none;
 }
 
 /* quotation tables styling */
@@ -363,7 +353,7 @@ table.product-table {
     text-align: right;
     font-weight: bold;
 }
-#quotation-details .cost-summary .cost-section .costs,  #quotation-details .cost-summary .totals-section .costs{
+#quotation-details .cost-summary .cost-item .costs,  #quotation-details .cost-summary .costs{
     font-weight: normal;
 }
 #quotation-details .cost-summary .totals .costs {
@@ -382,11 +372,11 @@ table.product-table {
     margin-right: 0;
 }
 
-#quotation-details .cost-summary .cost-section {
+#quotation-details .cost-summary .cost-item {
     grid-template-columns: auto calc(100%/6);
 }
 
-#quotation-details .cost-summary .totals-section {
+#quotation-details .cost-summary {
     grid-template-columns: auto calc(100%/6);
 }
 

@@ -184,13 +184,13 @@ class OfferTemplate {
         }
     }
 
-    private static void appendOfferItems(Element tableBody, List<OfferItem> offerItems, PositionCounter counter) {
+    private static void appendOfferItems(Element tableBody, List<OfferItem> offerItems, PositionCounter counter, Boolean isDataManagement) {
         for (OfferItem offerItem : offerItems) {
             OfferPosition offerPosition = OfferPosition.createProductItem(counter.currentPosition, offerItem)
             tableBody.append(offerPosition.outerHtml())
             counter.increase()
             if (offerItem.getQuantityDiscount() > 0) {
-                OfferPosition discountPosition = OfferPosition.createDiscount(counter.currentPosition, counter.currentPosition - 1, offerItem)
+                OfferPosition discountPosition = OfferPosition.createDiscount(counter.currentPosition, counter.currentPosition - 1, offerItem, isDataManagement)
                 tableBody.append(discountPosition.outerHtml())
                 counter.increase()
             }
@@ -211,7 +211,7 @@ class OfferTemplate {
         }
         // fill the table
         Element tableBody = dataGenerationTable.selectFirst("tbody")
-        appendOfferItems(tableBody, offer.getDataGenerationItems(), counter)
+        appendOfferItems(tableBody, offer.getDataGenerationItems(), counter, false)
         // set the footer
         String netCosts = Currency.format(offer.getNetDataGeneration())
         dataGenerationTable.select("> tfoot .costs").first().text(netCosts)
@@ -229,7 +229,7 @@ class OfferTemplate {
         }
         // fill the table
         Element tableBody = dataAnalysisTable.selectFirst("tbody")
-        appendOfferItems(tableBody, offer.getDataAnalysisItems(), counter)
+        appendOfferItems(tableBody, offer.getDataAnalysisItems(), counter, false)
         // set the footer
         String netCosts = Currency.format(offer.getNetDataAnalysis())
         dataAnalysisTable.select(" > tfoot .costs").first().text(netCosts)
@@ -247,7 +247,7 @@ class OfferTemplate {
         }
         // fill the table
         Element tableBody = dataManagementTable.selectFirst("tbody")
-        appendOfferItems(tableBody, offer.getDataManagementItems(), counter)
+        appendOfferItems(tableBody, offer.getDataManagementItems(), counter, true)
         // set the footer
         String netCosts = Currency.format(offer.getNetPMandDS())
         dataManagementTable.select(" > tfoot .costs").first().text(netCosts)
@@ -279,14 +279,16 @@ class OfferTemplate {
             return new OfferPosition(position, name, description, quantity, unitPrice, total, unit)
         }
 
-        static OfferPosition createDiscount(int position, int discountedPosition, OfferItem offerItem) {
+        static OfferPosition createDiscount(int position, int discountedPosition, OfferItem offerItem, Boolean isDataStorage) {
             String name = "Discount"
             double quantity = offerItem.getQuantity()
             double unitPrice = offerItem.getDiscountPerUnit() * (-1)
             double total = offerItem.getQuantityDiscount() * (-1)
             String unit = offerItem.getUnit()
             double discountPercentage = offerItem.getDiscountPercentage()
-            String description = createDiscountDescription(discountedPosition, quantity, unit, discountPercentage)
+            String description = isDataStorage ? \
+                        createDataStorageDiscountDescription(discountedPosition)  : \
+                        createDiscountDescription(discountedPosition, quantity, unit, discountPercentage)
             return new OfferPosition(position, name, description, quantity, unitPrice, total, unit)
         }
 
@@ -342,6 +344,9 @@ class OfferTemplate {
             String unitName = unit.toString().toLowerCase()
             unitName = (quantity != 1)?  unitName + "s" : unitName
             return "Discount on ${quantity.toString()} ${unitName} based on item no ${discountedPosition}. ${discountPercentage}% discount applied."
+        }
+        private static String createDataStorageDiscountDescription(int discountedPosition) {
+            return "Data storage on item ${discountedPosition} is free of charge due to internal funding."
         }
 
         /**

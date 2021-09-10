@@ -160,7 +160,7 @@ class CreateOfferContentSpec extends Specification{
             final OfferContent offerContent = arguments.get(0)
             assert offerContent.netDataAnalysis  == 2 * unitPrice - quantityDiscount.apply(2, 2*unitPrice)
             assert offerContent.netDataGeneration == 3 * unitPrice
-            assert offerContent.netPMandDS == 4 * unitPrice
+            assert offerContent.netPMandDS == (affiliationCategory == AffiliationCategory.INTERNAL) ? 0.0 : 4 * unitPrice
         }
 
         where:
