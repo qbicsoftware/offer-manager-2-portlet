@@ -124,7 +124,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
             return 0
         } else {
             return offerItems.sum {
-                it.itemTotal -it.quantityDiscount
+                it.itemTotal - it.quantityDiscount
             } as double
         }
     }
