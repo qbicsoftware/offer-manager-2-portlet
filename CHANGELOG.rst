@@ -49,6 +49,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Fix rounding issue for discount unit price (`#784 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/784>`_)
 
+* Fix app trying to unregister file downloaders that were not previously registered (`#796 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/796>`_)
+
 * Restructured the cost summary to solve (`#784 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/784>`_ and `#689 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/689>`_)
 
 **Dependencies**
