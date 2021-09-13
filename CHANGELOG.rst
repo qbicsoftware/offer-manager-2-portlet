@@ -4,6 +4,20 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.1.1 (2021-09-13)
+------------------
+
+**Added**
+
+**Fixed**
+
+* Avoid page breaks in footer content (`#798 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/798>`_)
+
+**Dependencies**
+
+**Deprecated**
+
+
 1.1.0 (2021-08-17)
 ------------------
 
