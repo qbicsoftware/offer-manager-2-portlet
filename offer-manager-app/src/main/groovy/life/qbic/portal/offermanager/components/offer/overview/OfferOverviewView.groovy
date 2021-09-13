@@ -118,6 +118,7 @@ class OfferOverviewView extends VerticalLayout {
                 downloadSpinner)
 
         activityContainer.setMargin(false)
+        activityContainer.setComponentAlignment(downloadSpinner, Alignment.MIDDLE_CENTER)
         headerRow.addComponents(activityContainer, overviewGrid)
         headerRow.setSizeFull()
 
