@@ -11,6 +11,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* Avoid page breaks in footer content (`#798 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/798>`_)
+
 **Dependencies**
 
 **Deprecated**
