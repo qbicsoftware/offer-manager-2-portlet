@@ -3,11 +3,10 @@ package life.qbic.portal.offermanager.components.offer.overview
 import groovy.beans.Bindable
 import life.qbic.business.offers.OfferContent
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.portal.offermanager.OfferToPDFConverter
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.AppViewModel
-import life.qbic.portal.offermanager.OfferToPDFConverter
 import life.qbic.portal.offermanager.dataresources.ResourcesService
-import life.qbic.portal.offermanager.dataresources.offers.OverviewService
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
 /**
@@ -28,10 +27,6 @@ class OfferOverviewModel {
      * A list with all available offer overviews
      */
     ObservableList offerOverviewList
-    /**
-     * The currently selected offer overview
-     */
-    Optional<OfferOverview> selectedOffer
 
     Optional<Offer> offer
 
@@ -40,8 +35,6 @@ class OfferOverviewModel {
     private final ResourcesService<OfferOverview> service
 
     private final AppViewModel viewModel
-
-    private boolean downloadButtonActive
 
     @Bindable boolean displaySpinner
 
@@ -52,10 +45,8 @@ class OfferOverviewModel {
                        EventEmitter<Offer> offerEventEmitter) {
         this.service = service
         this.offerOverviewList = new ObservableList(new ArrayList(service.iterator().toList()))
-        this.selectedOffer = Optional.empty()
         this.offerContent = Optional.empty()
         this.viewModel = viewModel
-        this.downloadButtonActive = false
         this.displaySpinner = false
         this.offerEventEmitter = offerEventEmitter
         subscribeToOverviewService()
@@ -70,7 +61,6 @@ class OfferOverviewModel {
     }
 
     Offer getSelectedOffer() {
-        this.downloadButtonActive = false
         if(offer.isPresent()) {
             return offer.get()
         } else {
