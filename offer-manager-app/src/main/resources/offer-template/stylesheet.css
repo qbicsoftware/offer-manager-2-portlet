@@ -93,7 +93,8 @@ thead#page-header {
 /* page-footer */
 #page-footer {
     color: #bbbbbb;
-    height: var(--footer-height);
+    min-height: var(--footer-height);
+    max-height: var(--footer-height);
 }
 #page-footer-content .footer-columns {
     display: grid;
