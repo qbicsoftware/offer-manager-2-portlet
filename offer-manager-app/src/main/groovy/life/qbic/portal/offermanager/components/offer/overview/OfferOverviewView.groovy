@@ -208,7 +208,13 @@ class OfferOverviewView extends VerticalLayout {
                         downloadSpinner.setVisible(true)
                         new LoadOfferInfoThread(UI.getCurrent(), overview).start()
                     })
-                })
+                    if(!selection.firstSelectedItem.isPresent()){
+                        updateOfferBtn.setEnabled(false)
+                        downloadBtn.setEnabled(false)
+                        createProjectButton.setEnabled(false)
+                    }
+                }
+        )
     }
 
     private void checkProjectCreationAllowed(OfferOverview overview) {
