@@ -12,7 +12,7 @@
 
 /* general-settings */
 :root {
-    --footer-height : calc(10*10pt);
+    --footer-height : calc(10pt * 10);
     --margin-top : 10mm;
     --margin-right : 20mm;
     --margin-bottom:  10mm;
@@ -74,7 +74,7 @@ table#multipage-content {
     height: auto;
 }
 /* we have to remove the defauld padding on the multi-page content */
-table#multipage-content > td {
+table#multipage-content > td, #page-footer td, #page-header td, #offer-content td {
     padding: 0; /* defaults to 1px */
 }
 tfoot#page-footer {
