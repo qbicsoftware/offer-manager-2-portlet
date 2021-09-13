@@ -13,6 +13,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Avoid page breaks in footer content (`#798 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/798>`_)
 
+* Disable buttons after deselecting offers (`#799 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/799>`_)
+
 **Dependencies**
 
 **Deprecated**
