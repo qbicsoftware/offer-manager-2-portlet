@@ -263,7 +263,6 @@ class OfferOverviewView extends VerticalLayout {
                 downloadSpinner.setVisible(true)
                 overviewGrid.setEnabled(false)
                 selectedOffer = overviewGrid.getSelectionModel().getFirstSelectedItem()
-                overviewGrid.setSelectionMode(Grid.SelectionMode.NONE)
                 downloadBtn.setEnabled(false)
                 updateOfferBtn.setEnabled(false)
                 createProjectButton.setEnabled(false)
@@ -273,13 +272,6 @@ class OfferOverviewView extends VerticalLayout {
 
             ui.access(() -> {
                 downloadSpinner.setVisible(false)
-                overviewGrid.setSelectionMode(Grid.SelectionMode.SINGLE)
-                // After we have set the single mode to NONE, the listeners seem to be gone
-                // So we set them again
-                // IMPORTANT: the selection must be set before we attach the listener,
-                // otherwise the selection listener gets triggered (LOOP!)
-                overviewGrid.select(selectedOffer.get())
-                setupGridListeners()
                 overviewGrid.setEnabled(true)
                 downloadBtn.setEnabled(true)
                 updateOfferBtn.setEnabled(true)
