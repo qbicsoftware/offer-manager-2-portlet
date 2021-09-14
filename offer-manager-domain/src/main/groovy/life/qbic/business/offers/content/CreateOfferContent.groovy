@@ -154,7 +154,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         BigDecimal totalPrice = productItem.totalPrice.toBigDecimal()
         if (totalPrice.compareTo(BigDecimal.ZERO) == 0) {
             //avoid division by 0
-            //assume 100% discount for a total price of 0
+            //if a product has a total price of 0 set discount percentage to 0
             return 0.doubleValue()
         }
         BigDecimal result = 100.0.toBigDecimal() * productItem.quantityDiscount.toBigDecimal() / totalPrice
