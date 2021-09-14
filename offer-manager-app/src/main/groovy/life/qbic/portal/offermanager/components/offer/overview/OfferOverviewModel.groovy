@@ -28,9 +28,9 @@ class OfferOverviewModel {
      */
     ObservableList offerOverviewList
 
-    Optional<Offer> offer
+    Optional<Offer> offer = Optional.empty()
 
-    Optional<OfferContent> offerContent
+    Optional<OfferContent> offerContent = Optional.empty()
 
     private final ResourcesService<OfferOverview> service
 
