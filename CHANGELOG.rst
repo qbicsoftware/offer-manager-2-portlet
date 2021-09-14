@@ -15,6 +15,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Disable buttons after deselecting offers (`#799 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/799>`_)
 
+* Avoid division by zero during offer content creation (`#806 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/806>`_)
+
 **Dependencies**
 
 * Bump data model lib 2.12.0 -> 2.12.1 (includes important bug fixes)
