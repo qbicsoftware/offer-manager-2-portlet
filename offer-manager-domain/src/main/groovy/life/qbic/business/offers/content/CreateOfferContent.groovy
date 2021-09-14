@@ -11,17 +11,7 @@ import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.ProteomicAnalysis
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Sequencing
-
-import java.text.DateFormat
-import java.time.Instant
+import life.qbic.datamodel.dtos.business.services.*
 
 /**
  * <h1>Creates the content for an offer export</h1>
@@ -161,7 +151,13 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
      * @return the discount percentage based on quantity discount and item total cost
      */
     private double calculateDiscountPercentage(ProductItem productItem) {
-        BigDecimal result = 100.0.toBigDecimal() * productItem.quantityDiscount.toBigDecimal() / productItem.totalPrice.toBigDecimal()
+        BigDecimal totalPrice = productItem.totalPrice.toBigDecimal()
+        if (totalPrice.compareTo(BigDecimal.ZERO) == 0) {
+            //avoid division by 0
+            //assume 100% discount for a total price of 0
+            return 0.doubleValue()
+        }
+        BigDecimal result = 100.0.toBigDecimal() * productItem.quantityDiscount.toBigDecimal() / totalPrice
         return result.doubleValue()
     }
     
