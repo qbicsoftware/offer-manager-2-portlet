@@ -168,10 +168,15 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
      * @return the discount per unit, if applicable, 0 otherwise
      */
     private double calculateDiscountPerUnit(ProductItem productItem) {
-        BigDecimal result = productItem.quantityDiscount.toBigDecimal() / productItem.quantity.toBigDecimal()
+        BigDecimal quantity = productItem.quantity.toBigDecimal()
+        if (quantity.compareTo(BigDecimal.ZERO) == 0) {
+            //avoid division by 0
+            //if a a productItem has no quantity set discount to 0
+            return 0.doubleValue()
+        }
+        BigDecimal result = productItem.quantityDiscount.toBigDecimal() / quantity
         return result.doubleValue()
     }
-
 
     /**
      * Adds the product items to the respective product group list
