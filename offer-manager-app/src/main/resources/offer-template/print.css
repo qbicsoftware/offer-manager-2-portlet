@@ -1,7 +1,7 @@
 
 /* override variables */
 :root {
-    --footer-height : calc( 9 * 10pt);
+    --footer-height : calc(10pt * 10);
     --margin-top : 10mm;
     --margin-right : 20mm;
     --margin-bottom:  10mm;
@@ -24,7 +24,7 @@ html, body {
 }
 
 /* make last page full */
+/* 100vh is the printable area in print medium */
 .last-page {
-    /* 100vh is the printable area in print medium */
-    min-height: calc(100vh - var(--footer-height));
+    min-height:calc(100vh - var(--footer-height));
 }
