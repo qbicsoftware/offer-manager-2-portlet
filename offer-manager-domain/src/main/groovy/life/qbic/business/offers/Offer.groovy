@@ -568,7 +568,7 @@ class Offer {
             try {
                 discount = cataloguePrice.andThen(dataStorageDiscount).apply(item)
             } catch (IllegalArgumentException e) {
-                log.error("Negative values for product Items are not applicable for a discount, $e.message", e)
+                log.error("product item is not applicable for a discount, $e.message", e)
             }
         }
         return discount
