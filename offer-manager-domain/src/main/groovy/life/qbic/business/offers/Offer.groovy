@@ -564,16 +564,16 @@ class Offer {
 
     private BigDecimal storageDiscountAmountForProductItem(ProductItem item) {
         BigDecimal discount = BigDecimal.ZERO
-        try {
             if (dataStorageApplicable.test(item)) {
+                try {
                 discount = cataloguePrice.andThen(dataStorageDiscount).apply(item)
             }
-        } catch (IllegalArgumentException e){
-            log.error("Negative values for Product Items are not applicable for a discount, $e.message", e)
+                catch (IllegalArgumentException e){
+                    log.error("Negative values for product Items are not applicable for a discount, $e.message", e)
+                }
         }
         return discount
     }
-
 
     /**
      * Calculates the VAT costs of an offer depending on the customers affiliation country and category
