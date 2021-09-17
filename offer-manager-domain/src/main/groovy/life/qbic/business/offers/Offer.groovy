@@ -30,7 +30,6 @@ import java.util.function.Predicate
  *
  * @since 0.1.0
  */
-
 class Offer {
     /**
      * Holds all available versions of an existing offer
