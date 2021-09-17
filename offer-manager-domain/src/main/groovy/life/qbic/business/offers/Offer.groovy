@@ -1,6 +1,7 @@
 package life.qbic.business.offers
 
 import groovy.time.TimeCategory
+import groovy.util.logging.Log4j2
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
@@ -12,8 +13,6 @@ import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
-import java.math.MathContext
-import java.math.RoundingMode
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.function.Function
@@ -29,6 +28,7 @@ import java.util.function.Predicate
  *
  * @since 0.1.0
  */
+@Log4j2
 class Offer {
     /**
      * Holds all available versions of an existing offer
@@ -560,9 +560,13 @@ class Offer {
 
     private BigDecimal storageDiscountAmountForProductItem(ProductItem item) {
         BigDecimal discount = BigDecimal.ZERO
-
-        if (dataStorageApplicable.test(item)) {
-            discount = cataloguePrice.andThen(dataStorageDiscount).apply(item)
+        try {
+            if (dataStorageApplicable.test(item)) {
+                discount = cataloguePrice.andThen(dataStorageDiscount).apply(item)
+            }
+        } catch (IllegalArgumentException e){
+            log.error(e.message)
+            log.error(e.stackTrace.join("\n"))
         }
         return discount
     }
