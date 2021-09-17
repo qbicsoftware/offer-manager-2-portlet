@@ -4,6 +4,19 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.1.2 (2021-09-17)
+------------------
+
+**Added**
+
+**Fixed**
+
+* Catch exception during discount generation for negative product prices (`#808 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/808>`_)
+
+**Dependencies**
+
+**Deprecated**
+
 1.1.1 (2021-09-14)
 ------------------
 
