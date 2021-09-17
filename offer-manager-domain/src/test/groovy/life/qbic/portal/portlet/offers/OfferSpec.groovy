@@ -768,7 +768,7 @@ class OfferSpec extends Specification {
         BigDecimal totalDiscount = offer.getTotalDiscountAmount()
 
         then: "the total discount is zero for negative list prices"
-        totalDiscount == 0
+        hasRequiredPrecision(totalDiscount,BigDecimal.ZERO)
         where: "for every possible combination of product class, affiliation, quantity and unitPrice"
         [productClass, affiliation, quantity, unitPrice] << [
                 [DataStorage, ProjectManagement, PrimaryAnalysis, MetabolomicAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing],
