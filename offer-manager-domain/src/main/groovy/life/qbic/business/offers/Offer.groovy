@@ -3,6 +3,7 @@ package life.qbic.business.offers
 import groovy.time.TimeCategory
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
+import life.qbic.business.offers.Offer
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
@@ -19,7 +20,6 @@ import java.security.MessageDigest
 import java.util.function.Function
 import java.util.function.Predicate
 
-
 /**
  * Represents the Offer business model.
  *
@@ -30,7 +30,6 @@ import java.util.function.Predicate
  *
  * @since 0.1.0
  */
-
 class Offer {
     /**
      * Holds all available versions of an existing offer
@@ -568,7 +567,7 @@ class Offer {
             try {
                 discount = cataloguePrice.andThen(dataStorageDiscount).apply(item)
             } catch (IllegalArgumentException e) {
-                log.error("product item is not applicable for a discount, $e.message", e)
+                log.error("product item is not applicable for a discount, $e.message")
             }
         }
         return discount
