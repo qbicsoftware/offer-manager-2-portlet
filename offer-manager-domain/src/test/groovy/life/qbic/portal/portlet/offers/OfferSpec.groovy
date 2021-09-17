@@ -767,8 +767,8 @@ class OfferSpec extends Specification {
         when: "the total discount is calculated"
         BigDecimal totalDiscount = offer.getTotalDiscountAmount()
 
-        then: "the total discount is not greater than the listPrice"
-        cutAtRequiredPrecision(listPrice - totalDiscount) == cutAtRequiredPrecision(listPrice)
+        then: "the total discount is zero for negative list prices"
+        totalDiscount == 0
         where: "for every possible combination of product class, affiliation, quantity and unitPrice"
         [productClass, affiliation, quantity, unitPrice] << [
                 [DataStorage, ProjectManagement, PrimaryAnalysis, MetabolomicAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing],
@@ -777,7 +777,6 @@ class OfferSpec extends Specification {
                 [-0.1, -0.01, 0.00, -1, -0.33, -7/9]
         ].combinations()
         listPrice = unitPrice * quantity
-
 
     }
 

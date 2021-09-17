@@ -566,9 +566,8 @@ class Offer {
         BigDecimal discount = BigDecimal.ZERO
             if (dataStorageApplicable.test(item)) {
                 try {
-                discount = cataloguePrice.andThen(dataStorageDiscount).apply(item)
-            }
-                catch (IllegalArgumentException e){
+                    discount = cataloguePrice.andThen(dataStorageDiscount).apply(item)
+                } catch (IllegalArgumentException e) {
                     log.error("Negative values for product Items are not applicable for a discount, $e.message", e)
                 }
         }
