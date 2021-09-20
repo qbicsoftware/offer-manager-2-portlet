@@ -1,6 +1,9 @@
 package life.qbic.business.offers
 
 import groovy.time.TimeCategory
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
+import life.qbic.business.offers.Offer
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
@@ -12,8 +15,6 @@ import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
-import java.math.MathContext
-import java.math.RoundingMode
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
 import java.util.function.Function
@@ -144,6 +145,8 @@ class Offer {
         it.product instanceof DataStorage && \
                     selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL
     }
+
+    private static Logging log = Logger.getLogger(this.class)
 
     static class Builder {
 
@@ -560,13 +563,15 @@ class Offer {
 
     private BigDecimal storageDiscountAmountForProductItem(ProductItem item) {
         BigDecimal discount = BigDecimal.ZERO
-
         if (dataStorageApplicable.test(item)) {
-            discount = cataloguePrice.andThen(dataStorageDiscount).apply(item)
+            try {
+                discount = cataloguePrice.andThen(dataStorageDiscount).apply(item)
+            } catch (IllegalArgumentException e) {
+                log.error("product item is not applicable for a discount, $e.message")
+            }
         }
         return discount
     }
-
 
     /**
      * Calculates the VAT costs of an offer depending on the customers affiliation country and category

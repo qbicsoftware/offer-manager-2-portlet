@@ -760,6 +760,26 @@ class OfferSpec extends Specification {
 
     }
 
+    def "automatic discounts are not applied for negative values"() {
+        given: "an item and an offer with this item only"
+        def item = new ProductItem(quantity, ProductFactory.createProduct(productClass, unitPrice, unitPrice))
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager,  "", "", [item], affiliation).build()
+        when: "the total discount is calculated"
+        BigDecimal totalDiscount = offer.getTotalDiscountAmount()
+
+        then: "the total discount is zero for negative list prices"
+        hasRequiredPrecision(totalDiscount,BigDecimal.ZERO)
+        where: "for every possible combination of product class, affiliation, quantity and unitPrice"
+        [productClass, affiliation, quantity, unitPrice] << [
+                [DataStorage, ProjectManagement, PrimaryAnalysis, MetabolomicAnalysis, ProteomicAnalysis, SecondaryAnalysis, Sequencing],
+                [internalAffiliation, externalAffiliation, externalAcademicAffiliation],
+                [1, 10, 100, 1000, 10000, 20, 30, 70, 42],
+                [-0.1, -0.01, 0.00, -1, -0.33, -7/9]
+        ].combinations()
+        listPrice = unitPrice * quantity
+
+    }
+
     static boolean hasRequiredPrecision(BigDecimal overheadSum, BigDecimal expectedValue) {
         return (overheadSum-expectedValue).abs() < MAX_NUMERIC_ERROR
     }

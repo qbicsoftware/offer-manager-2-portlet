@@ -162,7 +162,12 @@ class AppView extends VerticalLayout {
 
     private static void showNotification(String title, String message, Notification.Type type) {
         StyledNotification notification = new StyledNotification(title, message, type)
-        notification.show(Page.getCurrent())
+        Page page = Page.getCurrent()
+        if (page) {
+            notification.show(page)
+        } else {
+            log.warn("Page ${page}: Tried to show ${type}: $title - $message")
+        }
     }
 
     private class TomatoFeatures extends HorizontalLayout {
