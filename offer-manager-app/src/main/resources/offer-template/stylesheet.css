@@ -140,6 +140,8 @@ thead#page-header {
 .cost-summary .cost-item {
     display: grid;
     grid-template-columns: auto auto;
+    column-gap: 1mm;
+    grid-column-gap: 1mm;
     margin-top: 1mm;
     margin-bottom: 0;
 }

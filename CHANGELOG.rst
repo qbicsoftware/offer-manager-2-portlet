@@ -11,6 +11,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* Add spacing to cost overview (`#810 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/810>`_)
+
 **Dependencies**
 
 **Deprecated**
