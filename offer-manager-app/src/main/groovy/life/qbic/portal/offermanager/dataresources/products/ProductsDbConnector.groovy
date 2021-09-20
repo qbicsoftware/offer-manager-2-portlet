@@ -88,7 +88,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
         Product product = rowResultToProduct(SqlExtensions.toRowResult(resultSet))
         products.add(product)
       } catch (IllegalArgumentException illegalRow) {
-        log.warn("Could not parse row. Skipping.", illegalRow)
+        log.error("Could not parse row. Skipping.", illegalRow)
         log.debug("Could not parse row. Skipping.", illegalRow)
       }
     }
