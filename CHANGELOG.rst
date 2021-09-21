@@ -4,6 +4,19 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.1.3 (2021-09-20)
+------------------
+
+**Added**
+
+**Fixed**
+
+* Add spacing to cost overview (`#810 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/810>`_)
+
+**Dependencies**
+
+**Deprecated**
+
 1.1.2 (2021-09-17)
 ------------------
 
