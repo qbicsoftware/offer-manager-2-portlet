@@ -11,6 +11,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* Update offer template footer to show correct names (`#817 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/817>`_)
+
 **Dependencies**
 
 **Deprecated**
