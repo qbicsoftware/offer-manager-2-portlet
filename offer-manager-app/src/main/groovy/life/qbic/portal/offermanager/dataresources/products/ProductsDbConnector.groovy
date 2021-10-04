@@ -218,6 +218,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     if (product instanceof DataStorage) return ProductCategory.DATA_STORAGE.getValue()
     if (product instanceof ProteomicAnalysis) return ProductCategory.PROTEOMIC.getValue()
     if (product instanceof MetabolomicAnalysis) return ProductCategory.METABOLOMIC.getValue()
+    if (product instanceof ExternalServiceProduct) return ProductCategory.EXTERNAL_SERVICE.getValue()
 
     return null
   }
