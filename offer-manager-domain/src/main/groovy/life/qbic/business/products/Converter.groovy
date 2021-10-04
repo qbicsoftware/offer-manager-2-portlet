@@ -2,6 +2,7 @@ package life.qbic.business.products
 
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
+import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.facilities.Facility
@@ -75,6 +76,9 @@ class Converter {
             case ProductCategory.METABOLOMIC:
                 product = new MetabolomicAnalysis(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, serviceProvider)
                 break
+            case ProductCategory.EXTERNAL_SERVICE:
+                product = new ExternalServiceProduct(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, serviceProvider)
+                break
             default:
                 log.warn("Unknown product category $category")
         }
@@ -95,6 +99,7 @@ class Converter {
         if(product instanceof DataStorage) return ProductCategory.DATA_STORAGE
         if(product instanceof ProteomicAnalysis) return ProductCategory.PROTEOMIC
         if(product instanceof MetabolomicAnalysis) return ProductCategory.METABOLOMIC
+        if(product instanceof ExternalServiceProduct) return ProductCategory.EXTERNAL_SERVICE
 
         throw  new IllegalArgumentException("Cannot parse category of the provided product ${product.toString()}")
     }
