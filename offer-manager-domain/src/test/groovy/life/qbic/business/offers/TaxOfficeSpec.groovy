@@ -1,19 +1,9 @@
 package life.qbic.business.offers
 
-import life.qbic.business.products.Product
+
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.facilities.Facility
-import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.ExternalServiceProduct
-import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
-import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.ProteomicAnalysis
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Sequencing
+import life.qbic.datamodel.dtos.business.services.*
 import spock.lang.Shared
 import spock.lang.Specification
 

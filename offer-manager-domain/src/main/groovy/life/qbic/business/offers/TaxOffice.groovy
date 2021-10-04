@@ -3,7 +3,6 @@ package life.qbic.business.offers
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.services.ExternalServiceProduct
-import life.qbic.datamodel.dtos.business.services.Product
 
 
 /**
