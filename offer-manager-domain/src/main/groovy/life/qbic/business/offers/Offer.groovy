@@ -3,20 +3,22 @@ package life.qbic.business.offers
 import groovy.time.TimeCategory
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.offers.Offer
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
 import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.ExternalServiceProduct
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
+import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import java.util.function.BiFunction
 import java.util.function.Function
 import java.util.function.Predicate
 
@@ -146,6 +148,8 @@ class Offer {
                     selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL
     }
 
+    private final TaxOffice taxOffice
+
     private static Logging log = Logger.getLogger(this.class)
 
     static class Builder {
@@ -247,6 +251,7 @@ class Offer {
             this.associatedProject = Optional.empty()
         }
         builder.items.each {this.items.add(finaliseProductItem(it))}
+        this.taxOffice = new TaxOffice(selectedCustomerAffiliation)
     }
 
     /**
@@ -351,13 +356,15 @@ class Offer {
      *
      * @return The amount of VAT price based on all items in the offer.
      */
-    double getTaxCosts() {
-        if (!selectedCustomerAffiliation.category.equals(noVatCategory) && selectedCustomerAffiliation.country.equals(countryWithVat)) {
-            return (calculateNetPrice() + getOverheadSum()) * VAT
-        }
-        else {
-            return 0
-        }
+    BigDecimal getTaxCosts() {
+        Taxes taxes = new Taxes()
+        items.stream()
+                .map( { ProductItem item ->
+                    BigDecimal itemCostWithOverhead = BigDecimal.valueOf(calculateItemOverhead(item)) + BigDecimal.valueOf(item.totalPrice) - BigDecimal.valueOf(item.quantityDiscount)
+                    taxes.apply(itemCostWithOverhead, item.product)
+                })
+                .collect()
+                .sum() as BigDecimal
     }
 
     /**
@@ -574,11 +581,25 @@ class Offer {
     }
 
     /**
-     * Calculates the VAT costs of an offer depending on the customers affiliation country and category
-     * @return the vat costs for an offer
+     * Calculates the VAT ratio of an offer depending on the customers affiliation country and category
+     * or in presence of external services
+     * @return the vat ratio for an offer
+     * @deprecated since 1.2.0, please use {@link #appliedTaxRatio}
      */
+    @Deprecated
     double determineTaxCost() {
-        return isVatCountry() && !isNoVatAffiliation() ? VAT : 0.0
+        boolean isExternalProductPresent = items.findAll( {it.product instanceof ExternalServiceProduct}).size() > 0
+        return isVatCountry() && (!isNoVatAffiliation() || isExternalProductsPresent)  ? VAT : 0.0
+    }
+    /**
+     * Calculates the VAT ratio of an offer depending on the customers affiliation country and category
+     * or in presence of external services
+     * @return the vat ratio for an offer
+     * @since 1.2.0
+     */
+    BigDecimal appliedTaxRatio() {
+        boolean isExternalProductsPresent = items.findAll( {it.product instanceof ExternalServiceProduct}).size() > 0
+        return isVatCountry() && (!isNoVatAffiliation() || isExternalProductsPresent)  ? BigDecimal.valueOf(VAT) : 0.0
     }
 
     /**
@@ -660,5 +681,12 @@ class Offer {
 
         //return complete hash
         return sb.toString()
+    }
+
+    private class Taxes implements BiFunction<BigDecimal, Product, BigDecimal> {
+        @Override
+        BigDecimal apply(BigDecimal serviceCosts, Product product) {
+            return taxOffice.applyTaxes(serviceCosts, product)
+        }
     }
 }

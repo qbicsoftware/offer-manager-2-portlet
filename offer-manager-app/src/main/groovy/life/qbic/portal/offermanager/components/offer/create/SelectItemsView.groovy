@@ -42,6 +42,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
     private List<ProductItemViewModel> secondaryAnalyseProduct
     private List<ProductItemViewModel> proteomicAnalysisProduct
     private List<ProductItemViewModel> metabolomicAnalysisProduct
+    private List<ProductItemViewModel> externalServiceProduct
 
     Grid<Product> sequencingGrid
     Grid<Product> projectManagementGrid
@@ -50,6 +51,8 @@ class SelectItemsView extends VerticalLayout implements Resettable {
     Grid<Product> secondaryAnalyseGrid
     Grid<Product> proteomicsAnalysisGrid
     Grid<Product> metabolomicsAnalysisGrid
+    Grid<Product> externalServiceGrid
+
     Grid<ProductItemViewModel> overviewGrid
 
     Button applySequencing
@@ -59,6 +62,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
     Button applyProteomicAnalysis
     Button applyMetabolomicAnalysis
     Button applyDataStorage
+    Button applyExternalService
     Button removeItemsButton
     Button next
     Button previous
@@ -70,6 +74,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
     TextField amountProteomicAnalysis
     TextField amountMetabolomicAnalysis
     TextField amountDataStorage
+    TextField amountExternalService
 
     TabSheet packageAccordion
 
@@ -148,6 +153,13 @@ class SelectItemsView extends VerticalLayout implements Resettable {
             }
         })
 
+        externalServiceProduct = createOfferViewModel.externalServiceProduct as ObservableList
+        externalServiceProduct.addPropertyChangeListener({
+            if (it instanceof ObservableList.ElementEvent) {
+                externalServiceGrid.dataProvider.refreshAll()
+            }
+        })
+
         initLayout()
         setupDataProvider()
         addListener()
@@ -174,6 +186,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         this.proteomicsAnalysisGrid = new Grid<>()
         this.metabolomicsAnalysisGrid = new Grid<>()
         this.projectManagementGrid = new Grid<>()
+        this.externalServiceGrid = new Grid<>()
         this.storageGrid = new Grid<>()
         this.overviewGrid = new Grid<>("Overview:")
 
@@ -191,6 +204,8 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         amountProjectManagement.setPlaceholder("e.g. 1.5")
         amountDataStorage = new TextField("Quantity:")
         amountDataStorage.setPlaceholder("e.g. 1.6")
+        amountExternalService = new TextField("Quantity:")
+        amountExternalService.setPlaceholder("e.g. 1.6")
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.setEnabled(false)
@@ -219,6 +234,9 @@ class SelectItemsView extends VerticalLayout implements Resettable {
 
         this.applyProjectManagement = new Button("Apply", VaadinIcons.PLUS)
         applyProjectManagement.setEnabled(false)
+
+        this.applyExternalService = new Button("Apply", VaadinIcons.PLUS)
+        applyExternalService.setEnabled(false)
 
         this.removeItemsButton = new Button("Remove Item", VaadinIcons.MINUS)
         removeItemsButton.setEnabled(false)
@@ -272,6 +290,13 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         projectManagementGrid.setHeightByRows(6)
         projectManagementLayout.setSizeFull()
 
+        HorizontalLayout externalService = new HorizontalLayout(amountExternalService, applyExternalService)
+        externalService.setComponentAlignment(applyExternalService, Alignment.BOTTOM_LEFT)
+        VerticalLayout externalServiceLayout = new VerticalLayout(externalServiceGrid, externalService)
+        externalServiceGrid.setHeightByRows(6)
+        externalServiceLayout.setSizeFull()
+
+
         HorizontalLayout overview = new HorizontalLayout(overviewGrid)
         overviewGrid.setHeightByRows(6)
         overview.setSizeFull()
@@ -284,6 +309,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         generateProductGrid(metabolomicsAnalysisGrid)
         generateProductGrid(storageGrid)
         generateProductGrid(projectManagementGrid)
+        generateProductGrid(externalServiceGrid)
         // This grid summarises product items selected for this specific offer, so we set quantity = true
         generateItemGrid(overviewGrid)
 
@@ -295,6 +321,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         packageAccordion.addTab(metabolomicsLayout, "Metabolomics")
         packageAccordion.addTab(projectManagementLayout, "Project Management")
         packageAccordion.addTab(dataStorageLayout, "Data Storage")
+        packageAccordion.addTab(externalServiceLayout, "External Services")
 
         this.addComponents(packageAccordion, overview, buttonLayout)
         this.setSizeFull()
@@ -333,6 +360,10 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         ListDataProvider<ProductItemViewModel> storageProductDataProvider = new ListDataProvider(createOfferViewModel.storageProducts)
         this.storageGrid.setDataProvider(storageProductDataProvider)
         setupFilters(storageProductDataProvider, storageGrid)
+
+        ListDataProvider<ProductItemViewModel> externalServiceProvider = new ListDataProvider(createOfferViewModel.externalServiceProduct)
+        this.externalServiceGrid.setDataProvider(externalServiceProvider)
+        setupFilters(externalServiceProvider, externalServiceGrid)
 
         ListDataProvider<ProductItemViewModel> selectedItemsDataProvider =
                 new ListDataProvider(createOfferViewModel.getProductItems())
@@ -760,6 +791,54 @@ class SelectItemsView extends VerticalLayout implements Resettable {
             amountDataStorage.setComponentError(null)
         })
 
+        externalServiceGrid.addSelectionListener({
+            createOfferViewModel.externalServiceGridSelected = it.firstSelectedItem.isPresent()
+        })
+
+        this.amountExternalService.addValueChangeListener({ event ->
+            ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountExternalService))
+            ValidationResult numberResult = partialValidator.apply(event.getValue(), new ValueContext(amountExternalService))
+            UserError error
+            if (emptyResult.isError()) {
+                error = new UserError(emptyResult.getErrorMessage())
+                this.amountExternalService.setComponentError(error)
+                createOfferViewModel.externalServiceQuantityValid = false
+            } else if (numberResult.isError()) {
+                error = new UserError(numberResult.getErrorMessage())
+                this.amountDataStorage.setComponentError(error)
+                createOfferViewModel.externalServiceQuantityValid = false
+            } else {
+                this.amountDataStorage.setComponentError(null)
+                createOfferViewModel.externalServiceQuantityValid = true
+            }
+        })
+
+        applyExternalService.addClickListener({
+            if (externalServiceGrid.getSelectedItems() != null) {
+                String amount = amountExternalService.getValue()
+
+                try {
+                    if (amount != null && amount.isNumber()) {
+                        externalServiceGrid.getSelectedItems().each {
+                            def amountParsed = Double.parseDouble(amount)
+                            if (amountParsed >= 0.0) {
+                                ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
+                                updateOverviewGrid(offerItem)
+                            }
+                        }
+                        externalServiceGrid.getDataProvider().refreshAll()
+                    }
+                }
+                catch (Exception e) {
+                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
+                }
+            }
+            amountExternalService.clear()
+            externalServiceGrid.deselectAll()
+            applyExternalService.setEnabled(false)
+            amountExternalService.setComponentError(null)
+        })
+
         createOfferViewModel.productItems.addPropertyChangeListener({
             if (createOfferViewModel.productItems) {
                 next.setEnabled(true)
@@ -776,6 +855,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
             applyMetabolomicAnalysis.setEnabled(createOfferViewModel.metabolomicsAnalysisGridSelected && createOfferViewModel.metabolomicsAnalysisQuantityValid)
             applyProjectManagement.setEnabled(createOfferViewModel.projectManagementGridSelected && createOfferViewModel.projectManagementQuantityValid)
             applyDataStorage.setEnabled(createOfferViewModel.storageGridSelected && createOfferViewModel.storageQuantityValid)
+            applyExternalService.setEnabled(createOfferViewModel.externalServiceGridSelected && createOfferViewModel.externalServiceQuantityValid)
         })
 
         overviewGrid.addSelectionListener({

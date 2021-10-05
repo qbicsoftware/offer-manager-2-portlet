@@ -2,6 +2,7 @@ package life.qbic.business
 
 import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.ExternalServiceProduct
 import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
@@ -86,6 +87,15 @@ class ProductFactory {
                         runningNumber,
                         serviceProvider) as T
                 break
+            case ExternalServiceProduct:
+                return new ExternalServiceProduct(name,
+                        description,
+                        internalPrice,
+                        externalPrice,
+                        productUnit,
+                        runningNumber,
+                        serviceProvider) as T
+                break
         }
     }
 
@@ -152,6 +162,15 @@ class ProductFactory {
                 break
             case Sequencing:
                 return new Sequencing(name,
+                        description,
+                        internalPrice,
+                        externalPrice,
+                        productUnit,
+                        runningNumber,
+                        serviceProvider) as T
+                break
+            case ExternalServiceProduct:
+                return new ExternalServiceProduct(name,
                         description,
                         internalPrice,
                         externalPrice,
