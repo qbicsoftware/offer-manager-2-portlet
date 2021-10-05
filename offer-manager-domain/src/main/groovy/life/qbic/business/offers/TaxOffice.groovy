@@ -56,7 +56,6 @@ class TaxOffice {
     }
 
     private static BigDecimal applyTaxesForInternals(BigDecimal serviceCosts, Class clazz) {
-        println clazz
         if (clazz.equals(ExternalServiceProduct)) {
             return serviceCosts * VAT_RATIO
         }

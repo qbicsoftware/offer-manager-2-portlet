@@ -76,28 +76,33 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         List<OfferItem> dataManagementOfferItems = dataManagementItems.collect{createOfferItem(it)}
         List<OfferItem> dataAnalysisOfferItems = dataAnalysisItems.collect{createOfferItem(it)}
         List<OfferItem> dataGenerationOfferItems = dataGenerationItems.collect{createOfferItem(it)}
+        List<OfferItem> externalServiceItems = externalServiceItems.collect({createOfferItem(it)})
 
         offerContentBuilder.dataGenerationItems(dataGenerationOfferItems)
-        .dataAnalysisItems(dataAnalysisOfferItems)
-        .dataManagementItems(dataManagementOfferItems)
+            .dataAnalysisItems(dataAnalysisOfferItems)
+            .dataManagementItems(dataManagementOfferItems)
+            .externalServiceItems(externalServiceItems)
 
         double overheadsDA = calculateOverheadSum(dataAnalysisOfferItems)
         double overheadsDG = calculateOverheadSum(dataGenerationOfferItems)
         double overheadsPMandDS = calculateOverheadSum(dataManagementOfferItems)
+        double overheadsExternalServices = calculateOverheadSum(externalServiceItems)
 
         offerContentBuilder.overheadsDataAnalysis(overheadsDA)
         .overheadsDataGeneration(overheadsDG)
         .overheadsProjectManagementAndDataStorage(overheadsPMandDS)
+        .overheadsExternalServices(overheadsExternalServices )
         .overheadTotal(offer.overheadSum)
         .overheadRatio(offer.overheadRatio)
 
         offerContentBuilder.netDataAnalysis(calculateNetSum(dataAnalysisOfferItems))
         .netDataGeneration(calculateNetSum(dataGenerationOfferItems))
         .netProjectManagementAndDataStorage(calculateNetSum(dataManagementOfferItems))
+        .netExternalServices(calculateNetSum(externalServiceItems))
         .netCost(offer.totalNetPrice)
 
         offerContentBuilder.totalVat(offer.taxCosts)
-        .vatRatio(offer.determineTaxCost())
+        .vatRatio(offer.appliedTaxRatio())
         .totalCost(offer.totalCosts)
         .totalDiscountAmount(offer.totalDiscountAmount)
 

@@ -114,7 +114,10 @@ class OfferContent {
      * The overhead costs for the project management and data storage items
      */
     final double overheadsProjectManagementAndDataStorage
-
+    /**
+     * The overhead costs for external services
+     */
+    final double overheadsExternalService
 
     /*Prices*/
     /**
@@ -129,6 +132,10 @@ class OfferContent {
      * The net costs for the project management and data storage section on the offer
      */
     final double netPMandDS
+    /**
+     * The net costs for external services
+     */
+    final double netExternalServices
     /**
      * The total costs of the offer
      */
@@ -193,12 +200,14 @@ class OfferContent {
         Double overheadsDataGeneration
         Double overheadsDataAnalysis
         Double overheadsProjectManagementAndDataStorage
+        Double overheadsExternalServices
         Double overheadRatio
 
         /*Prices*/
         Double netDataGeneration
         Double netDataAnalysis
         Double netPMandDS
+        Double netExternalServices
         Double totalCost
         Double netCostsWithOverheads
         Double netCost
@@ -248,6 +257,8 @@ class OfferContent {
             Provides NPE safe extension of the builder and keeps developers happy
              */
             this.externalServiceItems = []
+            this.netExternalServices = 0
+            this.overheadsExternalServices = 0
         }
         Builder dataGenerationItems(List<OfferItem> dataGenerationItems){
             this.dataGenerationItems = dataGenerationItems
@@ -285,6 +296,10 @@ class OfferContent {
             this.overheadsProjectManagementAndDataStorage = overheadPmAndDs
             return this
         }
+        Builder overheadsExternalServices(double overheadExternalServices) {
+            this.overheadsExternalServices = overheadExternalServices
+            return this
+        }
         Builder netDataGeneration(double net){
             this.netDataGeneration = net
             return this
@@ -295,6 +310,10 @@ class OfferContent {
         }
         Builder netProjectManagementAndDataStorage(double net){
             this.netPMandDS = net
+            return this
+        }
+        Builder netExternalServices(double net) {
+            this.netExternalServices = net
             return this
         }
         Builder totalCost(double total){
@@ -385,11 +404,13 @@ class OfferContent {
         overheadsDataGeneration = builder.overheadsDataGeneration
         overheadsDataAnalysis = builder.overheadsDataAnalysis
         overheadsProjectManagementAndDataStorage = builder.overheadsProjectManagementAndDataStorage
+        overheadsExternalService = builder.overheadsExternalServices
 
         /*Prices*/
         netDataGeneration = builder.netDataGeneration
         netDataAnalysis = builder.netDataAnalysis
         netPMandDS = builder.netPMandDS
+        netExternalServices = builder.netExternalServices
         totalCost = builder.totalCost
         netCost = builder.netCost
         netCostsWithOverheads = builder.netCostsWithOverheads

@@ -800,6 +800,7 @@ class OfferSpec extends Specification {
         then:
         taxCosts == BigDecimal.valueOf(0.19 * 20.0 * 10.0)
         overheads == BigDecimal.valueOf(0.0 * 20.0 * 10.0)
+        BigDecimal.valueOf(offer.determineTaxCost()) == BigDecimal.valueOf(0.19)
     }
 
     def "Given an external academic customer affiliation, there needs to be VAT applied + 20% overhead for external services as well."() {
