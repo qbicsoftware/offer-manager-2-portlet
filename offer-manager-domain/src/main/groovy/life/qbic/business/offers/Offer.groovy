@@ -10,6 +10,7 @@ import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.DataStorage
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
+import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
@@ -359,7 +360,7 @@ class Offer {
         items.stream()
                 .map( { ProductItem item ->
                     BigDecimal itemCostWithOverhead = BigDecimal.valueOf(calculateItemOverhead(item)) + BigDecimal.valueOf(item.totalPrice) - BigDecimal.valueOf(item.quantityDiscount)
-                    taxes.apply(itemCostWithOverhead, item.product.class)
+                    taxes.apply(itemCostWithOverhead, item.product)
                 })
                 .collect()
                 .sum() as BigDecimal
@@ -667,10 +668,10 @@ class Offer {
         return sb.toString()
     }
 
-    private class Taxes implements BiFunction<BigDecimal, Class, BigDecimal> {
+    private class Taxes implements BiFunction<BigDecimal, Product, BigDecimal> {
         @Override
-        BigDecimal apply(BigDecimal serviceCosts, Class clazz) {
-            return taxOffice.applyTaxes(serviceCosts, clazz)
+        BigDecimal apply(BigDecimal serviceCosts, Product product) {
+            return taxOffice.applyTaxes(serviceCosts, product)
         }
     }
 }

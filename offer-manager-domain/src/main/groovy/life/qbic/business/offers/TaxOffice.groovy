@@ -3,6 +3,7 @@ package life.qbic.business.offers
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.services.ExternalServiceProduct
+import life.qbic.datamodel.dtos.business.services.Product
 
 
 /**
@@ -40,13 +41,13 @@ class TaxOffice {
      * @param product the service product
      * @return the absolute resulting tax value
      */
-    BigDecimal applyTaxes(BigDecimal serviceCosts, Class clazz) {
+     BigDecimal applyTaxes(BigDecimal serviceCosts, Product product) {
         switch (affiliation) {
             case ({it.country != "Germany"}):
                 return BigDecimal.valueOf(0)
                 break
             case ({it.category.equals(AffiliationCategory.INTERNAL)}):
-                return applyTaxesForInternals(serviceCosts, clazz)
+                return applyTaxesForInternals(serviceCosts, product.class)
                 break
             default:
                 return applyTaxesForExternals(serviceCosts)
@@ -55,6 +56,7 @@ class TaxOffice {
     }
 
     private static BigDecimal applyTaxesForInternals(BigDecimal serviceCosts, Class clazz) {
+        println clazz
         if (clazz.equals(ExternalServiceProduct)) {
             return serviceCosts * VAT_RATIO
         }
