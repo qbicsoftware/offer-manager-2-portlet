@@ -88,6 +88,10 @@ class OfferContent {
      * The items assigned to project management and data storage section of the offer
      */
     final List<OfferItem> dataManagementItems
+    /**
+     * The items assigned to external services of the offer
+     */
+    final List<OfferItem> externalServiceItems
 
     /*Overheads*/
     /**
@@ -182,6 +186,7 @@ class OfferContent {
         List<OfferItem> dataGenerationItems
         List<OfferItem> dataAnalysisItems
         List<OfferItem> dataManagementItems
+        List<OfferItem> externalServiceItems
 
         /*Overheads*/
         Double overheadTotal
@@ -251,6 +256,10 @@ class OfferContent {
             this.dataManagementItems = dataManagementItems
             return this
         }
+        Builder externalServiceItems(List<OfferItem> externalServiceItems) {
+            this.externalServiceItems = externalServiceItems
+            return this
+        }
         Builder overheadTotal(double overheadTotal){
             this.overheadTotal = overheadTotal
             return this
@@ -309,6 +318,7 @@ class OfferContent {
             if(dataGenerationItems == null) throw new NullPointerException("Missing data generation items")
             if(dataAnalysisItems == null) throw new NullPointerException("Missing data analysis items")
             if(dataManagementItems == null) throw new NullPointerException("Missing data management items")
+            if(externalServiceItems == null) throw new NullPointerException("Missing external service items")
             if(overheadTotal == null) throw new NullPointerException("Missing overhead total costs")
             if(overheadRatio == null) throw new NullPointerException("Missing overhead ratio")
             if(overheadsDataAnalysis == null) throw new NullPointerException("Missing data analysis overhead costs")
@@ -359,9 +369,10 @@ class OfferContent {
         offerIdentifier = builder.offerIdentifier
 
         /*Items*/
-        dataGenerationItems = builder.dataGenerationItems
-        dataAnalysisItems = builder.dataAnalysisItems
-        dataManagementItems = builder.dataManagementItems
+        dataGenerationItems = builder.dataGenerationItems.collect()
+        dataAnalysisItems = builder.dataAnalysisItems.collect()
+        dataManagementItems = builder.dataManagementItems.collect()
+        externalServiceItems = builder.externalServiceItems.collect()
 
         /*Overheads*/
         overheadTotal = builder.overheadTotal
@@ -382,15 +393,35 @@ class OfferContent {
         totalDiscountAmount = builder.totalDiscountAmount
     }
 
+    /**
+     * Returns a true copy of the data generation items.
+     * @return
+     */
     List<OfferItem> getDataGenerationItems() {
         return dataGenerationItems.collect()
     }
 
+    /**
+     * Returns a true copy of the data analysis items.
+     * @return
+     */
     List<OfferItem> getDataAnalysisItems() {
         return dataAnalysisItems.collect()
     }
 
+    /**
+     * Returns a true copy of the data management items.
+     * @return
+     */
     List<OfferItem> getDataManagementItems() {
         return dataManagementItems.collect()
+    }
+
+    /**
+     * Returns a true copy of the external service items.
+     * @return
+     */
+    List<OfferItem> getExternalServiceItems() {
+        return externalServiceItems.collect()
     }
 }
