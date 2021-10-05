@@ -65,7 +65,7 @@ def "An internal customer has to pay taxes on external services"() {
         taxesAmount == BigDecimal.valueOf(20*0.19)
 
         where:
-        clazz << [ExternalService]
+        clazz << [ExternalServiceProduct]
     }
     def "An external customer has to pay taxes on every service"() {
         given:
@@ -86,7 +86,7 @@ def "An internal customer has to pay taxes on external services"() {
                   ProjectManagement,
                   ProteomicAnalysis,
                   MetabolomicAnalysis,
-                  ExternalService]
+                  ExternalServiceProduct]
     }
 
     def "An external academic customer has to pay taxes on every service"() {
@@ -108,7 +108,7 @@ def "An internal customer has to pay taxes on external services"() {
                   ProjectManagement,
                   ProteomicAnalysis,
                   MetabolomicAnalysis,
-                  ExternalService]
+                  ExternalServiceProduct]
     }
 
 }
