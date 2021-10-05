@@ -32,11 +32,13 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
     private static List<Class> DATA_GENERATION = [Sequencing, ProteomicAnalysis, MetabolomicAnalysis]
     private static List<Class> DATA_ANALYSIS = [PrimaryAnalysis, SecondaryAnalysis]
     private static List<Class> PROJECT_AND_DATA_MANAGEMENT = [ProjectManagement, DataStorage]
+    private static List<Class> EXTERNAL_SERVICES = [ExternalServiceProduct]
 
 
     private List<ProductItem> dataGenerationItems
     private List<ProductItem> dataAnalysisItems
     private List<ProductItem> dataManagementItems
+    private List<ProductItem> externalServiceItems
 
 
     CreateOfferContent(CreateOfferContentOutput output, FetchOfferDataSource fetchOfferDataSource){
@@ -187,17 +189,23 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         dataGenerationItems = []
         dataAnalysisItems = []
         dataManagementItems = []
+        externalServiceItems = []
 
         // Sort ProductItems into "DataGeneration", "Data Analysis" and "Project & Data Management"
         offerItems.each {
-            if (it.product.class in DATA_GENERATION) {
-                dataGenerationItems.add(it)
-            }
-            if (it.product.class in DATA_ANALYSIS) {
-                dataAnalysisItems.add(it)
-            }
-            if (it.product.class in PROJECT_AND_DATA_MANAGEMENT) {
-                dataManagementItems.add(it)
+            switch (it.product.class) {
+                case ({it in DATA_GENERATION}):
+                    dataGenerationItems.add(it)
+                    break
+                case ({it in DATA_ANALYSIS}):
+                    dataAnalysisItems.add(it)
+                    break
+                case ({it in PROJECT_AND_DATA_MANAGEMENT}):
+                    dataManagementItems.add(it)
+                    break
+                case ({it in EXTERNAL_SERVICES}):
+                    externalServiceItems.add(it)
+                    break
             }
         }
     }
