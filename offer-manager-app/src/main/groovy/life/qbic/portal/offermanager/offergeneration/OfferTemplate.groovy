@@ -50,6 +50,7 @@ class OfferTemplate {
      *  <li>.overheads  .data-analysis  > .costs</li>
      *  <li>.overheads  .data-management > .costs</li>
      *  <li>.overheads  > .totals-section  > .costs</li>
+     *  <li>#external-service-overheads</li>
      *  <li>.total-costs .net > .costs</li>
      *  <li>.total-costs .discounts > .costs</li>
      *  <li>.total-costs .overheads > .costs</li>
@@ -159,6 +160,13 @@ class OfferTemplate {
         document.select(".overheads  .data-generation  > .costs").each {element ->
             element.text(Currency.format(offer.getOverheadsDataGeneration()))
         }
+        document.select(".overheads  .external-services  > .costs").each {element ->
+            element.text(Currency.format(offer.getOverheadsExternalService()))
+        }
+        if (offer.overheadsExternalService == 0) {
+            Element element = document.getElementById("external-service-overheads")
+            element.remove()
+        }
         document.select(".overheads  .data-analysis  > .costs").each {element ->
             element.text(Currency.format(offer.getOverheadsDataAnalysis()))
         }
@@ -218,6 +226,26 @@ class OfferTemplate {
         String netCosts = Currency.format(offer.getNetDataGeneration())
         dataGenerationTable.select("> tfoot .costs").first().text(netCosts)
     }
+
+    private static void fillExternalServiceItems(Document document, OfferContent offer, PositionCounter counter) {
+        Element externalServiceTable = document.getElementById("external-service-items")
+        // remove table if no items are available
+        if (offer.externalServiceItems.isEmpty()) {
+            externalServiceTable.remove()
+            return
+        }
+        // clear the table
+        externalServiceTable.select("tbody > tr").each {element ->
+            element.remove()
+        }
+        // fill the table
+        Element tableBody = externalServiceTable.selectFirst("tbody")
+        appendOfferItems(tableBody, offer.getExternalServiceItems(), counter, false)
+        // set the footer
+        String netCosts = Currency.format(offer.getNetExternalServices())
+        externalServiceTable.select(" > tfoot .costs").first().text(netCosts)
+    }
+
     private static void fillDataAnalysisItems(Document document, OfferContent offer, PositionCounter counter) {
         Element dataAnalysisTable = document.getElementById("data-analysis-items")
         // remove table if no items are available
@@ -258,6 +286,7 @@ class OfferTemplate {
     void fillItems(Document document, OfferContent offerContent) {
         PositionCounter counter = new PositionCounter()
         fillDataGenerationItems(document, offerContent, counter)
+        fillExternalServiceItems(document, offerContent, counter)
         fillDataAnalysisItems(document, offerContent, counter)
         fillDataManagementItems(document, offerContent, counter)
     }

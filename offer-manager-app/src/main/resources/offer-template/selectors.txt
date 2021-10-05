@@ -32,12 +32,14 @@
 .overheads  .data-generation  > .costs
 .overheads  .data-analysis  > .costs
 .overheads  .data-management > .costs
+.overheads  .external-services > .costs
 .overheads  > .totals-section  > .costs
 .total-costs .net > .costs
 .total-costs .discounts > .costs
 .total-costs .overheads > .costs
 .total-costs .vat > .costs
 .total-costs > .totals-section > .costs
+#external-service-overheads
 
 --- tables
 #data-generation-items

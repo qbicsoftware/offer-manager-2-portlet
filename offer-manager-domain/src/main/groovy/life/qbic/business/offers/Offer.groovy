@@ -9,6 +9,7 @@ import life.qbic.business.offers.identifier.RandomPart
 import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.DataStorage
+import life.qbic.datamodel.dtos.business.services.ExternalServiceProduct
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProjectManagement
@@ -580,11 +581,25 @@ class Offer {
     }
 
     /**
-     * Calculates the VAT costs of an offer depending on the customers affiliation country and category
-     * @return the vat costs for an offer
+     * Calculates the VAT ratio of an offer depending on the customers affiliation country and category
+     * or in presence of external services
+     * @return the vat ratio for an offer
+     * @deprecated since 1.2.0, please use {@link #appliedTaxRatio}
      */
+    @Deprecated
     double determineTaxCost() {
-        return isVatCountry() && !isNoVatAffiliation() ? VAT : 0.0
+        boolean isExternalProductsPresent = items.findAll( {it.product instanceof ExternalServiceProduct}).size() > 0
+        return isVatCountry() && (!isNoVatAffiliation() || isExternalProductsPresent)  ? VAT : 0.0
+    }
+    /**
+     * Calculates the VAT ratio of an offer depending on the customers affiliation country and category
+     * or in presence of external services
+     * @return the vat ratio for an offer
+     * @since 1.2.0
+     */
+    BigDecimal appliedTaxRatio() {
+        boolean isExternalProductsPresent = items.findAll( {it.product instanceof ExternalServiceProduct}).size() > 0
+        return isVatCountry() && (!isNoVatAffiliation() || isExternalProductsPresent)  ? BigDecimal.valueOf(VAT) : 0.0
     }
 
     /**
