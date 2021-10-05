@@ -184,7 +184,7 @@ class OfferSpec extends Specification {
                 BigDecimal.valueOf(primaryAnalysisItem.product.externalUnitPrice)) * primaryAnalysisItem.quantity
         double expectedNetSum = (10.0 + (400 * 1.0) - totalDiscount)
         double expectedOverhead = (expectedNetSum) * 0.2
-        BigDecimal expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
+        BigDecimal expectedTaxes = (BigDecimal.valueOf(expectedNetSum) + BigDecimal.valueOf(expectedOverhead)) * BigDecimal.valueOf(0.19)
 
         offer.items.size() == 2
         totalDiscount == offer.totalDiscountAmount
