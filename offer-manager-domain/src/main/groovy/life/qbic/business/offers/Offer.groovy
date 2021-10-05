@@ -588,7 +588,7 @@ class Offer {
      */
     @Deprecated
     double determineTaxCost() {
-        boolean isExternalProductsPresent = items.findAll( {it.product instanceof ExternalServiceProduct}).size() > 0
+        boolean isExternalProductPresent = items.findAll( {it.product instanceof ExternalServiceProduct}).size() > 0
         return isVatCountry() && (!isNoVatAffiliation() || isExternalProductsPresent)  ? VAT : 0.0
     }
     /**
