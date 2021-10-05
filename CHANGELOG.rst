@@ -21,6 +21,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * org.jsoup 1.13.1 -> 1.14.2 (addresses CVE-2021-37714)
 
+* org.apache.logging.log4j 1.2.17 -> 2.14.0 (addresses CVE-2019-17571)
+
 **Deprecated**
 
 1.1.3 (2021-09-20)
