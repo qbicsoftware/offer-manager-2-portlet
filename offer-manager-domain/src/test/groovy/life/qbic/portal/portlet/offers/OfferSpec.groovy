@@ -148,10 +148,13 @@ class OfferSpec extends Specification {
         then:
         double expectedNetPrice = (double) 10.0 + 400 * 1.0 - totalDiscount
         double expectedTotalPrice = expectedNetPrice
+        double expectedTax = 0
+        offer.getTaxCosts() == expectedTax
         netPrice == expectedNetPrice
         totalCosts == expectedTotalPrice
         totalDiscount == offer.getTotalDiscountAmount()
         offer.getOverheadSum() == 0
+
 
 
     }
@@ -171,7 +174,7 @@ class OfferSpec extends Specification {
 
         when:
         double overhead = offer.getOverheadSum()
-        double taxes = offer.getTaxCosts()
+        BigDecimal taxes = offer.getTaxCosts()
         double totalCosts = offer.getTotalCosts()
         double netSum = offer.getTotalNetPrice()
 
@@ -181,7 +184,7 @@ class OfferSpec extends Specification {
                 BigDecimal.valueOf(primaryAnalysisItem.product.externalUnitPrice)) * primaryAnalysisItem.quantity
         double expectedNetSum = (10.0 + (400 * 1.0) - totalDiscount)
         double expectedOverhead = (expectedNetSum) * 0.2
-        double expectedTaxes = (expectedNetSum + expectedOverhead) * 0.19
+        BigDecimal expectedTaxes = (BigDecimal.valueOf(expectedNetSum) + BigDecimal.valueOf(expectedOverhead)) * BigDecimal.valueOf(0.19)
 
         offer.items.size() == 2
         totalDiscount == offer.totalDiscountAmount
@@ -778,6 +781,55 @@ class OfferSpec extends Specification {
         ].combinations()
         listPrice = unitPrice * quantity
 
+    }
+
+    /*
+     * Tests for external service products
+     */
+
+    def "Given an internal customer affiliation, there needs to be VAT applied but no overheads for external services."() {
+        given:
+        def item = new ProductItem(20.0, ProductFactory.createProduct(ExternalServiceProduct, 10.0, 10.0))
+        def item2 = new ProductItem(1.0, ProductFactory.createProduct(Sequencing, 1.0, 2.0))
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "", "", [item, item2], internalAffiliation).build()
+
+        when:
+        BigDecimal taxCosts = offer.getTaxCosts()
+        BigDecimal overheads = offer.getOverheadSum()
+
+        then:
+        taxCosts == BigDecimal.valueOf(0.19 * 20.0 * 10.0)
+        overheads == BigDecimal.valueOf(0.0 * 20.0 * 10.0)
+    }
+
+    def "Given an external academic customer affiliation, there needs to be VAT applied + 20% overhead for external services as well."() {
+        given:
+        def item = new ProductItem(20.0, ProductFactory.createProduct(ExternalServiceProduct, 10.0, 10.0))
+        def item2 = new ProductItem(1.0, ProductFactory.createProduct(Sequencing, 1.0, 2.0))
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "", "", [item, item2], externalAcademicAffiliation).build()
+
+        when:
+        BigDecimal taxCosts = offer.getTaxCosts()
+        BigDecimal overheads = offer.getOverheadSum()
+
+        then:
+        taxCosts == BigDecimal.valueOf(0.19 * (20.0 * 10.0 + 1.0 * 2.0 + overheads))
+        overheads == BigDecimal.valueOf(0.20 * 20.0 * 10.0 + 0.20 * 1.0 * 2.0)
+    }
+
+    def "Given an external customer affiliation, there needs to be VAT applied + 40% overhead for external services as well."() {
+        given:
+        def item = new ProductItem(20.0, ProductFactory.createProduct(ExternalServiceProduct, 10.0, 10.0))
+        def item2 = new ProductItem(1.0, ProductFactory.createProduct(Sequencing, 1.0, 2.0))
+        Offer offer = new Offer.Builder(customerWithAllAffiliations, projectManager, "", "", [item, item2], externalAffiliation).build()
+
+        when:
+        BigDecimal taxCosts = offer.getTaxCosts()
+        BigDecimal overheads = offer.getOverheadSum()
+
+        then:
+        taxCosts == BigDecimal.valueOf(0.19 * (20.0 * 10.0 + 1.0 * 2.0 + overheads))
+        overheads == BigDecimal.valueOf(0.40 * 20.0 * 10.0 + 0.40 * 1.0 * 2.0)
     }
 
     static boolean hasRequiredPrecision(BigDecimal overheadSum, BigDecimal expectedValue) {
