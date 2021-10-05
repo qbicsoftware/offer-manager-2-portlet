@@ -9,9 +9,11 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Support for external service products (#700)
+
 **Fixed**
 
-* Update offer template footer to show correct names (`#817 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/817>`_)
+* Update offer template footer to show correct names (#817)
 
 **Dependencies**
 
