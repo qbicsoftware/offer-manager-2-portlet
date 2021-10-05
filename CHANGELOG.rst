@@ -4,7 +4,7 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-1.2.0 (2021-09-21)
+1.2.0 (2021-10-05)
 ------------------
 
 **Added**
@@ -15,7 +15,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Update offer template footer to show correct names (#817)
 
-* Generated offers are removed from the server after download (`#776 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/776>`_)
+* Generated offers are removed from the server after download (#776)
 
 **Dependencies**
 
