@@ -1,6 +1,9 @@
 package life.qbic.business.offers
 
 import groovy.time.TimeCategory
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
+import life.qbic.business.offers.Offer
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
@@ -14,6 +17,8 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
 import java.security.MessageDigest
+import java.util.function.Function
+import java.util.function.Predicate
 
 /**
  * Represents the Offer business model.
@@ -130,7 +135,18 @@ class Offer {
         }
     }
 
-    private static final quantityDiscount = new QuantityDiscount()
+    private final QuantityDiscount quantityDiscount = new QuantityDiscount()
+
+    private final Function<ProductItem, BigDecimal> cataloguePrice = { ProductItem it -> calculateCataloguePriceForItem(it) }
+
+    private final Function<BigDecimal, BigDecimal> dataStorageDiscount = new DataStorageDiscount()
+
+    private final Predicate<ProductItem> dataStorageApplicable = {
+        it.product instanceof DataStorage && \
+                    selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL
+    }
+
+    private static Logging log = Logger.getLogger(this.class)
 
     static class Builder {
 
@@ -261,7 +277,7 @@ class Offer {
      * @return The net offer price including overheads
      */
     double getTotalNetPriceWithOverheads() {
-        return calculateNetPrice() - getTotalDiscountAmount() + getOverheadSum()
+        return BigDecimal.valueOf(calculateNetPrice() + getOverheadSum())
     }
 
     /**
@@ -269,22 +285,28 @@ class Offer {
      *
      * @return The calculated overhead amount of the selected items.
      */
-    double getOverheadSum() {
+    BigDecimal getOverheadSum() {
         if (items.empty) {
             return 0
         }
-        return items.sum {calculateItemOverhead(it)} as double
+        return items.sum {BigDecimal.valueOf(calculateItemOverhead(it))} as BigDecimal
+    }
+
+    private BigDecimal determineUnitPrice(ProductItem item) {
+        BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice as BigDecimal: item.product.externalUnitPrice as BigDecimal
+        return unitPrice
     }
 
     private BigDecimal calculateItemNet(ProductItem item) {
-        BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice : item.product.externalUnitPrice
-        return unitPrice * item.quantity
+        BigDecimal unitPrice = determineUnitPrice(item)
+        BigDecimal totalItemPrice = unitPrice * item.quantity
+        return totalItemPrice - Math.max(quantityDiscountAmountForProductItem(item),
+                storageDiscountAmountForProductItem(item))
     }
 
-    private double calculateItemOverhead(ProductItem item) {
-        return (calculateItemNet(item) - item.quantityDiscount) * overhead
+    private BigDecimal calculateItemOverhead(ProductItem item) {
+        return calculateItemNet(item) * overhead
     }
-
 
     /**
      * This method returns the net cost of all product items for which no overhead cost is calculated
@@ -331,7 +353,7 @@ class Offer {
      */
     double getTaxCosts() {
         if (!selectedCustomerAffiliation.category.equals(noVatCategory) && selectedCustomerAffiliation.country.equals(countryWithVat)) {
-            return (calculateNetPrice() + getOverheadSum() - getTotalDiscountAmount()) * VAT
+            return (calculateNetPrice() + getOverheadSum()) * VAT
         }
         else {
             return 0
@@ -478,24 +500,32 @@ class Offer {
         return calculateTotalDiscountAmount()
     }
 
-    private double calculateTotalDiscountAmount() {
-        return items.sum{ it.quantityDiscount }
+    private BigDecimal calculateTotalDiscountAmount() {
+        return items.sum{ BigDecimal.valueOf(it.quantityDiscount) } as BigDecimal
     }
 
-    private BigDecimal discountAmountForProductItem(ProductItem productItem) {
+    private BigDecimal calculateCataloguePriceForItem(ProductItem item) {
+        return BigDecimal.valueOf(item.quantity * determineUnitPrice(item))
+    }
+
+    private BigDecimal quantityDiscountAmountForProductItem(ProductItem productItem) {
         BigDecimal discount = 0
         if (productItem.product instanceof PrimaryAnalysis
                 || productItem.product instanceof SecondaryAnalysis) {
-            discount = quantityDiscount.apply(productItem.quantity as Integer, calculateItemNet(productItem))
+            BigDecimal unitPrice = determineUnitPrice(productItem)
+            BigDecimal unitPriceDiscount = quantityDiscount.apply(productItem.quantity as Integer,
+                    unitPrice)
+            discount = unitPriceDiscount * productItem.quantity
+            discount = discount.round(2)
         }
         return discount
     }
 
-    private double calculateNetPrice() {
+    private BigDecimal calculateNetPrice() {
         if (items.empty) {
             return 0
         }
-        return items.sum {calculateItemNet(it)} as double
+        return items.sum {BigDecimal.valueOf(it.totalPrice - it.quantityDiscount)}
     }
 
     private double determineOverhead() {
@@ -517,17 +547,31 @@ class Offer {
     }
 
     private double calculateTotalCosts(){
-        final double netPrice = calculateNetPrice()
+        double netPrice = calculateNetPrice()
         final double overhead = getOverheadSum()
-        return netPrice + overhead + getTaxCosts() - getTotalDiscountAmount()
+        return netPrice + overhead + getTaxCosts()
     }
 
     private ProductItem finaliseProductItem(ProductItem item) {
-        BigDecimal totalItemCosts = calculateItemNet(item)
-        BigDecimal totalItemQuantityDiscount = discountAmountForProductItem(item)
-        return new ProductItem(item.quantity, item.product, totalItemCosts, totalItemQuantityDiscount)
+        BigDecimal totalItemQuantityDiscount = quantityDiscountAmountForProductItem(item)
+        BigDecimal totalDataStorageDiscount = storageDiscountAmountForProductItem(item)
+        BigDecimal totalItemCosts = calculateCataloguePriceForItem(item)
+        // we determine the max discount available for the product item and assign it
+        BigDecimal maxDiscount = totalItemQuantityDiscount.max(totalDataStorageDiscount)
+        return new ProductItem(item.quantity, item.product, totalItemCosts, maxDiscount)
     }
 
+    private BigDecimal storageDiscountAmountForProductItem(ProductItem item) {
+        BigDecimal discount = BigDecimal.ZERO
+        if (dataStorageApplicable.test(item)) {
+            try {
+                discount = cataloguePrice.andThen(dataStorageDiscount).apply(item)
+            } catch (IllegalArgumentException e) {
+                log.error("product item is not applicable for a discount, $e.message")
+            }
+        }
+        return discount
+    }
 
     /**
      * Calculates the VAT costs of an offer depending on the customers affiliation country and category

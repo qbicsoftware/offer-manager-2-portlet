@@ -188,10 +188,10 @@ class OfferOverviewView extends VerticalLayout {
         Grid<PriceField> gridLayout = new Grid<>()
         gridLayout.setHeightByRows(5)
         gridLayout.setItems([
-                new PriceField("Net Price", createOfferViewModel.netPrice),
+                new PriceField("Net Price (incl. discount)", createOfferViewModel.netPrice),
                 new PriceField("Overheads", createOfferViewModel.overheads),
                 new PriceField("Taxes", createOfferViewModel.taxes),
-                new PriceField("Total Discount", createOfferViewModel.totalDiscountAmount*-1),
+                new PriceField("Total Discount (considered)", createOfferViewModel.totalDiscountAmount*-1),
                 new PriceField("Total Price", createOfferViewModel.totalPrice)
         ])
         gridLayout.addColumn(PriceField::getName)

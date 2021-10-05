@@ -1,712 +1,958 @@
 <!DOCTYPE html>
 <html>
-
 <head>
-    <meta charset="UTF-8">
-    <title>Offer Template</title>
-    <link rel="stylesheet" href="stylesheet.css">
+  <meta charset="UTF-8">
+  <title>DEVELOPMENT</title>
+  <!--<link rel="stylesheet" href="stylesheet.css"> -->
+  <link rel="stylesheet" href="stylesheet.css" media="all">
+  <link rel="stylesheet" type="text/css" href="print.css" media="print">
 </head>
 <body>
-    <div class="grid-container">
-        <div class="header"><img src="offer_header.png"/></div>
-        <div class="customer">
-            <div id="customer-name">Dr. Max Mustermann</div>
-            <div id="customer-organisation">Quantitative Biology Center</div>
-            <div id="customer-street">Auf der Morgenstelle 10</div>
-            <div id="customer-postal-code">72076</div>
-            <div id="customer-city">Tübingen</div>
-            <div id="customer-country">-</div>
-        </div>
-        <div class="project-manager">
-            <div class="qbic-ad">Quantitative Biology Center (QBiC) <br> and 
-                Technology Platforms</div>
-            
-            <div class="small-spacer"></div>
-            <div class="info-title">Contact</div>
-            <div id="project-manager-name">Dr. Doctore Doctores</div>
-            
-            <div id="project-manager-street">Auf der Morgenstelle 20</div>
-            <div id="project-manager-city">72076 Tübingen</div>
-            
-            <div class="small-spacer"></div>
-
-            <div id="project-manager-email">doctore.doctores@qbic.uni-tuebingen.de</div>
-        </div>
-        <div class="small-spacer"></div>
-        
-        <div class="doctype-desc">Quotation</div>
-        <div id="offer-date" class="date common-text">Monday, 7 March 2020</div>
-
-        <div class="small-spacer"></div>
-
-        <div class="reference-number common-text">
-            <div class="info-title">Reference number</div>
-            <div id="offer-identifier">ae2a-xxxx-01</div>
-        </div>
-        <div class="valid-until-date common-text">
-            <div class="info-title">Offer valid until</div>
-            <div id="offer-expiry-date">30-06-2021</div>
-        </div>
-
-        <div class="project-section">
-            <h2 id="project-title">Project title</h2>
-            <div id="project-description" class="common-text">Describe what the project is about
-                here. Make sure not to write in too much detail as we want to prevent unauthorized people to get too much knowledge about the project. <br>
-                Explain the experimental design in detail. <br>
-                Explain in short what analysis will be performed. <br>
+<div id="wrapper">
+  <table id="multipage-content">
+    <thead id="page-header">
+    <tr>
+      <td>
+        <img src="offer_header.png"/>
+      </td>
+    </tr>
+    </thead>
+    <tbody id="offer-content">
+    <tr>
+      <td id="offer-content-data">
+        <div>
+          <section id="first-page">
+            <div id="letter-head">
+              <div id="customer">
+                <div id="customer-name">Dr. Max Mustermann</div>
+                <div id="customer-organisation">Quantitative Biology Center</div>
+                <div id="customer-street">Auf der Morgenstelle 10</div>
+                <div id="customer-postal-code">72076</div>
+                <div id="customer-city">Tübingen</div>
+                <div id="customer-country">-</div>
+              </div>
+              <div id="project-manager">
+                <div id="qbic-ad">Quantitative Biology Center (QBiC) <br> and Technology Platforms</div>
+                <div class="info-title">Contact</div>
+                <div id="project-manager-name">Dr. Doctore Doctores</div>
+                <div id="project-manager-street">Auf der Morgenstelle 20</div>
+                <div>
+                  <span id="project-manager-postal-code">72076</span>
+                  <span id="project-manager-city">Tübingen</span>
+                </div>
+                <div id="project-manager-email">doctore.doctores@qbic.uni-tuebingen.de</div>
+              </div>
+              <div id="doctype-desc">Quotation</div>
+              <div id="offer-date">Monday, 7 March 2020</div>
+              <div>
+                <div class="info-title">Reference number</div>
+                <div id="offer-identifier">ae2a-xxxx-01</div></div>
+              <div>
+                <div class="info-title">Offer valid until</div>
+                <div id="offer-expiry-date">30-06-2021</div></div>
+            </div>
+            <div id="project-section">
+              <h2 id="project-title">Project title</h2>
+              <div id="project-description">
+                Describe what the project is about
+                here. Make sure not to write in too much detail as we want to prevent unauthorized people to get too much knowledge about the project. <br/>
+                Explain the experimental design in detail. <br/>
+                Explain in short what analysis will be performed. <br/>
                 Describe what is included in the quotation/cost estimation and some general information.
-            </div>
-            <h2>Experimental design</h2>
-            <div id="experimental-design" class="common-text">
+              </div>
+              <h2>Experimental design</h2>
+              <div id="experimental-design">
                 No experimental design has been described.
+              </div>
+              <br/>
+              <div>Detailed information about the comprised services are listed in the
+                <a href="#quotation-details">Quotation Details</a>.
+              </div>
+              <br>
             </div>
-            <br>
-            <div class="common-text">Detailed information about the comprised services are listed in the
-                <a href="#items-container-table">Quotation Details</a>.</div>
-            <br>
-            <div id = "vat-cost-applicable"></div>
-
-        </div>
-        <h2>Cost summary</h2>
-        <div class="cost-summary common-text">
-            <table style="border-collapse: collapse;">
-                <tr class="table-row">
-                    <td class="table-row">Net</td>
-                    <td id ="total-costs-net" class="right-align table-row">€ 1,000.00</td>
-                </tr>
-                <tr class="table-row">
-                    <td class="table-row">Discount</td>
-                    <td id ="total-discount" class="right-align table-row">-€ 1,000.00</td>
-                </tr>
-                <tr>
-                    <td class="table-row" id="ratio-costs-overhead">Overheads (0%)</td>
-                    <td id ="total-costs-overhead" class="right-align table-row">€ 190.00</td>
-                </tr>
-                <tr style="border-bottom: 1px solid black;">
-                    <td class="table-row" id = "total-taxes-ratio">VAT (19%)</td>
-                    <td id ="total-taxes" class="right-align table-row">€ 190.00</td>
-                </tr>
-                <tr>
-                    <td class="total-costs-sum-row table-row">Total </td>
-                    <td id ="total-costs-sum" class="right-align total-costs-sum-row table-row">€ 1,190.00</td>
-                </tr>
-            </table>
-        </div>
-        <div class="signature inline">
-            <hr width="75%" align="left"/>
-            <p class="common-text">Date, Signature</p>
-            <p class="sub-text">With your signature, you consent to our <a href="#tos">Agreement Declaration</a>.</p>
-        </div>
-    </div>
-    <footer>
-        <hr size="1" noshade/>
-        <div class="grid-container-footer">
-            <div>
-               <strong>Quantitative Biology<br> Center (QBiC)</strong> <br>
-               Dr. Sven Nahnsen <br>
-               Auf der Morgenstelle 10 <br>
-               72076 Tübingen
+            <div id="front-page-summary">
+              <div class="cost-summary-container">
+                <h2>Cost Summary</h2>
+                <div class="cost-summary total-costs">
+<!--                  <div class="cost-section">-->
+                    <div class="cost-item net">
+                      <div>Net</div>
+                      <div class="costs">39,332.88 €</div>
+                    </div>
+<!--                  </div>-->
+<!--                  <div class="cost-section">-->
+                    <div class="cost-item overheads">
+                      <div>Overheads (<span class="overheads-percentage">20%</span>)</div>
+                      <div class="costs">0.00 €</div>
+                    </div>
+<!--                  </div>-->
+<!--                  <div class="cost-section">-->
+                    <div class="cost-item total-before-vat">
+                      <div>Total before VAT</div>
+                      <div class="costs">39,332.88 €</div>
+                    </div>
+<!--                  </div>-->
+                  <div class="cost-item vat">
+                    <div>VAT (<span class="vat-percentage">0%</span>)</div>
+                    <div class="costs">0.00 €</div>
+                  </div>
+                  <div class="cost-item totals-section totals">
+                    <div>Total</div>
+                    <div class="costs">39,332.88 €</div>
+                  </div>
+                </div>
+              </div>
+              <div id="signature">
+                <p id="signature-text">Date, Signature</p>
+                <p class="small">With your signature, you consent to our <a href="#agreement-declaration">Agreement Declaration</a>.</p>
+              </div>
             </div>
-            <div>
-                <strong>Institute for Medical Genetics and Applied Genomics (IMGAG)</strong> <br>
-                Prof. Dr. Olaf Rieß <br>
-                Calwerstr. 7 <br>
-                72076 Tübingen
-             </div>
-            <div>
-                <strong>Institute for Medical Microbiology and Hygiene <br>(MGM)</strong> <br>
-                Prof. Dr. Julia-Stefanie Frick <br>
-                Elfriede-Aulhorn-Str. 6 <br>
-                72076 Tübingen
-            </div>
-            <div>
-                <strong>Proteome Center <br>Tübingen (PCT) </strong><br>
-                Prof. Dr. Boris Macek <br>
-                Auf der Morgenstelle 15 <br>
-                72076 Tübingen
-            </div>
-            <div>
-                <strong>Core Facility for Medical Bioanalytics (CFMB) </strong><br>
-                Prof. Dr. Marius Üffing <br>
-                Elfriede-Aulhorn-Str. 7 <br>
-                72076 Tübingen
-            </div>
-        </div>
-    </footer>
-
-    <div class="pagebreak"> </div>
-
-    <div class="grid-container">
-        <div class="items-introduction-text">
+          </section>
+          <section id="quotation-details">
             <h2>Quotation Details</h2>
-            <p>The following table shows a detailed listing of 
-                the cost information for individual service items and the calculated total:</p>          
-        </div>
-
-        <div class="items-overview common-text" id="items-container-table">
-            <div class="grid-container-table" id="item-table-grid">
-                <div id = "DATA_GENERATION-table">
-                    <div class ="product-items" id="DATA_GENERATION-title"><h4>Data Generation (DG)</h4></div>
-                <div class="product-items" id="DATA_GENERATION-product-items-1">
-                    <div class="row table-header" id="grid-table-header-1">
-                        <div class="col-1">
-                            &#8470;
-                        </div>
-                        <div class="col-4">
-                            Service Description
-                        </div>
-                        <div class="col-1 price-value">
-                            Amount
-                        </div>
-                        <div class="col-2 text-center">
-                            Unit
-                        </div>
-                        <div class="col-2 price-value">
-                            Price/Unit (€)
-                        </div>
-                        <div class="col-2 price-value">
-                            Total (€)
-                        </div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1">
-                            1
-                        </div>
-                        <div class="col-4 ">
-                            RNA sequencing
-                        </div>
-                        <div class="col-1 price-value">
-                            40.0
-                        </div>
-                        <div class="col-2 text-center">
-                            Sample
-                        </div>
-                        <div class="col-2 price-value">
-                            25.00
-                        </div>
-                        <div class="col-2 price-value">
-                            1,000.00
-                        </div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Primary Bioinformatics using the nf-core pipeline nf-core/bcellmagic (raw data QC, extensive preprocessing, clone assignment, reconstruct germlines)
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1">
-                            2
-                        </div>
-                        <div class="col-4 ">
-                            RNA sequencing
-                        </div>
-                        <div class="col-1 price-value">
-                            40.0
-                        </div>
-                        <div class="col-2 text-center">
-                            Sample
-                        </div>
-                        <div class="col-2 price-value">
-                            25.00
-                        </div>
-                        <div class="col-2 price-value">
-                            1,000.00
-                        </div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Sequencing of RNA
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1">
-                            3
-                        </div>
-                        <div class="col-4 ">
-                            RNA sequencing
-                        </div>
-                        <div class="col-1 price-value">
-                            40.0
-                        </div>
-                        <div class="col-2 text-center">
-                            Sample
-                        </div>
-                        <div class="col-2 price-value">
-                            25.00
-                        </div>
-                        <div class="col-2 price-value">
-                            1,000.00
-                        </div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Sequencing of RNA
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Medical Genetics and Applied Genomics
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1">
-                            4
-                        </div>
-                        <div class="col-4 ">
-                            RNA sequencing
-                        </div>
-                        <div class="col-1 price-value">
-                            40.0
-                        </div>
-                        <div class="col-2 text-center">
-                            Sample
-                        </div>
-                        <div class="col-2 price-value">
-                            25.00
-                        </div>
-                        <div class="col-2 price-value">
-                            1,000.00
-                        </div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Sequencing of RNA
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Medical Genetics and Applied Genomics
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1">
-                            5
-                        </div>
-                        <div class="col-4 ">
-                            RNA sequencing
-                        </div>
-                        <div class="col-1 price-value">
-                            40.0
-                        </div>
-                        <div class="col-2 text-center">
-                            Sample
-                        </div>
-                        <div class="col-2 price-value">
-                            25.00
-                        </div>
-                        <div class="col-2 price-value">
-                            1,000.00
-                        </div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Sequencing of RNA
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Medical Genetics and Applied Genomics
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1">
-                            6
-                        </div>
-                        <div class="col-4 ">
-                            DNA sequencing
-                        </div>
-                        <div class="col-1 price-value">
-                            40.0
-                        </div>
-                        <div class="col-2 text-center">
-                            Sample
-                        </div>
-                        <div class="col-2 price-value">
-                            25.00
-                        </div>
-                        <div class="col-2 price-value">
-                            1,000.00
-                        </div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Sequencing of DNA
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Medical Genetics and Applied Genomics
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1">
-                            7
-                        </div>
-                        <div class="col-4 ">
-                            Discount
-                        </div>
-                        <div class="col-1 price-value">
-                            4.0
-                        </div>
-                        <div class="col-2 text-center">
-                            Sample
-                        </div>
-                        <div class="col-2 price-value">
-                            -10.00
-                        </div>
-                        <div class="col-2 price-value">
-                            -40.00
-                        </div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Discount 1
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Medical Genetics and Applied Genomics
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                    <div class ="grid-sub-total-footer" id="grid-sub-total-footer-1">
-                        <div class="col-6"></div>
-                        <div class="row sub-total-costs" id="DATA_GENERATION-sub-net">
-                            <div class="col-10 cost-summary-field">
-                                Net (DG):
-                            </div>
-                            <div class="col-2 price-value" id="DATA_GENERATION-net-costs-value">
-                                960.00
-                            </div>
-                        </div>
-                    </div>
+            <p>The following table shows a detailed listing of
+              the cost information for individual service items and the calculated total:</p>
+            <table id="data-generation-items" class="product-table">
+              <thead>
+              <tr>
+                <td colspan="6">
+                  <h4>Data Generation (DG)</h4>
+                </td>
+              </tr>
+              <tr>
+                <th class="item-number-column">&#8470;</th>
+                <th class="item-description-column">Service Description</th>
+                <th class="item-amount-column">Amount</th>
+                <th class="item-unit-column">Unit</th>
+                <th class="item-unit-price-column">Price/Unit (<div class="currency-symbol">€</div>)</th>
+                <th class="item-total-column">Total (<div class="currency-symbol">€</div>)</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">test prod</div>
+                </td>
+                <td class="item-amount-column">4.5</td>
+                <td class="item-unit-column">Sample</td>
+                <td class="item-unit-price-column">2.00</td>
+                <td class="item-total-column">9.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    prod desc
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">2</td>
+                <td class="item-description-column">
+                  <div class="item-title">Discount</div>
+                </td>
+                <td class="item-amount-column">4.5</td>
+                <td class="item-unit-column">Sample</td>
+                <td class="item-unit-price-column">-1.00</td>
+                <td class="item-total-column">-4.50</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    Discount on 4.5 samples based on item no 1. 50% discount applied
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+              <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="item-unit-price-column">NET (DG):</td>
+                <td class="costs">960.00</td>
+              </tr>
+              </tfoot>
+            </table>
+            <table id="data-analysis-items" class="product-table">
+              <thead>
+              <tr>
+                <td colspan="6">
+                  <h4>Data Analysis (DA)</h4>
+                </td>
+              </tr>
+              <tr>
+                <th class="item-number-column">&#8470;</th>
+                <th class="item-description-column">Service Description</th>
+                <th class="item-amount-column">Amount</th>
+                <th class="item-unit-column">Unit</th>
+                <th class="item-unit-price-column">Price/Unit (<div class="currency-symbol">€</div>)</th>
+                <th class="item-total-column">Total (<div class="currency-symbol">€</div>)</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              </tbody>
+              <tfoot>
+              <tr>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td></td>
+                <td class="item-unit-price-column">NET (DA):</td>
+                <td class="costs">960.00</td>
+              </tr>
+              </tfoot>
+            </table>
+            <table id="data-management-items" class="product-table">
+              <thead>
+              <tr>
+                <td colspan="6">
+                  <h4>Project Management & Data Storage (PM & DS)</h4>
+                </td>
+              </tr>
+              <tr>
+                <th class="item-number-column">&#8470;</th>
+                <th class="item-description-column">Service Description</th>
+                <th class="item-amount-column">Amount</th>
+                <th class="item-unit-column">Unit</th>
+                <th class="item-unit-price-column">Price/Unit (<div class="currency-symbol">€</div>)</th>
+                <th class="item-total-column">Total (<div class="currency-symbol">€</div>)</th>
+              </tr>
+              </thead>
+              <tbody>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              <tr>
+                <td class="item-number-column"></td>
+                <td class="item-description-column" colspan="3">
+                  <div class="item-description">
+                    This is an awesome product. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Integer tempus augue dolor, eu eleifend neque consequat id. Mauris nulla leo, elementum id finibus eu, suscipit at eros. Praesent dictum rutrum dolor, in euismod urna finibus vehicula. Nam aliquam cursus justo, non sagittis lacus congue ac. Pellentesque sed neque tempus, placerat dolor at, volutpat risus.
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td class="item-number-column">1</td>
+                <td class="item-description-column">
+                  <div class="item-title">Awesome product</div>
+                </td>
+                <td class="item-amount-column">5.00</td>
+                <td class="item-unit-column">Samples</td>
+                <td class="item-unit-price-column">1.00</td>
+                <td class="item-total-column">5.00</td>
+              </tr>
+              </tbody>
+              <tfoot>
+              <tr>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td> </td>
+                <td class="item-unit-price-column">NET (PM & DS):</td>
+                <td class="costs">960.00</td>
+              </tr>
+              </tfoot>
+            </table>
+            <div id="lines">
+              <hr/>
+              <hr/>
+            </div>
+            <div class="cost-summary-container">
+              <div class="cost-summary total-costs overheads">
+                <div class="cost-section">
+                  <div class="cost-item net">
+                    <div>Net:</div>
+                    <div class="costs">50.00</div>
+                  </div>
                 </div>
+                <div class="cost-section">
+                  <div class="cost-item">
+                    <div>Overheads (<span class="overheads-percentage">0%</span>)</div>
+                    <div class="costs"></div>
+                  </div>
+                  <div class="cost-item data-generation">
+                    <div>Data Generation:</div>
+                    <div class="costs">50.00</div>
+                  </div>
+                  <div class="cost-item  data-analysis">
+                    <div>Data Analysis:</div>
+                    <div class="costs">50.00</div>
+                  </div>
+                  <div class="cost-item  data-management">
+                    <div>Project management and data storage:</div>
+                    <div class="costs">50.00</div></div>
+                  <div class="totals-section cost-item overheads">
+                    <div>Overhead Total:</div>
+                    <div class="costs">50.00</div>
+                  </div>
                 </div>
-                    <div id = "DATA_ANALYSIS-table">
-                        <div class ="product-items" id= "DATA_ANALYSIS-title"><h4>Data Analysis (DA)</h4></div>
-                        <div class="product-items" id="DATA_ANALYSIS-product-items-1">
-                    <div class="row table-header" id="grid-table-header-2">
-                        <div class="col-1">
-                            &#8470;
-                        </div>
-                        <div class="col-4">
-                            Service Description
-                        </div>
-                        <div class="col-1 price-value">
-                            Amount
-                        </div>
-                        <div class="col-2 text-center">
-                            Unit
-                        </div>
-                        <div class="col-2 price-value">
-                            Price/Unit (€)
-                        </div>
-                        <div class="col-2 price-value">
-                            Total (€)
-                        </div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1">
-                            8
-                        </div>
-                        <div class="col-4 ">
-                            RNA-Seq Primary Data Analysis
-                        </div>
-                        <div class="col-1 price-value">
-                            40.0
-                        </div>
-                        <div class="col-2 text-center">
-                            Sample
-                        </div>
-                        <div class="col-2 price-value">
-                            111.00
-                        </div>
-                        <div class="col-2 price-value">
-                            4,440.00
-                        </div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Quality control, mapping, read counting
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                            <div class="row product-item">
-                                <div class="col-1"></div>
-                                <div class="col-7 item-description">
-                                    Medical Genetics and Applied Genomics
-                                </div>
-                                <div class="col-7"></div>
-                            </div>
-                    <div class="grid-sub-total-footer" id="grid-sub-total-footer-2">
-                        <div class="col-6"></div>
-                        <div class="row sub-total-costs" id="DATA_ANALYSIS-sub-net">
-                            <div class="col-10 cost-summary-field">
-                                Net (DA):
-                            </div>
-                            <div class="col-2 price-value" id="DATA_ANALYSIS-net-costs-value">
-                                4,440.00
-                            </div>
-                        </div>
-                    </div>
+                <div class="cost-section">
+                  <div class="cost-item total-before-vat">
+                  <div>Total before VAT:</div>
+                  <div class="costs">-50.00</div>
+                  </div>
                 </div>
-                    </div>
-                <div id="template-page-break" class="pagebreak"></div>
-                <div id = "PROJECT_AND_DATA_MANAGEMENT-table">
-                    <div class ="product-items" id= "PROJECT_AND_DATA_MANAGEMENT-title"><h4>Project Management & Data Storage (PM & DS)</h4></div>
-                    <div class="product-items" id="PROJECT_AND_DATA_MANAGEMENT-product-items-1">
-                    <div class="row table-header" id="grid-table-header-3">
-                        <div class="col-1">
-                            &#8470;
-                        </div>
-                        <div class="col-4">
-                            Service Description
-                        </div>
-                        <div class="col-1 price-value">
-                            Amount
-                        </div>
-                        <div class="col-2 text-center">
-                            Unit
-                        </div>
-                        <div class="col-2 price-value">
-                            Price/Unit (€)
-                        </div>
-                        <div class="col-2 price-value">
-                            Total (€)
-                        </div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1">
-                            9
-                        </div>
-                        <div class="col-4 ">
-                            Data Storage New
-                        </div>
-                        <div class="col-1 price-value">
-                            40.0
-                        </div>
-                        <div class="col-2 text-center">
-                            Gigabyte
-                        </div>
-                        <div class="col-2 price-value">
-                            1.00
-                        </div>
-                        <div class="col-2 price-value">
-                            40.00
-                        </div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Data Storage
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                        <div class="row product-item">
-                            <div class="col-1"></div>
-                            <div class="col-7 item-description">
-                                Medical Genetics and Applied Genomics
-                            </div>
-                            <div class="col-7"></div>
-                        </div>
-                    <div class="row product-item">
-                        <div class="col-1">
-                            10
-                        </div>
-                        <div class="col-4 ">
-                            Project Management
-                        </div>
-                        <div class="col-1 price-value">
-                            5.0
-                        </div>
-                        <div class="col-2 text-center">
-                            Dataset
-                        </div>
-                        <div class="col-2 price-value">
-                            50.00
-                        </div>
-                        <div class="col-2 price-value">
-                            250.00
-                        </div>
-                    </div>
-                    <div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Project administration
-                        </div>
-                        <div class="col-7"></div>
-                    </div><div class="row product-item">
-                        <div class="col-1"></div>
-                        <div class="col-7 item-description">
-                            Medical Genetics and Applied Genomics
-                        </div>
-                        <div class="col-7"></div>
-                    </div>
-                    <div class="grid-sub-total-footer" id="grid-sub-total-footer-3">
-                        <div class="col-6"></div>
-                        <div class="row sub-total-costs" id="PROJECT_AND_DATA_MANAGEMENT-sub-total">
-                            <div class="col-10 cost-summary-field">
-                                Net (PM & DS):
-                            </div>
-                            <div class="col-2 price-value" id="PROJECT_AND_DATA_MANAGEMENT-total-costs-value">
-                                290.00
-                            </div>
-                        </div>
-                    </div>
+                <div class="cost-section">
+                  <div class="cost-item vat">
+                    <div>VAT (<span class="vat-percentage">0%</span>):</div>
+                    <div class="costs">50.00</div>
+                  </div>
                 </div>
+                <div class="cost-item totals-section totals">
+                  <div>Total:</div>
+                  <div class="costs">50.00</div>
                 </div>
-                <div id="grid-table-footer">
-                    <div class="col-10 cost-summary-field" id="overhead-percentage-value">Overheads (20%)</div>
-                    <div class="row sub-total-costs" id="DATA_GENERATION-sub-overhead">
-                        <div class="col-10 cost-summary-field">
-                            Data Generation:
-                        </div>
-                        <div class="col-2 price-value" id="DATA_GENERATION-overhead-costs-value">
-                            192.00
-                        </div>
-                    </div>
-                    <div class="row sub-total-costs" id="DATA_ANALYSIS-sub-overhead">
-                        <div class="col-10 cost-summary-field">
-                            Data Analysis:
-                        </div>
-                        <div class="col-2 price-value" id="DATA_ANALYSIS-overhead-costs-value">
-                            888.00
-                        </div>
-                    </div>
-                    <div class="row sub-total-costs" id="PROJECT_AND_DATA_MANAGEMENT-sub-overhead">
-                        <div class="col-10 cost-summary-field">
-                            Project management and data storage:
-                        </div>
-                        <div class="col-2 price-value" id="PROJECT_AND_DATA_MANAGEMENT-overhead-costs-value">
-                            666.00
-                        </div>
-                    </div>
-                    <div class="row total-costs single-overscore" id="offer-overhead">
-                        <div class="col-10 cost-summary-field">
-                            Overhead Total:
-                        </div>
-                        <div class="col-2 price-value" id="overhead-cost-value">
-                            1,080.00
-                        </div>
-                    </div>
-
-                    <div class="row total-costs" id="offer-net">
-                        <div class="col-6"></div>
-                        <div class="col-4 cost-summary-field">
-                            Net:
-                        </div>
-                        <div class="col-2 price-value" id="total-cost-value-net">
-                            5,690.00
-                        </div>
-                    </div>
-                    <div class="row total-costs" id="offer-discount">
-                        <div class="col-6"></div>
-                        <div class="col-4 cost-summary-field">
-                            Discount:
-                        </div>
-                        <div class="col-2 price-value" id="total-discount-value">
-                            -1,690.00
-                        </div>
-                    </div>
-                    <div class="row total-costs" id="total-before-vat">
-                        <div class="col-6"></div>
-                        <div class="col-4 cost-summary-field">
-                            Total before VAT:
-                        </div>
-                        <div class="col-2 price-value" id="total-before-vat-value">
-                            ?
-                        </div>
-                    </div>
-                    <div class="row total-costs" id="offer-vat">
-                        <div class="col-10 cost-summary-field" id="vat-percentage-value">
-                            VAT (19%):
-                        </div>
-                        <div class="col-2 price-value" id="vat-cost-value">
-                            1,286.30
-                        </div>
-                    </div>
-                    <div class="row total-costs single-overscore" id="offer-total">
-                        <div class="col-10 cost-summary-field">
-                            Total:
-                        </div>
-                        <div class="col-2 price-value highlight" id="final-cost-value">
-                            8,056.30
-                        </div>
-                    </div>
-                </div>
-        </div>
-    </div>
-    </div>
-    <div class="pagebreak"> </div>
-
-    <div class="agreement-section common-text">
-        <h2 id="tos">Agreement declaration</h2>
-        <p>
-            The invoice will be issued after completion of the project.
-        </p>
-
-        <p>
-            Quality control at all steps of the data processing will guarantee that the processed data is in accordance to DFG (German research foundation) guidance for good scientific practice. All project related data will be kept securely on our local infrastructure.
+              </div>
+            </div>
+          </section>
+          <section id="agreement-declaration" class="last-page">
+            <h2>Agreement declaration</h2>
+            <p>
+              The invoice will be issued after completion of the project.
             </p>
-        <p>
-            <strong>Publication Acknowledgement</strong>
-            <br>
-            Any publication that contains information based on counselling with or data generated by QBiC and the involved technology platforms requires at least the acknowledgement of the scientists at QBiC and the
-            involved technology platforms.
-        </p>
-        <ul>
-            <li>
-            <strong>In the case of NGS projects</strong>
-            <br>
-            <i>“the xyz part of the work was supported by the Quantitative Biology Center (QBiC), Institute for Medical Genetics and Applied Genomics (IMGAG) and Institute for Medical Microbiology and Hygiene (MGM) of the University of Tübingen”</i>
-            </li>
-        <li>
-            <strong>In the case of proteomics/metabolomics projects</strong>
-            <br>
-            <i>“the xyz part of the work was supported by the Quantitative Biology Center (QBiC), Proteome Center Tübingen (PCT) and Core Facility for Medical Bioanalytics (CFMB) of the University of Tübingen”</i>
-        </li>
-        <li>
-            <strong>In the case of multiomics projects</strong>
-            <br>
-            <i>“the xyz part of the work was supported by the Quantitative Biology Center (QBiC), Institute for Medical Genetics and Applied Genomics (IMGAG) and Institute for Medical Microbiology and Hygiene (MGM),
-                Proteome Center Tübingen (PCT) and Core Facility for Medical Bioanalytics (CFMB) of the University of Tübingen”</i>
-        </li>
-        </ul>
-        <p>
-            This is required because QBiC is subsidized by the university and other external funding, and therefore needs recognition.
-        </p>
-        <p>
-            Depending on the extent of involvement, either co-authorship (e.g. downstream analysis, analytical method development) or acknowledgement (e.g. direct pipeline output) will be required. Should the project deviate from the plan outlined above, the customer will be contacted by QBiC or one of the involved technology platforms again in order to discuss the continuation of the project.
 
-        </p>
-        <p>
-            <strong>Customer Responsibilities</strong>
-            <br>
-            By signing the quote, you confirm that all samples were collected according to governing law and the current scientific code of conduct, all necessary documentation has been performed and the respective permissions are available upon request
+            <p>
+              Quality control at all steps of the data processing will guarantee that the processed data is in accordance to DFG (German research foundation) guidance for good scientific practice. All project related data will be kept securely on our local infrastructure.
+            </p>
+            <p>
+              <strong>Publication Acknowledgement</strong>
+              <br>
+              Any publication that contains information based on counselling with or data generated by QBiC and the involved technology platforms requires at least the acknowledgement of the scientists at QBiC and the
+              involved technology platforms.
+            </p>
+            <ul>
+              <li>
+                <strong>In the case of NGS projects</strong>
+                <br>
+                <i>“the xyz part of the work was supported by the Quantitative Biology Center (QBiC), Institute for Medical Genetics and Applied Genomics (IMGAG) and Institute for Medical Microbiology and Hygiene (MGM) of the University of Tübingen”</i>
+              </li>
+              <li>
+                <strong>In the case of proteomics/metabolomics projects</strong>
+                <br>
+                <i>“the xyz part of the work was supported by the Quantitative Biology Center (QBiC), Proteome Center Tübingen (PCT) and Core Facility for Medical Bioanalytics (CFMB) of the University of Tübingen”</i>
+              </li>
+              <li>
+                <strong>In the case of multiomics projects</strong>
+                <br>
+                <i>“the xyz part of the work was supported by the Quantitative Biology Center (QBiC), Institute for Medical Genetics and Applied Genomics (IMGAG) and Institute for Medical Microbiology and Hygiene (MGM),
+                  Proteome Center Tübingen (PCT) and Core Facility for Medical Bioanalytics (CFMB) of the University of Tübingen”</i>
+              </li>
+            </ul>
+            <p>
+              This is required because QBiC is subsidized by the university and other external funding, and therefore needs recognition.
+            </p>
+            <p>
+              Depending on the extent of involvement, either co-authorship (e.g. downstream analysis, analytical method development) or acknowledgement (e.g. direct pipeline output) will be required. Should the project deviate from the plan outlined above, the customer will be contacted by QBiC or one of the involved technology platforms again in order to discuss the continuation of the project.
+            </p>
+            <p>
+              <strong>Customer Responsibilities</strong>
+              <br/>
+              By signing the quote, you confirm that all samples were collected according to governing law and the current scientific code of conduct, all necessary documentation has been performed and the respective permissions are available upon request
+            <p>
             <ul>
                 <li>approval of the local Ethical Committee</li>
                 <li>informed consent</li>
@@ -714,10 +960,54 @@
                 <li>biosafety information</li>
                 <li>etc</li>
             </ul>
-
-        </p>
-        <p> If you agree with this offer, please return a <strong>signed copy.</strong></p>
-    </div>
-    <div id="header"></div>
+            <p> If you agree with this offer, please return a <strong>signed copy.</strong></p>
+          </section>
+        </div>
+      </td>
+    </tr>
+    </tbody>
+    <tfoot id="page-footer">
+    <tr>
+      <td>
+        <div id="page-footer-content">
+          <hr/>
+          <div class="footer-columns">
+            <div class="facility">
+              <strong>Quantitative Biology Center (QBiC)</strong><br>
+              Prof. Dr. Sven Nahnsen<br>
+              Auf der Morgenstelle 10<br>
+              72076 Tübingen
+            </div>
+            <div class="facility">
+              <strong>Institute for Medical Genetics and Applied Genomics (IMGAG)</strong><br>
+              Prof. Dr. Olaf Rieß<br>
+              Calwerstr. 7<br>
+              72076 Tübingen
+            </div>
+            <div class="facility">
+              <strong>Institute for Medical Microbiology and Hygiene (MGM)</strong><br>
+              Apl. Prof. Dr. med. Silke Peter<br>
+              Elfriede-Aulhorn-Str. 6<br>
+              72076 Tübingen
+            </div>
+            <div class="facility">
+              <strong>Proteome Center Tübingen (PCT)</strong><br>
+              Prof. Dr. Boris Macek<br>
+              Auf der Morgenstelle 15<br>
+              72076 Tübingen
+            </div>
+            <div class="facility">
+              <strong>Core Facility for Medical Bioanalytics (CFMB)</strong><br>
+              Prof. Dr. Marius Üffing<br>
+              Elfriede-Aulhorn-Str. 7<br>
+              72076 Tübingen
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+    </tfoot>
+  </table>
+</div>
 </body>
 </html>

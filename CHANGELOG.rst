@@ -4,12 +4,75 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.2.0 (2021-09-21)
+------------------
+
+**Added**
+
+**Fixed**
+
+* Update offer template footer to show correct names (`#817 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/817>`_)
+
+* Generated offers are removed from the server after download (`#776 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/776>`_)
+
+**Dependencies**
+
+**Deprecated**
+
+1.1.3 (2021-09-20)
+------------------
+
+**Added**
+
+**Fixed**
+
+* Add spacing to cost overview (`#810 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/810>`_)
+
+**Dependencies**
+
+**Deprecated**
+
+1.1.2 (2021-09-17)
+------------------
+
+**Added**
+
+**Fixed**
+
+* Catch exception during discount generation for negative product prices (`#808 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/808>`_)
+
+**Dependencies**
+
+**Deprecated**
+
+1.1.1 (2021-09-14)
+------------------
+
+**Added**
+
+**Fixed**
+
+* Avoid page breaks in footer content (`#798 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/798>`_)
+
+* Disable buttons after deselecting offers (`#799 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/799>`_)
+
+* Avoid division by zero during offer content creation (`#806 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/806>`_)
+
+**Dependencies**
+
+* Bump data model lib 2.12.0 -> 2.12.1 (includes important bug fixes)
+
+**Deprecated**
+
+
 1.1.0 (2021-08-17)
 ------------------
 
 **Added**
 
 * Function to apply the quantity discount price (`#707 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/707>`_)
+
+* Add automatic data management discount generation (`#783 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/783>`_)
 
 * Adds a new DTO OfferItem which represents an item on the offer (`#728 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/728>`_)
 
@@ -25,7 +88,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Adds the total price before VAT is applied to an offer (`#754 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/754>`_)
 
-* Generated offers are removed from the server after download (`#777 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/778>`_)
+* Add new offer layout and css  (`#768 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/768>`_)
 
 **Fixed**
 
@@ -46,6 +109,12 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 * Creating a product switches name and description (`#731 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/731>`_)
 
 * Space names are now validated (`#736 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/736>`_)
+
+* Fix rounding issue for discount unit price (`#784 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/784>`_)
+
+* Fix app trying to unregister file downloaders that were not previously registered (`#796 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/796>`_)
+
+* Restructured the cost summary to solve (`#784 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/784>`_ and `#689 <https://github.com/qbicsoftware/offer-manager-2-portlet/pull/689>`_)
 
 **Dependencies**
 

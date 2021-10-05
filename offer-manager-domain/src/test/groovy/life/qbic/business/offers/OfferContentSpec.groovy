@@ -1,11 +1,20 @@
 package life.qbic.business.offers
 
+import life.qbic.business.offers.content.CreateOfferContent
+import life.qbic.business.offers.content.CreateOfferContentOutput
+import life.qbic.business.offers.fetch.FetchOfferDataSource
+import life.qbic.business.offers.identifier.ProjectPart
+import life.qbic.business.offers.identifier.RandomPart
+import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
+import life.qbic.datamodel.dtos.business.facilities.Facility
+import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
+import life.qbic.datamodel.dtos.business.services.ProductUnit
+import life.qbic.datamodel.dtos.business.services.ProjectManagement
 import spock.lang.Specification
 import spock.lang.Unroll
 
 import java.text.SimpleDateFormat
-import java.time.Instant
 
 /**
  * <h1>Tests for the offercontent dto</h1>
@@ -51,6 +60,51 @@ class OfferContentSpec extends Specification{
                     "QBiC","Dataset", 6).build(),
 
     ]
+
+    def "Discounted product unit price multiplied with quantity obtains the correct total discount price" () {
+        given: "CreateOfferContent use case"
+        FetchOfferDataSource fetchOfferDataSource = Stub()
+        CreateOfferContentOutput output = Mock()
+        CreateOfferContent createOfferContent = new CreateOfferContent(output, fetchOfferDataSource)
+
+        and: "An offer id that is not the latest version of the offer"
+        life.qbic.business.offers.identifier.OfferId offerId = new life.qbic.business.offers.identifier.OfferId (new RandomPart(), new ProjectPart("test"), new Version(0))
+
+        and: "some example product items"
+        List<ProductItem> items = [
+                new ProductItem(42, new PrimaryAnalysis("Basic RNAsq", "Just an" +
+                        " example", 83.33, 83.33,ProductUnit.PER_SAMPLE, 1, Facility.QBIC)),
+                new ProductItem(1, new ProjectManagement("Basic Management",
+                        "Just an example", 10.0, 10.0, ProductUnit.PER_DATASET, 1, Facility.QBIC))
+        ]
+
+        and: "an offer"
+        life.qbic.datamodel.dtos.business.Offer offertest = new life.qbic.datamodel.dtos.business.Offer.Builder(customerWithAllAffiliations,projectManager1,"Awesome Project", "An " +
+                "awesome project", internalAffiliation)
+                .items(items).identifier(Converter.convertIdToDTO(offerId))
+                .experimentalDesign("This is a test")
+                .expirationDate(new Date()).modificationDate(new Date())
+                .netPrice(5)
+                .taxes(5)
+                .overheads(5)
+                .totalPrice(5)
+                .totalDiscountPrice(5666)
+                .overheadRatio(0.2)
+                .build()
+
+        fetchOfferDataSource.getOffer(_ as OfferId) >> {Optional.of(offertest)}
+
+        when: "the offer content is created"
+        createOfferContent.createOfferContent(offertest.identifier)
+
+        then: "the total discount can be calculated from the unit price discount and the other way around"
+        output.createdOfferContent(_ as OfferContent) >> { arguments ->
+                final OfferContent offerContent = arguments.get(0)
+                OfferItem item = offerContent.dataAnalysisItems.get(0)
+                assert item.quantityDiscount == BigDecimal.valueOf(item.quantity * item.discountPerUnit).round(2)
+                assert item.discountPerUnit.toBigDecimal().round(4) == (item.quantityDiscount / item.quantity.toBigDecimal()).round(4)
+        }
+    }
 
     def "An OfferContent with equal content is equal"(){
         when: "two offercontents with the exact same content"

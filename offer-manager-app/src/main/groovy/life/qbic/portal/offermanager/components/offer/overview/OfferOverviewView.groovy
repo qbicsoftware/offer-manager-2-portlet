@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.offer.overview
 
 import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.event.selection.SelectionEvent
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.FileDownloader
 import com.vaadin.server.StreamResource
@@ -117,6 +118,7 @@ class OfferOverviewView extends VerticalLayout {
                 downloadSpinner)
 
         activityContainer.setMargin(false)
+        activityContainer.setComponentAlignment(downloadSpinner, Alignment.MIDDLE_CENTER)
         headerRow.addComponents(activityContainer, overviewGrid)
         headerRow.setSizeFull()
 
@@ -201,14 +203,30 @@ class OfferOverviewView extends VerticalLayout {
     }
 
     private void setupGridListeners() {
-        overviewGrid.addSelectionListener(
-                { selection ->
-                    selection.firstSelectedItem.ifPresent({ overview ->
-                        UI.getCurrent().setPollInterval(50)
-                        downloadSpinner.setVisible(true)
-                        new LoadOfferInfoThread(UI.getCurrent(), overview).start()
-                    })
-                })
+        overviewGrid.addSelectionListener({ selection ->handleSelection(selection)}
+        )
+    }
+
+    private void handleSelection(SelectionEvent<OfferOverview> selection) {
+        selection.firstSelectedItem.ifPresent(this::selectOfferOverview)
+        if (!selection.firstSelectedItem.isPresent()) {
+            deselectOfferOverview()
+        }
+    }
+
+    private void deselectOfferOverview() {
+        updateOfferBtn.setEnabled(false)
+        downloadBtn.setEnabled(false)
+        createProjectButton.setEnabled(false)
+    }
+
+    private void selectOfferOverview(OfferOverview overview) {
+        UI.getCurrent().setPollInterval(50)
+        downloadSpinner.setVisible(true)
+        new LoadOfferInfoThread(UI.getCurrent(), overview).start()
+        downloadBtn.setEnabled(true)
+        updateOfferBtn.setEnabled(true)
+        checkProjectCreationAllowed(overview)
     }
 
     private void checkProjectCreationAllowed(OfferOverview overview) {
@@ -231,9 +249,11 @@ class OfferOverviewView extends VerticalLayout {
     }
 
     private void removeExistingResources() {
-        if (fileDownloader) {
-            downloadBtn.removeExtension(fileDownloader)
-        }
+        Optional.ofNullable(fileDownloader).ifPresent({
+            if (downloadBtn.extensions.contains(fileDownloader)) {
+                downloadBtn.removeExtension(fileDownloader)
+            }
+        })
     }
 
     private class LoadOfferInfoThread extends Thread {
@@ -255,27 +275,13 @@ class OfferOverviewView extends VerticalLayout {
                 downloadSpinner.setVisible(true)
                 overviewGrid.setEnabled(false)
                 selectedOffer = overviewGrid.getSelectionModel().getFirstSelectedItem()
-                overviewGrid.setSelectionMode(Grid.SelectionMode.NONE)
-                downloadBtn.setEnabled(false)
-                updateOfferBtn.setEnabled(false)
-                createProjectButton.setEnabled(false)
             })
             offerOverviewController.fetchOffer(offerOverview.offerId)
             createResourceForDownload()
 
             ui.access(() -> {
                 downloadSpinner.setVisible(false)
-                overviewGrid.setSelectionMode(Grid.SelectionMode.SINGLE)
-                // After we have set the single mode to NONE, the listeners seem to be gone
-                // So we set them again
-                // IMPORTANT: the selection must be set before we attach the listener,
-                // otherwise the selection listener gets triggered (LOOP!)
-                overviewGrid.select(selectedOffer.get())
-                setupGridListeners()
                 overviewGrid.setEnabled(true)
-                downloadBtn.setEnabled(true)
-                updateOfferBtn.setEnabled(true)
-                checkProjectCreationAllowed(offerOverview)
                 ui.setPollInterval(-1)
             })
         }
