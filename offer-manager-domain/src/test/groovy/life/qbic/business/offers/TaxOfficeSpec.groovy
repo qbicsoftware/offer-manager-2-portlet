@@ -8,11 +8,9 @@ import spock.lang.Shared
 import spock.lang.Specification
 
 /**
- * <class short description - 1 Line!>
+ * Tests for the TaxOffice class
  *
- * <More detailed description - When to use, what it solves, etc.>
- *
- * @since <version tag>
+ * @since 1.1.5
  */
 class TaxOfficeSpec extends Specification{
     @Shared
@@ -55,7 +53,20 @@ class TaxOfficeSpec extends Specification{
                   ProteomicAnalysis,
                   MetabolomicAnalysis]
     }
+def "An internal customer has to pay taxes on external services"() {
+        given:
+        BigDecimal serviceCosts = BigDecimal.valueOf(20)
+        TaxOffice taxOffice = new TaxOffice(internalAffiliation)
 
+        when:
+        BigDecimal taxesAmount = taxOffice.applyTaxes(serviceCosts, clazz)
+
+        then:
+        taxesAmount == BigDecimal.valueOf(20*0.19)
+
+        where:
+        clazz << [ExternalService]
+    }
     def "An external customer has to pay taxes on every service"() {
         given:
         BigDecimal serviceCosts = BigDecimal.valueOf(20)
@@ -74,7 +85,8 @@ class TaxOfficeSpec extends Specification{
                   DataStorage,
                   ProjectManagement,
                   ProteomicAnalysis,
-                  MetabolomicAnalysis]
+                  MetabolomicAnalysis,
+                  ExternalService]
     }
 
     def "An external academic customer has to pay taxes on every service"() {
@@ -95,7 +107,8 @@ class TaxOfficeSpec extends Specification{
                   DataStorage,
                   ProjectManagement,
                   ProteomicAnalysis,
-                  MetabolomicAnalysis]
+                  MetabolomicAnalysis,
+                  ExternalService]
     }
 
 }

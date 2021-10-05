@@ -787,7 +787,7 @@ class OfferSpec extends Specification {
      * Tests for external service products
      */
 
-    def "Given an internal customer affiliation, there needs to be VAT applied for external services."() {
+    def "Given an internal customer affiliation, there needs to be VAT applied but no overheads for external services."() {
         given:
         def item = new ProductItem(20.0, ProductFactory.createProduct(ExternalServiceProduct, 10.0, 10.0))
         def item2 = new ProductItem(1.0, ProductFactory.createProduct(Sequencing, 1.0, 2.0))
