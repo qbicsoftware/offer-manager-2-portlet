@@ -44,8 +44,10 @@
 #data-generation-items > tfoot .costs
 #data-analysis-items
 #data-analysis-items > tfoot .costs
-data-management-items
-data-management-items > tfoot .costs
+#data-management-items
+#data-management-items > tfoot .costs
+#external-service-items
+#external-service-items > tfoot .costs
 
 /* to be filled with the following html:
 <tr>
