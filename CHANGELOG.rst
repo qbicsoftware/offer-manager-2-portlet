@@ -15,6 +15,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Update offer template footer to show correct names (#817)
 
+* Generated offers are removed from the server after download (`#776 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/776>`_)
+
 **Dependencies**
 
 **Deprecated**
