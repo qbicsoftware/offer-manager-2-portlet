@@ -243,6 +243,11 @@ class OfferContent {
 
             /*costs*/
             this.netCostsWithOverheads = Objects.requireNonNull(netCostsWithOverheads, "Net costs with overheads must not be null")
+
+            /*
+            Provides NPE safe extension of the builder and keeps developers happy
+             */
+            this.externalServiceItems = []
         }
         Builder dataGenerationItems(List<OfferItem> dataGenerationItems){
             this.dataGenerationItems = dataGenerationItems
