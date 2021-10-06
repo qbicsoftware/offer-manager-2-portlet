@@ -181,6 +181,7 @@ class UpdatePersonView extends CreatePersonView {
 
         updatePersonViewModel.addPropertyChangeListener({ it ->
             if (updatePersonViewModel.outdatedPerson) {
+                //TODO this does not check/re-evaluate validity for affiliations
                 switch (it.propertyName) {
                     case "academicTitle":
                         boolean titleChanged = updatePersonViewModel.academicTitle != updatePersonViewModel.outdatedPerson.title.toString()
