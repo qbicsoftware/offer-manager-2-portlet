@@ -207,6 +207,7 @@ class UpdatePersonView extends CreatePersonView {
 
             updatePersonViewModel.affiliationList.addPropertyChangeListener({
                 //validation
+                //Todo redo validation
                 updatePersonViewModel.affiliationsValid = ! updatePersonViewModel.affiliationList.isEmpty()
                 if(updatePersonViewModel.outdatedPerson) {
                     List<Affiliation> originalList = updatePersonViewModel.outdatedPerson.affiliations
