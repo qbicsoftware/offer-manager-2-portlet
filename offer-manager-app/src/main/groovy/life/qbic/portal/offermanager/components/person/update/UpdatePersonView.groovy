@@ -169,9 +169,8 @@ class UpdatePersonView extends CreatePersonView {
 
         addAffiliationButton.addClickListener({
             if (!updatePersonViewModel.affiliationList.contains(updatePersonViewModel.affiliation)) {
-                updatePersonViewModel.affiliationList << updatePersonViewModel.affiliation
+                updatePersonViewModel.affiliationList.add(updatePersonViewModel.affiliation)
                 affiliations.dataProvider.refreshAll()
-                updatePersonViewModel.personUpdated = true
             } else {
                 sharedViewModel.failureNotifications.add("Cannot add the selected affiliation. It was already associated with the person.")
                 addAffiliationButton.setEnabled(false)
@@ -179,46 +178,13 @@ class UpdatePersonView extends CreatePersonView {
             resetAffiliation()
         })
 
-        updatePersonViewModel.addPropertyChangeListener({ it ->
-            if (updatePersonViewModel.outdatedPerson) {
-                //TODO this does not check/re-evaluate validity for affiliations
-                switch (it.propertyName) {
-                    case "academicTitle":
-                        boolean titleChanged = updatePersonViewModel.academicTitle != updatePersonViewModel.outdatedPerson.title.toString()
-                        updatePersonViewModel.personUpdated = updatePersonViewModel.academicTitleValid && titleChanged
-                        break
-                    case "firstName":
-                        boolean firstNameChanged = updatePersonViewModel.firstName != updatePersonViewModel.outdatedPerson.firstName
-                        updatePersonViewModel.personUpdated = updatePersonViewModel.firstNameValid && firstNameChanged
-                        break
-                    case "lastName":
-                        boolean lastNameChanged = updatePersonViewModel.lastName != updatePersonViewModel.outdatedPerson.lastName
-                        updatePersonViewModel.personUpdated = updatePersonViewModel.lastNameValid && lastNameChanged
-                        break
-                    case "email":
-                        boolean emailChanged = updatePersonViewModel.email != updatePersonViewModel.outdatedPerson.emailAddress
-                        updatePersonViewModel.personUpdated = updatePersonViewModel.emailValid && emailChanged
-                        break
-                    default:
-                        break
-                }
+        updatePersonViewModel.affiliationList.addPropertyChangeListener({
+            updatePersonViewModel.affiliationsValid = ! updatePersonViewModel.affiliationList.isEmpty()
+            if(updatePersonViewModel.outdatedPerson) {
                 submitButton.enabled = allValuesValid()
+            } else {
+                log.warn("Tried to check for person affiliation changes. There is no person to update.")
             }
-
-            updatePersonViewModel.affiliationList.addPropertyChangeListener({
-                //validation
-                //Todo redo validation
-                updatePersonViewModel.affiliationsValid = ! updatePersonViewModel.affiliationList.isEmpty()
-                if(updatePersonViewModel.outdatedPerson) {
-                    List<Affiliation> originalList = updatePersonViewModel.outdatedPerson.affiliations
-                    List<Affiliation> viewModelList = updatePersonViewModel.affiliationList
-                    boolean affiliationsChanged = ! (originalList == viewModelList)
-                    // set the changed needs to be triggered after the validity update
-                    updatePersonViewModel.personUpdated = updatePersonViewModel.affiliationsValid && affiliationsChanged
-                } else {
-                    log.warn("Tried to check for person affiliation changes. There is no person to update.")
-                }
-            })
         })
     }
 
@@ -239,10 +205,10 @@ class UpdatePersonView extends CreatePersonView {
     @Override
     protected boolean allValuesValid() {
         return createPersonViewModel.academicTitleValid \
-             && createPersonViewModel.firstNameValid \
-             && createPersonViewModel.lastNameValid \
-             && createPersonViewModel.emailValid \
-             && updatePersonViewModel.personUpdated \
-             && updatePersonViewModel.affiliationsValid
+               && createPersonViewModel.firstNameValid \
+               && createPersonViewModel.lastNameValid \
+               && createPersonViewModel.emailValid \
+               && updatePersonViewModel.affiliationsValid \
+               && updatePersonViewModel.hasPersonChanged()
     }
 }

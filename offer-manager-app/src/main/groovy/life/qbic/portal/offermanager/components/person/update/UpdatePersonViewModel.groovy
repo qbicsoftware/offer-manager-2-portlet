@@ -5,8 +5,8 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
-import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.communication.EventEmitter
+import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
@@ -29,9 +29,6 @@ class UpdatePersonViewModel extends CreatePersonViewModel implements Resettable{
     ObservableList affiliationList
 
     @Bindable
-    Boolean personUpdated
-
-    @Bindable
     Boolean affiliationsValid
 
     UpdatePersonViewModel(ResourcesService<Customer> customerService,
@@ -42,7 +39,6 @@ class UpdatePersonViewModel extends CreatePersonViewModel implements Resettable{
         super(customerService, managerResourceService, affiliationService, personResourceService)
         this.customerUpdate = customerUpdate
         affiliationList = new ObservableList(new ArrayList<Affiliation>())
-        personUpdated = false
 
         this.customerUpdate.register((Person person) -> {
             if (person) {
@@ -64,10 +60,24 @@ class UpdatePersonViewModel extends CreatePersonViewModel implements Resettable{
         affiliationList.addAll(person.affiliations)
     }
 
+    boolean hasPersonChanged() {
+        Optional<Person> person = Optional.ofNullable(outdatedPerson)
+        if (!person.isPresent()) {
+            return true
+        } else {
+            boolean hasFirstNameChanged = outdatedPerson.firstName != firstName
+            boolean hasLastNameChanged = outdatedPerson.lastName != lastName
+            boolean hasTitleChanged = outdatedPerson.title.toString() != academicTitle
+            boolean hasEmailChanged = outdatedPerson.emailAddress != email
+            boolean hasAffiliationsChanged = outdatedPerson.affiliations.toList() != affiliationList.toList()
+            return hasFirstNameChanged && hasLastNameChanged && hasTitleChanged && hasEmailChanged && hasAffiliationsChanged
+        }
+    }
+
     @Override
     void reset() {
-        affiliationList.clear()
-        setOutdatedPerson(null)
         super.reset()
+        setOutdatedPerson(null)
+        affiliationList.clear()
     }
 }
