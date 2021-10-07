@@ -3,17 +3,13 @@ package life.qbic.business.offers
 import groovy.time.TimeCategory
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
+import life.qbic.business.offers.Offer
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.identifier.ProjectPart
 import life.qbic.business.offers.identifier.RandomPart
 import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
-import life.qbic.datamodel.dtos.business.services.DataStorage
-import life.qbic.datamodel.dtos.business.services.ExternalServiceProduct
-import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
-import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.datamodel.dtos.business.services.ProjectManagement
-import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis
+import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
 import java.nio.charset.StandardCharsets
@@ -589,7 +585,7 @@ class Offer {
     @Deprecated
     double determineTaxCost() {
         boolean isExternalProductPresent = items.findAll( {it.product instanceof ExternalServiceProduct}).size() > 0
-        return isVatCountry() && (!isNoVatAffiliation() || isExternalProductsPresent)  ? VAT : 0.0
+        return isVatCountry() && (!isNoVatAffiliation() || isExternalProductPresent)  ? VAT : 0.0
     }
     /**
      * Calculates the VAT ratio of an offer depending on the customers affiliation country and category
