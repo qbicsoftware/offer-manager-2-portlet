@@ -98,16 +98,21 @@ class CreatePersonViewModel implements Resettable{
 
     @Override
     void reset() {
-        setAcademicTitle(AcademicTitle.NONE.toString())
-        setFirstName(null)
-        setLastName(null)
-        setEmail(null)
-        setAffiliation(null)
-        setAcademicTitleValid(null)
-        setFirstNameValid(null)
-        setLastNameValid(null)
-        setEmailValid(null)
-        setAffiliationValid(null)
+
+        this.setAcademicTitle(AcademicTitle.NONE.toString())
+        this.setAcademicTitleValid(true)
+
+        this.setFirstName(null)
+        this.setFirstNameValid(null)
+
+        this.setLastName(null)
+        this.setLastNameValid(null)
+
+        this.setEmail(null)
+        this.setEmailValid(null)
+
+        this.setAffiliation(null)
+        this.setAffiliationValid(null)
 
         refreshAvailableOrganizations()
     }
