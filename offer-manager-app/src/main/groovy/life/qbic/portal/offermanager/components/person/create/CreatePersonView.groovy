@@ -496,8 +496,8 @@ class CreatePersonView extends VerticalLayout implements Resettable {
         firstNameField.clear()
         lastNameField.clear()
         emailField.clear()
-        organisationComboBox.selectedItem = organisationComboBox.clear()
-        addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
+        organisationComboBox.clear()
+        addressAdditionComboBox.clear()
         affiliationDetails.setContent(null)
 
     }
