@@ -352,7 +352,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   void updatePerson(int oldPersonId, Person updatedPerson) {
 
     if (!getPerson(oldPersonId)) {
-      throw new DatabaseQueryException("Person is not in the database and can't be updated.")
+      throw new DatabaseQueryException("Person was not found in the database and can't be updated.")
     }
 
     Connection connection = connectionProvider.connect()
@@ -798,7 +798,8 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
   @Override
   Optional<Integer> findPerson(Person person) {
-    int personID
+    //to be nullable this needs to be an Integer and not an int
+    Integer personID
 
     findActivePerson(person.firstName, person.lastName).each { foundCustomer ->
       //todo is the email address sufficient to compare customers for identity?

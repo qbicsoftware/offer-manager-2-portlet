@@ -26,6 +26,9 @@ class UpdatePerson {
 
   void updatePerson(int personId, Person person) {
     Person existingCustomer = dataSource.getPerson(personId)
+
+    if(! existingCustomer) throw new IllegalArgumentException("Could not find person to updated, the entry changed in the database. Please try again.")
+
     boolean customerChanged = hasBasicPersonDataChanged(existingCustomer, person)
     try {
       if(customerChanged) {
@@ -41,7 +44,8 @@ class UpdatePerson {
         log.error(e.stackTrace.join("\n"))
       }
     } catch(DatabaseQueryException databaseQueryException){
-      output.failNotification(databaseQueryException.message)
+      output.failNotification("Could not find person to updated, the entry changed in the database. Please try again.")
+      log.error databaseQueryException.stackTrace.join("\n")
     } catch(Exception unexpected) {
       log.error(unexpected.message)
       log.error(unexpected.stackTrace.join("\n"))

@@ -23,6 +23,7 @@ class SearchPerson implements SearchPersonInput{
     void searchPerson(String firstName, String lastName) {
         try {
             List<Person> foundCustomer = dataSource.findPerson(firstName, lastName)
+
             if (foundCustomer.isEmpty()) {
                 output.failNotification("Could not find a person for $firstName $lastName")
             } else {
