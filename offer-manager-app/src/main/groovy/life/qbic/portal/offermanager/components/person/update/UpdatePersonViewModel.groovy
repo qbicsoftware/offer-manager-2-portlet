@@ -5,10 +5,12 @@ import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.general.Person
-import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.communication.EventEmitter
+import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel
 import life.qbic.portal.offermanager.dataresources.ResourcesService
+
+import java.util.function.Function
 
 /**
  * Model with data for updating an existing person.
@@ -42,7 +44,6 @@ class UpdatePersonViewModel extends CreatePersonViewModel implements Resettable{
         super(customerService, managerResourceService, affiliationService, personResourceService)
         this.customerUpdate = customerUpdate
         affiliationList = new ObservableList(new ArrayList<Affiliation>())
-        personUpdated = false
 
         this.customerUpdate.register((Person person) -> {
             if (person) {
@@ -64,10 +65,24 @@ class UpdatePersonViewModel extends CreatePersonViewModel implements Resettable{
         affiliationList.addAll(person.affiliations)
     }
 
+    boolean personChanged() {
+        Optional<Person> person = Optional.ofNullable(outdatedPerson)
+        Function<Person, Boolean> changed = { Person it ->
+            boolean titleChanged = it.title.toString() != academicTitle
+            boolean firstNameChanged = it.firstName != firstName
+            boolean lastNameChanged = it.lastName != lastName
+            boolean emailChanged = it.emailAddress != email
+            boolean affiliationsChanged = it.affiliations.sort() != affiliationList.sort()
+            boolean result = titleChanged || firstNameChanged || lastNameChanged || emailChanged || affiliationsChanged
+            return result
+        }
+        return person.map(changed).orElse(false)
+    }
+
     @Override
     void reset() {
+        super.reset()
         affiliationList.clear()
         setOutdatedPerson(null)
-        super.reset()
     }
 }
