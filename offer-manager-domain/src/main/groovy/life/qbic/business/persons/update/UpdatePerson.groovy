@@ -27,7 +27,10 @@ class UpdatePerson {
   void updatePerson(int personId, Person person) {
     Person existingCustomer = dataSource.getPerson(personId)
 
-    if(! existingCustomer) throw new IllegalArgumentException("Could not find person to updated, the entry changed in the database. Please try again.")
+    if(! existingCustomer){
+      output.reloadPersonContent()
+      output.failNotification("Could not find person to updated, the entry changed in the database. Please try again.")
+    }
 
     boolean customerChanged = hasBasicPersonDataChanged(existingCustomer, person)
     try {

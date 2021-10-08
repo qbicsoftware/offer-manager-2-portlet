@@ -26,4 +26,8 @@ interface CreatePersonOutput extends UseCaseFailure {
      */
     void personCreated(Person person)
 
+    /**
+     * Triggers the reload of the person data from the database
+     */
+    void reloadPersonContent()
 }

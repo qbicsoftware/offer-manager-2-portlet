@@ -33,10 +33,12 @@ class CreatePersonPresenter implements CreatePersonOutput{
     @Override
     void failNotification(String notification) {
         viewModel.failureNotifications.add(notification)
-        //reload the person content from the db
-        createPersonViewModel.refreshPersonEntries()
     }
 
+    @Override
+    void reloadPersonContent() {
+        createPersonViewModel.refreshPersonEntries()
+    }
 
     @Deprecated
     void personCreated(String message) {

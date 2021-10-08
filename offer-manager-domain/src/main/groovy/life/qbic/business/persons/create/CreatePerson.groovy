@@ -59,6 +59,11 @@ class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
   }
 
   @Override
+  void reloadPersonContent() {
+    output.reloadPersonContent()
+  }
+
+  @Override
   void failNotification(String notification) {
     output.failNotification(notification)
   }
