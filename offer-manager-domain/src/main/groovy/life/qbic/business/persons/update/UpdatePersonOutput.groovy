@@ -17,8 +17,4 @@ interface UpdatePersonOutput extends UseCaseFailure {
      */
     void personUpdated(Person person)
 
-    /**
-     * Triggers the reload of the person data from the database
-     */
-    void reloadPersonContent()
 }

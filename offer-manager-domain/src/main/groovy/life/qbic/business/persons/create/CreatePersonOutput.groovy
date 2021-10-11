@@ -27,7 +27,9 @@ interface CreatePersonOutput extends UseCaseFailure {
     void personCreated(Person person)
 
     /**
-     * Triggers the reload of the person data from the database
+     * To be called if a person entry was not found in the database
+     * @param notFoundPerson The person that was searched for but not found
+     * @param message The message the should be propagated to the view
      */
-    void reloadPersonContent()
+    void personNotFound(Person notFoundPerson, String message)
 }
