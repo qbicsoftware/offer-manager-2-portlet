@@ -73,18 +73,16 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   }
 
   @Override
-  List<Person> findActivePerson(Person person) throws DatabaseQueryException {
-    String sqlCondition = "WHERE first_name = ? AND last_name = ? AND title = ? AND email = ? AND active = 1"
+  List<Person> findActivePerson(String firstName, String lastName) throws DatabaseQueryException {
+    String sqlCondition = "WHERE first_name = ? AND last_name = ? AND active = 1"
     String queryTemplate = PERSON_SELECT_QUERY + " " + sqlCondition
     Connection connection = connectionProvider.connect()
     List<Person> personList = new ArrayList<>()
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(queryTemplate)
 
-      preparedStatement.setString(1, person.firstName)
-      preparedStatement.setString(2, person.lastName)
-      preparedStatement.setString(3, person.title.value)
-      preparedStatement.setString(4, person.emailAddress)
+      preparedStatement.setString(1, firstName)
+      preparedStatement.setString(2, lastName)
 
       ResultSet resultSet = preparedStatement.executeQuery()
       while (resultSet.next()) {
@@ -804,7 +802,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     //to be nullable this needs to be an Integer and not an int
     Integer personID
 
-    findActivePerson(person).each { foundCustomer ->
+    findActivePerson(person.firstName, person.lastName).each { foundCustomer ->
       //todo is the email address sufficient to compare customers for identity?
       if (foundCustomer.emailAddress == person.emailAddress) personID = getActivePersonId(foundCustomer)
     }

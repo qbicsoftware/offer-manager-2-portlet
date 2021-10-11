@@ -31,12 +31,13 @@ interface SearchPersonDataSource {
     /**
      * This method returns a person matching the given search criteria only if it is set to active
      *
-     * @param person The person that needs to be found
+     * @param firstName The persons first name that needs to be found
+     * @param lastName The persons last name that needs to be found
      * @return A list of matching person entries with the given first and last name that are set to active
      * @throws DatabaseQueryException If the data source query fails for technical reasons, this
      * exception is thrown.
      *
      * @since 1.0.0
      */
-    List<Person> findActivePerson(Person person) throws DatabaseQueryException
+    List<Person> findActivePerson(String firstName, String lastName) throws DatabaseQueryException
 }
