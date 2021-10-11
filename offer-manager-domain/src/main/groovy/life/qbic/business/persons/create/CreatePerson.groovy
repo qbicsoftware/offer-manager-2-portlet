@@ -49,8 +49,14 @@ class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
 
   @Override
   void updatePerson(Person oldPerson, Person newPerson) {
-    int personId = dataSource.findPerson(oldPerson).get()
-    updatePerson.updatePerson(personId,newPerson)
+    try{
+      int personId = dataSource.findPerson(oldPerson).get()
+      updatePerson.updatePerson(personId,newPerson)
+    }catch(Exception ignore){
+      reloadPersonContent()
+      failNotification("Cannot update person entry for ${oldPerson.title} ${oldPerson.firstName} ${oldPerson.lastName}. \n" +
+              "Please try again.")
+    }
   }
 
   @Override
