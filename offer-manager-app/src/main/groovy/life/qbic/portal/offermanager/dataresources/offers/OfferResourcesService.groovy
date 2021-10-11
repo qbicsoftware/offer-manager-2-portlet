@@ -27,6 +27,7 @@ class OfferResourcesService implements ResourcesService<Offer> {
     }
 
     @Override
+    @Deprecated
     void reloadResources() {
 
     }

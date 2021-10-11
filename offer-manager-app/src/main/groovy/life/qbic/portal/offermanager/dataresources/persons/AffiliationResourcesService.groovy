@@ -31,8 +31,14 @@ class AffiliationResourcesService implements ResourcesService<Affiliation> {
 
     @Override
     void reloadResources() {
-        this.availableAffiliations.clear()
-        this.availableAffiliations.addAll(listAffiliationsDataSource.listAllAffiliations())
+        //do it explicitly to trigger the service
+        availableAffiliations.each {
+            removeFromResource(it)
+        }
+        List updatedEntries = listAffiliationsDataSource.listAllAffiliations()
+        updatedEntries.each {
+            addToResource(it)
+        }
     }
 
     @Override

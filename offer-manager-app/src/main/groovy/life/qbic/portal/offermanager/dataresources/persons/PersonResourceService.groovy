@@ -31,8 +31,6 @@ class PersonResourceService implements ResourcesService<Person>{
 
     @Override
     void reloadResources() {
-        this.availablePersonEntries.clear()
-
         //do it explicitly to trigger the service
         availablePersonEntries.each {
             removeFromResource(it)

@@ -30,8 +30,14 @@ class CustomerResourceService implements ResourcesService<Customer>{
 
     @Override
     void reloadResources() {
-        this.customerList.clear()
-        this.customerList.addAll(listPersonsDataSource.listAllCustomers())
+        //do it explicitly to trigger the service
+        customerList.each {
+            removeFromResource(it)
+        }
+        List updatedEntries = listPersonsDataSource.listAllCustomers()
+        updatedEntries.each {
+            addToResource(it)
+        }
     }
 
     @Override
