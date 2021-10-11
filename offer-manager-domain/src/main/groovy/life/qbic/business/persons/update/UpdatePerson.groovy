@@ -45,7 +45,7 @@ class UpdatePerson {
       }
     } catch(DatabaseQueryException databaseQueryException){
       output.failNotification("Could not find person to updated, the entry changed in the database. Please try again.")
-      log.error databaseQueryException.stackTrace.join("\n")
+      log.error(databaseQueryException.message, databaseQueryException)
     } catch(Exception unexpected) {
       log.error(unexpected.message)
       log.error(unexpected.stackTrace.join("\n"))
