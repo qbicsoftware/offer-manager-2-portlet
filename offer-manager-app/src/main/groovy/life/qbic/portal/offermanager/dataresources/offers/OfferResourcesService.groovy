@@ -29,6 +29,9 @@ class OfferResourcesService implements ResourcesService<Offer> {
     }
 
     @Override
+    /**
+     * The implementation of this method is currently not supported, it throws a OperationNotSupported exception upon calling
+     */
     void reloadResources() {
         throw new OperationNotSupportedException("Reloading resources is not supported for the OfferResourceService!")
     }
