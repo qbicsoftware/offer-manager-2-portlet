@@ -11,6 +11,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Support for external service products (#700)
 
+* Adds a facility column to the view (#835)
+
 **Fixed**
 
 * Update offer template footer to show correct names (#817)
