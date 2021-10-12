@@ -94,15 +94,17 @@ class OfferOverviewView extends VerticalLayout {
             grid.addColumn({ productItem -> productItem.quantity }).setCaption("Quantity")
             grid.addColumn({ productItem -> productItem.product.productName })
                     .setCaption("Product Name").setId("ProductName")
-            grid.addColumn({ productItem -> productItem.product.description })
-                    .setCaption("Product Description").setId("ProductDescription")
+            Grid.Column<ProductItemViewModel,String> descriptionColumn = grid.addColumn({ productItem -> productItem.product.description })
+                    .setCaption("Product Description").setId("ProductDescription").setDescriptionGenerator({it.product.description})
             grid.addColumn({ productItem -> productItem.product.internalUnitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol())).setCaption("Internal Unit Price")
             grid.addColumn({ productItem -> productItem.product.externalUnitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol())).setCaption("External Unit Price")
+            grid.addColumn({ productItem -> productItem.product.serviceProvider.fullName }).setCaption("Facility")
             grid.addColumn({ productItem -> productItem.product.unit }).setCaption("Product Unit")
 
 
             //specify size of grid and layout
             grid.setWidthFull()
+            descriptionColumn.setWidth(GridUtils.DESCRIPTION_MAX_WIDTH)
             grid.setHeightByRows(6)
 
         } catch (Exception e) {
