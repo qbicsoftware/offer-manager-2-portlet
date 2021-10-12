@@ -38,7 +38,6 @@ class ProductsResourcesService implements ResourcesService<Product> {
     }
 
     @Override
-    @Deprecated
     void reloadResources() {
         products.clear()
 
