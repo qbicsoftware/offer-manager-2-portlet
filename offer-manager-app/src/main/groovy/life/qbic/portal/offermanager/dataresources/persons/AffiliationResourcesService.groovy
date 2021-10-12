@@ -31,10 +31,9 @@ class AffiliationResourcesService implements ResourcesService<Affiliation> {
 
     @Override
     void reloadResources() {
-        //do it explicitly to trigger the service
         availableAffiliations.clear()
 
-        List updatedEntries = listAffiliationsDataSource.listAllAffiliations()
+        List<Affiliation> updatedEntries = listAffiliationsDataSource.listAllAffiliations()
         updatedEntries.each {
             addToResource(it)
         }

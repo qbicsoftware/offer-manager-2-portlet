@@ -30,10 +30,9 @@ class ProjectManagerResourceService implements ResourcesService<ProjectManager>{
 
     @Override
     void reloadResources() {
-        //do it explicitly to trigger the service
         availableProjectManagers.clear()
 
-        List updatedEntries = listPersonsDataSource.listAllProjectManagers()
+        List<ProjectManager> updatedEntries = listPersonsDataSource.listAllProjectManagers()
         updatedEntries.each {
             addToResource(it)
         }

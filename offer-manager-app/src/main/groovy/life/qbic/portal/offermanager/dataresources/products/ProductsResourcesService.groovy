@@ -40,10 +40,9 @@ class ProductsResourcesService implements ResourcesService<Product> {
     @Override
     @Deprecated
     void reloadResources() {
-        //do it explicitly to trigger the service
         products.clear()
 
-        List updatedEntries = listProductsDataSource.listProducts()
+        List<Product> updatedEntries = listProductsDataSource.listProducts()
         updatedEntries.each {
             addToResource(it)
         }
