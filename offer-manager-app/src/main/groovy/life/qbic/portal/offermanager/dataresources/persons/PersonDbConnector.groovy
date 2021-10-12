@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager.dataresources.persons
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.exceptions.PersonNotFoundException
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
 import life.qbic.business.persons.create.CreatePersonDataSource
@@ -580,7 +581,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       def msg = "Could not find ${person.firstName} ${person.lastName} " +
               "(${person.emailAddress}) in the list of active persons. They might be inactive."
       log.error(msg)
-      throw new DatabaseQueryException(msg)
+      throw new PersonNotFoundException(msg)
     }
     return personId
   }
