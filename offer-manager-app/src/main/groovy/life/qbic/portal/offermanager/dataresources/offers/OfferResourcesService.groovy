@@ -5,7 +5,6 @@ import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
-import javax.naming.OperationNotSupportedException
 
 /**
  * ResourcesService that represents available offer for downloads.
@@ -29,11 +28,11 @@ class OfferResourcesService implements ResourcesService<Offer> {
     }
 
     /**
-     * The implementation of this method is currently not supported, it throws a OperationNotSupported exception upon calling
+     * The implementation of this method is currently not supported, it throws a UnsupportedOperationException exception upon calling
      */
     @Override
     void reloadResources() {
-        throw new OperationNotSupportedException("Reloading resources is not supported for the OfferResourceService!")
+        throw new UnsupportedOperationException("Reloading resources is not supported for the OfferResourceService!")
     }
 
     @Override
