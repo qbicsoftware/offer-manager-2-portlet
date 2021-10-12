@@ -41,9 +41,7 @@ class ProductsResourcesService implements ResourcesService<Product> {
     @Deprecated
     void reloadResources() {
         //do it explicitly to trigger the service
-        products.each {
-            removeFromResource(it)
-        }
+        products.clear()
 
         List updatedEntries = listProductsDataSource.listProducts()
         updatedEntries.each {

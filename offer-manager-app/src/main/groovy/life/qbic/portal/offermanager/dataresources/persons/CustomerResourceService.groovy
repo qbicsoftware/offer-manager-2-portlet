@@ -31,9 +31,8 @@ class CustomerResourceService implements ResourcesService<Customer>{
     @Override
     void reloadResources() {
         //do it explicitly to trigger the service
-        customerList.each {
-            removeFromResource(it)
-        }
+        customerList.clear()
+
         List updatedEntries = listPersonsDataSource.listAllCustomers()
         updatedEntries.each {
             addToResource(it)
