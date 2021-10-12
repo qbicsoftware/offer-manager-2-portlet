@@ -53,7 +53,7 @@ class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
       int personId = dataSource.findPerson(oldPerson).get()
       updatePerson.updatePerson(personId,newPerson)
     }catch(Exception ignore){
-      output.personNotFound(oldPerson, "Cannot update person entry for ${oldPerson.title} ${oldPerson.firstName} ${oldPerson.lastName}. \n" +
+      output.personNotFound(oldPerson, "Cannot update person entry for ${oldPerson.firstName} ${oldPerson.lastName}. \n" +
               "Please try again.")
     }
   }
