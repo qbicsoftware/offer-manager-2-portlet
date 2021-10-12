@@ -402,6 +402,8 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                     .setCaption("Internal Unit Price").setId("InternalUnitPrice")
             grid.addColumn({ it.externalUnitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol()))
                     .setCaption("External Unit Price").setId("ExternalUnitPrice")
+            grid.addColumn({ it.serviceProvider.fullName})
+                    .setCaption("Facility").setId("Facility")
             grid.addColumn({ it.unit.value })
                     .setCaption("Product Unit").setId("ProductUnit")
 
@@ -431,6 +433,8 @@ class SelectItemsView extends VerticalLayout implements Resettable {
             grid.addColumn({ it.product.externalUnitPrice }, new NumberRenderer(Currency
                     .getFormatterWithSymbol()))
                     .setCaption("External Unit Price").setId("ExternalUnitPrice")
+            grid.addColumn({ it.product.serviceProvider.fullName})
+                    .setCaption("Facility").setId("Facility")
             grid.addColumn({ it.product.unit.value })
                     .setCaption("Product Unit").setId("ProductUnit")
 
