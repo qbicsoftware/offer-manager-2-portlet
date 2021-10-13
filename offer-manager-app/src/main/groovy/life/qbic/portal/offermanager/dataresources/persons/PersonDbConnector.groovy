@@ -805,7 +805,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
     findActivePerson(person.firstName, person.lastName).each { foundCustomer ->
       //todo is the email address sufficient to compare customers for identity?
-      if (foundCustomer.emailAddress == person.emailAddress) personID = getActivePersonId(foundCustomer)
+      if (foundCustomer.emailAddress == person.emailAddress && foundCustomer.title.value == person.title.value) personID = getActivePersonId(foundCustomer)
     }
 
     return Optional.of(personID)

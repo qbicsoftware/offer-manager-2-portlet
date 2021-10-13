@@ -594,8 +594,8 @@ class Offer {
      * @since 1.2.0
      */
     BigDecimal appliedTaxRatio() {
-        boolean isExternalProductsPresent = items.findAll( {it.product instanceof ExternalServiceProduct}).size() > 0
-        return isVatCountry() && (!isNoVatAffiliation() || isExternalProductsPresent)  ? BigDecimal.valueOf(VAT) : 0.0
+        boolean isExternalProductPresent = items.findAll( {it.product instanceof ExternalServiceProduct}).size() > 0
+        return isVatCountry() && (!isNoVatAffiliation() || isExternalProductPresent)  ? BigDecimal.valueOf(VAT) : 0.0
     }
 
     /**
