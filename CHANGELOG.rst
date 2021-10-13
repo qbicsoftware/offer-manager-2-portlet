@@ -27,6 +27,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * org.apache.logging.log4j 1.2.17 -> 2.14.0 (addresses CVE-2019-17571)
 
+* Bump data model lib 2.12.1 -> 2.13.0 (includes extended enum with the external service )
+
 **Deprecated**
 
 1.1.3 (2021-09-20)
