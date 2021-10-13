@@ -549,7 +549,6 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 1.0.0-SNAPSHOT (2020-11-09)
 
-
 * Create project with QUBE
 
 * Create project modules infrastructure and domain
