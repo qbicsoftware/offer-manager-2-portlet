@@ -11,11 +11,15 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Support for external service products (#700)
 
+* Adds a facility column to the view (#835)
+
 **Fixed**
 
 * Update offer template footer to show correct names (#817)
 
 * Generated offers are removed from the server after download (#776)
+
+* Fix race condition issue in the update person use case (`#833 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/833>`_)
 
 **Dependencies**
 

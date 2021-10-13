@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.dataresources.persons
 
 import life.qbic.business.persons.list.ListPersonsDataSource
 import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.people.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
@@ -17,17 +18,24 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
 class ProjectManagerResourceService implements ResourcesService<ProjectManager>{
 
     private final List<ProjectManager> availableProjectManagers
+    private final ListPersonsDataSource listPersonsDataSource
 
     private final EventEmitter<ProjectManager> resourceUpdateEvent
 
     ProjectManagerResourceService(ListPersonsDataSource listPersonsDataSource) {
         availableProjectManagers = listPersonsDataSource.listAllProjectManagers()
+        this.listPersonsDataSource = listPersonsDataSource
         resourceUpdateEvent = new EventEmitter<>()
     }
 
     @Override
     void reloadResources() {
+        availableProjectManagers.clear()
 
+        List<ProjectManager> updatedEntries = listPersonsDataSource.listAllProjectManagers()
+        updatedEntries.each {
+            addToResource(it)
+        }
     }
 
     @Override

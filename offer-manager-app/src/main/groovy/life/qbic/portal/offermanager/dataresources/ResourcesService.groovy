@@ -10,10 +10,9 @@ interface ResourcesService<T> {
 
     /**
      * Triggers a service to reload its resources.
+     * This clears the current list and reloads the data from the connected datasource
      *
-     * @deprecated Use #addToResource or #removeFromResource to update content.
      */
-    @Deprecated
     void reloadResources()
 
     /**
