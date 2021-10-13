@@ -142,6 +142,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       String query = "INSERT INTO productitem (productId, quantity, offerid) "+
               "VALUE(?,?,?)"
 
+      //todo here could occur a potential issue, what if the products cannot be found (were archived during the process of offer creation)
       int productId = findProductId(productItem.product)
 
       provider.connect().withCloseable {
@@ -218,6 +219,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     if (product instanceof DataStorage) return ProductCategory.DATA_STORAGE.getValue()
     if (product instanceof ProteomicAnalysis) return ProductCategory.PROTEOMIC.getValue()
     if (product instanceof MetabolomicAnalysis) return ProductCategory.METABOLOMIC.getValue()
+    if (product instanceof ExternalServiceProduct) return ProductCategory.EXTERNAL_SERVICE.getValue()
 
     return null
   }

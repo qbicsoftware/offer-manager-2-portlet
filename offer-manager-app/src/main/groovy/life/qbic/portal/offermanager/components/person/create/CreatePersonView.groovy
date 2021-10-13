@@ -266,6 +266,9 @@ class CreatePersonView extends VerticalLayout implements Resettable {
                 default:
                     break
             }
+        })
+
+        createPersonViewModel.addPropertyChangeListener({
             submitButton.enabled = allValuesValid()
         })
 
@@ -392,7 +395,7 @@ class CreatePersonView extends VerticalLayout implements Resettable {
      * @return
      */
     private void initDefaultValues() {
-        createPersonViewModel.academicTitle = AcademicTitle.NONE.toString()
+        titleField.setValue(AcademicTitle.NONE.toString())
     }
 
     /**
@@ -488,21 +491,6 @@ class CreatePersonView extends VerticalLayout implements Resettable {
     }
 
     /**
-     *  Clears User Input from all fields in the Create Person View and reset validation status of all Fields
-     */
-    protected void clearAllFields() {
-
-        titleField.clear()
-        firstNameField.clear()
-        lastNameField.clear()
-        emailField.clear()
-        organisationComboBox.selectedItem = organisationComboBox.clear()
-        addressAdditionComboBox.selectedItem = addressAdditionComboBox.clear()
-        affiliationDetails.setContent(null)
-
-    }
-
-    /**
      * Returns the organisation for an affiliation if one is available
      * @param affiliation An affiliation for which an organisation is searched
      * @return an organisation if one is present
@@ -532,7 +520,5 @@ class CreatePersonView extends VerticalLayout implements Resettable {
     @Override
     void reset() {
         createPersonViewModel.reset()
-        clearAllFields()
-        initDefaultValues()
     }
 }

@@ -88,6 +88,10 @@ class OfferContent {
      * The items assigned to project management and data storage section of the offer
      */
     final List<OfferItem> dataManagementItems
+    /**
+     * The items assigned to external services of the offer
+     */
+    final List<OfferItem> externalServiceItems
 
     /*Overheads*/
     /**
@@ -110,7 +114,10 @@ class OfferContent {
      * The overhead costs for the project management and data storage items
      */
     final double overheadsProjectManagementAndDataStorage
-
+    /**
+     * The overhead costs for external services
+     */
+    final double overheadsExternalService
 
     /*Prices*/
     /**
@@ -125,6 +132,10 @@ class OfferContent {
      * The net costs for the project management and data storage section on the offer
      */
     final double netPMandDS
+    /**
+     * The net costs for external services
+     */
+    final double netExternalServices
     /**
      * The total costs of the offer
      */
@@ -182,18 +193,21 @@ class OfferContent {
         List<OfferItem> dataGenerationItems
         List<OfferItem> dataAnalysisItems
         List<OfferItem> dataManagementItems
+        List<OfferItem> externalServiceItems
 
         /*Overheads*/
         Double overheadTotal
         Double overheadsDataGeneration
         Double overheadsDataAnalysis
         Double overheadsProjectManagementAndDataStorage
+        Double overheadsExternalServices
         Double overheadRatio
 
         /*Prices*/
         Double netDataGeneration
         Double netDataAnalysis
         Double netPMandDS
+        Double netExternalServices
         Double totalCost
         Double netCostsWithOverheads
         Double netCost
@@ -238,6 +252,13 @@ class OfferContent {
 
             /*costs*/
             this.netCostsWithOverheads = Objects.requireNonNull(netCostsWithOverheads, "Net costs with overheads must not be null")
+
+            /*
+            Provides NPE safe extension of the builder and keeps developers happy
+             */
+            this.externalServiceItems = []
+            this.netExternalServices = 0
+            this.overheadsExternalServices = 0
         }
         Builder dataGenerationItems(List<OfferItem> dataGenerationItems){
             this.dataGenerationItems = dataGenerationItems
@@ -249,6 +270,10 @@ class OfferContent {
         }
         Builder dataManagementItems(List<OfferItem> dataManagementItems){
             this.dataManagementItems = dataManagementItems
+            return this
+        }
+        Builder externalServiceItems(List<OfferItem> externalServiceItems) {
+            this.externalServiceItems = externalServiceItems
             return this
         }
         Builder overheadTotal(double overheadTotal){
@@ -271,6 +296,10 @@ class OfferContent {
             this.overheadsProjectManagementAndDataStorage = overheadPmAndDs
             return this
         }
+        Builder overheadsExternalServices(double overheadExternalServices) {
+            this.overheadsExternalServices = overheadExternalServices
+            return this
+        }
         Builder netDataGeneration(double net){
             this.netDataGeneration = net
             return this
@@ -281,6 +310,10 @@ class OfferContent {
         }
         Builder netProjectManagementAndDataStorage(double net){
             this.netPMandDS = net
+            return this
+        }
+        Builder netExternalServices(double net) {
+            this.netExternalServices = net
             return this
         }
         Builder totalCost(double total){
@@ -309,6 +342,7 @@ class OfferContent {
             if(dataGenerationItems == null) throw new NullPointerException("Missing data generation items")
             if(dataAnalysisItems == null) throw new NullPointerException("Missing data analysis items")
             if(dataManagementItems == null) throw new NullPointerException("Missing data management items")
+            if(externalServiceItems == null) throw new NullPointerException("Missing external service items")
             if(overheadTotal == null) throw new NullPointerException("Missing overhead total costs")
             if(overheadRatio == null) throw new NullPointerException("Missing overhead ratio")
             if(overheadsDataAnalysis == null) throw new NullPointerException("Missing data analysis overhead costs")
@@ -359,9 +393,10 @@ class OfferContent {
         offerIdentifier = builder.offerIdentifier
 
         /*Items*/
-        dataGenerationItems = builder.dataGenerationItems
-        dataAnalysisItems = builder.dataAnalysisItems
-        dataManagementItems = builder.dataManagementItems
+        dataGenerationItems = builder.dataGenerationItems.collect()
+        dataAnalysisItems = builder.dataAnalysisItems.collect()
+        dataManagementItems = builder.dataManagementItems.collect()
+        externalServiceItems = builder.externalServiceItems.collect()
 
         /*Overheads*/
         overheadTotal = builder.overheadTotal
@@ -369,11 +404,13 @@ class OfferContent {
         overheadsDataGeneration = builder.overheadsDataGeneration
         overheadsDataAnalysis = builder.overheadsDataAnalysis
         overheadsProjectManagementAndDataStorage = builder.overheadsProjectManagementAndDataStorage
+        overheadsExternalService = builder.overheadsExternalServices
 
         /*Prices*/
         netDataGeneration = builder.netDataGeneration
         netDataAnalysis = builder.netDataAnalysis
         netPMandDS = builder.netPMandDS
+        netExternalServices = builder.netExternalServices
         totalCost = builder.totalCost
         netCost = builder.netCost
         netCostsWithOverheads = builder.netCostsWithOverheads
@@ -382,15 +419,35 @@ class OfferContent {
         totalDiscountAmount = builder.totalDiscountAmount
     }
 
+    /**
+     * Returns a true copy of the data generation items.
+     * @return
+     */
     List<OfferItem> getDataGenerationItems() {
         return dataGenerationItems.collect()
     }
 
+    /**
+     * Returns a true copy of the data analysis items.
+     * @return
+     */
     List<OfferItem> getDataAnalysisItems() {
         return dataAnalysisItems.collect()
     }
 
+    /**
+     * Returns a true copy of the data management items.
+     * @return
+     */
     List<OfferItem> getDataManagementItems() {
         return dataManagementItems.collect()
+    }
+
+    /**
+     * Returns a true copy of the external service items.
+     * @return
+     */
+    List<OfferItem> getExternalServiceItems() {
+        return externalServiceItems.collect()
     }
 }

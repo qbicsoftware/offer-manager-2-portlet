@@ -75,6 +75,13 @@ class CreatePersonViewModel implements Resettable{
     }
 
     /**
+     * Triggers the reload of the person entries through the service and therefore re-queries the database
+     */
+    void refreshPersonEntries(){
+        personResourceService.reloadResources()
+    }
+
+    /**
      * Maps a list of affiliations to organisations
      * @param affiliations A list of affiliations where some have the same organisation
      * @return a list of organisations containing the associated affiliations
@@ -98,16 +105,21 @@ class CreatePersonViewModel implements Resettable{
 
     @Override
     void reset() {
-        setAcademicTitle(AcademicTitle.NONE.toString())
-        setFirstName(null)
-        setLastName(null)
-        setEmail(null)
-        setAffiliation(null)
-        setAcademicTitleValid(null)
-        setFirstNameValid(null)
-        setLastNameValid(null)
-        setEmailValid(null)
-        setAffiliationValid(null)
+
+        this.setAcademicTitle(AcademicTitle.NONE.toString())
+        this.setAcademicTitleValid(true)
+
+        this.setFirstName(null)
+        this.setFirstNameValid(null)
+
+        this.setLastName(null)
+        this.setLastNameValid(null)
+
+        this.setEmail(null)
+        this.setEmailValid(null)
+
+        this.setAffiliation(null)
+        this.setAffiliationValid(null)
 
         refreshAvailableOrganizations()
     }

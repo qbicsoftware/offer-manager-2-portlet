@@ -31,6 +31,7 @@ class CreateOfferViewModel {
     List<Product> storageProducts = new ObservableList(new ArrayList<Product>())
     List<Product> proteomicAnalysisProducts = new ObservableList(new ArrayList<Product>())
     List<Product> metabolomicAnalysisProduct = new ObservableList(new ArrayList<Product>())
+    List<Product> externalServiceProduct = new ObservableList(new ArrayList<Product>())
 
     ObservableList productItems = new ObservableList(new ArrayList<ProductItemViewModel>())
     ObservableList foundCustomers = new ObservableList(new ArrayList<Customer>())
@@ -83,6 +84,8 @@ class CreateOfferViewModel {
     Boolean projectManagementGridSelected
     @Bindable
     Boolean storageGridSelected
+    @Bindable
+    Boolean externalServiceGridSelected
 
     @Bindable
     Boolean sequencingQuantityValid
@@ -98,6 +101,8 @@ class CreateOfferViewModel {
     Boolean projectManagementQuantityValid
     @Bindable
     Boolean storageQuantityValid
+    @Bindable
+    Boolean externalServiceQuantityValid
 
     @Bindable
     EventEmitter<String> resetViewRequired
@@ -249,6 +254,7 @@ class CreateOfferViewModel {
         this.storageProducts.clear()
         this.proteomicAnalysisProducts.clear()
         this.metabolomicAnalysisProduct.clear()
+        this.externalServiceProduct.clear()
 
         products.each { product ->
 
@@ -273,6 +279,9 @@ class CreateOfferViewModel {
                     break
                 case MetabolomicAnalysis:
                     metabolomicAnalysisProduct.add(product)
+                    break
+                case ExternalServiceProduct:
+                    externalServiceProduct.add(product)
                     break
                 default:
                     // this should not happen

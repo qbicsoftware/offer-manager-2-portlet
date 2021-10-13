@@ -4,6 +4,33 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.2.0 (2021-10-13)
+------------------
+
+**Added**
+
+* Support for external service products (#700)
+
+* Adds a facility column to the view (#835)
+
+**Fixed**
+
+* Update offer template footer to show correct names (#817)
+
+* Generated offers are removed from the server after download (#776)
+
+* Fix race condition issue in the update person use case (`#833 <https://github.com/qbicsoftware/offer-manager-2-portlet/issues/833>`_)
+
+**Dependencies**
+
+* org.jsoup 1.13.1 -> 1.14.2 (addresses CVE-2021-37714)
+
+* org.apache.logging.log4j 1.2.17 -> 2.14.0 (addresses CVE-2019-17571)
+
+* Bump data model lib 2.12.1 -> 2.13.0 (includes extended enum with the external service )
+
+**Deprecated**
+
 1.1.3 (2021-09-20)
 ------------------
 
@@ -521,7 +548,6 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 
 1.0.0-SNAPSHOT (2020-11-09)
-
 
 * Create project with QUBE
 

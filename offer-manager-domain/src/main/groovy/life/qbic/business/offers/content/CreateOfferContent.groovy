@@ -32,11 +32,13 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
     private static List<Class> DATA_GENERATION = [Sequencing, ProteomicAnalysis, MetabolomicAnalysis]
     private static List<Class> DATA_ANALYSIS = [PrimaryAnalysis, SecondaryAnalysis]
     private static List<Class> PROJECT_AND_DATA_MANAGEMENT = [ProjectManagement, DataStorage]
+    private static List<Class> EXTERNAL_SERVICES = [ExternalServiceProduct]
 
 
     private List<ProductItem> dataGenerationItems
     private List<ProductItem> dataAnalysisItems
     private List<ProductItem> dataManagementItems
+    private List<ProductItem> externalServiceItems
 
 
     CreateOfferContent(CreateOfferContentOutput output, FetchOfferDataSource fetchOfferDataSource){
@@ -74,28 +76,33 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         List<OfferItem> dataManagementOfferItems = dataManagementItems.collect{createOfferItem(it)}
         List<OfferItem> dataAnalysisOfferItems = dataAnalysisItems.collect{createOfferItem(it)}
         List<OfferItem> dataGenerationOfferItems = dataGenerationItems.collect{createOfferItem(it)}
+        List<OfferItem> externalServiceItems = externalServiceItems.collect({createOfferItem(it)})
 
         offerContentBuilder.dataGenerationItems(dataGenerationOfferItems)
-        .dataAnalysisItems(dataAnalysisOfferItems)
-        .dataManagementItems(dataManagementOfferItems)
+            .dataAnalysisItems(dataAnalysisOfferItems)
+            .dataManagementItems(dataManagementOfferItems)
+            .externalServiceItems(externalServiceItems)
 
         double overheadsDA = calculateOverheadSum(dataAnalysisOfferItems)
         double overheadsDG = calculateOverheadSum(dataGenerationOfferItems)
         double overheadsPMandDS = calculateOverheadSum(dataManagementOfferItems)
+        double overheadsExternalServices = calculateOverheadSum(externalServiceItems)
 
         offerContentBuilder.overheadsDataAnalysis(overheadsDA)
         .overheadsDataGeneration(overheadsDG)
         .overheadsProjectManagementAndDataStorage(overheadsPMandDS)
+        .overheadsExternalServices(overheadsExternalServices )
         .overheadTotal(offer.overheadSum)
         .overheadRatio(offer.overheadRatio)
 
         offerContentBuilder.netDataAnalysis(calculateNetSum(dataAnalysisOfferItems))
         .netDataGeneration(calculateNetSum(dataGenerationOfferItems))
         .netProjectManagementAndDataStorage(calculateNetSum(dataManagementOfferItems))
+        .netExternalServices(calculateNetSum(externalServiceItems))
         .netCost(offer.totalNetPrice)
 
         offerContentBuilder.totalVat(offer.taxCosts)
-        .vatRatio(offer.determineTaxCost())
+        .vatRatio(offer.appliedTaxRatio())
         .totalCost(offer.totalCosts)
         .totalDiscountAmount(offer.totalDiscountAmount)
 
@@ -187,17 +194,23 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         dataGenerationItems = []
         dataAnalysisItems = []
         dataManagementItems = []
+        externalServiceItems = []
 
         // Sort ProductItems into "DataGeneration", "Data Analysis" and "Project & Data Management"
         offerItems.each {
-            if (it.product.class in DATA_GENERATION) {
-                dataGenerationItems.add(it)
-            }
-            if (it.product.class in DATA_ANALYSIS) {
-                dataAnalysisItems.add(it)
-            }
-            if (it.product.class in PROJECT_AND_DATA_MANAGEMENT) {
-                dataManagementItems.add(it)
+            switch (it.product.class) {
+                case ({it in DATA_GENERATION}):
+                    dataGenerationItems.add(it)
+                    break
+                case ({it in DATA_ANALYSIS}):
+                    dataAnalysisItems.add(it)
+                    break
+                case ({it in PROJECT_AND_DATA_MANAGEMENT}):
+                    dataManagementItems.add(it)
+                    break
+                case ({it in EXTERNAL_SERVICES}):
+                    externalServiceItems.add(it)
+                    break
             }
         }
     }

@@ -31,7 +31,12 @@ class PersonResourceService implements ResourcesService<Person>{
 
     @Override
     void reloadResources() {
+        availablePersonEntries.clear()
 
+        List<Person> updatedEntries = listPersonsDataSource.listActivePersons()
+        updatedEntries.each {
+            addToResource(it)
+        }
     }
 
     @Override
