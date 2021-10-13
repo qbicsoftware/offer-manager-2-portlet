@@ -31,8 +31,8 @@ interface SearchPersonDataSource {
     /**
      * This method returns a person matching the given search criteria only if it is set to active
      *
-     * @param firstName The person's first name
-     * @param lastName The person's last name
+     * @param firstName The persons first name that needs to be found
+     * @param lastName The persons last name that needs to be found
      * @return A list of matching person entries with the given first and last name that are set to active
      * @throws DatabaseQueryException If the data source query fails for technical reasons, this
      * exception is thrown.

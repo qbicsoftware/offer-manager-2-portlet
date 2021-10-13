@@ -38,10 +38,13 @@ class ProductsResourcesService implements ResourcesService<Product> {
     }
 
     @Override
-    @Deprecated
     void reloadResources() {
-        this.products.clear()
-        this.products.addAll(listProductsDataSource.listProducts())
+        products.clear()
+
+        List<Product> updatedEntries = listProductsDataSource.listProducts()
+        updatedEntries.each {
+            addToResource(it)
+        }
     }
 
     private void populateResources() {

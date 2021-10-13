@@ -75,6 +75,13 @@ class CreatePersonViewModel implements Resettable{
     }
 
     /**
+     * Triggers the reload of the person entries through the service and therefore re-queries the database
+     */
+    void refreshPersonEntries(){
+        personResourceService.reloadResources()
+    }
+
+    /**
      * Maps a list of affiliations to organisations
      * @param affiliations A list of affiliations where some have the same organisation
      * @return a list of organisations containing the associated affiliations

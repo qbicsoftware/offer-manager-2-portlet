@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager.dataresources.persons
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.exceptions.PersonNotFoundException
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
 import life.qbic.business.persons.create.CreatePersonDataSource
@@ -83,6 +84,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
       preparedStatement.setString(1, firstName)
       preparedStatement.setString(2, lastName)
+
       ResultSet resultSet = preparedStatement.executeQuery()
       while (resultSet.next()) {
         personList.add(parseCommonPersonFromResultSet(resultSet))
@@ -352,7 +354,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   void updatePerson(int oldPersonId, Person updatedPerson) {
 
     if (!getPerson(oldPersonId)) {
-      throw new DatabaseQueryException("Person is not in the database and can't be updated.")
+      throw new DatabaseQueryException("Person was not found in the database and can't be updated.")
     }
 
     Connection connection = connectionProvider.connect()
@@ -579,7 +581,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       def msg = "Could not find ${person.firstName} ${person.lastName} " +
               "(${person.emailAddress}) in the list of active persons. They might be inactive."
       log.error(msg)
-      throw new DatabaseQueryException(msg)
+      throw new PersonNotFoundException(msg)
     }
     return personId
   }
@@ -798,7 +800,8 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
   @Override
   Optional<Integer> findPerson(Person person) {
-    int personID
+    //to be nullable this needs to be an Integer and not an int
+    Integer personID
 
     findActivePerson(person.firstName, person.lastName).each { foundCustomer ->
       //todo is the email address sufficient to compare customers for identity?

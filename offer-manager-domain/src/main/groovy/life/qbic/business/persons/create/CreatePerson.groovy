@@ -1,5 +1,6 @@
 package life.qbic.business.persons.create
 
+import life.qbic.business.exceptions.PersonNotFoundException
 import life.qbic.business.persons.update.UpdatePerson
 import life.qbic.business.persons.update.UpdatePersonOutput
 import life.qbic.business.logging.Logger
@@ -49,8 +50,17 @@ class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
 
   @Override
   void updatePerson(Person oldPerson, Person newPerson) {
-    int personId = dataSource.findPerson(oldPerson).get()
-    updatePerson.updatePerson(personId,newPerson)
+    try{
+      int personId = dataSource.findPerson(oldPerson).get()
+      updatePerson.updatePerson(personId,newPerson)
+    }catch(PersonNotFoundException ignore){
+      output.personNotFound(oldPerson, "Cannot update person entry for ${oldPerson.firstName} ${oldPerson.lastName}. \n" +
+              "Person was not found. Please try again.")
+    }
+    catch(Exception ignore){
+      output.failNotification("Cannot update person entry for ${oldPerson.firstName} ${oldPerson.lastName}. \n" +
+              "Please try again.")
+    }
   }
 
   @Override

@@ -142,6 +142,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       String query = "INSERT INTO productitem (productId, quantity, offerid) "+
               "VALUE(?,?,?)"
 
+      //todo here could occur a potential issue, what if the products cannot be found (were archived during the process of offer creation)
       int productId = findProductId(productItem.product)
 
       provider.connect().withCloseable {
