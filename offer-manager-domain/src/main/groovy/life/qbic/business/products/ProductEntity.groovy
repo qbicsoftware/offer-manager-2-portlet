@@ -17,7 +17,7 @@ import java.security.MessageDigest
  *
  * @since 1.0.0
  *
-*/
+ */
 class ProductEntity {
     ProductCategory category
     String name
@@ -28,7 +28,7 @@ class ProductEntity {
     Facility serviceProvider
     Optional<ProductId> id
 
-    private ProductEntity(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility serviceProvider){
+    private ProductEntity(ProductCategory category, String name, String description, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility serviceProvider) {
         this.category = Objects.requireNonNull(category)
         this.name = Objects.requireNonNull(name)
         this.description = Objects.requireNonNull(description)
@@ -84,17 +84,17 @@ class ProductEntity {
      * @param product The product of a specific product category
      * @return the product category of the given product
      */
-    static ProductCategory determineProductCategory(Product product){
-        if(product instanceof ProjectManagement) return ProductCategory.PROJECT_MANAGEMENT
-        if(product instanceof Sequencing) return ProductCategory.SEQUENCING
-        if(product instanceof PrimaryAnalysis) return ProductCategory.PRIMARY_BIOINFO
-        if(product instanceof SecondaryAnalysis) return ProductCategory.SECONDARY_BIOINFO
-        if(product instanceof DataStorage) return ProductCategory.DATA_STORAGE
-        if(product instanceof ProteomicAnalysis) return ProductCategory.PROTEOMIC
-        if(product instanceof MetabolomicAnalysis) return ProductCategory.METABOLOMIC
-        if(product instanceof ExternalServiceProduct) return ProductCategory.EXTERNAL_SERVICE
+    static ProductCategory determineProductCategory(Product product) {
+        if (product instanceof ProjectManagement) return ProductCategory.PROJECT_MANAGEMENT
+        if (product instanceof Sequencing) return ProductCategory.SEQUENCING
+        if (product instanceof PrimaryAnalysis) return ProductCategory.PRIMARY_BIOINFO
+        if (product instanceof SecondaryAnalysis) return ProductCategory.SECONDARY_BIOINFO
+        if (product instanceof DataStorage) return ProductCategory.DATA_STORAGE
+        if (product instanceof ProteomicAnalysis) return ProductCategory.PROTEOMIC
+        if (product instanceof MetabolomicAnalysis) return ProductCategory.METABOLOMIC
+        if (product instanceof ExternalServiceProduct) return ProductCategory.EXTERNAL_SERVICE
 
-        throw  new IllegalArgumentException("Cannot parse category of the provided product ${product.toString()}")
+        throw new IllegalArgumentException("Cannot parse category of the provided product ${product.toString()}")
     }
 
     /**
@@ -102,7 +102,7 @@ class ProductEntity {
      * @return a product dto
      */
     Product toFinalProduct() {
-        ProductId productId = id.orElseThrow({new RuntimeException("Can not finalize product without id.")})
+        ProductId productId = id.orElseThrow({ new RuntimeException("Can not finalize product without id.") })
         long runningNumber = productId.getUniqueId()
         Class productClass = determineProductClass(category)
         try {
@@ -124,7 +124,7 @@ class ProductEntity {
             case ProductCategory.SECONDARY_BIOINFO:
                 return SecondaryAnalysis
             case ProductCategory.SEQUENCING:
-                return  Sequencing
+                return Sequencing
             case ProductCategory.PROTEOMIC:
                 return ProteomicAnalysis
             case ProductCategory.METABOLOMIC:
@@ -144,9 +144,9 @@ class ProductEntity {
      *
      * @return a string containing the checksum for this product
      */
-    String checksum(){
+    String checksum() {
         MessageDigest digest = MessageDigest.getInstance("SHA-256")
-        return getProductChecksum(digest,this)
+        return getProductChecksum(digest, this)
     }
 
     /**
@@ -156,8 +156,7 @@ class ProductEntity {
      * @param product Contains the product information
      * @return a string that encrypts the product object
      */
-    private static String getProductChecksum(MessageDigest digest, ProductEntity product)
-    {
+    private static String getProductChecksum(MessageDigest digest, ProductEntity product) {
         //digest crucial offer characteristics
         digest.update(product.name.getBytes(StandardCharsets.UTF_8))
 
@@ -176,8 +175,7 @@ class ProductEntity {
         //This bytes[] has bytes in decimal format
         //Convert it to hexadecimal format
         StringBuilder sb = new StringBuilder()
-        for(int i=0; i< bytes.length ;i++)
-        {
+        for (int i = 0; i < bytes.length; i++) {
             sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1))
         }
 
