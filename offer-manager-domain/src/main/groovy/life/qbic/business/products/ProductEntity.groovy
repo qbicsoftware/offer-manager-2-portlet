@@ -64,6 +64,40 @@ class ProductEntity {
     }
 
     /**
+     * Creates a new Entity from a product DTO
+     * @param product the product DTO containing information on the product
+     * @return a product entity
+     */
+    static ProductEntity fromDto(Product product) {
+        ProductCategory productCategory = determineProductCategory(product)
+        return new ProductEntity(productCategory,
+                product.productName,
+                product.description,
+                product.internalUnitPrice,
+                product.externalUnitPrice,
+                product.unit,
+                product.serviceProvider)
+    }
+
+    /**
+     * Retrieves the category of the given product
+     * @param product The product of a specific product category
+     * @return the product category of the given product
+     */
+    static ProductCategory determineProductCategory(Product product){
+        if(product instanceof ProjectManagement) return ProductCategory.PROJECT_MANAGEMENT
+        if(product instanceof Sequencing) return ProductCategory.SEQUENCING
+        if(product instanceof PrimaryAnalysis) return ProductCategory.PRIMARY_BIOINFO
+        if(product instanceof SecondaryAnalysis) return ProductCategory.SECONDARY_BIOINFO
+        if(product instanceof DataStorage) return ProductCategory.DATA_STORAGE
+        if(product instanceof ProteomicAnalysis) return ProductCategory.PROTEOMIC
+        if(product instanceof MetabolomicAnalysis) return ProductCategory.METABOLOMIC
+        if(product instanceof ExternalServiceProduct) return ProductCategory.EXTERNAL_SERVICE
+
+        throw  new IllegalArgumentException("Cannot parse category of the provided product ${product.toString()}")
+    }
+
+    /**
      * Parses to a product dto
      * @return a product dto
      */
