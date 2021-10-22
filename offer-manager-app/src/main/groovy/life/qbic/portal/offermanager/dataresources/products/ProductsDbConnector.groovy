@@ -8,6 +8,7 @@ import life.qbic.business.products.archive.ArchiveProductDataSource
 import life.qbic.business.products.copy.CopyProductDataSource
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.ProductExistsException
+import life.qbic.business.products.dtos.ProductDraft
 import life.qbic.business.products.list.ListProductsDataSource
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductCategoryFactory
@@ -114,7 +115,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       double externalUnitPrice = row.externalUnitPrice
       Facility serviceProvider = Facility.valueOf(row.serviceProvider as String)
 
-
+      //ToDo Retire Converter with ProductEntity once it's decided how the ProductID will be matched
       product = Converter.createProductWithVersion(
               productCategory,
               productName,
@@ -208,7 +209,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   /**
    * Returns the product type of a product based on its implemented class
    *
-   * @param product A product for which the type needs to be determined
+   * @param product A productDraft for which the type needs to be determined
    * @return the type of the product or null
    */
   private static String getProductType(Product product){
@@ -262,6 +263,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     Connection connection = provider.connect()
 
     connection.withCloseable {
+
       def statement = connection.prepareStatement(Queries.ARCHIVE_PRODUCT)
       statement.setString(1, product.productId.toString())
       statement.execute()
@@ -303,21 +305,22 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * {@inheritDoc}
    */
   @Override
-  ProductId store(Product product) throws DatabaseQueryException, ProductExistsException {
+  ProductId store(ProductDraft productDraft) throws DatabaseQueryException, ProductExistsException {
+
     Connection connection = provider.connect()
 
-    ProductId productId = createProductId(product)
+    ProductId productId = createProductId(productDraft)
 
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(Queries.INSERT_PRODUCT)
-      preparedStatement.setString(1, getProductType(product))
-      preparedStatement.setString(2, product.description)
-      preparedStatement.setString(3, product.productName)
-      preparedStatement.setDouble(4, product.internalUnitPrice)
-      preparedStatement.setDouble(5, product.externalUnitPrice)
-      preparedStatement.setString(6, product.unit.value)
+      preparedStatement.setString(1, productDraft.category.getValue())
+      preparedStatement.setString(2, productDraft.description)
+      preparedStatement.setString(3, productDraft.name)
+      preparedStatement.setDouble(4, productDraft.internalUnitPrice)
+      preparedStatement.setDouble(5, productDraft.externalUnitPrice)
+      preparedStatement.setString(6, productDraft.unit.value)
       preparedStatement.setString(7, productId.toString())
-      preparedStatement.setString(8, product.serviceProvider.name())
+      preparedStatement.setString(8, productDraft.serviceProvider.name())
 
       preparedStatement.execute()
     }
@@ -325,14 +328,17 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     return productId
   }
 
-  private ProductId createProductId(Product product){
-    String productType = product.productId.type
-    String version = fetchLatestIdentifier(productType) //todo exchange with long
-
-    return new ProductId(productType,version)
+  private ProductId createProductId(ProductDraft productDraft) {
+    ProductType productType = getProductTypeByCategory(productDraft.getCategory())
+    String version = fetchLatestIdentifier(productType.toString()) //todo exchange with long
+    return new ProductId(productType.toString(), version)
   }
 
-  private Long fetchLatestIdentifier(String productType){
+  private static ProductType getProductTypeByCategory(ProductCategory productCategory) {
+    return ProductType.valueOf(productCategory.toString())
+  }
+
+  private Long fetchLatestIdentifier(String productType) {
     String query = "SELECT productId FROM product WHERE productId LIKE ?"
     Connection connection = provider.connect()
 
