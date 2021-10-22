@@ -1,7 +1,7 @@
 package life.qbic.business.products.copy
 
+import life.qbic.business.products.dtos.ProductDraft
 import life.qbic.datamodel.dtos.business.ProductId
-import life.qbic.datamodel.dtos.business.services.Product
 
 /**
  * Input interface for the {@link CopyProduct} use case
@@ -13,8 +13,9 @@ interface CopyProductInput {
 
     /**
      * Creates a product and populates it with provided information
-     * @param product The modified product information. The identifier should already be present.
+     * @param productDraft The modified product information
+     * @param originalProductId the id of the origin Product
      * @since 1.0.0
      */
-    void copyModified(Product product)
+    void copyModified(ProductDraft productDraft, ProductId originalProductId)
 }

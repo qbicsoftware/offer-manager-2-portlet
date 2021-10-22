@@ -17,4 +17,6 @@ interface CopyProductOutput extends UseCaseFailure {
      * @since 1.0.0
      */
     void copied(Product product)
+
+
 }
