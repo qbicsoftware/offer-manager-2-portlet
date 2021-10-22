@@ -2,14 +2,13 @@ package life.qbic.portal.offermanager.components.product
 
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.products.Converter
 import life.qbic.business.products.archive.ArchiveProductInput
 import life.qbic.business.products.copy.CopyProductInput
 import life.qbic.business.products.create.CreateProductInput
+import life.qbic.business.products.dtos.ProductDraft
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.facilities.Facility
-import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 
 /**
@@ -49,8 +48,8 @@ class MaintainProductsController {
      */
     void createNewProduct(ProductCategory category, String description, String name, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility facility){
         try {
-            Product product = Converter.createProduct(category, name, description, internalUnitPrice, externalUnitPrice, unit, facility)
-            createProductInput.create(product)
+            ProductDraft createProductDraft = ProductDraft.create(category, name, description, internalUnitPrice, externalUnitPrice, unit, facility)
+            createProductInput.create(createProductDraft)
         } catch (Exception unexpected) {
             log.error("unexpected exception during create product call", unexpected)
             throw new IllegalArgumentException("Could not create products from provided arguments.")
@@ -79,14 +78,14 @@ class MaintainProductsController {
      * @param internalUnitPrice The unit price of the product
      * @param externalUnitPrice The unit price of the product
      * @param unit The unit in which the product is measured
-     * @param productId the productId of the to be copied product
+     * @param originalProductId the productId of the to be copied product
      * @param serviceProvider the facility providing this product
      */
-    void copyProduct(ProductCategory category, String description, String name, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, ProductId productId, Facility serviceProvider){
-        try{
-            Product product = Converter.createProductWithVersion(category, name, description, internalUnitPrice, externalUnitPrice, unit, productId.uniqueId, serviceProvider)
-            copyProductInput.copyModified(product)
-        }catch(Exception unexpected){
+    void copyProduct(ProductCategory category, String description, String name, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, ProductId originalProductId, Facility serviceProvider) {
+        try {
+            ProductDraft copyProductDraft = ProductDraft.create(category, name, description, internalUnitPrice, externalUnitPrice, unit, serviceProvider)
+            copyProductInput.copyModified(copyProductDraft, originalProductId)
+        } catch (Exception unexpected) {
             log.error("Unexpected exception at copy product call", unexpected)
             throw new IllegalArgumentException("Could not copy product from provided arguments.")
         }
