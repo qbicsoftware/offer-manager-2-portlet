@@ -1,6 +1,7 @@
 package life.qbic.business.products.create
 
 import life.qbic.business.UseCaseFailure
+import life.qbic.business.products.dtos.ProductDraft
 import life.qbic.datamodel.dtos.business.services.Product
 
 /**
@@ -23,7 +24,7 @@ interface CreateProductOutput extends UseCaseFailure{
      * @param product The product for which a duplicate has been found
      * @since 1.0.0
      */
-    void foundDuplicate(Product product)
+    void foundDuplicate(ProductDraft product)
 
 
 }

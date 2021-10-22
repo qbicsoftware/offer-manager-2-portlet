@@ -1,6 +1,7 @@
 package life.qbic.business.products.create
 
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.products.dtos.ProductDraft
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.Product
 
@@ -19,6 +20,6 @@ interface CreateProductDataSource {
      * @throws DatabaseQueryException if any technical interaction with the data source fails
      * @throws ProductExistsException if the product already exists in the data source
      */
-    ProductId store(Product product) throws DatabaseQueryException, ProductExistsException
+    ProductId store(ProductDraft productDraft) throws DatabaseQueryException, ProductExistsException
 
 }
