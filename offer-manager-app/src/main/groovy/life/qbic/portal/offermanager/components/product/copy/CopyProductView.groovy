@@ -1,7 +1,6 @@
 package life.qbic.portal.offermanager.components.product.copy
 
 import life.qbic.business.products.Converter
-import life.qbic.business.products.dtos.ProductDraft
 import life.qbic.portal.offermanager.components.product.MaintainProductsController
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
 
