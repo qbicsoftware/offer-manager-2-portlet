@@ -80,7 +80,7 @@ class CopyProduct implements CopyProductInput, CreateProductOutput {
         copiedProduct.checksum() != oldProduct.checksum()
     }
 
-    /**e
+    /**
      * {@inheritDoc}
      */
     @Override
