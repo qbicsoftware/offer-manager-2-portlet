@@ -209,7 +209,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   /**
    * Returns the product type of a product based on its implemented class
    *
-   * @param product A productDraft for which the type needs to be determined
+   * @param product A product for which the type needs to be determined
    * @return the type of the product or null
    */
   private static String getProductType(Product product){
