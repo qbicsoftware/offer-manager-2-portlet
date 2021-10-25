@@ -107,6 +107,6 @@ class Converter {
     }
 
     static Product convertProductToDTO(ProductEntity product){
-        return createProductWithVersion(product.category,product.name, product.description, product.internalUnitPrice, product.externalUnitPrice, product.unit, product.id.uniqueId, product.serviceProvider)
+        return product.toFinalProduct()
     }
 }
