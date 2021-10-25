@@ -5,7 +5,6 @@ import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.products.Converter
 import life.qbic.business.products.archive.ArchiveProductDataSource
-import life.qbic.business.products.copy.CopyProductDataSource
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.create.ProductExistsException
 import life.qbic.business.products.dtos.ProductDraft
@@ -30,7 +29,7 @@ import java.sql.SQLException
  * @since 1.0.0
  */
 @Log4j2
-class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource, CopyProductDataSource, ListProductsDataSource {
+class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource, ListProductsDataSource {
 
   private final ConnectionProvider provider
 
@@ -165,13 +164,11 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * @return the found ID
    */
   int findProductId(Product product) {
-    String query = "SELECT id FROM product "+
-            "WHERE category = ? AND description = ? AND productName = ? AND internalUnitPrice = ? AND externalUnitPrice = ? AND unit = ? AND serviceProvider = ?"
 
     List<Integer> foundId = []
 
     provider.connect().withCloseable {
-      PreparedStatement preparedStatement = it.prepareStatement(query)
+      PreparedStatement preparedStatement = it.prepareStatement(Queries.FIND_ID_BY_PRODUCT_PROPERTIES)
       preparedStatement.setString(1, getProductType(product))
       preparedStatement.setString(2,product.description)
       preparedStatement.setString(3,product.productName)
@@ -187,6 +184,35 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       }
     }
     return foundId[0]
+  }
+
+  /**
+   * Searches if the properties contained in a productDraft are already contained in the database
+   *
+   * @param connection through which the query is executed
+   * @param product for which the ID needs to be found
+   * @throws life.qbic.business.products.create.ProductExistsException
+   */
+  void findProductIdByDraft(ProductDraft productDraft) throws ProductExistsException {
+
+    provider.connect().withCloseable {
+      PreparedStatement preparedStatement = it.prepareStatement(Queries.FIND_ACTIVE_PRODUCTID_BY_PROPERTIES)
+      preparedStatement.setString(1, productDraft.category.getValue())
+      preparedStatement.setString(2, productDraft.description)
+      preparedStatement.setString(3, productDraft.name)
+      preparedStatement.setDouble(4, productDraft.internalUnitPrice)
+      preparedStatement.setDouble(5, productDraft.externalUnitPrice)
+      preparedStatement.setString(6, productDraft.unit.value)
+      preparedStatement.setString(7, productDraft.serviceProvider.name())
+
+      ResultSet result = preparedStatement.executeQuery()
+
+      while (result.next()) {
+        String duplicateId = result.getString(1)
+        ProductId duplicateProductId = new ProductId(getProductTypeByCategory(productDraft.category).value, parseProductId(duplicateId).toString())
+        throw new ProductExistsException(duplicateProductId, "Product already exists with id $duplicateId")
+      }
+    }
   }
 
   /**
@@ -308,6 +334,8 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   ProductId store(ProductDraft productDraft) throws DatabaseQueryException, ProductExistsException {
 
     Connection connection = provider.connect()
+    //Throws ProductExistsException if Product already exists
+    findProductIdByDraft(productDraft)
 
     ProductId productId = createProductId(productDraft)
 
@@ -391,5 +419,17 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
                     "LEFT JOIN product ON productitem.productId = product.id " +
                     "WHERE offerId=?;"
 
+    /**
+     * Query for SQL table Id of a product by product properties
+     */
+    final static String FIND_ID_BY_PRODUCT_PROPERTIES = "SELECT id FROM product "+
+            "WHERE category = ? AND description = ? AND productName = ? AND internalUnitPrice = ? AND externalUnitPrice = ? AND unit = ? AND serviceProvider = ?"
+
+    /**
+     * Query for ProductId of a product by product properties
+     */
+
+    final static String FIND_ACTIVE_PRODUCTID_BY_PROPERTIES = "SELECT productId FROM product "+
+            "WHERE category = ? AND description = ? AND productName = ? AND internalUnitPrice = ? AND externalUnitPrice = ? AND unit = ? AND serviceProvider = ? AND active = 1"
   }
 }

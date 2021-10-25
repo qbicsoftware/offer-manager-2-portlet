@@ -49,7 +49,7 @@ class CreateProduct implements CreateProductInput {
             log.error("Product creation failed", databaseQueryException)
             output.failNotification("Could not create new product $productDraft.name")
         } catch(ProductExistsException productExistsException) {
-            log.warn("A product with the same content like ${productDraft.name} already exists.", productExistsException)
+            log.warn(productExistsException.message, productExistsException.cause)
             output.foundDuplicate(productDraft)
         } catch(Exception exception) {
             log.error("An unexpected error occured during product creation.", exception)

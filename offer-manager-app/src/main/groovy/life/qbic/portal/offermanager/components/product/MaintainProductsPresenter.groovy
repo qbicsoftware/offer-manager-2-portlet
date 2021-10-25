@@ -1,7 +1,6 @@
 package life.qbic.portal.offermanager.components.product
 
 import life.qbic.business.products.archive.ArchiveProductOutput
-import life.qbic.business.products.copy.CopyProductOutput
 import life.qbic.business.products.create.CreateProductOutput
 import life.qbic.business.products.dtos.ProductDraft
 import life.qbic.datamodel.dtos.business.services.Product
@@ -15,7 +14,7 @@ import life.qbic.portal.offermanager.components.AppViewModel
  * @since 1.0.0
  *
  */
-class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOutput, CopyProductOutput{
+class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOutput{
 
     private final MaintainProductsViewModel productsViewModel
     private final AppViewModel mainViewModel
@@ -39,15 +38,8 @@ class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOu
     }
 
     @Override
-    void copied(Product product) {
-        mainViewModel.successNotifications << "Successfully copied product $product.productId - $product.productName."
-        productsViewModel.productsResourcesService.addToResource(product)
-        productsViewModel.productCreatedSuccessfully = true
-    }
-
-    @Override
-    void foundDuplicate(ProductDraft product) {
-        mainViewModel.failureNotifications << "Found duplicate product for $product.name."
+    void foundDuplicate(ProductDraft productDraft) {
+        mainViewModel.failureNotifications << "Found duplicate product for $productDraft.name"
         //todo triggers sth in the view-model to ask the user if he still wants to create the duplicate
     }
 
