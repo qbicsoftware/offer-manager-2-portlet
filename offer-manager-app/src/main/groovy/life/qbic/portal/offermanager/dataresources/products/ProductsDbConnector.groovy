@@ -6,7 +6,6 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.products.Converter
 import life.qbic.business.products.archive.ArchiveProductDataSource
 import life.qbic.business.products.create.CreateProductDataSource
-import life.qbic.business.products.create.ProductExistsException
 import life.qbic.business.products.dtos.ProductDraft
 import life.qbic.business.products.list.ListProductsDataSource
 import life.qbic.datamodel.dtos.business.ProductCategory
@@ -189,11 +188,13 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   /**
    * Searches if the properties contained in a productDraft are already contained in the database
    *
-   * @param connection through which the query is executed
-   * @param product for which the ID needs to be found
-   * @throws life.qbic.business.products.create.ProductExistsException
+   * @param productDraft for which it is checked if it's already contained in the db
+   * @return List containing all duplicate products stored in the DB for the provided productDraft
    */
-  void findProductIdByDraft(ProductDraft productDraft) throws ProductExistsException {
+  @Override
+  List<Product> findDuplicateProducts(ProductDraft productDraft) {
+
+    List<Product> products = []
 
     provider.connect().withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(Queries.FIND_ACTIVE_PRODUCTID_BY_PROPERTIES)
@@ -208,11 +209,19 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       ResultSet result = preparedStatement.executeQuery()
 
       while (result.next()) {
-        String duplicateId = result.getString(1)
-        ProductId duplicateProductId = new ProductId(getProductTypeByCategory(productDraft.category).value, parseProductId(duplicateId).toString())
-        throw new ProductExistsException(duplicateProductId, "Product already exists with id $duplicateId")
+        //ToDo It would be way nicer if the ProductId would supply a From(String) method
+        ProductId duplicateProductId = new ProductId(getProductTypeByCategory(productDraft.category).value, parseProductId(result.getString(1)).toString())
+        try {
+          Product retrievedProduct = fetch(duplicateProductId).get()
+          products << retrievedProduct
+        }
+        catch (DatabaseQueryException databaseQueryException) {
+          log.warn("Could not check for duplicate Products for $productDraft.name  'Skipping.")
+          log.debug("Could not check for duplicate Products for $productDraft.name. Skipping.", databaseQueryException)
+        }
       }
     }
+    return products
   }
 
   /**
@@ -331,11 +340,9 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * {@inheritDoc}
    */
   @Override
-  ProductId store(ProductDraft productDraft) throws DatabaseQueryException, ProductExistsException {
+  ProductId store(ProductDraft productDraft) throws DatabaseQueryException {
 
     Connection connection = provider.connect()
-    //Throws ProductExistsException if Product already exists
-    findProductIdByDraft(productDraft)
 
     ProductId productId = createProductId(productDraft)
 
