@@ -30,32 +30,54 @@ class CreateProduct implements CreateProductInput {
 
     @Override
     void create(ProductDraft productDraft) {
-        ProductId createdProductId
-        Product storedProduct
         try {
-            createdProductId = dataSource.store(productDraft)
-            //create product with new product ID
-            if (createdProductId) {
-                ProductEntity storedProductEntity = ProductEntity.fromDraft(productDraft)
-                storedProductEntity.id(createdProductId)
-                storedProduct = storedProductEntity.toFinalProduct()
-                output.created(storedProduct)
-                log.info("${storedProduct.productName} with identifier ${storedProduct.productId} was created successfully.")
-            } else {
-                log.error("The database could not return a ProductId for the generated Product.")
-                output.failNotification("The created Product $productDraft.name did not return a ProductId")
+            if (!isProductDuplicated(productDraft)) {
+                storeProduct(productDraft)
             }
-        } catch(DatabaseQueryException databaseQueryException) {
+        } catch (DatabaseQueryException databaseQueryException) {
             log.error("Product creation failed", databaseQueryException)
             output.failNotification("Could not create new product $productDraft.name")
-        } catch(ProductExistsException productExistsException) {
-            log.warn(productExistsException.message, productExistsException.cause)
-            output.foundDuplicate(productDraft)
-        } catch(Exception exception) {
+        } catch (Exception exception) {
             log.error("An unexpected error occured during product creation.", exception)
             output.failNotification("An unexpected error occured during product creation. " +
                     "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
     }
 
+    private boolean isProductDuplicated(ProductDraft productDraft) {
+        List<Product> duplicateProducts = []
+        duplicateProducts = dataSource.findDuplicateProducts(productDraft)
+        switch (duplicateProducts.size()) {
+            case 0:
+                return false
+            case 1:
+                Product duplicateProduct = duplicateProducts.get(0)
+                log.info("Duplicate entry with id $duplicateProduct.productId for ${productDraft.name} found")
+                output.foundDuplicate(duplicateProduct)
+                return true
+            default:
+                Product duplicateProduct = duplicateProducts.get(0)
+                log.info("Found multiple duplicate products for $duplicateProduct.productName with Ids $duplicateProduct.productId")
+                output.foundDuplicates(duplicateProducts)
+                return true
+        }
+    }
+
+    private void storeProduct(ProductDraft productDraft) {
+        ProductId createdProductId
+        Product storedProduct
+        createdProductId = dataSource.store(productDraft)
+        //create product with new product ID
+        if (createdProductId) {
+            ProductEntity storedProductEntity = ProductEntity.fromDraft(productDraft)
+            storedProductEntity.id(createdProductId)
+            storedProduct = storedProductEntity.toFinalProduct()
+            output.created(storedProduct)
+            log.info("${storedProduct.productName} with identifier ${storedProduct.productId} was created successfully.")
+        } else {
+            log.error("The database could not return a ProductId for the generated Product.")
+            output.failNotification("The created Product $productDraft.name did not return a ProductId")
+        }
+    }
 }
+

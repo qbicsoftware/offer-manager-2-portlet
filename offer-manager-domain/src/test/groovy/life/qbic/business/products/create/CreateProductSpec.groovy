@@ -68,9 +68,9 @@ class CreateProductSpec extends Specification {
         given: "a data source that detects a duplicate entry"
         CreateProductDataSource dataSource = Stub(CreateProductDataSource)
         String dataStatus = ""
-        dataSource.store(productDraft) >> {
+        dataSource.findDuplicateProducts(productDraft) >> {
             dataStatus = "not stored"
-            throw new ProductExistsException(createdProductId)
+            List<Product> productList = [product]
         }
 
         and: "an instance of the use case"
@@ -80,7 +80,30 @@ class CreateProductSpec extends Specification {
         createProduct.create(productDraft)
 
         then: "the output is informed and no failure notification is send"
-        1 * output.foundDuplicate(productDraft)
+        1 * output.foundDuplicate(_)
+        0 * output.created(_)
+        0 * output.failNotification(_)
+        and: "the data was not stored in the database"
+        dataStatus == "not stored"
+    }
+
+    def "Create informs the output that multiple entries matching the provided product already exists"() {
+        given: "a data source that detects multiple duplicate entries"
+        CreateProductDataSource dataSource = Stub(CreateProductDataSource)
+        String dataStatus = ""
+        dataSource.findDuplicateProducts(productDraft) >> {
+            dataStatus = "not stored"
+            List<Product> productList = [product, product, product]
+        }
+
+        and: "an instance of the use case"
+        CreateProduct createProduct = new CreateProduct(dataSource, output)
+
+        when: "the create method is called"
+        createProduct.create(productDraft)
+
+        then: "the output is informed and no failure notification is send"
+        1 * output.foundDuplicates(_)
         0 * output.created(_)
         0 * output.failNotification(_)
         and: "the data was not stored in the database"
