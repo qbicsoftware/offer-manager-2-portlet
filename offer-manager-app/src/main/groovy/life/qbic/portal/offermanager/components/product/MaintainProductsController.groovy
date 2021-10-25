@@ -48,8 +48,8 @@ class MaintainProductsController {
      */
     void createNewProduct(ProductCategory category, String description, String name, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility facility){
         try {
-            ProductDraft createProductDraft = ProductDraft.create(category, name, description, internalUnitPrice, externalUnitPrice, unit, facility)
-            createProductInput.create(createProductDraft)
+            ProductDraft productDraft = ProductDraft.create(category, name, description, internalUnitPrice, externalUnitPrice, unit, facility)
+            createProductInput.create(productDraft)
         } catch (Exception unexpected) {
             log.error("unexpected exception during create product call", unexpected)
             throw new IllegalArgumentException("Could not create products from provided arguments.")
