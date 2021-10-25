@@ -85,14 +85,24 @@ class ProductEntity {
      * @return the product category of the given product
      */
     static ProductCategory determineProductCategory(Product product) {
-        if (product instanceof ProjectManagement) return ProductCategory.PROJECT_MANAGEMENT
-        if (product instanceof Sequencing) return ProductCategory.SEQUENCING
-        if (product instanceof PrimaryAnalysis) return ProductCategory.PRIMARY_BIOINFO
-        if (product instanceof SecondaryAnalysis) return ProductCategory.SECONDARY_BIOINFO
-        if (product instanceof DataStorage) return ProductCategory.DATA_STORAGE
-        if (product instanceof ProteomicAnalysis) return ProductCategory.PROTEOMIC
-        if (product instanceof MetabolomicAnalysis) return ProductCategory.METABOLOMIC
-        if (product instanceof ExternalServiceProduct) return ProductCategory.EXTERNAL_SERVICE
+        switch(product) {
+            case ProjectManagement:
+                return ProductCategory.PROJECT_MANAGEMENT
+            case Sequencing:
+                return ProductCategory.SEQUENCING
+            case PrimaryAnalysis:
+                return ProductCategory.PRIMARY_BIOINFO
+            case SecondaryAnalysis:
+                return ProductCategory.SECONDARY_BIOINFO
+            case DataStorage:
+                return ProductCategory.DATA_STORAGE
+            case ProteomicAnalysis:
+                return ProductCategory.PROTEOMIC
+            case MetabolomicAnalysis:
+                return ProductCategory.METABOLOMIC
+            case ExternalServiceProduct:
+                return ProductCategory.EXTERNAL_SERVICE
+        }
 
         throw new IllegalArgumentException("Cannot parse category of the provided product ${product.toString()}")
     }
