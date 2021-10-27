@@ -8,7 +8,7 @@
 		<module>offer-manager-app</module>
 	</modules>
 	<artifactId>offer-manager</artifactId>
-	<version>1.2.0</version> <!-- <<QUBE_FORCE_BUMP>> -->
+	<version>1.2.1</version> <!-- <<QUBE_FORCE_BUMP>> -->
 	<groupId>life.qbic</groupId>
 	<name>The new offer manager</name>
 	<url>http://github.com/qbicsoftware/qOffer_2.0</url>
