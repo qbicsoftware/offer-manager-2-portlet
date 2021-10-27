@@ -168,7 +168,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
 
     provider.connect().withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(Queries.FIND_ID_BY_PRODUCT_PROPERTIES)
-      preparedStatement.setString(1, getProductType(product))
+      preparedStatement.setString(1, getProductCategory(product))
       preparedStatement.setString(2,product.description)
       preparedStatement.setString(3,product.productName)
       preparedStatement.setDouble(4,product.internalUnitPrice)
@@ -239,12 +239,12 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
 
 
   /**
-   * Returns the product type of a product based on its implemented class
+   * Returns the product category value of a product based on its implemented class
    *
-   * @param product A product for which the type needs to be determined
+   * @param product A product for which the category needs to be determined
    * @return the type of the product or null
    */
-  private static String getProductType(Product product){
+  private static String getProductCategory(Product product){
     if (product instanceof Sequencing) return ProductCategory.SEQUENCING.getValue()
     if (product instanceof ProjectManagement) return ProductCategory.PROJECT_MANAGEMENT.getValue()
     if (product instanceof PrimaryAnalysis) return ProductCategory.PRIMARY_BIOINFO.getValue()
@@ -361,20 +361,16 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   private ProductId createProductId(ProductDraft productDraft) {
-    ProductType productType = getProductTypeByCategory(productDraft.getCategory())
-    String version = fetchLatestIdentifier(productType.toString()) //todo exchange with long
-    return new ProductId(productType.toString(), version)
+    String abbreviation = productDraft.getCategory().abbreviation
+    String version = fetchLatestIdentifier(abbreviation) //todo exchange with long
+    return new ProductId(abbreviation, version)
   }
 
-  private static ProductType getProductTypeByCategory(ProductCategory productCategory) {
-    return ProductType.valueOf(productCategory.toString())
-  }
-
-  private Long fetchLatestIdentifier(String productType) {
+  private Long fetchLatestIdentifier(String productCategory) {
     String query = "SELECT productId FROM product WHERE productId LIKE ?"
     Connection connection = provider.connect()
 
-    String category = productType + "_%"
+    String category = productCategory + "_%"
     Long latestUniqueId = 0
 
     connection.withCloseable {
