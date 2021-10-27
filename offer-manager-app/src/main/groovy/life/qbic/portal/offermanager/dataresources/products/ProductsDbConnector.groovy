@@ -142,8 +142,8 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       String query = "INSERT INTO productitem (productId, quantity, offerid) "+
               "VALUE(?,?,?)"
 
-      //todo here could occur a potential issue, what if the products cannot be found (were archived during the process of offer creation)
-      int productId = findProductId(productItem.product)
+      Integer productId = getProductPrimaryId(productItem.product)
+              .orElseThrow({new DatabaseQueryException("Could not determine product primary id for $productItem.product!")})
 
       provider.connect().withCloseable {
         PreparedStatement preparedStatement = it.prepareStatement(query)
@@ -154,6 +154,15 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
         preparedStatement.execute()
       }
     }
+  }
+
+  private Optional<Integer> getProductPrimaryId(Product product) {
+    Optional<Integer> productPrimaryId = Optional.empty()
+    def result = findProductId(product)
+    if (result) {
+      productPrimaryId = Optional.of(result as Integer)
+    }
+    return productPrimaryId
   }
 
   /**
