@@ -209,8 +209,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       ResultSet result = preparedStatement.executeQuery()
 
       while (result.next()) {
-        //ToDo It would be way nicer if the ProductId would supply a From(String) method
-        ProductId duplicateProductId = new ProductId(getProductTypeByCategory(productDraft.category).value, parseProductId(result.getString(1)).toString())
+        ProductId duplicateProductId = ProductId.from(result.getString("productId"))
         try {
           Product retrievedProduct = fetch(duplicateProductId).get()
           products << retrievedProduct
@@ -230,14 +229,12 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * @param productId String of productId stored in the DB e.g. "DS_1"
    * @return identifier Long of the iterative identifying part of the productId
    */
-  private static long parseProductId(String productId) throws NumberFormatException{
-    if (!productId.contains("_")) {
-      throw new IllegalArgumentException("Not a valid product identifier.")
-    }
-    def splitId = productId.split("_")
+  private static long parseProductId(String productIdText) throws NumberFormatException{
+
+    ProductId productId = ProductId.from(productIdText)
     // The first entry [0] contains the product type which is assigned automatically, no need to parse it.
-    String identifier = splitId[1]
-    return Long.parseLong(identifier)
+    String uniqueId = productId.getUniqueId()
+    return Long.parseLong(uniqueId)
   }
 
 
@@ -389,7 +386,8 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       while(result.next()){
         String id = result.getString(1)
         if(id) {
-          long idRunningNumber = Long.parseLong(id.split('_')[1])
+          ProductId productId = ProductId.from(id)
+          long idRunningNumber = productId.getUniqueId()
           if(idRunningNumber > latestUniqueId) latestUniqueId = idRunningNumber
         }
       }
