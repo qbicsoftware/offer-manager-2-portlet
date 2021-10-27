@@ -4,6 +4,19 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.2.1 (2021-10-??)
+------------------
+
+**Added**
+
+**Fixed**
+
+* Introduce proper exception handling when product cannot found in the database (DM-66)
+
+**Dependencies**
+
+**Deprecated**
+
 1.2.0 (2021-10-13)
 ------------------
 
