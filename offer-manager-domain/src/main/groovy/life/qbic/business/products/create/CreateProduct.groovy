@@ -31,8 +31,14 @@ class CreateProduct implements CreateProductInput {
     @Override
     void create(ProductDraft productDraft) {
         try {
-            if (!isProductDuplicated(productDraft)) {
+            Optional<List<Product>> duplicateProducts = getDuplicateProducts(productDraft)
+            if (!duplicateProducts.isPresent()) {
                 storeProduct(productDraft)
+            } else {
+                List<Product> foundDuplicates = duplicateProducts.get()
+                Product duplicateProduct = foundDuplicates.get(0)
+                log.info("Found duplicate products for ${duplicateProduct.productName} with Id ${foundDuplicates.productId}")
+                output.foundDuplicates(foundDuplicates)
             }
         } catch (DatabaseQueryException databaseQueryException) {
             log.error("Product creation failed", databaseQueryException)
@@ -44,22 +50,12 @@ class CreateProduct implements CreateProductInput {
         }
     }
 
-    private boolean isProductDuplicated(ProductDraft productDraft) {
-        List<Product> duplicateProducts = []
-        duplicateProducts = dataSource.findDuplicateProducts(productDraft)
-        switch (duplicateProducts.size()) {
-            case 0:
-                return false
-            case 1:
-                Product duplicateProduct = duplicateProducts.get(0)
-                log.info("Duplicate entry with id $duplicateProduct.productId for ${productDraft.name} found")
-                output.foundDuplicate(duplicateProduct)
-                return true
-            default:
-                Product duplicateProduct = duplicateProducts.get(0)
-                log.info("Found multiple duplicate products for $duplicateProduct.productName with Ids $duplicateProduct.productId")
-                output.foundDuplicates(duplicateProducts)
-                return true
+    private Optional<List<Product>> getDuplicateProducts(ProductDraft productDraft) {
+        List<Product> duplicateProducts = dataSource.findDuplicateProducts(productDraft)
+        if (duplicateProducts.empty) {
+            return Optional.empty()
+        } else {
+            return Optional.of(duplicateProducts)
         }
     }
 

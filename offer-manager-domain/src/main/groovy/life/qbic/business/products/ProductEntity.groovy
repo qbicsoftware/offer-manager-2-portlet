@@ -35,7 +35,7 @@ class ProductEntity {
         this.internalUnitPrice = Objects.requireNonNull(internalUnitPrice)
         this.externalUnitPrice = Objects.requireNonNull(externalUnitPrice)
         this.unit = Objects.requireNonNull(unit)
-        this.serviceProvider = serviceProvider
+        this.serviceProvider = Objects.requireNonNull(serviceProvider)
         this.id = Optional.empty()
     }
 
@@ -69,7 +69,7 @@ class ProductEntity {
      * @return a product entity
      */
     static ProductEntity fromDto(Product product) {
-        ProductCategory productCategory = determineProductCategory(product)
+        ProductCategory productCategory = ClassCategoryMapper.determineProductCategory(product)
         return new ProductEntity(productCategory,
                 product.productName,
                 product.description,
@@ -80,41 +80,13 @@ class ProductEntity {
     }
 
     /**
-     * Retrieves the category of the given product
-     * @param product The product of a specific product category
-     * @return the product category of the given product
-     */
-    static ProductCategory determineProductCategory(Product product) {
-        switch(product) {
-            case ProjectManagement:
-                return ProductCategory.PROJECT_MANAGEMENT
-            case Sequencing:
-                return ProductCategory.SEQUENCING
-            case PrimaryAnalysis:
-                return ProductCategory.PRIMARY_BIOINFO
-            case SecondaryAnalysis:
-                return ProductCategory.SECONDARY_BIOINFO
-            case DataStorage:
-                return ProductCategory.DATA_STORAGE
-            case ProteomicAnalysis:
-                return ProductCategory.PROTEOMIC
-            case MetabolomicAnalysis:
-                return ProductCategory.METABOLOMIC
-            case ExternalServiceProduct:
-                return ProductCategory.EXTERNAL_SERVICE
-        }
-
-        throw new IllegalArgumentException("Cannot parse category of the provided product ${product.toString()}")
-    }
-
-    /**
      * Parses to a product dto
      * @return a product dto
      */
     Product toFinalProduct() {
         ProductId productId = id.orElseThrow({ new RuntimeException("Can not finalize product without id.") })
         long runningNumber = productId.getUniqueId()
-        Class productClass = determineProductClass(category)
+        Class productClass = ClassCategoryMapper.determineProductClass(category)
         try {
             Product finalProduct = productClass.newInstance(name, description, internalUnitPrice, externalUnitPrice, unit, runningNumber, serviceProvider)
             return finalProduct
@@ -122,30 +94,6 @@ class ProductEntity {
             throw new RuntimeException("Could not finalize product. Class $productClass could not be instantiated: $runtimeException.message")
         }
     }
-
-    private static Class<? extends Product> determineProductClass(ProductCategory category) {
-        switch (category) {
-            case ProductCategory.DATA_STORAGE:
-                return DataStorage
-            case ProductCategory.PRIMARY_BIOINFO:
-                return PrimaryAnalysis
-            case ProductCategory.PROJECT_MANAGEMENT:
-                return ProjectManagement
-            case ProductCategory.SECONDARY_BIOINFO:
-                return SecondaryAnalysis
-            case ProductCategory.SEQUENCING:
-                return Sequencing
-            case ProductCategory.PROTEOMIC:
-                return ProteomicAnalysis
-            case ProductCategory.METABOLOMIC:
-                return MetabolomicAnalysis
-            case ProductCategory.EXTERNAL_SERVICE:
-                return ExternalServiceProduct
-            default:
-                throw new IllegalStateException("Unknown product category $category")
-        }
-    }
-
 
     /**
      * Calculates the SHA checksum for the product
@@ -206,5 +154,67 @@ class ProductEntity {
                 ", serviceProvider=" + serviceProvider +
                 ", id=" + id +
                 '}'
+    }
+
+    /**
+     * Small helper class to handle the mapping of a ProductClass to its associated ProductCategory and vice versa .
+     */
+    private static class ClassCategoryMapper {
+
+        /**
+         * Retrieves the product class associated with a given ProductCategory
+         * @param category The ProductCategory associated with a specific product
+         * @return the product class associated with the provided ProductCategory
+         */
+        private static Class<? extends Product> determineProductClass(ProductCategory category) {
+            switch (category) {
+                case ProductCategory.DATA_STORAGE:
+                    return DataStorage
+                case ProductCategory.PRIMARY_BIOINFO:
+                    return PrimaryAnalysis
+                case ProductCategory.PROJECT_MANAGEMENT:
+                    return ProjectManagement
+                case ProductCategory.SECONDARY_BIOINFO:
+                    return SecondaryAnalysis
+                case ProductCategory.SEQUENCING:
+                    return Sequencing
+                case ProductCategory.PROTEOMIC:
+                    return ProteomicAnalysis
+                case ProductCategory.METABOLOMIC:
+                    return MetabolomicAnalysis
+                case ProductCategory.EXTERNAL_SERVICE:
+                    return ExternalServiceProduct
+                default:
+                    throw new IllegalStateException("Unknown product category $category")
+            }
+        }
+
+        /**
+         * Retrieves the category of the given product
+         * @param product The product of a specific product category
+         * @return the product category of the given product
+         */
+        private static ProductCategory determineProductCategory(Product product) {
+            switch (product) {
+                case ProjectManagement:
+                    return ProductCategory.PROJECT_MANAGEMENT
+                case Sequencing:
+                    return ProductCategory.SEQUENCING
+                case PrimaryAnalysis:
+                    return ProductCategory.PRIMARY_BIOINFO
+                case SecondaryAnalysis:
+                    return ProductCategory.SECONDARY_BIOINFO
+                case DataStorage:
+                    return ProductCategory.DATA_STORAGE
+                case ProteomicAnalysis:
+                    return ProductCategory.PROTEOMIC
+                case MetabolomicAnalysis:
+                    return ProductCategory.METABOLOMIC
+                case ExternalServiceProduct:
+                    return ProductCategory.EXTERNAL_SERVICE
+            }
+
+            throw new IllegalArgumentException("Cannot parse category of the provided product ${product.toString()}")
+        }
     }
 }

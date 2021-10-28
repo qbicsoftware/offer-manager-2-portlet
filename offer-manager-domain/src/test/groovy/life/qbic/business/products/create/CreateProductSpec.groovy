@@ -25,8 +25,7 @@ class CreateProductSpec extends Specification {
     ProductCategoryFactory productCategoryFactory = new ProductCategoryFactory()
     ProductCategory category = productCategoryFactory.getForString("Sequencing")
     ProductDraft productDraft = ProductDraft.create(category, "test product", "this is a test product", 0.5, 0.5, ProductUnit.PER_GIGABYTE, Facility.CEGAT)
-    Product product = new Sequencing("test product", "this is a test product", 0.5, ProductUnit.PER_GIGABYTE, "1")
-    //todo use long when ProductId builder is fixed
+    Product product = new Sequencing("test product", "this is a test product", 0.5, 0.5, ProductUnit.PER_GIGABYTE, 1, Facility.CEGAT)
 
     def "Create stores the provided product in the data source"() {
         given: "a data source that stores a product"
@@ -43,7 +42,7 @@ class CreateProductSpec extends Specification {
         1 * output.created({Product product1 ->
             product1.productId == createdProductId
         })
-        0 * output.foundDuplicate(_)
+        0 * output.foundDuplicates(_)
         0 * output.failNotification(_)
     }
 
@@ -60,31 +59,8 @@ class CreateProductSpec extends Specification {
 
         then: "the output is informed and no failure notification is send"
         0 * output.created(_)
-        0 * output.foundDuplicate(_)
+        0 * output.foundDuplicates(_)
         1 * output.failNotification(_)
-    }
-
-    def "Create informs the output that an entry matching the provided product already exists"() {
-        given: "a data source that detects a duplicate entry"
-        CreateProductDataSource dataSource = Stub(CreateProductDataSource)
-        String dataStatus = ""
-        dataSource.findDuplicateProducts(productDraft) >> {
-            dataStatus = "not stored"
-            List<Product> productList = [product]
-        }
-
-        and: "an instance of the use case"
-        CreateProduct createProduct = new CreateProduct(dataSource, output)
-
-        when: "the create method is called"
-        createProduct.create(productDraft)
-
-        then: "the output is informed and no failure notification is send"
-        1 * output.foundDuplicate(_)
-        0 * output.created(_)
-        0 * output.failNotification(_)
-        and: "the data was not stored in the database"
-        dataStatus == "not stored"
     }
 
     def "Create informs the output that multiple entries matching the provided product already exists"() {
@@ -93,7 +69,7 @@ class CreateProductSpec extends Specification {
         String dataStatus = ""
         dataSource.findDuplicateProducts(productDraft) >> {
             dataStatus = "not stored"
-            List<Product> productList = [product, product, product]
+            [product, product, product]
         }
 
         and: "an instance of the use case"
@@ -127,7 +103,7 @@ class CreateProductSpec extends Specification {
 
         then: "the output is send a failure notification"
         0 * output.created(_)
-        0 * output.foundDuplicate(_)
+        0 * output.foundDuplicates(_)
         1 * output.failNotification(_ as String)
         and: "the data was stored"
         dataStatus == "not stored"

@@ -218,8 +218,8 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       while (result.next()) {
         ProductId duplicateProductId = ProductId.from(result.getString("productId"))
         try {
-          Product retrievedProduct = fetch(duplicateProductId).ifPresent({
-              products << it
+          fetch(duplicateProductId).ifPresent({ Product retrievedProduct ->
+            products << retrievedProduct
           })
         }
         catch (DatabaseQueryException databaseQueryException) {
@@ -237,12 +237,12 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * @param productId String of productId stored in the DB e.g. "DS_1"
    * @return identifier Long of the iterative identifying part of the productId
    */
-  private static long parseProductId(String productIdText) throws NumberFormatException{
+  private static long parseProductId(String productIdText) {
 
     ProductId productId = ProductId.from(productIdText)
     // The first entry [0] contains the product type which is assigned automatically, no need to parse it.
-    String uniqueId = productId.getUniqueId()
-    return Long.parseLong(uniqueId)
+    long uniqueId = productId.getUniqueId()
+    return uniqueId
   }
 
 
@@ -369,16 +369,17 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   private ProductId createProductId(ProductDraft productDraft) {
-    String abbreviation = productDraft.getCategory().abbreviation
-    String version = fetchLatestIdentifier(abbreviation) //todo exchange with long
-    return new ProductId(abbreviation, version)
+    ProductCategory productCategory = productDraft.getCategory()
+    String abbreviation = productCategory.getAbbreviation()
+    String version = fetchLatestIdentifier(productCategory) //todo exchange with long
+    return new ProductId.Builder(abbreviation, version).build()
   }
 
-  private Long fetchLatestIdentifier(String productCategory) {
+  private Long fetchLatestIdentifier(ProductCategory productCategory) {
     String query = "SELECT productId FROM product WHERE productId LIKE ?"
     Connection connection = provider.connect()
 
-    String category = productCategory + "_%"
+    String category = productCategory.getAbbreviation() + "_%"
     Long latestUniqueId = 0
 
     connection.withCloseable {
@@ -437,7 +438,6 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     /**
      * Query for ProductId of a product by product properties
      */
-
     final static String FIND_ACTIVE_PRODUCTID_BY_PROPERTIES = "SELECT productId FROM product "+
             "WHERE category = ? AND description = ? AND productName = ? AND internalUnitPrice = ? AND externalUnitPrice = ? AND unit = ? AND serviceProvider = ? AND active = 1"
   }
