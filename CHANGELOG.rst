@@ -4,6 +4,20 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.2.1 (2021-10-27)
+
+**Added**
+
+**Fixed**
+
+* Introduce proper exception handling when product cannot found in the database (DM-66)
+
+**Dependencies**
+
+* com.vaadin 8.13.0 -> 8.14.0 (addresses CVE-2021-37714)
+
+**Deprecated**
+
 1.2.0 (2021-10-13)
 ------------------
 
