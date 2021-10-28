@@ -218,8 +218,9 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       while (result.next()) {
         ProductId duplicateProductId = ProductId.from(result.getString("productId"))
         try {
-          Product retrievedProduct = fetch(duplicateProductId).get()
-          products << retrievedProduct
+          Product retrievedProduct = fetch(duplicateProductId).ifPresent({
+              products << it
+          })
         }
         catch (DatabaseQueryException databaseQueryException) {
           log.warn("Could not check for duplicate Products for $productDraft.name  'Skipping.")
