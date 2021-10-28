@@ -143,7 +143,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
               "VALUE(?,?,?)"
 
       Integer productId = getProductPrimaryId(productItem.product)
-              .orElseThrow({new DatabaseQueryException("Could not determine product primary id for $productItem.product!")})
+              .orElseThrow({new DatabaseQueryException("Could not determine product primary id for ${productItem.product}!")})
 
       provider.connect().withCloseable {
         PreparedStatement preparedStatement = it.prepareStatement(query)
@@ -157,11 +157,9 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   private Optional<Integer> getProductPrimaryId(Product product) {
-    Optional<Integer> productPrimaryId = Optional.empty()
     def result = findProductId(product)
-    if (result) {
-      productPrimaryId = Optional.of(result as Integer)
-    }
+    Optional<Integer> productPrimaryId = Optional.ofNullable(result).flatMap({ it as Integer})
+    return productPrimaryId
     return productPrimaryId
   }
 
