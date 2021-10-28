@@ -157,8 +157,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
 
   private Optional<Integer> getProductPrimaryId(Product product) {
     def result = findProductId(product)
-    Optional<Integer> productPrimaryId = Optional.ofNullable(result).flatMap({ it as Integer})
-    return productPrimaryId
+    Optional<Integer> productPrimaryId = Optional.ofNullable(result).map({ it as Integer })
     return productPrimaryId
   }
 
