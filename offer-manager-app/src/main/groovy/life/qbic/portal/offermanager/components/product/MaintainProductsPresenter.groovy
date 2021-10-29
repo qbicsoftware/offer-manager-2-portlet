@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.product
 
 import life.qbic.business.products.archive.ArchiveProductOutput
 import life.qbic.business.products.create.CreateProductOutput
+import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.AppViewModel
 
@@ -38,8 +39,13 @@ class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOu
 
     @Override
     void foundDuplicates(List<Product> duplicateProducts) {
-        String duplicateProductName = duplicateProducts.get(0).productName
-        mainViewModel.failureNotifications << "Found duplicate products for ${duplicateProductName} with Id ${duplicateProducts.productId}"
+        Product duplicateProduct = duplicateProducts.first()
+        List<ProductId> duplicateProductIds = []
+        duplicateProducts.forEach { Product product ->
+            duplicateProductIds << product.getProductId()
+        }
+        String productIds = duplicateProductIds.join(", ")
+        mainViewModel.failureNotifications << "Found multiple products for ${duplicateProduct.productName} : ${productIds}"
     }
 
     @Override

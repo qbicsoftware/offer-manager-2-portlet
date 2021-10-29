@@ -35,11 +35,15 @@ class CreateProduct implements CreateProductInput {
            if (duplicateProducts.isEmpty()) {
                 storeProduct(productDraft)
             } else {
-                Product duplicateProduct = duplicateProducts.first()
-                String productIds = duplicateProducts.join(", ")
-                log.info("Found multiple products for ${duplicateProduct.productName} : ${productIds}")
-                output.foundDuplicates(duplicateProducts)
-            }
+               Product duplicateProduct = duplicateProducts.first()
+               List<ProductId> duplicateProductIds = []
+               duplicateProducts.forEach { Product product ->
+                   duplicateProductIds << product.getProductId()
+               }
+               String productIds = duplicateProductIds.join(", ")
+               log.info("Found multiple products for ${duplicateProduct.productName} : ${productIds}")
+               output.foundDuplicates(duplicateProducts)
+           }
         } catch (DatabaseQueryException databaseQueryException) {
             log.error("Product creation failed", databaseQueryException)
             output.failNotification("Could not create new product $productDraft.name")
