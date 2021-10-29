@@ -50,7 +50,7 @@ class CreateProduct implements CreateProductInput {
         }
     }
 
-    private Optional<List<Product>> getDuplicateProducts(ProductDraft productDraft) {
+    private List<Product> getDuplicateProducts(ProductDraft productDraft) {
         List<Product> duplicateProducts = dataSource.findDuplicateProducts(productDraft)
         if (duplicateProducts.empty) {
             return Optional.empty()
