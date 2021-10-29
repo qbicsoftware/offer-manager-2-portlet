@@ -52,10 +52,7 @@ class CreateProduct implements CreateProductInput {
 
     private List<Product> getDuplicateProducts(ProductDraft productDraft) {
         List<Product> duplicateProducts = dataSource.findDuplicateProducts(productDraft)
-        if (duplicateProducts.empty) {
-            return Optional.empty()
-        } else {
-            return Optional.of(duplicateProducts)
+        return duplicateProducts
         }
     }
 
