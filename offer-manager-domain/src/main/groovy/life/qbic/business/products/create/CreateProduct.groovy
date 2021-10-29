@@ -31,8 +31,8 @@ class CreateProduct implements CreateProductInput {
     @Override
     void create(ProductDraft productDraft) {
         try {
-            Optional<List<Product>> duplicateProducts = getDuplicateProducts(productDraft)
-            if (!duplicateProducts.isPresent()) {
+           List<Product> duplicateProducts = getDuplicateProducts(productDraft)
+           if (duplicateProducts.isEmpty()) {
                 storeProduct(productDraft)
             } else {
                 List<Product> foundDuplicates = duplicateProducts.get()
