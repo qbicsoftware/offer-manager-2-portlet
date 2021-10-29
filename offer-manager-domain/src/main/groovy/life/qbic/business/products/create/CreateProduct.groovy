@@ -53,7 +53,6 @@ class CreateProduct implements CreateProductInput {
     private List<Product> getDuplicateProducts(ProductDraft productDraft) {
         List<Product> duplicateProducts = dataSource.findDuplicateProducts(productDraft)
         return duplicateProducts
-        }
     }
 
     private void storeProduct(ProductDraft productDraft) {
