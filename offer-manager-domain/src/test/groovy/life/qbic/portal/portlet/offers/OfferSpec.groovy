@@ -88,7 +88,6 @@ class OfferSpec extends Specification {
         and: "the expected calculation"
         MathContext rounding = new MathContext(2, RoundingMode.CEILING)
         ProductItem discountedItem = finalOffer.getItems().get(0)
-        println(discountedItem.totalPrice)
 
         BigDecimal unitPrice = discountedItem.product.internalUnitPrice.toBigDecimal()
         def discountedUnitPrice = new QuantityDiscount().apply(42,unitPrice)

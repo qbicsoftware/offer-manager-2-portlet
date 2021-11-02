@@ -19,11 +19,11 @@ interface CreateProductOutput extends UseCaseFailure{
     void created(Product product)
 
     /**
-     * The product is already stored in the database
-     * @param product The product for which a duplicate has been found
-     * @since 1.0.0
+     * Multiple instances of the product are already stored in the database
+     * @param product The product for which multiple duplicates have been found
+     * @since 1.2.0
      */
-    void foundDuplicate(Product product)
+    void foundDuplicates(List<Product> product)
 
 
 }

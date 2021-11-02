@@ -5,9 +5,8 @@ import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.products.Converter
 import life.qbic.business.products.archive.ArchiveProductDataSource
-import life.qbic.business.products.copy.CopyProductDataSource
 import life.qbic.business.products.create.CreateProductDataSource
-import life.qbic.business.products.create.ProductExistsException
+import life.qbic.business.products.dtos.ProductDraft
 import life.qbic.business.products.list.ListProductsDataSource
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductCategoryFactory
@@ -29,7 +28,7 @@ import java.sql.SQLException
  * @since 1.0.0
  */
 @Log4j2
-class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource, CopyProductDataSource, ListProductsDataSource {
+class ProductsDbConnector implements ArchiveProductDataSource, CreateProductDataSource, ListProductsDataSource {
 
   private final ConnectionProvider provider
 
@@ -114,7 +113,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       double externalUnitPrice = row.externalUnitPrice
       Facility serviceProvider = Facility.valueOf(row.serviceProvider as String)
 
-
+      //ToDo Retire Converter with ProductEntity once it's decided how the ProductID will be matched
       product = Converter.createProductWithVersion(
               productCategory,
               productName,
@@ -158,8 +157,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
 
   private Optional<Integer> getProductPrimaryId(Product product) {
     def result = findProductId(product)
-    Optional<Integer> productPrimaryId = Optional.ofNullable(result).flatMap({ it as Integer})
-    return productPrimaryId
+    Optional<Integer> productPrimaryId = Optional.ofNullable(result).map({ it as Integer })
     return productPrimaryId
   }
 
@@ -171,14 +169,12 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * @return the found ID
    */
   int findProductId(Product product) {
-    String query = "SELECT id FROM product "+
-            "WHERE category = ? AND description = ? AND productName = ? AND internalUnitPrice = ? AND externalUnitPrice = ? AND unit = ? AND serviceProvider = ?"
 
     List<Integer> foundId = []
 
     provider.connect().withCloseable {
-      PreparedStatement preparedStatement = it.prepareStatement(query)
-      preparedStatement.setString(1, getProductType(product))
+      PreparedStatement preparedStatement = it.prepareStatement(Queries.FIND_ID_BY_PRODUCT_PROPERTIES)
+      preparedStatement.setString(1, getProductCategory(product))
       preparedStatement.setString(2,product.description)
       preparedStatement.setString(3,product.productName)
       preparedStatement.setDouble(4,product.internalUnitPrice)
@@ -196,29 +192,66 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   /**
+   * Searches if the properties contained in a productDraft are already contained in the database
+   *
+   * @param productDraft for which it is checked if it's already contained in the db
+   * @return List containing all duplicate products stored in the DB for the provided productDraft
+   */
+  @Override
+  List<Product> findDuplicateProducts(ProductDraft productDraft) {
+
+    List<Product> products = []
+
+    provider.connect().withCloseable {
+      PreparedStatement preparedStatement = it.prepareStatement(Queries.FIND_ACTIVE_PRODUCTID_BY_PROPERTIES)
+      preparedStatement.setString(1, productDraft.category.getValue())
+      preparedStatement.setString(2, productDraft.description)
+      preparedStatement.setString(3, productDraft.name)
+      preparedStatement.setDouble(4, productDraft.internalUnitPrice)
+      preparedStatement.setDouble(5, productDraft.externalUnitPrice)
+      preparedStatement.setString(6, productDraft.unit.value)
+      preparedStatement.setString(7, productDraft.serviceProvider.name())
+
+      ResultSet result = preparedStatement.executeQuery()
+
+      while (result.next()) {
+        ProductId duplicateProductId = ProductId.from(result.getString("productId"))
+        try {
+          fetch(duplicateProductId).ifPresent({ Product retrievedProduct ->
+            products << retrievedProduct
+          })
+        }
+        catch (DatabaseQueryException databaseQueryException) {
+          log.warn("Could not check for duplicate Products for $productDraft.name  'Skipping.")
+          log.debug("Could not check for duplicate Products for $productDraft.name. Skipping.", databaseQueryException)
+        }
+      }
+    }
+    return products
+  }
+
+  /**
    * Returns the product identifying running number given a productId
    *
    * @param productId String of productId stored in the DB e.g. "DS_1"
    * @return identifier Long of the iterative identifying part of the productId
    */
-  private static long parseProductId(String productId) throws NumberFormatException{
-    if (!productId.contains("_")) {
-      throw new IllegalArgumentException("Not a valid product identifier.")
-    }
-    def splitId = productId.split("_")
+  private static long parseProductId(String productIdText) {
+
+    ProductId productId = ProductId.from(productIdText)
     // The first entry [0] contains the product type which is assigned automatically, no need to parse it.
-    String identifier = splitId[1]
-    return Long.parseLong(identifier)
+    long uniqueId = productId.getUniqueId()
+    return uniqueId
   }
 
 
   /**
-   * Returns the product type of a product based on its implemented class
+   * Returns the product category value of a product based on its implemented class
    *
-   * @param product A product for which the type needs to be determined
+   * @param product A product for which the category needs to be determined
    * @return the type of the product or null
    */
-  private static String getProductType(Product product){
+  private static String getProductCategory(Product product){
     if (product instanceof Sequencing) return ProductCategory.SEQUENCING.getValue()
     if (product instanceof ProjectManagement) return ProductCategory.PROJECT_MANAGEMENT.getValue()
     if (product instanceof PrimaryAnalysis) return ProductCategory.PRIMARY_BIOINFO.getValue()
@@ -269,6 +302,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     Connection connection = provider.connect()
 
     connection.withCloseable {
+
       def statement = connection.prepareStatement(Queries.ARCHIVE_PRODUCT)
       statement.setString(1, product.productId.toString())
       statement.execute()
@@ -310,21 +344,22 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
    * {@inheritDoc}
    */
   @Override
-  ProductId store(Product product) throws DatabaseQueryException, ProductExistsException {
+  ProductId store(ProductDraft productDraft) throws DatabaseQueryException {
+
     Connection connection = provider.connect()
 
-    ProductId productId = createProductId(product)
+    ProductId productId = createProductId(productDraft)
 
     connection.withCloseable {
       PreparedStatement preparedStatement = it.prepareStatement(Queries.INSERT_PRODUCT)
-      preparedStatement.setString(1, getProductType(product))
-      preparedStatement.setString(2, product.description)
-      preparedStatement.setString(3, product.productName)
-      preparedStatement.setDouble(4, product.internalUnitPrice)
-      preparedStatement.setDouble(5, product.externalUnitPrice)
-      preparedStatement.setString(6, product.unit.value)
+      preparedStatement.setString(1, productDraft.category.getValue())
+      preparedStatement.setString(2, productDraft.description)
+      preparedStatement.setString(3, productDraft.name)
+      preparedStatement.setDouble(4, productDraft.internalUnitPrice)
+      preparedStatement.setDouble(5, productDraft.externalUnitPrice)
+      preparedStatement.setString(6, productDraft.unit.value)
       preparedStatement.setString(7, productId.toString())
-      preparedStatement.setString(8, product.serviceProvider.name())
+      preparedStatement.setString(8, productDraft.serviceProvider.name())
 
       preparedStatement.execute()
     }
@@ -332,18 +367,18 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     return productId
   }
 
-  private ProductId createProductId(Product product){
-    String productType = product.productId.type
-    String version = fetchLatestIdentifier(productType) //todo exchange with long
-
-    return new ProductId(productType,version)
+  private ProductId createProductId(ProductDraft productDraft) {
+    ProductCategory productCategory = productDraft.getCategory()
+    String abbreviation = productCategory.getAbbreviation()
+    String version = fetchLatestIdentifier(productCategory) //todo exchange with long
+    return new ProductId.Builder(abbreviation, version).build()
   }
 
-  private Long fetchLatestIdentifier(String productType){
+  private Long fetchLatestIdentifier(ProductCategory productCategory) {
     String query = "SELECT productId FROM product WHERE productId LIKE ?"
     Connection connection = provider.connect()
 
-    String category = productType + "_%"
+    String category = productCategory.getAbbreviation() + "_%"
     Long latestUniqueId = 0
 
     connection.withCloseable {
@@ -355,7 +390,8 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       while(result.next()){
         String id = result.getString(1)
         if(id) {
-          long idRunningNumber = Long.parseLong(id.split('_')[1])
+          ProductId productId = ProductId.from(id)
+          long idRunningNumber = productId.getUniqueId()
           if(idRunningNumber > latestUniqueId) latestUniqueId = idRunningNumber
         }
       }
@@ -392,5 +428,16 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
                     "LEFT JOIN product ON productitem.productId = product.id " +
                     "WHERE offerId=?;"
 
+    /**
+     * Query for SQL table Id of a product by product properties
+     */
+    final static String FIND_ID_BY_PRODUCT_PROPERTIES = "SELECT id FROM product "+
+            "WHERE category = ? AND description = ? AND productName = ? AND internalUnitPrice = ? AND externalUnitPrice = ? AND unit = ? AND serviceProvider = ?"
+
+    /**
+     * Query for ProductId of a product by product properties
+     */
+    final static String FIND_ACTIVE_PRODUCTID_BY_PROPERTIES = "SELECT productId FROM product "+
+            "WHERE category = ? AND description = ? AND productName = ? AND internalUnitPrice = ? AND externalUnitPrice = ? AND unit = ? AND serviceProvider = ? AND active = 1"
   }
 }
