@@ -16,8 +16,6 @@ import life.qbic.business.persons.list.ListPersonsDataSource
 import life.qbic.business.persons.search.SearchPersonDataSource
 import life.qbic.business.products.archive.ArchiveProduct
 import life.qbic.business.products.archive.ArchiveProductDataSource
-import life.qbic.business.products.copy.CopyProduct
-import life.qbic.business.products.copy.CopyProductDataSource
 import life.qbic.business.products.create.CreateProduct
 import life.qbic.business.products.create.CreateProductDataSource
 import life.qbic.business.products.list.ListProductsDataSource
@@ -136,7 +134,6 @@ class DependencyManager {
     private SearchPersonDataSource searchPersonDataSource
     // Implemented by life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
     private ArchiveProductDataSource archiveProductDataSource
-    private CopyProductDataSource copyProductDataSource
     private CreateProductDataSource createProductDataSource
     private ListProductsDataSource listProductsDataSource
     // Implemented by life.qbic.portal.offermanager.dataresources.projects.ProjectMainConnector
@@ -190,7 +187,6 @@ class DependencyManager {
             ProductsDbConnector productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
             archiveProductDataSource = productsDbConnector
             createProductDataSource = productsDbConnector
-            copyProductDataSource = productsDbConnector
             listProductsDataSource = productsDbConnector
 
             /* Currently life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
@@ -612,7 +608,6 @@ class DependencyManager {
      * Creates a new MaintainProductsView using fields
      * <ul>
      *     <li>{@link #archiveProductDataSource}</li>
-     *     <li>{@link #copyProductDataSource}</li>
      *     <li>{@link #createProductDataSource}</li>
      *     <li>{@link #productsResourcesService}</li>
      *     <li>{@link #viewModel}</li>
@@ -625,9 +620,8 @@ class DependencyManager {
         ResourcesService<Product> productResourcesService = this.productsResourcesService
         ArchiveProductDataSource archiveProductDataSource = this.archiveProductDataSource
         CreateProductDataSource createProductDataSource = this.createProductDataSource
-        CopyProductDataSource copyProductDataSource = this.copyProductDataSource
 
-        // used to communicate products to be copied from the MaintainProducts to CopyProduct
+        // used to communicate products to be copied from the MaintainProducts
         EventEmitter<Product> productSelectEvent = new EventEmitter<Product>()
 
         MaintainProductsViewModel maintainProductsViewModel = new MaintainProductsViewModel(productResourcesService, productSelectEvent)
@@ -635,9 +629,8 @@ class DependencyManager {
 
         ArchiveProduct archiveProduct = new ArchiveProduct(archiveProductDataSource, maintainProductsPresenter)
         CreateProduct createProduct = new CreateProduct(createProductDataSource, maintainProductsPresenter)
-        CopyProduct copyProduct = new CopyProduct(copyProductDataSource, maintainProductsPresenter, createProductDataSource)
 
-        MaintainProductsController maintainProductsController = new MaintainProductsController(createProduct, archiveProduct, copyProduct)
+        MaintainProductsController maintainProductsController = new MaintainProductsController(createProduct, archiveProduct)
 
         CreateProductViewModel createProductViewModel = new CreateProductViewModel()
         CreateProductView createProductView = new CreateProductView(createProductViewModel, maintainProductsController)

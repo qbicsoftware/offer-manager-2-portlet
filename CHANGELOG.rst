@@ -4,7 +4,7 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-1.3.0-SNAPSHOT (2021-10-13)
+1.3.0-SNAPSHOT (2021-11-04)
 ---------------------------
 
 **Added**
@@ -15,6 +15,24 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Deprecated**
 
+1.2.1 (2021-10-27)
+------------------
+
+**Added**
+
+**Fixed**
+
+* Introduce proper exception handling when product cannot found in the database (DM-66)
+
+* Address exception creation when CopyProduct use case was triggered (DM-33)
+
+**Dependencies**
+
+* com.vaadin 8.13.0 -> 8.14.0 (addresses CVE-2021-37714)
+
+* Bump data model lib 2.13.0 -> 2.14.0 (includes extension of ProductCategory with ProductType abbreviation)
+
+**Deprecated**
 
 1.2.0 (2021-10-13)
 ------------------
