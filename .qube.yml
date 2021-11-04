@@ -3,7 +3,7 @@ full_name: Sven Fillinger
 email: sven.fillinger@qbic.uni-tuebingen.de
 project_name: qoffer-2-portlet
 project_short_description: qOffer assists in managing and creating offers
-version: 1.2.1
+version: 1.3.0-SNAPSHOT
 domain: portlet
 language: groovy
 project_slug: qoffer-2-portlet
