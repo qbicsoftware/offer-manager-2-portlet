@@ -4,8 +4,8 @@ import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.products.Converter
-import life.qbic.datamodel.dtos.business.ProductCategory
+import life.qbic.business.products.ProductEntity
+import life.qbic.business.products.dtos.ProductDraft
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.Product
 
@@ -29,25 +29,51 @@ class CreateProduct implements CreateProductInput {
     }
 
     @Override
-    void create(Product product) {
+    void create(ProductDraft productDraft) {
         try {
-            ProductId createdProductId = dataSource.store(product)
-            //create product with new product ID
-            ProductCategory category = Converter.getCategory(product)
-            Product storedProduct = Converter.createProductWithVersion(category,product.productName,product.description,product.internalUnitPrice, product.externalUnitPrice, product.unit, createdProductId.uniqueId, product.serviceProvider)
-
-            output.created(storedProduct)
-        } catch(DatabaseQueryException databaseQueryException) {
+           List<Product> duplicateProducts = getDuplicateProducts(productDraft)
+           if (duplicateProducts.isEmpty()) {
+                storeProduct(productDraft)
+            } else {
+               Product duplicateProduct = duplicateProducts.first()
+               List<ProductId> duplicateProductIds = []
+               duplicateProducts.forEach { Product product ->
+                   duplicateProductIds << product.getProductId()
+               }
+               String productIds = duplicateProductIds.join(", ")
+               log.info("Found multiple products for ${duplicateProduct.productName} : ${productIds}")
+               output.foundDuplicates(duplicateProducts)
+           }
+        } catch (DatabaseQueryException databaseQueryException) {
             log.error("Product creation failed", databaseQueryException)
-            output.failNotification("Could not create new product $product.productName")
-        } catch(ProductExistsException productExistsException) {
-            log.warn("Product $product.productName with identifier $product.productId already exists.", productExistsException)
-            output.foundDuplicate(product)
-        } catch(Exception exception) {
+            output.failNotification("Could not create new product $productDraft.name")
+        } catch (Exception exception) {
             log.error("An unexpected error occured during product creation.", exception)
             output.failNotification("An unexpected error occured during product creation. " +
                     "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
         }
     }
 
+    private List<Product> getDuplicateProducts(ProductDraft productDraft) {
+        List<Product> duplicateProducts = dataSource.findDuplicateProducts(productDraft)
+        return duplicateProducts
+    }
+
+    private void storeProduct(ProductDraft productDraft) {
+        ProductId createdProductId
+        Product storedProduct
+        createdProductId = dataSource.store(productDraft)
+        //create product with new product ID
+        if (createdProductId) {
+            ProductEntity storedProductEntity = ProductEntity.fromDraft(productDraft)
+            storedProductEntity.id(createdProductId)
+            storedProduct = storedProductEntity.toFinalProduct()
+            output.created(storedProduct)
+            log.info("${storedProduct.productName} with identifier ${storedProduct.productId} was created successfully.")
+        } else {
+            log.error("The database could not return a ProductId for the generated Product.")
+            output.failNotification("The created Product $productDraft.name did not return a ProductId")
+        }
+    }
 }
+

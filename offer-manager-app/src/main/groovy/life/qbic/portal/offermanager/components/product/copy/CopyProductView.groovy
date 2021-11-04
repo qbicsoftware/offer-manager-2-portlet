@@ -34,7 +34,7 @@ class CopyProductView extends CreateProductView {
     private void adaptListener() {
         createProductButtonRegistration.remove()
         this.createProductButton.addClickListener({
-            controller.copyProduct(viewModel.productCategory, viewModel.productDescription, viewModel.productName, Double.parseDouble(viewModel.internalUnitPrice), Double.parseDouble(viewModel.externalUnitPrice), viewModel.productUnit, copyProductViewModel.productId, viewModel.productFacility)
+            controller.createNewProduct(viewModel.productCategory, viewModel.productDescription, viewModel.productName, Double.parseDouble(viewModel.internalUnitPrice), Double.parseDouble(viewModel.externalUnitPrice), viewModel.productUnit, viewModel.productFacility)
             clearAllFields()
         })
     }

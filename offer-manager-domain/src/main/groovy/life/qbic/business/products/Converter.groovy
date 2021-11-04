@@ -2,8 +2,6 @@ package life.qbic.business.products
 
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.*
@@ -104,20 +102,11 @@ class Converter {
         throw  new IllegalArgumentException("Cannot parse category of the provided product ${product.toString()}")
     }
 
-    static life.qbic.business.products.Product convertDTOtoProduct(Product product){
-        ProductCategory category = getCategory(product)
-        return new life.qbic.business.products.Product.Builder(category,
-                    product.productName,
-                    product.description,
-                    product.internalUnitPrice,
-                    product.externalUnitPrice,
-                    product.unit,
-                    product.serviceProvider)
-                    .build()
-
+    static ProductEntity convertDTOtoProduct(Product product){
+        return ProductEntity.fromDto(product)
     }
 
-    static Product convertProductToDTO(life.qbic.business.products.Product product){
-        return createProductWithVersion(product.category,product.name, product.description, product.internalUnitPrice, product.externalUnitPrice, product.unit, product.id.uniqueId, product.serviceProvider)
+    static Product convertProductToDTO(ProductEntity product){
+        return product.toFinalProduct()
     }
 }

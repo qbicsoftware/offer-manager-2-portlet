@@ -1,6 +1,6 @@
 package life.qbic.business.products.create
 
-import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.business.products.dtos.ProductDraft
 
 /**
  * Input interface for the {@link CreateProduct} use case
@@ -12,9 +12,9 @@ interface CreateProductInput {
 
     /**
      * A product is created in the database
-     * @param product The product that is added to the database
+     * @param productDraft The productDraft containing information about the product to be added the database
      * @since 1.0.0
      */
-    void create(Product product)
+    void create(ProductDraft productDraft)
 
 }
