@@ -131,12 +131,7 @@ thead#page-header {
   grid-template-column: 50% 50%;
   font-weight: bold;
 }
-/* This can be used to address https://github.com/qbicsoftware/offer-manager-2-portlet/issues/765
-.cost-summary .cost-item {
-    display: grid;
-    grid-template-columns: auto auto;  
-}
-*/
+
 .cost-summary .cost-item {
     display: grid;
     grid-template-columns: auto auto;
@@ -382,16 +377,6 @@ table.product-table {
 #quotation-details .cost-summary {
     grid-template-columns: auto calc(100%/6);
 }
-
-/* cost summary in quotation details section*/
-/* This can be used to address https://github.com/qbicsoftware/offer-manager-2-portlet/issues/765
-#quotation-details .cost-summary {
-    width: calc(100% / 3);
-    margin-left: auto;
-    margin-right: 0;
-}*/
-
-
 
 /* agreement declaration */
 section#agreement-declaration {
