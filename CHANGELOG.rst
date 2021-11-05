@@ -11,7 +11,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
-* ZIP code and city of the offer recipient are in the same line now ([DM-67](https://qbicsoftware.atlassian.net/browse/DM-67))
+* ZIP code and city of the offer recipient are in the same line now 
 
 **Dependencies**
 
