@@ -29,6 +29,7 @@ class OfferContent {
      * The information for the affiliation of the customer selected for this offer
      */
     final String customerOrganisation
+    final String customerAddressAddition
     final String customerStreet
     final String customerPostalCode
     final String customerCity
@@ -167,6 +168,7 @@ class OfferContent {
         String customerLastName
         String customerTitle
         String customerOrganisation
+        String customerAddressAddition
         String customerStreet
         String customerPostalCode
         String customerCity
@@ -224,6 +226,7 @@ class OfferContent {
             this.customerTitle = Objects.requireNonNull(customerTitle, "Customer must not be null")
 
             customerOrganisation = Objects.requireNonNull(customerAffiliation.organisation, "Customer affiliation must not be null")
+            customerAddressAddition = customerAffiliation.addressAddition ?: ""
             customerStreet = Objects.requireNonNull(customerAffiliation.street, "Customer affiliation must not be null")
             customerPostalCode = Objects.requireNonNull(customerAffiliation.postalCode, "Customer affiliation  must not be null")
             customerCity = Objects.requireNonNull(customerAffiliation.city, "Customer affiliation must not be null")
@@ -369,6 +372,7 @@ class OfferContent {
         customerTitle = builder.customerTitle
 
         customerOrganisation = builder.customerOrganisation
+        customerAddressAddition = builder.customerAddressAddition
         customerStreet = builder.customerStreet
         customerPostalCode = builder.customerPostalCode
         customerCity = builder.customerCity
