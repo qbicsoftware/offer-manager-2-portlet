@@ -7,12 +7,15 @@ package life.qbic.business.offers.identifier
  *
  * @since 0.1.0
  */
+@Deprecated
 class OfferId extends TomatoId{
 
-    OfferId(RandomPart randomPart, ProjectPart projectPart, Version versionTag) {
-        super(randomPart, projectPart, versionTag)
+    @Deprecated
+    OfferId(RandomPart randomPart, ProjectPart projectPart, Version version) {
+        super(randomPart, projectPart, version)
     }
 
+    @Deprecated
     OfferId(OfferId offerId) {
         super(new RandomPart(offerId.randomPart),
                 new ProjectPart(offerId.projectPart),
@@ -20,6 +23,7 @@ class OfferId extends TomatoId{
     }
 
     @Override
+    @Deprecated
     String toString() {
         return "O-${super.projectPart}-${super.randomPart}-${super.version}"
     }

@@ -6,7 +6,9 @@ package life.qbic.business.offers.identifier
  * Contains the value of the version of the offer
  *
  * @since 0.1.0
+ * @Deprecated please use integer values instead
  */
+@Deprecated
 class Version {
 
     private int version

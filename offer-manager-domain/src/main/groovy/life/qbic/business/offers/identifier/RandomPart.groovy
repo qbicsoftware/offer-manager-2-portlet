@@ -6,7 +6,9 @@ package life.qbic.business.offers.identifier
  * This class contains the value of the random part of the offer identifier.
  *
  * @since 0.1.0
+ * @Deprecated please use Strings instead
  */
+@Deprecated
 class RandomPart {
 
     private static final String alphabet = "abcdefghijklmnopqrstuvwxyz"

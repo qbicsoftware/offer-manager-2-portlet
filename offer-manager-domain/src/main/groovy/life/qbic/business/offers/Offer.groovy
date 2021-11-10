@@ -32,7 +32,7 @@ class Offer {
     /**
      * Holds all available versions of an existing offer
      */
-    private List<OfferId> availableVersions
+    private List<Integer> availableVersions
     /**
      * Date on which the offer was lastly modified
      */
@@ -235,7 +235,7 @@ class Offer {
         this.availableVersions = builder.availableVersions
                 .stream()
                 .map(id -> new OfferId(id)).collect()
-        this.availableVersions.add(this.identifier)
+        this.availableVersions.add(this.identifier.version)
         this.itemsWithOverhead = getOverheadItems()
         this.itemsWithoutOverhead = getNoOverheadItems()
         this.itemsWithOverheadNetPrice = getOverheadItemsNet()
@@ -458,22 +458,8 @@ class Offer {
         return noVatCategory
     }
 
-    /**
-     * Returns a deep copy of all available offer versions.
-     *
-     * @return A list of available offer versions
-     */
-    List<OfferId> getAvailableVersions() {
-        return availableVersions.stream()
-                .map(offerId -> new OfferId(
-                        new RandomPart(offerId.randomPart),
-                        new ProjectPart(offerId.projectPart),
-                        new Version(offerId.version)
-                )).collect()
-    }
-
     void addAvailableVersion(OfferId offerId) {
-        this.availableVersions.add(new OfferId(offerId))
+        this.availableVersions.add(offerId.version)
     }
 
     void addAllAvailableVersions(Collection<OfferId> offerIdCollection) {
@@ -487,7 +473,7 @@ class Offer {
         def copyIdentifier = new OfferId(this.identifier)
         identifier = getLatestVersion()
         identifier.increaseVersion()
-        this.availableVersions.addAll(copyIdentifier, this.identifier)
+        this.availableVersions.addAll(copyIdentifier.version, this.identifier.version)
     }
 
     /**
@@ -622,8 +608,8 @@ class Offer {
      *
      * @return The latest offer id
      */
-    OfferId getLatestVersion() {
-        return availableVersions.sort().last() ?: this.identifier
+    int getLatestVersion() {
+        return availableVersions.max() ?: this.identifier.version
     }
 
 

@@ -1,6 +1,7 @@
 package life.qbic.business.offers.identifier
 
 import groovy.transform.CompileStatic
+import groovy.transform.EqualsAndHashCode
 
 /**
  * Represents and identifier for an offer
@@ -10,60 +11,67 @@ import groovy.transform.CompileStatic
  * @since 0.1.0
  */
 @CompileStatic
+@EqualsAndHashCode(includeFields = true)
 class TomatoId implements Comparable<TomatoId>{
 
-    private RandomPart randomPart
+    private static final String ALPHABET = "abcdefghijklmnopqrstuvwxyz"
 
-    private ProjectPart projectPart
+    private String projectPart
+    private String randomPart
+    private int version
 
-    private Version version
-
+    @Deprecated
     TomatoId(RandomPart randomPart, ProjectPart projectPart, Version version) {
-        this.randomPart = randomPart
+        this.randomPart = randomPart.toString()
+        this.projectPart = projectPart.toString()
+        this.version = version.getRawValue()
+    }
+
+    TomatoId(String projectPart, int version) {
+        this.randomPart = generateFourLetterString()
         this.projectPart = projectPart
         this.version = version
     }
 
-    RandomPart getRandomPart() {
-        return new RandomPart(randomPart)
+    TomatoId(String projectPart, String randomPart, int version) {
+        this.projectPart = projectPart
+        this.randomPart = randomPart
+        this.version = version
     }
 
-    ProjectPart getProjectPart() {
-        return new ProjectPart(projectPart)
+    private static String generateFourLetterString() {
+        StringBuilder randomString = new StringBuilder()
+        Random random = new Random()
+        for (int i = 0; i < 4; i++){
+            def randomIndex = random.nextInt(ALPHABET.size())
+            def newRandomChar = ALPHABET[randomIndex]
+            randomString.append(newRandomChar)
+        }
+        return randomString.toString()
     }
 
-    Version getVersion() {
-        return new Version(version)
-    }
-
-    /**
-     * TODO documentation
-     * @since 1.0.0
-     */
     void increaseVersion() {
-        this.version.increaseVersion()
+        this.version += 1
     }
 
-    @Override
-    String toString() {
-        return "${randomPart.toString()}-${projectPart.toString()}-${version.toString()}"
+    String getProjectPart() {
+        return projectPart
+    }
+
+    String getRandomPart() {
+        return randomPart
+    }
+
+    int getVersion() {
+        return version
     }
 
     @Override
     int compareTo(TomatoId other) {
-        /*
-        -1: current Id version lower than other
-        0: current Id version equal to other
-        1: current Id version higher than other
-         */
-        int returnValue = 0
-        if(this.version.rawValue < other.version.rawValue) {
-            returnValue = -1
-        } else if(this.version.rawValue == other.version.rawValue) {
-            returnValue = 0
-        } else {
-            returnValue = 1
+        if (this.equals(other)) {
+            // we want to be in sync with the equals method
+            return 0
         }
-        return returnValue
+        return this.version <=> other.version
     }
 }

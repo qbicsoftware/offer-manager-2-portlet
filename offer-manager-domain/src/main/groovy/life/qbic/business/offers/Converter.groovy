@@ -71,6 +71,7 @@ class Converter {
                 affiliation).build()
     }
 
+    @Deprecated
     static life.qbic.business.offers.identifier.OfferId buildOfferId(life.qbic.datamodel.dtos.business.OfferId id) {
         def randomPart = new life.qbic.business.offers.identifier.RandomPart(id.randomPart)
         def projectPart = new life.qbic.business.offers.identifier.ProjectPart(id.projectConservedPart)
@@ -78,6 +79,7 @@ class Converter {
         return new life.qbic.business.offers.identifier.OfferId(randomPart, projectPart, version)
     }
 
+    @Deprecated
     static life.qbic.datamodel.dtos.business.OfferId convertIdToDTO(life.qbic.business.offers.identifier.OfferId id) {
         return new life.qbic.datamodel.dtos.business.OfferId(
                 id.getProjectPart().value,

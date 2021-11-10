@@ -6,7 +6,9 @@ package life.qbic.business.offers.identifier
  * Contains the value of the project conserved part of the identifier
  *
  * @since 0.1.0
+ * @Deprecated please use Strings instead
  */
+@Deprecated
 class ProjectPart {
 
     protected String value
