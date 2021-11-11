@@ -7,6 +7,7 @@ import life.qbic.business.offers.fetch.FetchOffer
 import life.qbic.business.offers.fetch.FetchOfferDataSource
 import life.qbic.business.offers.fetch.FetchOfferInput
 import life.qbic.business.offers.fetch.FetchOfferOutput
+import life.qbic.business.offers.identifier.TomatoIdFormatter
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
@@ -67,7 +68,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         Date creationDate = offer.modificationDate
         Date expirationDate = offer.expirationDate
         groupProductItems(offer.items)
-        String id = offer.identifier.toString()
+        String id = TomatoIdFormatter.formatAsOfferId(offer.identifier)
         def offerContentBuilder = new OfferContent.Builder(offer.customer,offer.selectedCustomerAffiliation,offer.projectManager,creationDate,expirationDate,offer.projectTitle
         ,offer.projectObjective, offer.experimentalDesign.orElse(""), id, offer.getTotalNetPriceWithOverheads())
 

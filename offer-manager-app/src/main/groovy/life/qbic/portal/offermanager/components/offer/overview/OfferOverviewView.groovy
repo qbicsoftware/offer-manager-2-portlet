@@ -15,6 +15,7 @@ import com.vaadin.ui.renderers.TextRenderer
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.offers.Currency
+import life.qbic.business.offers.identifier.TomatoIdFormatter
 import life.qbic.portal.offermanager.OfferFileNameFormatter
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
@@ -142,7 +143,7 @@ class OfferOverviewView extends VerticalLayout {
                     .getModificationDate()
         }).setCaption("Creation Date").setId("CreationDate")
         dateColumn.setRenderer(date -> date, new DateRenderer('%1$tY-%1$tm-%1$td'))
-        overviewGrid.addColumn({ overview -> overview.offerId.toString() })
+        overviewGrid.addColumn({ overview -> TomatoIdFormatter.formatAsOfferId(overview.offerId) })
                 .setCaption("Offer ID").setId("OfferId")
         overviewGrid.addColumn({ overview -> overview.getProjectTitle() })
                 .setCaption("Project Title").setId("ProjectTitle")
