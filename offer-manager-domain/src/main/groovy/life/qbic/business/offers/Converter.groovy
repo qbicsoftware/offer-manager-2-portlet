@@ -1,8 +1,8 @@
 package life.qbic.business.offers
 
+
 import life.qbic.business.offers.identifier.OfferId
-import life.qbic.business.offers.identifier.TomatoId
-import life.qbic.business.offers.identifier.TomatoIdDtoMapper
+import life.qbic.business.offers.identifier.OfferIdDtoMapper
 
 /**
  * Helper class to convert DTOs in Business Objects and vice versa.
@@ -27,14 +27,14 @@ class Converter {
 
 
     @Deprecated
-    static TomatoId buildOfferId(life.qbic.datamodel.dtos.business.OfferId id) {
-        def offerId = TomatoIdDtoMapper.DTO_TO_TOMATO_ID.apply(id)
+    static OfferId buildOfferId(life.qbic.datamodel.dtos.business.OfferId id) {
+        def offerId = OfferIdDtoMapper.DTO_TO_OFFER_ID.apply(id)
         return offerId
     }
 
     @Deprecated
-    static life.qbic.datamodel.dtos.business.OfferId convertIdToDTO(TomatoId id) {
-        life.qbic.datamodel.dtos.business.OfferId offerIdDto = TomatoIdDtoMapper.TOMATO_ID_TO_OFFER_ID_DTO.apply(id)
+    static life.qbic.datamodel.dtos.business.OfferId convertIdToDTO(OfferId id) {
+        life.qbic.datamodel.dtos.business.OfferId offerIdDto = OfferIdDtoMapper.OFFER_ID_TO_DTO.apply(id)
         return offerIdDto
     }
 

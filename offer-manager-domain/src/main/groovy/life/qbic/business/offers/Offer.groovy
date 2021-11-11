@@ -3,8 +3,8 @@ package life.qbic.business.offers
 import groovy.time.TimeCategory
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.offers.identifier.TomatoId
-import life.qbic.business.offers.identifier.TomatoIdFormatter
+import life.qbic.business.offers.Offer
+import life.qbic.business.offers.identifier.OfferId
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
@@ -29,7 +29,7 @@ class Offer {
     /**
      * Holds all available versions of an existing offer
      */
-    private List<TomatoId> availableIdentifiers = []
+    private List<OfferId> availableIdentifiers = []
     /**
      * Date on which the offer was lastly modified
      */
@@ -65,7 +65,7 @@ class Offer {
     /**
      * The identifier for the offer which makes it distinguishable from other offers
      */
-    private TomatoId identifier
+    private OfferId identifier
     /**
      * The affiliation of the customer selected for this offer
      */
@@ -154,9 +154,9 @@ class Offer {
         String projectObjective
         Optional<String> experimentalDesign
         List<ProductItem> items
-        TomatoId identifier
+        OfferId identifier
         Affiliation selectedCustomerAffiliation
-        List<TomatoId> availableVersions = []
+        List<OfferId> availableVersions = []
         Optional<ProjectIdentifier> associatedProject
 
         Builder(Customer customer, ProjectManager projectManager, String projectTitle, String projectObjective, List<ProductItem> items, Affiliation selectedCustomerAffiliation) {
@@ -180,7 +180,7 @@ class Offer {
             return this
         }
 
-        Builder identifier(TomatoId identifier) {
+        Builder identifier(OfferId identifier) {
             this.identifier = identifier
             return this
         }
@@ -220,10 +220,6 @@ class Offer {
         this.overhead = determineOverhead()
         addAllAvailableIdentifiers(builder.availableVersions)
         addAvailableIdentifier(this.identifier)
-        this.itemsWithOverhead = getOverheadItems()
-        this.itemsWithoutOverhead = getNoOverheadItems()
-        this.itemsWithOverheadNetPrice = getOverheadItemsNet()
-        this.itemsWithoutOverheadNetPrice = getNoOverheadItemsNet()
         this.overheadRatio = determineOverhead()
         if (builder.associatedProject.isPresent()) {
             this.associatedProject = Optional.of(builder.associatedProject.get())
@@ -414,7 +410,7 @@ class Offer {
         return items
     }
 
-    TomatoId getIdentifier() {
+    OfferId getIdentifier() {
         return identifier
     }
 
@@ -442,11 +438,11 @@ class Offer {
         return noVatCategory
     }
 
-    void addAvailableIdentifier(TomatoId offerId) {
+    void addAvailableIdentifier(OfferId offerId) {
         this.availableIdentifiers.add(offerId)
     }
 
-    void addAllAvailableIdentifiers(Collection<TomatoId> offerIdCollection) {
+    void addAllAvailableIdentifiers(Collection<OfferId> offerIdCollection) {
         offerIdCollection.each {addAvailableIdentifier(it)}
     }
 
@@ -454,7 +450,7 @@ class Offer {
      * Increases the version of an offer, resulting in a offer id with a new version tag.
      */
     void increaseVersion() {
-        def currentId = new TomatoId(identifier.projectPart, identifier.randomPart, identifier.version)
+        def currentId = new OfferId(identifier.projectPart, identifier.randomPart, identifier.version)
         addAvailableIdentifier(currentId)
         def latestId = getLatestIdentifier()
         if (latestId != identifier) {
@@ -600,7 +596,7 @@ class Offer {
         return getLatestIdentifier().version ?: this.identifier.version
     }
 
-    private TomatoId getLatestIdentifier() {
+    private OfferId getLatestIdentifier() {
         return availableIdentifiers.max()
     }
 

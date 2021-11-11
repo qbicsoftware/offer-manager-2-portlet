@@ -8,16 +8,21 @@ package life.qbic.business.offers.identifier
  */
 class TomatoIdFormatter {
 
-    static <T extends TomatoId> String formatAsOfferId(T identifier) {
-        return generateIdString(identifier.projectPart, identifier.randomPart, identifier.version)
+    static <T extends OfferId> String formatAsOfferId(T identifier) {
+        return generateOfferIdString(identifier.projectPart, identifier.randomPart, identifier.version)
     }
 
     static <T extends life.qbic.datamodel.dtos.business.TomatoId> String formatAsOfferId(T identifier) {
-        TomatoId tomatoId = TomatoIdDtoMapper.DTO_TO_TOMATO_ID.apply(identifier)
-        return generateIdString(tomatoId.projectPart, tomatoId.randomPart, tomatoId.version)
+        OfferId tomatoId = OfferIdDtoMapper.DTO_TO_OFFER_ID.apply(identifier)
+        return generateOfferIdString(tomatoId.projectPart, tomatoId.randomPart, tomatoId.version)
     }
 
-    private static String generateIdString(String projectPart, String randomPart, int version) {
+    static String removeVersion(String formattedId) {
+        int versionDelimiterPosition = formattedId.findLastIndexOf {it == "_"}
+        return formattedId.substring(0, versionDelimiterPosition)
+    }
+
+    private static String generateOfferIdString(String projectPart, String randomPart, int version) {
         return "O_${projectPart}_${randomPart}_${version}"
     }
 

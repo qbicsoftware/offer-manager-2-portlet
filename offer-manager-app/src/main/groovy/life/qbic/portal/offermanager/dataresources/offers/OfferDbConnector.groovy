@@ -4,6 +4,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.fetch.FetchOfferDataSource
+import life.qbic.business.offers.identifier.TomatoIdFormatter
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
@@ -81,16 +82,16 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
 
     @Override
     List<OfferId> fetchAllVersionsForOfferId(OfferId id) {
-        String query = OFFER_SELECT_QUERY + " WHERE offerId LIKE ? AND offerId LIKE ?"
+        String query = OFFER_SELECT_QUERY + " WHERE offerId LIKE ? "
         Connection connection = null
         List<OfferId> ids = []
+        String idPattern = TomatoIdFormatter.removeVersion(TomatoIdFormatter.formatAsOfferId(id))
 
         try{
             connection = connectionProvider.connect()
             connection.withCloseable {
                 PreparedStatement preparedStatement = it.prepareStatement(query)
-                preparedStatement.setString(1, "O_"+id.projectConservedPart+"_%")
-                preparedStatement.setString(2, "%_"+id.randomPart+"_%")
+                preparedStatement.setString(1, "${idPattern}_%")
                 ResultSet resultSet = preparedStatement.executeQuery()
 
                 while (resultSet.next()) {
@@ -254,7 +255,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
         Connection connection = connectionProvider.connect()
         connection.withCloseable {
             PreparedStatement statement = it.prepareStatement(query)
-            statement.setString(1, offerId.toString())
+            statement.setString(1, TomatoIdFormatter.formatAsOfferId(offerId))
             ResultSet resultSet = statement.executeQuery()
             while (resultSet.next()) {
                 /*
@@ -352,7 +353,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
         connection.withCloseable {
             PreparedStatement statement = it.prepareStatement(query)
             statement.setString(1, projectIdentifier.toString())
-            statement.setString(2, offerId.toString())
+            statement.setString(2, TomatoIdFormatter.formatAsOfferId(offerId))
             statement.executeUpdate()
         }
     }

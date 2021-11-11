@@ -7,8 +7,7 @@ import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Offer
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.identifier.OfferId
-import life.qbic.business.offers.identifier.TomatoId
-import life.qbic.business.offers.identifier.TomatoIdDtoMapper
+import life.qbic.business.offers.identifier.OfferIdDtoMapper
 
 /**
  * <h1>SRS - 4.2.2 Update Offer</h1>
@@ -83,7 +82,7 @@ class UpdateOffer{
     private void fetchAllAvailableVersions() {
         def versions = dataSource.fetchAllVersionsForOfferId(Converter.convertIdToDTO(offerToUpdate
                 .identifier))
-        List<TomatoId> offerIds = versions.stream().map(TomatoIdDtoMapper.DTO_TO_TOMATO_ID).collect()
+        List<OfferId> offerIds = versions.stream().map(OfferIdDtoMapper.DTO_TO_OFFER_ID).collect()
         offerToUpdate.addAllAvailableIdentifiers(offerIds)
     }
 
@@ -108,18 +107,6 @@ class UpdateOffer{
 
     private static boolean theOfferHasChanged(Offer oldOffer, Offer newOffer) {
         return oldOffer.checksum() != newOffer.checksum()
-    }
-
-    private static Offer buildOffer(life.qbic.datamodel.dtos.business.Offer offer, OfferId identifier){
-        return new Offer.Builder(
-                        offer.customer,
-                        offer.projectManager,
-                        offer.projectTitle,
-                        offer.projectDescription,
-                        offer.items,
-                        offer.selectedCustomerAffiliation)
-                        .identifier(identifier)
-                        .build()
     }
 
 }

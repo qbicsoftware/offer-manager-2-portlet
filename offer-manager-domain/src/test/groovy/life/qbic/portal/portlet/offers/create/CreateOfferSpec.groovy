@@ -4,9 +4,6 @@ import life.qbic.business.offers.Converter
 import life.qbic.business.offers.create.CreateOffer
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.create.CreateOfferOutput
-import life.qbic.business.offers.identifier.ProjectPart
-import life.qbic.business.offers.identifier.RandomPart
-import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.*
@@ -120,7 +117,7 @@ class CreateOfferSpec extends Specification {
         ProductItem dataStorage = new ProductItem(2, new DataStorage("Data Storage",
                 "Just an example", 20.0, 20.0, ProductUnit.PER_DATASET, 1, Facility.QBIC))
         List<ProductItem> items = [primaryAnalysis, projectManagement, sequencing, dataStorage, secondaryAnalysis]
-        life.qbic.business.offers.identifier.OfferId offerId = new life.qbic.business.offers.identifier.OfferId (new RandomPart(), new ProjectPart("test"), new Version(0))
+        life.qbic.business.offers.identifier.OfferId offerId = new life.qbic.business.offers.identifier.OfferId("test", 0)
         and:
         life.qbic.business.offers.Offer offerEntity = new life.qbic.business.offers.Offer.Builder(customer, projectManager, "Awesome Project", "An " +
                 "awesome project", items, selectedAffiliation).identifier(offerId).build()

@@ -63,7 +63,7 @@ class OfferSpec extends Specification {
         def projectConservedPart = "test"
         def versions = [3,1,4,2]
         return versions.stream()
-                .map( version -> new life.qbic.business.offers.identifier.TomatoId(projectConservedPart, version))
+                .map( version -> new life.qbic.business.offers.identifier.OfferId(projectConservedPart, version))
                 .collect()
     }
 
@@ -93,7 +93,7 @@ class OfferSpec extends Specification {
 
     def "An offer with multiple versions shall return the latest version on request"() {
         given: "An offer id that is not the latest version of the offer"
-        life.qbic.business.offers.identifier.TomatoId offerId = new life.qbic.business.offers.identifier.TomatoId("test", 0)
+        life.qbic.business.offers.identifier.OfferId offerId = new life.qbic.business.offers.identifier.OfferId("test", 0)
 
         and: "some example product items"
         List<ProductItem> items = [

@@ -1,8 +1,8 @@
 package life.qbic.business.offers
 
+
 import life.qbic.business.offers.identifier.OfferId
-import life.qbic.business.offers.identifier.TomatoId
-import life.qbic.business.offers.identifier.TomatoIdDtoMapper
+import life.qbic.business.offers.identifier.OfferIdDtoMapper
 
 import java.util.function.Function
 
@@ -16,7 +16,7 @@ import java.util.function.Function
 class OfferDtoMapper {
 
     public static final Function<? extends life.qbic.datamodel.dtos.business.Offer, Offer> DTO_TO_OFFER = (life.qbic.datamodel.dtos.business.Offer offerDto) -> {
-        TomatoId offerId = TomatoIdDtoMapper.DTO_TO_TOMATO_ID.apply(offerDto.getIdentifier())
+        OfferId offerId = OfferIdDtoMapper.DTO_TO_OFFER_ID.apply(offerDto.getIdentifier())
         def builder = new Offer.Builder(
                 offerDto.customer,
                 offerDto.projectManager,
@@ -34,7 +34,7 @@ class OfferDtoMapper {
     }
 
     public static final Function<? extends Offer, life.qbic.datamodel.dtos.business.Offer> OFFER_TO_DTO = (Offer offer) -> {
-        life.qbic.datamodel.dtos.business.OfferId offerIdDto = TomatoIdDtoMapper.TOMATO_ID_TO_OFFER_ID_DTO.apply(offer.getIdentifier())
+        life.qbic.datamodel.dtos.business.OfferId offerIdDto = OfferIdDtoMapper.OFFER_ID_TO_DTO.apply(offer.getIdentifier())
         def builder = new life.qbic.datamodel.dtos.business.Offer.Builder(
                 offer.customer,
                 offer.projectManager,
