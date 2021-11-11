@@ -3,11 +3,8 @@ package life.qbic.business.offers
 import groovy.time.TimeCategory
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.offers.Offer
-import life.qbic.business.offers.identifier.OfferId
-import life.qbic.business.offers.identifier.ProjectPart
-import life.qbic.business.offers.identifier.RandomPart
-import life.qbic.business.offers.identifier.Version
+import life.qbic.business.offers.identifier.TomatoId
+import life.qbic.business.offers.identifier.TomatoIdFormatter
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
@@ -32,7 +29,7 @@ class Offer {
     /**
      * Holds all available versions of an existing offer
      */
-    private List<Integer> availableVersions
+    private List<TomatoId> availableIdentifiers = []
     /**
      * Date on which the offer was lastly modified
      */
@@ -64,11 +61,11 @@ class Offer {
     /**
      * A list of items for which the customer will be charged
      */
-    private List<ProductItem> items
+    private List<ProductItem> items = []
     /**
      * The identifier for the offer which makes it distinguishable from other offers
      */
-    private OfferId identifier
+    private TomatoId identifier
     /**
      * The affiliation of the customer selected for this offer
      */
@@ -77,12 +74,12 @@ class Offer {
      * A list of items for which an overhead cost is applicable
      */
     @Deprecated
-    private List<ProductItem> itemsWithOverhead
+    private List<ProductItem> itemsWithOverhead = []
     /**
      * A list of items for which an overhead cost is not applicable
      */
     @Deprecated
-    private List<ProductItem> itemsWithoutOverhead
+    private List<ProductItem> itemsWithoutOverhead = []
     /**
      * The net price of all items for which an overhead cost is applicable, without overhead and taxes
      */
@@ -157,10 +154,9 @@ class Offer {
         String projectObjective
         Optional<String> experimentalDesign
         List<ProductItem> items
-        OfferId identifier
+        TomatoId identifier
         Affiliation selectedCustomerAffiliation
-        List<OfferId> availableVersions
-        double overheadRatio
+        List<TomatoId> availableVersions = []
         Optional<ProjectIdentifier> associatedProject
 
         Builder(Customer customer, ProjectManager projectManager, String projectTitle, String projectObjective, List<ProductItem> items, Affiliation selectedCustomerAffiliation) {
@@ -184,18 +180,8 @@ class Offer {
             return this
         }
 
-        Builder identifier(OfferId identifier) {
+        Builder identifier(TomatoId identifier) {
             this.identifier = identifier
-            return this
-        }
-
-        Builder availableVersions(List<OfferId> availableVersions) {
-            this.availableVersions.addAll(availableVersions)
-            return this
-        }
-
-        Builder overheadRatio(double overheadRatio){
-            this.overheadRatio = overheadRatio
             return this
         }
 
@@ -232,10 +218,8 @@ class Offer {
         this.projectTitle = builder.projectTitle
         this.selectedCustomerAffiliation = builder.selectedCustomerAffiliation
         this.overhead = determineOverhead()
-        this.availableVersions = builder.availableVersions
-                .stream()
-                .map(id -> new OfferId(id)).collect()
-        this.availableVersions.add(this.identifier.version)
+        addAllAvailableIdentifiers(builder.availableVersions)
+        addAvailableIdentifier(this.identifier)
         this.itemsWithOverhead = getOverheadItems()
         this.itemsWithoutOverhead = getNoOverheadItems()
         this.itemsWithOverheadNetPrice = getOverheadItemsNet()
@@ -430,7 +414,7 @@ class Offer {
         return items
     }
 
-    OfferId getIdentifier() {
+    TomatoId getIdentifier() {
         return identifier
     }
 
@@ -458,22 +442,25 @@ class Offer {
         return noVatCategory
     }
 
-    void addAvailableVersion(OfferId offerId) {
-        this.availableVersions.add(offerId.version)
+    void addAvailableIdentifier(TomatoId offerId) {
+        this.availableIdentifiers.add(offerId)
     }
 
-    void addAllAvailableVersions(Collection<OfferId> offerIdCollection) {
-        offerIdCollection.each {addAvailableVersion(it)}
+    void addAllAvailableIdentifiers(Collection<TomatoId> offerIdCollection) {
+        offerIdCollection.each {addAvailableIdentifier(it)}
     }
 
     /**
      * Increases the version of an offer, resulting in a offer id with a new version tag.
      */
     void increaseVersion() {
-        def copyIdentifier = new OfferId(this.identifier)
-        identifier = getLatestVersion()
+        def currentId = new TomatoId(identifier.projectPart, identifier.randomPart, identifier.version)
+        addAvailableIdentifier(currentId)
+        def latestId = getLatestIdentifier()
+        if (latestId != identifier) {
+            identifier = latestId
+        }
         identifier.increaseVersion()
-        this.availableVersions.addAll(copyIdentifier.version, this.identifier.version)
     }
 
     /**
@@ -609,7 +596,12 @@ class Offer {
      * @return The latest offer id
      */
     int getLatestVersion() {
-        return availableVersions.max() ?: this.identifier.version
+        //FIXME the current version should be in available versions
+        return getLatestIdentifier().version ?: this.identifier.version
+    }
+
+    private TomatoId getLatestIdentifier() {
+        return availableIdentifiers.max()
     }
 
 

@@ -15,6 +15,7 @@ import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.datamodel.dtos.business.ProjectManager
 
 /**
  * This class implements logic to create new offers.
@@ -95,13 +96,34 @@ class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput
 
     @Override
     void calculatePrice(List<ProductItem> items, Affiliation affiliation) {
-        life.qbic.business.offers.Offer offer = Converter.buildOfferForCostCalculation(items, affiliation)
+        life.qbic.business.offers.Offer offer = buildOfferForCostCalculation(items, affiliation)
         output.calculatedPrice(
                 offer.getTotalNetPrice(),
                 offer.getTaxCosts(),
                 offer.getOverheadSum(),
                 offer.getTotalCosts(),
                 offer.getTotalDiscountAmount())
+    }
+
+    /**
+     * Builds an offer entity with a dummy customer and a dummy project manager
+     * @param items the offer items to be used
+     * @param affiliation the affiliation to be used
+     * @return an offer object with the given items and affiliation
+     */
+    private static life.qbic.business.offers.Offer buildOfferForCostCalculation(List<ProductItem> items,
+                                                                        Affiliation affiliation) {
+        final def dummyCustomer = new Customer.Builder("Nobody", "Nobody",
+                "nobody@qbic.com").build()
+        final def dummyProjectManager = new ProjectManager.Builder("Nobody", "Nobody",
+                "nobody@qbic.com").build()
+        new life.qbic.business.offers.Offer.Builder(
+                dummyCustomer,
+                dummyProjectManager,
+                "",
+                "",
+                items,
+                affiliation).build()
     }
 
     @Override

@@ -8,13 +8,13 @@ package life.qbic.business.offers.identifier
  */
 class TomatoIdFormatter {
 
-    public static <T extends TomatoId> String formatAsOfferId(T identifier) {
+    static <T extends TomatoId> String formatAsOfferId(T identifier) {
         return generateIdString(identifier.projectPart, identifier.randomPart, identifier.version)
     }
 
-    public static <T extends life.qbic.datamodel.dtos.business.TomatoId> String formatAsOfferId(T identifier) {
-        TomatoId tomatoId = TomatoIdDtoMapper.tomatoIdFrom(identifier)
-        return formatAsOfferId(tomatoId)
+    static <T extends life.qbic.datamodel.dtos.business.TomatoId> String formatAsOfferId(T identifier) {
+        TomatoId tomatoId = TomatoIdDtoMapper.DTO_TO_TOMATO_ID.apply(identifier)
+        return generateIdString(tomatoId.projectPart, tomatoId.randomPart, tomatoId.version)
     }
 
     private static String generateIdString(String projectPart, String randomPart, int version) {

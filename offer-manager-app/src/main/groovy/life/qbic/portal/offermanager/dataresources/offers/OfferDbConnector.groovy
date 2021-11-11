@@ -129,7 +129,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
                     isAlreadyInDataSource = true
                 }
             }
-        }catch(Exception e){
+        } catch(Exception e){
             log.error(e.message)
             log.error(e.stackTrace.join("\n"))
             connection.rollback()

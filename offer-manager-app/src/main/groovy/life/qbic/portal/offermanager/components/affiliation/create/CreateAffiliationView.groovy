@@ -144,7 +144,7 @@ class CreateAffiliationView extends FormLayout {
 
         // Check if the caption for new item already exists in the list of item
         // captions before approving it as a new item.
-        ComboBox.NewItemProvider<String> itemHandler = newItemCaption -> {
+        ComboBox.NewItemProvider<String> itemHandler = (String newItemCaption) -> {
             //todo error: newItemCaption cannot be inferred --> duplicated entries are still possible
             boolean newItem = organisationNames.stream().noneMatch(data -> data.equalsIgnoreCase(newItemCaption))
             if (newItem) {

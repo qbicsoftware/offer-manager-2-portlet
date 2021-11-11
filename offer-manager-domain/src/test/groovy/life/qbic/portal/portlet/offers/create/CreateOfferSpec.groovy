@@ -137,11 +137,7 @@ class CreateOfferSpec extends Specification {
         offerDto.modificationDate == offerEntity.getModificationDate()
         offerDto.expirationDate == offerEntity.getExpirationDate()
         offerDto.items == offerEntity.getItems()
-        offerDto.itemsWithOverhead == offerEntity.getOverheadItems()
-        offerDto.itemsWithoutOverhead == offerEntity.getNoOverheadItems()
         offerDto.totalPrice == offerEntity.getTotalCosts()
-        offerDto.overheads == offerEntity.getOverheadSum()
-        offerDto.itemsWithOverheadNetPrice == offerEntity.getOverheadItemsNet()
-        offerDto.itemsWithoutOverheadNetPrice == offerEntity.getNoOverheadItemsNet()
+        offerDto.overheads == offerEntity.getOverheadSum().doubleValue()
     }
 }

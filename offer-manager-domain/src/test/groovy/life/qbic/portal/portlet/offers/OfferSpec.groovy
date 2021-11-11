@@ -3,10 +3,6 @@ package life.qbic.portal.portlet.offers
 import life.qbic.business.ProductFactory
 import life.qbic.business.offers.Offer
 import life.qbic.business.offers.QuantityDiscount
-import life.qbic.business.offers.identifier.OfferId
-import life.qbic.business.offers.identifier.ProjectPart
-import life.qbic.business.offers.identifier.RandomPart
-import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.*
@@ -64,11 +60,10 @@ class OfferSpec extends Specification {
     }
 
     static List<OfferId> createExampleOfferId() {
-        def projectConservedPart = new ProjectPart("test")
+        def projectConservedPart = "test"
         def versions = [3,1,4,2]
         return versions.stream()
-                .map( version -> new OfferId(new RandomPart(), projectConservedPart,
-                        new Version(version)))
+                .map( version -> new life.qbic.business.offers.identifier.TomatoId(projectConservedPart, version))
                 .collect()
     }
 
@@ -98,7 +93,7 @@ class OfferSpec extends Specification {
 
     def "An offer with multiple versions shall return the latest version on request"() {
         given: "An offer id that is not the latest version of the offer"
-        OfferId offerId = new OfferId (new RandomPart(), new ProjectPart("test"), new Version(0))
+        life.qbic.business.offers.identifier.TomatoId offerId = new life.qbic.business.offers.identifier.TomatoId("test", 0)
 
         and: "some example product items"
         List<ProductItem> items = [
@@ -117,10 +112,10 @@ class OfferSpec extends Specification {
                 .identifier(offerId)
                 .experimentalDesign(Optional.of("this is a design"))
                 .build()
-        offer.addAllAvailableVersions(versions)
+        offer.addAllAvailableIdentifiers(versions)
 
         then: "the latest version must be 4"
-        offer.getLatestVersion().version == new Version(4)
+        offer.getLatestVersion() == 4
     }
 
     def "A customer with an internal affiliation shall pay no overheads"() {

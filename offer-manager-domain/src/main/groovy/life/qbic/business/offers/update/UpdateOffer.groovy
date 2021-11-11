@@ -1,14 +1,14 @@
 package life.qbic.business.offers.update
 
 import life.qbic.business.Constants
-import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.offers.Converter
 import life.qbic.business.offers.Offer
 import life.qbic.business.offers.create.CreateOfferDataSource
-import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.identifier.OfferId
+import life.qbic.business.offers.identifier.TomatoId
+import life.qbic.business.offers.identifier.TomatoIdDtoMapper
 
 /**
  * <h1>SRS - 4.2.2 Update Offer</h1>
@@ -83,10 +83,8 @@ class UpdateOffer{
     private void fetchAllAvailableVersions() {
         def versions = dataSource.fetchAllVersionsForOfferId(Converter.convertIdToDTO(offerToUpdate
                 .identifier))
-        offerToUpdate.addAllAvailableVersions(
-                versions.stream()
-                        .map(version -> Converter.buildOfferId(version))
-                        .collect())
+        List<TomatoId> offerIds = versions.stream().map(TomatoIdDtoMapper.DTO_TO_TOMATO_ID).collect()
+        offerToUpdate.addAllAvailableIdentifiers(offerIds)
     }
 
     private static Offer createBusinessOffer(life.qbic.datamodel.dtos.business.Offer offer){
@@ -106,22 +104,6 @@ class UpdateOffer{
         // Will throw a NullPointer Exception, when the offer is not present
         def offerDTO = dataSource.getOffer(Converter.convertIdToDTO(offerId)).get()
         return createBusinessOffer(offerDTO)
-    }
-
-    private OfferId createNewVersionTag(){
-
-        //search for all ids in the database
-        List<OfferId> allVersionIds = dataSource
-                .fetchAllVersionsForOfferId(Converter.convertIdToDTO(offerToUpdate.identifier))
-                .stream().map(offerId -> Converter.buildOfferId(offerId))
-                .collect()
-
-        offerToUpdate.addAllAvailableVersions(allVersionIds)
-
-        OfferId convertedId = offerToUpdate.getLatestVersion()
-        convertedId.increaseVersion()
-
-        return convertedId
     }
 
     private static boolean theOfferHasChanged(Offer oldOffer, Offer newOffer) {

@@ -801,14 +801,16 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   @Override
   Optional<Integer> findPerson(Person person) {
     //to be nullable this needs to be an Integer and not an int
-    Integer personID
+    Integer personID = null
 
     findActivePerson(person.firstName, person.lastName).each { foundCustomer ->
       //todo is the email address sufficient to compare customers for identity?
-      if (foundCustomer.emailAddress == person.emailAddress && foundCustomer.title.value == person.title.value) personID = getActivePersonId(foundCustomer)
+      if (foundCustomer.emailAddress == person.emailAddress && foundCustomer.title.value == person.title.value) {
+        personID = getActivePersonId(foundCustomer)
+      }
     }
 
-    return Optional.of(personID)
+    return Optional.ofNullable(personID)
   }
 
   ProjectManager getProjectManager(int personPrimaryId) {
