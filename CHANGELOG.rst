@@ -9,6 +9,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Address additions of customers are now shown on generated offer PDFs
+
 **Fixed**
 
 * ZIP code and city of the offer recipient are in the same line now
