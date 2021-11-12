@@ -24,9 +24,13 @@ class OfferDtoMapper {
                 offerDto.projectDescription,
                 offerDto.items,
                 offerDto.selectedCustomerAffiliation)
-                .experimentalDesign(offerDto.experimentalDesign)
                 .identifier(offerId)
-                .creationDate(offerDto.modificationDate)
+        if (offerDto.modificationDate) {
+            builder.creationDate(offerDto.modificationDate)
+        }
+        offerDto.experimentalDesign.ifPresent({
+            builder.experimentalDesign(offerDto.experimentalDesign)
+        })
         offerDto.associatedProject.ifPresent({
             builder.associatedProject(it)
         })
