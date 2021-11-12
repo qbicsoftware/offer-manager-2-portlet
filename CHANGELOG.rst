@@ -4,8 +4,18 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
-1.3.0-SNAPSHOT (2021-11-04)
+1.3.0-SNAPSHOT (2021-11-12)
 ---------------------------
+**Added**
+
+**Fixed**
+
+**Dependencies**
+
+**Deprecated**
+
+1.2.2 (2021-11-09)
+------------------
 
 **Added**
 
@@ -15,7 +25,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 * Offer identifiers are now all in the format `O_project_rand_1`
 
-* ZIP code and city of the offer recipient are in the same line now 
+* ZIP code and city of the offer recipient are in the same line now
 
 **Dependencies**
 

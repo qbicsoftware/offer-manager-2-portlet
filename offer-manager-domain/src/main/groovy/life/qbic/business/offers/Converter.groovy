@@ -19,7 +19,10 @@ import life.qbic.business.offers.identifier.OfferIdDtoMapper
  * package domain for the DTO class explicitly.
  *
  * @since 1.0.0
+ * @deprecated Please use the appropriate mapper functions in {@link life.qbic.business.offers.OfferDtoMapper}
+ * and {@link life.qbic.business.offers.identifier.OfferIdDtoMapper}
  */
+@Deprecated
 class Converter {
     static life.qbic.datamodel.dtos.business.Offer convertOfferToDTO(Offer offer) {
         return OfferDtoMapper.OFFER_TO_DTO.apply(offer)
@@ -38,6 +41,7 @@ class Converter {
         return offerIdDto
     }
 
+    @Deprecated
     static Offer convertDTOToOffer(life.qbic.datamodel.dtos.business.Offer offer) {
         return OfferDtoMapper.DTO_TO_OFFER.apply(offer)
     }
