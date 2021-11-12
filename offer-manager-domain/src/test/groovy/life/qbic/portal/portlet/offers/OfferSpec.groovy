@@ -3,6 +3,7 @@ package life.qbic.portal.portlet.offers
 import life.qbic.business.ProductFactory
 import life.qbic.business.offers.Offer
 import life.qbic.business.offers.QuantityDiscount
+import life.qbic.business.offers.identifier.OfferId
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.*
@@ -63,7 +64,7 @@ class OfferSpec extends Specification {
         def projectConservedPart = "test"
         def versions = [3,1,4,2]
         return versions.stream()
-                .map( version -> new life.qbic.business.offers.identifier.OfferId(projectConservedPart, version))
+                .map( version -> new OfferId(projectConservedPart, version))
                 .collect()
     }
 
