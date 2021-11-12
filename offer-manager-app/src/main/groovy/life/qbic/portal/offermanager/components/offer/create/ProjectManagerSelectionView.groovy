@@ -135,7 +135,7 @@ class ProjectManagerSelectionView extends VerticalLayout implements Resettable {
         /*
         Lastly, we add some nice content filters
          */
-        setupFilters(projectManagerDataProvider)
+        setupFilters(projectManagerDataProvider) //fixme type mismatch
     }
 
     /**

@@ -9,7 +9,7 @@ class StyledNotification extends Notification {
 
     StyledNotification(String caption) {
         super(caption)
-        setNotificationProperties()
+        setNotificationProperties(Type.HUMANIZED_MESSAGE)
     }
 
     StyledNotification(String caption, Type type) {

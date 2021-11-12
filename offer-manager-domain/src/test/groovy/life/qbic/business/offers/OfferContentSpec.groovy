@@ -3,9 +3,6 @@ package life.qbic.business.offers
 import life.qbic.business.offers.content.CreateOfferContent
 import life.qbic.business.offers.content.CreateOfferContentOutput
 import life.qbic.business.offers.fetch.FetchOfferDataSource
-import life.qbic.business.offers.identifier.ProjectPart
-import life.qbic.business.offers.identifier.RandomPart
-import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
@@ -68,7 +65,7 @@ class OfferContentSpec extends Specification{
         CreateOfferContent createOfferContent = new CreateOfferContent(output, fetchOfferDataSource)
 
         and: "An offer id that is not the latest version of the offer"
-        life.qbic.business.offers.identifier.OfferId offerId = new life.qbic.business.offers.identifier.OfferId (new RandomPart(), new ProjectPart("test"), new Version(0))
+        life.qbic.business.offers.identifier.OfferId offerId = new life.qbic.business.offers.identifier.OfferId("test", 0)
 
         and: "some example product items"
         List<ProductItem> items = [

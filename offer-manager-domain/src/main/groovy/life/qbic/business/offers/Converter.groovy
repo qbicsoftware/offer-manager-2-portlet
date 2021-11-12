@@ -1,10 +1,8 @@
 package life.qbic.business.offers
 
 
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.business.offers.identifier.OfferId
+import life.qbic.business.offers.identifier.OfferIdDtoMapper
 
 /**
  * Helper class to convert DTOs in Business Objects and vice versa.
@@ -24,85 +22,23 @@ import life.qbic.datamodel.dtos.business.ProjectManager
  */
 class Converter {
     static life.qbic.datamodel.dtos.business.Offer convertOfferToDTO(Offer offer) {
-        def builder =  new life.qbic.datamodel.dtos.business.Offer.Builder(
-                offer.customer,
-                offer.projectManager,
-                offer.projectTitle,
-                offer.projectObjective,
-                offer.selectedCustomerAffiliation)
-                .identifier(convertIdToDTO(offer.identifier))
-                .items(offer.getItems())
-                .netPrice(offer.getTotalNetPrice())
-                .taxes(offer.getTaxCosts())
-                .overheads(offer.getOverheadSum())
-                .totalPrice(offer.getTotalCosts())
-                .totalDiscountPrice(offer.totalDiscountAmount)
-                .modificationDate(offer.modificationDate)
-                .expirationDate(offer.expirationDate)
-                .checksum(offer.checksum())
-                .itemsWithOverhead(offer.overheadItems) //todo Achtung! it sets values that are not in use anymore
-                .itemsWithoutOverhead(offer.noOverheadItems)
-                .itemsWithOverheadNet(offer.overheadItemsNet)
-                .itemsWithoutOverheadNet(offer.noOverheadItemsNet)
-                .overheadRatio(offer.overheadRatio)
-        // Add the project identifier, if one is present
-        if (offer.associatedProject.isPresent()) {
-            builder.associatedProject(offer.associatedProject.get())
-        }
-
-        if(offer.experimentalDesign.isPresent()){
-            builder.experimentalDesign(offer.experimentalDesign.get())
-        }
-
-        return builder.build()
-    }
-    static Offer buildOfferForCostCalculation(List<ProductItem> items,
-                                              Affiliation affiliation) {
-        final def dummyCustomer = new Customer.Builder("Nobody", "Nobody",
-                "nobody@qbic.com").build()
-        final def dummyProjectManager = new ProjectManager.Builder("Nobody", "Nobody",
-                "nobody@qbic.com").build()
-        new Offer.Builder(
-                dummyCustomer,
-                dummyProjectManager,
-                "",
-                "",
-                items,
-                affiliation).build()
+        return OfferDtoMapper.OFFER_TO_DTO.apply(offer)
     }
 
-    static life.qbic.business.offers.identifier.OfferId buildOfferId(life.qbic.datamodel.dtos.business.OfferId id) {
-        def randomPart = new life.qbic.business.offers.identifier.RandomPart(id.randomPart)
-        def projectPart = new life.qbic.business.offers.identifier.ProjectPart(id.projectConservedPart)
-        def version = new life.qbic.business.offers.identifier.Version(id.version)
-        return new life.qbic.business.offers.identifier.OfferId(randomPart, projectPart, version)
+
+    @Deprecated
+    static OfferId buildOfferId(life.qbic.datamodel.dtos.business.OfferId id) {
+        def offerId = OfferIdDtoMapper.DTO_TO_OFFER_ID.apply(id)
+        return offerId
     }
 
-    static life.qbic.datamodel.dtos.business.OfferId convertIdToDTO(life.qbic.business.offers.identifier.OfferId id) {
-        return new life.qbic.datamodel.dtos.business.OfferId(
-                id.getProjectPart().value,
-                id.getRandomPart().value,
-                id.getVersion().value)
+    @Deprecated
+    static life.qbic.datamodel.dtos.business.OfferId convertIdToDTO(OfferId id) {
+        life.qbic.datamodel.dtos.business.OfferId offerIdDto = OfferIdDtoMapper.OFFER_ID_TO_DTO.apply(id)
+        return offerIdDto
     }
 
-    static life.qbic.business.offers.Offer convertDTOToOffer(life.qbic.datamodel.dtos.business.Offer offer) {
-        def builder = new Offer.Builder(
-                offer.customer,
-                offer.projectManager,
-                offer.projectTitle,
-                offer.projectDescription,
-                offer.items,
-                offer.selectedCustomerAffiliation)
-                .experimentalDesign(offer.experimentalDesign)
-                .identifier(buildOfferId(offer.identifier))
-                //ToDo Is this the correct mapping?
-                .creationDate(offer.modificationDate)
-
-        // We optionally add the associated project, if present
-        if (offer.associatedProject.isPresent()) {
-            builder.associatedProject(offer.associatedProject.get())
-        }
-
-        return builder.build()
+    static Offer convertDTOToOffer(life.qbic.datamodel.dtos.business.Offer offer) {
+        return OfferDtoMapper.DTO_TO_OFFER.apply(offer)
     }
 }

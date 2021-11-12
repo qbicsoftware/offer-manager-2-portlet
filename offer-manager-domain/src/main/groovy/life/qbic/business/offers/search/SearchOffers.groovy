@@ -1,4 +1,7 @@
 package life.qbic.business.offers.search
+
+import life.qbic.business.offers.OfferExporter
+
 /**
  * This use case searches for offers matching provided criteria.
  *
@@ -10,10 +13,10 @@ package life.qbic.business.offers.search
  */
 class SearchOffers implements SearchOffersInput{
 
-    private final life.qbic.business.offers.OfferExporter exporter
+    private final OfferExporter exporter
     private final SearchOffersOutput output
 
-    SearchOffers(SearchOffersOutput output, life.qbic.business.offers.OfferExporter exporter){
+    SearchOffers(SearchOffersOutput output, OfferExporter exporter){
         this.output = output
         this.exporter = exporter
     }

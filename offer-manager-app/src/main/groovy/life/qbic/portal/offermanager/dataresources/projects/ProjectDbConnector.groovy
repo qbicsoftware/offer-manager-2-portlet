@@ -172,7 +172,7 @@ class ProjectDbConnector {
         }
     }
 
-    private boolean hasPersonRoleInProject(Connection connection, int personID, int projectID, String role) {
+    private static boolean hasPersonRoleInProject(Connection connection, int personID, int projectID, String role) {
         String sql =
                 "SELECT * from projects_persons WHERE person_id = ? AND project_id = ? and project_role = ?"
         boolean res = false
