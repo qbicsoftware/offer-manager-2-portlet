@@ -4,6 +4,23 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.2.2 (2021-11-09)
+------------------
+
+**Added**
+
+* Address additions of customers are now shown on generated offer PDFs
+
+**Fixed**
+
+* Offer identifiers are now all in the format `O_project_rand_1`
+
+* ZIP code and city of the offer recipient are in the same line now
+
+**Dependencies**
+
+**Deprecated**
+
 1.2.1 (2021-10-27)
 ------------------
 

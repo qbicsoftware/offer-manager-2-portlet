@@ -7,6 +7,7 @@ import life.qbic.business.offers.fetch.FetchOffer
 import life.qbic.business.offers.fetch.FetchOfferDataSource
 import life.qbic.business.offers.fetch.FetchOfferInput
 import life.qbic.business.offers.fetch.FetchOfferOutput
+import life.qbic.business.offers.identifier.TomatoIdFormatter
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
@@ -67,9 +68,9 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
         Date creationDate = offer.modificationDate
         Date expirationDate = offer.expirationDate
         groupProductItems(offer.items)
-        String id = offer.identifier.toString()
+        String id = TomatoIdFormatter.formatAsOfferId(offer.identifier)
         def offerContentBuilder = new OfferContent.Builder(offer.customer,offer.selectedCustomerAffiliation,offer.projectManager,creationDate,expirationDate,offer.projectTitle
-        ,offer.projectObjective, offer.experimentalDesign.orElse(""),offer.identifier.toString(), offer.getTotalNetPriceWithOverheads())
+        ,offer.projectObjective, offer.experimentalDesign.orElse(""), id, offer.getTotalNetPriceWithOverheads())
 
         //collect productitems and convert to offeritems
         groupProductItems(offer.items)
@@ -157,7 +158,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
      * @param offerItem item for which the discount percentage should be calculated
      * @return the discount percentage based on quantity discount and item total cost
      */
-    private double calculateDiscountPercentage(ProductItem productItem) {
+    private static double calculateDiscountPercentage(ProductItem productItem) {
         BigDecimal totalPrice = productItem.totalPrice.toBigDecimal()
         if (totalPrice.compareTo(BigDecimal.ZERO) == 0) {
             //avoid division by 0
@@ -174,7 +175,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
      * @param offerItem item for which the discount per unit should be calculated
      * @return the discount per unit, if applicable, 0 otherwise
      */
-    private double calculateDiscountPerUnit(ProductItem productItem) {
+    private static double calculateDiscountPerUnit(ProductItem productItem) {
         BigDecimal quantity = productItem.quantity.toBigDecimal()
         if (quantity.compareTo(BigDecimal.ZERO) == 0) {
             //avoid division by 0

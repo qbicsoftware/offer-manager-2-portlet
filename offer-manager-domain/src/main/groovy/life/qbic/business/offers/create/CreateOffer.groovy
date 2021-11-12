@@ -1,20 +1,14 @@
 package life.qbic.business.offers.create
 
+import life.qbic.business.Constants
+import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.offers.Converter
-import life.qbic.business.offers.update.UpdateOffer
 import life.qbic.business.offers.identifier.OfferId
-import life.qbic.business.offers.identifier.ProjectPart
-import life.qbic.business.offers.identifier.RandomPart
-import life.qbic.business.offers.identifier.Version
+import life.qbic.business.offers.update.UpdateOffer
 import life.qbic.business.offers.update.UpdateOfferOutput
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.business.Constants
-import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.datamodel.dtos.business.*
 
 /**
  * This class implements logic to create new offers.
@@ -49,7 +43,7 @@ class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput
     }
 
     private void createNewOffer(Offer offerContent){
-        OfferId newOfferId = generateQuotationID(offerContent.customer)
+        OfferId newOfferId = generateTomatoId(offerContent.customer)
 
         life.qbic.business.offers.Offer finalizedOffer = new life.qbic.business.offers.Offer.Builder(
                 offerContent.customer,
@@ -85,23 +79,43 @@ class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput
      * @param customer which is required for the project conserved part
      * @return
      */
-    private static OfferId generateQuotationID(Customer customer){
-        RandomPart randomPart = new RandomPart()
-        ProjectPart projectConservedPart = new ProjectPart(customer.lastName.toLowerCase())
-        Version version = new Version(1)
+    private static OfferId generateTomatoId(Customer customer){
+        String projectConservedPart = customer.lastName.toLowerCase()
+        int version = 1
 
-        return new OfferId(randomPart, projectConservedPart, version)
+        return new OfferId(projectConservedPart, version)
     }
 
     @Override
     void calculatePrice(List<ProductItem> items, Affiliation affiliation) {
-        life.qbic.business.offers.Offer offer = Converter.buildOfferForCostCalculation(items, affiliation)
+        life.qbic.business.offers.Offer offer = buildOfferForCostCalculation(items, affiliation)
         output.calculatedPrice(
                 offer.getTotalNetPrice(),
                 offer.getTaxCosts(),
                 offer.getOverheadSum(),
                 offer.getTotalCosts(),
                 offer.getTotalDiscountAmount())
+    }
+
+    /**
+     * Builds an offer entity with a dummy customer and a dummy project manager
+     * @param items the offer items to be used
+     * @param affiliation the affiliation to be used
+     * @return an offer object with the given items and affiliation
+     */
+    private static life.qbic.business.offers.Offer buildOfferForCostCalculation(List<ProductItem> items,
+                                                                        Affiliation affiliation) {
+        final def dummyCustomer = new Customer.Builder("Nobody", "Nobody",
+                "nobody@qbic.com").build()
+        final def dummyProjectManager = new ProjectManager.Builder("Nobody", "Nobody",
+                "nobody@qbic.com").build()
+        new life.qbic.business.offers.Offer.Builder(
+                dummyCustomer,
+                dummyProjectManager,
+                "",
+                "",
+                items,
+                affiliation).build()
     }
 
     @Override

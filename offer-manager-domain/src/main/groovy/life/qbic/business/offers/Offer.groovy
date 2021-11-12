@@ -5,9 +5,6 @@ import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.offers.Offer
 import life.qbic.business.offers.identifier.OfferId
-import life.qbic.business.offers.identifier.ProjectPart
-import life.qbic.business.offers.identifier.RandomPart
-import life.qbic.business.offers.identifier.Version
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
@@ -32,7 +29,7 @@ class Offer {
     /**
      * Holds all available versions of an existing offer
      */
-    private List<OfferId> availableVersions
+    private List<OfferId> availableIdentifiers = []
     /**
      * Date on which the offer was lastly modified
      */
@@ -64,7 +61,7 @@ class Offer {
     /**
      * A list of items for which the customer will be charged
      */
-    private List<ProductItem> items
+    private List<ProductItem> items = []
     /**
      * The identifier for the offer which makes it distinguishable from other offers
      */
@@ -77,12 +74,12 @@ class Offer {
      * A list of items for which an overhead cost is applicable
      */
     @Deprecated
-    private List<ProductItem> itemsWithOverhead
+    private List<ProductItem> itemsWithOverhead = []
     /**
      * A list of items for which an overhead cost is not applicable
      */
     @Deprecated
-    private List<ProductItem> itemsWithoutOverhead
+    private List<ProductItem> itemsWithoutOverhead = []
     /**
      * The net price of all items for which an overhead cost is applicable, without overhead and taxes
      */
@@ -133,18 +130,20 @@ class Offer {
         }
     }
 
-    private final QuantityDiscount quantityDiscount = new QuantityDiscount()
+    private static final QuantityDiscount quantityDiscount = new QuantityDiscount()
 
-    private final Function<ProductItem, BigDecimal> cataloguePrice = { ProductItem it -> calculateCataloguePriceForItem(it) }
+    private static final Function<BigDecimal, BigDecimal> dataStorageDiscount = new DataStorageDiscount()
 
-    private final Function<BigDecimal, BigDecimal> dataStorageDiscount = new DataStorageDiscount()
+    private final TaxOffice taxOffice
+
+    private final Function<ProductItem, BigDecimal> cataloguePrice = {
+        ProductItem it -> calculateCataloguePriceForItem(it)
+    }
 
     private final Predicate<ProductItem> dataStorageApplicable = {
         it.product instanceof DataStorage && \
                     selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL
     }
-
-    private final TaxOffice taxOffice
 
     private static Logging log = Logger.getLogger(this.class)
 
@@ -159,8 +158,7 @@ class Offer {
         List<ProductItem> items
         OfferId identifier
         Affiliation selectedCustomerAffiliation
-        List<OfferId> availableVersions
-        double overheadRatio
+        List<OfferId> availableVersions = []
         Optional<ProjectIdentifier> associatedProject
 
         Builder(Customer customer, ProjectManager projectManager, String projectTitle, String projectObjective, List<ProductItem> items, Affiliation selectedCustomerAffiliation) {
@@ -186,16 +184,6 @@ class Offer {
 
         Builder identifier(OfferId identifier) {
             this.identifier = identifier
-            return this
-        }
-
-        Builder availableVersions(List<OfferId> availableVersions) {
-            this.availableVersions.addAll(availableVersions)
-            return this
-        }
-
-        Builder overheadRatio(double overheadRatio){
-            this.overheadRatio = overheadRatio
             return this
         }
 
@@ -232,14 +220,8 @@ class Offer {
         this.projectTitle = builder.projectTitle
         this.selectedCustomerAffiliation = builder.selectedCustomerAffiliation
         this.overhead = determineOverhead()
-        this.availableVersions = builder.availableVersions
-                .stream()
-                .map(id -> new OfferId(id)).collect()
-        this.availableVersions.add(this.identifier)
-        this.itemsWithOverhead = getOverheadItems()
-        this.itemsWithoutOverhead = getNoOverheadItems()
-        this.itemsWithOverheadNetPrice = getOverheadItemsNet()
-        this.itemsWithoutOverheadNetPrice = getNoOverheadItemsNet()
+        addAllAvailableIdentifiers(builder.availableVersions)
+        addAvailableIdentifier(this.identifier)
         this.overheadRatio = determineOverhead()
         if (builder.associatedProject.isPresent()) {
             this.associatedProject = Optional.of(builder.associatedProject.get())
@@ -359,8 +341,7 @@ class Offer {
                     BigDecimal itemCostWithOverhead = BigDecimal.valueOf(calculateItemOverhead(item)) + BigDecimal.valueOf(item.totalPrice) - BigDecimal.valueOf(item.quantityDiscount)
                     taxes.apply(itemCostWithOverhead, item.product)
                 })
-                .collect()
-                .sum() as BigDecimal
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
     }
 
     /**
@@ -458,36 +439,25 @@ class Offer {
         return noVatCategory
     }
 
-    /**
-     * Returns a deep copy of all available offer versions.
-     *
-     * @return A list of available offer versions
-     */
-    List<OfferId> getAvailableVersions() {
-        return availableVersions.stream()
-                .map(offerId -> new OfferId(
-                        new RandomPart(offerId.randomPart),
-                        new ProjectPart(offerId.projectPart),
-                        new Version(offerId.version)
-                )).collect()
+    void addAvailableIdentifier(OfferId offerId) {
+        this.availableIdentifiers.add(offerId)
     }
 
-    void addAvailableVersion(OfferId offerId) {
-        this.availableVersions.add(new OfferId(offerId))
-    }
-
-    void addAllAvailableVersions(Collection<OfferId> offerIdCollection) {
-        offerIdCollection.each {addAvailableVersion(it)}
+    void addAllAvailableIdentifiers(Collection<OfferId> offerIdCollection) {
+        offerIdCollection.each {addAvailableIdentifier(it)}
     }
 
     /**
      * Increases the version of an offer, resulting in a offer id with a new version tag.
      */
     void increaseVersion() {
-        def copyIdentifier = new OfferId(this.identifier)
-        identifier = getLatestVersion()
+        def currentId = new OfferId(identifier.projectPart, identifier.randomPart, identifier.version)
+        addAvailableIdentifier(currentId)
+        def latestId = getLatestIdentifier()
+        if (latestId != identifier) {
+            identifier = latestId
+        }
         identifier.increaseVersion()
-        this.availableVersions.addAll(copyIdentifier, this.identifier)
     }
 
     /**
@@ -504,7 +474,9 @@ class Offer {
     }
 
     private BigDecimal calculateTotalDiscountAmount() {
-        return items.sum{ BigDecimal.valueOf(it.quantityDiscount) } as BigDecimal
+        return items.stream()
+                .map({ BigDecimal.valueOf(it.quantityDiscount) })
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
     }
 
     private BigDecimal calculateCataloguePriceForItem(ProductItem item) {
@@ -622,8 +594,13 @@ class Offer {
      *
      * @return The latest offer id
      */
-    OfferId getLatestVersion() {
-        return availableVersions.sort().last() ?: this.identifier
+    int getLatestVersion() {
+        //FIXME the current version should be in available versions
+        return getLatestIdentifier().version ?: this.identifier.version
+    }
+
+    private OfferId getLatestIdentifier() {
+        return availableIdentifiers.max()
     }
 
 

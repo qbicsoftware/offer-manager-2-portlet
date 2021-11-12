@@ -4,6 +4,7 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.offers.Converter
+import life.qbic.business.offers.identifier.TomatoIdFormatter
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
 
@@ -32,21 +33,21 @@ class FetchOffer implements FetchOfferInput {
         try {
             Optional<Offer> foundOffer = dataSource.getOffer(offerId)
             if (!foundOffer.isPresent()) {
-                output.failNotification("Could not find an Offer for the given OfferId ${offerId.toString()}")
+                output.failNotification("Could not find an Offer for the given OfferId ${TomatoIdFormatter.formatAsOfferId(offerId)}")
             } else {
                 Offer finalOffer = generateOfferFromSource(foundOffer.get())
-                log.info("Successfully retrieved Offer with Id ${offerId.toString()} ")
+                log.info("Successfully retrieved Offer with Id ${TomatoIdFormatter.formatAsOfferId(offerId)} ")
                 output.fetchedOffer(finalOffer)
             }
         }
         catch (DatabaseQueryException queryException) {
             log.error(queryException.message)
-            output.failNotification("Could not retrieve Offer with OfferId ${offerId.toString()} from the Database")
+            output.failNotification("Could not retrieve Offer with OfferId ${TomatoIdFormatter.formatAsOfferId(offerId)} from the Database")
         }
         catch (Exception e) {
             log.error(e.message)
             log.error(e.stackTrace.join("\n"))
-            output.failNotification("Unexpected error when searching for the Offer associated with the Id ${offerId.toString()}")
+            output.failNotification("Unexpected error when searching for the Offer associated with the Id ${TomatoIdFormatter.formatAsOfferId(offerId)}")
         }
     }
     private static Offer generateOfferFromSource(Offer offer){
