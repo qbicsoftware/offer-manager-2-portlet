@@ -1,10 +1,8 @@
 package life.qbic.business.offers.identifier
 /**
- * <b><short description></b>
+ * <b>Formats different Ids to String.</b>
  *
- * <p><detailed description></p>
- *
- * @since <version tag>
+ * @since 1.2.2
  */
 class TomatoIdFormatter {
 

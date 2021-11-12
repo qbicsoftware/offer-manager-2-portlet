@@ -3,11 +3,9 @@ package life.qbic.business.offers.identifier
 import spock.lang.Specification
 
 /**
- * <b><short description></b>
+ * <b>Tests wether the fomatter works as expected.</b>
  *
- * <p><detailed description></p>
- *
- * @since <version tag>
+ * @since 1.2.2
  */
 class TomatoIdFormatterSpec extends Specification {
 
