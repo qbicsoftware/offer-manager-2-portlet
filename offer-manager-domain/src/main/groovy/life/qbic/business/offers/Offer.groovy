@@ -339,8 +339,7 @@ class Offer {
                     BigDecimal itemCostWithOverhead = BigDecimal.valueOf(calculateItemOverhead(item)) + BigDecimal.valueOf(item.totalPrice) - BigDecimal.valueOf(item.quantityDiscount)
                     taxes.apply(itemCostWithOverhead, item.product)
                 })
-                .collect()
-                .sum() as BigDecimal
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
     }
 
     /**
@@ -473,7 +472,9 @@ class Offer {
     }
 
     private BigDecimal calculateTotalDiscountAmount() {
-        return items.sum{ BigDecimal.valueOf(it.quantityDiscount) } as BigDecimal
+        return items.stream()
+                .map({ BigDecimal.valueOf(it.quantityDiscount) })
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
     }
 
     private BigDecimal calculateCataloguePriceForItem(ProductItem item) {
