@@ -123,6 +123,12 @@ class OfferTemplate {
                 offer.getCustomerLastName())
         document.getElementById("customer-name").text(customerName)
         document.getElementById("customer-organisation").text(offer.getCustomerOrganisation())
+        Element addressAddition = document.getElementById("customer-address-addition")
+        if (offer.customerAddressAddition) {
+            addressAddition.text(offer.customerAddressAddition)
+        } else {
+            addressAddition.remove()
+        }
         document.getElementById("customer-street").text(offer.getCustomerStreet())
         document.getElementById("customer-postal-code").text(offer.getCustomerPostalCode())
         document.getElementById("customer-city").text(offer.getCustomerCity())
