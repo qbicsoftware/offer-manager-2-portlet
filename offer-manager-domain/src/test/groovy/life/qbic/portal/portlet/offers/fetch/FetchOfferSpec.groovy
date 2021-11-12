@@ -4,6 +4,7 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.fetch.FetchOffer
 import life.qbic.business.offers.fetch.FetchOfferDataSource
 import life.qbic.business.offers.fetch.FetchOfferOutput
+import life.qbic.business.offers.identifier.TomatoIdFormatter
 import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.facilities.Facility
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
@@ -82,7 +83,7 @@ class FetchOfferSpec extends Specification {
         FetchOfferDataSource ds = Stub(FetchOfferDataSource.class)
         FetchOffer fetchOffer = new FetchOffer(ds, output)
 
-        ds.getOffer(offerId) >> { throw new DatabaseQueryException("Could not retrieve Offer with OfferId ${offerId.toString()} from the Database") }
+        ds.getOffer(offerId) >> { throw new DatabaseQueryException("Could not retrieve Offer with OfferId ${TomatoIdFormatter.formatAsOfferId(offerId)} from the Database") }
 
         when:
         fetchOffer.fetchOffer(offerId)
