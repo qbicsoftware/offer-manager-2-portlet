@@ -1,5 +1,6 @@
 package life.qbic.business.offers
 
+import groovy.transform.EqualsAndHashCode
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.services.ExternalServiceProduct
@@ -19,6 +20,7 @@ import life.qbic.datamodel.dtos.business.services.Product
  *
  * @since 1.2.0
  */
+@EqualsAndHashCode
 class TaxOffice {
 
     private static final BigDecimal VAT_RATIO = BigDecimal.valueOf(0.19)
