@@ -11,6 +11,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
+* Offer identifiers are now all in the format `O_project_rand_1`
+
 * ZIP code and city of the offer recipient are in the same line now 
 
 **Dependencies**
