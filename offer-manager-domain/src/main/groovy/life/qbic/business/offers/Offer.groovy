@@ -130,18 +130,20 @@ class Offer {
         }
     }
 
-    private final QuantityDiscount quantityDiscount = new QuantityDiscount()
+    private static final QuantityDiscount quantityDiscount = new QuantityDiscount()
 
-    private final Function<ProductItem, BigDecimal> cataloguePrice = { ProductItem it -> calculateCataloguePriceForItem(it) }
+    private static final Function<BigDecimal, BigDecimal> dataStorageDiscount = new DataStorageDiscount()
 
-    private final Function<BigDecimal, BigDecimal> dataStorageDiscount = new DataStorageDiscount()
+    private final TaxOffice taxOffice
+
+    private final Function<ProductItem, BigDecimal> cataloguePrice = {
+        ProductItem it -> calculateCataloguePriceForItem(it)
+    }
 
     private final Predicate<ProductItem> dataStorageApplicable = {
         it.product instanceof DataStorage && \
                     selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL
     }
-
-    private final TaxOffice taxOffice
 
     private static Logging log = Logger.getLogger(this.class)
 
