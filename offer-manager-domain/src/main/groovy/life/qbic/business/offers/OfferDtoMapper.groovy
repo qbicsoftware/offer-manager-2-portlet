@@ -7,11 +7,11 @@ import life.qbic.business.offers.identifier.OfferIdDtoMapper
 import java.util.function.Function
 
 /**
- * <b><short description></b>
+ * <b>Offer object mapper functions</b>
  *
- * <p><detailed description></p>
+ * <p>A mapper class containing mapping functions with regards to the Offer object.</p>
  *
- * @since <version tag>
+ * @since 1.2.2
  */
 class OfferDtoMapper {
 
@@ -56,10 +56,6 @@ class OfferDtoMapper {
                 .expirationDate(offer.expirationDate)
                 .checksum(offer.checksum())
                 .overheadRatio(offer.overheadRatio)
-//                .itemsWithOverhead(offer.overheadItems) // This is deprecated and not used. Only required by the tests
-//                .itemsWithoutOverhead(offer.noOverheadItems) // This is deprecated and not used. Only required by the tests
-//                .itemsWithOverheadNet(offer.overheadItemsNet) // This is deprecated and not used. Only required by the tests
-//                .itemsWithoutOverheadNet(offer.noOverheadItemsNet) // This is deprecated and not used. Only required by the tests
         offer.associatedProject.ifPresent({
             builder.associatedProject(it)
         })

@@ -4,11 +4,9 @@ package life.qbic.business.offers.identifier
 import spock.lang.Specification
 
 /**
- * <b><short description></b>
+ * <b>Tests the mapping of OfferId entity object to OfferId dto and vice versa.</b>
  *
- * <p><detailed description></p>
- *
- * @since <version tag>
+ * @since 1.2.2
  */
 class OfferIdDtoMapperSpec extends Specification {
 
