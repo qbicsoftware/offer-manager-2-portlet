@@ -7,11 +7,9 @@ import life.qbic.datamodel.dtos.business.ProjectManager
 import spock.lang.Specification
 
 /**
- * <b><short description></b>
+ * <b>Tests the mapping of Offer entity object to Offer dto and vice versa.</b>
  *
- * <p><detailed description></p>
- *
- * @since <version tag>
+ * @since 1.2.2
  */
 class OfferDtoMapperSpec extends Specification {
 
@@ -22,6 +20,8 @@ class OfferDtoMapperSpec extends Specification {
 
     static Offer offer = generateOffer()
     static life.qbic.datamodel.dtos.business.Offer offerDto = generateOfferDto()
+    static life.qbic.datamodel.dtos.business.Offer filledDto = generateOfferDto(offer.checksum(), offer.getExpirationDate(), offer.getOverheadRatio())
+
 
     def "DTO_TO_OFFER works"() {
         when:
@@ -34,7 +34,7 @@ class OfferDtoMapperSpec extends Specification {
         when:
         def mappedOfferDto = OfferDtoMapper.OFFER_TO_DTO.apply(offer)
         then:
-        mappedOfferDto == offerDto
+        mappedOfferDto == filledDto
     }
 
     private static Offer generateOffer() {
@@ -48,6 +48,16 @@ class OfferDtoMapperSpec extends Specification {
         def builder = new life.qbic.datamodel.dtos.business.Offer.Builder(customer, projectManager, "projectTitle", "projectObjective", affiliation)
         builder.identifier(new life.qbic.datamodel.dtos.business.OfferId("projectPart", "randomPart", "1"))
         builder.modificationDate(creationDate)
+        return builder.build()
+    }
+
+    private static life.qbic.datamodel.dtos.business.Offer generateOfferDto(String checksum, Date expirationdate, def overheadRatio) {
+        def builder = new life.qbic.datamodel.dtos.business.Offer.Builder(customer, projectManager, "projectTitle", "projectObjective", affiliation)
+        builder.identifier(new life.qbic.datamodel.dtos.business.OfferId("projectPart", "randomPart", "1"))
+        builder.modificationDate(creationDate)
+        builder.expirationDate(expirationdate)
+        builder.checksum(checksum)
+        builder.overheadRatio(overheadRatio)
         return builder.build()
     }
 
