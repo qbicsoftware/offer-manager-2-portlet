@@ -18,6 +18,9 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 1.2.3 (2021-12-13)
 ------------------
+**Added**
+
+**Fixed**
 
 * CVE-2021-44228
 
