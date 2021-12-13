@@ -23,6 +23,8 @@
 
 		<vaadin.version>8.14.0</vaadin.version>
 		<vaadin.plugin.version>8.14.0</vaadin.plugin.version>
+
+		<log4j.version>2.15.0</log4j.version>
 	</properties>
 	<pluginRepositories>
 		<pluginRepository>
