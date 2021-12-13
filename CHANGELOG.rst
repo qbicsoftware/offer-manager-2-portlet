@@ -16,6 +16,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 **Dependencies**
 
 * ``org.apache.logging.log4j:log4j-core:2.14.0`` -> ``2.15.0``
+* ``org.apache.logging.log4j:log4j-api:2.14.0`` -> ``2.15.0``
 
 **Deprecated**
 
