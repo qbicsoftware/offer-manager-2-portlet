@@ -1,7 +1,7 @@
 TOMATO - The Offer MAnager Tool
 -----------------------------------
 
-|maven-build| |maven-test| |release| |java| |groovy|
+|maven-build| |maven-test| |release| |java| |groovy| |code-ql|
 
 Tomato assists in managing and creating offers
 
@@ -115,4 +115,7 @@ This project was created with qube_.
 
 .. |groovy| image:: https://img.shields.io/badge/language-groovy-blue.svg
     :alt: Written in Groovy
+    
+.. |code-ql| image:: https://github.com/qbicsoftware/offer-manager-2-portlet/actions/workflows/codeql-analysis.yml/badge.svg?branch=master
+    :alt: CodeQL
     
