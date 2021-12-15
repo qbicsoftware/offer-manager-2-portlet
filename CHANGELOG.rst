@@ -4,6 +4,26 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.2.4 (2021-12-15)
+------------------
+
+**Added**
+
+**Fixed**
+
+* CVE-2021-44228
+
+**Dependencies**
+
+* ``com.vaadin:vaadin-bom:8.14.0`` -> ``8.14.3``
+* ``org.codehaus.groovy:groovy-sql:3.0.8`` -> ``3.0.9``
+* ``org.codehaus.groovy:groovy-all:3.0.8`` -> ``3.0.9``
+* ``org.apache.logging.log4j:log4j-core:2.15.0`` -> ``2.16.0``
+* ``org.apache.logging.log4j:log4j-api:2.15.0`` -> ``2.16.0``
+
+**Deprecated**
+
+
 1.2.3 (2021-12-13)
 ------------------
 
