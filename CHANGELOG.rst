@@ -11,7 +11,7 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Fixed**
 
-* CVE-2021-44228
+* CVE-2021-45046
 
 **Dependencies**
 
