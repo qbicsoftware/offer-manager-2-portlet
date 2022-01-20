@@ -21,7 +21,7 @@
 
 		<groovy.version>3.0.9</groovy.version>
 
-		<vaadin.version>8.14.3</vaadin.version>
+		<vaadin.version>22.0.3</vaadin.version>
 		<vaadin.plugin.version>8.14.3</vaadin.plugin.version>
 
 		<log4j.version>2.17.1</log4j.version>
