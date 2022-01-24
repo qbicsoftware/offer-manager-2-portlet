@@ -4,6 +4,19 @@ Changelog
 
 This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
+1.2.7 (2022-01-24)
+------------------
+
+**Added**
+
+* Update publication acknowledgement template text in offer template (#884)
+
+**Fixed**
+
+**Dependencies**
+
+**Deprecated**
+
 1.2.6 (2022-01-04)
 ------------------
 
