@@ -9,6 +9,8 @@ This project adheres to `Semantic Versioning <https://semver.org/>`_.
 
 **Added**
 
+* Update publication acknowledgement template text in offer template (#884)
+
 **Fixed**
 
 **Dependencies**
