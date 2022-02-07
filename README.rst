@@ -1,7 +1,8 @@
 TOMATO - The Offer MAnager Tool
 -----------------------------------
 
-|maven-build| |maven-test| |release| |java| |groovy| |code-ql|
+|maven-build| |maven-test| |codeql| |release|
+|license| |java| |groovy|
 
 Tomato assists in managing and creating offers
 
@@ -94,10 +95,6 @@ is sufficient.
 Credits
 -------
 
-This project was created with qube_.
-
-.. _qube: https://github.com/qbicsoftware/qube
-
 .. |maven-build| image:: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Build%20Maven%20Package/badge.svg
     :target: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Build%20Maven%20Package/badge.svg
     :alt: Github Workflow Build Maven Package Status
@@ -108,7 +105,11 @@ This project was created with qube_.
 
 .. |release| image:: https://img.shields.io/github/v/release/qbicsoftware/offer-manager-2-portlet.svg
     :target: https://github.com/qbicsoftware/offer-manager-2-portlet/release
-    :alt: Release status 
+    :alt: Release status
+
+.. |license| image:: https://img.shields.io/github/license/qbicsoftware/offer-manager-2-portlet
+    :target: https://img.shields.io/github/license/qbicsoftware/offer-manager-2-portlet
+    :alt: Project Licence
 
 .. |java| image:: https://img.shields.io/badge/language-java-blue.svg
     :alt: Written in Java
