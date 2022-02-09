@@ -1,7 +1,7 @@
 TOMATO - The Offer MAnager Tool
 -----------------------------------
 
-|maven-build| |maven-test| |codeql| |release|
+|maven-build| |maven-test| |code-ql| |release|
 |license| |java| |groovy|
 
 
@@ -19,7 +19,7 @@ Build the project with Maven and Java 8
   mvn clean package
 
 Deploy the created portlet in a Liferay instance.
-Make sure that Chromium is installed on the server, it is required for the download of the offer. (see 'How to use')
+Make sure that Chromium is installed on the server, it is required for the download of the offer. (see `How to use`_)
 
 **Local testing**
 
