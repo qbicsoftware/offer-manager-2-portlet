@@ -1,13 +1,10 @@
 TOMATO - The Offer MAnager Tool
 -----------------------------------
 
-|maven-build| |maven-test| |code-ql| |release|
-|license| |java| |groovy|
-
-
 Tomato assists in managing and creating offers
 
-* Free software: MIT
+|maven-build| |maven-test| |code-ql| |release|
+|license| |java| |groovy|
 
 How to run
 -----------
@@ -125,6 +122,14 @@ In order to enable the offer manager app to convert an offer as PDF, you need to
 environment variable in the system's environment accessible by the application.
 
 The app will look for an environment variable ``CHROMIUM_EXECUTABLE``, so make sure to have set it.
+
+
+License
+-------
+
+This work is licensed under the `MIT license <https://mit-license.org/>`_.
+
+**Note**: This work uses the `Vaadin Framework <https://github.com/vaadin>`_, which is licensed under `Apache 2.0 <https://www.apache.org/licenses/LICENSE-2.0>`_.
 
 
 .. |maven-build| image:: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Build%20Maven%20Package/badge.svg
