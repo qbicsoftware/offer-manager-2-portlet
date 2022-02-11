@@ -155,5 +155,6 @@ This work is licensed under the `MIT license <https://mit-license.org/>`_.
     :alt: Written in Groovy
     
 .. |code-ql| image:: https://github.com/qbicsoftware/offer-manager-2-portlet/actions/workflows/codeql-analysis.yml/badge.svg?branch=master
+    :target: https://github.com/qbicsoftware/offer-manager-2-portlet/actions/workflows/codeql-analysis.yml
     :alt: CodeQL
     
