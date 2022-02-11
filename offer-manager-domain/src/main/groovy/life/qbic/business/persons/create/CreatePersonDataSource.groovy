@@ -1,8 +1,8 @@
 package life.qbic.business.persons.create
 
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.persons.PersonExistsException
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.general.CommonPerson
 import life.qbic.datamodel.dtos.general.Person
 
@@ -21,9 +21,10 @@ interface CreatePersonDataSource {
      *
      * @param person a person to be added to known persons
      * @throws DatabaseQueryException When a person could not been added to the person database
+     * @throws PersonExistsException When a person already exists in the database
      * @since 1.0.0
      */
-    void addPerson(Person person) throws DatabaseQueryException
+    void addPerson(Person person) throws DatabaseQueryException, PersonExistsException
 
     /**
      * Updates the information of a given person specified by a person ID
