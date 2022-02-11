@@ -133,19 +133,19 @@ This work is licensed under the `MIT license <https://mit-license.org/>`_.
 
 
 .. |maven-build| image:: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Build%20Maven%20Package/badge.svg
-    :target: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Build%20Maven%20Package/badge.svg
+    :target: https://github.com/qbicsoftware/offer-manager-2-portlet/actions/workflows/build_package.yml
     :alt: Github Workflow Build Maven Package Status
 
 .. |maven-test| image:: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Run%20Maven%20Tests/badge.svg
-    :target: https://github.com/qbicsoftware/offer-manager-2-portlet/workflows/Run%20Maven%20Tests/badge.svg
+    :target: https://github.com/qbicsoftware/offer-manager-2-portlet/actions/workflows/run_tests.yml
     :alt: Github Workflow Tests Status  
 
 .. |release| image:: https://img.shields.io/github/v/release/qbicsoftware/offer-manager-2-portlet.svg
-    :target: https://github.com/qbicsoftware/offer-manager-2-portlet/release
+    :target: https://github.com/qbicsoftware/offer-manager-2-portlet/releases
     :alt: Release status
 
 .. |license| image:: https://img.shields.io/github/license/qbicsoftware/offer-manager-2-portlet
-    :target: https://img.shields.io/github/license/qbicsoftware/offer-manager-2-portlet
+    :target: https://github.com/qbicsoftware/offer-manager-2-portlet/blob/master/LICENSE
     :alt: Project Licence
 
 .. |java| image:: https://img.shields.io/badge/language-java-blue.svg
