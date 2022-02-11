@@ -184,7 +184,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
       connection.withCloseable { it ->
         try {
-          int personId = createNewPerson(it, person)
+          int personId = storePerson(it, person)
           storeAffiliation(it, personId, person.affiliations)
           connection.commit()
         } catch (Exception e) {
@@ -222,7 +222,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     return personAlreadyInDb
   }
 
-  private static int createNewPerson(Connection connection, Person person) {
+  private static int storePerson(Connection connection, Person person) {
     String query = "INSERT INTO person (user_id, first_name, last_name, title, email, active) " +
             "VALUES(?, ?, ?, ?, ?, ?)"
 
@@ -362,7 +362,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
     connection.withCloseable { it ->
       try {
-        int newPersonId = createNewPerson(it, updatedPerson)
+        int newPersonId = storePerson(it, updatedPerson)
         List<Affiliation> allAffiliations = fetchAffiliationsForPerson(oldPersonId)
 
         updatedPerson.affiliations.each {
