@@ -5,6 +5,7 @@ import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.persons.PersonExistsException
 import life.qbic.business.persons.PersonNotFoundException
+import life.qbic.business.persons.affiliation.AffiliationExistsException
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
 import life.qbic.business.persons.create.CreatePersonDataSource
@@ -432,41 +433,28 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
    * @inheritDoc
    */
   @Override
-  void addAffiliation(Affiliation affiliation) {
-    try {
-      if (affiliationExists(affiliation)) {
-        throw new DatabaseQueryException("Affiliation is already in the database.")
-      }
-      Connection connection = connectionProvider.connect()
-      connection.setAutoCommit(false)
+  void addAffiliation(Affiliation affiliation) throws DatabaseQueryException, AffiliationExistsException {
+    if (affiliationExists(affiliation)) {
+      throw new AffiliationExistsException("Affiliation is already in the database.")
+    }
+    Connection connection = connectionProvider.connect()
+    connection.setAutoCommit(false)
 
-      connection.withCloseable { it ->
-        try {
-          storeAffiliation(it, affiliation)
-          connection.commit()
-        }
-        catch (DatabaseQueryException e) {
-          log.error(e.message)
-          log.error(e.stackTrace.join("\n"))
-          connection.rollback()
-          connection.close()
-          throw new DatabaseQueryException("Could not create affiliation in database")
-        }
-        catch (Exception e) {
-          log.error(e.message)
-          log.error(e.stackTrace.join("\n"))
-          connection.rollback()
-          connection.close()
-          throw new DatabaseQueryException("Unexpected exception occurred")
-        }
-
+    connection.withCloseable { it ->
+      try {
+        storeAffiliation(it, affiliation)
+        connection.commit()
+      } catch (DatabaseQueryException e) {
+        log.error(e.message, e)
+        connection.rollback()
+        connection.close()
+        throw new DatabaseQueryException("Could not create the affiliation in the database")
+      } catch (Exception e) {
+        log.error(e.message, e)
+        connection.rollback()
+        connection.close()
+        throw new DatabaseQueryException("The affiliation could not be created: ${affiliation.toString()}")
       }
-    } catch (DatabaseQueryException ignored) {
-      throw new DatabaseQueryException("The affiliation could not be created: ${affiliation.toString()}")
-    } catch (Exception e) {
-      log.error(e)
-      log.error(e.stackTrace.join("\n"))
-      throw new DatabaseQueryException("The affiliation could not be created: ${affiliation.toString()}")
     }
   }
 
