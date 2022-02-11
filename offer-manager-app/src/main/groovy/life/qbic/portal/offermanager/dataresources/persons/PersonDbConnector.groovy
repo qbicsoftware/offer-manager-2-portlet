@@ -3,7 +3,8 @@ package life.qbic.portal.offermanager.dataresources.persons
 import groovy.sql.GroovyRowResult
 import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.business.exceptions.PersonNotFoundException
+import life.qbic.business.persons.PersonExistsException
+import life.qbic.business.persons.PersonNotFoundException
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
 import life.qbic.business.persons.create.CreatePersonDataSource
@@ -173,10 +174,10 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
    * @param customer
    */
   @Override
-  void addPerson(Person person) throws DatabaseQueryException {
+  void addPerson(Person person) throws DatabaseQueryException, PersonExistsException {
     try {
       if (personExists(person)) {
-        throw new DatabaseQueryException("Customer is already in the database.")
+        throw new PersonExistsException("Customer is already in the database.")
       }
       Connection connection = connectionProvider.connect()
       connection.setAutoCommit(false)
@@ -299,8 +300,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       existingAffiliations = getAffiliationForPersonId(personId)
 
     } catch (Exception e) {
-      log.error(e)
-      log.error(e.stackTrace.join("\n"))
+      log.error(e.getMessage(), e)
       throw new DatabaseQueryException("The customer's affiliations could not be updated.")
     }
 

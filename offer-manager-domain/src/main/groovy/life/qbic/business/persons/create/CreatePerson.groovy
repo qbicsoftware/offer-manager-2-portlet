@@ -1,11 +1,11 @@
 package life.qbic.business.persons.create
 
-import life.qbic.business.exceptions.PersonNotFoundException
-import life.qbic.business.persons.update.UpdatePerson
-import life.qbic.business.persons.update.UpdatePersonOutput
+import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.persons.PersonNotFoundException
+import life.qbic.business.persons.update.UpdatePerson
+import life.qbic.business.persons.update.UpdatePersonOutput
 import life.qbic.datamodel.dtos.general.Person
 
 /**
@@ -36,8 +36,8 @@ class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
       dataSource.addPerson(person)
       try {
         output.personCreated(person)
-      } catch (Exception ignored) {
-        log.error(ignored.stackTrace.toString())
+      } catch (Exception unexpectedException) {
+        log.error(unexpectedException.getMessage(), unexpectedException)
       }
     } catch(DatabaseQueryException databaseQueryException){
       output.failNotification(databaseQueryException.message)

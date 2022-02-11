@@ -1,4 +1,4 @@
-package life.qbic.business.exceptions
+package life.qbic.business.persons
 /**
  * <b>Exception thrown when no person was found</b>
  *
