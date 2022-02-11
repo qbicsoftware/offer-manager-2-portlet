@@ -66,7 +66,7 @@ If an authenticated user has none of these roles, she will not be able to execut
     * - datasource.url
       - Connection to datasource
       - https://openbis.domain.de
-    * - datasource.api.ur
+    * - datasource.api.url
       - Connection to API datasource
       - https://openbis.domain.de/api/path
     * - datasource.user
