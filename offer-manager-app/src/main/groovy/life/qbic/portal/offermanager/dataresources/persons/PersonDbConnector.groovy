@@ -442,7 +442,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
       connection.withCloseable { it ->
         try {
-          createNewAffiliation(it, affiliation)
+          storeAffiliation(it, affiliation)
           connection.commit()
         }
         catch (DatabaseQueryException e) {
@@ -499,7 +499,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     return affiliationAlreadyInDb
   }
 
-  private static int createNewAffiliation(Connection connection, Affiliation affiliation) {
+  private static int storeAffiliation(Connection connection, Affiliation affiliation) {
     String query = "INSERT INTO affiliation (organization, address_addition, street, country, postal_code, city, category) " +
             "VALUES(?, ?, ?, ?, ?, ?, ?)"
 
@@ -746,7 +746,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     return affiliations
   }
 
-  static AffiliationCategory determineAffiliationCategory(String value) {
+  private static AffiliationCategory determineAffiliationCategory(String value) {
     def category
     switch (value.toLowerCase()) {
       case "internal":
