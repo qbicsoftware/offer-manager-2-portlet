@@ -176,32 +176,24 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
    */
   @Override
   void addPerson(Person person) throws DatabaseQueryException, PersonExistsException {
-    try {
-      if (personExists(person)) {
-        throw new PersonExistsException("Customer is already in the database.")
-      }
-      Connection connection = connectionProvider.connect()
-      connection.setAutoCommit(false)
+    if (personExists(person)) {
+      throw new PersonExistsException("Customer is already in the database.")
+    }
+    Connection connection = connectionProvider.connect()
+    connection.setAutoCommit(false)
 
-      connection.withCloseable { it ->
-        try {
-          int personId = storePerson(it, person)
-          storeAffiliation(it, personId, person.affiliations)
-          connection.commit()
-        } catch (Exception e) {
-          log.error(e.message)
-          log.error(e.stackTrace.join("\n"))
-          connection.rollback()
-          connection.close()
-          throw new DatabaseQueryException("Could not create person.")
-        }
+    connection.withCloseable { it ->
+      try {
+        int personId = storePerson(it, person)
+        storeAffiliation(it, personId, person.affiliations)
+        connection.commit()
+      } catch (Exception e) {
+        log.error(e.message)
+        log.error(e.stackTrace.join("\n"))
+        connection.rollback()
+        connection.close()
+        throw new DatabaseQueryException("The person could not be created: ${person.toString()}")
       }
-    } catch (DatabaseQueryException ignored) {
-      throw new DatabaseQueryException("The person could not be created: ${person.toString()}")
-    } catch (Exception e) {
-      log.error(e)
-      log.error(e.stackTrace.join("\n"))
-      throw new DatabaseQueryException("The person could not be created: ${person.toString()}")
     }
   }
 
