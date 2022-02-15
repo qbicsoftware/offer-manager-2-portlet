@@ -72,6 +72,8 @@ import life.qbic.portal.offermanager.components.product.create.CreateProductView
 import life.qbic.portal.offermanager.components.product.create.CreateProductViewModel
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 import life.qbic.portal.offermanager.dataresources.database.DatabaseSession
+import life.qbic.portal.offermanager.dataresources.database.DatabaseSessionV2
+import life.qbic.portal.offermanager.dataresources.database.SessionProvider
 import life.qbic.portal.offermanager.dataresources.offers.*
 import life.qbic.portal.offermanager.dataresources.persons.*
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
@@ -83,6 +85,11 @@ import life.qbic.portal.offermanager.dataresources.projects.ProjectSpaceResource
 import life.qbic.portal.offermanager.security.Role
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
+import org.hibernate.Criteria
+import org.hibernate.Session
+import org.hibernate.criterion.CriteriaQuery
+import org.hibernate.query.Query
+import org.hibernate.query.criteria.internal.CriteriaBuilderImpl
 
 /**
  * Class that manages all the dependency injections and class instance creations
@@ -120,6 +127,8 @@ class DependencyManager {
      */
     private EventEmitter<Project> projectCreatedEvent
 
+    // Hibernate session management
+    private SessionProvider sessionProvider
 
     // Implemented by life.qbic.portal.offermanager.dataresources.offers.OfferDbConnector
     private CreateOfferDataSource createOfferDataSource
@@ -175,6 +184,11 @@ class DependencyManager {
             String host = Objects.requireNonNull(configurationManager.getMysqlHost(), "Mysql host missing.")
             String port = Objects.requireNonNull(configurationManager.getMysqlPort(), "Mysql port missing.")
             String sqlDatabase = Objects.requireNonNull(configurationManager.getMysqlDB(), "Mysql database name missing.")
+
+            // Setup Hibernate session
+            String dbFullUrl = "jdbc:mysql://" + host + ":" + port + "/" + sqlDatabase
+            sessionProvider = new DatabaseSessionV2(dbFullUrl, user, password, "com.mysql.cj.jdbc.Driver", "org.hibernate.dialect.MariaDBDialect")
+            trySessionProvider(sessionProvider)
 
             DatabaseSession.init(user, password, host, port, sqlDatabase)
             PersonDbConnector personDbConnector = new PersonDbConnector(DatabaseSession.getInstance())
@@ -647,4 +661,15 @@ class DependencyManager {
         return maintainProductsView
     }
 
+    private static void trySessionProvider(DatabaseSessionV2 databaseSessionV2) {
+        try(Session session = databaseSessionV2.getCurrentSession()) {
+            session.beginTransaction()
+            Query<Person> query = session.createQuery("FROM Person ")
+            // Print entities
+            List<life.qbic.portal.offermanager.dataresources.persons.Person> persons = query.list() as List<life.qbic.portal.offermanager.dataresources.persons.Person>
+            for (life.qbic.portal.offermanager.dataresources.persons.Person person : persons) {
+                log.info(person)
+            }
+        }
+    }
 }

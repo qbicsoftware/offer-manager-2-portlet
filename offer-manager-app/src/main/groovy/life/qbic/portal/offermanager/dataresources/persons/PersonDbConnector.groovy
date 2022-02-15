@@ -16,6 +16,7 @@ import life.qbic.datamodel.dtos.general.CommonPerson
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
+import life.qbic.datamodel.dtos.business.Affiliation
 
 import java.sql.Connection
 import java.sql.PreparedStatement
