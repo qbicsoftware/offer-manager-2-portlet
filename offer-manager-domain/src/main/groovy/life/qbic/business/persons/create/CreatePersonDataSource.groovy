@@ -27,21 +27,13 @@ interface CreatePersonDataSource {
     /**
      * Updates the information of a given person specified by a person ID
      *
-     * @param personId to specify the person to be updated
-     * @param updatedPerson person containing all information and the updates of a person
+     * @param outdatedPersonData specifies the person to be updated
+     * @param updatedPersonData person containing all information and the updates of a person
      * @throws DatabaseQueryException When a person could not been updated in the person
      * database
      * @since 1.0.0
      */
     void updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException
-
-    /**
-     * Searches for a person in a database and returns its id
-     *
-     * @param person The person that needs to be searched in the database
-     * @return an optional containing the person if found
-     */
-    Optional<Integer> findPerson(Person person)
 
     /**
      * Updates affiliations of a person specified by a customer ID.

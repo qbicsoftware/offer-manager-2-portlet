@@ -100,20 +100,24 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     }
 
     @Override
-    void updatePerson(int personId, Person updatedPerson) throws DatabaseQueryException {
-      // FIXME
+    void updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException {
+        outdatedPersonData.setIsActive(false)
+        updatedPersonData.setIsActive(true)
+        try(Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            session.save(outdatedPersonData)
+            session.save(updatedPersonData)
+        } catch (HibernateException e) {
+            log.error(e.getStackTrace().join("\n"))
+            throw new DatabaseQueryException("Unable to update person entry.")
+        }
     }
 
 
 
     @Override
-    Optional<Integer> findPerson(Person person) {
-        return Optional.empty()
-    }
+    void updatePersonAffiliations(Person person) throws DatabaseQueryException {
 
-    @Override
-    void updatePersonAffiliations(int personId, List<Affiliation> affiliations) throws DatabaseQueryException {
-      // FIXME
     }
 
     @Override
