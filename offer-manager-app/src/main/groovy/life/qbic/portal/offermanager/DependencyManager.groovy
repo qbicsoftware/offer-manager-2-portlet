@@ -1,7 +1,6 @@
 package life.qbic.portal.offermanager
 
 import groovy.util.logging.Log4j2
-import life.qbic.business.offers.OfferContent
 import life.qbic.business.offers.content.CreateOfferContent
 import life.qbic.business.offers.create.CreateOffer
 import life.qbic.business.offers.create.CreateOfferDataSource
@@ -85,11 +84,8 @@ import life.qbic.portal.offermanager.dataresources.projects.ProjectSpaceResource
 import life.qbic.portal.offermanager.security.Role
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
-import org.hibernate.Criteria
 import org.hibernate.Session
-import org.hibernate.criterion.CriteriaQuery
 import org.hibernate.query.Query
-import org.hibernate.query.criteria.internal.CriteriaBuilderImpl
 
 /**
  * Class that manages all the dependency injections and class instance creations
@@ -666,8 +662,8 @@ class DependencyManager {
             session.beginTransaction()
             Query<Person> query = session.createQuery("FROM Person ")
             // Print entities
-            List<life.qbic.portal.offermanager.dataresources.persons.Person> persons = query.list() as List<life.qbic.portal.offermanager.dataresources.persons.Person>
-            for (life.qbic.portal.offermanager.dataresources.persons.Person person : persons) {
+            List<life.qbic.business.persons.Person> persons = query.list() as List<life.qbic.business.persons.Person>
+            for (life.qbic.business.persons.Person person : persons) {
                 log.info(person)
             }
         }

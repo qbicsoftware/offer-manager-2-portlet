@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.dataresources.persons
+package life.qbic.business.persons
 
 import groovy.transform.ToString
 

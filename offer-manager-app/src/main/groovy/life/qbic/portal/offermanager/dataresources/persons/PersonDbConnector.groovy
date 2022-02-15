@@ -15,6 +15,7 @@ import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.general.CommonPerson
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
+import life.qbic.portal.offermanager.dataresources.database.SessionProvider
 import org.apache.groovy.sql.extensions.SqlExtensions
 import life.qbic.datamodel.dtos.business.Affiliation
 
@@ -40,6 +41,8 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
    */
   private final ConnectionProvider connectionProvider
 
+  private final SessionProvider sessionProvider
+
   private static final AffiliationCategoryFactory CATEGORY_FACTORY = new AffiliationCategoryFactory()
   private static final AcademicTitleFactory TITLE_FACTORY = new AcademicTitleFactory()
   private static final String PERSON_SELECT_QUERY = "SELECT id, first_name, last_name, title, email FROM person"
@@ -54,6 +57,15 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
    */
   PersonDbConnector(ConnectionProvider connectionProvider) {
     this.connectionProvider = connectionProvider
+  }
+
+  /**
+   * Uses a Hibernate session to perform the transactions with the persistence layer
+   * @param sessionProvider
+   * @since 1.3.0
+   */
+  PersonDbConnector(SessionProvider sessionProvider) {
+
   }
 
   @Override
@@ -833,5 +845,10 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       }
       return affiliation
     }
+  }
+
+  @Override
+  List<life.qbic.business.persons.Person> listPersons() {
+    return null
   }
 }
