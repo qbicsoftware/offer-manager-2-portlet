@@ -1,7 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
+import life.qbic.business.persons.Person
 import life.qbic.business.persons.list.ListPersonsDataSource
-import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
@@ -14,17 +14,17 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * @since 1.0.0
  */
-class CustomerResourceService implements ResourcesService<Customer>{
+class CustomerResourceService implements ResourcesService<Person> {
 
     private final ListPersonsDataSource listPersonsDataSource
 
-    private final List<Customer> customerList
+    private final List<Person> customerList
 
-    private final EventEmitter<Customer> eventEmitter
+    private final EventEmitter<Person> eventEmitter
 
     CustomerResourceService(ListPersonsDataSource listPersonsDataSource) {
         this.listPersonsDataSource = listPersonsDataSource
-        this.customerList = listPersonsDataSource.listAllCustomers()
+        this.customerList = listPersonsDataSource.listPersons()
         this.eventEmitter = new EventEmitter<>()
     }
 
@@ -32,36 +32,36 @@ class CustomerResourceService implements ResourcesService<Customer>{
     void reloadResources() {
         customerList.clear()
 
-        List<Customer> updatedEntries = listPersonsDataSource.listAllCustomers()
+        List<Person> updatedEntries = listPersonsDataSource.listPersons()
         updatedEntries.each {
             addToResource(it)
         }
     }
 
     @Override
-    void subscribe(Subscription<Customer> subscription) {
+    void subscribe(Subscription<Person> subscription) {
         eventEmitter.register(subscription)
     }
 
     @Override
-    void unsubscribe(Subscription<Customer> subscription) {
+    void unsubscribe(Subscription<Person> subscription) {
         eventEmitter.unregister(subscription)
     }
 
     @Override
-    void addToResource(Customer resourceItem) {
+    void addToResource(Person resourceItem) {
         customerList.add(resourceItem)
         eventEmitter.emit(resourceItem)
     }
 
     @Override
-    void removeFromResource(Customer resourceItem) {
+    void removeFromResource(Person resourceItem) {
         customerList.remove(resourceItem)
         eventEmitter.emit(resourceItem)
     }
 
     @Override
-    Iterator<Customer> iterator() {
+    Iterator<Person> iterator() {
         return new ArrayList(customerList).iterator()
     }
 }

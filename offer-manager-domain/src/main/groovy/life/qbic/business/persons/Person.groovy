@@ -46,32 +46,23 @@ class Person {
     @Column(name = "email")
     String email
 
-    @Column(name = "active")
-    Integer active
+    @Column(name = "active", columnDefinition = "tinyint", nullable = false)
+    boolean isActive
 
     @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH],
         fetch = FetchType.LAZY)
     @JoinTable(name = "person_affiliation", joinColumns = [ @JoinColumn(name = "person_id") ],
             inverseJoinColumns = [ @JoinColumn(name = "affiliation_id")])
-    Set<Affiliation> affiliations
+    List<Affiliation> affiliations
 
     Person() {}
 
-    Set<Affiliation> getAffiliations() {
-        return affiliations
-    }
-
-    void setAffiliations(Set<Affiliation> affiliations) {
-        this.affiliations = affiliations
-    }
-
-    Person(String userId, String firstName, String lastName, String title, String email, Integer active, Set<Affiliation> affiliations) {
+    Person(String userId, String firstName, String lastName, String title, String email, List<Affiliation> affiliations) {
         this.userId = userId
         this.firstName = firstName
         this.lastName = lastName
         this.title = title
         this.email = email
-        this.active = active
         this.affiliations = affiliations
     }
 
@@ -93,6 +84,14 @@ class Person {
 
     String getFirstName() {
         return firstName
+    }
+
+    boolean getIsActive() {
+        return isActive
+    }
+
+    void setIsActive(boolean isActive) {
+        this.isActive = isActive
     }
 
     void setFirstName(String firstName) {
@@ -123,16 +122,17 @@ class Person {
         this.email = email
     }
 
-    Integer getActive() {
-        return active
+    List<Affiliation> getAffiliations() {
+        return affiliations
     }
 
-    void setActive(Integer active) {
-        this.active = active
+    void setAffiliations(List<Affiliation> affiliations) {
+        this.affiliations = affiliations
     }
 
     void addAffiliation(Affiliation affiliation) {
-        this.affiliations.add(affiliation)
+        if (!(affiliation in affiliations))
+            this.affiliations.add(affiliation)
     }
 
     void removeAffiliation(Affiliation affiliation) {

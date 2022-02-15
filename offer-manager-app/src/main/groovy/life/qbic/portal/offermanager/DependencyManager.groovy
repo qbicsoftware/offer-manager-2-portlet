@@ -187,7 +187,7 @@ class DependencyManager {
             trySessionProvider(sessionProvider)
 
             DatabaseSession.init(user, password, host, port, sqlDatabase)
-            PersonDbConnector personDbConnector = new PersonDbConnector(DatabaseSession.getInstance())
+            PersonDbConnector personDbConnector = new PersonDbConnector(sessionProvider)
             createPersonDataSource = personDbConnector
             searchPersonDataSource = personDbConnector
             createAffiliationDataSource = personDbConnector
