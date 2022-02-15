@@ -1,6 +1,6 @@
 package life.qbic.business.persons.affiliation.list
 
-import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.business.persons.Affiliation
 
 /**
  * <short description>

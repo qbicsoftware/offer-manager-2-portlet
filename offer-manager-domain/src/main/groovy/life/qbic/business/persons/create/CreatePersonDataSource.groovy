@@ -1,10 +1,10 @@
 package life.qbic.business.persons.create
 
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.persons.Affiliation
+import life.qbic.business.persons.Person
 import life.qbic.business.persons.PersonExistsException
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.general.CommonPerson
-import life.qbic.datamodel.dtos.general.Person
+
 
 /**
  * Creates a person in the database for the CreatePerson use case
@@ -42,7 +42,7 @@ interface CreatePersonDataSource {
      *
      * @param personId to specify and existing customer
      */
-    CommonPerson getPerson(int personId)
+    Person getPerson(int personId)
 
     /**
      * Searches for a person in a database and returns its id
