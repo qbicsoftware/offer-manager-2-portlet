@@ -66,7 +66,7 @@ If an authenticated user has none of these roles, she will not be able to execut
     * - datasource.url
       - Connection to datasource
       - https://openbis.domain.de
-    * - datasource.api.url =
+    * - datasource.api.url
       - Connection to API datasource
       - https://openbis.domain.de/api/path
     * - datasource.user
@@ -157,4 +157,3 @@ This work is licensed under the `MIT license <https://mit-license.org/>`_.
 .. |code-ql| image:: https://github.com/qbicsoftware/offer-manager-2-portlet/actions/workflows/codeql-analysis.yml/badge.svg?branch=master
     :target: https://github.com/qbicsoftware/offer-manager-2-portlet/actions/workflows/codeql-analysis.yml
     :alt: CodeQL
-    
