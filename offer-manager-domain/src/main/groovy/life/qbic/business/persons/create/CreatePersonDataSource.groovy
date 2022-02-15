@@ -1,10 +1,8 @@
 package life.qbic.business.persons.create
 
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.business.persons.Affiliation
 import life.qbic.business.persons.Person
 import life.qbic.business.persons.PersonExistsException
-
 
 /**
  * Creates a person in the database for the CreatePerson use case
@@ -15,7 +13,7 @@ import life.qbic.business.persons.PersonExistsException
  * @since: 1.0.0
  */
 interface CreatePersonDataSource {
-  
+
     /**
      * Adds a person to the user database
      *
@@ -35,14 +33,7 @@ interface CreatePersonDataSource {
      * database
      * @since 1.0.0
      */
-    void updatePerson(int personId, Person updatedPerson) throws DatabaseQueryException
-
-    /**
-     * Returns a person given a person specified by a person ID
-     *
-     * @param personId to specify and existing customer
-     */
-    Person getPerson(int personId)
+    void updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException
 
     /**
      * Searches for a person in a database and returns its id
@@ -56,7 +47,6 @@ interface CreatePersonDataSource {
      * Updates affiliations of a person specified by a customer ID.
      *
      * @param personId to specify the person whose affiliations should be updated
-     * @param affiliations that the person should be associated to
      */
-    void updatePersonAffiliations(int personId, List<Affiliation> affiliations) throws DatabaseQueryException
+    void updatePersonAffiliations(Person person) throws DatabaseQueryException
 }

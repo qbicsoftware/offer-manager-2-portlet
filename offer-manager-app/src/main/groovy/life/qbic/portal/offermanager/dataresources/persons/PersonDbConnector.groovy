@@ -65,18 +65,38 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
         session.save(affiliation)
       } catch (HibernateException e ){
         log.error(e.getStackTrace().join("\n"))
-        throw new DatabaseQueryException()
+        throw new DatabaseQueryException("An unexpected exception occurred during new affiliation creation")
       }
     }
 
     @Override
     List<Affiliation> listAllAffiliations() {
-        return new ArrayList<Affiliation>()
+        List<Affiliation> affiliations = new ArrayList<>()
+        try(Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            // we ignore the generated primary id for now
+            Query<Affiliation> query = session.createQuery("FROM Affiliation ")
+            // Print entities
+            affiliations.addAll(query.list() as List<Affiliation>)
+        }
+        return affiliations
     }
 
     @Override
     void addPerson(Person person) throws DatabaseQueryException, PersonExistsException {
-      // FIXME
+        try(Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            int id = session.getIdentifier(person) as int
+            if (id) {
+                // If the query returns an identifier, an entry with this data already exists
+                throw new AffiliationExistsException("The person already exists.")
+            }
+            // we ignore the generated primary id for now
+            session.save(person)
+        } catch (HibernateException e ){
+            log.error(e.getStackTrace().join("\n"))
+            throw new DatabaseQueryException("An unexpected exception occurred during new affiliation creation")
+        }
     }
 
     @Override
@@ -84,10 +104,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       // FIXME
     }
 
-    @Override
-    Person getPerson(int personId) {
-        return new Person()
-    }
+
 
     @Override
     Optional<Integer> findPerson(Person person) {

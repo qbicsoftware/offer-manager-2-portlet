@@ -24,14 +24,14 @@ class UpdatePerson {
     this.dataSource = dataSource
   }
 
-  void updatePerson(int personId, Person person) {
-    Person existingCustomer = dataSource.getPerson(personId)
+  void updatePerson(Person outdatedPerson, Person personWithUpdate) {
+    Person existingCustomer = dataSource.getPerson(outdatedPerson)
 
     if(! existingCustomer) {
         output.failNotification("Could not find person to updated, the entry changed in the database. Please try again.")
     }
 
-    boolean customerChanged = hasBasicPersonDataChanged(existingCustomer, person)
+    boolean customerChanged = hasBasicPersonDataChanged(outdatedPerson, personWithUpdate)
     try {
       if(customerChanged) {
         dataSource.updatePerson(personId, person)

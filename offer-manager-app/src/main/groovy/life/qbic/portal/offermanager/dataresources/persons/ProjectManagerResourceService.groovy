@@ -1,8 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
+import life.qbic.business.persons.Person
 import life.qbic.business.persons.list.ListPersonsDataSource
-import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.people.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
@@ -15,15 +14,15 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * @since 1.0.0
  */
-class ProjectManagerResourceService implements ResourcesService<ProjectManager>{
+class ProjectManagerResourceService implements ResourcesService<Person>{
 
-    private final List<ProjectManager> availableProjectManagers
+    private final List<Person> availableProjectManagers
     private final ListPersonsDataSource listPersonsDataSource
 
-    private final EventEmitter<ProjectManager> resourceUpdateEvent
+    private final EventEmitter<Person> resourceUpdateEvent
 
     ProjectManagerResourceService(ListPersonsDataSource listPersonsDataSource) {
-        availableProjectManagers = listPersonsDataSource.listAllProjectManagers()
+        availableProjectManagers = listPersonsDataSource.listPersons()
         this.listPersonsDataSource = listPersonsDataSource
         resourceUpdateEvent = new EventEmitter<>()
     }
@@ -32,37 +31,37 @@ class ProjectManagerResourceService implements ResourcesService<ProjectManager>{
     void reloadResources() {
         availableProjectManagers.clear()
 
-        List<ProjectManager> updatedEntries = listPersonsDataSource.listAllProjectManagers()
+        List<Person> updatedEntries = listPersonsDataSource.listPersons()
         updatedEntries.each {
             addToResource(it)
         }
     }
 
     @Override
-    void subscribe(Subscription<ProjectManager> subscription) {
+    void subscribe(Subscription<Person> subscription) {
         resourceUpdateEvent.register(subscription)
     }
 
     @Override
-    void unsubscribe(Subscription<ProjectManager> subscription) {
+    void unsubscribe(Subscription<Person> subscription) {
         resourceUpdateEvent.unregister(subscription)
     }
 
     @Override
-    void addToResource(ProjectManager resourceItem) {
+    void addToResource(Person resourceItem) {
         availableProjectManagers.add(resourceItem)
         resourceUpdateEvent.emit(resourceItem)
     }
 
     @Override
-    void removeFromResource(ProjectManager resourceItem) {
+    void removeFromResource(Person resourceItem) {
         availableProjectManagers.remove(resourceItem)
         resourceUpdateEvent.emit(resourceItem)
 
     }
 
     @Override
-    Iterator<ProjectManager> iterator() {
+    Iterator<Person> iterator() {
         return new ArrayList(availableProjectManagers).iterator()
     }
 }
