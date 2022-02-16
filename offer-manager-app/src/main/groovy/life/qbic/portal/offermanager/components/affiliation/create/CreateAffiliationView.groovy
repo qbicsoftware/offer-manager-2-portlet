@@ -9,8 +9,8 @@ import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.Country
-import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
 
 import java.util.stream.Collectors
@@ -135,7 +135,7 @@ class CreateAffiliationView extends FormLayout {
         List<String> organisationNames = createAffiliationViewModel
                 .affiliationService.iterator().toList()
                 .stream()
-                .map(affiliation -> (affiliation as Affiliation).organisation)
+                .map(affiliation -> (affiliation as Affiliation).getOrganization())
                 .distinct()
                 .collect(Collectors.toList())
 
@@ -363,14 +363,14 @@ class CreateAffiliationView extends FormLayout {
             try {
                 clearAllFields()
             }
-            catch (Exception e) {
+            catch (Exception ignored) {
                 sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
             }
         })
     }
 
-    private static ComboBox generateAffiliationCategorySelect(List<String> possibleCategories) {
-        ComboBox comboBox = new ComboBox<>("Affiliation Category")
+    private static ComboBox<String> generateAffiliationCategorySelect(List<String> possibleCategories) {
+        ComboBox<String> comboBox = new ComboBox<>("Affiliation Category")
         comboBox.setItems(possibleCategories)
         comboBox.setEmptySelectionAllowed(false)
         comboBox.setPlaceholder("The affiliation category")
