@@ -3,11 +3,21 @@ package life.qbic.business.persons.affiliation
 import javax.persistence.AttributeConverter
 
 /**
- * <b><class short description - 1 Line!></b>
+ * <b>AffiliationCategoryConverter class</b>
  *
- * <p><More detailed description - When to use, what it solves, etc.></p>
+ * <p>Maps affiliation categories to its String representation and vice versa</p>
  *
- * @since <version tag>
+ * @since 1.3.0
  */
-class AffiliationCategoryConverter implements AttributeConverter<Category, String>{
+class AffiliationCategoryConverter implements AttributeConverter<AffiliationCategory, String>{
+
+    @Override
+    String convertToDatabaseColumn(AffiliationCategory affiliationCategory) {
+        return affiliationCategory.toString()
+    }
+
+    @Override
+    AffiliationCategory convertToEntityAttribute(String s) {
+        return AffiliationCategory.from(s)
+    }
 }
