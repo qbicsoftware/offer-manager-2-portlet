@@ -193,10 +193,11 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
         List<OfferOverview> offerOverviewList = []
 
         String query = "SELECT offerId, creationDate, projectTitle, " +
-                "totalPrice, first_name, last_name, email, projectManagerId, associatedProject\n" +
+                "totalPrice, person.first_name AS customer_first_name, person.last_name AS customer.last_name, person.email AS customer_email, p2.first_name AS pm_first_name, p2.last_name AS pm_last_name, associatedProject\n" +
                 "FROM offer \n" +
                 "LEFT JOIN person \n" +
-                "ON offer.customerId = person.id"
+                "ON offer.customerId = person.id \n" +
+                "LEFT JOIN person AS p2 ON offer.projectManagerId = p2.id"
 
         Connection connection = connectionProvider.connect()
         connection.withCloseable {
@@ -204,17 +205,16 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             ResultSet resultSet = statement.executeQuery()
             while (resultSet.next()) {
                 Customer customer = new Customer.Builder(
-                        resultSet.getString("first_name"),
-                        resultSet.getString("last_name"),
-                        resultSet.getString("email"))
+                        resultSet.getString("customer_first_name"),
+                        resultSet.getString("customer_last_name"),
+                        resultSet.getString("customer_email"))
                         .build()
-                int projectManagerId = resultSet.getInt("projectManagerId")
-                ProjectManager projectManager = customerGateway.getProjectManager(projectManagerId)
+
                 def projectTitle = resultSet.getString("projectTitle")
                 def totalCosts = resultSet.getDouble("totalPrice")
                 def creationDate = resultSet.getDate("creationDate")
                 def customerName = "${customer.getFirstName()} ${customer.getLastName()}"
-                def projectManagerName = "${projectManager.getFirstName()} ${projectManager.getLastName()}"
+                def projectManagerName = "${resultSet.getString("pm_first_name")} ${resultSet.getString("pm_last_name")}"
                 def offerId = parseOfferId(resultSet.getString("offerId"))
                 Optional<ProjectIdentifier> projectIdentifier = parseProjectIdentifier(
                         resultSet.getString("associatedProject"))

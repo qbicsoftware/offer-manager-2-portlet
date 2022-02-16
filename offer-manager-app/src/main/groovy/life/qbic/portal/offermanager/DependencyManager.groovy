@@ -184,11 +184,12 @@ class DependencyManager {
             // Setup Hibernate session
             String dbFullUrl = "jdbc:mysql://" + host + ":" + port + "/" + sqlDatabase
             sessionProvider = new DatabaseSessionV2(dbFullUrl, user, password, "com.mysql.cj.jdbc.Driver", "org.hibernate.dialect.MariaDBDialect")
-            trySessionProvider(sessionProvider)
 
             DatabaseSession.init(user, password, host, port, sqlDatabase)
             PersonDbConnector personDbConnector = new PersonDbConnector(sessionProvider)
+            // Todo can be removed
             tryPersonDbConnector(personDbConnector)
+
             createPersonDataSource = personDbConnector
             searchPersonDataSource = personDbConnector
             createAffiliationDataSource = personDbConnector
@@ -658,19 +659,7 @@ class DependencyManager {
         return maintainProductsView
     }
 
-    private static void trySessionProvider(DatabaseSessionV2 databaseSessionV2) {
-        try(Session session = databaseSessionV2.getCurrentSession()) {
-            session.beginTransaction()
-            Query<Person> query = session.createQuery("FROM Person ")
-            // Print entities
-            List<life.qbic.business.persons.Person> persons = query.list() as List<life.qbic.business.persons.Person>
-            for (life.qbic.business.persons.Person person : persons) {
-                log.info(person)
-            }
-        }
-    }
-
-    private void tryPersonDbConnector(PersonDbConnector personDbConnector) {
+    private static void tryPersonDbConnector(PersonDbConnector personDbConnector) {
         personDbConnector.findPerson("Sven", "Fillinger").stream().forEach(System.out::println)
     }
 }
