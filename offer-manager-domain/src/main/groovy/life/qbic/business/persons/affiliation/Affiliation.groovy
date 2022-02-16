@@ -38,9 +38,10 @@ class Affiliation {
     String country
 
     @Column(name = "category")
-    String category
+    @Convert(converter = AffiliationCategoryConverter.class)
+    AffiliationCategory category
 
-    Affiliation(String organization, String addressAddition, String street, String postalCode, String city, String country, String category) {
+    Affiliation(String organization, String addressAddition, String street, String postalCode, String city, String country, AffiliationCategory category) {
         this.organization = organization
         this.addressAddition = addressAddition
         this.street = street
@@ -110,11 +111,11 @@ class Affiliation {
         this.country = country
     }
 
-    String getCategory() {
+    AffiliationCategory getCategory() {
         return category
     }
 
-    void setCategory(String category) {
+    void setCategory(AffiliationCategory category) {
         this.category = category
     }
 }
