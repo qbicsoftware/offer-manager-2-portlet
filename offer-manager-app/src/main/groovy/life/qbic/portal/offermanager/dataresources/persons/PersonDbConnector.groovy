@@ -64,7 +64,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
         // we ignore the generated primary id for now
         session.save(affiliation)
       } catch (HibernateException e ){
-        log.error(e.getStackTrace().join("\n"))
+        logException(e)
         throw new DatabaseQueryException("An unexpected exception occurred during new affiliation creation")
       }
     }
@@ -94,7 +94,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
             // we ignore the generated primary id for now
             session.save(person)
         } catch (HibernateException e ){
-            log.error(e.getStackTrace().join("\n"))
+            logException(e)
             throw new DatabaseQueryException("An unexpected exception occurred during new affiliation creation")
         }
     }
@@ -107,21 +107,45 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
             session.beginTransaction()
             session.save(outdatedPersonData)
             session.save(updatedPersonData)
+            session.getTransaction().commit()
         } catch (HibernateException e) {
-            log.error(e.getStackTrace().join("\n"))
+            logException(e)
             throw new DatabaseQueryException("Unable to update person entry.")
         }
     }
 
-
-
     @Override
     void updatePersonAffiliations(Person person) throws DatabaseQueryException {
-
+        try(Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            session.merge(person)
+            session.getTransaction().commit()
+        } catch (HibernateException e) {
+            logException(e)
+            throw new DatabaseQueryException("Unable to update person affiliations.")
+        }
     }
 
     @Override
     List<Person> findPerson(String firstName, String lastName) throws DatabaseQueryException {
-      return new ArrayList<Person>()
+        List<Person> matches = new ArrayList<>()
+        try(Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            Query<List<Person>> query =
+                    session.createQuery("SELECT p FROM Person p  LEFT JOIN FETCH p.affiliations WHERE p.firstName=:firstName AND p.lastName=:lastName")
+            query.setParameter("firstName", firstName)
+            query.setParameter("lastName", lastName)
+            session.getTransaction().commit()
+            matches.addAll(query.list() as List<Person>)
+        } catch (HibernateException e) {
+            logException(e)
+            throw new DatabaseQueryException("An unexpected exception occurred during the search.")
+        }
+      return matches
+    }
+
+    private static void logException(Exception e) {
+        log.error(e.message)
+        log.error(e.getStackTrace().join("\n"))
     }
 }

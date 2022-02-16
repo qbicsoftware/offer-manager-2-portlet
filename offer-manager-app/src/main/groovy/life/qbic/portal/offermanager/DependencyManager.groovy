@@ -188,6 +188,7 @@ class DependencyManager {
 
             DatabaseSession.init(user, password, host, port, sqlDatabase)
             PersonDbConnector personDbConnector = new PersonDbConnector(sessionProvider)
+            tryPersonDbConnector(personDbConnector)
             createPersonDataSource = personDbConnector
             searchPersonDataSource = personDbConnector
             createAffiliationDataSource = personDbConnector
@@ -667,5 +668,9 @@ class DependencyManager {
                 log.info(person)
             }
         }
+    }
+
+    private void tryPersonDbConnector(PersonDbConnector personDbConnector) {
+        personDbConnector.findPerson("Sven", "Fillinger").stream().forEach(System.out::println)
     }
 }
