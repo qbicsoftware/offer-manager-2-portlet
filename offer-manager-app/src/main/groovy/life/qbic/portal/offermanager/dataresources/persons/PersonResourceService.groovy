@@ -1,7 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
+import life.qbic.business.persons.Person
 import life.qbic.business.persons.list.ListPersonsDataSource
-import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
@@ -25,7 +25,7 @@ class PersonResourceService implements ResourcesService<Person>{
     PersonResourceService(ListPersonsDataSource listPersonsDataSource) {
         this.listPersonsDataSource = Objects.requireNonNull(listPersonsDataSource, "Database connector " +
                 "must not be null.")
-        this.availablePersonEntries = listPersonsDataSource.listActivePersons()
+        this.availablePersonEntries = listPersonsDataSource.listPersons()
         this.eventEmitter = new EventEmitter<>()
     }
 
@@ -33,7 +33,7 @@ class PersonResourceService implements ResourcesService<Person>{
     void reloadResources() {
         availablePersonEntries.clear()
 
-        List<Person> updatedEntries = listPersonsDataSource.listActivePersons()
+        List<Person> updatedEntries = listPersonsDataSource.listPersons()
         updatedEntries.each {
             addToResource(it)
         }

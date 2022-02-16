@@ -135,8 +135,8 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
                     session.createQuery("SELECT p FROM Person p  LEFT JOIN FETCH p.affiliations WHERE p.firstName=:firstName AND p.lastName=:lastName")
             query.setParameter("firstName", firstName)
             query.setParameter("lastName", lastName)
-            session.getTransaction().commit()
             matches.addAll(query.list() as List<Person>)
+            session.getTransaction().commit()
         } catch (HibernateException e) {
             logException(e)
             throw new DatabaseQueryException("An unexpected exception occurred during the search.")

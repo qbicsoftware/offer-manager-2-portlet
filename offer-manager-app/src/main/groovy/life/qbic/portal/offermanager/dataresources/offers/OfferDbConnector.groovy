@@ -193,7 +193,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
         List<OfferOverview> offerOverviewList = []
 
         String query = "SELECT offerId, creationDate, projectTitle, " +
-                "totalPrice, person.first_name AS customer_first_name, person.last_name AS customer.last_name, person.email AS customer_email, p2.first_name AS pm_first_name, p2.last_name AS pm_last_name, associatedProject\n" +
+                "totalPrice, person.first_name AS customer_first_name, person.last_name AS customer_last_name, person.email AS customer_email, p2.first_name AS pm_first_name, p2.last_name AS pm_last_name, associatedProject\n" +
                 "FROM offer \n" +
                 "LEFT JOIN person \n" +
                 "ON offer.customerId = person.id \n" +
