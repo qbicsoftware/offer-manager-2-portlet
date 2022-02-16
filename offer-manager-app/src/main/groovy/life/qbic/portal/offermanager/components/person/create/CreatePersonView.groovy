@@ -14,8 +14,8 @@ import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.business.persons.AcademicTitle
+import life.qbic.business.persons.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
@@ -183,8 +183,7 @@ class CreatePersonView extends VerticalLayout implements Resettable {
     }
 
     /**
-     * This method connects the form fields to the corresponding values in the view model
-     */
+     * This method connects the form fields to the corresponding values in the view model*/
     private void bindViewModel() {
 
         this.titleField.addValueChangeListener({ this.createPersonViewModel.academicTitle = it.value })
@@ -474,8 +473,8 @@ class CreatePersonView extends VerticalLayout implements Resettable {
     protected void updateAffiliationDetails(Affiliation affiliation) {
         if (affiliation) {
             VerticalLayout content = new VerticalLayout()
-            content.addComponent(new Label("<strong>${affiliation.category.value}</strong>", ContentMode.HTML))
-            content.addComponent(new Label("${affiliation.organisation}"))
+            content.addComponent(new Label("<strong>${affiliation.getCategory()}</strong>", ContentMode.HTML))
+            content.addComponent(new Label("${affiliation.getOrganization()}"))
             if (affiliation.addressAddition) {
                 content.addComponent(new Label("${affiliation.addressAddition}"))
             }

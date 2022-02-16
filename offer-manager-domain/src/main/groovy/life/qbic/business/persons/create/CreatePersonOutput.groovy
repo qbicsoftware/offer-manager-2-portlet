@@ -13,14 +13,6 @@ import life.qbic.business.persons.Person
 interface CreatePersonOutput extends UseCaseFailure {
 
     /**
-     * Is called by the use case, when a new customer has been created
-     * @param message
-     * @deprecated Use the more explicit #customerCreated(Person person) method
-     */
-    @Deprecated
-    void personCreated(String message)
-
-    /**
      * Is called by the use case, when a new customer resource has been created
      * @param person The newly created person resource
      */
