@@ -1,6 +1,6 @@
 package life.qbic.business.persons.create
 
-import life.qbic.datamodel.dtos.general.Person
+import life.qbic.business.persons.Person
 
 
 /**

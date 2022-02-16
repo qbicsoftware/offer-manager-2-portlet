@@ -4,7 +4,7 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.persons.affiliation.AffiliationExistsException
-import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.business.persons.Affiliation
 
 /**
  * This class implements the Create Affiliations use case.

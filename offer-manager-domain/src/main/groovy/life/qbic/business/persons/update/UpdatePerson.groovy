@@ -1,10 +1,10 @@
 package life.qbic.business.persons.update
 
+import life.qbic.business.persons.Person
 import life.qbic.business.persons.create.CreatePersonDataSource
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.datamodel.dtos.general.Person
 
 /**
  * This use case updates an existing customer in the system. New Affiliations of the customer are added to the respective table.
@@ -25,31 +25,21 @@ class UpdatePerson {
   }
 
   void updatePerson(Person outdatedPerson, Person personWithUpdate) {
-
-    //FIXME
-    Person existingCustomer = dataSource.getPerson(outdatedPerson)
-
-    if(! existingCustomer) {
-        output.failNotification("Could not find person to updated, the entry changed in the database. Please try again.")
-    }
-
-    boolean customerChanged = hasBasicPersonDataChanged(outdatedPerson, personWithUpdate)
     try {
-      if(customerChanged) {
-        dataSource.updatePerson(personId, person)
+      if(hasBasicPersonDataChanged(outdatedPerson, personWithUpdate)) {
+        dataSource.updatePerson(outdatedPerson, personWithUpdate)
       } else {
-        dataSource.updatePersonAffiliations(personId, person.affiliations)
+        dataSource.updatePersonAffiliations(personWithUpdate)
       }
       //this exception catching is important to avoid displaying a wrong failure notification
       try {
-        output.personUpdated(person)
+        output.personUpdated(personWithUpdate)
       } catch (Exception e) {
         log.error(e.message)
         log.error(e.stackTrace.join("\n"))
       }
-    } catch(DatabaseQueryException databaseQueryException){
+    } catch(DatabaseQueryException ignored){
       output.failNotification("Could not find person to updated, the entry changed in the database. Please try again.")
-      log.error(databaseQueryException.message, databaseQueryException)
     } catch(Exception unexpected) {
       log.error(unexpected.message)
       log.error(unexpected.stackTrace.join("\n"))
@@ -59,11 +49,9 @@ class UpdatePerson {
 
   // determines if customer properties other than affiliations have changed
   private static boolean hasBasicPersonDataChanged(Person existingPerson, Person newPerson) {
-    boolean noFundamentalChange = existingPerson.firstName.equals(newPerson.firstName)
-    && existingPerson.lastName.equals(newPerson.lastName)
-    && existingPerson.emailAddress.equals(newPerson.emailAddress)
-    && existingPerson.title.equals(newPerson.title)
-    
-    return !noFundamentalChange
+    return !(existingPerson.firstName.equals(newPerson.firstName)
+            && existingPerson.lastName.equals(newPerson.lastName)
+            && existingPerson.email.equals(newPerson.email)
+            && existingPerson.title.equals(newPerson.title))
   }
 }
