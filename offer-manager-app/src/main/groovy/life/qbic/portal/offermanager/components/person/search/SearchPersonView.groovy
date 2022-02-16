@@ -4,19 +4,13 @@ import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.shared.ui.grid.HeightMode
-import com.vaadin.ui.Button
-import com.vaadin.ui.FormLayout
-import com.vaadin.ui.Grid
-import com.vaadin.ui.Label
-import com.vaadin.ui.Panel
-import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
-import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.general.Person
+import life.qbic.business.persons.AcademicTitle
+import life.qbic.business.persons.Affiliation
+import life.qbic.business.persons.Person
 import life.qbic.portal.offermanager.components.GridUtils
-
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 
 /**
@@ -71,8 +65,8 @@ class SearchPersonView extends FormLayout{
 
     private void generateAffiliationGrid() {
         try {
-            this.personAffiliations.addColumn({ affiliation -> affiliation.category.value }).setCaption("Category")
-            this.personAffiliations.addColumn({ affiliation -> affiliation.organisation }).setCaption("Organization")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.getCategory() }).setCaption("Category")
+            this.personAffiliations.addColumn({ affiliation -> affiliation.getOrganization() }).setCaption("Organization")
             this.personAffiliations.addColumn({ affiliation -> affiliation.addressAddition }).setCaption("Address Addition")
             this.personAffiliations.addColumn({ affiliation -> affiliation.street }).setCaption("Street")
             this.personAffiliations.addColumn({ affiliation -> affiliation.postalCode }).setCaption("Postal Code")
@@ -138,8 +132,8 @@ class SearchPersonView extends FormLayout{
     private void fillPanel(Person person){
         VerticalLayout content = new VerticalLayout()
 
-        content.addComponent(new Label("<strong>${person.title == AcademicTitle.NONE ? "" : person.title} ${person.firstName} ${person.lastName}</strong>", ContentMode.HTML))
-        content.addComponent(new Label("${person.emailAddress}", ContentMode.HTML))
+        content.addComponent(new Label("<strong>${person.title == AcademicTitle.NONE.toString() ? "" : person.title} ${person.firstName} ${person.lastName}</strong>", ContentMode.HTML))
+        content.addComponent(new Label("${person.getEmail()}", ContentMode.HTML))
 
         content.setMargin(true)
         content.setSpacing(false)
@@ -172,7 +166,7 @@ class SearchPersonView extends FormLayout{
             this.personGrid.addColumn({ person -> person.emailAddress })
                     .setCaption("Email Address").setId("EmailAddress")
             this.personGrid.addColumn({ person ->
-                person.title == AcademicTitle.NONE ? "" : person.title})
+                person.title == AcademicTitle.NONE.toString() ? "" : person.title})
                     .setCaption("Title").setId("Title")
 
             //specify size of grid and layout
