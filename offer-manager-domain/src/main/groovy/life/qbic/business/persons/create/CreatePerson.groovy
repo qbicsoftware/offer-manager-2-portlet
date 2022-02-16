@@ -3,11 +3,11 @@ package life.qbic.business.persons.create
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
+import life.qbic.business.persons.Person
 import life.qbic.business.persons.PersonExistsException
 import life.qbic.business.persons.PersonNotFoundException
 import life.qbic.business.persons.update.UpdatePerson
 import life.qbic.business.persons.update.UpdatePersonOutput
-import life.qbic.datamodel.dtos.general.Person
 
 /**
  * This use case creates a customer in the system

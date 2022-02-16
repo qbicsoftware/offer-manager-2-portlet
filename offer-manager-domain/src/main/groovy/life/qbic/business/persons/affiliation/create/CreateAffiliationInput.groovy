@@ -1,6 +1,6 @@
 package life.qbic.business.persons.affiliation.create
 
-import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.business.persons.Affiliation
 
 /**
  * The input interface for the Create Affiliation use case.
