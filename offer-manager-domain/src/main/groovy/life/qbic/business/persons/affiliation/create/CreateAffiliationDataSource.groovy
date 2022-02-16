@@ -1,7 +1,7 @@
 package life.qbic.business.persons.affiliation.create
 
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.business.persons.Affiliation
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.AffiliationExistsException
 
 /**

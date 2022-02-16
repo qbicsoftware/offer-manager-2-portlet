@@ -15,7 +15,7 @@ import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.persons.AcademicTitle
-import life.qbic.business.persons.Affiliation
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView

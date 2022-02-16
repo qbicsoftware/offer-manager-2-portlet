@@ -1,8 +1,8 @@
 package life.qbic.portal.offermanager.components.person.create
 
 import groovy.util.logging.Log4j2
-import life.qbic.business.persons.Affiliation
 import life.qbic.business.persons.Person
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.create.CreatePersonInput
 import life.qbic.datamodel.dtos.business.AcademicTitle
 

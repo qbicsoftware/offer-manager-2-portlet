@@ -8,8 +8,8 @@ import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.business.persons.AcademicTitle
-import life.qbic.business.persons.Affiliation
 import life.qbic.business.persons.Person
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 

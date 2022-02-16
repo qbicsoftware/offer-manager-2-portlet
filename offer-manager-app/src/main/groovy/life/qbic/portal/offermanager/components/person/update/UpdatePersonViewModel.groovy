@@ -1,8 +1,8 @@
 package life.qbic.portal.offermanager.components.person.update
 
 import groovy.beans.Bindable
-import life.qbic.business.persons.Affiliation
 import life.qbic.business.persons.Person
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel

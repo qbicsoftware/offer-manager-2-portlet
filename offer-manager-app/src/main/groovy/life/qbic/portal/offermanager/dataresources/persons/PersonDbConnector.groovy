@@ -1,11 +1,10 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
-
 import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.business.persons.Affiliation
 import life.qbic.business.persons.Person
 import life.qbic.business.persons.PersonExistsException
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.AffiliationExistsException
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
