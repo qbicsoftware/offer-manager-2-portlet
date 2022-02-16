@@ -1,7 +1,7 @@
 package life.qbic.business.offers.create
 
-import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.UseCaseFailure
+import life.qbic.business.offers.Offer
 
 
 /**
