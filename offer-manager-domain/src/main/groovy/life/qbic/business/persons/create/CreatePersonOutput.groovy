@@ -1,7 +1,7 @@
 package life.qbic.business.persons.create
 
 import life.qbic.business.UseCaseFailure
-import life.qbic.datamodel.dtos.general.Person
+import life.qbic.business.persons.Person
 
 /**
  * Output interface for the {@link CreatePerson} use
@@ -11,14 +11,6 @@ import life.qbic.datamodel.dtos.general.Person
  * @author: Tobias Koch
  */
 interface CreatePersonOutput extends UseCaseFailure {
-
-    /**
-     * Is called by the use case, when a new customer has been created
-     * @param message
-     * @deprecated Use the more explicit #customerCreated(Person person) method
-     */
-    @Deprecated
-    void personCreated(String message)
 
     /**
      * Is called by the use case, when a new customer resource has been created
