@@ -1,4 +1,4 @@
-package life.qbic.business.persons
+package life.qbic.business.persons;
 
 /**
  * Possible academic titles
@@ -6,34 +6,37 @@ package life.qbic.business.persons
  * This enum describes all academic titles known to the qbic infrastructure.
  * Bachelor and Masters titles as well as multiple doctorates are not supported.
  *
- * @since: 1.11.0
+ * @since 1.3.0
  */
 enum AcademicTitle {
 
     PROFESSOR("Prof. Dr."),
     DOCTOR("Dr."),
     PHD("PhD"),
-    NONE("None")
+    NONE("None");
 
     /**
      Holds the String text of the enum
      */
-    private final String text
+    private final String label;
 
     /**
      * Private constructor to create different AcademicTitle enum items
-     * @param value
+     * @param label the label for this enum instance
      */
-    private AcademicTitle(String value) {
-        this.text = value
+    AcademicTitle(String label) {
+        this.label = label;
     }
 
     /**
-     * Returns a String representation of the enum item
-     * @return
+     * @return the label for this academic title. For example 'Dr.'
      */
+    public String getLabel() {
+        return this.label;
+    }
+
     @Override
-    String toString() {
-        return this.text
+    public String toString() {
+        return getLabel();
     }
 }
