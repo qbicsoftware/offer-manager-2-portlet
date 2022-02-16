@@ -8,7 +8,7 @@ import com.vaadin.ui.Grid
 import com.vaadin.ui.Label
 import com.vaadin.ui.components.grid.HeaderRow
 import groovy.util.logging.Log4j2
-import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
@@ -72,9 +72,9 @@ class UpdatePersonView extends CreatePersonView {
 
     private void generateAffiliationGrid() {
         try {
-            this.affiliations.addColumn({ affiliation -> affiliation.category.value })
+            this.affiliations.addColumn({ affiliation -> affiliation.getCategory() })
                     .setCaption("Category").setId("Category")
-            this.affiliations.addColumn({ affiliation -> affiliation.organisation })
+            this.affiliations.addColumn({ affiliation -> affiliation.getOrganization() })
                     .setCaption("Organisation").setId("Organisation")
             this.affiliations.addColumn({ affiliation -> affiliation.addressAddition })
                     .setCaption("Address Addition").setId("AddressAddition")

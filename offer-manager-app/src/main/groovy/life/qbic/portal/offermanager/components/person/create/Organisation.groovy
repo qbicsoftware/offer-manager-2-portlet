@@ -1,6 +1,6 @@
 package life.qbic.portal.offermanager.components.person.create
 
-import life.qbic.business.persons.Affiliation
+import life.qbic.business.persons.affiliation.Affiliation
 
 /**
  * <h1>Organisation of an affiliation</h1>

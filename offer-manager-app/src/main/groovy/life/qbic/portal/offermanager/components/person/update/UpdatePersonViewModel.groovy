@@ -1,10 +1,8 @@
 package life.qbic.portal.offermanager.components.person.update
 
 import groovy.beans.Bindable
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.ProjectManager
-import life.qbic.datamodel.dtos.general.Person
+import life.qbic.business.persons.Person
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.components.person.create.CreatePersonViewModel
@@ -36,12 +34,10 @@ class UpdatePersonViewModel extends CreatePersonViewModel implements Resettable{
     @Bindable
     Boolean affiliationsValid
 
-    UpdatePersonViewModel(ResourcesService<Customer> customerService,
-                          ResourcesService<ProjectManager> managerResourceService,
-                          ResourcesService<Affiliation> affiliationService,
+    UpdatePersonViewModel(ResourcesService<Affiliation> affiliationService,
                           EventEmitter<Person> customerUpdate,
                           ResourcesService<Person> personResourceService) {
-        super(customerService, managerResourceService, affiliationService, personResourceService)
+        super(affiliationService, personResourceService)
         this.customerUpdate = customerUpdate
         affiliationList = new ObservableList(new ArrayList<Affiliation>())
 
@@ -59,7 +55,7 @@ class UpdatePersonViewModel extends CreatePersonViewModel implements Resettable{
         academicTitle = person.title
         firstName = person.firstName
         lastName = person.lastName
-        email = person.emailAddress
+        email = person.getEmail()
         //obtain the affiliations
         affiliationList.clear()
         affiliationList.addAll(person.affiliations)
@@ -71,7 +67,7 @@ class UpdatePersonViewModel extends CreatePersonViewModel implements Resettable{
             boolean titleChanged = it.title.toString() != academicTitle
             boolean firstNameChanged = it.firstName != firstName
             boolean lastNameChanged = it.lastName != lastName
-            boolean emailChanged = it.emailAddress != email
+            boolean emailChanged = it.getEmail() != email
             boolean affiliationsChanged = it.affiliations.sort() != affiliationList.sort()
             boolean result = titleChanged || firstNameChanged || lastNameChanged || emailChanged || affiliationsChanged
             return result
