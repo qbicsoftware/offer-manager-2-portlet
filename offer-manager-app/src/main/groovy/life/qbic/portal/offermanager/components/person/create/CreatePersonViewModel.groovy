@@ -1,9 +1,9 @@
 package life.qbic.portal.offermanager.components.person.create
 
 import groovy.beans.Bindable
+import life.qbic.business.persons.AcademicTitle
 import life.qbic.business.persons.Affiliation
 import life.qbic.business.persons.Person
-import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
