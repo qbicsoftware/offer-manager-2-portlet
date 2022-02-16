@@ -37,10 +37,9 @@ class CreateAffiliationController {
         if (!country) {
             country = "Germany"
         }
-        if (!category) {
-            category = "external"
-        }
-        Affiliation affiliation = new Affiliation(organisation, addressAddition, street, postalCode, city, country, category)
+        AffiliationCategory affiliationCategory = AffiliationCategory.from(category) ?: AffiliationCategory.EXTERNAL
+
+        Affiliation affiliation = new Affiliation(organisation, addressAddition, street, postalCode, city, country, affiliationCategory)
         useCaseInput.createAffiliation(affiliation)
     }
 }
