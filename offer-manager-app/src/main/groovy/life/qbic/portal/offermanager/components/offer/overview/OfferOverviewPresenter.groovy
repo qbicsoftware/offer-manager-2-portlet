@@ -1,9 +1,9 @@
 package life.qbic.portal.offermanager.components.offer.overview
 
+import life.qbic.business.offers.Offer
 import life.qbic.business.offers.OfferContent
 import life.qbic.business.offers.content.CreateOfferContentOutput
 import life.qbic.business.offers.fetch.FetchOfferOutput
-import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.components.AppViewModel
 
 
