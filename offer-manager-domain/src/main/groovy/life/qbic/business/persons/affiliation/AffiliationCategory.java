@@ -22,7 +22,15 @@ public enum AffiliationCategory {
   EXTERNAL_ACADEMIC("external academic"),
   EXTERNAL("external");
 
-  public static AffiliationCategory from(String label) {
+  /**
+   * Factory method returning the corresponding AffiliationCategory given a label.
+   * This method scans through all available enum values and returns a value with matching label.
+   * @param label the label for which the enum value is requested
+   * @return an {@link AffiliationCategory} if any has a matching label, otherwise {@link IllegalArgumentException}
+   * @since 1.3.0
+   * @throws IllegalArgumentException in case no enum value has the provided label
+   */
+  public static AffiliationCategory from(String label) throws IllegalArgumentException {
     Optional<AffiliationCategory> affiliationCategory =
         Arrays.stream(AffiliationCategory.values())
             .filter(it -> it.getLabel().equals(label))
