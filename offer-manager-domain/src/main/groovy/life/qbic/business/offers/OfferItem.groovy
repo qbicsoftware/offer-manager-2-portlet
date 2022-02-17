@@ -22,6 +22,7 @@ class OfferItem {
     final String serviceProvider
     final String unit
     final double itemTotal
+    final String category
 
     static class Builder {
         double quantity
@@ -34,6 +35,7 @@ class OfferItem {
         String serviceProvider
         String unit
         double itemTotal
+        String category
 
         Builder(double quantity, String productDescription, String productName, double unitPrice, double quantityDiscount, double discountPerUnit, double discountPercentage, String serviceProvider, String unit, double itemTotal) {
             this.quantity =  Objects.requireNonNull(quantity, "Quantity must not be null")
@@ -47,6 +49,11 @@ class OfferItem {
             this.unit =  Objects.requireNonNull(unit, "Unit must not be null")
             this.itemTotal =  Objects.requireNonNull(itemTotal, "Item total must not be null")
 
+        }
+
+        Builder setCategory(String category) {
+            this.category = category
+            return this;
         }
 
         OfferItem build() {
@@ -65,5 +72,6 @@ class OfferItem {
         this.serviceProvider = builder.serviceProvider
         this.unit = builder.unit
         this.itemTotal = builder.itemTotal
+        this.category = builder.category ? builder.category : ""
     }
 }
