@@ -13,7 +13,7 @@ class AffiliationCategoryConverter implements AttributeConverter<AffiliationCate
 
     @Override
     String convertToDatabaseColumn(AffiliationCategory affiliationCategory) {
-        return affiliationCategory.toString()
+        return affiliationCategory.getLabel()
     }
 
     @Override
