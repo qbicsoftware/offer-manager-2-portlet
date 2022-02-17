@@ -1,6 +1,7 @@
 package life.qbic.business.offers.content
 
 import life.qbic.business.offers.Converter
+import life.qbic.business.offers.Offer
 import life.qbic.business.offers.OfferContent
 import life.qbic.business.offers.OfferItem
 import life.qbic.business.offers.fetch.FetchOffer
@@ -8,8 +9,7 @@ import life.qbic.business.offers.fetch.FetchOfferDataSource
 import life.qbic.business.offers.fetch.FetchOfferInput
 import life.qbic.business.offers.fetch.FetchOfferOutput
 import life.qbic.business.offers.identifier.TomatoIdFormatter
-import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.business.persons.affiliation.AffiliationCategory
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
@@ -59,8 +59,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
 
     @Override
     void fetchedOffer(Offer fetchedOffer) {
-        //create the offer business object
-        life.qbic.business.offers.Offer offer = Converter.convertDTOToOffer(fetchedOffer)
+
         affiliationCategory = offer.selectedCustomerAffiliation.category
         overheadRatio = offer.getOverheadRatio()
 

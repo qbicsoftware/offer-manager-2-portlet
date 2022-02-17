@@ -20,6 +20,15 @@ class OfferId implements Comparable<OfferId>{
     private String randomPart
     private int version
 
+    static OfferId from(String s) {
+        def splitId = s.split("_")
+        // The first entry [0] contains the id prefix, no need to parse it.
+        def projectPart = splitId[1]
+        def randomPart = splitId[2]
+        def version = Integer.parseInt(splitId[3])
+        return new OfferId(projectPart, randomPart, version)
+    }
+
     OfferId(String projectPart, int version) {
         this.randomPart = generateFourLetterString()
         this.projectPart = projectPart
