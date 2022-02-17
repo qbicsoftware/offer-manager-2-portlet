@@ -131,7 +131,7 @@ class SearchPersonView extends FormLayout{
     private void fillPanel(Person person){
         VerticalLayout content = new VerticalLayout()
 
-        content.addComponent(new Label("<strong>${person.title == AcademicTitle.NONE.toString() ? "" : person.title} ${person.firstName} ${person.lastName}</strong>", ContentMode.HTML))
+        content.addComponent(new Label("<strong>${person.title == "None" ? "" : person.title} ${person.firstName} ${person.lastName}</strong>", ContentMode.HTML))
         content.addComponent(new Label("${person.getEmail()}", ContentMode.HTML))
 
         content.setMargin(true)
