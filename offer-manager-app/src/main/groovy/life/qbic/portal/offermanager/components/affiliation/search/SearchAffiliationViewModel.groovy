@@ -1,7 +1,7 @@
 package life.qbic.portal.offermanager.components.affiliation.search
 
 import groovy.beans.Bindable
-import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**

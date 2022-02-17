@@ -1,7 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
-import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService

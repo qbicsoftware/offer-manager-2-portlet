@@ -1,10 +1,11 @@
 package life.qbic.portal.offermanager.components.offer.create
 
-import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.business.offers.Offer
 import life.qbic.business.offers.create.CreateOfferOutput
-import life.qbic.portal.offermanager.dataresources.ResourcesService
-import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.business.offers.fetch.FetchOfferOutput
+import life.qbic.portal.offermanager.components.AppViewModel
+import life.qbic.portal.offermanager.dataresources.ResourcesService
+
 /**
  * AppPresenter for the CreateOffer
  *
