@@ -108,6 +108,129 @@ class OfferV2 {
      */
     private double overheadRatio
 
+    private List<OfferItem> dataAnalysisItems = new ArrayList<>()
+    private List<OfferItem> dataGenerationItems = new ArrayList<>()
+    private List<OfferItem> dataManagementItems = new ArrayList<>()
+    private List<OfferItem> externalServiceItems = new ArrayList<>()
+
+    private BigDecimal overheadsDataAnalysis
+    private BigDecimal overheadsDataGeneration
+    private BigDecimal overheadsDataManagement
+    private BigDecimal overheadsExternalServices
+    private BigDecimal netSumDataAnalysis
+    private BigDecimal netSumDataGeneration
+    private BigDecimal netSumDataManagement
+    private BigDecimal netSumExternalServices
+    private BigDecimal totalNetPrice
+    private BigDecimal vatRatio
+    private BigDecimal totalVat
+    private BigDecimal totalCost
+    private BigDecimal totalDiscountAmount
+
+    BigDecimal getOverheadsDataAnalysis() {
+        return overheadsDataAnalysis
+    }
+
+    void setOverheadsDataAnalysis(BigDecimal overheadsDataAnalysis) {
+        this.overheadsDataAnalysis = overheadsDataAnalysis
+    }
+
+    BigDecimal getOverheadsDataGeneration() {
+        return overheadsDataGeneration
+    }
+
+    void setOverheadsDataGeneration(BigDecimal overheadsDataGeneration) {
+        this.overheadsDataGeneration = overheadsDataGeneration
+    }
+
+    BigDecimal getOverheadsDataManagement() {
+        return overheadsDataManagement
+    }
+
+    void setOverheadsDataManagement(BigDecimal overheadsDataManagement) {
+        this.overheadsDataManagement = overheadsDataManagement
+    }
+
+    BigDecimal getOverheadsExternalServices() {
+        return overheadsExternalServices
+    }
+
+    void setOverheadsExternalServices(BigDecimal overheadsExternalServices) {
+        this.overheadsExternalServices = overheadsExternalServices
+    }
+
+    BigDecimal getNetSumDataAnalysis() {
+        return netSumDataAnalysis
+    }
+
+    void setNetSumDataAnalysis(BigDecimal netSumDataAnalysis) {
+        this.netSumDataAnalysis = netSumDataAnalysis
+    }
+
+    BigDecimal getNetSumDataGeneration() {
+        return netSumDataGeneration
+    }
+
+    void setNetSumDataGeneration(BigDecimal netSumDataGeneration) {
+        this.netSumDataGeneration = netSumDataGeneration
+    }
+
+    BigDecimal getNetSumDataManagement() {
+        return netSumDataManagement
+    }
+
+    void setNetSumDataManagement(BigDecimal netSumDataManagement) {
+        this.netSumDataManagement = netSumDataManagement
+    }
+
+    BigDecimal getNetSumExternalServices() {
+        return netSumExternalServices
+    }
+
+    void setNetSumExternalServices(BigDecimal netSumExternalServices) {
+        this.netSumExternalServices = netSumExternalServices
+    }
+
+    BigDecimal getTotalNetPrice() {
+        return totalNetPrice
+    }
+
+    void setTotalNetPrice(BigDecimal totalNetPrice) {
+        this.totalNetPrice = totalNetPrice
+    }
+
+    BigDecimal getVatRatio() {
+        return vatRatio
+    }
+
+    void setVatRatio(BigDecimal vatRatio) {
+        this.vatRatio = vatRatio
+    }
+
+    BigDecimal getTotalVat() {
+        return totalVat
+    }
+
+    void setTotalVat(BigDecimal totalVat) {
+        this.totalVat = totalVat
+    }
+
+    BigDecimal getTotalCost() {
+        return totalCost
+    }
+
+    void setTotalCost(BigDecimal totalCost) {
+        this.totalCost = totalCost
+    }
+
+    BigDecimal getTotalDiscountAmount() {
+        return totalDiscountAmount
+    }
+
+    void setTotalDiscountAmount(BigDecimal totalDiscountAmount) {
+        this.totalDiscountAmount = totalDiscountAmount
+    }
+
     /**
      * A project that has been created from this offer (optional)
      */
@@ -217,6 +340,73 @@ class OfferV2 {
 
     void setAssociatedProject(Optional<ProjectIdentifier> associatedProject) {
         this.associatedProject = associatedProject
+    }
+
+    void addDataManagementItem(OfferItem item) {
+        this.dataManagementItems.add(item)
+    }
+
+    void addExternalServiceItem(OfferItem item) {
+        this.externalServiceItems.add(item)
+    }
+
+    void addDataGenerationItem(OfferItem item) {
+        this.dataGenerationItems.add(item)
+    }
+
+    void addDataAnalysisItem(OfferItem item) {
+        this.dataAnalysisItems.add(item)
+    }
+
+    List<OfferItem> getDataManagementItems() {
+        // Create a copy of the item collection
+        return dataManagementItems.collect()
+    }
+
+    List<OfferItem> getDataAnalysisItems() {
+        return dataAnalysisItems.collect()
+    }
+
+    List<OfferItem> getDataGenerationItems() {
+        return dataGenerationItems.collect()
+    }
+
+    List<OfferItem> getExternalServiceItems() {
+        return externalServiceItems.collect()
+    }
+
+    static OfferV2 copy(OfferV2 original) {
+        OfferV2 offerCopy = new OfferV2()
+
+        //sorted alphabetically
+        offerCopy.setAssociatedProject(original.getAssociatedProject())
+        offerCopy.setCreationDate(original.getCreationDate())
+        offerCopy.setCustomer(original.getCustomer())
+        offerCopy.setExperimentalDesign(original.getExperimentalDesign())
+        offerCopy.setExpirationDate(original.getExpirationDate())
+        offerCopy.setIdentifier(original.getIdentifier())
+        offerCopy.setItems(original.getItems())
+        offerCopy.setNetSumDataAnalysis(original.getNetSumDataAnalysis())
+        offerCopy.setNetSumDataGeneration(original.getNetSumDataGeneration())
+        offerCopy.setNetSumDataManagement(original.getNetSumDataManagement())
+        offerCopy.setNetSumExternalServices(original.getNetSumExternalServices())
+        offerCopy.setOverhead(original.getOverhead())
+        offerCopy.setOverheadRatio(original.getOverheadRatio())
+        offerCopy.setOverheadsDataAnalysis(original.getOverheadsDataAnalysis())
+        offerCopy.setOverheadsDataGeneration(original.getOverheadsDataGeneration())
+        offerCopy.setOverheadsDataManagement(original.getOverheadsDataManagement())
+        offerCopy.setOverheadsExternalServices(original.getOverheadsExternalServices())
+        offerCopy.setProjectManager(original.getProjectManager())
+        offerCopy.setProjectObjective(original.getProjectObjective())
+        offerCopy.setProjectTitle(original.getProjectTitle())
+        offerCopy.setSelectedCustomerAffiliation(original.getSelectedCustomerAffiliation())
+        offerCopy.setTotalCost(original.getTotalCost())
+        offerCopy.setTotalDiscountAmount(original.getTotalDiscountAmount())
+        offerCopy.setTotalNetPrice(original.getTotalNetPrice())
+        offerCopy.setTotalVat(original.getTotalVat())
+        offerCopy.setVatRatio(original.getVatRatio())
+
+        return offerCopy
     }
 
     private static class OptionalStringConverter implements AttributeConverter<Optional<String>, String> {
