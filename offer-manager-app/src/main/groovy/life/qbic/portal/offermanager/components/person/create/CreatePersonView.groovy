@@ -14,7 +14,6 @@ import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
-import life.qbic.business.persons.AcademicTitle
 import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.Resettable
@@ -394,7 +393,7 @@ class CreatePersonView extends VerticalLayout implements Resettable {
      * @return
      */
     private void initDefaultValues() {
-        titleField.setValue(AcademicTitle.NONE.toString())
+        titleField.setValue("None")
     }
 
     /**

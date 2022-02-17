@@ -7,7 +7,6 @@ import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
-import life.qbic.business.persons.AcademicTitle
 import life.qbic.business.persons.Person
 import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.portal.offermanager.components.GridUtils
@@ -132,7 +131,7 @@ class SearchPersonView extends FormLayout{
     private void fillPanel(Person person){
         VerticalLayout content = new VerticalLayout()
 
-        content.addComponent(new Label("<strong>${person.title == AcademicTitle.NONE.toString() ? "" : person.title} ${person.firstName} ${person.lastName}</strong>", ContentMode.HTML))
+        content.addComponent(new Label("<strong>${person.title == "None" ? "" : person.title} ${person.firstName} ${person.lastName}</strong>", ContentMode.HTML))
         content.addComponent(new Label("${person.getEmail()}", ContentMode.HTML))
 
         content.setMargin(true)
@@ -163,10 +162,10 @@ class SearchPersonView extends FormLayout{
                     .setCaption("First Name").setId("FirstName")
             this.personGrid.addColumn({ person -> person.lastName })
                     .setCaption("Last Name").setId("LastName")
-            this.personGrid.addColumn({ person -> person.emailAddress })
+            this.personGrid.addColumn({ person -> person.getEmail() })
                     .setCaption("Email Address").setId("EmailAddress")
             this.personGrid.addColumn({ person ->
-                person.title == AcademicTitle.NONE.toString() ? "" : person.title})
+                person.title == "None" ? "" : person.title})
                     .setCaption("Title").setId("Title")
 
             //specify size of grid and layout

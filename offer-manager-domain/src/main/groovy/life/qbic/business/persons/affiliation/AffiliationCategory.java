@@ -22,7 +22,15 @@ public enum AffiliationCategory {
   EXTERNAL_ACADEMIC("external academic"),
   EXTERNAL("external");
 
-  public static AffiliationCategory from(String label) {
+  /**
+   * Factory method returning the corresponding AffiliationCategory given a label.
+   * This method scans through all available enum values and returns a value with matching label.
+   * @param label the label for which the enum value is requested
+   * @return an {@link AffiliationCategory} if any has a matching label, otherwise {@link IllegalArgumentException}
+   * @since 1.3.0
+   * @throws IllegalArgumentException in case no enum value has the provided label
+   */
+  public static AffiliationCategory from(String label) throws IllegalArgumentException {
     Optional<AffiliationCategory> affiliationCategory =
         Arrays.stream(AffiliationCategory.values())
             .filter(it -> it.getLabel().equals(label))
@@ -34,7 +42,7 @@ public enum AffiliationCategory {
   }
 
   /**
-   * Holds the value of the enum
+   * Holds the label of this enum value
    */
   private final String label;
 
@@ -47,10 +55,18 @@ public enum AffiliationCategory {
   }
 
   /**
-   * @return the label for this academic title. For example 'Dr.'
+   * @return the label for this affiliation category. For example 'internal'.
    */
   public String getLabel() {
     return label;
   }
 
+  /**
+   * {@inheritDoc} <b>This method might change. Please consider using
+   * {@link life.qbic.business.persons.affiliation.AffiliationCategory#getLabel()} instead</b>
+   */
+  @Override
+  public String toString() {
+    return label;
+  }
 }

@@ -109,7 +109,7 @@ class SearchAffiliationView extends FormLayout{
             }
 
             if (selectedAffiliation.getOrganization()) {
-                Label organisation = new Label("$selectedAffiliation.getOrganization()")
+                Label organisation = new Label("${selectedAffiliation.getOrganization()}")
                 organisation.setIcon(VaadinIcons.BUILDING_O)
                 organisation.setCaption("Organization")
                 detailsContent.addComponent(organisation)
@@ -136,7 +136,7 @@ class SearchAffiliationView extends FormLayout{
     private static String generateAddressString(Affiliation affiliation) {
         StringBuilder stringBuilder = new StringBuilder()
         if (affiliation.getOrganization()) {
-            stringBuilder.append("$affiliation.getOrganization()")
+            stringBuilder.append("${affiliation.getOrganization()}")
             stringBuilder.append("\n")
         }
         if (affiliation.addressAddition) {
