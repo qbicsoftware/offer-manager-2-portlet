@@ -3,9 +3,11 @@ package life.qbic.business.offers
 import groovy.time.TimeCategory
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.offers.Offer
 import life.qbic.business.offers.identifier.OfferId
-import life.qbic.datamodel.dtos.business.*
+import life.qbic.business.persons.Person
+import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.business.persons.affiliation.AffiliationCategory
+import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
@@ -41,11 +43,11 @@ class Offer {
     /**
      * The customer for which this offer was created
      */
-    private Customer customer
+    private Person customer
     /**
      * The QBiC project manager who was assigned to the project
      */
-    private ProjectManager projectManager
+    private Person projectManager
     /**
      * The title of the project
      */
@@ -98,10 +100,10 @@ class Offer {
     private double overhead
 
     /**
-    * The overhead ratio that is applied to calculate the total offer price. The ratio is chosen
-    * based on the customer's affiliation.
+     * The overhead ratio that is applied to calculate the total offer price. The ratio is chosen
+     * based on the customer's affiliation.
      *  e.g. 0.4 or a 40% markup for external customers
-    */
+     */
     private double overheadRatio
 
     /**
@@ -125,7 +127,7 @@ class Offer {
     private Optional<ProjectIdentifier> associatedProject
 
     private static Date calculateExpirationDate(Date date) {
-        use (TimeCategory) {
+        use(TimeCategory) {
             return date + 90.days
         }
     }
@@ -141,8 +143,8 @@ class Offer {
     }
 
     private final Predicate<ProductItem> dataStorageApplicable = {
-        it.product instanceof DataStorage && \
-                    selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL
+        it.product instanceof DataStorage &&   \
+                      selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL
     }
 
     private static Logging log = Logger.getLogger(this.class)
@@ -150,8 +152,8 @@ class Offer {
     static class Builder {
 
         Date creationDate
-        Customer customer
-        ProjectManager projectManager
+        Person customer
+        Person projectManager
         String projectTitle
         String projectObjective
         Optional<String> experimentalDesign
@@ -161,7 +163,7 @@ class Offer {
         List<OfferId> availableVersions = []
         Optional<ProjectIdentifier> associatedProject
 
-        Builder(Customer customer, ProjectManager projectManager, String projectTitle, String projectObjective, List<ProductItem> items, Affiliation selectedCustomerAffiliation) {
+        Builder(Person customer, Person projectManager, String projectTitle, String projectObjective, List<ProductItem> items, Affiliation selectedCustomerAffiliation) {
             this.customer = Objects.requireNonNull(customer, "Customer must not be null")
             this.projectManager = Objects.requireNonNull(projectManager, "Project Manager must not be null")
             this.projectTitle = Objects.requireNonNull(projectTitle, "Project Title must not be null")
@@ -172,7 +174,7 @@ class Offer {
             this.experimentalDesign = Optional.empty()
             // Since the incoming item list is mutable we need to
             // copy all immutable items to out internal list
-            items.each {this.items.add(it)}
+            items.each { this.items.add(it) }
             this.selectedCustomerAffiliation = Objects.requireNonNull(selectedCustomerAffiliation, "Customer Affiliation must not be null")
             this.associatedProject = Optional.empty()
         }
@@ -192,7 +194,7 @@ class Offer {
             return this
         }
 
-        Builder experimentalDesign(Optional<String> experimentalDesign){
+        Builder experimentalDesign(Optional<String> experimentalDesign) {
             this.experimentalDesign = experimentalDesign
             return this
         }
@@ -228,7 +230,7 @@ class Offer {
         } else {
             this.associatedProject = Optional.empty()
         }
-        builder.items.each {this.items.add(finaliseProductItem(it))}
+        builder.items.each { this.items.add(finaliseProductItem(it)) }
         this.taxOffice = new TaxOffice(selectedCustomerAffiliation)
     }
 
@@ -272,11 +274,11 @@ class Offer {
         if (items.empty) {
             return 0
         }
-        return items.sum {BigDecimal.valueOf(calculateItemOverhead(it))} as BigDecimal
+        return items.sum { BigDecimal.valueOf(calculateItemOverhead(it)) } as BigDecimal
     }
 
     private BigDecimal determineUnitPrice(ProductItem item) {
-        BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice as BigDecimal: item.product.externalUnitPrice as BigDecimal
+        BigDecimal unitPrice = selectedCustomerAffiliation.category == AffiliationCategory.INTERNAL ? item.product.internalUnitPrice as BigDecimal : item.product.externalUnitPrice as BigDecimal
         return unitPrice
     }
 
@@ -319,8 +321,7 @@ class Offer {
         items.each {
             if (it.product instanceof ProjectManagement || it.product instanceof DataStorage) {
                 // No overheads are assigned for data storage and project management
-            }
-            else {
+            } else {
                 costOverheadItemsNet += calculateItemNet(it)
             }
         }
@@ -337,7 +338,7 @@ class Offer {
     BigDecimal getTaxCosts() {
         Taxes taxes = new Taxes()
         items.stream()
-                .map( { ProductItem item ->
+                .map({ ProductItem item ->
                     BigDecimal itemCostWithOverhead = BigDecimal.valueOf(calculateItemOverhead(item)) + BigDecimal.valueOf(item.totalPrice) - BigDecimal.valueOf(item.quantityDiscount)
                     taxes.apply(itemCostWithOverhead, item.product)
                 })
@@ -353,10 +354,9 @@ class Offer {
     List<ProductItem> getOverheadItems() {
         List<ProductItem> listOverheadProductItem = []
         items.each {
-            if (it.product instanceof DataStorage || it.product instanceof ProjectManagement){
+            if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
                 // No overheads are assigned for data storage and project management
-            }
-            else {
+            } else {
                 listOverheadProductItem.add(it)
             }
         }
@@ -369,7 +369,7 @@ class Offer {
      * @return ProductItem list containing all ProductItems without overhead cost
      */
     @Deprecated
-    List<ProductItem> getNoOverheadItems(){
+    List<ProductItem> getNoOverheadItems() {
         List<ProductItem> listNoOverheadProductItem = []
         items.each {
             if (it.product instanceof DataStorage || it.product instanceof ProjectManagement) {
@@ -387,11 +387,11 @@ class Offer {
         return expirationDate
     }
 
-    Customer getCustomer() {
+    Person getCustomer() {
         return customer
     }
 
-    ProjectManager getProjectManager() {
+    Person getProjectManager() {
         return projectManager
     }
 
@@ -403,7 +403,7 @@ class Offer {
         return projectObjective
     }
 
-    Optional<String> getExperimentalDesign(){
+    Optional<String> getExperimentalDesign() {
         return experimentalDesign
     }
 
@@ -444,7 +444,7 @@ class Offer {
     }
 
     void addAllAvailableIdentifiers(Collection<OfferId> offerIdCollection) {
-        offerIdCollection.each {addAvailableIdentifier(it)}
+        offerIdCollection.each { addAvailableIdentifier(it) }
     }
 
     /**
@@ -469,7 +469,7 @@ class Offer {
      * @return the total discount amount applied in the offer
      * @since 1.1.0
      */
-    double getTotalDiscountAmount(){
+    double getTotalDiscountAmount() {
         return calculateTotalDiscountAmount()
     }
 
@@ -500,12 +500,12 @@ class Offer {
         if (items.empty) {
             return 0
         }
-        return items.sum {BigDecimal.valueOf(it.totalPrice - it.quantityDiscount)}
+        return items.sum { BigDecimal.valueOf(it.totalPrice - it.quantityDiscount) }
     }
 
     private double determineOverhead() {
         double overhead
-        switch(selectedCustomerAffiliation.category) {
+        switch (selectedCustomerAffiliation.category) {
             case AffiliationCategory.INTERNAL:
                 overhead = 0.0
                 break
@@ -521,7 +521,7 @@ class Offer {
         return overhead
     }
 
-    private double calculateTotalCosts(){
+    private double calculateTotalCosts() {
         double netPrice = calculateNetPrice()
         final double overhead = getOverheadSum()
         return netPrice + overhead + getTaxCosts()
@@ -556,8 +556,8 @@ class Offer {
      */
     @Deprecated
     double determineTaxCost() {
-        boolean isExternalProductPresent = items.findAll( {it.product instanceof ExternalServiceProduct}).size() > 0
-        return isVatCountry() && (!isNoVatAffiliation() || isExternalProductPresent)  ? VAT : 0.0
+        boolean isExternalProductPresent = items.findAll({ it.product instanceof ExternalServiceProduct }).size() > 0
+        return isVatCountry() && (!isNoVatAffiliation() || isExternalProductPresent) ? VAT : 0.0
     }
     /**
      * Calculates the VAT ratio of an offer depending on the customers affiliation country and category
@@ -566,15 +566,15 @@ class Offer {
      * @since 1.2.0
      */
     BigDecimal appliedTaxRatio() {
-        boolean isExternalProductPresent = items.findAll( {it.product instanceof ExternalServiceProduct}).size() > 0
-        return isVatCountry() && (!isNoVatAffiliation() || isExternalProductPresent)  ? BigDecimal.valueOf(VAT) : 0.0
+        boolean isExternalProductPresent = items.findAll({ it.product instanceof ExternalServiceProduct }).size() > 0
+        return isVatCountry() && (!isNoVatAffiliation() || isExternalProductPresent) ? BigDecimal.valueOf(VAT) : 0.0
     }
 
     /**
      * Determines if the customers affiliation is within germany
      * @return true if the country of the customer is within
      */
-    boolean isVatCountry(){
+    boolean isVatCountry() {
         return selectedCustomerAffiliation.getCountry() == countryWithVat
 
     }
@@ -583,7 +583,7 @@ class Offer {
      * Determines if the customers affiliation is excluded for VAT
      * @return true if the affiliation category of the customer is internal
      */
-    private boolean isNoVatAffiliation(){
+    private boolean isNoVatAffiliation() {
         return selectedCustomerAffiliation.getCategory() == noVatCategory
     }
 
@@ -605,9 +605,9 @@ class Offer {
 
 
     /**
-    * Returns the checksum of the current Offer Object
-    */
-    String checksum(){
+     * Returns the checksum of the current Offer Object
+     */
+    String checksum() {
         //Use SHA-2 algorithm
         MessageDigest shaDigest = MessageDigest.getInstance("SHA-256")
 
@@ -622,14 +622,13 @@ class Offer {
      * @param offer Contains the offer information
      * @return a string that encrypts the offer object
      */
-    private static String getOfferChecksum(MessageDigest digest, Offer offer)
-    {
+    private static String getOfferChecksum(MessageDigest digest, Offer offer) {
         //digest crucial offer characteristics
         digest.update(offer.projectTitle.getBytes(StandardCharsets.UTF_8))
         digest.update(offer.projectObjective.getBytes(StandardCharsets.UTF_8))
-        if(offer.experimentalDesign.isPresent()) digest.update(offer.experimentalDesign.get().getBytes(StandardCharsets.UTF_8))
+        if (offer.experimentalDesign.isPresent()) digest.update(offer.experimentalDesign.get().getBytes(StandardCharsets.UTF_8))
 
-        offer.items.each {item ->
+        offer.items.each { item ->
             digest.update(item.product.productName.getBytes(StandardCharsets.UTF_8))
             digest.update(item.quantity.toString().getBytes(StandardCharsets.UTF_8))
         }
@@ -647,8 +646,7 @@ class Offer {
         //This bytes[] has bytes in decimal format
         //Convert it to hexadecimal format
         StringBuilder sb = new StringBuilder()
-        for(int i=0; i< bytes.length ;i++)
-        {
+        for (int i = 0; i < bytes.length; i++) {
             sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1))
         }
 
