@@ -36,14 +36,12 @@ public class Product {
   @Column(name = "externalUnitPrice", nullable = false)
   private Double externalUnitPrice;
 
-  @Lob
   @Column(name = "unit")
   private String unit;
 
   @Column(name = "productId", length = 45)
   private String productId;
 
-  @Lob
   @Column(name = "serviceProvider", nullable = false)
   private String serviceProvider;
 
