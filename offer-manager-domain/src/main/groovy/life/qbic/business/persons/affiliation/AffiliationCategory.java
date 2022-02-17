@@ -42,7 +42,7 @@ public enum AffiliationCategory {
   }
 
   /**
-   * Holds the value of the enum
+   * Holds the label of this enum value
    */
   private final String label;
 
@@ -55,10 +55,18 @@ public enum AffiliationCategory {
   }
 
   /**
-   * @return the label for this academic title. For example 'Dr.'
+   * @return the label for this affiliation category. For example 'internal'.
    */
   public String getLabel() {
     return label;
   }
 
+  /**
+   * {@inheritDoc} <b>This method might change. Please consider using
+   * {@link life.qbic.business.persons.affiliation.AffiliationCategory#getLabel()} instead</b>
+   */
+  @Override
+  public String toString() {
+    return label;
+  }
 }

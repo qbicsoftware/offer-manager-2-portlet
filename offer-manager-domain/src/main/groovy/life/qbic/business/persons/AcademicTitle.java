@@ -35,6 +35,10 @@ enum AcademicTitle {
         return this.label;
     }
 
+    /**
+     * {@inheritDoc} <b>This method might change. Please consider using
+     * {@link AcademicTitle#getLabel()} instead</b>
+     */
     @Override
     public String toString() {
         return getLabel();
