@@ -1,7 +1,6 @@
 package life.qbic.portal.offermanager.components.person.create
 
 import groovy.beans.Bindable
-import life.qbic.business.persons.AcademicTitle
 import life.qbic.business.persons.Person
 import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.portal.offermanager.components.Resettable
@@ -50,7 +49,7 @@ class CreatePersonViewModel implements Resettable{
         refreshAvailableOrganizations()
 
         this.affiliationService.subscribe({
-            List foundOrganisations = availableOrganisations.findAll() { organisation -> (organisation as Organisation).name == it.organisation }
+            List foundOrganisations = availableOrganisations.findAll() { organisation -> (organisation as Organisation).name == it.getOrganization() }
             if (foundOrganisations.empty) {
                 //create a new organisation
                 availableOrganisations << new Organisation(it.getOrganization(), [it])
