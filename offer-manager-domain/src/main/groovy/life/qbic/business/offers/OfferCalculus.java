@@ -38,24 +38,26 @@ class OfferCalculus {
   private BigDecimal totalCost;
   private BigDecimal totalDiscountAmount;
 
+   /**
+   * Determines the overhead ratio for this offer based on the customer affiliation.
+   * @param offer the offer for which the overhead ratio should be determined
+   * @return a copy of the provided offer with the overhead ratio filled.
+   */
   OfferV2 overheadRatio(OfferV2 offer) {
-    OfferV2 result = OfferV2.copy(offer);
-    BigDecimal overheadRatio;
-    switch (offer.getSelectedCustomerAffiliation().getCategory()) {
-      case INTERNAL:
-        overheadRatio = BigDecimal.ZERO;
-        break;
-      case EXTERNAL_ACADEMIC:
-        overheadRatio = BigDecimal.valueOf(0.2);
-        break;
-      case EXTERNAL:
-        overheadRatio = BigDecimal.valueOf(0.4);
-        break;
-      default:
-        overheadRatio = BigDecimal.valueOf(0.4);
-    }
-    result.setOverheadRatio(overheadRatio);
-    return null;
+      OfferV2 result = OfferV2.copy(offer);
+      BigDecimal overheadRatio;
+      switch (offer.getSelectedCustomerAffiliation().getCategory()) {
+          case INTERNAL:
+              overheadRatio = BigDecimal.ZERO;
+              break;
+          case EXTERNAL_ACADEMIC:
+              overheadRatio = BigDecimal.valueOf(0.2);
+              break;
+          default:
+              overheadRatio = BigDecimal.valueOf(0.4);
+      }
+      result.setOverheadRatio(overheadRatio.doubleValue());
+      return result;
   }
 
   /**
