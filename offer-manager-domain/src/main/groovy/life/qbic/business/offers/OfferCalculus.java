@@ -3,7 +3,6 @@ package life.qbic.business.offers;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import life.qbic.business.offers.OfferItem.Builder;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
 import life.qbic.datamodel.dtos.business.ProductItem;
 import life.qbic.datamodel.dtos.business.services.Product;
@@ -37,6 +36,11 @@ class OfferCalculus {
     private BigDecimal totalDiscountAmount;
 
 
+    /**
+     * Determines the overhead ratio for this offer based on the customer affiliation.
+     * @param offer the offer for which the overhead ratio should be determined
+     * @return a copy of the provided offer with the overhead ratio filled.
+     */
     OfferV2 overheadRatio(OfferV2 offer) {
         OfferV2 result = OfferV2.copy(offer);
         BigDecimal overheadRatio;
@@ -47,14 +51,11 @@ class OfferCalculus {
             case EXTERNAL_ACADEMIC:
                 overheadRatio = BigDecimal.valueOf(0.2);
                 break;
-            case EXTERNAL:
-                overheadRatio = BigDecimal.valueOf(0.4);
-                break;
             default:
                 overheadRatio = BigDecimal.valueOf(0.4);
         }
-        result.setOverheadRatio(overheadRatio);
-        return null;
+        result.setOverheadRatio(overheadRatio.doubleValue());
+        return result;
     }
 
     /**
