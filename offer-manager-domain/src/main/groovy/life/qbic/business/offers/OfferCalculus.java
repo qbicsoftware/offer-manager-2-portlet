@@ -1,13 +1,13 @@
 package life.qbic.business.offers;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
-import life.qbic.datamodel.dtos.business.ProductItem;
-import life.qbic.datamodel.dtos.business.services.Product;
+import life.qbic.business.products.ProductItem;
 
 
 /**
@@ -77,64 +77,50 @@ class OfferCalculus {
     return null;
   }
 
-  private static List<OfferItem> convertProductItems(List<ProductItem> productItems, Affiliation affiliation) {
-      return productItems.stream()
-          .map( (ProductItem item) -> create(item, affiliation.getCategory()) )
-          .collect(Collectors.toList());
+  public static List<OfferItem> convertProductItemsForExternals(List<ProductItem> productItems) {
+    return productItems.stream()
+        .map( OfferCalculus::createWithExternalPrice )
+        .collect(Collectors.toList());
   }
 
-  private static OfferItem create(ProductItem productItem, AffiliationCategory affiliationCategory) {
-    Product product = productItem.getProduct();
-    double unitPrice = (affiliationCategory == AffiliationCategory.INTERNAL)
-        ? product.getInternalUnitPrice()
-        : product.getExternalUnitPrice();
-    return new OfferItem.Builder(
-                productItem.getQuantity(),
-                product.getDescription(),
-                product.getProductName(),
-                unitPrice,
-                productItem.getQuantityDiscount(),
-                calculateDiscountPerUnit(productItem),
-                calculateDiscountPercentage(productItem),
-                product.getServiceProvider().getLabel(),
-                product.getUnit().getValue(),
-                productItem.getTotalPrice()).setCategory(productItem.getCategory)
-            .build();
+  public static List<OfferItem> convertProductItemsForInternals(List<ProductItem> productItems) {
+    return productItems.stream()
+        .map( OfferCalculus::createWithInternalPrice )
+        .collect(Collectors.toList());
   }
 
-  /**
-   * Calculates the discount percentage for a product item. Note that this is not a ratio, but a
-   * number between 0 and 100.
-   *
-   * @param productItem item for which the discount percentage should be calculated
-   * @return the discount percentage based on quantity discount and item total cost
-   */
-  private static double calculateDiscountPercentage(ProductItem productItem) {
-    BigDecimal totalPrice = BigDecimal.valueOf(productItem.getTotalPrice());
-    if (totalPrice.compareTo(BigDecimal.ZERO) == 0) {
-      // avoid division by 0
-      // if a product has a total price of 0 set discount percentage to 0
-      return BigDecimal.ZERO.doubleValue();
+  public static OfferItem createWithInternalPrice(ProductItem item) { return null;}
+
+  public static OfferItem createWithExternalPrice(ProductItem item) { return null;}
+
+  private static OfferItem create(Double quantity, String description, String productName, Double unitPrice,
+      Double quantityDiscount, Double unitDiscount, Double discountPercentage, String serviceProvider,
+      String unit, Double totalPrice, String productCategory) {
+
+    return new OfferItem.Builder(quantity, description, productName, unitPrice,
+        quantityDiscount, unitDiscount, discountPercentage,
+        serviceProvider, unit, totalPrice)
+        .setCategory(productCategory).build();
+  }
+
+  public static BigDecimal applyStorageDiscount(BigDecimal itemTotalPrice, AffiliationCategory affiliationCategory) {
+    if(affiliationCategory == AffiliationCategory.INTERNAL) {
+      // 100% discount for internal customers for storage
+      return itemTotalPrice;
     }
-    return (BigDecimal.valueOf(100.0)
-            .multiply(BigDecimal.valueOf(productItem.getQuantityDiscount())))
-            .divide(totalPrice)
-            .doubleValue();
+    return BigDecimal.ZERO;
   }
 
-  /**
-   * Calculates the discount per unit for a product item
-   *
-   * @param productItem item for which the discount per unit should be calculated
-   * @return the discount per unit, if applicable, 0 otherwise
-   */
-  private static double calculateDiscountPerUnit(ProductItem productItem) {
-    BigDecimal quantity = BigDecimal.valueOf(productItem.getQuantity());
-    if (quantity.compareTo(BigDecimal.ZERO) == 0) {
-      // avoid division by 0
-      // if a a productItem has no quantity set discount to 0
-      return BigDecimal.ZERO.doubleValue();
-    }
-    return BigDecimal.valueOf(productItem.getQuantityDiscount()).divide(quantity).doubleValue();
+  public static BigDecimal applyQuantityDiscount(BigDecimal unitPrice, Integer quantity) {
+    QuantityDiscount quantityDiscount = new QuantityDiscount();
+    BigDecimal discountTotal = quantityDiscount.apply(quantity, unitPrice);
+    // Round up to the second digit
+    return discountTotal.setScale(2, RoundingMode.UP);
+  }
+
+  public BigDecimal determineUnitPrice(ProductItem item, AffiliationCategory affiliationCategory) {
+    return affiliationCategory == AffiliationCategory.INTERNAL ?
+        BigDecimal.valueOf(item.getProduct().getInternalUnitPrice())
+        : BigDecimal.valueOf(item.getProduct().getExternalUnitPrice());
   }
 }

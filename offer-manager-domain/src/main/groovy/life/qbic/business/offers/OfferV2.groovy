@@ -3,7 +3,7 @@ package life.qbic.business.offers
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.persons.Person
 import life.qbic.business.persons.affiliation.Affiliation
-import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.business.products.ProductItem
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
