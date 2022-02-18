@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
+import life.qbic.business.products.Product;
 import life.qbic.business.products.ProductItem;
 
 
@@ -131,11 +132,34 @@ class OfferCalculus {
         .collect(Collectors.toList());
   }
 
-  public static OfferItem createWithInternalPrice(ProductItem item) { return null;}
+  public static OfferItem createWithInternalPrice(ProductItem item) {
+    Double selectedUnitPrice = item.getProduct().getInternalUnitPrice();
+    String category = item.getProduct().getCategory();
+    BigDecimal quantityUnitDiscount;
+    BigDecimal totalDiscount;
+    Double productQuantity = item.getQuantity();
+
+    if (DATA_GENERATION.contains(category)) {
+      quantityUnitDiscount = applyQuantityDiscount(BigDecimal.valueOf(selectedUnitPrice),
+          productQuantity.intValue());
+      totalDiscount = quantityUnitDiscount.multiply(BigDecimal.valueOf(productQuantity));
+    } else if (category.equalsIgnoreCase("Data Storage")) {
+      quantityUnitDiscount = BigDecimal.valueOf(selectedUnitPrice);
+      totalDiscount = quantityUnitDiscount.multiply(BigDecimal.valueOf(productQuantity));
+    } else {
+      quantityUnitDiscount = BigDecimal.ZERO;
+      totalDiscount = BigDecimal.ZERO;
+    }
+
+    Product product = item.getProduct();
+    return createOfferItem(productQuantity, product.getDescription(), product.getProductName(), selectedUnitPrice,
+        totalDiscount.doubleValue(), quantityUnitDiscount.doubleValue(), "", product.getServiceProvider(),
+        product.getUnit(), "", product.getCategory());
+  }
 
   public static OfferItem createWithExternalPrice(ProductItem item) { return null;}
 
-  private static OfferItem create(Double quantity, String description, String productName, Double unitPrice,
+  private static OfferItem createOfferItem(Double quantity, String description, String productName, Double unitPrice,
       Double quantityDiscount, Double unitDiscount, Double discountPercentage, String serviceProvider,
       String unit, Double totalPrice, String productCategory) {
 
