@@ -85,7 +85,7 @@ class OfferCalculus {
     return offerItems;
   }
 
-  OfferV2 groupItems(OfferV2 offer, List<OfferItem> offerItems) {
+  OfferV2 groupItems(OfferV2 offer, List<OfferItem> offerItems) throws OfferCalculusException {
     if (offerItems.isEmpty()) {
       offerItems = createOfferItems(offer);
     }
