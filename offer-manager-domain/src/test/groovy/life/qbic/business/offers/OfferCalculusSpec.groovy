@@ -21,10 +21,10 @@ class OfferCalculusSpec extends Specification {
     then: "the overhead ratio is #expectedRatio"
     filledOffer.getOverheadRatio() == expectedRatio.doubleValue()
     where:
-    category | expectedRatio
-    AffiliationCategory.INTERNAL | 0.0
+    category                              | expectedRatio
+    AffiliationCategory.INTERNAL          | 0.0
     AffiliationCategory.EXTERNAL_ACADEMIC | 0.2
-    AffiliationCategory.EXTERNAL | 0.4
+    AffiliationCategory.EXTERNAL          | 0.4
   }
 
 }
