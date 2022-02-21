@@ -216,8 +216,8 @@ class OfferCalculus {
     Product product = item.getProduct();
     // Calculate the discount percentage
     Double discountPercentage = calcDiscountPercentage(BigDecimal.valueOf(unitPrice), unitPriceAfterDiscount).doubleValue();
-    // Get the final item price, including potential discount
-    Double totalPrice = unitPriceAfterDiscount.multiply(BigDecimal.valueOf(productQuantity)).doubleValue();
+    // Get the final item price, excluding potential discount
+    Double totalPrice = unitPrice * productQuantity;
     return createOfferItem(productQuantity, product.getDescription(), product.getProductName(),
         unitPrice,
         totalDiscount.doubleValue(), unitPriceAfterDiscount.doubleValue(),
@@ -445,6 +445,59 @@ class OfferCalculus {
       return OVERHEAD_RATIO_EXTERNAL_ACADEMIC;
     }
     return OVERHEAD_RATIO_EXTERNAL;
+  }
+
+  /**
+   * <p>Calculates the sum of the net price of every item.</p>
+   *
+   * <b>Note</b>: Potential discount will be considered in the calculation and subtracted from the total item price.
+   * @param items the items to calculate the net sum for
+   * @return the net sum including discounts.
+   */
+  public static BigDecimal netSum(List<OfferItem> items) {
+    return items.stream()
+        .map(OfferCalculus::netPrice)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+  }
+
+  /**
+   * <p>Calculates the net price of a given item.</p>
+   *
+   * <b>Note</b>: Potential discount will be considered in the calculation and subtracted from the total item price.
+   * @param item the item to calculate the net sum for
+   * @return the net sum of the provided item
+   */
+  public static BigDecimal netPrice(OfferItem item) {
+    return BigDecimal.valueOf(item.getItemTotal())
+        .subtract(BigDecimal.valueOf(item.getQuantityDiscount()));
+  }
+
+  /**
+   * <p>Calculates the net prices for all service categories</p>
+   * @param offer the offer with the items to calculate the net sums
+   * @return a copy of the input offer with the final net prices
+   */
+  public static OfferV2 calcNetPrices(OfferV2 offer) {
+    OfferV2 offerCopy = OfferV2.copy(offer);
+
+    BigDecimal dataAnalysisNetTotal = netSum(offerCopy.getDataAnalysisItems());
+    BigDecimal dataGenerationNetTotal = netSum(offerCopy.getDataGenerationItems());
+    BigDecimal projectAndDataManagementNetTotal = netSum(offerCopy.getDataManagementItems());
+    BigDecimal externalServicesNetTotal = netSum(offerCopy.getDataAnalysisItems());
+
+    BigDecimal totalNet = dataAnalysisNetTotal
+        .add(dataGenerationNetTotal)
+        .add(projectAndDataManagementNetTotal)
+        .add(externalServicesNetTotal);
+
+    offerCopy.setNetSumDataAnalysis(dataAnalysisNetTotal);
+    offerCopy.setNetSumDataGeneration(dataGenerationNetTotal);
+    offerCopy.setNetSumDataManagement(projectAndDataManagementNetTotal);
+    offerCopy.setNetSumExternalServices(externalServicesNetTotal);
+
+    offerCopy.setTotalNetPrice(totalNet);
+
+    return offerCopy;
   }
 
 
