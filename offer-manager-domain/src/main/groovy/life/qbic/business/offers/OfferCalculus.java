@@ -27,24 +27,24 @@ class OfferCalculus {
   private List<OfferItem> externalServiceItems = new ArrayList<>();
 
   /*Overheads*/
-  Double overheadTotal
-  Double overheadsDataGeneration
-  Double overheadsDataAnalysis
-  Double overheadsProjectManagementAndDataStorage
-  Double overheadsExternalServices
-  Double overheadRatio
+  Double overheadTotal;
+  Double overheadsDataGeneration;
+  Double overheadsDataAnalysis;
+  Double overheadsProjectManagementAndDataStorage;
+  Double overheadsExternalServices;
+  Double overheadRatio;
 
   /*Prices*/
-  Double netDataGeneration
-  Double netDataAnalysis
-  Double netPMandDS
-  Double netExternalServices
-  Double totalCost
-  Double netCostsWithOverheads
-  Double netCost
-  Double totalVat
-  Double vatRatio
-  Double totalDiscountAmount
+  Double netDataGeneration;
+  Double netDataAnalysis;
+  Double netPMandDS;
+  Double netExternalServices;
+  Double totalCost;
+  Double netCostsWithOverheads;
+  Double netCost;
+  Double totalVat;
+  Double vatRatio;
+  Double totalDiscountAmount;
 
   private static final List<String> DATA_GENERATION = Arrays.asList("Sequencing", "Proteomics", "Metabolomics");
   private static final List<String> DATA_ANALYSIS = Arrays.asList("Primary Bioinformatics", "Secondary Bioinformatics");
