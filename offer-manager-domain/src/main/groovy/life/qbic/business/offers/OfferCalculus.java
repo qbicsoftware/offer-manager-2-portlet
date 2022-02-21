@@ -68,9 +68,9 @@ class OfferCalculus {
     List<OfferItem> offerItems;
     // Discounting for internal customer is different, so we check the affiliation first
     if (affiliationCategory == AffiliationCategory.INTERNAL) {
-      offerItems = convertProductItemsForInternals(offer.getItems());
+      offerItems = createOfferItemsForInternals(offer.getItems());
     } else {
-      offerItems = convertProductItemsForExternals(offer.getItems());
+      offerItems = createOfferItemsForExternals(offer.getItems());
     }
     return offerItems;
   }
@@ -83,10 +83,10 @@ class OfferCalculus {
    * <p>If the offer items list passed is empty, this method tries to create the offer items first
    * based on the ProductItems in the offer. Internally, the method {@link OfferCalculus#createOfferItems(OfferV2)}
    * is used for this.</p>
-   * @param offer
-   * @param offerItems
-   * @return
-   * @throws OfferCalculusException
+   * @param offer the offer to use as basis for the calculations
+   * @param offerItems the offer items to use to group the items into their belonging category
+   * @return A copy of the input offer, with the offer items sorted in the categories.
+   * @throws OfferCalculusException if anything goes wrong
    */
   OfferV2 groupItems(OfferV2 offer, List<OfferItem> offerItems) throws OfferCalculusException {
     if (offerItems.isEmpty()) {
@@ -122,15 +122,20 @@ class OfferCalculus {
     return offerCopy;
   }
 
-  public static List<OfferItem> convertProductItemsForExternals(List<ProductItem> productItems) {
+  /**
+   *
+   * @param productItems
+   * @return
+   */
+  public static List<OfferItem> createOfferItemsForExternals(List<ProductItem> productItems) {
     return productItems.stream()
-        .map( OfferCalculus::createWithExternalPrice )
+        .map( OfferCalculus::createOfferItemWithExternalPrice)
         .collect(Collectors.toList());
   }
 
-  public static List<OfferItem> convertProductItemsForInternals(List<ProductItem> productItems) {
+  public static List<OfferItem> createOfferItemsForInternals(List<ProductItem> productItems) {
     return productItems.stream()
-        .map( OfferCalculus::createWithInternalPrice )
+        .map( OfferCalculus::createOfferItemWithInternalPrice)
         .collect(Collectors.toList());
   }
 
@@ -140,7 +145,7 @@ class OfferCalculus {
    * @param item the item that is going to be used to create the OfferItem instance.
    * @return
    */
-  public static OfferItem createWithInternalPrice(ProductItem item) {
+  public static OfferItem createOfferItemWithInternalPrice(ProductItem item) {
     Double selectedUnitPrice = item.getProduct().getInternalUnitPrice();
     return createWithUnitPrice(item, selectedUnitPrice);
   }
@@ -151,7 +156,7 @@ class OfferCalculus {
    * @param item the item that is going to be used to create the OfferItem instance.
    * @return
    */
-  public static OfferItem createWithExternalPrice(ProductItem item) {
+  public static OfferItem createOfferItemWithExternalPrice(ProductItem item) {
     Double selectedUnitPrice = item.getProduct().getExternalUnitPrice();
     return createWithUnitPrice(item, selectedUnitPrice);
   }
