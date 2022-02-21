@@ -21,31 +21,6 @@ import life.qbic.business.products.ProductItem;
  */
 class OfferCalculus {
 
-  private List<OfferItem> dataAnalysisItems = new ArrayList<>();
-  private List<OfferItem> dataGenerationItems = new ArrayList<>();
-  private List<OfferItem> dataManagementItems = new ArrayList<>();
-  private List<OfferItem> externalServiceItems = new ArrayList<>();
-
-  /*Overheads*/
-  Double overheadTotal;
-  Double overheadsDataGeneration;
-  Double overheadsDataAnalysis;
-  Double overheadsProjectManagementAndDataStorage;
-  Double overheadsExternalServices;
-  Double overheadRatio;
-
-  /*Prices*/
-  Double netDataGeneration;
-  Double netDataAnalysis;
-  Double netPMandDS;
-  Double netExternalServices;
-  Double totalCost;
-  Double netCostsWithOverheads;
-  Double netCost;
-  Double totalVat;
-  Double vatRatio;
-  Double totalDiscountAmount;
-
   private static final List<String> DATA_GENERATION = Arrays.asList("Sequencing", "Proteomics", "Metabolomics");
   private static final List<String> DATA_ANALYSIS = Arrays.asList("Primary Bioinformatics", "Secondary Bioinformatics");
   private static final List<String> PROJECT_AND_DATA_MANAGEMENT = Arrays.asList("Project Management", "Data Storage");
