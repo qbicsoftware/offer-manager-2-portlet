@@ -138,16 +138,31 @@ class OfferCalculus {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Creates an {@link OfferItem} object with all its properties calculated based on the
+   * given {@link ProductItem}. This method uses the <b>internal unit price</b>.
+   * @param item the item that is going to be used to create the OfferItem instance.
+   * @return
+   */
   public static OfferItem createWithInternalPrice(ProductItem item) {
     Double selectedUnitPrice = item.getProduct().getInternalUnitPrice();
     return createWithUnitPrice(item, selectedUnitPrice);
   }
 
+  /**
+   * Creates an {@link OfferItem} object with all its properties calculated based on the
+   * given {@link ProductItem}. This method uses the <b>external unit price</b>.
+   * @param item the item that is going to be used to create the OfferItem instance.
+   * @return
+   */
   public static OfferItem createWithExternalPrice(ProductItem item) {
     Double selectedUnitPrice = item.getProduct().getExternalUnitPrice();
     return createWithUnitPrice(item, selectedUnitPrice);
   }
 
+  /*
+  Creates an OfferItem based on a ProductItem and a pre-selected unit price.
+   */
   private static OfferItem createWithUnitPrice(ProductItem item, Double unitPrice) {
     String category = item.getProduct().getCategory();
     BigDecimal unitPriceAfterDiscount;
