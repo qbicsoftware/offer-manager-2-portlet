@@ -33,28 +33,6 @@ class OfferCalculus {
   private static final List<String> PROJECT_AND_DATA_MANAGEMENT = Arrays.asList("Project Management", "Data Storage");
   private static final List<String> EXTERNAL_SERVICES = Collections.singletonList("External Service");
 
-   /**
-   * Determines the overhead ratio for this offer based on the customer affiliation.
-   * @param offer the offer for which the overhead ratio should be determined
-   * @return a copy of the provided offer with the overhead ratio filled.
-   */
-  OfferV2 overheadRatio(OfferV2 offer) {
-      OfferV2 result = OfferV2.copy(offer);
-      BigDecimal overheadRatio;
-      switch (offer.getSelectedCustomerAffiliation().getCategory()) {
-          case INTERNAL:
-              overheadRatio = BigDecimal.ZERO;
-              break;
-          case EXTERNAL_ACADEMIC:
-              overheadRatio = BigDecimal.valueOf(0.2);
-              break;
-          default:
-              overheadRatio = BigDecimal.valueOf(0.4);
-      }
-      result.setOverheadRatio(overheadRatio.doubleValue());
-      return result;
-  }
-
   /**
    * Uses the {@link ProductItem} items provided in the offer and creates a list
    * of converted {@link OfferItem} items. The affiliation is used to determine,
@@ -170,7 +148,7 @@ class OfferCalculus {
    */
   public static OfferItem createWithUnitPriceAndFullStorageDiscount(ProductItem item, Double selectedUnitPrice) throws OfferCalculusException {
     String productCategory = item.getProduct().getCategory();
-    if (!(productCategory.equalsIgnoreCase("data storage"))) {
+    if (!(productCategory.equalsIgnoreCase("data storage")))  {
       throw new OfferCalculusException(String.format("Product item must be of category 'Data Storage' but was '%s'.", productCategory));
     }
     OfferItem offerItem = createWithUnitPrice(item, selectedUnitPrice);
@@ -193,7 +171,6 @@ class OfferCalculus {
     Double selectedUnitPrice = item.getProduct().getExternalUnitPrice();
     return createWithUnitPrice(item, selectedUnitPrice);
   }
-
   /*
   Creates an OfferItem based on a ProductItem and a pre-selected unit price.
    */
@@ -437,7 +414,7 @@ class OfferCalculus {
     return offerCopy;
   }
 
-  private BigDecimal overheadRatio(AffiliationCategory category) {
+  protected BigDecimal overheadRatio(AffiliationCategory category) {
     if (category == AffiliationCategory.INTERNAL) {
       return BigDecimal.ZERO;
     }
