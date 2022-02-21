@@ -16,6 +16,13 @@ import spock.lang.Specification
 class OfferCalculusSpec extends Specification {
   OfferCalculus offerCalculus = new OfferCalculus()
 
+  static final Affiliation internalAffiliation = setupInternalAffiliation()
+  static final Affiliation externalAffiliation = setupExternalAffiliation()
+  static final Affiliation externalAcademicAffiliation = setupExternalAcademicAffiliation()
+
+  static final Product dataAnalysisProduct = createDataAnalysisProduct()
+  static final Product dataStorageProduct = createDataStorageProduct()
+
   def "overhead ratio is #expectedRatio for customer affiliation with category #category"() {
     given: "an offer with the respective customer affiliation"
     OfferV2 offer = new OfferV2()
@@ -32,14 +39,17 @@ class OfferCalculusSpec extends Specification {
   }
 
   def "when the offers product items are converted to offer items, then every product item is represented in an offer item"() {
-    given:
-    def item1 = new ProductItem(createDataAnalysisProduct(), 4.5, 0.0, 0.0)
+    given: "an offer with items"
+    def item1 = new ProductItem(dataAnalysisProduct, 4.5, 0.0, 0.0)
     def productItems = [item1]
     OfferV2 offer = new OfferV2()
     offer.setItems(productItems)
+    and: "and a customer affiliation selected"
+    offer.setSelectedCustomerAffiliation(affiliation)
     when: "the offers product items are converted to offer items"
     def offerItems = offerCalculus.createOfferItems(offer)
     then: "every product item is represented in an offer item"
+    !offerItems.isEmpty()
     offerItems.stream()
             .filter(offerItem ->
                     productItems.stream()
@@ -47,8 +57,70 @@ class OfferCalculusSpec extends Specification {
             )
             .findAny()
             .isPresent()
-
+    offerItems.stream().forEach(System.out::println)
+    where:
+    affiliation << [internalAffiliation, externalAcademicAffiliation, externalAffiliation]
   }
+
+  // ## ITEMS
+  //TODO test unit price determined by affiliation
+  def "when the offer's product items are converted to offer items, then the correct unit price is used based on the affiliation category"() {
+    given:
+    def item = new ProductItem(dataAnalysisProduct, 4.5, 0.0, 0.0)
+    def dsItem = new ProductItem(dataStorageProduct, 4.5, 0.0, 0.0)
+    def productItems = [item, dsItem]
+    OfferV2 offer = new OfferV2()
+    offer.setItems(productItems)
+    offer.setSelectedCustomerAffiliation(affiliation)
+
+    when: "the offer's product items are converted to offer items"
+    def offerItems = offerCalculus.createOfferItems(offer)
+
+    then: "the correct unit price is used based on the affiliation category"
+    offerItems.each { it.getUnitPrice() == expectedPrice }
+
+    where: "the affiliation category is #affiliationCategory"
+    affiliation                 | expectedPrice
+    internalAffiliation         | dataAnalysisProduct.getInternalUnitPrice()
+    externalAcademicAffiliation | dataAnalysisProduct.getExternalUnitPrice()
+    externalAffiliation         | dataAnalysisProduct.getExternalUnitPrice()
+  }
+
+  // test discount factor determined by quantity
+  // test quantity discount determined by discount factor, quantity and unit price
+  // covered by QuantityDiscountSpec.groovy
+
+  //TODO test quantity discount is rounded up
+  def "when the quantity discount is computed, then returned discount is rounded up 2 digits after the comma"() {
+    when: "the quantity discount is computed"
+    def result = OfferCalculus.applyQuantityDiscount(unitPrice as BigDecimal, quantity as Integer)
+    then: "returned discount is rounded up 2 digits after the comma"
+    println new QuantityDiscount().apply(quantity, unitPrice as BigDecimal)
+    result == expectedResult
+
+    where:
+    unitPrice  | quantity | expectedResult
+    100.33     | 33       | 57.19 //57.1881
+    33.3333339 | 44       | 20.34 // 20.333333679
+    10         | 10000    | 8.20 // 8.20
+  }
+
+
+  //TODO test item DS discount determined by quantity, item group, affiliation, unitPrice
+
+  //TODO test item discount determined by quantity discount and ds discount
+
+  //TODO test item discount per unit determined by item discount and quantity
+
+  //TODO test item net price determined by item discount, quantity and unit price
+
+  // ## Groups
+
+  // ## Offer
+  //TODO test overhead ratio determined by affiliation
+
+  //TODO test VAT ratio determined by affiliation
+
 
   boolean equals(ProductItem productItem, OfferItem offerItem) {
     // check for product properties
@@ -71,7 +143,7 @@ class OfferCalculusSpec extends Specification {
     return productItem.getQuantity().equals(offerItem.getQuantity())
   }
 
-  Product createDataAnalysisProduct() {
+  static Product createDataAnalysisProduct() {
     def daProduct = new Product()
     daProduct.setCategory("Primary Bioinformatics")
     daProduct.setActive(true)
@@ -83,5 +155,49 @@ class OfferCalculusSpec extends Specification {
     daProduct.setUnit("Brain Cell")
     daProduct.setServiceProvider("Bioinformatiker Model Z")
     return daProduct
+  }
+
+  static Product createDataStorageProduct() {
+    def daProduct = new Product()
+    daProduct.setCategory("Data Storage")
+    daProduct.setActive(true)
+    daProduct.setDescription("This is a primary bioinformatics product")
+    daProduct.setExternalUnitPrice(0.25)
+    daProduct.setInternalUnitPrice(0.5)
+    daProduct.setProductId("PB_1")
+    daProduct.setProductName("Awesome Bioinformatics")
+    daProduct.setUnit("Brain Cell")
+    daProduct.setServiceProvider("Bioinformatiker Model Z")
+    return daProduct
+  }
+
+  static Affiliation setupInternalAffiliation() {
+    new Affiliation("University of Tübingen",
+            "",
+            "Auf der Morgenstelle",
+            "72076",
+            "Tübingen",
+            "Germany",
+            AffiliationCategory.INTERNAL)
+  }
+
+  static Affiliation setupExternalAffiliation() {
+    new Affiliation("Last Resort Tübingen",
+            "",
+            "Somewhere else",
+            "72076",
+            "Tübingen",
+            "Germany",
+            AffiliationCategory.EXTERNAL)
+  }
+
+  static Affiliation setupExternalAcademicAffiliation() {
+    new Affiliation("University of Stuttgart",
+            "Some Department",
+            "Auf der Morgenstelle",
+            "73210",
+            "Stuttgart",
+            "Germany",
+            AffiliationCategory.EXTERNAL_ACADEMIC)
   }
 }
