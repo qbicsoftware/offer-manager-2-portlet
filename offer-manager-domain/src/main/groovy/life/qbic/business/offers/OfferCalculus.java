@@ -13,11 +13,14 @@ import life.qbic.business.products.ProductItem;
 
 
 /**
- * <b><class short description - 1 Line!></b>
+ * <b>OfferCalculus</b>
  *
- * <p><More detailed description - When to use, what it solves, etc.>
+ * <p>Not a spell! </p>
  *
- * @since <version tag>
+ * <p>This class offers various methods to perform calculations in the process
+ * of offer creation and incorporates central business rules.</p>
+ *
+ * @since 1.3.0
  */
 class OfferCalculus {
 
@@ -51,13 +54,6 @@ class OfferCalculus {
       result.setOverheadRatio(overheadRatio.doubleValue());
       return result;
   }
-
-  /**
-   * Groups the offer's product items into its offer items
-   *
-   * @param offer
-   * @return
-   */
 
   /**
    * Uses the {@link ProductItem} items provided in the offer and creates a list
@@ -165,12 +161,18 @@ class OfferCalculus {
   }
 
   /**
+   * Creates an offer item based on a given ProductItem and a selected unit price.
    *
-   * @param item
-   * @param selectedUnitPrice
-   * @return
+   * @param item a {@link ProductItem} of category `Data Storage`
+   * @param selectedUnitPrice the pre-selected unit price
+   * @return a new instance of a {@link OfferItem} with the storage discount applied
+   * @throws OfferCalculusException if the item product is not of category 'Data Storage'
    */
-  public static OfferItem createWithUnitPriceAndFullStorageDiscount(ProductItem item, Double selectedUnitPrice) {
+  public static OfferItem createWithUnitPriceAndFullStorageDiscount(ProductItem item, Double selectedUnitPrice) throws OfferCalculusException {
+    String productCategory = item.getProduct().getCategory();
+    if (!(productCategory.equalsIgnoreCase("data storage"))) {
+      throw new OfferCalculusException(String.format("Product item must be of category 'Data Storage' but was '%s'.", productCategory));
+    }
     OfferItem offerItem = createWithUnitPrice(item, selectedUnitPrice);
     double storageDiscount = offerItem.getItemTotal();
     double storageDiscountPerUnit = offerItem.getUnitPrice();
@@ -243,9 +245,9 @@ class OfferCalculus {
 
   /**
    * Calculates the discounted unit price based on the quantity.
-   * @param unitPrice
-   * @param quantity
-   * @return
+   * @param unitPrice the pre-selected uni price
+   * @param quantity the quantity amount of the product
+   * @return the discounted final price
    */
   public static BigDecimal applyQuantityDiscount(BigDecimal unitPrice, Integer quantity) {
     QuantityDiscount quantityDiscount = new QuantityDiscount();
@@ -254,12 +256,16 @@ class OfferCalculus {
     return discountTotal.setScale(2, RoundingMode.UP);
   }
 
-  public BigDecimal determineUnitPrice(ProductItem item, AffiliationCategory affiliationCategory) {
-    return affiliationCategory == AffiliationCategory.INTERNAL ?
-        BigDecimal.valueOf(item.getProduct().getInternalUnitPrice())
-        : BigDecimal.valueOf(item.getProduct().getExternalUnitPrice());
-  }
-
+  /**
+   * Calculates the overhead sum for data analysis items based on the given {@link AffiliationCategory}.
+   *
+   * Remember, that for internal customers, we apply 0%, for external academic 20%, and
+   * for external non-academic 40% overhead.
+   *
+   * @param items a collection of {@link OfferItem}
+   * @param affiliationCategory the {@link AffiliationCategory} the overhead needs to be applied
+   * @return the overhead sum that applies, based on the category and item collection
+   */
   public BigDecimal overheadsDataAnalysis (List<OfferItem> items, AffiliationCategory affiliationCategory) {
     if (affiliationCategory == AffiliationCategory.INTERNAL) {
       return BigDecimal.ZERO;
@@ -270,12 +276,28 @@ class OfferCalculus {
     return overheadsDataAnalysis(items, OVERHEAD_RATIO_EXTERNAL);
   }
 
+  /**
+   * Calculates the overhead sum for a given collection of offer items and a pre-defined
+   * overhead ratio.
+   * <strong>Note</strong>: this method will filter the item list by category of type {@link OfferCalculus#DATA_ANALYSIS}.
+   * @param items a collection of offer items the overheads are calculated
+   * @param overheadRatio the overhead ratio (between 0 >= x <= 1)
+   * @return the overhead sum that applies, based on the overhead ratio and item collection
+   */
   public BigDecimal overheadsDataAnalysis(List<OfferItem> items, BigDecimal overheadRatio) {
     List<OfferItem> itemsDataAnalysis = items.stream().filter(offerItem -> DATA_ANALYSIS.contains(offerItem.getCategory())).collect(
         Collectors.toList());
     return overheads(itemsDataAnalysis, overheadRatio);
   }
 
+  /**
+   * Calculates the overhead sum for a given collection of offer items and a pre-defined overhead
+   * ratio.
+   * <strong>Note</strong>: this method will NOT apply any product category filter.
+   * @param items a collection of offer items
+   * @param overheadRatio the overhead ratio to apply
+   * @return the overhead sum based on the overhead ratio and items
+   */
   public BigDecimal overheads(List<OfferItem> items, BigDecimal overheadRatio) {
     return items.stream()
         .map( OfferItem::getItemTotal )
@@ -285,6 +307,18 @@ class OfferCalculus {
         .reduce(BigDecimal.ZERO, BigDecimal::add);
   }
 
+  /**
+   * Calculates the overhead sum for a given collection of offer items and a pre-selected affiliation category.
+   *
+   * Since this method uses the {@link OfferCalculus#overheadsProjectManagementAndStorage(List, BigDecimal)} method,
+   * a filter for the product category matching {@link OfferCalculus#PROJECT_AND_DATA_MANAGEMENT} is applied.
+   *
+   * Remember that for internal affiliations, we charge 0% overhead, 20% for external academic and 40% for external.
+   *
+   * @param items a collection of offer items
+   * @param affiliationCategory a pre-selected affiliation category
+   * @return the overhead sum based on the items and affiliation category
+   */
   public BigDecimal overheadsProjectManagementAndStorage(List<OfferItem> items, AffiliationCategory affiliationCategory) {
     if (affiliationCategory == AffiliationCategory.INTERNAL) {
       return BigDecimal.ZERO;
@@ -295,12 +329,32 @@ class OfferCalculus {
     return overheadsProjectManagementAndStorage(items, OVERHEAD_RATIO_EXTERNAL);
   }
 
+  /**
+   * Calculates the overhead sum for a given collection of offer items and a pre-defined
+   * overhead ratio.
+   * <strong>Note</strong>: this method will filter the item list by category of type {@link OfferCalculus#PROJECT_AND_DATA_MANAGEMENT}.
+   * @param items a collection of offer items the overheads are calculated
+   * @param overheadRatio the overhead ratio (between 0 >= x <= 1)
+   * @return the overhead sum that applies, based on the overhead ratio and item collection
+   */
   public BigDecimal overheadsProjectManagementAndStorage(List<OfferItem> items, BigDecimal overheadRatio) {
     List<OfferItem> itemsDataAnalysis = items.stream().filter(offerItem -> PROJECT_AND_DATA_MANAGEMENT.contains(offerItem.getCategory())).collect(
         Collectors.toList());
     return overheads(itemsDataAnalysis, overheadRatio);
   }
 
+  /**
+   * Calculates the overhead sum for a given collection of offer items and a pre-selected affiliation category.
+   *
+   * Since this method uses the {@link OfferCalculus#overheadsDataGeneration(List, BigDecimal)} method,
+   * a filter for the product category matching {@link OfferCalculus#DATA_GENERATION} is applied.
+   *
+   * Remember that for internal affiliations, we charge 0% overhead, 20% for external academic and 40% for external.
+   *
+   * @param items a collection of offer items
+   * @param affiliationCategory a pre-selected affiliation category
+   * @return the overhead sum based on the items and affiliation category
+   */
   public BigDecimal overheadsDataGeneration(List<OfferItem> items, AffiliationCategory affiliationCategory) {
     if (affiliationCategory == AffiliationCategory.INTERNAL) {
       return BigDecimal.ZERO;
@@ -311,12 +365,32 @@ class OfferCalculus {
     return overheadsDataGeneration(items, OVERHEAD_RATIO_EXTERNAL);
   }
 
+  /**
+   * Calculates the overhead sum for a given collection of offer items and a pre-defined
+   * overhead ratio.
+   * <strong>Note</strong>: this method will filter the item list by category of type {@link OfferCalculus#DATA_GENERATION}.
+   * @param items a collection of offer items the overheads are calculated
+   * @param overheadRatio the overhead ratio (between 0 >= x <= 1)
+   * @return the overhead sum that applies, based on the overhead ratio and item collection
+   */
   public BigDecimal overheadsDataGeneration(List<OfferItem> items, BigDecimal overheadRatio) {
     List<OfferItem> itemsDataAnalysis = items.stream().filter(offerItem -> DATA_GENERATION.contains(offerItem.getCategory())).collect(
         Collectors.toList());
     return overheads(itemsDataAnalysis, overheadRatio);
   }
 
+  /**
+   * Calculates the overhead sum for a given collection of offer items and a pre-selected affiliation category.
+   *
+   * Since this method uses the {@link OfferCalculus#overheadsExternalServices(List, BigDecimal)} method,
+   * a filter for the product category matching {@link OfferCalculus#EXTERNAL_SERVICES} is applied.
+   *
+   * Remember that for internal affiliations, we charge 0% overhead, 20% for external academic and 40% for external.
+   *
+   * @param items a collection of offer items
+   * @param affiliationCategory a pre-selected affiliation category
+   * @return the overhead sum based on the items and affiliation category
+   */
   public BigDecimal overheadsExternalServices(List<OfferItem> items, AffiliationCategory affiliationCategory) {
     if (affiliationCategory == AffiliationCategory.INTERNAL) {
       return BigDecimal.ZERO;
@@ -327,6 +401,14 @@ class OfferCalculus {
     return overheadsExternalServices(items, OVERHEAD_RATIO_EXTERNAL);
   }
 
+  /**
+   * Calculates the overhead sum for a given collection of offer items and a pre-defined
+   * overhead ratio.
+   * <strong>Note</strong>: this method will filter the item list by category of type {@link OfferCalculus#EXTERNAL_SERVICES}.
+   * @param items a collection of offer items the overheads are calculated
+   * @param overheadRatio the overhead ratio (between 0 >= x <= 1)
+   * @return the overhead sum that applies, based on the overhead ratio and item collection
+   */
   public BigDecimal overheadsExternalServices(List<OfferItem> items, BigDecimal overheadRatio) {
     List<OfferItem> itemsDataAnalysis = items.stream().filter(offerItem -> EXTERNAL_SERVICES.contains(offerItem.getCategory())).collect(
         Collectors.toList());
