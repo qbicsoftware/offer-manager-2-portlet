@@ -123,9 +123,10 @@ class OfferCalculus {
   }
 
   /**
-   *
-   * @param productItems
-   * @return
+   * Create offer items based on a list of product items, assuming the selected customer affiliation
+   * is internal
+   * @param productItems the product items to use as information for the offer item creation
+   * @return a collection of offer items
    */
   public static List<OfferItem> createOfferItemsForExternals(List<ProductItem> productItems) {
     return productItems.stream()
@@ -133,6 +134,12 @@ class OfferCalculus {
         .collect(Collectors.toList());
   }
 
+  /**
+   * Create offer items based on a list of product items, assuming the selected customer affiliation
+   * is external or external academic
+   * @param productItems the product items to use as information for the offer item creation
+   * @return a collection of offer items
+   */
   public static List<OfferItem> createOfferItemsForInternals(List<ProductItem> productItems) {
     return productItems.stream()
         .map( OfferCalculus::createOfferItemWithInternalPrice)
@@ -143,7 +150,7 @@ class OfferCalculus {
    * Creates an {@link OfferItem} object with all its properties calculated based on the
    * given {@link ProductItem}. This method uses the <b>internal unit price</b>.
    * @param item the item that is going to be used to create the OfferItem instance.
-   * @return
+   * @return the offer item based on the given product item
    */
   public static OfferItem createOfferItemWithInternalPrice(ProductItem item) {
     Double selectedUnitPrice = item.getProduct().getInternalUnitPrice();
@@ -154,7 +161,7 @@ class OfferCalculus {
    * Creates an {@link OfferItem} object with all its properties calculated based on the
    * given {@link ProductItem}. This method uses the <b>external unit price</b>.
    * @param item the item that is going to be used to create the OfferItem instance.
-   * @return
+   * @return the offer item based on the given product item
    */
   public static OfferItem createOfferItemWithExternalPrice(ProductItem item) {
     Double selectedUnitPrice = item.getProduct().getExternalUnitPrice();
@@ -213,12 +220,22 @@ class OfferCalculus {
         .setCategory(productCategory).build();
   }
 
+  /**
+   * Applies storage discount for a given affiliation's {@link AffiliationCategory}.
+   *
+   * Currently, we apply full discount for data storage for internal customers only.
+   *
+   * @param itemTotalPrice the price to determine the amount of discount
+   * @param affiliationCategory the affiliation category
+   * @return the discounted total price, between 0 (100% discount) and the actual item's total price (no discount)
+   */
   public static BigDecimal applyStorageDiscount(BigDecimal itemTotalPrice, AffiliationCategory affiliationCategory) {
-    if(affiliationCategory == AffiliationCategory.INTERNAL) {
-      // 100% discount for internal customers for storage
-      return itemTotalPrice;
+    if(affiliationCategory != AffiliationCategory.INTERNAL) {
+      // No discount for external customers for storage
+      return BigDecimal.ZERO;
     }
-    return BigDecimal.ZERO;
+    // 100% discount for internal customer
+    return itemTotalPrice;
   }
 
   /**
