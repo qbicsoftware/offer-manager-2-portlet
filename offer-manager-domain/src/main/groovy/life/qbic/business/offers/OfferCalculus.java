@@ -21,6 +21,10 @@ import life.qbic.business.products.ProductItem;
  */
 class OfferCalculus {
 
+  private static final BigDecimal OVERHEAD_RATIO_EXTERNAL_ACADEMIC = new BigDecimal("0.2");
+
+  private static final BigDecimal OVERHEAD_RATIO_EXTERNAL = new BigDecimal("0.4");
+
   private static final List<String> DATA_GENERATION = Arrays.asList("Sequencing", "Proteomics", "Metabolomics");
   private static final List<String> DATA_ANALYSIS = Arrays.asList("Primary Bioinformatics", "Secondary Bioinformatics");
   private static final List<String> PROJECT_AND_DATA_MANAGEMENT = Arrays.asList("Project Management", "Data Storage");
@@ -154,7 +158,27 @@ class OfferCalculus {
    */
   public static OfferItem createOfferItemWithInternalPrice(ProductItem item) {
     Double selectedUnitPrice = item.getProduct().getInternalUnitPrice();
+    if (item.getProduct().getCategory().equalsIgnoreCase("data storage")) {
+      return createWithUnitPriceAndFullStorageDiscount(item, selectedUnitPrice);
+    }
     return createWithUnitPrice(item, selectedUnitPrice);
+  }
+
+  /**
+   *
+   * @param item
+   * @param selectedUnitPrice
+   * @return
+   */
+  public static OfferItem createWithUnitPriceAndFullStorageDiscount(ProductItem item, Double selectedUnitPrice) {
+    OfferItem offerItem = createWithUnitPrice(item, selectedUnitPrice);
+    double storageDiscount = offerItem.getItemTotal();
+    double storageDiscountPerUnit = offerItem.getUnitPrice();
+    return new OfferItem.Builder(offerItem.getQuantity(),
+        offerItem.getProductDescription(), offerItem.getProductName(), offerItem.getUnitPrice(),
+        storageDiscount, storageDiscountPerUnit, offerItem.getDiscountPercentage(),
+            offerItem.getServiceProvider(), offerItem.getUnit(), offerItem.getItemTotal())
+        .setCategory(offerItem.getCategory()).build();
   }
 
   /**
@@ -180,9 +204,6 @@ class OfferCalculus {
     if (DATA_GENERATION.contains(category)) {
       unitPriceAfterDiscount = applyQuantityDiscount(BigDecimal.valueOf(unitPrice),
           productQuantity.intValue());
-      totalDiscount = unitPriceAfterDiscount.multiply(BigDecimal.valueOf(productQuantity));
-    } else if (category.equalsIgnoreCase("Data Storage")) {
-      unitPriceAfterDiscount = BigDecimal.valueOf(unitPrice);
       totalDiscount = unitPriceAfterDiscount.multiply(BigDecimal.valueOf(productQuantity));
     } else {
       // Without discount, the unit after discount is equal to the original unit price
@@ -221,24 +242,6 @@ class OfferCalculus {
   }
 
   /**
-   * Applies storage discount for a given affiliation's {@link AffiliationCategory}.
-   *
-   * Currently, we apply full discount for data storage for internal customers only.
-   *
-   * @param itemTotalPrice the price to determine the amount of discount
-   * @param affiliationCategory the affiliation category
-   * @return the discounted total price, between 0 (100% discount) and the actual item's total price (no discount)
-   */
-  public static BigDecimal applyStorageDiscount(BigDecimal itemTotalPrice, AffiliationCategory affiliationCategory) {
-    if(affiliationCategory != AffiliationCategory.INTERNAL) {
-      // No discount for external customers for storage
-      return BigDecimal.ZERO;
-    }
-    // 100% discount for internal customer
-    return itemTotalPrice;
-  }
-
-  /**
    * Calculates the discounted unit price based on the quantity.
    * @param unitPrice
    * @param quantity
@@ -257,18 +260,109 @@ class OfferCalculus {
         : BigDecimal.valueOf(item.getProduct().getExternalUnitPrice());
   }
 
-  Double overheadTotal
-  Double overheadsDataGeneration
-  Double overheadsDataAnalysis
-  Double overheadsProjectManagementAndDataStorage
-  Double overheadsExternalServices
-  Double overheadRatio
+  public BigDecimal overheadsDataAnalysis (List<OfferItem> items, AffiliationCategory affiliationCategory) {
+    if (affiliationCategory == AffiliationCategory.INTERNAL) {
+      return BigDecimal.ZERO;
+    }
+    if (affiliationCategory == AffiliationCategory.EXTERNAL_ACADEMIC) {
+      return overheadsDataAnalysis(items, OVERHEAD_RATIO_EXTERNAL_ACADEMIC);
+    }
+    return overheadsDataAnalysis(items, OVERHEAD_RATIO_EXTERNAL);
+  }
+
+  public BigDecimal overheadsDataAnalysis(List<OfferItem> items, BigDecimal overheadRatio) {
+    List<OfferItem> itemsDataAnalysis = items.stream().filter(offerItem -> DATA_ANALYSIS.contains(offerItem.getCategory())).collect(
+        Collectors.toList());
+    return overheads(itemsDataAnalysis, overheadRatio);
+  }
+
+  public BigDecimal overheads(List<OfferItem> items, BigDecimal overheadRatio) {
+    return items.stream()
+        .map( OfferItem::getItemTotal )
+        .filter( (x) -> x > 0  )
+        .map(BigDecimal::valueOf)
+        .map( itemPrice -> itemPrice.multiply(overheadRatio) )
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+  }
+
+  public BigDecimal overheadsProjectManagementAndStorage(List<OfferItem> items, AffiliationCategory affiliationCategory) {
+    if (affiliationCategory == AffiliationCategory.INTERNAL) {
+      return BigDecimal.ZERO;
+    }
+    if (affiliationCategory == AffiliationCategory.EXTERNAL_ACADEMIC) {
+      return overheadsProjectManagementAndStorage(items, OVERHEAD_RATIO_EXTERNAL_ACADEMIC);
+    }
+    return overheadsProjectManagementAndStorage(items, OVERHEAD_RATIO_EXTERNAL);
+  }
+
+  public BigDecimal overheadsProjectManagementAndStorage(List<OfferItem> items, BigDecimal overheadRatio) {
+    List<OfferItem> itemsDataAnalysis = items.stream().filter(offerItem -> PROJECT_AND_DATA_MANAGEMENT.contains(offerItem.getCategory())).collect(
+        Collectors.toList());
+    return overheads(itemsDataAnalysis, overheadRatio);
+  }
+
+  public BigDecimal overheadsDataGeneration(List<OfferItem> items, AffiliationCategory affiliationCategory) {
+    if (affiliationCategory == AffiliationCategory.INTERNAL) {
+      return BigDecimal.ZERO;
+    }
+    if (affiliationCategory == AffiliationCategory.EXTERNAL_ACADEMIC) {
+      return overheadsDataGeneration(items, OVERHEAD_RATIO_EXTERNAL_ACADEMIC);
+    }
+    return overheadsDataGeneration(items, OVERHEAD_RATIO_EXTERNAL);
+  }
+
+  public BigDecimal overheadsDataGeneration(List<OfferItem> items, BigDecimal overheadRatio) {
+    List<OfferItem> itemsDataAnalysis = items.stream().filter(offerItem -> DATA_GENERATION.contains(offerItem.getCategory())).collect(
+        Collectors.toList());
+    return overheads(itemsDataAnalysis, overheadRatio);
+  }
+
+  public BigDecimal overheadsExternalServices(List<OfferItem> items, AffiliationCategory affiliationCategory) {
+    if (affiliationCategory == AffiliationCategory.INTERNAL) {
+      return BigDecimal.ZERO;
+    }
+    if (affiliationCategory == AffiliationCategory.EXTERNAL_ACADEMIC) {
+      return overheadsExternalServices(items, OVERHEAD_RATIO_EXTERNAL_ACADEMIC);
+    }
+    return overheadsExternalServices(items, OVERHEAD_RATIO_EXTERNAL);
+  }
+
+  public BigDecimal overheadsExternalServices(List<OfferItem> items, BigDecimal overheadRatio) {
+    List<OfferItem> itemsDataAnalysis = items.stream().filter(offerItem -> EXTERNAL_SERVICES.contains(offerItem.getCategory())).collect(
+        Collectors.toList());
+    return overheads(itemsDataAnalysis, overheadRatio);
+  }
 
   public OfferV2 calculateOverheads(OfferV2 offerV2) {
     OfferV2 offerCopy = OfferV2.copy(offerV2);
-    if (offerCopy.getOff().isEmpty()) {
-      ;
+    AffiliationCategory affiliationCategory = offerV2.getSelectedCustomerAffiliation().getCategory();
+    BigDecimal overheadDataAnalysis = overheadsDataAnalysis(offerV2.getDataAnalysisItems(), affiliationCategory);
+    BigDecimal overheadDataGeneration = overheadsDataGeneration(offerV2.getDataGenerationItems(), affiliationCategory);
+    BigDecimal overheadProjectManagementDataStorage = overheadsProjectManagementAndStorage(offerV2.getDataManagementItems(), affiliationCategory);
+    BigDecimal overheadExternalServices = overheadsExternalServices(offerV2.getExternalServiceItems(), affiliationCategory);
+    BigDecimal totalOverheads = overheadDataAnalysis.add(overheadDataGeneration)
+        .add(overheadProjectManagementDataStorage).add(overheadExternalServices);
+
+    // Set the overhead properties
+    offerCopy.setOverheadsDataAnalysis(overheadDataAnalysis);
+    offerCopy.setOverheadsDataGeneration(overheadDataGeneration);
+    offerCopy.setOverheadsDataManagement(overheadProjectManagementDataStorage);
+    offerCopy.setOverheadsExternalServices(overheadExternalServices);
+    offerCopy.setOverhead(totalOverheads.doubleValue());
+    // Lastly the overhead ratio that has been applied
+    offerCopy.setOverheadRatio(overheadRatio(affiliationCategory).doubleValue());
+
+    return offerCopy;
+  }
+
+  private BigDecimal overheadRatio(AffiliationCategory category) {
+    if (category == AffiliationCategory.INTERNAL) {
+      return BigDecimal.ZERO;
     }
+    if (category == AffiliationCategory.EXTERNAL_ACADEMIC) {
+      return OVERHEAD_RATIO_EXTERNAL_ACADEMIC;
+    }
+    return OVERHEAD_RATIO_EXTERNAL;
   }
 
 
