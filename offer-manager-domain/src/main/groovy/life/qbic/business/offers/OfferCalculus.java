@@ -21,31 +21,6 @@ import life.qbic.business.products.ProductItem;
  */
 class OfferCalculus {
 
-  private List<OfferItem> dataAnalysisItems = new ArrayList<>();
-  private List<OfferItem> dataGenerationItems = new ArrayList<>();
-  private List<OfferItem> dataManagementItems = new ArrayList<>();
-  private List<OfferItem> externalServiceItems = new ArrayList<>();
-
-  /*Overheads*/
-  Double overheadTotal
-  Double overheadsDataGeneration
-  Double overheadsDataAnalysis
-  Double overheadsProjectManagementAndDataStorage
-  Double overheadsExternalServices
-  Double overheadRatio
-
-  /*Prices*/
-  Double netDataGeneration
-  Double netDataAnalysis
-  Double netPMandDS
-  Double netExternalServices
-  Double totalCost
-  Double netCostsWithOverheads
-  Double netCost
-  Double totalVat
-  Double vatRatio
-  Double totalDiscountAmount
-
   private static final List<String> DATA_GENERATION = Arrays.asList("Sequencing", "Proteomics", "Metabolomics");
   private static final List<String> DATA_ANALYSIS = Arrays.asList("Primary Bioinformatics", "Secondary Bioinformatics");
   private static final List<String> PROJECT_AND_DATA_MANAGEMENT = Arrays.asList("Project Management", "Data Storage");
@@ -80,6 +55,14 @@ class OfferCalculus {
    * @return
    */
 
+  /**
+   * Uses the {@link ProductItem} items provided in the offer and creates a list
+   * of converted {@link OfferItem} items. The affiliation is used to determine,
+   * if the customer has an internal or external affiliation. Based on the affiliation, the
+   * internal or external unit price is used for the calculation.
+   * @param offer the offer to use to access the product items
+   * @return a list of prepared OfferItem items
+   */
   List<OfferItem> createOfferItems(OfferV2 offer) {
     AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory();
     List<OfferItem> offerItems;
@@ -92,6 +75,19 @@ class OfferCalculus {
     return offerItems;
   }
 
+  /**
+   * <p>Groups offer items based on their assigned category (data generation, data analysis, project
+   * and data management or external services) and fills the offer.
+   * The returned offer object is a full copy of the input offer and will contain the right
+   * grouping of the given offer items.</p>
+   * <p>If the offer items list passed is empty, this method tries to create the offer items first
+   * based on the ProductItems in the offer. Internally, the method {@link OfferCalculus#createOfferItems(OfferV2)}
+   * is used for this.</p>
+   * @param offer
+   * @param offerItems
+   * @return
+   * @throws OfferCalculusException
+   */
   OfferV2 groupItems(OfferV2 offer, List<OfferItem> offerItems) throws OfferCalculusException {
     if (offerItems.isEmpty()) {
       offerItems = createOfferItems(offer);
@@ -238,6 +234,22 @@ class OfferCalculus {
         BigDecimal.valueOf(item.getProduct().getInternalUnitPrice())
         : BigDecimal.valueOf(item.getProduct().getExternalUnitPrice());
   }
+
+  Double overheadTotal
+  Double overheadsDataGeneration
+  Double overheadsDataAnalysis
+  Double overheadsProjectManagementAndDataStorage
+  Double overheadsExternalServices
+  Double overheadRatio
+
+  public OfferV2 calculateOverheads(OfferV2 offerV2) {
+    OfferV2 offerCopy = OfferV2.copy(offerV2);
+    if (offerCopy.getOff().isEmpty()) {
+      ;
+    }
+  }
+
+
 
   static class OfferCalculusException extends RuntimeException {
     OfferCalculusException() {
