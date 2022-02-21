@@ -95,7 +95,6 @@ class OfferCalculusSpec extends Specification {
     when: "the quantity discount is computed"
     def result = OfferCalculus.applyQuantityDiscount(unitPrice as BigDecimal, quantity as Integer)
     then: "returned discount is rounded up 2 digits after the comma"
-    println new QuantityDiscount().apply(quantity, unitPrice as BigDecimal)
     result == expectedResult
 
     where:
