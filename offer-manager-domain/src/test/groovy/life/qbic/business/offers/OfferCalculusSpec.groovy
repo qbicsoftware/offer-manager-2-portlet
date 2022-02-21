@@ -28,9 +28,9 @@ class OfferCalculusSpec extends Specification {
     OfferV2 offer = new OfferV2()
     offer.setSelectedCustomerAffiliation(new Affiliation("organization", "addressAddition", "street", "postalCode", "city", "country", category))
     when: "the calculus determines the overhead ratio for that offer"
-    OfferV2 filledOffer = offerCalculus.overheadRatio(offer)
+    def ratio = OfferCalculus.overheadRatio(category)
     then: "the overhead ratio is #expectedRatio"
-    filledOffer.getOverheadRatio() == expectedRatio.doubleValue()
+    ratio == expectedRatio
     where:
     category                              | expectedRatio
     AffiliationCategory.INTERNAL          | 0.0
