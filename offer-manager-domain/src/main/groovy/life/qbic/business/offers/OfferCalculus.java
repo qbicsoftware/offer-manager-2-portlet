@@ -26,19 +26,25 @@ class OfferCalculus {
   private List<OfferItem> dataManagementItems = new ArrayList<>();
   private List<OfferItem> externalServiceItems = new ArrayList<>();
 
-  private BigDecimal overheadsDataAnalysis;
-  private BigDecimal overheadsDataGeneration;
-  private BigDecimal overheadsDataManagement;
-  private BigDecimal overheadsExternalServices;
-  private BigDecimal netSumDataAnalysis;
-  private BigDecimal netSumDataManagement;
-  private BigDecimal netSumDataGeneration;
-  private BigDecimal netSumExternalServices;
-  private BigDecimal totalNetPrice;
-  private BigDecimal vatRatio;
-  private BigDecimal totalVat;
-  private BigDecimal totalCost;
-  private BigDecimal totalDiscountAmount;
+  /*Overheads*/
+  Double overheadTotal
+  Double overheadsDataGeneration
+  Double overheadsDataAnalysis
+  Double overheadsProjectManagementAndDataStorage
+  Double overheadsExternalServices
+  Double overheadRatio
+
+  /*Prices*/
+  Double netDataGeneration
+  Double netDataAnalysis
+  Double netPMandDS
+  Double netExternalServices
+  Double totalCost
+  Double netCostsWithOverheads
+  Double netCost
+  Double totalVat
+  Double vatRatio
+  Double totalDiscountAmount
 
   private static final List<String> DATA_GENERATION = Arrays.asList("Sequencing", "Proteomics", "Metabolomics");
   private static final List<String> DATA_ANALYSIS = Arrays.asList("Primary Bioinformatics", "Secondary Bioinformatics");
@@ -135,26 +141,40 @@ class OfferCalculus {
   public static OfferItem createWithInternalPrice(ProductItem item) {
     Double selectedUnitPrice = item.getProduct().getInternalUnitPrice();
     String category = item.getProduct().getCategory();
-    BigDecimal quantityUnitDiscount;
+    BigDecimal unitPriceAfterDiscount;
     BigDecimal totalDiscount;
     Double productQuantity = item.getQuantity();
 
     if (DATA_GENERATION.contains(category)) {
-      quantityUnitDiscount = applyQuantityDiscount(BigDecimal.valueOf(selectedUnitPrice),
+      unitPriceAfterDiscount = applyQuantityDiscount(BigDecimal.valueOf(selectedUnitPrice),
           productQuantity.intValue());
-      totalDiscount = quantityUnitDiscount.multiply(BigDecimal.valueOf(productQuantity));
+      totalDiscount = unitPriceAfterDiscount.multiply(BigDecimal.valueOf(productQuantity));
     } else if (category.equalsIgnoreCase("Data Storage")) {
-      quantityUnitDiscount = BigDecimal.valueOf(selectedUnitPrice);
-      totalDiscount = quantityUnitDiscount.multiply(BigDecimal.valueOf(productQuantity));
+      unitPriceAfterDiscount = BigDecimal.valueOf(selectedUnitPrice);
+      totalDiscount = unitPriceAfterDiscount.multiply(BigDecimal.valueOf(productQuantity));
     } else {
-      quantityUnitDiscount = BigDecimal.ZERO;
+      // Without discount, the unit after discount is equal to the original unit price
+      unitPriceAfterDiscount = BigDecimal.valueOf(selectedUnitPrice);
       totalDiscount = BigDecimal.ZERO;
     }
 
     Product product = item.getProduct();
+    // Calculate the discount percentage
+    Double discountPercentage = calcDiscountPercentage(BigDecimal.valueOf(selectedUnitPrice), unitPriceAfterDiscount).doubleValue();
+    // Get the final item price, including potential discount
+    Double totalPrice = unitPriceAfterDiscount.multiply(BigDecimal.valueOf(productQuantity)).doubleValue();
     return createOfferItem(productQuantity, product.getDescription(), product.getProductName(), selectedUnitPrice,
-        totalDiscount.doubleValue(), quantityUnitDiscount.doubleValue(), "", product.getServiceProvider(),
-        product.getUnit(), "", product.getCategory());
+        totalDiscount.doubleValue(), unitPriceAfterDiscount.doubleValue(),
+        discountPercentage, product.getServiceProvider(),
+        product.getUnit(), totalPrice, product.getCategory());
+  }
+
+  private static BigDecimal calcDiscountPercentage(BigDecimal originalPrice, BigDecimal discountedPrice) {
+    BigDecimal difference = originalPrice.subtract(discountedPrice);
+    if (difference.equals(BigDecimal.ZERO)) {
+      return BigDecimal.ZERO;
+    }
+    return difference.divide(originalPrice);
   }
 
   public static OfferItem createWithExternalPrice(ProductItem item) { return null;}
@@ -177,6 +197,12 @@ class OfferCalculus {
     return BigDecimal.ZERO;
   }
 
+  /**
+   * Calculates the discounted unit price based on the quantity.
+   * @param unitPrice
+   * @param quantity
+   * @return
+   */
   public static BigDecimal applyQuantityDiscount(BigDecimal unitPrice, Integer quantity) {
     QuantityDiscount quantityDiscount = new QuantityDiscount();
     BigDecimal discountTotal = quantityDiscount.apply(quantity, unitPrice);
@@ -189,6 +215,10 @@ class OfferCalculus {
         BigDecimal.valueOf(item.getProduct().getInternalUnitPrice())
         : BigDecimal.valueOf(item.getProduct().getExternalUnitPrice());
   }
+
+
+
+
 
   static class OfferCalculusException extends RuntimeException {
     OfferCalculusException() {
