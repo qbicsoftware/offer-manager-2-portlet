@@ -111,20 +111,20 @@ class OfferCalculusSpec extends Specification {
     given: "an offer with at least one data storage service item"
     def offer = new OfferV2()
     offer.setSelectedCustomerAffiliation(internalAffiliation)
-    offer.setItems([createDataStorageProductItem(quantityA, unitPriceA)])
+    offer.setItems([createDataStorageProductItem(quantity, unitPrice)])
 
     when:
     def processedOffer = OfferCalculus.groupItems(offer)
 
     then:
     OfferItem offerItem = processedOffer.getDataManagementItems().get(0)
-    offerItem.quantityDiscount == expectedDiscountA as double
+    offerItem.quantityDiscount == expectedDiscount as double
 
     where:
-    quantityA | unitPriceA | expectedDiscountA
-    10        | 10.0       | 100.0
-    20        | 0.333      | 6.60 // 6.666
-    10        | 0.666      | 6.70 // unit price gets rounded to 0.66
+    quantity | unitPrice | expectedDiscount
+    10       | 10.0      | 100.0
+    20       | 0.333     | 6.60 // 6.666
+    10       | 0.666     | 6.70 // unit price gets rounded to 0.66
   }
 
   def "when a data storage item is accounted for an customer with external or external academic affiliation, apply NO discount for this item"() {
