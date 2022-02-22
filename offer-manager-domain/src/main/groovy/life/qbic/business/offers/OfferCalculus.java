@@ -157,6 +157,8 @@ class OfferCalculus {
     }
     OfferItem offerItem = createWithUnitPrice(item, selectedUnitPrice);
     double storageDiscount = offerItem.getItemTotal();
+
+    // important to make sure that the unit price is rounded up to the second
     double storageDiscountPerUnit = offerItem.getUnitPrice();
     return new OfferItem.Builder(offerItem.getQuantity(),
         offerItem.getProductDescription(), offerItem.getProductName(), offerItem.getUnitPrice(),

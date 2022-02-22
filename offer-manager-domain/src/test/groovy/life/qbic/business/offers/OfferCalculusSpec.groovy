@@ -117,12 +117,32 @@ class OfferCalculusSpec extends Specification {
     def processedOffer = OfferCalculus.groupItems(offer)
 
     then:
+    OfferItem offerItem = processedOffer.getDataManagementItems().get(0)
+    offerItem.quantityDiscount == expectedDiscountA as double
+
+    where:
+    quantityA | unitPriceA | expectedDiscountA
+    10        | 10.0       | 100.0
+    20        | 0.333      | 6.66 // 6.666
+    10        | 0.666      | 6.67 // unit price gets rounded to 0.66
+  }
+
+  def "when a data storage item is accounted for an customer with external or external academic affiliation, apply NO discount for this item"() {
+    given: "an offer with at least one data storage service item"
+    def offer = new OfferV2()
+    offer.setSelectedCustomerAffiliation(internalAffiliation)
+    offer.setItems([createDataStorageProductItem(quantityA, unitPriceA)])
+
+    when:
+    def processedOffer = OfferCalculus.groupItems(offer)
+
+    then:
     processedOffer.getDataManagementItems()
 
     where:
-    quantityA | unitPriceA | expectedDiscountA | expectedDiscountB
-    10        | 10.0       | 100.0             | 400.0
-    200       | 0.1        | 20.0              | 6.67 // 6.666
+    affiliation                 | quantityA | unitPriceA | expectedDiscountA | expectedDiscountB
+    externalAcademicAffiliation | 10        | 10.0       | 100.0             | 0.0
+    externalAffiliation         | 200       | 0.1        | 20.0              | 0.0 // 6.666
   }
 
 
