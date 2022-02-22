@@ -137,7 +137,8 @@ class OfferCalculusSpec extends Specification {
     def processedOffer = OfferCalculus.groupItems(offer)
 
     then:
-    processedOffer.getDataManagementItems()
+    OfferItem offerItem = processedOffer.getDataManagementItems().get(0)
+    offerItem.quantityDiscount == expectedDiscountA as double
 
     where:
     affiliation                 | quantityA | unitPriceA | expectedDiscountA | expectedDiscountB
