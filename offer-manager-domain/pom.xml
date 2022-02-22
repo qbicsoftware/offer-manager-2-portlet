@@ -7,7 +7,7 @@
 	<parent>
 		<artifactId>offer-manager</artifactId>
 		<groupId>life.qbic</groupId>
-		<version>1.2.7</version>
+		<version>1.2.8</version>
 	</parent>
 	<dependencies>
 		<dependency>
