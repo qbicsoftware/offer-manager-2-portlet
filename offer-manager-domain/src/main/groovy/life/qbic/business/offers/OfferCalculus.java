@@ -41,7 +41,7 @@ class OfferCalculus {
    * @param offer the offer to use to access the product items
    * @return a list of prepared OfferItem items
    */
-  List<OfferItem> createOfferItems(OfferV2 offer) {
+  protected static List<OfferItem> createOfferItems(OfferV2 offer) {
     AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory();
     List<OfferItem> offerItems;
     // Discounting for internal customer is different, so we check the affiliation first
@@ -66,7 +66,7 @@ class OfferCalculus {
    * @return A copy of the input offer, with the offer items sorted in the categories.
    * @throws OfferCalculusException if anything goes wrong
    */
-  OfferV2 groupItems(OfferV2 offer, List<OfferItem> offerItems) throws OfferCalculusException {
+  protected static OfferV2 groupItems(OfferV2 offer, List<OfferItem> offerItems) throws OfferCalculusException {
     if (offerItems.isEmpty()) {
       offerItems = createOfferItems(offer);
     }
@@ -98,6 +98,10 @@ class OfferCalculus {
           + " was unknown. " + ungroupedItems);
     }
     return offerCopy;
+  }
+
+  public static OfferV2 groupItems(OfferV2 offerV2) throws OfferCalculusException {
+    return groupItems(offerV2, createOfferItems(offerV2));
   }
 
   /**

@@ -105,7 +105,26 @@ class OfferCalculusSpec extends Specification {
   }
 
 
+
   //TODO test item DS discount determined by quantity, item group, affiliation, unitPrice
+  def "when a data storage item is accounted for an customer with internal affiliation, give 100% discount for this item"() {
+    given: "an offer with at least one data storage service item"
+    def offer = new OfferV2()
+    offer.setSelectedCustomerAffiliation(internalAffiliation)
+    offer.setItems([createDataStorageProductItem(quantityA, unitPriceA)])
+
+    when:
+    def processedOffer = OfferCalculus.groupItems(offer)
+
+    then:
+    processedOffer.getDataManagementItems()
+
+    where:
+    quantityA | unitPriceA | expectedDiscountA | expectedDiscountB
+    10        | 10.0       | 100.0             | 400.0
+    200       | 0.1        | 20.0              | 6.67 // 6.666
+  }
+
 
   //TODO test item discount determined by quantity discount and ds discount
 
@@ -168,6 +187,17 @@ class OfferCalculusSpec extends Specification {
     daProduct.setUnit("Brain Cell")
     daProduct.setServiceProvider("Bioinformatiker Model Z")
     return daProduct
+  }
+
+  static Product createDataStorageProduct(double unitPrice) {
+    def daProduct = createDataStorageProduct()
+    daProduct.setExternalUnitPrice(unitPrice)
+    daProduct.setInternalUnitPrice(unitPrice)
+    return daProduct
+  }
+
+  static ProductItem createDataStorageProductItem(double quantity, double unitPrice) {
+    return new ProductItem(createDataStorageProduct(unitPrice), quantity, BigDecimal.ZERO, BigDecimal.ZERO)
   }
 
   static Affiliation setupInternalAffiliation() {
