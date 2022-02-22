@@ -1,5 +1,7 @@
 package life.qbic.business.products;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -84,16 +86,34 @@ public class Product {
     return externalUnitPrice;
   }
 
+  /**
+   * <p>Since this is a currency value, we eradicate rounding issues
+   * and apply the method {@link java.math.BigDecimal#setScale(int, RoundingMode)} with
+   * a scale of 2 and {@link java.math.RoundingMode#HALF_UP} explicitly.</p>
+   * For example <code>2.356</code> becomes <code>2.36</code>.
+   * @param externalUnitPrice the internal unit price of the service product
+   */
   public void setExternalUnitPrice(Double externalUnitPrice) {
-    this.externalUnitPrice = externalUnitPrice;
+    BigDecimal value = BigDecimal.valueOf(externalUnitPrice)
+        .setScale(2, RoundingMode.HALF_UP);
+    this.externalUnitPrice = value.doubleValue();
   }
 
   public Double getInternalUnitPrice() {
     return internalUnitPrice;
   }
 
+  /**
+   * <p>Since this is a currency value, we eradicate rounding issues
+   * and apply the method {@link java.math.BigDecimal#setScale(int, RoundingMode)} with
+   * a scale of 2 and {@link java.math.RoundingMode#HALF_UP} explicitly.</p>
+   * For example <code>2.356</code> becomes <code>2.36</code>.
+   * @param internalUnitPrice the internal unit price of the service product
+   */
   public void setInternalUnitPrice(Double internalUnitPrice) {
-    this.internalUnitPrice = internalUnitPrice;
+    BigDecimal value = BigDecimal.valueOf(internalUnitPrice)
+        .setScale(2, RoundingMode.HALF_UP);
+    this.internalUnitPrice = value.doubleValue();
   }
 
   public String getProductName() {

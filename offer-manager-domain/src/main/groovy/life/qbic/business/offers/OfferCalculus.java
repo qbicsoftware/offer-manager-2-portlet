@@ -208,6 +208,10 @@ class OfferCalculus {
         product.getUnit(), totalPrice, product.getCategory());
   }
 
+  private static BigDecimal formatCurrency(BigDecimal value) {
+    return value.setScale(2, RoundingMode.HALF_UP);
+  }
+
   private static BigDecimal calcDiscountPercentage(BigDecimal originalPrice, BigDecimal discountedPrice) {
     BigDecimal difference = originalPrice.subtract(discountedPrice);
     if (difference.equals(BigDecimal.ZERO)) {

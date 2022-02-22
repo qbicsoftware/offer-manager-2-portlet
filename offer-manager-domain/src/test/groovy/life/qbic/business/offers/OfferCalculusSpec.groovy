@@ -123,8 +123,8 @@ class OfferCalculusSpec extends Specification {
     where:
     quantityA | unitPriceA | expectedDiscountA
     10        | 10.0       | 100.0
-    20        | 0.333      | 6.66 // 6.666
-    10        | 0.666      | 6.67 // unit price gets rounded to 0.66
+    20        | 0.333      | 6.60 // 6.666
+    10        | 0.666      | 6.70 // unit price gets rounded to 0.66
   }
 
   def "when a data storage item is accounted for an customer with external or external academic affiliation, apply NO discount for this item"() {
