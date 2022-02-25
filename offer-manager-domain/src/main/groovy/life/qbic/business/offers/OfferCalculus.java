@@ -24,6 +24,8 @@ import life.qbic.business.products.ProductItem;
  */
 class OfferCalculus {
 
+  private static final BigDecimal VAT_RATIO_GERMANY = new BigDecimal("0.19");
+
   private static final BigDecimal OVERHEAD_RATIO_EXTERNAL_ACADEMIC = new BigDecimal("0.2");
 
   private static final BigDecimal OVERHEAD_RATIO_EXTERNAL = new BigDecimal("0.4");
@@ -237,6 +239,15 @@ class OfferCalculus {
     BigDecimal discountTotal = quantityDiscount.apply(quantity, unitPrice);
     // Round up to the second digit
     return discountTotal.setScale(2, RoundingMode.UP);
+  }
+
+  /**
+   * Calculates the VAT amount for a given net price. The rate is stored in {@link OfferCalculus#VAT_RATIO_GERMANY}.
+   * @param bigDecimal the net price VAT is going to be applied
+   * @return the VAT amount for Germany
+   */
+  public static BigDecimal calcVATGermany(BigDecimal bigDecimal) {
+    return formatCurrency(bigDecimal.multiply(VAT_RATIO_GERMANY));
   }
 
   /**
@@ -483,6 +494,10 @@ class OfferCalculus {
     return offerCopy;
   }
 
+
+  private static BigDecimal formatCurrency(BigDecimal value) {
+    return value.setScale(2, RoundingMode.HALF_UP);
+  }
 
 
   static class OfferCalculusException extends RuntimeException {

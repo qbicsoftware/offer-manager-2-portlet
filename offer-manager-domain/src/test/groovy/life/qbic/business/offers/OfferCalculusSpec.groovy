@@ -6,6 +6,8 @@ import life.qbic.business.products.Product
 import life.qbic.business.products.ProductItem
 import spock.lang.Specification
 
+import java.math.RoundingMode
+
 /**
  * <b>short description</b>
  *
@@ -159,6 +161,19 @@ class OfferCalculusSpec extends Specification {
   //TODO test overhead ratio determined by affiliation
 
   //TODO test VAT ratio determined by affiliation
+  def "The VAT for Germany applied is 19%"() {
+    when:
+    BigDecimal result = OfferCalculus.calcVATGermany(netprices)
+
+    then:
+    result == expected
+
+    where:
+    netprices | expected
+    6.00      | 1.14
+    1.50      | 0.29 // 0.285
+    2.50      | 0.48 // 0.475
+  }
 
 
   boolean equals(ProductItem productItem, OfferItem offerItem) {
