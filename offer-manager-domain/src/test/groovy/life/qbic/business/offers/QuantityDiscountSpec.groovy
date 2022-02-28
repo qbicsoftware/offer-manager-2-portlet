@@ -36,6 +36,17 @@ class QuantityDiscountSpec extends Specification {
         discountablePrice = new BigDecimal(42.5)
     }
 
+    def "Apply leads to no discount for #sampleCount samples"() {
+        when:"a discount is applied to a discountable price"
+        def function = new QuantityDiscount()
+        double result = function.apply(sampleCount, discountablePrice)
+        then: "the discount is applied correctly"
+        result == BigDecimal.ZERO
+        where: "the number of samples and the discountable price are as follows"
+        sampleCount << [0, 0.1, 0.5, 0.9]
+        discountablePrice = new BigDecimal(42.5)
+    }
+
     def "Apply leads to minimum discount for sample count greater #maxDefinedCount"() {
         when:"a discount is applied to a discountable price"
         def function = new QuantityDiscount()

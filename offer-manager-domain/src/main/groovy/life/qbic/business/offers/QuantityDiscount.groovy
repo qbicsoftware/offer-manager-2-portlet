@@ -22,17 +22,21 @@ class QuantityDiscount implements BiFunction<BigDecimal, BigDecimal, BigDecimal>
      */
     @Override
     BigDecimal apply(BigDecimal quantity, BigDecimal price) {
-        return getDiscountFactor(quantity.intValue()) * price
+        return getDiscountFactor(quantity) * price
     }
 
-    private static BigDecimal getDiscountFactor(int sampleCount) {
+    private static BigDecimal getDiscountFactor(BigDecimal quantity) {
+        int sampleCount = quantity.intValue()
         BigDecimal discountFactor
         switch (sampleCount) {
-            case {it < 1 }:
-                throw new UndefinedFunctionException(sampleCount)
+            case {it < 0 }:
+                throw new UndefinedFunctionException(quantity)
+                break
+            case 0:
+                discountFactor= BigDecimal.ONE
                 break
             case 1:
-                discountFactor= 1
+                discountFactor= BigDecimal.ONE
                 break
             case 2:
                 discountFactor= 0.98
@@ -197,7 +201,7 @@ class QuantityDiscount implements BiFunction<BigDecimal, BigDecimal, BigDecimal>
                 discountFactor=0.18
                 break
             default:
-                throw new UndefinedFunctionException(sampleCount)
+                throw new UndefinedFunctionException(quantity)
                 break
         }
         return 1.0 - discountFactor
@@ -208,7 +212,7 @@ class QuantityDiscount implements BiFunction<BigDecimal, BigDecimal, BigDecimal>
      * @since 1.1.0
      */
     private static class UndefinedFunctionException extends IllegalArgumentException {
-        UndefinedFunctionException(int sampleCount) {
+        UndefinedFunctionException(BigDecimal sampleCount) {
             super("Cannot determine discount for $sampleCount samples.")
         }
     }
