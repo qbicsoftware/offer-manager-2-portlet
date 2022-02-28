@@ -9,20 +9,20 @@ import java.util.function.BiFunction
  *
  * @since 1.1.0
  */
-class QuantityDiscount implements BiFunction<Integer, BigDecimal, BigDecimal> {
+class QuantityDiscount implements BiFunction<BigDecimal, BigDecimal, BigDecimal> {
 
     /**
      * Computes a quantity discount of the full price depending on the number of samples.
      * It is defined for all positive natural numbers greater than 0
      * <p>The function returns the discount for the discountable price. For a discount of 20% and a discountable price of 100$, the return value would be 20$.</p>
-     * @param sampleCount the number of samples
-     * @param fullPrice the price that should be discounted, before discounts are applied
+     * @param quantity the quantity for which to calculate a discount for
+     * @param price the price that should be discounted, before discounts are applied
      * @return the size of the discount
      * @since 1.1.0
      */
     @Override
-    BigDecimal apply(Integer sampleCount, BigDecimal fullPrice) {
-        return getDiscountFactor(sampleCount) * fullPrice
+    BigDecimal apply(BigDecimal quantity, BigDecimal price) {
+        return getDiscountFactor(quantity.intValue()) * price
     }
 
     private static BigDecimal getDiscountFactor(int sampleCount) {
