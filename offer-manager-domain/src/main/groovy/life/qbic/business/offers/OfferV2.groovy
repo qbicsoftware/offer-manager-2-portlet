@@ -409,8 +409,9 @@ class OfferV2 {
         offerCopy.setTotalNetPrice(this.getTotalNetPrice())
         offerCopy.setTotalVat(this.getTotalVat())
         offerCopy.setVatRatio(this.getVatRatio())
-        offerCopy.dataGenerationItems = this.getDataGenerationItems()
+        //fields
         offerCopy.dataAnalysisItems = this.getDataAnalysisItems()
+        offerCopy.dataGenerationItems = this.getDataGenerationItems()
         offerCopy.dataManagementItems = this.getDataManagementItems()
         offerCopy.externalServiceItems = this.getExternalServiceItems()
 
