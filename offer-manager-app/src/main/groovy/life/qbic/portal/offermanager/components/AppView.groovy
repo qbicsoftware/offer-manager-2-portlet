@@ -62,6 +62,8 @@ class AppView extends VerticalLayout {
         registerListeners()
         setupFeatureViews()
         hideAllFeatureViews()
+        makeAppViewScrollable()
+
         /*
          We set the offer overview view as first active view.
          You can set any other view to visible here for the startup
@@ -170,6 +172,12 @@ class AppView extends VerticalLayout {
         }
     }
 
+    private void makeAppViewScrollable () {
+        this.setWidth("100%");
+        this.setHeight("100%");
+        this.addStyleName("scrollable-layout")
+    }
+
     private class TomatoFeatures extends HorizontalLayout {
 
         TomatoFeatures() {
@@ -216,5 +224,6 @@ class AppView extends VerticalLayout {
             return dropDownButton
         }
 
-    }
+      }
+
 }
