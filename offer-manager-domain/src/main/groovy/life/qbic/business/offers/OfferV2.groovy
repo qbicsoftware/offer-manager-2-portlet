@@ -444,9 +444,9 @@ class OfferV2 {
         }
 
         @Override
-        Optional<ProjectIdentifier> convertToEntityAttribute(String s) {
+        Optional<ProjectIdentifier> convertToEntityAttribute(String projectIdentifier) {
             Optional<ProjectIdentifier> identifier = Optional.empty()
-            if (!s) {
+            if (!projectIdentifier) {
                 return identifier
             }
             try {
@@ -454,7 +454,7 @@ class OfferV2 {
                 A full openBIS project ID has the format: '/<space>/<project>', where
                 <space> and <project> are placeholders for real space and project names.
                  */
-                def splittedIdentifier = s.split("/")
+                def splittedIdentifier = projectIdentifier.split("/")
                 if (splittedIdentifier.length != 3) {
                     throw new RuntimeException(
                             "Project identifier has an unexpected number of separators: ${projectIdentifier}. " +

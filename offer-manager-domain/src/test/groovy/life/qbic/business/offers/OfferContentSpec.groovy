@@ -44,17 +44,9 @@ class OfferContentSpec extends Specification{
 
     final static List<OfferItem> items = [
             new OfferItem.Builder(2, "Just an example", "Basic RNAsq", 1.0, 1, 0.2, 0.1,
-                    "QBiC","Sample", 1).build(),
+                    "QBiC","Sample", 1,0).build(),
             new OfferItem.Builder(2, "Just an example", "Basic RNAsq", 1.0, 1, 0.2, 0.1,
-                    "QBiC","Dataset", 1).build(),
-
-    ]
-
-    final static List<OfferItem> items2 = [
-            new OfferItem.Builder(4, "Just an example", "Basic RNAsq", 1.0, 1, 0.2, 0.1,
-                    "QBiC","Sample", 1).build(),
-            new OfferItem.Builder(2, "Just an example", "Basic RNAsq", 1.0, 1, 0.2, 0.1,
-                    "QBiC","Dataset", 6).build(),
+                    "QBiC","Dataset", 1,0).build(),
 
     ]
 
@@ -98,8 +90,8 @@ class OfferContentSpec extends Specification{
         output.createdOfferContent(_ as OfferContent) >> { arguments ->
                 final OfferContent offerContent = arguments.get(0)
                 OfferItem item = offerContent.dataAnalysisItems.get(0)
-                assert item.quantityDiscount == BigDecimal.valueOf(item.quantity * item.discountPerUnit).round(2)
-                assert item.discountPerUnit.toBigDecimal().round(4) == (item.quantityDiscount / item.quantity.toBigDecimal()).round(4)
+                assert item.itemDiscount == BigDecimal.valueOf(item.quantity * item.unitDiscount).round(2)
+                assert item.unitDiscount.toBigDecimal().round(4) == (item.itemDiscount / item.quantity.toBigDecimal()).round(4)
         }
     }
 

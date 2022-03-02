@@ -6,9 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
-import life.qbic.business.products.Product;
 import life.qbic.business.products.ProductItem;
 
 
@@ -46,33 +46,294 @@ class OfferCalculus {
   protected static List<OfferItem> createOfferItems(OfferV2 offer) {
     AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory();
     List<OfferItem> offerItems;
-    // Discounting for internal customer is different, so we check the affiliation first
+    // Discounting for an internal customer is different, so we check the affiliation first.
     if (affiliationCategory == AffiliationCategory.INTERNAL) {
-      offerItems = createOfferItemsForInternals(offer.getItems());
+      offerItems = createOfferItems(offer.getItems(), OfferCalculus::offerItemFromInternal);
     } else {
-      offerItems = createOfferItemsForExternals(offer.getItems());
+      offerItems = createOfferItems(offer.getItems(), OfferCalculus::offerItemFromExternal);
     }
     return offerItems;
   }
 
   /**
-   * <p>Groups offer items based on their assigned category (data generation, data analysis, project
-   * and data management or external services) and fills the offer.
-   * The returned offer object is a full copy of the input offer and will contain the right
-   * grouping of the given offer items.</p>
+   * Process the provided offer and fills it with calculated information. The only requirement for
+   * this is that the offer contains product items.
+   *
+   * @param offer an offer containing product items
+   * @return an offer with all computable fields set
+   */
+  public static OfferV2 process(OfferV2 offer) {
+    // we always need to group the items to calculate anything
+    OfferV2 preparedOffer = withGroupedOfferItems(OfferV2.copyOf(offer));
+
+    /* order of calculation
+     *calc net costs----calc VAT----\
+     *calc overhead-------------calc total costs
+     */
+    OfferV2 offerWithPrices = withVat(withNetPrices(preparedOffer));
+    OfferV2 offerWithPricesAndOverheads = withOverheads(offerWithPrices);
+    OfferV2 processedOffer = withTotalCosts(offerWithPricesAndOverheads);
+    return processedOffer;
+  }
+
+  /**
+   * Calculates and fills the vat for an offer. Requires filled net prices {@link
+   * #withNetPrices(OfferV2)}
+   *
+   * @param offer an offer with filled net prices
+   * @return an offer with vat prices calculated and filled
+   */
+  protected static OfferV2 withVat(OfferV2 offer) {
+    OfferV2 offerCopy = OfferV2.copyOf(offer);
+    BigDecimal vatRatio = vatRatio(offer.getSelectedCustomerAffiliation().getCountry());
+    offerCopy.setVatRatio(vatRatio);
+    offerCopy.setTotalVat(calcVat(offerCopy.getTotalNetPrice(), vatRatio));
+    return offerCopy;
+  }
+
+  /**
+   * Calculates the VAT amount for a given net price. The rate is calculated by {@link
+   * #vatRatio(String)}
+   *
+   * @param totalNetPrice the VAT is calculated for this price
+   * @param country the country the vat shall be calculated for
+   * @return the VAT amount the provided country
+   * @see #calcVat(BigDecimal, BigDecimal)
+   */
+  public static BigDecimal calcVat(BigDecimal totalNetPrice, String country) {
+    BigDecimal vatRatio = vatRatio(country);
+    return calcVat(totalNetPrice, vatRatio);
+  }
+
+  /**
+   * Determines the VAT ratio. The VAT ratio for Germany is {@link #VAT_RATIO_GERMANY}. For all
+   * other countries, the VAT ratio is 0.
+   *
+   * @param country the country for which to get the VAT ratio
+   * @return the VAT ratio for the provided country
+   */
+  protected static BigDecimal vatRatio(String country) {
+    if (country.equalsIgnoreCase("Germany")) {
+      return VAT_RATIO_GERMANY;
+    }
+    return BigDecimal.ZERO;
+  }
+
+  /**
+   * Calculates the vat provided a total net price and a vat ratio
+   *
+   * @param totalNetPrice the total net price for which to calculate the VAT
+   * @param vatRatio the VAT ratio applied
+   * @return the VAT amount for the provided vat Ratio
+   * @see #calcVat(BigDecimal, String)
+   */
+  protected static BigDecimal calcVat(BigDecimal totalNetPrice, BigDecimal vatRatio) {
+    return roundToCurrency(totalNetPrice.multiply(vatRatio));
+  }
+
+  /**
+   * Applies rounding to the provided value to 2 decimal points
+   *
+   * @param value the value to round
+   * @return a value rounded to 2 decimal points
+   */
+  protected static BigDecimal roundToCurrency(BigDecimal value) {
+    return value.setScale(2, RoundingMode.HALF_UP);
+  }
+
+  /**
+   * Calculates and fills the offer with the total cost. Requires the offer to have overheads, net
+   * prices and VAT filled
+   *
+   * @param offer an offer with filled overheads, net prices and VAT
+   * @return an offer with a total price
+   */
+  protected static OfferV2 withTotalCosts(OfferV2 offer) {
+    OfferV2 offerCopy = OfferV2.copyOf(offer);
+    BigDecimal offerOverhead = BigDecimal.valueOf(offerCopy.getOverhead());
+    BigDecimal offerNet = offerCopy.getTotalNetPrice();
+    BigDecimal offerVat = offerCopy.getTotalVat();
+    offerCopy.setTotalCost(addTotalCosts(offerOverhead, offerNet, offerVat));
+    return offerCopy;
+  }
+
+  /**
+   * adds the total costs up
+   *
+   * @param offerOverheads the total overhead for an offer
+   * @param offerNet the total net for an offer
+   * @param offerVat the total vat for an offer
+   * @return the total costs of for an offer
+   */
+  protected static BigDecimal addTotalCosts(
+      BigDecimal offerOverheads, BigDecimal offerNet, BigDecimal offerVat) {
+    return offerNet.add(offerOverheads).add(offerVat);
+  }
+
+  /**
+   * Calculates the net prices for all service categories, and the overall offer net costs
+   *
+   * @param offer the offer with the items to calculate the net sums
+   * @return a copy of the input offer with the final net prices
+   */
+  public static OfferV2 withNetPrices(OfferV2 offer) {
+    OfferV2 offerCopy = OfferV2.copyOf(offer);
+
+    BigDecimal dataAnalysisNetTotal = netSum(offerCopy.getDataAnalysisItems());
+    BigDecimal dataGenerationNetTotal = netSum(offerCopy.getDataGenerationItems());
+    BigDecimal projectAndDataManagementNetTotal = netSum(offerCopy.getDataManagementItems());
+    BigDecimal externalServicesNetTotal = netSum(offerCopy.getExternalServiceItems());
+
+    BigDecimal totalNet =
+        dataAnalysisNetTotal
+            .add(dataGenerationNetTotal)
+            .add(projectAndDataManagementNetTotal)
+            .add(externalServicesNetTotal);
+
+    offerCopy.setNetSumDataAnalysis(dataAnalysisNetTotal);
+    offerCopy.setNetSumDataGeneration(dataGenerationNetTotal);
+    offerCopy.setNetSumDataManagement(projectAndDataManagementNetTotal);
+    offerCopy.setNetSumExternalServices(externalServicesNetTotal);
+
+    offerCopy.setTotalNetPrice(totalNet);
+
+    return offerCopy;
+  }
+
+  /**
+   * Converts all product items of an offer into offer items and passes them to {@link
+   * #withGroupedOfferItems(OfferV2, List)}
+   *
+   * @param offerV2 an offer with product items
+   * @return an offer with filled offer items
+   * @throws OfferCalculusException the product category could not be determined for one or more
+   *     product items in the provided offer
+   */
+  public static OfferV2 withGroupedOfferItems(OfferV2 offerV2) throws OfferCalculusException {
+    return withGroupedOfferItems(offerV2, createOfferItems(offerV2));
+  }
+
+  /**
+   * Calculates and fills the overhead information of an offer. The overheads are calculated for
+   * each product category and added up after rounding. Determines the overhead ratio based on the
+   * offer's affiliation {@link #overheadRatio(AffiliationCategory)}.
+   *
+   * @param offer an offer with a selected customer affiliation
+   * @return an offer with filled overhead information
+   */
+  public static OfferV2 withOverheads(OfferV2 offer) {
+    AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory();
+    BigDecimal overheadRatio = overheadRatio(affiliationCategory);
+
+    OfferV2 offerCopy = OfferV2.copyOf(offer);
+
+    BigDecimal overheadDataAnalysis =
+        roundToCurrency(overheads(offer.getDataAnalysisItems(), overheadRatio));
+    BigDecimal overheadDataGeneration =
+        roundToCurrency(overheads(offer.getDataGenerationItems(), overheadRatio));
+    BigDecimal overheadProjectManagementDataStorage =
+        roundToCurrency(overheads(offer.getDataManagementItems(), overheadRatio));
+    BigDecimal overheadExternalServices =
+        roundToCurrency(overheads(offer.getExternalServiceItems(), overheadRatio));
+
+    // ATTENTION: due to the rounding of individual prices for the groups to currencies,
+    // we need to add the rounded numbers.
+    // This may give a different result from offerNet * overheadRatio !
+    BigDecimal totalOverheads =
+        roundToCurrency(
+            overheadDataAnalysis
+                .add(overheadDataGeneration)
+                .add(overheadProjectManagementDataStorage)
+                .add(overheadExternalServices));
+
+    offerCopy.setOverheadRatio(overheadRatio.doubleValue());
+    offerCopy.setOverheadsDataAnalysis(overheadDataAnalysis);
+    offerCopy.setOverheadsDataGeneration(overheadDataGeneration);
+    offerCopy.setOverheadsDataManagement(overheadProjectManagementDataStorage);
+    offerCopy.setOverheadsExternalServices(overheadExternalServices);
+    offerCopy.setOverhead(totalOverheads.doubleValue());
+
+    return offerCopy;
+  }
+
+  /**
+   * Calculates the net costs of a group of offer items.
+   *
+   * @param items the items to calculate the net sum for
+   * @return the net sum including discounts.
+   */
+  public static BigDecimal netSum(List<OfferItem> items) {
+    return items.stream()
+        .map(OfferItem::getItemNet)
+        .map(BigDecimal::valueOf)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+  }
+
+  /**
+   * Determines the overhead ratio applied to a given {@link AffiliationCategory}
+   *
+   * <ul>
+   *   <li>For <b>internal</b> affiliations the overhead ratio is 0%.
+   *   <li>For <b>external academic</b> affiliations the overhead ratio is {@link
+   *       #OVERHEAD_RATIO_EXTERNAL_ACADEMIC}.
+   *   <li>For <b>external</b> affiliations the overhead ratio is {@link #OVERHEAD_RATIO_EXTERNAL}.
+   * </ul>
+   *
+   * @param category the affiliation category determining the overhead raio
+   * @return the applicable overhead ratio
+   */
+  protected static BigDecimal overheadRatio(AffiliationCategory category) {
+    if (category == AffiliationCategory.INTERNAL) {
+      return BigDecimal.ZERO;
+    }
+    if (category == AffiliationCategory.EXTERNAL_ACADEMIC) {
+      return OVERHEAD_RATIO_EXTERNAL_ACADEMIC;
+    }
+    return OVERHEAD_RATIO_EXTERNAL;
+  }
+
+  /**
+   * Calculates the overhead sum for a given collection of offer items and a pre-defined overhead
+   * ratio. <strong>Note</strong>: this method will NOT apply any product category filter.
+   *
+   * @param items a collection of offer items
+   * @param overheadRatio the overhead ratio to apply
+   * @return the overhead sum based on the overhead ratio and items
+   */
+  public static BigDecimal overheads(List<OfferItem> items, BigDecimal overheadRatio) {
+    if (overheadRatio.compareTo(BigDecimal.ZERO) < 0
+        || overheadRatio.compareTo(BigDecimal.ONE) > 0) {
+      throw new IllegalArgumentException(
+          "Overhead ratio must be between 0 and 1. Provided ratio: " + overheadRatio);
+    }
+    return items.stream()
+        .map(OfferItem::getItemNet)
+        .filter((x) -> x > 0)
+        .map(BigDecimal::valueOf)
+        .map(itemPrice -> itemPrice.multiply(overheadRatio))
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
+  }
+
+  /**
+   * Groups offer items based on their assigned category (data generation, data analysis, project
+   * and data management or external services) and fills the offer. The returned offer object is a
+   * full copy of the input offer and will contain the right grouping of the given offer items.
+   *
    * <p>If the offer items list passed is empty, this method tries to create the offer items first
-   * based on the ProductItems in the offer. Internally, the method {@link OfferCalculus#createOfferItems(OfferV2)}
-   * is used for this.</p>
+   * based on the ProductItems in the offer. Internally, the method {@link
+   * OfferCalculus#createOfferItems(OfferV2)} is used for this.
+   *
    * @param offer the offer to use as basis for the calculations
    * @param offerItems the offer items to use to group the items into their belonging category
    * @return A copy of the input offer, with the offer items sorted in the categories.
    * @throws OfferCalculusException if anything goes wrong
    */
-  protected static OfferV2 groupItems(OfferV2 offer, List<OfferItem> offerItems) throws OfferCalculusException {
+  protected static OfferV2 withGroupedOfferItems(OfferV2 offer, List<OfferItem> offerItems)
+      throws OfferCalculusException {
     if (offerItems.isEmpty()) {
       offerItems = createOfferItems(offer);
     }
-    OfferV2 offerCopy = OfferV2.copy(offer);
+    OfferV2 offerCopy = OfferV2.copyOf(offer);
     List<OfferItem> ungroupedItems = new ArrayList<>();
     // And then sort them into the correct categories
     for (OfferItem item : offerItems) {
@@ -102,401 +363,203 @@ class OfferCalculus {
     return offerCopy;
   }
 
-  public static OfferV2 groupItems(OfferV2 offerV2) throws OfferCalculusException {
-    return groupItems(offerV2, createOfferItems(offerV2));
-  }
-
   /**
-   * Create offer items based on a list of product items, assuming the selected customer affiliation
-   * is internal
-   * @param productItems the product items to use as information for the offer item creation
-   * @return a collection of offer items
-   */
-  public static List<OfferItem> createOfferItemsForExternals(List<ProductItem> productItems) {
-    return productItems.stream()
-        .map( OfferCalculus::createOfferItemWithExternalPrice)
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * Create offer items based on a list of product items, assuming the selected customer affiliation
-   * is external or external academic
-   * @param productItems the product items to use as information for the offer item creation
-   * @return a collection of offer items
-   */
-  public static List<OfferItem> createOfferItemsForInternals(List<ProductItem> productItems) {
-    return productItems.stream()
-        .map( OfferCalculus::createOfferItemWithInternalPrice)
-        .collect(Collectors.toList());
-  }
-
-  /**
-   * Creates an {@link OfferItem} object with all its properties calculated based on the
-   * given {@link ProductItem}. This method uses the <b>internal unit price</b>.
-   * @param item the item that is going to be used to create the OfferItem instance.
-   * @return the offer item based on the given product item
-   */
-  public static OfferItem createOfferItemWithInternalPrice(ProductItem item) {
-    Double selectedUnitPrice = item.getProduct().getInternalUnitPrice();
-    if (item.getProduct().getCategory().equalsIgnoreCase("data storage")) {
-      return createWithUnitPriceAndFullStorageDiscount(item, selectedUnitPrice);
-    }
-    return createWithUnitPrice(item, selectedUnitPrice);
-  }
-
-  /**
-   * Creates an offer item based on a given ProductItem and a selected unit price.
+   * Creates an {@link OfferItem} object with all its properties calculated based on the given
+   * {@link ProductItem}. This method uses the <b>external unit price</b>.
    *
-   * @param item a {@link ProductItem} of category `Data Storage`
-   * @param selectedUnitPrice the pre-selected unit price
-   * @return a new instance of a {@link OfferItem} with the storage discount applied
-   * @throws OfferCalculusException if the item product is not of category 'Data Storage'
+   * @param item the item from which to create an OfferItem instance.
+   * @return the offer item based on the given product item
    */
-  public static OfferItem createWithUnitPriceAndFullStorageDiscount(ProductItem item, Double selectedUnitPrice) throws OfferCalculusException {
-    String productCategory = item.getProduct().getCategory();
-    if (!(productCategory.equalsIgnoreCase("data storage")))  {
-      throw new OfferCalculusException(String.format("Product item must be of category 'Data Storage' but was '%s'.", productCategory));
-    }
-    OfferItem offerItem = createWithUnitPrice(item, selectedUnitPrice);
-    double storageDiscount = offerItem.getItemTotal();
+  protected static OfferItem offerItemFromExternal(ProductItem item) {
+    Double unitPrice = item.getProduct().getExternalUnitPrice();
+    AffiliationCategory affiliationCategory = AffiliationCategory.EXTERNAL;
 
-    // important to make sure that the unit price is rounded up to the second
-    double storageDiscountPerUnit = offerItem.getUnitPrice();
-    return new OfferItem.Builder(offerItem.getQuantity(),
-        offerItem.getProductDescription(), offerItem.getProductName(), offerItem.getUnitPrice(),
-        storageDiscount, storageDiscountPerUnit, offerItem.getDiscountPercentage(),
-            offerItem.getServiceProvider(), offerItem.getUnit(), offerItem.getItemTotal())
-        .setCategory(offerItem.getCategory()).build();
+    return createOfferItem(
+        item.getQuantity(),
+        unitPrice,
+        item.getProduct().getCategory(),
+        affiliationCategory,
+        item.getProduct().getDescription(),
+        item.getProduct().getProductName(),
+        item.getProduct().getServiceProvider(),
+        item.getProduct().getUnit());
   }
 
   /**
-   * Creates an {@link OfferItem} object with all its properties calculated based on the
-   * given {@link ProductItem}. This method uses the <b>external unit price</b>.
-   * @param item the item that is going to be used to create the OfferItem instance.
+   * Creates an {@link OfferItem} object with all its properties calculated based on the given
+   * {@link ProductItem}. This method uses the <b>internal unit price</b>.
+   *
+   * @param item the item from which to create an OfferItem instance.
    * @return the offer item based on the given product item
    */
-  public static OfferItem createOfferItemWithExternalPrice(ProductItem item) {
-    Double selectedUnitPrice = item.getProduct().getExternalUnitPrice();
-    return createWithUnitPrice(item, selectedUnitPrice);
-  }
-  /*
-  Creates an OfferItem based on a ProductItem and a pre-selected unit price.
-   */
-  private static OfferItem createWithUnitPrice(ProductItem item, Double unitPrice) {
-    String category = item.getProduct().getCategory();
-    BigDecimal unitPriceAfterDiscount;
-    BigDecimal totalDiscount;
-    Double productQuantity = item.getQuantity();
+  protected static OfferItem offerItemFromInternal(ProductItem item) {
+    Double unitPrice = item.getProduct().getInternalUnitPrice();
+    AffiliationCategory affiliationCategory = AffiliationCategory.INTERNAL;
 
-    if (DATA_GENERATION.contains(category)) {
-      unitPriceAfterDiscount = applyQuantityDiscount(BigDecimal.valueOf(unitPrice),
-          productQuantity.intValue());
-      totalDiscount = unitPriceAfterDiscount.multiply(BigDecimal.valueOf(productQuantity));
-    } else {
-      // Without discount, the unit after discount is equal to the original unit price
-      unitPriceAfterDiscount = BigDecimal.valueOf(unitPrice);
-      totalDiscount = BigDecimal.ZERO;
-    }
-
-    Product product = item.getProduct();
-    // Calculate the discount percentage
-    Double discountPercentage = calcDiscountPercentage(BigDecimal.valueOf(unitPrice), unitPriceAfterDiscount).doubleValue();
-    // Get the final item price, excluding potential discount
-    Double totalPrice = unitPrice * productQuantity;
-    return createOfferItem(productQuantity, product.getDescription(), product.getProductName(),
+    return createOfferItem(
+        item.getQuantity(),
         unitPrice,
-        totalDiscount.doubleValue(), unitPriceAfterDiscount.doubleValue(),
-        discountPercentage, product.getServiceProvider(),
-        product.getUnit(), totalPrice, product.getCategory());
+        item.getProduct().getCategory(),
+        affiliationCategory,
+        item.getProduct().getDescription(),
+        item.getProduct().getProductName(),
+        item.getProduct().getServiceProvider(),
+        item.getProduct().getUnit());
   }
 
-  private static BigDecimal calcDiscountPercentage(BigDecimal originalPrice, BigDecimal discountedPrice) {
-    BigDecimal difference = originalPrice.subtract(discountedPrice);
-    if (difference.equals(BigDecimal.ZERO)) {
-      return BigDecimal.ZERO;
+  /**
+   * Creates an offer item based on a set of a minimal set of parameters that are used for
+   * calculation or are written as is in case no calculation is necessary
+   *
+   * @param quantity the quantity for the new offer item
+   * @param unitPrice the price per unit of this offer item
+   * @param productCategory the product category this offer item belongs to
+   * @param affiliationCategory the affiliation category used for calculation
+   * @param description the product description
+   * @param productName the product name
+   * @param serviceProvider the provider of the offered product
+   * @param unit the unit in which the quantity is counted
+   * @return a complete offer item with calculated netPrice, listPrice and discounts
+   */
+  protected static OfferItem createOfferItem(
+      double quantity,
+      double unitPrice,
+      String productCategory,
+      AffiliationCategory affiliationCategory,
+      String description,
+      String productName,
+      String serviceProvider,
+      String unit) {
+    BigDecimal roundedQuantity = roundToCurrency(BigDecimal.valueOf(quantity));
+    BigDecimal roundedUnitPrice = roundToCurrency(BigDecimal.valueOf(unitPrice));
+    BigDecimal listPrice = roundToCurrency(roundedQuantity.multiply(roundedUnitPrice));
+
+    BigDecimal unitDiscount =
+        roundToCurrency(
+            calculateUnitDiscount(
+                productCategory, affiliationCategory, roundedUnitPrice, roundedQuantity));
+
+    BigDecimal netPrice =
+        roundToCurrency(itemNetPrice(roundedUnitPrice, roundedQuantity, unitDiscount));
+
+    // we have percentage thus a precision of 0.1234 is required -> 12.34 %
+    BigDecimal discountPercentage = unitDiscount.divide(roundedUnitPrice, 4, RoundingMode.HALF_UP);
+
+    BigDecimal totalDiscount = roundToCurrency(roundedQuantity.multiply(unitDiscount));
+
+    return new OfferItem.Builder(
+            roundedQuantity.doubleValue(),
+            description,
+            productName,
+            roundedUnitPrice.doubleValue(),
+            totalDiscount.doubleValue(),
+            unitDiscount.doubleValue(),
+            discountPercentage.doubleValue(),
+            serviceProvider,
+            unit,
+            listPrice.doubleValue(),
+            netPrice.doubleValue())
+        .setCategory(productCategory)
+        .build();
+  }
+
+  /**
+   * Calculates the quantity discount, and the data storage discount. The applied discount per unit
+   * is the maximum discount applicable.
+   *
+   * @param productCategory the category of the product for which the unit discount is calculated
+   * @param affiliationCategory the considered affiliation category
+   * @param unitPrice the price per unit that shall be discounted by the result of this method
+   * @param quantity the considered quantity
+   * @return the amount of discount per unit
+   */
+  protected static BigDecimal calculateUnitDiscount(
+      String productCategory,
+      AffiliationCategory affiliationCategory,
+      BigDecimal unitPrice,
+      BigDecimal quantity) {
+    BigDecimal dataStorageDiscount =
+        calculateDataStorageDiscount(affiliationCategory, productCategory, unitPrice);
+    BigDecimal quantityDiscount = calculateQuantityDiscount(unitPrice, quantity, productCategory);
+
+    return dataStorageDiscount.max(quantityDiscount);
+  }
+
+  /**
+   * Calculate the storage discount for a given unit price. For internal affiliations, this is set
+   * to 100%, for other affiliations this is set to 0%. Data storage discount is only applied for
+   * data storage products.
+   *
+   * @param affiliationCategory the considered affiliation category for discount determination
+   * @param productCategory the product category to be discounted
+   * @param unitPrice the unit price to be discounted
+   * @return the amount of discount per unit for the provided unit price
+   */
+  protected static BigDecimal calculateDataStorageDiscount(
+      AffiliationCategory affiliationCategory, String productCategory, BigDecimal unitPrice) {
+    if (productCategory.equalsIgnoreCase("data storage")
+        && affiliationCategory == AffiliationCategory.INTERNAL) {
+      return unitPrice;
     }
-    return difference.divide(originalPrice);
-  }
-
-  private static OfferItem createOfferItem(Double quantity, String description, String productName, Double unitPrice,
-      Double quantityDiscount, Double unitDiscount, Double discountPercentage, String serviceProvider,
-      String unit, Double totalPrice, String productCategory) {
-
-    return new OfferItem.Builder(quantity, description, productName, unitPrice,
-        quantityDiscount, unitDiscount, discountPercentage,
-        serviceProvider, unit, totalPrice)
-        .setCategory(productCategory).build();
+    return BigDecimal.ZERO;
   }
 
   /**
    * Calculates the discounted unit price based on the quantity.
+   *
    * @param unitPrice the pre-selected uni price
    * @param quantity the quantity amount of the product
    * @return the discounted final price
    */
-  public static BigDecimal applyQuantityDiscount(BigDecimal unitPrice, Integer quantity) {
+  public static BigDecimal calculateQuantityDiscount(
+      BigDecimal unitPrice, BigDecimal quantity, String productCategory) {
     QuantityDiscount quantityDiscount = new QuantityDiscount();
     BigDecimal discountTotal = quantityDiscount.apply(quantity, unitPrice);
     // Round up to the second digit
-    return discountTotal.setScale(2, RoundingMode.UP);
+    return DATA_ANALYSIS.contains(productCategory)
+        ? discountTotal.setScale(2, RoundingMode.UP)
+        : BigDecimal.ZERO;
   }
 
   /**
-   * Calculates the VAT amount for a given net price. The rate is stored in {@link OfferCalculus#VAT_RATIO_GERMANY}.
-   * @param bigDecimal the net price VAT is going to be applied
-   * @return the VAT amount for Germany
+   * Create offer items using the provided converter
+   *
+   * @param productItems the product items to be converted into offer items
+   * @param converter the mapping function from product item to offer item
+   * @return a list of offer items representing converted product items
    */
-  public static BigDecimal calcVATGermany(BigDecimal bigDecimal) {
-    return formatCurrency(bigDecimal.multiply(VAT_RATIO_GERMANY));
+  protected static List<OfferItem> createOfferItems(
+      List<ProductItem> productItems, Function<ProductItem, OfferItem> converter) {
+    return productItems.stream().map(converter).collect(Collectors.toList());
   }
 
   /**
-   * Calculates the overhead sum for data analysis items based on the given {@link AffiliationCategory}.
+   * Calculates the net price of a given item. <b>Note</b>: Potential discount will be considered in
+   * the calculation and subtracted from the total item price.
    *
-   * Remember, that for internal customers, we apply 0%, for external academic 20%, and
-   * for external non-academic 40% overhead.
-   *
-   * @param items a collection of {@link OfferItem}
-   * @param affiliationCategory the {@link AffiliationCategory} the overhead needs to be applied
-   * @return the overhead sum that applies, based on the category and item collection
-   */
-  public BigDecimal overheadsDataAnalysis (List<OfferItem> items, AffiliationCategory affiliationCategory) {
-    if (affiliationCategory == AffiliationCategory.INTERNAL) {
-      return BigDecimal.ZERO;
-    }
-    if (affiliationCategory == AffiliationCategory.EXTERNAL_ACADEMIC) {
-      return overheadsDataAnalysis(items, OVERHEAD_RATIO_EXTERNAL_ACADEMIC);
-    }
-    return overheadsDataAnalysis(items, OVERHEAD_RATIO_EXTERNAL);
-  }
-
-  /**
-   * Calculates the overhead sum for a given collection of offer items and a pre-defined
-   * overhead ratio.
-   * <strong>Note</strong>: this method will filter the item list by category of type {@link OfferCalculus#DATA_ANALYSIS}.
-   * @param items a collection of offer items the overheads are calculated
-   * @param overheadRatio the overhead ratio (between 0 >= x <= 1)
-   * @return the overhead sum that applies, based on the overhead ratio and item collection
-   */
-  public BigDecimal overheadsDataAnalysis(List<OfferItem> items, BigDecimal overheadRatio) {
-    List<OfferItem> itemsDataAnalysis = items.stream().filter(offerItem -> DATA_ANALYSIS.contains(offerItem.getCategory())).collect(
-        Collectors.toList());
-    return overheads(itemsDataAnalysis, overheadRatio);
-  }
-
-  /**
-   * Calculates the overhead sum for a given collection of offer items and a pre-defined overhead
-   * ratio.
-   * <strong>Note</strong>: this method will NOT apply any product category filter.
-   * @param items a collection of offer items
-   * @param overheadRatio the overhead ratio to apply
-   * @return the overhead sum based on the overhead ratio and items
-   */
-  public BigDecimal overheads(List<OfferItem> items, BigDecimal overheadRatio) {
-    return items.stream()
-        .map( OfferItem::getItemTotal )
-        .filter( (x) -> x > 0  )
-        .map(BigDecimal::valueOf)
-        .map( itemPrice -> itemPrice.multiply(overheadRatio) )
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
-  }
-
-  /**
-   * Calculates the overhead sum for a given collection of offer items and a pre-selected affiliation category.
-   *
-   * Since this method uses the {@link OfferCalculus#overheadsProjectManagementAndStorage(List, BigDecimal)} method,
-   * a filter for the product category matching {@link OfferCalculus#PROJECT_AND_DATA_MANAGEMENT} is applied.
-   *
-   * Remember that for internal affiliations, we charge 0% overhead, 20% for external academic and 40% for external.
-   *
-   * @param items a collection of offer items
-   * @param affiliationCategory a pre-selected affiliation category
-   * @return the overhead sum based on the items and affiliation category
-   */
-  public BigDecimal overheadsProjectManagementAndStorage(List<OfferItem> items, AffiliationCategory affiliationCategory) {
-    if (affiliationCategory == AffiliationCategory.INTERNAL) {
-      return BigDecimal.ZERO;
-    }
-    if (affiliationCategory == AffiliationCategory.EXTERNAL_ACADEMIC) {
-      return overheadsProjectManagementAndStorage(items, OVERHEAD_RATIO_EXTERNAL_ACADEMIC);
-    }
-    return overheadsProjectManagementAndStorage(items, OVERHEAD_RATIO_EXTERNAL);
-  }
-
-  /**
-   * Calculates the overhead sum for a given collection of offer items and a pre-defined
-   * overhead ratio.
-   * <strong>Note</strong>: this method will filter the item list by category of type {@link OfferCalculus#PROJECT_AND_DATA_MANAGEMENT}.
-   * @param items a collection of offer items the overheads are calculated
-   * @param overheadRatio the overhead ratio (between 0 >= x <= 1)
-   * @return the overhead sum that applies, based on the overhead ratio and item collection
-   */
-  public BigDecimal overheadsProjectManagementAndStorage(List<OfferItem> items, BigDecimal overheadRatio) {
-    List<OfferItem> itemsDataAnalysis = items.stream().filter(offerItem -> PROJECT_AND_DATA_MANAGEMENT.contains(offerItem.getCategory())).collect(
-        Collectors.toList());
-    return overheads(itemsDataAnalysis, overheadRatio);
-  }
-
-  /**
-   * Calculates the overhead sum for a given collection of offer items and a pre-selected affiliation category.
-   *
-   * Since this method uses the {@link OfferCalculus#overheadsDataGeneration(List, BigDecimal)} method,
-   * a filter for the product category matching {@link OfferCalculus#DATA_GENERATION} is applied.
-   *
-   * Remember that for internal affiliations, we charge 0% overhead, 20% for external academic and 40% for external.
-   *
-   * @param items a collection of offer items
-   * @param affiliationCategory a pre-selected affiliation category
-   * @return the overhead sum based on the items and affiliation category
-   */
-  public BigDecimal overheadsDataGeneration(List<OfferItem> items, AffiliationCategory affiliationCategory) {
-    if (affiliationCategory == AffiliationCategory.INTERNAL) {
-      return BigDecimal.ZERO;
-    }
-    if (affiliationCategory == AffiliationCategory.EXTERNAL_ACADEMIC) {
-      return overheadsDataGeneration(items, OVERHEAD_RATIO_EXTERNAL_ACADEMIC);
-    }
-    return overheadsDataGeneration(items, OVERHEAD_RATIO_EXTERNAL);
-  }
-
-  /**
-   * Calculates the overhead sum for a given collection of offer items and a pre-defined
-   * overhead ratio.
-   * <strong>Note</strong>: this method will filter the item list by category of type {@link OfferCalculus#DATA_GENERATION}.
-   * @param items a collection of offer items the overheads are calculated
-   * @param overheadRatio the overhead ratio (between 0 >= x <= 1)
-   * @return the overhead sum that applies, based on the overhead ratio and item collection
-   */
-  public BigDecimal overheadsDataGeneration(List<OfferItem> items, BigDecimal overheadRatio) {
-    List<OfferItem> itemsDataAnalysis = items.stream().filter(offerItem -> DATA_GENERATION.contains(offerItem.getCategory())).collect(
-        Collectors.toList());
-    return overheads(itemsDataAnalysis, overheadRatio);
-  }
-
-  /**
-   * Calculates the overhead sum for a given collection of offer items and a pre-selected affiliation category.
-   *
-   * Since this method uses the {@link OfferCalculus#overheadsExternalServices(List, BigDecimal)} method,
-   * a filter for the product category matching {@link OfferCalculus#EXTERNAL_SERVICES} is applied.
-   *
-   * Remember that for internal affiliations, we charge 0% overhead, 20% for external academic and 40% for external.
-   *
-   * @param items a collection of offer items
-   * @param affiliationCategory a pre-selected affiliation category
-   * @return the overhead sum based on the items and affiliation category
-   */
-  public BigDecimal overheadsExternalServices(List<OfferItem> items, AffiliationCategory affiliationCategory) {
-    if (affiliationCategory == AffiliationCategory.INTERNAL) {
-      return BigDecimal.ZERO;
-    }
-    if (affiliationCategory == AffiliationCategory.EXTERNAL_ACADEMIC) {
-      return overheadsExternalServices(items, OVERHEAD_RATIO_EXTERNAL_ACADEMIC);
-    }
-    return overheadsExternalServices(items, OVERHEAD_RATIO_EXTERNAL);
-  }
-
-  /**
-   * Calculates the overhead sum for a given collection of offer items and a pre-defined
-   * overhead ratio.
-   * <strong>Note</strong>: this method will filter the item list by category of type {@link OfferCalculus#EXTERNAL_SERVICES}.
-   * @param items a collection of offer items the overheads are calculated
-   * @param overheadRatio the overhead ratio (between 0 >= x <= 1)
-   * @return the overhead sum that applies, based on the overhead ratio and item collection
-   */
-  public BigDecimal overheadsExternalServices(List<OfferItem> items, BigDecimal overheadRatio) {
-    List<OfferItem> itemsDataAnalysis = items.stream().filter(offerItem -> EXTERNAL_SERVICES.contains(offerItem.getCategory())).collect(
-        Collectors.toList());
-    return overheads(itemsDataAnalysis, overheadRatio);
-  }
-
-  public OfferV2 calculateOverheads(OfferV2 offerV2) {
-    OfferV2 offerCopy = OfferV2.copy(offerV2);
-    AffiliationCategory affiliationCategory = offerV2.getSelectedCustomerAffiliation().getCategory();
-    BigDecimal overheadDataAnalysis = overheadsDataAnalysis(offerV2.getDataAnalysisItems(), affiliationCategory);
-    BigDecimal overheadDataGeneration = overheadsDataGeneration(offerV2.getDataGenerationItems(), affiliationCategory);
-    BigDecimal overheadProjectManagementDataStorage = overheadsProjectManagementAndStorage(offerV2.getDataManagementItems(), affiliationCategory);
-    BigDecimal overheadExternalServices = overheadsExternalServices(offerV2.getExternalServiceItems(), affiliationCategory);
-    BigDecimal totalOverheads = overheadDataAnalysis.add(overheadDataGeneration)
-        .add(overheadProjectManagementDataStorage).add(overheadExternalServices);
-
-    // Set the overhead properties
-    offerCopy.setOverheadsDataAnalysis(overheadDataAnalysis);
-    offerCopy.setOverheadsDataGeneration(overheadDataGeneration);
-    offerCopy.setOverheadsDataManagement(overheadProjectManagementDataStorage);
-    offerCopy.setOverheadsExternalServices(overheadExternalServices);
-    offerCopy.setOverhead(totalOverheads.doubleValue());
-    // Lastly the overhead ratio that has been applied
-    offerCopy.setOverheadRatio(overheadRatio(affiliationCategory).doubleValue());
-
-    return offerCopy;
-  }
-
-  protected BigDecimal overheadRatio(AffiliationCategory category) {
-    if (category == AffiliationCategory.INTERNAL) {
-      return BigDecimal.ZERO;
-    }
-    if (category == AffiliationCategory.EXTERNAL_ACADEMIC) {
-      return OVERHEAD_RATIO_EXTERNAL_ACADEMIC;
-    }
-    return OVERHEAD_RATIO_EXTERNAL;
-  }
-
-  /**
-   * <p>Calculates the sum of the net price of every item.</p>
-   *
-   * <b>Note</b>: Potential discount will be considered in the calculation and subtracted from the total item price.
-   * @param items the items to calculate the net sum for
-   * @return the net sum including discounts.
-   */
-  public static BigDecimal netSum(List<OfferItem> items) {
-    return items.stream()
-        .map(OfferCalculus::netPrice)
-        .reduce(BigDecimal.ZERO, BigDecimal::add);
-  }
-
-  /**
-   * <p>Calculates the net price of a given item.</p>
-   *
-   * <b>Note</b>: Potential discount will be considered in the calculation and subtracted from the total item price.
    * @param item the item to calculate the net sum for
    * @return the net sum of the provided item
    */
-  public static BigDecimal netPrice(OfferItem item) {
-    return BigDecimal.valueOf(item.getItemTotal())
-        .subtract(BigDecimal.valueOf(item.getQuantityDiscount()));
+  public static BigDecimal itemNetPrice(OfferItem item) {
+    BigDecimal unitPrice = BigDecimal.valueOf(item.getUnitPrice());
+    BigDecimal unitDiscount = BigDecimal.valueOf(item.getUnitDiscount());
+    BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
+    return itemNetPrice(unitPrice, quantity, unitDiscount);
   }
 
   /**
-   * <p>Calculates the net prices for all service categories</p>
-   * @param offer the offer with the items to calculate the net sums
-   * @return a copy of the input offer with the final net prices
+   * Calculates the net price given the price and discount per unit and the quantity. The net price
+   * is calculated as (unitPrice - unitDiscount) * quantity
+   *
+   * @param unitDiscount the discount per unit
+   * @param quantity the amount of units to consider
+   * @param unitPrice the price per unit
+   * @return the net sum of the provided item
+   * @see #itemNetPrice(OfferItem)
    */
-  public static OfferV2 calcNetPrices(OfferV2 offer) {
-    OfferV2 offerCopy = OfferV2.copy(offer);
-
-    BigDecimal dataAnalysisNetTotal = netSum(offerCopy.getDataAnalysisItems());
-    BigDecimal dataGenerationNetTotal = netSum(offerCopy.getDataGenerationItems());
-    BigDecimal projectAndDataManagementNetTotal = netSum(offerCopy.getDataManagementItems());
-    BigDecimal externalServicesNetTotal = netSum(offerCopy.getDataAnalysisItems());
-
-    BigDecimal totalNet = dataAnalysisNetTotal
-        .add(dataGenerationNetTotal)
-        .add(projectAndDataManagementNetTotal)
-        .add(externalServicesNetTotal);
-
-    offerCopy.setNetSumDataAnalysis(dataAnalysisNetTotal);
-    offerCopy.setNetSumDataGeneration(dataGenerationNetTotal);
-    offerCopy.setNetSumDataManagement(projectAndDataManagementNetTotal);
-    offerCopy.setNetSumExternalServices(externalServicesNetTotal);
-
-    offerCopy.setTotalNetPrice(totalNet);
-
-    return offerCopy;
-  }
-
-
-  private static BigDecimal formatCurrency(BigDecimal value) {
-    return value.setScale(2, RoundingMode.HALF_UP);
+  protected static BigDecimal itemNetPrice(
+      BigDecimal unitPrice, BigDecimal quantity, BigDecimal unitDiscount) {
+    return unitPrice.subtract(unitDiscount).multiply(quantity).setScale(2, RoundingMode.HALF_UP);
   }
 
 

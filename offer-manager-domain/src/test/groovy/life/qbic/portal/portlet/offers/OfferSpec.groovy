@@ -631,7 +631,7 @@ class OfferSpec extends Specification {
 
         when: "the net price is calculated"
         def itemNet =  {
-            BigDecimal.valueOf(it.totalPrice - it.quantityDiscount)
+            BigDecimal.valueOf(it.totalPrice - it.itemDiscount)
         }
         BigDecimal expectedValue = offer.getItems().collect(itemNet).sum() * overheadRatio
         overheadSum = offer.getOverheadSum()

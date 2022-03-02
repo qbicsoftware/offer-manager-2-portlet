@@ -205,7 +205,7 @@ class OfferTemplate {
             OfferPosition offerPosition = OfferPosition.createProductItem(counter.currentPosition, offerItem)
             tableBody.append(offerPosition.outerHtml())
             counter.increase()
-            if (offerItem.getQuantityDiscount() > 0) {
+            if (offerItem.getItemDiscount() > 0) {
                 OfferPosition discountPosition = OfferPosition.createDiscount(counter.currentPosition, counter.currentPosition - 1, offerItem, isDataManagement)
                 tableBody.append(discountPosition.outerHtml())
                 counter.increase()
@@ -311,7 +311,7 @@ class OfferTemplate {
             String description = createProductItemDescription(offerItem.getProductDescription(), offerItem.getServiceProvider())
             double quantity = offerItem.getQuantity()
             double unitPrice = offerItem.getUnitPrice()
-            double total = offerItem.getItemTotal()
+            double total = offerItem.getListPrice()
             String unit = offerItem.getUnit()
             return new OfferPosition(position, name, description, quantity, unitPrice, total, unit)
         }
@@ -319,8 +319,8 @@ class OfferTemplate {
         static OfferPosition createDiscount(int position, int discountedPosition, OfferItem offerItem, Boolean isDataStorage) {
             String name = "Discount"
             double quantity = offerItem.getQuantity()
-            double unitPrice = offerItem.getDiscountPerUnit() * (-1)
-            double total = offerItem.getQuantityDiscount() * (-1)
+            double unitPrice = offerItem.getUnitDiscount() * (-1)
+            double total = offerItem.getItemDiscount() * (-1)
             String unit = offerItem.getUnit()
             double discountPercentage = offerItem.getDiscountPercentage()
             String description = isDataStorage ? \

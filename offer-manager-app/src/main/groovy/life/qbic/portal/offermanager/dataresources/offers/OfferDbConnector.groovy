@@ -35,7 +35,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
 
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (offerId, " +
             "creationDate, expirationDate, customerId, projectManagerId, projectTitle, " +
-            "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, totalDiscount, " +
+            "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, itemDiscount, " +
             "checksum, experimentalDesign)"
 
     private static final String OFFER_SELECT_QUERY = "SELECT offerId, creationDate, expirationDate, customerId, projectManagerId, projectTitle," +

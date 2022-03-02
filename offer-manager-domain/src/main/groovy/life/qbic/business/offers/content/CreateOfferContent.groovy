@@ -1,6 +1,6 @@
 package life.qbic.business.offers.content
 
-import life.qbic.business.offers.Converter
+
 import life.qbic.business.offers.Offer
 import life.qbic.business.offers.OfferContent
 import life.qbic.business.offers.OfferItem
@@ -121,7 +121,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
             return 0
         } else {
             return offerItems.sum {
-                it.itemTotal - it.quantityDiscount
+                it.listPrice - it.itemDiscount
             } as double
         }
     }
@@ -136,7 +136,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput{
             return 0
         } else {
             return offerItems.sum {
-                (it.itemTotal - it.quantityDiscount ) * overheadRatio
+                (it.listPrice - it.itemDiscount ) * overheadRatio
             } as double
         }
     }
