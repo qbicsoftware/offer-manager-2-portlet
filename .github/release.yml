@@ -17,3 +17,5 @@ changelog:
         - chore
     - title: Others 🧃
       labels:
+        - "*"
+   

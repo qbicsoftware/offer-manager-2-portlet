@@ -118,7 +118,10 @@ class CreateProjectViewModel {
     }
 
     private void resetModel() {
+        String previousSpace = new String(resultingSpaceName)
         initFields()
+        resultingSpaceName = previousSpace
+        desiredSpaceName = previousSpace
     }
     
     private void validateSpaceName() {
