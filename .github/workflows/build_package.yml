@@ -1,9 +1,14 @@
 name: Build Maven Package
 
-on: [push]
-
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [ main, master ]
 jobs:
-  build:
+  package:
     runs-on: ubuntu-latest
 
     steps:

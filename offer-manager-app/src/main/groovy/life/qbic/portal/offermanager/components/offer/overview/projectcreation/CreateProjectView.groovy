@@ -320,6 +320,7 @@ class CreateProjectView extends VerticalLayout{
     }
 
     private void resetInputs() {
+        String previousSpaceName = new String(resultingSpaceName.getValue())
         this.projectSpaceSelection.clear()
         this.desiredProjectCode.clear()
         this.resultingProjectCode.clear()
@@ -328,6 +329,7 @@ class CreateProjectView extends VerticalLayout{
         this.existingSpaceLayout.setVisible(false)
         this.customSpaceLayout.setVisible(false)
         this.projectAvailability.removeAllComponents()
+        resultingSpaceName.setValue(previousSpaceName)
     }
 
     private void bindData() {
