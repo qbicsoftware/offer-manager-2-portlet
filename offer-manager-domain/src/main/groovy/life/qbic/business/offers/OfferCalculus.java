@@ -100,7 +100,7 @@ class OfferCalculus {
    * @return the VAT amount the provided country
    * @see #calcVat(BigDecimal, BigDecimal)
    */
-  public static BigDecimal calcVat(BigDecimal totalNetPrice, String country) {
+  protected static BigDecimal calcVat(BigDecimal totalNetPrice, String country) {
     BigDecimal vatRatio = vatRatio(country);
     return calcVat(totalNetPrice, vatRatio);
   }
@@ -176,7 +176,7 @@ class OfferCalculus {
    * @param offer the offer with the items to calculate the net sums
    * @return a copy of the input offer with the final net prices
    */
-  public static OfferV2 withNetPrices(OfferV2 offer) {
+  protected static OfferV2 withNetPrices(OfferV2 offer) {
     OfferV2 offerCopy = OfferV2.copyOf(offer);
 
     BigDecimal dataAnalysisNetTotal = netSum(offerCopy.getDataAnalysisItems());
@@ -209,7 +209,7 @@ class OfferCalculus {
    * @throws OfferCalculusException the product category could not be determined for one or more
    *     product items in the provided offer
    */
-  public static OfferV2 withGroupedOfferItems(OfferV2 offerV2) throws OfferCalculusException {
+  protected static OfferV2 withGroupedOfferItems(OfferV2 offerV2) throws OfferCalculusException {
     return withGroupedOfferItems(offerV2, createOfferItems(offerV2));
   }
 
@@ -221,7 +221,7 @@ class OfferCalculus {
    * @param offer an offer with a selected customer affiliation
    * @return an offer with filled overhead information
    */
-  public static OfferV2 withOverheads(OfferV2 offer) {
+  protected static OfferV2 withOverheads(OfferV2 offer) {
     AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory();
     BigDecimal overheadRatio = overheadRatio(affiliationCategory);
 
@@ -262,7 +262,7 @@ class OfferCalculus {
    * @param items the items to calculate the net sum for
    * @return the net sum including discounts.
    */
-  public static BigDecimal netSum(List<OfferItem> items) {
+  protected static BigDecimal netSum(List<OfferItem> items) {
     return items.stream()
         .map(OfferItem::getItemNet)
         .map(BigDecimal::valueOf)
@@ -300,7 +300,7 @@ class OfferCalculus {
    * @param overheadRatio the overhead ratio to apply
    * @return the overhead sum based on the overhead ratio and items
    */
-  public static BigDecimal overheads(List<OfferItem> items, BigDecimal overheadRatio) {
+  protected static BigDecimal overheads(List<OfferItem> items, BigDecimal overheadRatio) {
     if (overheadRatio.compareTo(BigDecimal.ZERO) < 0
         || overheadRatio.compareTo(BigDecimal.ONE) > 0) {
       throw new IllegalArgumentException(
@@ -511,7 +511,7 @@ class OfferCalculus {
    * @param quantity the quantity amount of the product
    * @return the discounted final price
    */
-  public static BigDecimal calculateQuantityDiscount(
+  protected static BigDecimal calculateQuantityDiscount(
       BigDecimal unitPrice, BigDecimal quantity, String productCategory) {
     QuantityDiscount quantityDiscount = new QuantityDiscount();
     BigDecimal discountTotal = quantityDiscount.apply(quantity, unitPrice);
@@ -540,7 +540,7 @@ class OfferCalculus {
    * @param item the item to calculate the net sum for
    * @return the net sum of the provided item
    */
-  public static BigDecimal itemNetPrice(OfferItem item) {
+  protected static BigDecimal itemNetPrice(OfferItem item) {
     BigDecimal unitPrice = BigDecimal.valueOf(item.getUnitPrice());
     BigDecimal unitDiscount = BigDecimal.valueOf(item.getUnitDiscount());
     BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
