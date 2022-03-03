@@ -38,7 +38,9 @@ public class RefactorConverter {
   }
 
   OfferId toOfferId(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
-    return null;
+    int version = Integer.parseInt(offerIdDto.getVersion());
+    return new OfferId(offerIdDto.getProjectConservedPart(), offerIdDto.getRandomPart(),
+        version);
   }
 
   Product toProduct(ProductDraft productDraft) {
