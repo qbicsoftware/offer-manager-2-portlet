@@ -67,7 +67,16 @@ public class RefactorConverter {
   }
 
   life.qbic.datamodel.dtos.business.AffiliationCategory toAffiliationCategoryDto(AffiliationCategory affiliationCategory) {
-    return null;
+    switch (affiliationCategory) {
+      case INTERNAL:
+        return life.qbic.datamodel.dtos.business.AffiliationCategory.INTERNAL;
+      case EXTERNAL_ACADEMIC:
+        return life.qbic.datamodel.dtos.business.AffiliationCategory.EXTERNAL_ACADEMIC;
+      case EXTERNAL:
+        return life.qbic.datamodel.dtos.business.AffiliationCategory.EXTERNAL;
+      default:
+        return life.qbic.datamodel.dtos.business.AffiliationCategory.EXTERNAL;
+    }
   }
 
   OfferId toOfferId(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
