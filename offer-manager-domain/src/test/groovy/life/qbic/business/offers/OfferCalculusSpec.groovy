@@ -430,7 +430,7 @@ class OfferCalculusSpec extends Specification {
     affiliationCategory << AffiliationCategory.values()
   }
 
-  def "when a german offer is processed, then the vat is #vatRatioString"() {
+  def "when an offer for a customer in Germany is processed, then the vat is #vatRatioString"() {
     given: "an unprocessed offer with items"
     OfferV2 unprocessedOffer = createUnprocessedOffer(affiliationCategory as AffiliationCategory, country)
     and: "an offer with filled VAT prices"
@@ -451,7 +451,7 @@ class OfferCalculusSpec extends Specification {
 
   }
 
-  def "when a foreign offer is processed, then the vat is #vatRatioString for #country"() {
+  def "when a offer for a customer outside of Germany is processed, then the vat is #vatRatioString for #country"() {
     given: "an unprocessed offer with items"
     OfferV2 unprocessedOffer = createUnprocessedOffer(affiliationCategory as AffiliationCategory, country)
     and: "an offer with filled VAT prices"
