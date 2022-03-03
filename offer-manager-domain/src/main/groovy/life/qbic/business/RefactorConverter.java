@@ -1,6 +1,10 @@
 package life.qbic.business;
 
 import java.util.function.Function;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.List;
 import java.util.stream.Collectors;
 import life.qbic.business.offers.OfferV2;
 import life.qbic.business.offers.identifier.OfferId;
@@ -8,6 +12,7 @@ import life.qbic.business.persons.Person;
 import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
 import life.qbic.business.products.Product;
+import life.qbic.business.products.ProductItem;
 import life.qbic.business.products.dtos.ProductDraft;
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
 import life.qbic.datamodel.dtos.business.Customer;
@@ -20,9 +25,9 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace;
  * <b>ATTENTION: Only for refactor purposes. Meant to be removed.</b>
  *
  * <ol>
- *   <li>use cases dürfen nur die neuen klassen verwenden (keine data-model-lib)
- *   <li>apdapter (controller und presenter) benutzen diesen converter
- *   <li>sobald alles umgestellt ist kann man den offer manager laufen lassen
+ *   <li>use cases dürfen nur die neuen klassen verwenden (keine data-model-lib)</li>
+ *   <li>apdapter (controller und presenter) benutzen diesen converter</li>
+ *   <li>sobald alles umgestellt ist kann man den offer manager laufen lassen</li>
  * </ol>
  */
 public class RefactorConverter {
@@ -44,14 +49,64 @@ public class RefactorConverter {
   }
 
   life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
+    life.qbic.datamodel.dtos.business.Customer customer = toCustomerDto(offer.getCustomer());
+    life.qbic.datamodel.dtos.business.ProjectManager projectManager = toProjectManagerDto(
+        offer.getProjectManager());
+    life.qbic.datamodel.dtos.business.Affiliation customerAffiliation = toAffiliationDto(
+        offer.getSelectedCustomerAffiliation());
+    java.util.Date expirationDate = toUtilDate(offer.getExpirationDate());
+    java.util.Date modificationDate = toUtilDate(offer.getCreationDate());
+    List<life.qbic.datamodel.dtos.business.ProductItem> productItemDtos = offer.getItems().stream()
+        .map(this::toProductItemDto)
+        .collect(Collectors.toList());
+
+    // builder composition
+    life.qbic.datamodel.dtos.business.Offer.Builder offerDtoBuilder =
+        new life.qbic.datamodel.dtos.business.Offer.Builder(customer, projectManager,
+            offer.getProjectTitle(), offer.getProjectObjective(), customerAffiliation);
+    offer.getExperimentalDesign().ifPresent(offerDtoBuilder::experimentalDesign);
+    offer.getAssociatedProject().ifPresent(offerDtoBuilder::associatedProject);
+    offerDtoBuilder.expirationDate(expirationDate);
+    offerDtoBuilder.modificationDate(modificationDate);
+    offerDtoBuilder.netPrice(offer.getTotalNetPrice().doubleValue());
+    offerDtoBuilder.overheads(offer.getOverhead());
+    offerDtoBuilder.taxes(offer.getTotalVat().doubleValue());
+    offerDtoBuilder.totalPrice(offerDtoBuilder.getTotalPrice());
+    offerDtoBuilder.items(productItemDtos);
     return null;
   }
 
+  private java.util.Date toUtilDate(LocalDate localDate) {
+    return Date.from(
+        localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+  }
+
+  life.qbic.datamodel.dtos.business.ProductItem toProductItemDto(ProductItem productItem) {
+    return null;
+  }
+
+  life.qbic.datamodel.dtos.business.ProjectManager toProjectManagerDto(Person person) {
+    life.qbic.datamodel.dtos.business.ProjectManager.Builder projectManagerDtoBuilder = new life.qbic.datamodel.dtos.business.ProjectManager.Builder(
+        person.getFirstName(),
+        person.getLastName(),
+        person.getEmail());
+    projectManagerDtoBuilder.affiliations(
+        person.getAffiliations().stream()
+            .map(this::toAffiliationDto)
+            .collect(Collectors.toList()));
+    projectManagerDtoBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
+    return projectManagerDtoBuilder.build();
+  }
+
   life.qbic.datamodel.dtos.business.Customer toCustomerDto(Person person) {
-    life.qbic.datamodel.dtos.business.Customer.Builder customerBuilder =
-        new Customer.Builder(person.getFirstName(), person.getLastName(), person.getEmail());
+    life.qbic.datamodel.dtos.business.Customer.Builder customerBuilder = new Customer.Builder(
+        person.getFirstName(),
+        person.getLastName(),
+        person.getEmail());
     customerBuilder.affiliations(
-        person.getAffiliations().stream().map(this::toAffiliationDto).collect(Collectors.toList()));
+        person.getAffiliations().stream()
+            .map(this::toAffiliationDto)
+            .collect(Collectors.toList()));
     customerBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
     return customerBuilder.build();
   }
@@ -68,8 +123,7 @@ public class RefactorConverter {
     return affiliationDtoBuilder.build();
   }
 
-  life.qbic.datamodel.dtos.business.AffiliationCategory toAffiliationCategoryDto(
-      AffiliationCategory affiliationCategory) {
+  life.qbic.datamodel.dtos.business.AffiliationCategory toAffiliationCategoryDto(AffiliationCategory affiliationCategory) {
     switch (affiliationCategory) {
       case INTERNAL:
         return life.qbic.datamodel.dtos.business.AffiliationCategory.INTERNAL;
@@ -85,6 +139,11 @@ public class RefactorConverter {
   OfferId toOfferId(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
     int version = Integer.parseInt(offerIdDto.getVersion());
     return new OfferId(offerIdDto.getProjectConservedPart(), offerIdDto.getRandomPart(), version);
+  }
+
+  life.qbic.datamodel.dtos.business.OfferId toOfferIdDto(OfferId offerId) {
+    return new life.qbic.datamodel.dtos.business.OfferId(offerId.getProjectPart(),
+        offerId.getRandomPart(), Integer.toString(offerId.getVersion()));
   }
 
   Product toProduct(ProductDraft productDraft) {
