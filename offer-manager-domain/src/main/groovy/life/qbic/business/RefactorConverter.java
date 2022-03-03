@@ -13,6 +13,7 @@ import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
 import life.qbic.datamodel.dtos.business.Customer;
 import life.qbic.datamodel.dtos.business.ProductId;
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode;
+import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier;
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace;
 
 /**
@@ -166,18 +167,30 @@ public class RefactorConverter {
         projectIdentifier.getProjectCode().getCode().toUpperCase());
   }
 
+  /**
+   * Converts a project identifier String representation into an instance of
+   * {@link life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier}.
+   * @param projectIdentifier the project identifier in its String representation
+   * @return the project identifier DTO form
+   * @throws IllegalArgumentException if the conversion failed, for example due to format rule violations
+   */
   public life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier toProjectIdentifierDTO(
       String projectIdentifier) throws IllegalArgumentException {
-    // todo implement
     return new ProjectIdentifierParser().apply(projectIdentifier);
   }
 
+  /**
+   * Converts a project code String representation into an instance of {@link life.qbic.datamodel.dtos.projectmanagement.ProjectCode}.
+   * @param projectCode the project code in String representation
+   * @throws IllegalArgumentException if the project code cannot be converted, for example due to format rule violations
+   */
   public life.qbic.datamodel.dtos.projectmanagement.ProjectCode toProjectCodeDTO(String projectCode)
-    throws IllegalArgumentException {
+      throws IllegalArgumentException {
     try {
       return new ProjectCode(projectCode);
     } catch (Exception e) {
-      throw new IllegalArgumentException(String.format("Could not convert project code %s.", projectCode), e);
+      throw new IllegalArgumentException(
+          String.format("Could not convert project code %s.", projectCode), e);
     }
   }
 
@@ -193,6 +206,17 @@ public class RefactorConverter {
     public life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier apply(String s) {
       return null; // todo implement
     }
+
+    private static life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier parseFrom(
+        String s) {
+      String[] splitString = s.split("/");
+      if (splitString.length != 3) {
+        throw new IllegalArgumentException(
+            String.format("Unknown project identifier format %s", s));
+      }
+      return new ProjectIdentifier(
+          new ProjectSpace(splitString[1]), new ProjectCode(splitString[2]));
+    }
   }
 
   /**
@@ -205,10 +229,10 @@ public class RefactorConverter {
 
     @Override
     public life.qbic.datamodel.dtos.business.ProductId apply(String s) {
-      return parseString(s);
+      return parseFrom(s);
     }
 
-    private static life.qbic.datamodel.dtos.business.ProductId parseString(String s) {
+    private static life.qbic.datamodel.dtos.business.ProductId parseFrom(String s) {
       String[] splitString = s.split("_");
       if (splitString.length != 2) {
         throw new IllegalArgumentException(String.format("Unknown product id format: %s", s));
