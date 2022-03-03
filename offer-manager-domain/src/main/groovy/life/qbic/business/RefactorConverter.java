@@ -41,7 +41,27 @@ public class RefactorConverter {
   }
 
   life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
+    life.qbic.datamodel.dtos.business.Customer customer = toCustomerDto(offer.getCustomer());
+    life.qbic.datamodel.dtos.business.ProjectManager projectManager = toProjectManagerDto(
+        offer.getProjectManager());
+    life.qbic.datamodel.dtos.business.Affiliation customerAffiliation = null;
+
+    life.qbic.datamodel.dtos.business.Offer offerDto = new Offer.Builder(customer, projectManager,
+        offer.getProjectTitle(), offer.getProjectObjective(), customerAffiliation).build();
     return null;
+  }
+
+  life.qbic.datamodel.dtos.business.ProjectManager toProjectManagerDto(Person person) {
+    life.qbic.datamodel.dtos.business.ProjectManager.Builder projectManagerDtoBuilder = new life.qbic.datamodel.dtos.business.ProjectManager.Builder(
+        person.getFirstName(),
+        person.getLastName(),
+        person.getEmail());
+    projectManagerDtoBuilder.affiliations(
+        person.getAffiliations().stream()
+            .map(this::toAffiliationDto)
+            .collect(Collectors.toList()));
+    projectManagerDtoBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
+    return projectManagerDtoBuilder.build();
   }
 
   life.qbic.datamodel.dtos.business.Customer toCustomerDto(Person person) {
