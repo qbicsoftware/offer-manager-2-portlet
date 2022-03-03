@@ -5,6 +5,7 @@ import life.qbic.business.offers.OfferV2;
 import life.qbic.business.offers.identifier.OfferId;
 import life.qbic.business.persons.Person;
 import life.qbic.business.persons.affiliation.Affiliation;
+import life.qbic.business.persons.affiliation.AffiliationCategory;
 import life.qbic.business.products.Product;
 import life.qbic.business.products.dtos.ProductDraft;
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
@@ -57,6 +58,15 @@ public class RefactorConverter {
   }
 
   life.qbic.datamodel.dtos.business.Affiliation toAffiliationDto(Affiliation affiliation) {
+    life.qbic.datamodel.dtos.business.Affiliation.Builder affiliationDtoBuilder = new life.qbic.datamodel.dtos.business.Affiliation.Builder(
+        affiliation.getOrganization(), affiliation.getStreet(), affiliation.getPostalCode(),
+        affiliation.getCity());
+    affiliationDtoBuilder.category(toAffiliationCategoryDto(affiliation.getCategory()));
+    affiliationDtoBuilder.country(affiliation.getCountry());
+    return affiliationDtoBuilder.build();
+  }
+
+  life.qbic.datamodel.dtos.business.AffiliationCategory toAffiliationCategoryDto(AffiliationCategory affiliationCategory) {
     return null;
   }
 
