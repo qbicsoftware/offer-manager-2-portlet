@@ -1,9 +1,15 @@
 package life.qbic.business;
 
+import java.util.stream.Collectors;
 import life.qbic.business.offers.OfferV2;
 import life.qbic.business.offers.identifier.OfferId;
+import life.qbic.business.persons.Person;
+import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.products.Product;
 import life.qbic.business.products.dtos.ProductDraft;
+import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
+import life.qbic.datamodel.dtos.business.Customer;
+import life.qbic.datamodel.dtos.business.Offer;
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier;
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace;
 
@@ -34,6 +40,23 @@ public class RefactorConverter {
   }
 
   life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
+    return null;
+  }
+
+  life.qbic.datamodel.dtos.business.Customer toCustomerDto(Person person) {
+    life.qbic.datamodel.dtos.business.Customer.Builder customerBuilder = new Customer.Builder(
+        person.getFirstName(),
+        person.getLastName(),
+        person.getEmail());
+    customerBuilder.affiliations(
+        person.getAffiliations().stream()
+            .map(this::toAffiliationDto)
+            .collect(Collectors.toList()));
+    customerBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
+    return customerBuilder.build();
+  }
+
+  life.qbic.datamodel.dtos.business.Affiliation toAffiliationDto(Affiliation affiliation) {
     return null;
   }
 
