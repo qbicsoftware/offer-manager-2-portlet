@@ -12,6 +12,7 @@ import life.qbic.business.products.dtos.ProductDraft;
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
 import life.qbic.datamodel.dtos.business.Customer;
 import life.qbic.datamodel.dtos.business.ProductId;
+import life.qbic.datamodel.dtos.projectmanagement.ProjectCode;
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace;
 
 /**
@@ -140,13 +141,11 @@ public class RefactorConverter {
    */
   public life.qbic.datamodel.dtos.projectmanagement.ProjectSpace toProjectSpaceDTO(
       String projectSpace) throws IllegalArgumentException {
-    ProjectSpace projectSpaceDTO;
     try {
-      projectSpaceDTO = new ProjectSpace(projectSpace);
+      return new ProjectSpace(projectSpace);
     } catch (Exception e) {
       throw new IllegalArgumentException("Could not convert project space", e);
     }
-    return projectSpaceDTO;
   }
 
   /**
@@ -171,6 +170,15 @@ public class RefactorConverter {
       String projectIdentifier) throws IllegalArgumentException {
     // todo implement
     return new ProjectIdentifierParser().apply(projectIdentifier);
+  }
+
+  public life.qbic.datamodel.dtos.projectmanagement.ProjectCode toProjectCodeDTO(String projectCode)
+    throws IllegalArgumentException {
+    try {
+      return new ProjectCode(projectCode);
+    } catch (Exception e) {
+      throw new IllegalArgumentException(String.format("Could not convert project code %s.", projectCode), e);
+    }
   }
 
   /**
