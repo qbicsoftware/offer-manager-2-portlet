@@ -105,6 +105,11 @@ public class RefactorConverter {
         version);
   }
 
+  life.qbic.datamodel.dtos.business.OfferId toOfferIdDto(OfferId offerId) {
+    return new life.qbic.datamodel.dtos.business.OfferId(offerId.getProjectPart(),
+        offerId.getRandomPart(), Integer.toString(offerId.getVersion()));
+  }
+
   Product toProduct(ProductDraft productDraft) {
     return null;
   }
