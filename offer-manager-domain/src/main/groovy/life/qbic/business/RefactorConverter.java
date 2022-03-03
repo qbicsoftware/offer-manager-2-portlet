@@ -1,9 +1,16 @@
 package life.qbic.business;
 
 import java.util.function.Function;
-import life.qbic.business.offers.Offer;
+import java.util.stream.Collectors;
+import life.qbic.business.offers.OfferV2;
+import life.qbic.business.offers.identifier.OfferId;
+import life.qbic.business.persons.Person;
+import life.qbic.business.persons.affiliation.Affiliation;
+import life.qbic.business.persons.affiliation.AffiliationCategory;
 import life.qbic.business.products.Product;
 import life.qbic.business.products.dtos.ProductDraft;
+import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
+import life.qbic.datamodel.dtos.business.Customer;
 import life.qbic.datamodel.dtos.business.ProductId;
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace;
 
@@ -23,16 +30,59 @@ public class RefactorConverter {
   // be removed
   // ProductDraft and ProductEntity can be replaced
 
-  Offer toOffer(life.qbic.datamodel.dtos.business.OfferId offerId) {
+  OfferV2 toOffer(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
+    OfferV2 offer = new OfferV2();
+    OfferId offerId = toOfferId(offerIdDto);
+    offer.setIdentifier(offerId);
+    return offer;
+  }
+
+  OfferV2 toOffer(life.qbic.datamodel.dtos.business.Offer offerDto) {
     return null;
   }
 
-  Offer toOffer(life.qbic.datamodel.dtos.business.Offer offerDto) {
+  life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
     return null;
   }
 
-  life.qbic.datamodel.dtos.business.Offer toOfferDto(Offer offer) {
-    return null;
+  life.qbic.datamodel.dtos.business.Customer toCustomerDto(Person person) {
+    life.qbic.datamodel.dtos.business.Customer.Builder customerBuilder =
+        new Customer.Builder(person.getFirstName(), person.getLastName(), person.getEmail());
+    customerBuilder.affiliations(
+        person.getAffiliations().stream().map(this::toAffiliationDto).collect(Collectors.toList()));
+    customerBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
+    return customerBuilder.build();
+  }
+
+  life.qbic.datamodel.dtos.business.Affiliation toAffiliationDto(Affiliation affiliation) {
+    life.qbic.datamodel.dtos.business.Affiliation.Builder affiliationDtoBuilder =
+        new life.qbic.datamodel.dtos.business.Affiliation.Builder(
+            affiliation.getOrganization(),
+            affiliation.getStreet(),
+            affiliation.getPostalCode(),
+            affiliation.getCity());
+    affiliationDtoBuilder.category(toAffiliationCategoryDto(affiliation.getCategory()));
+    affiliationDtoBuilder.country(affiliation.getCountry());
+    return affiliationDtoBuilder.build();
+  }
+
+  life.qbic.datamodel.dtos.business.AffiliationCategory toAffiliationCategoryDto(
+      AffiliationCategory affiliationCategory) {
+    switch (affiliationCategory) {
+      case INTERNAL:
+        return life.qbic.datamodel.dtos.business.AffiliationCategory.INTERNAL;
+      case EXTERNAL_ACADEMIC:
+        return life.qbic.datamodel.dtos.business.AffiliationCategory.EXTERNAL_ACADEMIC;
+      case EXTERNAL:
+        return life.qbic.datamodel.dtos.business.AffiliationCategory.EXTERNAL;
+      default:
+        return life.qbic.datamodel.dtos.business.AffiliationCategory.EXTERNAL;
+    }
+  }
+
+  OfferId toOfferId(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
+    int version = Integer.parseInt(offerIdDto.getVersion());
+    return new OfferId(offerIdDto.getProjectConservedPart(), offerIdDto.getRandomPart(), version);
   }
 
   Product toProduct(ProductDraft productDraft) {
@@ -100,17 +150,20 @@ public class RefactorConverter {
   }
 
   /**
-   * Converts a {@link life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier} object
-   * to its String representation.
+   * Converts a {@link life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier} object to its
+   * String representation.
    *
-   * The resulting format is upper case: <code>/#projectspace/#projectcode</code>
+   * <p>The resulting format is upper case: <code>/#projectspace/#projectcode</code>
+   *
    * @param projectIdentifier the project identifier to convert
    * @return its String representation
    */
   public String toProjectIdentifier(
       life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier projectIdentifier) {
     // we do not want to  depend on the class String format implementation, so we are explicit
-    return String.format("/%s/%s", projectIdentifier.getProjectSpace().getName().toUpperCase(),
+    return String.format(
+        "/%s/%s",
+        projectIdentifier.getProjectSpace().getName().toUpperCase(),
         projectIdentifier.getProjectCode().getCode().toUpperCase());
   }
 
@@ -121,9 +174,9 @@ public class RefactorConverter {
   }
 
   /**
-   * Small helper class to provide project identifier parsing functionality. Since we control the String
-   * representation of the project identifier, we know that we can expect it
-   * to be in the format <code>/#projectspace/#projectcode</code>.
+   * Small helper class to provide project identifier parsing functionality. Since we control the
+   * String representation of the project identifier, we know that we can expect it to be in the
+   * format <code>/#projectspace/#projectcode</code>.
    */
   protected static class ProjectIdentifierParser
       implements Function<String, life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier> {
