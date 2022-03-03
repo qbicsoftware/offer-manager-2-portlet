@@ -60,9 +60,9 @@ public class RefactorConverter {
         .collect(Collectors.toList());
 
     // builder composition
-    life.qbic.datamodel.dtos.business.Offer.Builder offerDtoBuilder = new Offer.Builder(customer,
-        projectManager,
-        offer.getProjectTitle(), offer.getProjectObjective(), customerAffiliation);
+    life.qbic.datamodel.dtos.business.Offer.Builder offerDtoBuilder =
+        new life.qbic.datamodel.dtos.business.Offer.Builder(customer, projectManager,
+            offer.getProjectTitle(), offer.getProjectObjective(), customerAffiliation);
     offer.getExperimentalDesign().ifPresent(offerDtoBuilder::experimentalDesign);
     offer.getAssociatedProject().ifPresent(offerDtoBuilder::associatedProject);
     offerDtoBuilder.expirationDate(expirationDate);
