@@ -11,6 +11,7 @@ import life.qbic.business.persons.Person;
 import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
 import life.qbic.business.products.Product;
+import life.qbic.business.products.ProductItem;
 import life.qbic.business.products.dtos.ProductDraft;
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
 import life.qbic.datamodel.dtos.business.Customer;
@@ -48,10 +49,27 @@ public class RefactorConverter {
     life.qbic.datamodel.dtos.business.Customer customer = toCustomerDto(offer.getCustomer());
     life.qbic.datamodel.dtos.business.ProjectManager projectManager = toProjectManagerDto(
         offer.getProjectManager());
-    life.qbic.datamodel.dtos.business.Affiliation customerAffiliation = null;
+    life.qbic.datamodel.dtos.business.Affiliation customerAffiliation = toAffiliationDto(
+        offer.getSelectedCustomerAffiliation());
+    java.util.Date expirationDate = toUtilDate(offer.getExpirationDate());
+    java.util.Date modificationDate = toUtilDate(offer.getCreationDate());
+    List<life.qbic.datamodel.dtos.business.ProductItem> productItemDtos = offer.getItems().stream()
+        .map(this::toProductItemDto)
+        .collect(Collectors.toList());
 
-    life.qbic.datamodel.dtos.business.Offer offerDto = new Offer.Builder(customer, projectManager,
-        offer.getProjectTitle(), offer.getProjectObjective(), customerAffiliation).build();
+    // builder composition
+    life.qbic.datamodel.dtos.business.Offer.Builder offerDtoBuilder = new Offer.Builder(customer,
+        projectManager,
+        offer.getProjectTitle(), offer.getProjectObjective(), customerAffiliation);
+    offer.getExperimentalDesign().ifPresent(offerDtoBuilder::experimentalDesign);
+    offer.getAssociatedProject().ifPresent(offerDtoBuilder::associatedProject);
+    offerDtoBuilder.expirationDate(expirationDate);
+    offerDtoBuilder.modificationDate(modificationDate);
+    offerDtoBuilder.netPrice(offer.getTotalNetPrice().doubleValue());
+    offerDtoBuilder.overheads(offer.getOverhead());
+    offerDtoBuilder.taxes(offer.getTotalVat().doubleValue());
+    offerDtoBuilder.totalPrice(offerDtoBuilder.getTotalPrice());
+    offerDtoBuilder.items(productItemDtos);
     return null;
   }
 
