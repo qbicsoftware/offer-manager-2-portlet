@@ -10,5 +10,10 @@ package life.qbic.business;
  */
 public class RefactorConverter {
 
+  // CreateOfferContent can be replaced by the OfferCalculus
+  // vat calculation logic in the offer calculus can be redirected to the Tax office /Tax office can
+  // be removed
+  // ProductDraft and ProductEntity can be replaced
+
 
 }
