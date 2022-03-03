@@ -1,6 +1,7 @@
 package life.qbic.business;
 
 import life.qbic.business.offers.OfferV2;
+import life.qbic.business.offers.identifier.OfferId;
 import life.qbic.business.products.Product;
 import life.qbic.business.products.dtos.ProductDraft;
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier;
@@ -21,8 +22,11 @@ public class RefactorConverter {
   // be removed
   // ProductDraft and ProductEntity can be replaced
 
-  OfferV2 toOffer(life.qbic.datamodel.dtos.business.OfferId offerId) {
-    return null;
+  OfferV2 toOffer(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
+    OfferV2 offer = new OfferV2();
+    OfferId offerId = toOfferId(offerIdDto);
+    offer.setIdentifier(offerId);
+    return offer;
   }
 
   OfferV2 toOffer(life.qbic.datamodel.dtos.business.Offer offerDto) {
@@ -30,6 +34,10 @@ public class RefactorConverter {
   }
 
   life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
+    return null;
+  }
+
+  OfferId toOfferId(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
     return null;
   }
 
