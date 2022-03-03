@@ -1,5 +1,9 @@
 package life.qbic.business;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.List;
 import java.util.stream.Collectors;
 import life.qbic.business.offers.OfferV2;
 import life.qbic.business.offers.identifier.OfferId;
@@ -48,6 +52,15 @@ public class RefactorConverter {
 
     life.qbic.datamodel.dtos.business.Offer offerDto = new Offer.Builder(customer, projectManager,
         offer.getProjectTitle(), offer.getProjectObjective(), customerAffiliation).build();
+    return null;
+  }
+
+  private java.util.Date toUtilDate(LocalDate localDate) {
+    return Date.from(
+        localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+  }
+
+  life.qbic.datamodel.dtos.business.ProductItem toProductItemDto(ProductItem productItem) {
     return null;
   }
 
