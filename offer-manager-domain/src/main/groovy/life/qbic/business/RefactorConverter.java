@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import life.qbic.business.offers.OfferV2;
@@ -21,6 +22,18 @@ import life.qbic.business.products.dtos.ProductDraft;
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
 import life.qbic.datamodel.dtos.business.Customer;
 import life.qbic.datamodel.dtos.business.ProductId;
+import life.qbic.datamodel.dtos.business.facilities.Facility;
+import life.qbic.datamodel.dtos.business.facilities.FacilityFactory;
+import life.qbic.datamodel.dtos.business.services.DataStorage;
+import life.qbic.datamodel.dtos.business.services.ExternalServiceProduct;
+import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis;
+import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis;
+import life.qbic.datamodel.dtos.business.services.ProductUnit;
+import life.qbic.datamodel.dtos.business.services.ProductUnitFactory;
+import life.qbic.datamodel.dtos.business.services.ProjectManagement;
+import life.qbic.datamodel.dtos.business.services.ProteomicAnalysis;
+import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis;
+import life.qbic.datamodel.dtos.business.services.Sequencing;
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode;
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier;
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace;
@@ -224,7 +237,7 @@ public class RefactorConverter {
 
   private <T extends life.qbic.datamodel.dtos.business.services.Product> Product toProduct(
       T productDto) {
-    String productCategory = new ProductCategorizer().apply(productDto.getClass());
+    String productCategory = new ProductCategoryFormatter().apply(productDto.getClass());
     Product product = new Product();
     product.setCategory(productCategory);
     product.setDescription(productDto.getDescription());
@@ -237,11 +250,54 @@ public class RefactorConverter {
   }
 
   Product toProduct(ProductDraft productDraft) {
-    return null;
+    return null; //TODO
   }
 
   life.qbic.datamodel.dtos.business.services.Product toProductDto(Product product) {
-    return null;
+    String productName = product.getProductName();
+    String productDescription = product.getDescription();
+    Double internalUnitPrice = product.getInternalUnitPrice();
+    Double externalUnitPrice = product.getExternalUnitPrice();
+    ProductUnit productUnit = new ProductUnitFactory().getForString(product.getUnit());
+    Long runningNumber = toProductIdDto(
+        product.getProductId()).getUniqueId();
+    Facility serviceProvider = new FacilityFactory().getForString(product.getServiceProvider());
+    Class<? extends life.qbic.datamodel.dtos.business.services.Product> requestedProductClass = new ProductCategoryParser().apply(
+        product.getCategory());
+    if (Sequencing.class.equals(requestedProductClass)) {
+      return new Sequencing(productName, productDescription, internalUnitPrice, externalUnitPrice,
+          productUnit, runningNumber, serviceProvider);
+    } else if (ProteomicAnalysis.class.equals(requestedProductClass)) {
+      return new ProteomicAnalysis(productName, productDescription, internalUnitPrice,
+          externalUnitPrice,
+          productUnit, runningNumber, serviceProvider);
+    } else if (MetabolomicAnalysis.class.equals(requestedProductClass)) {
+      return new MetabolomicAnalysis(productName, productDescription, internalUnitPrice,
+          externalUnitPrice,
+          productUnit, runningNumber, serviceProvider);
+    } else if (PrimaryAnalysis.class.equals(requestedProductClass)) {
+      return new PrimaryAnalysis(productName, productDescription, internalUnitPrice,
+          externalUnitPrice,
+          productUnit, runningNumber, serviceProvider);
+    } else if (SecondaryAnalysis.class.equals(requestedProductClass)) {
+      return new SecondaryAnalysis(productName, productDescription, internalUnitPrice,
+          externalUnitPrice,
+          productUnit, runningNumber, serviceProvider);
+    } else if (ProjectManagement.class.equals(requestedProductClass)) {
+      return new ProjectManagement(productName, productDescription, internalUnitPrice,
+          externalUnitPrice,
+          productUnit, runningNumber, serviceProvider);
+    } else if (DataStorage.class.equals(requestedProductClass)) {
+      return new DataStorage(productName, productDescription, internalUnitPrice, externalUnitPrice,
+          productUnit, runningNumber, serviceProvider);
+    } else if (ExternalServiceProduct.class.equals(requestedProductClass)) {
+      return new ExternalServiceProduct(productName, productDescription, internalUnitPrice,
+          externalUnitPrice,
+          productUnit, runningNumber, serviceProvider);
+    }
+    throw new IllegalArgumentException(
+        String.format("Product category %s cannot be converted to a Product DTO",
+            product.getCategory()));
   }
 
   /**
@@ -399,7 +455,40 @@ public class RefactorConverter {
     }
   }
 
-  protected static class ProductCategorizer implements
+  private static Map<Class<? extends life.qbic.datamodel.dtos.business.services.Product>, String> productCategoryMap() {
+    Map<Class<? extends life.qbic.datamodel.dtos.business.services.Product>, String> categoryMap = new HashMap<>();
+    categoryMap.put(Sequencing.class, "Sequencing");
+    categoryMap.put(ProteomicAnalysis.class, "Proteomics");
+    categoryMap.put(MetabolomicAnalysis.class, "Metabolomics");
+    categoryMap.put(PrimaryAnalysis.class, "Primary Bioinformatics");
+    categoryMap.put(SecondaryAnalysis.class, "Secondary Bioinformatics");
+    categoryMap.put(ProjectManagement.class, "Project Management");
+    categoryMap.put(DataStorage.class, "Data Storage");
+    categoryMap.put(ExternalServiceProduct.class, "External Service");
+    return categoryMap;
+  }
+
+  protected static class ProductCategoryParser implements
+      Function<String, Class<? extends life.qbic.datamodel.dtos.business.services.Product>> {
+
+    /**
+     * Applies this function to the given argument.
+     *
+     * @param categoryName the function argument
+     * @return the function result
+     */
+    @Override
+    public Class<? extends life.qbic.datamodel.dtos.business.services.Product> apply(String categoryName) {
+      return productCategoryMap().entrySet().stream()
+          .filter(it -> it.getValue().equalsIgnoreCase(categoryName))
+          .map(Entry::getKey)
+          .findAny()
+          .orElseThrow(
+              () -> new IllegalArgumentException("No product class found for " + categoryName)
+          );
+    }
+  }
+  protected static class ProductCategoryFormatter implements
       Function<Class<? extends life.qbic.datamodel.dtos.business.services.Product>, String> {
 
     private final Map<Class<? extends life.qbic.datamodel.dtos.business.services.Product>, String> categoryMap = new HashMap<>();
@@ -424,7 +513,7 @@ public class RefactorConverter {
     @Override
     public String apply(
         Class<? extends life.qbic.datamodel.dtos.business.services.Product> aClass) {
-      return categoryMap.getOrDefault(aClass, "");
+      return productCategoryMap().getOrDefault(aClass, "");
     }
   }
 }
