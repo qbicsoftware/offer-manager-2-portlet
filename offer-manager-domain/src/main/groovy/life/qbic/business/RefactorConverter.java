@@ -62,7 +62,39 @@ public class RefactorConverter {
   }
 
   OfferV2 toOffer(life.qbic.datamodel.dtos.business.Offer offerDto) {
-    return null; //TODO
+    List<ProductItem> productItems = offerDto.getItems().stream().map(this::toProductItem)
+        .collect(Collectors.toList());
+    LocalDate creationDate = toLocalDate(offerDto.getModificationDate());
+    Person customer = toPerson(offerDto.getCustomer());
+    LocalDate expirationDate = toLocalDate(offerDto.getExpirationDate());
+    OfferId offerId = toOfferId(offerDto.getIdentifier());
+    Person projectManager = toPerson(offerDto.getProjectManager());
+    Affiliation selectedCustomerAffiliation = toAffiliation(
+        offerDto.getSelectedCustomerAffiliation());
+    BigDecimal totalCost = BigDecimal.valueOf(offerDto.getTotalPrice());
+    BigDecimal totalDiscountAmount = BigDecimal.valueOf(offerDto.getTotalDiscountPrice());
+    BigDecimal totalNetPrice = BigDecimal.valueOf(offerDto.getNetPrice());
+    BigDecimal totalVat = BigDecimal.valueOf(offerDto.getTaxes());
+
+    OfferV2 offer = new OfferV2();
+    offer.setAssociatedProject(offerDto.getAssociatedProject());
+    offer.setCreationDate(creationDate);
+    offer.setCustomer(customer);
+    offer.setExperimentalDesign(offerDto.getExperimentalDesign());
+    offer.setExpirationDate(expirationDate);
+    offer.setIdentifier(offerId);
+    offer.setItems(productItems);
+    offer.setOverhead(offerDto.getOverheads());
+    offer.setOverheadRatio(offerDto.getOverheadRatio());
+    offer.setProjectManager(projectManager);
+    offer.setProjectObjective(offerDto.getProjectObjective());
+    offer.setProjectTitle(offerDto.getProjectTitle());
+    offer.setSelectedCustomerAffiliation(selectedCustomerAffiliation);
+    offer.setTotalCost(totalCost);
+    offer.setTotalDiscountAmount(totalDiscountAmount);
+    offer.setTotalNetPrice(totalNetPrice);
+    offer.setTotalVat(totalVat);
+    return offer;
   }
 
   life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
@@ -250,7 +282,21 @@ public class RefactorConverter {
   }
 
   Product toProduct(ProductDraft productDraft) {
-    return null; //TODO
+    String productCategory = productDraft.getCategory().getValue();
+    String serviceProvider = productDraft.getServiceProvider().getLabel();
+    String description = productDraft.getDescription();
+    double externalUnitPrice = productDraft.getExternalUnitPrice();
+    double internalUnitPrice = productDraft.getInternalUnitPrice();
+    String productName = productDraft.getName();
+
+    Product product = new Product();
+    product.setCategory(productCategory);
+    product.setDescription(description);
+    product.setExternalUnitPrice(externalUnitPrice);
+    product.setInternalUnitPrice(internalUnitPrice);
+    product.setProductName(productName);
+    product.setServiceProvider(serviceProvider);
+    return product;
   }
 
   life.qbic.datamodel.dtos.business.services.Product toProductDto(Product product) {
@@ -490,20 +536,6 @@ public class RefactorConverter {
   }
   protected static class ProductCategoryFormatter implements
       Function<Class<? extends life.qbic.datamodel.dtos.business.services.Product>, String> {
-
-    private final Map<Class<? extends life.qbic.datamodel.dtos.business.services.Product>, String> categoryMap = new HashMap<>();
-
-    public ProductCategorizer() {
-      categoryMap.put(Sequencing.class, "Sequencing");
-      categoryMap.put(ProteomicAnalysis.class, "Proteomics");
-      categoryMap.put(MetabolomicAnalysis.class, "Metabolomics");
-      categoryMap.put(PrimaryAnalysis.class, "Primary Bioinformatics");
-      categoryMap.put(SecondaryAnalysis.class, "Secondary Bioinformatics");
-      categoryMap.put(ProjectManagement.class, "Project Management");
-      categoryMap.put(DataStorage.class, "Data Storage");
-      categoryMap.put(ExternalServiceProduct.class, "External Service");
-    }
-
     /**
      * Applies this function to the given argument.
      *
