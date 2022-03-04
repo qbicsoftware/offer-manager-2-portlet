@@ -85,7 +85,13 @@ public class RefactorConverter {
         localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
   }
 
-  life.qbic.datamodel.dtos.business.ProductItem toProductItemDto(ProductItem productItem) {
+  private LocalDate toLocalDate(java.util.Date utilDate) {
+    return Instant.ofEpochMilli(utilDate.getTime())
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate();
+  }
+
+  private life.qbic.datamodel.dtos.business.ProductItem toProductItemDto(ProductItem productItem) {
     double quantity = productItem.getQuantity();
     life.qbic.datamodel.dtos.business.services.Product productDto = toProductDto(
         productItem.getProduct());
