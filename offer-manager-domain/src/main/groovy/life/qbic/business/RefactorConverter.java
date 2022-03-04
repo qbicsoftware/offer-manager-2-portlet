@@ -1,9 +1,13 @@
 package life.qbic.business;
 
+import java.math.BigDecimal;
 import java.sql.Date;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import life.qbic.business.offers.OfferV2;
@@ -203,6 +207,20 @@ public class RefactorConverter {
   life.qbic.datamodel.dtos.business.OfferId toOfferIdDto(OfferId offerId) {
     return new life.qbic.datamodel.dtos.business.OfferId(offerId.getProjectPart(),
         offerId.getRandomPart(), Integer.toString(offerId.getVersion()));
+  }
+
+  private <T extends life.qbic.datamodel.dtos.business.services.Product> Product toProduct(
+      T productDto) {
+    String productCategory = new ProductCategorizer().apply(productDto.getClass());
+    Product product = new Product();
+    product.setCategory(productCategory);
+    product.setDescription(productDto.getDescription());
+    product.setExternalUnitPrice(productDto.getExternalUnitPrice());
+    product.setInternalUnitPrice(productDto.getInternalUnitPrice());
+    product.setProductId(productDto.getProductId().toString());
+    product.setProductName(productDto.getProductName());
+    product.setServiceProvider(productDto.getServiceProvider().getLabel());
+    return product;
   }
 
   Product toProduct(ProductDraft productDraft) {
