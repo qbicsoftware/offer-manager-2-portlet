@@ -1,10 +1,10 @@
 package life.qbic.business;
 
-import java.util.function.Function;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import life.qbic.business.offers.OfferV2;
 import life.qbic.business.offers.identifier.OfferId;
@@ -45,7 +45,7 @@ public class RefactorConverter {
   }
 
   OfferV2 toOffer(life.qbic.datamodel.dtos.business.Offer offerDto) {
-    return null;
+    return null; //TODO
   }
 
   life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
@@ -59,6 +59,7 @@ public class RefactorConverter {
     List<life.qbic.datamodel.dtos.business.ProductItem> productItemDtos = offer.getItems().stream()
         .map(this::toProductItemDto)
         .collect(Collectors.toList());
+    life.qbic.datamodel.dtos.business.OfferId offerIdDto = toOfferIdDto(offer.getIdentifier());
 
     // builder composition
     life.qbic.datamodel.dtos.business.Offer.Builder offerDtoBuilder =
@@ -73,7 +74,10 @@ public class RefactorConverter {
     offerDtoBuilder.taxes(offer.getTotalVat().doubleValue());
     offerDtoBuilder.totalPrice(offerDtoBuilder.getTotalPrice());
     offerDtoBuilder.items(productItemDtos);
-    return null;
+    offerDtoBuilder.identifier(offerIdDto);
+    offerDtoBuilder.overheadRatio(offer.getOverheadRatio());
+    offerDtoBuilder.totalDiscountPrice(offer.getTotalDiscountAmount().doubleValue());
+    return offerDtoBuilder.build();
   }
 
   private java.util.Date toUtilDate(LocalDate localDate) {
