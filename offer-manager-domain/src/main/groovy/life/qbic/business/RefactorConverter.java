@@ -385,4 +385,33 @@ public class RefactorConverter {
       return new ProductId.Builder(productCategory, productId).build();
     }
   }
+
+  protected static class ProductCategorizer implements
+      Function<Class<? extends life.qbic.datamodel.dtos.business.services.Product>, String> {
+
+    private final Map<Class<? extends life.qbic.datamodel.dtos.business.services.Product>, String> categoryMap = new HashMap<>();
+
+    public ProductCategorizer() {
+      categoryMap.put(Sequencing.class, "Sequencing");
+      categoryMap.put(ProteomicAnalysis.class, "Proteomics");
+      categoryMap.put(MetabolomicAnalysis.class, "Metabolomics");
+      categoryMap.put(PrimaryAnalysis.class, "Primary Bioinformatics");
+      categoryMap.put(SecondaryAnalysis.class, "Secondary Bioinformatics");
+      categoryMap.put(ProjectManagement.class, "Project Management");
+      categoryMap.put(DataStorage.class, "Data Storage");
+      categoryMap.put(ExternalServiceProduct.class, "External Service");
+    }
+
+    /**
+     * Applies this function to the given argument.
+     *
+     * @param aClass the function argument
+     * @return the function result
+     */
+    @Override
+    public String apply(
+        Class<? extends life.qbic.datamodel.dtos.business.services.Product> aClass) {
+      return categoryMap.getOrDefault(aClass, "");
+    }
+  }
 }
