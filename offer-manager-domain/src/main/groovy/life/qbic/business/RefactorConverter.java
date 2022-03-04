@@ -84,6 +84,18 @@ public class RefactorConverter {
     return offerDtoBuilder.build();
   }
 
+  private ProductItem toProductItem(
+      life.qbic.datamodel.dtos.business.ProductItem productItemDto) {
+    Product product = toProduct(productItemDto.getProduct());
+    BigDecimal unitDiscount = BigDecimal.valueOf(productItemDto.getQuantityDiscount());
+    BigDecimal totalPrice = BigDecimal.valueOf(productItemDto.getTotalPrice());
+    double quantity = productItemDto.getQuantity();
+    return new ProductItem(product,
+        quantity,
+        unitDiscount,
+        totalPrice);
+  }
+
   private java.util.Date toUtilDate(LocalDate localDate) {
     return Date.from(
         localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
@@ -183,9 +195,8 @@ public class RefactorConverter {
         return life.qbic.datamodel.dtos.business.AffiliationCategory.EXTERNAL_ACADEMIC;
       case EXTERNAL:
         return life.qbic.datamodel.dtos.business.AffiliationCategory.EXTERNAL;
-      default:
-        return life.qbic.datamodel.dtos.business.AffiliationCategory.EXTERNAL;
     }
+    return life.qbic.datamodel.dtos.business.AffiliationCategory.EXTERNAL;
   }
 
   private AffiliationCategory toAffiliationCategory(
@@ -195,10 +206,12 @@ public class RefactorConverter {
         return AffiliationCategory.INTERNAL;
       case EXTERNAL_ACADEMIC:
         return AffiliationCategory.EXTERNAL_ACADEMIC;
-      default:
+      case EXTERNAL:
         return AffiliationCategory.EXTERNAL;
     }
+    return AffiliationCategory.EXTERNAL;
   }
+
   OfferId toOfferId(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
     int version = Integer.parseInt(offerIdDto.getVersion());
     return new OfferId(offerIdDto.getProjectConservedPart(), offerIdDto.getRandomPart(), version);
