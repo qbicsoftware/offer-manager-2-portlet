@@ -148,6 +148,17 @@ public class RefactorConverter {
     }
   }
 
+  private AffiliationCategory toAffiliationCategory(
+      life.qbic.datamodel.dtos.business.AffiliationCategory affiliationCategoryDto) {
+    switch (affiliationCategoryDto) {
+      case INTERNAL:
+        return AffiliationCategory.INTERNAL;
+      case EXTERNAL_ACADEMIC:
+        return AffiliationCategory.EXTERNAL_ACADEMIC;
+      default:
+        return AffiliationCategory.EXTERNAL;
+    }
+  }
   OfferId toOfferId(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
     int version = Integer.parseInt(offerIdDto.getVersion());
     return new OfferId(offerIdDto.getProjectConservedPart(), offerIdDto.getRandomPart(), version);
