@@ -103,7 +103,7 @@ public class RefactorConverter {
         unitDiscount);
   }
 
-  life.qbic.datamodel.dtos.business.ProjectManager toProjectManagerDto(Person person) {
+  private life.qbic.datamodel.dtos.business.ProjectManager toProjectManagerDto(Person person) {
     life.qbic.datamodel.dtos.business.ProjectManager.Builder projectManagerDtoBuilder = new life.qbic.datamodel.dtos.business.ProjectManager.Builder(
         person.getFirstName(),
         person.getLastName(),
@@ -116,7 +116,7 @@ public class RefactorConverter {
     return projectManagerDtoBuilder.build();
   }
 
-  life.qbic.datamodel.dtos.business.Customer toCustomerDto(Person person) {
+  private life.qbic.datamodel.dtos.business.Customer toCustomerDto(Person person) {
     life.qbic.datamodel.dtos.business.Customer.Builder customerBuilder = new Customer.Builder(
         person.getFirstName(),
         person.getLastName(),
