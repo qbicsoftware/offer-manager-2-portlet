@@ -141,6 +141,19 @@ public class RefactorConverter {
     return affiliationDtoBuilder.build();
   }
 
+  private Affiliation toAffiliation(
+      life.qbic.datamodel.dtos.business.Affiliation affiliationDto) {
+    AffiliationCategory affiliationCategory = toAffiliationCategory(affiliationDto.getCategory());
+    return new Affiliation(
+        affiliationDto.getOrganisation(),
+        affiliationDto.getAddressAddition(),
+        affiliationDto.getStreet(),
+        affiliationDto.getPostalCode(),
+        affiliationDto.getCity(),
+        affiliationDto.getCountry(),
+        affiliationCategory);
+  }
+
   life.qbic.datamodel.dtos.business.AffiliationCategory toAffiliationCategoryDto(AffiliationCategory affiliationCategory) {
     switch (affiliationCategory) {
       case INTERNAL:
