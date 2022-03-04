@@ -129,6 +129,23 @@ public class RefactorConverter {
     return customerBuilder.build();
   }
 
+  private Person toPerson(life.qbic.datamodel.dtos.general.Person personDto) {
+    String emailAddress = personDto.getEmailAddress();
+    String firstName = personDto.getFirstName();
+    String lastName = personDto.getLastName();
+    String title = personDto.getTitle().getValue();
+    List<Affiliation> affiliations = personDto.getAffiliations().stream()
+        .map(this::toAffiliation)
+        .collect(Collectors.toList());
+    return new Person(emailAddress,
+        firstName,
+        lastName,
+        title,
+        emailAddress,
+        affiliations);
+  }
+
+
   life.qbic.datamodel.dtos.business.Affiliation toAffiliationDto(Affiliation affiliation) {
     life.qbic.datamodel.dtos.business.Affiliation.Builder affiliationDtoBuilder =
         new life.qbic.datamodel.dtos.business.Affiliation.Builder(
