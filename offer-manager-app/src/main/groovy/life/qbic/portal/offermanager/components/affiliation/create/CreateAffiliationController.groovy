@@ -1,9 +1,11 @@
 package life.qbic.portal.offermanager.components.affiliation.create
 
 import groovy.util.logging.Log4j2
-import life.qbic.business.persons.affiliation.Affiliation
-import life.qbic.business.persons.affiliation.AffiliationCategory
+import life.qbic.business.RefactorConverter
 import life.qbic.business.persons.affiliation.create.CreateAffiliationInput
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.AffiliationCategory
+import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
 
 /**
  * Controller class adapter from view information into use case input interface
@@ -31,15 +33,19 @@ class CreateAffiliationController {
      * @see AffiliationCategory
      */
     void createAffiliation(String organisation, String addressAddition, String street, String postalCode, String city, String country, String category) {
-        if (!addressAddition) {
-            addressAddition = ""
+        Affiliation.Builder affiliationBuilder
+        affiliationBuilder = new Affiliation.Builder(organisation, street, postalCode, city)
+        if (addressAddition && addressAddition?.length() > 0) {
+            affiliationBuilder.setAddressAddition(addressAddition)
         }
-        if (!country) {
-            country = "Germany"
-        }
-        AffiliationCategory affiliationCategory = AffiliationCategory.from(category) ?: AffiliationCategory.EXTERNAL
+        affiliationBuilder.setCountry(country)
+        AffiliationCategoryFactory categoryFactory = new AffiliationCategoryFactory()
 
-        Affiliation affiliation = new Affiliation(organisation, addressAddition, street, postalCode, city, country, affiliationCategory)
-        useCaseInput.createAffiliation(affiliation)
+        AffiliationCategory affiliationCategory
+        assert category && ! category.isEmpty()
+        affiliationCategory = categoryFactory.getForString(category)
+        affiliationBuilder.setCategory(affiliationCategory)
+        Affiliation affiliation = affiliationBuilder.build()
+        useCaseInput.createAffiliation(new RefactorConverter().toAffiliation(affiliation))
     }
 }

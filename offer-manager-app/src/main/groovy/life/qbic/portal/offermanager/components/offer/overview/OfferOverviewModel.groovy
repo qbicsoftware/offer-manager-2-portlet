@@ -1,8 +1,8 @@
 package life.qbic.portal.offermanager.components.offer.overview
 
 import groovy.beans.Bindable
-import life.qbic.business.offers.Offer
 import life.qbic.business.offers.OfferContent
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.OfferToPDFConverter
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.AppViewModel

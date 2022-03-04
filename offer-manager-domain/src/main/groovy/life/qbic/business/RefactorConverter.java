@@ -97,7 +97,7 @@ public class RefactorConverter {
     return offer;
   }
 
-  life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
+  public life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
     life.qbic.datamodel.dtos.business.Customer customer = toCustomerDto(offer.getCustomer());
     life.qbic.datamodel.dtos.business.ProjectManager projectManager = toProjectManagerDto(
         offer.getProjectManager());
@@ -164,7 +164,7 @@ public class RefactorConverter {
         unitDiscount);
   }
 
-  private life.qbic.datamodel.dtos.business.ProjectManager toProjectManagerDto(Person person) {
+  public life.qbic.datamodel.dtos.business.ProjectManager toProjectManagerDto(Person person) {
     life.qbic.datamodel.dtos.business.ProjectManager.Builder projectManagerDtoBuilder = new life.qbic.datamodel.dtos.business.ProjectManager.Builder(
         person.getFirstName(),
         person.getLastName(),
@@ -177,7 +177,7 @@ public class RefactorConverter {
     return projectManagerDtoBuilder.build();
   }
 
-  private life.qbic.datamodel.dtos.business.Customer toCustomerDto(Person person) {
+  public life.qbic.datamodel.dtos.business.Customer toCustomerDto(Person person) {
     life.qbic.datamodel.dtos.business.Customer.Builder customerBuilder = new Customer.Builder(
         person.getFirstName(),
         person.getLastName(),
@@ -190,7 +190,7 @@ public class RefactorConverter {
     return customerBuilder.build();
   }
 
-  private Person toPerson(life.qbic.datamodel.dtos.general.Person personDto) {
+  public Person toPerson(life.qbic.datamodel.dtos.general.Person personDto) {
     String emailAddress = personDto.getEmailAddress();
     String firstName = personDto.getFirstName();
     String lastName = personDto.getLastName();
@@ -207,7 +207,7 @@ public class RefactorConverter {
   }
 
 
-  life.qbic.datamodel.dtos.business.Affiliation toAffiliationDto(Affiliation affiliation) {
+  public life.qbic.datamodel.dtos.business.Affiliation toAffiliationDto(Affiliation affiliation) {
     life.qbic.datamodel.dtos.business.Affiliation.Builder affiliationDtoBuilder =
         new life.qbic.datamodel.dtos.business.Affiliation.Builder(
             affiliation.getOrganization(),
@@ -219,7 +219,7 @@ public class RefactorConverter {
     return affiliationDtoBuilder.build();
   }
 
-  private Affiliation toAffiliation(
+  public Affiliation toAffiliation(
       life.qbic.datamodel.dtos.business.Affiliation affiliationDto) {
     AffiliationCategory affiliationCategory = toAffiliationCategory(affiliationDto.getCategory());
     return new Affiliation(

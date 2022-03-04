@@ -84,8 +84,6 @@ import life.qbic.portal.offermanager.dataresources.projects.ProjectSpaceResource
 import life.qbic.portal.offermanager.security.Role
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
-import org.hibernate.Session
-import org.hibernate.query.Query
 
 /**
  * Class that manages all the dependency injections and class instance creations
@@ -187,9 +185,6 @@ class DependencyManager {
 
             DatabaseSession.init(user, password, host, port, sqlDatabase)
             PersonDbConnector personDbConnector = new PersonDbConnector(sessionProvider)
-            // Todo can be removed
-            tryPersonDbConnector(personDbConnector)
-
             createPersonDataSource = personDbConnector
             searchPersonDataSource = personDbConnector
             createAffiliationDataSource = personDbConnector

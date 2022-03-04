@@ -1,8 +1,7 @@
 package life.qbic.business.offers.create
 
 import life.qbic.business.UseCaseFailure
-import life.qbic.business.offers.Offer
-
+import life.qbic.business.offers.OfferV2
 
 /**
  * Output interface for the {@link CreateOffer} use case
@@ -19,7 +18,7 @@ interface CreateOfferOutput extends UseCaseFailure {
    * @param createdOffer {@link life.qbic.datamodel.dtos.business.Offer}
    * @since 1.0.0
    */
-  void createdNewOffer(Offer createdOffer)
+  void createdNewOffer(OfferV2 createdOffer)
 
   /**
    * Transfers the calculated price to an implementing class

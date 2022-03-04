@@ -9,8 +9,8 @@ import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
-import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.Country
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
 
 import java.util.stream.Collectors
@@ -81,7 +81,7 @@ class CreateAffiliationView extends FormLayout {
         countryBox.setDescription("Select the name of the country e.g. Germany")
         countryBox.setItems(Country.availableCountryNames())
 
-        this.affiliationCategoryField = generateAffiliationCategorySelect(createAffiliationViewModel.affiliationCategories)
+        this.affiliationCategoryField = generateAffiliationCategorySelect(createAffiliationViewModel.affiliationCategories) as ComboBox<String>
 
         this.abortButton = new Button("Abort Affiliation Creation")
         abortButton.setIcon(VaadinIcons.CLOSE_CIRCLE)
@@ -135,7 +135,7 @@ class CreateAffiliationView extends FormLayout {
         List<String> organisationNames = createAffiliationViewModel
                 .affiliationService.iterator().toList()
                 .stream()
-                .map(affiliation -> (affiliation as Affiliation).getOrganization())
+                .map(affiliation -> (affiliation as Affiliation).organisation)
                 .distinct()
                 .collect(Collectors.toList())
 
@@ -369,8 +369,8 @@ class CreateAffiliationView extends FormLayout {
         })
     }
 
-    private static ComboBox<String> generateAffiliationCategorySelect(List<String> possibleCategories) {
-        ComboBox<String> comboBox = new ComboBox<>("Affiliation Category")
+    private static ComboBox generateAffiliationCategorySelect(List<String> possibleCategories) {
+        ComboBox comboBox = new ComboBox<>("Affiliation Category")
         comboBox.setItems(possibleCategories)
         comboBox.setEmptySelectionAllowed(false)
         comboBox.setPlaceholder("The affiliation category")

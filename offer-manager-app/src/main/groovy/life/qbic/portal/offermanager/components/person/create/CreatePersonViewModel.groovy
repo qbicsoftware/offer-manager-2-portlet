@@ -1,11 +1,13 @@
 package life.qbic.portal.offermanager.components.person.create
 
 import groovy.beans.Bindable
-import life.qbic.business.persons.Person
-import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.dataresources.ResourcesService
-
 /**
  * A ViewModel holding data that is presented in a
  * life.qbic.portal.qoffer2.web.viewmodel.CreatePersonViewModel
@@ -38,21 +40,27 @@ class CreatePersonViewModel implements Resettable{
 
     ObservableList availableOrganisations
 
+    final ResourcesService<Customer> customerService
+    final ResourcesService<ProjectManager> managerResourceService
     final ResourcesService<Affiliation> affiliationService
     final ResourcesService<Person> personResourceService
 
-    CreatePersonViewModel(ResourcesService<Affiliation> affiliationService,
+    CreatePersonViewModel(ResourcesService<Customer> customerService,
+                          ResourcesService<ProjectManager> managerResourceService,
+                          ResourcesService<Affiliation> affiliationService,
                           ResourcesService<Person> personResourceService) {
         this.affiliationService = affiliationService
+        this.customerService = customerService
+        this.managerResourceService = managerResourceService
         this.personResourceService = personResourceService
         availableOrganisations = new ObservableList()
         refreshAvailableOrganizations()
 
         this.affiliationService.subscribe({
-            List foundOrganisations = availableOrganisations.findAll() { organisation -> (organisation as Organisation).name == it.getOrganization() }
+            List foundOrganisations = availableOrganisations.findAll() { organisation -> (organisation as Organisation).name == it.organisation }
             if (foundOrganisations.empty) {
                 //create a new organisation
-                availableOrganisations << new Organisation(it.getOrganization(), [it])
+                availableOrganisations << new Organisation(it.organisation, [it])
             }else{
                 //add the new affiliation
                 (foundOrganisations.get(0) as Organisation).affiliations << it
@@ -80,13 +88,13 @@ class CreatePersonViewModel implements Resettable{
      */
     protected static List<Organisation> toOrganisation(List<Affiliation> affiliations){
 
-        List<String> organisationNames = affiliations.collect{it.getOrganization()}.toUnique()
+        List<String> organisationNames = affiliations.collect{it.organisation}.toUnique()
         List<Organisation> organisations = []
 
         organisationNames.each {organisationName ->
             List<Affiliation> organisationAffiliations = []
             affiliations.each {affiliation ->
-                if(affiliation.getOrganization() == organisationName) organisationAffiliations << affiliation
+                if(affiliation.organisation == organisationName) organisationAffiliations << affiliation
             }
 
             organisations << new Organisation(organisationName,organisationAffiliations)
@@ -98,7 +106,7 @@ class CreatePersonViewModel implements Resettable{
     @Override
     void reset() {
 
-        this.setAcademicTitle("None")
+        this.setAcademicTitle(AcademicTitle.NONE.toString())
         this.setAcademicTitleValid(true)
 
         this.setFirstName(null)

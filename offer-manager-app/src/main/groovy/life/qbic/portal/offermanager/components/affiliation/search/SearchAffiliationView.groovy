@@ -7,7 +7,7 @@ import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
-import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.GridUtils
 
 /**
@@ -47,8 +47,8 @@ class SearchAffiliationView extends FormLayout{
 
     private void generateAffiliationGrid() {
         Grid<Affiliation> affiliationGrid = this.affiliationGrid
-        affiliationGrid.addColumn({ affiliation -> affiliation.category.getLabel() }).setCaption("Category").setId("Category")
-        affiliationGrid.addColumn({ affiliation -> affiliation.getOrganization() }).setCaption("Organization").setId("Organization")
+        affiliationGrid.addColumn({ affiliation -> affiliation.category.value }).setCaption("Category").setId("Category")
+        affiliationGrid.addColumn({ affiliation -> affiliation.organisation }).setCaption("Organization").setId("Organization")
         affiliationGrid.addColumn({ affiliation -> affiliation.addressAddition }).setCaption("Address Addition").setId("AddressAddition")
         affiliationGrid.addColumn({ affiliation -> affiliation.street }).setCaption("Street").setId("Street")
         affiliationGrid.addColumn({ affiliation -> affiliation.postalCode }).setCaption("Postal Code").setId("PostalCode")
@@ -108,8 +108,8 @@ class SearchAffiliationView extends FormLayout{
                 detailsContent.addComponent(category)
             }
 
-            if (selectedAffiliation.getOrganization()) {
-                Label organisation = new Label("${selectedAffiliation.getOrganization()}")
+            if (selectedAffiliation.organisation) {
+                Label organisation = new Label("$selectedAffiliation.organisation")
                 organisation.setIcon(VaadinIcons.BUILDING_O)
                 organisation.setCaption("Organization")
                 detailsContent.addComponent(organisation)
@@ -135,8 +135,8 @@ class SearchAffiliationView extends FormLayout{
 
     private static String generateAddressString(Affiliation affiliation) {
         StringBuilder stringBuilder = new StringBuilder()
-        if (affiliation.getOrganization()) {
-            stringBuilder.append("${affiliation.getOrganization()}")
+        if (affiliation.organisation) {
+            stringBuilder.append("$affiliation.organisation")
             stringBuilder.append("\n")
         }
         if (affiliation.addressAddition) {

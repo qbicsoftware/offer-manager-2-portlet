@@ -1,10 +1,13 @@
 package life.qbic.portal.offermanager.components.person.create
 
 import groovy.util.logging.Log4j2
-import life.qbic.business.persons.Person
-import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.business.RefactorConverter
 import life.qbic.business.persons.create.CreatePersonInput
 import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.AcademicTitleFactory
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.Customer
+import life.qbic.datamodel.dtos.general.Person
 
 /**
  * Controller class adapter from view information into use case input interface
@@ -17,6 +20,7 @@ import life.qbic.datamodel.dtos.business.AcademicTitle
 class CreatePersonController {
 
     private final CreatePersonInput useCaseInput
+    private final RefactorConverter refactorConverter = new RefactorConverter()
 
     CreatePersonController(CreatePersonInput useCaseInput) {
         this.useCaseInput = useCaseInput
@@ -35,9 +39,17 @@ class CreatePersonController {
      * @since 1.0.0
      */
     void createNewPerson(String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations) {
+        AcademicTitleFactory academicTitleFactory = new AcademicTitleFactory()
+        AcademicTitle academicTitle
+        if (!title || title?.isEmpty()) {
+            academicTitle = AcademicTitle.NONE
+        } else {
+            academicTitle = academicTitleFactory.getForString(title)
+        }
+
         try {
-            Person person = new Person(email, firstName, lastName, title, email, affiliations)
-            this.useCaseInput.createPerson(person) //FIXME use new person in use case
+            life.qbic.business.persons.Person person = refactorConverter.toPerson(new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build())
+            this.useCaseInput.createPerson(person)
         } catch(Exception ignored) {
             throw new IllegalArgumentException("Could not create customer from provided arguments.")
         }
@@ -55,9 +67,18 @@ class CreatePersonController {
      *
      */
     void updatePerson(Person oldEntry, String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations){
+        AcademicTitleFactory academicTitleFactory = new AcademicTitleFactory()
+        AcademicTitle academicTitle
+        if (!title || title?.isEmpty()) {
+            academicTitle = AcademicTitle.NONE
+        } else {
+            academicTitle = academicTitleFactory.getForString(title)
+        }
+
         try{
-            Person person = new Person(oldEntry.userId, firstName, lastName, title, email, affiliations)
-            this.useCaseInput.updatePerson(oldEntry, person) //FIXME use new person in use case
+            Person personDto = new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build()
+            this.useCaseInput.updatePerson(refactorConverter.toPerson(oldEntry), refactorConverter.toPerson(personDto))
+
         }catch(Exception ignored) {
             throw new IllegalArgumentException("Could not update customer from provided arguments.")
         }
