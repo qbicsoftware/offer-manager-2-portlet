@@ -86,7 +86,15 @@ public class RefactorConverter {
   }
 
   life.qbic.datamodel.dtos.business.ProductItem toProductItemDto(ProductItem productItem) {
-    return null;
+    double quantity = productItem.getQuantity();
+    life.qbic.datamodel.dtos.business.services.Product productDto = toProductDto(
+        productItem.getProduct());
+    double totalPrice = productItem.getTotalPrice().doubleValue();
+    double unitDiscount = productItem.getUnitDiscount().doubleValue();
+    return new life.qbic.datamodel.dtos.business.ProductItem(quantity,
+        productDto,
+        totalPrice,
+        unitDiscount);
   }
 
   life.qbic.datamodel.dtos.business.ProjectManager toProjectManagerDto(Person person) {

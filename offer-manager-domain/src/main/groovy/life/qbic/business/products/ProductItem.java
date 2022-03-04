@@ -33,20 +33,20 @@ public class ProductItem {
   @Column(name = "offerId", nullable = false)
   private Integer offerId;
 
-  public ProductItem(Product product, Double quantity, BigDecimal quantityDiscount,
+  public ProductItem(Product product, Double quantity, BigDecimal unitDiscount,
       BigDecimal totalPrice) {
     this.product = product;
     this.quantity = quantity;
-    this.quantityDiscount = quantityDiscount;
+    this.unitDiscount = unitDiscount;
     this.totalPrice = totalPrice;
   }
 
-  public BigDecimal getQuantityDiscount() {
-    return quantityDiscount;
+  public BigDecimal getUnitDiscount() {
+    return unitDiscount;
   }
 
-  public void setQuantityDiscount(BigDecimal quantityDiscount) {
-    this.quantityDiscount = quantityDiscount;
+  public void setUnitDiscount(BigDecimal quantityDiscount) {
+    this.unitDiscount = quantityDiscount;
   }
 
   public BigDecimal getTotalPrice() {
@@ -57,7 +57,7 @@ public class ProductItem {
     this.totalPrice = totalPrice;
   }
 
-  private BigDecimal quantityDiscount;
+  private BigDecimal unitDiscount;
 
   private BigDecimal totalPrice;
 
