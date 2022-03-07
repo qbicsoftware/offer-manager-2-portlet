@@ -1,7 +1,7 @@
 package life.qbic.business.offers.update
 
 import life.qbic.business.UseCaseFailure
-import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.business.offers.OfferV2
 
 /**
  * Defines the output of the UpdateOffer use case
@@ -20,5 +20,5 @@ interface UpdateOfferOutput extends UseCaseFailure{
      * @param createdOffer {@link life.qbic.datamodel.dtos.business.Offer}
      * @since 1.0.0
      */
-    void updatedOffer(Offer createdOffer)
+    void updatedOffer(OfferV2 createdOffer)
 }

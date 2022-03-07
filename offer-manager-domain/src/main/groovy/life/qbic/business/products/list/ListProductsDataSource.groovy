@@ -1,7 +1,7 @@
 package life.qbic.business.products.list
 
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.business.products.Product
 
 /**
  * Provides functionality to list persons

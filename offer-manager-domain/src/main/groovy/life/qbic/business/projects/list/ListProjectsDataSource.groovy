@@ -1,7 +1,5 @@
 package life.qbic.business.projects.list
 
-import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
-
 /**
  * Provides functionality to list projects
  *
@@ -14,5 +12,5 @@ interface ListProjectsDataSource {
      * @return a list of all projects
      * @since 1.0.0
      */
-    List<ProjectIdentifier> listProjects()
+    List<String> listProjects()
 }

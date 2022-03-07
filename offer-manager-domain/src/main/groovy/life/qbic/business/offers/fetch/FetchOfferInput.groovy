@@ -1,6 +1,6 @@
 package life.qbic.business.offers.fetch
 
-import life.qbic.datamodel.dtos.business.OfferId
+import life.qbic.business.offers.identifier.OfferId
 
 /**
  * Input interface for the {@link life.qbic.business.offers.fetch.FetchOffer} use case

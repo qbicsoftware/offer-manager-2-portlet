@@ -1,7 +1,6 @@
 package life.qbic.business.projects.spaces.create
 
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 
 /**
  * <h1>Access to the project management datasource</h1>
@@ -21,7 +20,7 @@ interface CreateProjectSpaceDataSource {
      * @throws ProjectSpaceExistsException If the project space name already exists
      * @throws DatabaseQueryException If a technical issue occurs during the data source interaction
      */
-    void createProjectSpace(ProjectSpace projectSpace) throws ProjectSpaceExistsException,
+    void createProjectSpace(String projectSpace) throws ProjectSpaceExistsException,
             DatabaseQueryException
 
 }

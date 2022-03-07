@@ -1,8 +1,7 @@
 package life.qbic.business.products.archive
 
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.datamodel.dtos.business.ProductId
-import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.business.products.Product
 
 /**
  * <h1>Data souce interface for {@link life.qbic.business.products.archive.ArchiveProduct}</h1>
@@ -26,6 +25,6 @@ interface ArchiveProductDataSource {
      * @since 1.0.0
      * @throws life.qbic.business.exceptions.DatabaseQueryException is thrown when any technical interaction with the data source fails
      */
-    Optional<Product> fetch(ProductId productId) throws DatabaseQueryException
+    Optional<Product> fetch(String productId) throws DatabaseQueryException
 
 }

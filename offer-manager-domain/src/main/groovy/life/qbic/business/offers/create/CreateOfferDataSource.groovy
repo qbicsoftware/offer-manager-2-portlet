@@ -1,8 +1,8 @@
 package life.qbic.business.offers.create
 
-import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.datamodel.dtos.business.OfferId
+import life.qbic.business.offers.OfferV2
+import life.qbic.business.offers.identifier.OfferId
 
 
 /**
@@ -29,7 +29,7 @@ interface CreateOfferDataSource {
      * @throws DatabaseQueryException
      * @since 1.0.0
      */
-    void store(Offer offer) throws DatabaseQueryException
+    void store(OfferV2 offer) throws DatabaseQueryException
 
 
     /**
@@ -47,5 +47,5 @@ interface CreateOfferDataSource {
      * @param oldId specifying the offer for which the content shall be fetched
      * @return the offer content in form of the offer dto
      */
-    Optional<Offer> getOffer(OfferId oldId)
+    Optional<OfferV2> getOffer(OfferId oldId)
 }

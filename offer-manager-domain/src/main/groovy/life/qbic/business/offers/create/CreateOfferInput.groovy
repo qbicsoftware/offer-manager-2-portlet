@@ -1,7 +1,6 @@
 package life.qbic.business.offers.create
 
-import life.qbic.datamodel.dtos.business.Offer
-
+import life.qbic.business.offers.OfferV2
 
 /**
  * Input interface for the {@link CreateOffer} use case
@@ -28,6 +27,6 @@ interface CreateOfferInput {
    * @param offer {@link life.qbic.datamodel.dtos.business.Offer}
    * @since 1.0.0
    */
-  void createOffer(Offer offerContent)
+  void createOffer(OfferV2 offerContent)
 
 }
