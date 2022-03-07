@@ -63,7 +63,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       // we ignore the generated primary id for now
       session.save(affiliation)
     } catch (HibernateException e) {
-      logException(e)
+      log.error(e.message, e)
       throw new DatabaseQueryException("An unexpected exception occurred during new affiliation creation")
     }
   }
@@ -85,30 +85,39 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   void addPerson(Person person) throws DatabaseQueryException, PersonExistsException {
     try (Session session = sessionProvider.getCurrentSession()) {
       session.beginTransaction()
-      int id = session.getIdentifier(person) as int
-      if (id) {
-        // If the query returns an identifier, an entry with this data already exists
-        throw new PersonExistsException("The person already exists.")
-      }
+      findPersonInSession(session, person).ifPresent(() -> {throw new PersonExistsException("The person already exists.")})
       // we ignore the generated primary id for now
       session.save(person)
     } catch (HibernateException e) {
-      logException(e)
+      log.error(e.message, e)
       throw new DatabaseQueryException("An unexpected exception occurred during new affiliation creation")
     }
+  }
+
+  private static Optional<Person> findPersonInSession(Session session, Person person) {
+    int id = session.getIdentifier(person) as int
+    if (id) {
+      return Optional.of(person)
+    }
+    return Optional.empty()
   }
 
   @Override
   void updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException {
     outdatedPersonData.setIsActive(false)
     updatedPersonData.setIsActive(true)
+    // the user id nees to be preserved
+    updatedPersonData.setUserId(outdatedPersonData.getUserId())
     try (Session session = sessionProvider.getCurrentSession()) {
       session.beginTransaction()
+      if (!findPersonInSession(session, outdatedPersonData).isPresent()) {
+        throw new DatabaseQueryException("Person was not found in the database and can't be updated.")
+      }
       session.save(outdatedPersonData)
       session.save(updatedPersonData)
       session.getTransaction().commit()
     } catch (HibernateException e) {
-      logException(e)
+      log.error(e.message, e)
       throw new DatabaseQueryException("Unable to update person entry.")
     }
   }
@@ -120,7 +129,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       session.merge(person)
       session.getTransaction().commit()
     } catch (HibernateException e) {
-      logException(e)
+      log.error(e.message, e)
       throw new DatabaseQueryException("Unable to update person affiliations.")
     }
   }
@@ -137,14 +146,9 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       matches.addAll(query.list() as List<Person>)
       session.getTransaction().commit()
     } catch (HibernateException e) {
-      logException(e)
+      log.error(e.message, e)
       throw new DatabaseQueryException("An unexpected exception occurred during the search.")
     }
     return matches
-  }
-
-  private static void logException(Exception e) {
-    log.error(e.message)
-    log.error(e.getStackTrace().join("\n"))
   }
 }
