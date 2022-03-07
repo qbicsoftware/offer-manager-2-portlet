@@ -25,10 +25,10 @@ class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
   private final Logging log = Logger.getLogger(CreatePerson.class)
 
 
-    CreatePerson(CreatePersonOutput output, CreatePersonDataSource dataSource){
+  CreatePerson(CreatePersonOutput output, CreatePersonDataSource dataSource) {
     this.output = output
     this.dataSource = dataSource
-    this.updatePerson = new UpdatePerson(this,dataSource)
+    this.updatePerson = new UpdatePerson(this, dataSource)
   }
 
   @Override
@@ -44,7 +44,7 @@ class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
       output.failNotification(databaseQueryException.message)
     } catch (PersonExistsException personExistsException) {
       output.failNotification("Could not create ${person.firstName} ${person.lastName}. \n" + personExistsException.getMessage())
-    } catch(Exception unexpected) {
+    } catch (Exception unexpected) {
       log.error("Unexpected Exception: $unexpected.message")
       log.debug("Unexpected Exception: $unexpected.message", unexpected)
       output.failNotification("Could not create new person")
@@ -53,19 +53,15 @@ class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
 
   @Override
   void updatePerson(Person oldPerson, Person newPerson) {
-    try{
-      int personId = dataSource.findPerson(oldPerson).get()
-      updatePerson.updatePerson(personId,newPerson)
-    }
-    catch(PersonNotFoundException ignore){
+    try {
+      dataSource.updatePerson(oldPerson, newPerson)
+    } catch (PersonNotFoundException ignore) {
       output.personNotFound(oldPerson, "Cannot update person entry for ${oldPerson.firstName} ${oldPerson.lastName}. \n" +
               "Person was not found. Please try again.")
-    }
-    catch(NullPointerException ignore){
+    } catch (NullPointerException ignore) {
       output.personNotFound(oldPerson, "Cannot update person entry for ${oldPerson.firstName} ${oldPerson.lastName}. \n" +
               "Person was not found. Please try again.")
-    }
-    catch(Exception ignore){
+    } catch (Exception ignore) {
       output.failNotification("Cannot update person entry for ${oldPerson.firstName} ${oldPerson.lastName}. \n" +
               "Please try again.")
     }
