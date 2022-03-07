@@ -1,7 +1,7 @@
 package life.qbic.business.products.archive
 
 import life.qbic.business.UseCaseFailure
-import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.business.products.Product
 
 /**
  * Output interface for the {@link ArchiveProduct} use case

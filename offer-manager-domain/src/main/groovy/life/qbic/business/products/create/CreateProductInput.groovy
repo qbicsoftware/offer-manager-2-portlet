@@ -1,5 +1,6 @@
 package life.qbic.business.products.create
 
+
 import life.qbic.business.products.dtos.ProductDraft
 
 /**
