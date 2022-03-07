@@ -88,7 +88,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       int id = session.getIdentifier(person) as int
       if (id) {
         // If the query returns an identifier, an entry with this data already exists
-        throw new AffiliationExistsException("The person already exists.")
+        throw new PersonExistsException("The person already exists.")
       }
       // we ignore the generated primary id for now
       session.save(person)
