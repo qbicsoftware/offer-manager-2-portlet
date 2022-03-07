@@ -1,7 +1,7 @@
 package life.qbic.business.projects.create
 
 import life.qbic.business.UseCaseFailure
-import life.qbic.datamodel.dtos.business.OfferId
+import life.qbic.business.offers.identifier.OfferId
 import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
