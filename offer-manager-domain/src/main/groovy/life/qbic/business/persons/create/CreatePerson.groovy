@@ -35,15 +35,13 @@ class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
   void createPerson(Person person) {
     try {
       dataSource.addPerson(person)
-      try {
-        output.personCreated(person)
-      } catch (Exception unexpectedException) {
-        log.error(unexpectedException.getMessage(), unexpectedException)
-      }
+      output.personCreated(person)
     } catch (DatabaseQueryException databaseQueryException) {
       output.failNotification(databaseQueryException.message)
     } catch (PersonExistsException personExistsException) {
       output.failNotification("Could not create ${person.firstName} ${person.lastName}. \n" + personExistsException.getMessage())
+      log.error(personExistsException.message)
+      log.debug(personExistsException.message, personExistsException)
     } catch (Exception unexpected) {
       log.error("Unexpected Exception: $unexpected.message")
       log.debug("Unexpected Exception: $unexpected.message", unexpected)
