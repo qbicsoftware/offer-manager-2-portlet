@@ -1,10 +1,10 @@
 package life.qbic.business.persons.update
 
-import life.qbic.business.persons.Person
-import life.qbic.business.persons.create.CreatePersonDataSource
+import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.persons.Person
+import life.qbic.business.persons.create.CreatePersonDataSource
 
 /**
  * This use case updates an existing customer in the system. New Affiliations of the customer are added to the respective table.
@@ -27,6 +27,7 @@ class UpdatePerson {
   void updatePerson(Person outdatedPerson, Person personWithUpdate) {
     try {
       if(hasBasicPersonDataChanged(outdatedPerson, personWithUpdate)) {
+        personWithUpdate.setUserId(outdatedPerson.getUserId())
         dataSource.updatePerson(outdatedPerson, personWithUpdate)
       } else {
         dataSource.updatePersonAffiliations(personWithUpdate)
