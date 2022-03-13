@@ -38,7 +38,7 @@ class Person {
     String email
 
     @Column(name = "active", columnDefinition = "tinyint", nullable = false)
-    boolean isActive
+    boolean isActive = true
 
     @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH],
         fetch = FetchType.LAZY)
