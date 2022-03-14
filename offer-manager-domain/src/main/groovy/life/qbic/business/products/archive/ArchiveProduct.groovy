@@ -1,8 +1,7 @@
 package life.qbic.business.products.archive
 
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.datamodel.dtos.business.ProductId
-import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.business.products.Product
 
 /**
  * <h1>4.3.2 Archive Service Product</h1>
@@ -25,7 +24,7 @@ class ArchiveProduct implements ArchiveProductInput {
     }
 
     @Override
-    void archive(ProductId productId) {
+    void archive(String productId) {
         try {
             Optional<Product> searchResult = this.dataSource.fetch(productId)
             if (searchResult.isPresent()) {
