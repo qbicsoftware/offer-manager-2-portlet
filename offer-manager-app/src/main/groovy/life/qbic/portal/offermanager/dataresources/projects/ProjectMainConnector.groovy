@@ -198,6 +198,13 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
         }
     }
 
+    /*
+    ProjectApplication
+    - project space
+    - project code
+    - project objective
+    - linked offer
+     */
     @Override
     Project createProject(ProjectApplication projectApplication) throws ProjectExistsException, DatabaseQueryException {
         //collect infos needed for openBIS
