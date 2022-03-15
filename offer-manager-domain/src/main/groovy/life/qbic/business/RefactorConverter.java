@@ -17,8 +17,8 @@ import life.qbic.business.persons.Person;
 import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
 import life.qbic.business.products.Product;
+import life.qbic.business.products.ProductDraft;
 import life.qbic.business.products.ProductItem;
-import life.qbic.business.products.dtos.ProductDraft;
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
 import life.qbic.datamodel.dtos.business.Customer;
 import life.qbic.datamodel.dtos.business.ProductId;
@@ -61,7 +61,7 @@ public class RefactorConverter {
     return offer;
   }
 
-  OfferV2 toOffer(life.qbic.datamodel.dtos.business.Offer offerDto) {
+  public OfferV2 toOffer(life.qbic.datamodel.dtos.business.Offer offerDto) {
     List<ProductItem> productItems = offerDto.getItems().stream().map(this::toProductItem)
         .collect(Collectors.toList());
     LocalDate creationDate = toLocalDate(offerDto.getModificationDate());
@@ -257,12 +257,12 @@ public class RefactorConverter {
     return AffiliationCategory.EXTERNAL;
   }
 
-  OfferId toOfferId(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
+  public OfferId toOfferId(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
     int version = Integer.parseInt(offerIdDto.getVersion());
     return new OfferId(offerIdDto.getProjectConservedPart(), offerIdDto.getRandomPart(), version);
   }
 
-  life.qbic.datamodel.dtos.business.OfferId toOfferIdDto(OfferId offerId) {
+  public life.qbic.datamodel.dtos.business.OfferId toOfferIdDto(OfferId offerId) {
     return new life.qbic.datamodel.dtos.business.OfferId(offerId.getProjectPart(),
         offerId.getRandomPart(), Integer.toString(offerId.getVersion()));
   }
@@ -281,9 +281,9 @@ public class RefactorConverter {
     return product;
   }
 
-  Product toProduct(ProductDraft productDraft) {
-    String productCategory = productDraft.getCategory().getValue();
-    String serviceProvider = productDraft.getServiceProvider().getLabel();
+  public Product toProduct(ProductDraft productDraft) {
+    String productCategory = productDraft.getCategory().getLabel();
+    String serviceProvider = productDraft.getServiceProvider();
     String description = productDraft.getDescription();
     double externalUnitPrice = productDraft.getExternalUnitPrice();
     double internalUnitPrice = productDraft.getInternalUnitPrice();

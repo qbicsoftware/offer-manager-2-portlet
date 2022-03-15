@@ -1,7 +1,4 @@
-package life.qbic.business.products.dtos
-
-import life.qbic.datamodel.dtos.business.ProductCategory
-
+package life.qbic.business.products
 /**
  * <b>A draft for a product</b>
  *

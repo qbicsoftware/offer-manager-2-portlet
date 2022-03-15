@@ -1,14 +1,10 @@
 package life.qbic.business.products.create
 
+import life.qbic.business.RefactorConverter
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.business.products.dtos.ProductDraft
-import life.qbic.datamodel.dtos.business.ProductCategory
-import life.qbic.datamodel.dtos.business.ProductCategoryFactory
-import life.qbic.datamodel.dtos.business.ProductId
-import life.qbic.datamodel.dtos.business.facilities.Facility
-import life.qbic.datamodel.dtos.business.services.Product
-import life.qbic.datamodel.dtos.business.services.ProductUnit
-import life.qbic.datamodel.dtos.business.services.Sequencing
+import life.qbic.business.products.Product
+import life.qbic.business.products.ProductCategory
+import life.qbic.business.products.ProductDraft
 import spock.lang.Specification
 
 /**
@@ -21,16 +17,16 @@ import spock.lang.Specification
 class CreateProductSpec extends Specification {
 
     CreateProductOutput output = Mock(CreateProductOutput)
-    ProductId createdProductId = new ProductId("SE", "1")
-    ProductCategoryFactory productCategoryFactory = new ProductCategoryFactory()
-    ProductCategory category = productCategoryFactory.getForString("Sequencing")
-    ProductDraft productDraft = ProductDraft.create(category, "test product", "this is a test product", 0.5, 0.5, ProductUnit.PER_GIGABYTE, Facility.CEGAT)
-    Product product = new Sequencing("test product", "this is a test product", 0.5, 0.5, ProductUnit.PER_GIGABYTE, 1, Facility.CEGAT)
+//    ProductId createdProductId = new ProductId("SE", "1")
+//    ProductCategoryFactory productCategoryFactory = new ProductCategoryFactory()
+    ProductCategory category = ProductCategory.forLabel("Sequencing")
+    ProductDraft productDraft = ProductDraft.create(category, "test product", "this is a test product", 0.5, 0.5, "Gigabyte", "CEGAT")
+    Product product = new RefactorConverter().toProduct(productDraft)
 
     def "Create stores the provided product in the data source"() {
         given: "a data source that stores a product"
         CreateProductDataSource dataSource = Stub(CreateProductDataSource)
-        dataSource.store(productDraft) >> { createdProductId }
+        dataSource.store(productDraft) >> { product }
 
         and: "an instance of the use case"
         CreateProduct createProduct = new CreateProduct(dataSource, output)
@@ -39,9 +35,7 @@ class CreateProductSpec extends Specification {
         createProduct.create(productDraft)
 
         then: "the output is informed and no failure notification is send"
-        1 * output.created({Product product1 ->
-            product1.productId == createdProductId
-        })
+        1 * output.created(product)
         0 * output.foundDuplicates(_)
         0 * output.failNotification(_)
     }
@@ -91,7 +85,7 @@ class CreateProductSpec extends Specification {
         CreateProductDataSource dataSource = Stub(CreateProductDataSource)
         String dataStatus = ""
         dataSource.store(productDraft) >> {
-            dataStatus = "not stored"
+            dataStatus = "stored"
             throw new DatabaseQueryException("This is a test")
         }
 
@@ -106,7 +100,7 @@ class CreateProductSpec extends Specification {
         0 * output.foundDuplicates(_)
         1 * output.failNotification(_ as String)
         and: "the data was stored"
-        dataStatus == "not stored"
+        dataStatus == "stored"
     }
 
 }

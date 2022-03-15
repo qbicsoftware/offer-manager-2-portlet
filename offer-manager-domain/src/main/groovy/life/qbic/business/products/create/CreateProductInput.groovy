@@ -1,7 +1,7 @@
 package life.qbic.business.products.create
 
 
-import life.qbic.business.products.dtos.ProductDraft
+import life.qbic.business.products.ProductDraft
 
 /**
  * Input interface for the {@link CreateProduct} use case
