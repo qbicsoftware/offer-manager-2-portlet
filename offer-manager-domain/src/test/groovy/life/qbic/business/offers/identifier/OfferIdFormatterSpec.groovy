@@ -7,7 +7,7 @@ import spock.lang.Specification
  *
  * @since 1.2.2
  */
-class TomatoIdFormatterSpec extends Specification {
+class OfferIdFormatterSpec extends Specification {
 
     def "FormatAsOfferId works for life.qbic.datamodel.dtos.business.OfferId"() {
         given:
@@ -18,7 +18,7 @@ class TomatoIdFormatterSpec extends Specification {
         def offerId = new life.qbic.datamodel.dtos.business.OfferId(projectPart, randomPart, version.toString())
 
         when: "an offer identifier is formatted"
-        String formattedId = TomatoIdFormatter.formatAsOfferId(offerId)
+        String formattedId = OfferIdFormatter.formatAsOfferId(offerId)
 
         then: "the formatted string equals O_projectPart_randomPart_versionNumber"
         formattedId == expectedFormatting
@@ -41,7 +41,7 @@ class TomatoIdFormatterSpec extends Specification {
         def offerId = new OfferId(projectPart, randomPart, version)
 
         when: "an offer identifier is formatted"
-        String formattedId = TomatoIdFormatter.formatAsOfferId(offerId)
+        String formattedId = OfferIdFormatter.formatAsOfferId(offerId)
 
         then: "the formatted string equals O_projectPart_randomPart_versionNumber"
         formattedId == "O_projectPart_ilko_2"

@@ -1,12 +1,11 @@
 package life.qbic.business.offers.fetch
 
-import life.qbic.business.exceptions.DatabaseQueryException
+import groovy.transform.CompileStatic
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.offers.Converter
-import life.qbic.business.offers.identifier.TomatoIdFormatter
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.OfferId
+import life.qbic.business.offers.OfferCalculus
+import life.qbic.business.offers.OfferV2
+import life.qbic.business.offers.identifier.OfferId
 
 /**
  * This class implements logic to fetch an Offer from the database
@@ -17,6 +16,7 @@ import life.qbic.datamodel.dtos.business.OfferId
  *
  * @since: 1.0.0
  */
+@CompileStatic
 class FetchOffer implements FetchOfferInput {
 
     private FetchOfferDataSource dataSource
@@ -28,32 +28,39 @@ class FetchOffer implements FetchOfferInput {
         this.output = output
     }
 
+    /**
+     * Retrieves an offer from a (persistent) datasource.
+     *
+     * Developers shall call this method to pass an OfferId
+     * provided from the user in order to trigger the completion
+     * of the business use case `Fetch Offer`,
+     * which will apply business policies for offer retrieval
+     * in a pre-configured, optimally persistent data-source.
+     *
+     * @param offerId {@link life.qbic.datamodel.dtos.business.OfferId}
+     * @since 1.0.0
+     *
+     */
     @Override
     void fetchOffer(OfferId offerId) {
-        try {
-            Optional<Offer> foundOffer = dataSource.getOffer(offerId)
-            if (!foundOffer.isPresent()) {
-                output.failNotification("Could not find an Offer for the given OfferId ${TomatoIdFormatter.formatAsOfferId(offerId)}")
-            } else {
-                Offer finalOffer = generateOfferFromSource(foundOffer.get())
-                log.info("Successfully retrieved Offer with Id ${TomatoIdFormatter.formatAsOfferId(offerId)} ")
-                output.fetchedOffer(finalOffer)
-            }
-        }
-        catch (DatabaseQueryException queryException) {
-            log.error(queryException.message)
-            output.failNotification("Could not retrieve Offer with OfferId ${TomatoIdFormatter.formatAsOfferId(offerId)} from the Database")
-        }
-        catch (Exception e) {
-            log.error(e.message)
-            log.error(e.stackTrace.join("\n"))
-            output.failNotification("Unexpected error when searching for the Offer associated with the Id ${TomatoIdFormatter.formatAsOfferId(offerId)}")
-        }
-    }
-    private static Offer generateOfferFromSource(Offer offer){
-        life.qbic.business.offers.Offer filledOffer = Converter.convertDTOToOffer(offer)
-        Offer filledOfferDTO = Converter.convertOfferToDTO(filledOffer)
-        return filledOfferDTO
-    }
 
+        Optional<OfferV2> fetchedOffer
+        try {
+            fetchedOffer = dataSource.getOffer(offerId)
+        } catch (RuntimeException e) {
+            String message = "Database query unsuccessful for offer ${offerId.toString()}"
+            log.error(message, e)
+            output.failNotification(message)
+            return
+        }
+        if (!fetchedOffer.isPresent()) {
+            String message = "Failed to find an offer for $offerId.projectPart $offerId.randomPart $offerId.version"
+            log.info(message)
+            output.failNotification(message)
+        }
+        fetchedOffer.ifPresent({
+            OfferV2 processedOffer = OfferCalculus.process(it)
+            output.fetchedOffer(processedOffer)
+        })
+    }
 }

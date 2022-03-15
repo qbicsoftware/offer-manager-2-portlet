@@ -4,7 +4,7 @@ package life.qbic.business.offers.identifier
  *
  * @since 1.2.2
  */
-class TomatoIdFormatter {
+class OfferIdFormatter {
 
     static <T extends OfferId> String formatAsOfferId(T identifier) {
         return generateOfferIdString(identifier.projectPart, identifier.randomPart, identifier.version)

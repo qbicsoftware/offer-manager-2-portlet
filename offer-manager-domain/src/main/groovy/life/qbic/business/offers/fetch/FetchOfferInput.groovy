@@ -17,6 +17,7 @@ interface FetchOfferInput {
    * of the business use case `Fetch Offer`,
    * which will apply business policies for offer retrieval
    * in a pre-configured, optimally persistent data-source.
+   * Offer price information will be recomputed for the fetched offer.
    *
    * @param offerId {@link life.qbic.datamodel.dtos.business.OfferId}
    * @since 1.0.0

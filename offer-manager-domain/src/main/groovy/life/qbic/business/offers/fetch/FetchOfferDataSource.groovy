@@ -15,7 +15,7 @@ interface FetchOfferDataSource {
      * Returns the offer content based on the given offer id
      * @param Id specifying the offer for which the content shall be fetched
      * @throws DatabaseQueryException
-     * @return the offer content in form of an Offer Dto
+     * @return the offer content in form of an Offer
      */
     Optional<OfferV2> getOffer(OfferId Id) throws DatabaseQueryException
 

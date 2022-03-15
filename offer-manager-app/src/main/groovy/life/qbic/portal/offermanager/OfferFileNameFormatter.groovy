@@ -1,6 +1,6 @@
 package life.qbic.portal.offermanager
 
-import life.qbic.business.offers.identifier.TomatoIdFormatter
+import life.qbic.business.offers.identifier.OfferIdFormatter
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
 
@@ -52,7 +52,7 @@ class OfferFileNameFormatter {
          */
         @Override
         String toString() {
-            return "${createDateString(this.date)}_${TomatoIdFormatter.formatAsOfferId(offerId)}" +
+            return "${createDateString(this.date)}_${OfferIdFormatter.formatAsOfferId(offerId)}" +
                     ".pdf"
         }
     }

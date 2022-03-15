@@ -11,8 +11,8 @@ import life.qbic.business.offers.OfferV2
 interface FetchOfferOutput extends UseCaseFailure {
 
   /**
-   * Returns the offer associated with the provided OfferId 
-   * the fetched Offer
+   * Returns the offer associated with the provided OfferId.
+   * The fetched offer has updated price information according to the latest business logic.
    *
    * @param fetchedOffer {@link life.qbic.datamodel.dtos.business.Offer}
    * @since 1.0.0
