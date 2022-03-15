@@ -22,7 +22,7 @@ import life.qbic.business.products.ProductItem;
  *
  * @since 1.3.0
  */
-class OfferCalculus {
+public class OfferCalculus {
 
   private static final BigDecimal VAT_RATIO_GERMANY = new BigDecimal("0.19");
 
@@ -72,7 +72,7 @@ class OfferCalculus {
      */
     OfferV2 offerWithPrices = withVat(withNetPrices(preparedOffer));
     OfferV2 offerWithPricesAndOverheads = withOverheads(offerWithPrices);
-    OfferV2 processedOffer = withTotalCosts(offerWithPricesAndOverheads);
+    OfferV2 processedOffer = withTotalCosts(withTotalDiscount(offerWithPricesAndOverheads));
     return processedOffer;
   }
 
@@ -198,6 +198,28 @@ class OfferCalculus {
     offerCopy.setTotalNetPrice(totalNet);
 
     return offerCopy;
+  }
+
+  protected static OfferV2 withTotalDiscount(OfferV2 offer) {
+    OfferV2 offerCopy = OfferV2.copyOf(offer);
+    BigDecimal dataAnalysisDiscount = discountSum(offerCopy.getDataAnalysisItems());
+    BigDecimal dataGenerationDiscount = discountSum(offerCopy.getDataGenerationItems());
+    BigDecimal dataManagementDiscount = discountSum(offerCopy.getDataManagementItems());
+    BigDecimal externalServiceDiscount = discountSum(offerCopy.getExternalServiceItems());
+    BigDecimal totalDiscount = dataAnalysisDiscount
+        .add(dataGenerationDiscount)
+        .add(dataManagementDiscount)
+        .add(externalServiceDiscount);
+
+    offerCopy.setTotalDiscountAmount(totalDiscount);
+    return offerCopy;
+  }
+
+  private static BigDecimal discountSum(List<OfferItem> dataAnalysisItems) {
+    return dataAnalysisItems.stream()
+        .map(OfferItem::getItemDiscount)
+        .map(BigDecimal::valueOf)
+        .reduce(BigDecimal.ZERO, BigDecimal::add);
   }
 
   /**

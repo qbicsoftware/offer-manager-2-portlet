@@ -21,7 +21,7 @@ class OfferCalculusSpec extends Specification {
 
   def "when the offers product items are converted to offer items, then every product item is represented in an offer item"() {
     given: "an offer with items"
-    def item1 = new ProductItem(createDataAnalysisProduct(), 4.5, 0.0, 0.0)
+    def item1 = new ProductItem(createDataAnalysisProduct(), 4.5)
     def productItems = [item1]
     OfferV2 offer = new OfferV2()
     offer.setItems(productItems)
@@ -44,8 +44,8 @@ class OfferCalculusSpec extends Specification {
 
   def "when the offer's product items are converted to offer items, then the correct unit price is used based on the affiliation category"() {
     given:
-    def item = new ProductItem(createDataAnalysisProduct(), 4.5, 0.0, 0.0)
-    def dsItem = new ProductItem(createDataStorageProduct(), 4.5, 0.0, 0.0)
+    def item = new ProductItem(createDataAnalysisProduct(), 4.5)
+    def dsItem = new ProductItem(createDataStorageProduct(), 4.5)
     def productItems = [item, dsItem]
     OfferV2 offer = new OfferV2()
     offer.setItems(productItems)
@@ -270,7 +270,69 @@ class OfferCalculusSpec extends Specification {
     where: "the affiliation category varies"
     affiliationCategory << AffiliationCategory.values()
     affiliation = createAffiliation(affiliationCategory as AffiliationCategory, "Germany")
+  }
 
+  def "the offer net is the sum of the group nets"() {
+
+    def dataGenerationProductItem = createDataGenerationProductItem(20.9, 5.6)
+    def dataAnalysisProductItem = createDataAnalysisProductItem(20.9, 5.6)
+    def dataManagementProductItem = createDataManagementProductItem(20.9, 5.6)
+    def externalServicesProductItem = createExternalServicesProductItem(20.9, 5.6)
+
+    OfferV2 offerWithItems = createFilledOffer(
+            [
+                    dataGenerationProductItem,
+                    dataAnalysisProductItem,
+                    dataManagementProductItem,
+                    externalServicesProductItem
+            ], affiliation)
+    when: "the net prices are recomputed"
+    OfferV2 offerWithNet = withNetPrices(offerWithItems)
+
+    then: "the offer net is the sum of all of its item's net prices"
+    offerWithNet.getTotalNetPrice() == offerWithNet.getNetSumDataGeneration()
+            .add(offerWithNet.getNetSumDataAnalysis())
+            .add(offerWithNet.getNetSumDataManagement())
+            .add(offerWithNet.getNetSumExternalServices())
+
+    where: "the affiliation category varies"
+    affiliationCategory << AffiliationCategory.values()
+    affiliation = createAffiliation(affiliationCategory as AffiliationCategory, "Germany")
+  }
+
+  def "the offer discount is the sum of the item discounts"() {
+
+    def dataGenerationProductItem = createDataGenerationProductItem(20.9, 5.6)
+    def dataAnalysisProductItem = createDataAnalysisProductItem(20.9, 5.6)
+    def dataManagementProductItem = createDataManagementProductItem(20.9, 5.6)
+    def externalServicesProductItem = createExternalServicesProductItem(20.9, 5.6)
+
+    def dataGenerationOfferItem = affiliationCategory == AffiliationCategory.INTERNAL ? offerItemFromInternal(dataGenerationProductItem) : offerItemFromExternal(dataGenerationProductItem)
+    def dataAnalysisOfferItem = affiliationCategory == AffiliationCategory.INTERNAL ? offerItemFromInternal(dataAnalysisProductItem) : offerItemFromExternal(dataAnalysisProductItem)
+    def dataManagementOfferItem = affiliationCategory == AffiliationCategory.INTERNAL ? offerItemFromInternal(dataManagementProductItem) : offerItemFromExternal(dataManagementProductItem)
+    def externalServicesOfferItem = affiliationCategory == AffiliationCategory.INTERNAL ? offerItemFromInternal(externalServicesProductItem) : offerItemFromExternal(externalServicesProductItem)
+
+
+    OfferV2 offerWithItems = createFilledOffer(
+            [
+                    dataGenerationProductItem,
+                    dataAnalysisProductItem,
+                    dataManagementProductItem,
+                    externalServicesProductItem
+            ], affiliation)
+    when: "the net prices are recomputed"
+    OfferV2 offerWithNet = withTotalDiscount(offerWithItems)
+    then: "the offer discount is the sum of all its item's discounts"
+    offerWithNet.getTotalDiscountAmount() == [
+            dataGenerationOfferItem.getItemDiscount(),
+            dataAnalysisOfferItem.getItemDiscount(),
+            dataManagementOfferItem.getItemDiscount(),
+            externalServicesOfferItem.getItemDiscount()
+    ].stream().map(BigDecimal::valueOf).reduce(BigDecimal.ZERO, BigDecimal::add)
+
+    where: "the affiliation category varies"
+    affiliationCategory << AffiliationCategory.values()
+    affiliation = createAffiliation(affiliationCategory as AffiliationCategory, "Germany")
   }
 
   def "when overheads are computed for an offer, then the item group overhead price equals GroupNet * #expectedRatio for #affiliationCategory affiliations and the total overhead is the sum of the group overheads"() {
@@ -374,6 +436,19 @@ class OfferCalculusSpec extends Specification {
 
     expect: "after processing the total net is correct"
     process(unprocessedOffer).getTotalNetPrice() == offerWithNets.getTotalNetPrice()
+
+    where:
+    affiliationCategory << AffiliationCategory.values()
+  }
+
+  def "when an offer is processed, then the total discount is correct for #affiliationCategory affiliations"() {
+    given: "an unprocessed offer with items"
+    OfferV2 unprocessedOffer = createUnprocessedOffer(affiliationCategory as AffiliationCategory)
+    and: "an offer with filled net prices"
+    OfferV2 offerWithTotalDiscount = withTotalDiscount(withGroupedOfferItems(unprocessedOffer))
+
+    expect: "after processing the total net is correct"
+    process(unprocessedOffer).getTotalDiscountAmount() == offerWithTotalDiscount.getTotalDiscountAmount()
 
     where:
     affiliationCategory << AffiliationCategory.values()
@@ -577,29 +652,29 @@ class OfferCalculusSpec extends Specification {
   }
 
   static ProductItem createDataStorageProductItem(double quantity, double unitPrice) {
-    return new ProductItem(createDataStorageProduct(unitPrice), quantity, BigDecimal.ZERO, BigDecimal.ZERO)
+    return new ProductItem(createDataStorageProduct(unitPrice), quantity)
   }
 
   static ProductItem createDataStorageProductItem(double quantity, double internalUnitPrice, double externalUnitPrice) {
     def product = createDataStorageProduct()
     product.setInternalUnitPrice(internalUnitPrice)
     product.setExternalUnitPrice(externalUnitPrice)
-    return new ProductItem(product, quantity, BigDecimal.ZERO, BigDecimal.ZERO)
+    return new ProductItem(product, quantity)
   }
 
   static ProductItem createDataAnalysisProductItem(double quantity, double unitPrice) {
-    return new ProductItem(createDataAnalysisProduct(unitPrice), quantity, BigDecimal.ZERO, BigDecimal.ZERO)
+    return new ProductItem(createDataAnalysisProduct(unitPrice), quantity)
   }
 
   static ProductItem createDataAnalysisProductItem(double quantity, double internalUnitPrice, double externalUnitPrice) {
     def product = createDataAnalysisProduct()
     product.setInternalUnitPrice(internalUnitPrice)
     product.setExternalUnitPrice(externalUnitPrice)
-    return new ProductItem(product, quantity, BigDecimal.ZERO, BigDecimal.ZERO)
+    return new ProductItem(product, quantity)
   }
 
   static ProductItem createDataGenerationProductItem(double quantity, double unitPrice) {
-    return new ProductItem(createDtaGenerationProduct(unitPrice), quantity, BigDecimal.ZERO, BigDecimal.ZERO)
+    return new ProductItem(createDtaGenerationProduct(unitPrice), quantity)
   }
 
 
@@ -608,7 +683,7 @@ class OfferCalculusSpec extends Specification {
   }
 
   static ProductItem createExternalServicesProductItem(double quantity, double unitPrice) {
-    return new ProductItem(createExternalServicesProduct(unitPrice), quantity, BigDecimal.ZERO, BigDecimal.ZERO)
+    return new ProductItem(createExternalServicesProduct(unitPrice), quantity)
   }
 
   static Affiliation createAffiliation(AffiliationCategory affiliationCategory, String country) {
