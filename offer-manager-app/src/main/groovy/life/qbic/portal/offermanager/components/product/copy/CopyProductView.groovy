@@ -1,9 +1,9 @@
 package life.qbic.portal.offermanager.components.product.copy
 
-import life.qbic.business.products.Converter
+import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.portal.offermanager.components.product.MaintainProductsController
+import life.qbic.portal.offermanager.components.product.ProductClassToCategory
 import life.qbic.portal.offermanager.components.product.create.CreateProductView
-
 
 /**
  * This class represents the GUI for copying a product
@@ -42,6 +42,8 @@ class CopyProductView extends CreateProductView {
     @Override
     protected boolean allValuesValid() {
         boolean wasModified = false
+        ProductCategory originalProductCategory = new ProductClassToCategory().apply(copyProductViewModel.originalProduct.getClass())
+
         if (super.allValuesValid()) {
             if (copyProductViewModel.productName != copyProductViewModel.originalProduct.productName) {
                 wasModified = true
@@ -53,12 +55,10 @@ class CopyProductView extends CreateProductView {
                 wasModified = true
             } else if (copyProductViewModel.productUnit != copyProductViewModel.originalProduct.unit) {
                 wasModified = true
-            } else if (copyProductViewModel.productCategory != Converter.getCategory(copyProductViewModel.originalProduct)) {
+            } else if (copyProductViewModel.productCategory != originalProductCategory) {
                 wasModified = true
-            }  else if (copyProductViewModel.productFacility != copyProductViewModel.originalProduct.serviceProvider) {
-                wasModified = true
-            }else {
-                wasModified = false
+            } else {
+                wasModified = copyProductViewModel.productFacility != copyProductViewModel.originalProduct.serviceProvider
             }
         }
         return super.allValuesValid() && wasModified
