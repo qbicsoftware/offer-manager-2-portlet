@@ -32,7 +32,10 @@ class FetchOfferSpec extends Specification {
     FetchOffer fetchOffer = new FetchOffer(datasource, output)
     fetchOffer.fetchOffer(offerId)
     then: "the offer is returned"
-    1 * output.fetchedOffer(offerV2)
+    1 * output.fetchedOffer({ OfferV2 it ->
+      it.getSelectedCustomerAffiliation() == offerV2.getSelectedCustomerAffiliation()
+      it.getIdentifier() == offerV2.getIdentifier()
+    })
   }
 
   def "given a failing datasource, when the offer is requested, then a failure notice is returned"() {
