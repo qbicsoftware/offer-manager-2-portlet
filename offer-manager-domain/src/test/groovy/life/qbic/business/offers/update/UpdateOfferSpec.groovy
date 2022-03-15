@@ -1,15 +1,9 @@
-package life.qbic.portal.portlet.offers.update
+package life.qbic.business.offers.update
 
 import life.qbic.business.offers.create.CreateOfferDataSource
-import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.update.UpdateOffer
 import life.qbic.business.offers.update.UpdateOfferOutput
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.OfferId
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.PrimaryAnalysis
 import life.qbic.datamodel.dtos.business.services.ProductUnit
 import life.qbic.datamodel.dtos.business.services.ProjectManagement

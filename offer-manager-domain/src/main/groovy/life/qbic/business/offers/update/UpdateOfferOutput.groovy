@@ -11,7 +11,7 @@ import life.qbic.business.offers.OfferV2
  * @since 1.0.0
  *
  */
-interface UpdateOfferOutput extends UseCaseFailure{
+interface UpdateOfferOutput extends UseCaseFailure {
 
     /**
      * Confirms the updating of an offer by providing
