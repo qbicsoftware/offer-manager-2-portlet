@@ -315,7 +315,7 @@ class OfferV2 {
     }
 
     OfferId getIdentifier() {
-        return identifier
+        return this.identifier
     }
 
     void setIdentifier(OfferId identifier) {
