@@ -127,6 +127,18 @@ class OfferV2 {
     private BigDecimal totalCost
     private BigDecimal totalDiscountAmount
 
+    OfferV2() {}
+
+    /**
+     * Constructor for an OfferV2 entity on which price calculation can be performed on.
+     * @param items
+     * @param selectedCustomerAffiliation
+     */
+    OfferV2(Affiliation selectedCustomerAffiliation, OfferId identifier) {
+        this.selectedCustomerAffiliation = selectedCustomerAffiliation
+        this.identifier = identifier
+    }
+
     BigDecimal getOverheadsDataAnalysis() {
         return overheadsDataAnalysis
     }
