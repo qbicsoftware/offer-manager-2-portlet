@@ -132,13 +132,8 @@ public class RefactorConverter {
   private ProductItem toProductItem(
       life.qbic.datamodel.dtos.business.ProductItem productItemDto) {
     Product product = toProduct(productItemDto.getProduct());
-    BigDecimal unitDiscount = BigDecimal.valueOf(productItemDto.getQuantityDiscount());
-    BigDecimal totalPrice = BigDecimal.valueOf(productItemDto.getTotalPrice());
     double quantity = productItemDto.getQuantity();
-    return new ProductItem(product,
-        quantity,
-        unitDiscount,
-        totalPrice);
+    return new ProductItem(product, quantity);
   }
 
   private java.util.Date toUtilDate(LocalDate localDate) {
@@ -156,8 +151,8 @@ public class RefactorConverter {
     double quantity = productItem.getQuantity();
     life.qbic.datamodel.dtos.business.services.Product productDto = toProductDto(
         productItem.getProduct());
-    double totalPrice = productItem.getTotalPrice().doubleValue();
-    double unitDiscount = productItem.getUnitDiscount().doubleValue();
+    double totalPrice = 0;
+    double unitDiscount = 0;
     return new life.qbic.datamodel.dtos.business.ProductItem(quantity,
         productDto,
         totalPrice,

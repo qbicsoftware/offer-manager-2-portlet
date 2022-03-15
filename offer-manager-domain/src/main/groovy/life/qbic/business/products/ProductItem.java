@@ -1,6 +1,5 @@
 package life.qbic.business.products;
 
-import java.math.BigDecimal;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -33,36 +32,13 @@ public class ProductItem {
   @Column(name = "offerId", nullable = false)
   private Integer offerId;
 
-  public ProductItem(Product product, Double quantity, BigDecimal unitDiscount,
-      BigDecimal totalPrice) {
+  public ProductItem(Product product, Double quantity) {
     this.product = product;
     this.quantity = quantity;
-    this.unitDiscount = unitDiscount;
-    this.totalPrice = totalPrice;
   }
 
   protected ProductItem() {
   }
-
-  public BigDecimal getUnitDiscount() {
-    return unitDiscount;
-  }
-
-  public void setUnitDiscount(BigDecimal quantityDiscount) {
-    this.unitDiscount = quantityDiscount;
-  }
-
-  public BigDecimal getTotalPrice() {
-    return totalPrice;
-  }
-
-  public void setTotalPrice(BigDecimal totalPrice) {
-    this.totalPrice = totalPrice;
-  }
-
-  private BigDecimal unitDiscount;
-
-  private BigDecimal totalPrice;
 
   public Integer getOfferId() {
     return offerId;
