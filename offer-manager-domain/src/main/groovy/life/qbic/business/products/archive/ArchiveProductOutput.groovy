@@ -11,10 +11,10 @@ import life.qbic.business.products.Product
  */
 interface ArchiveProductOutput extends UseCaseFailure {
 
-    /**
-     * A product has been archived in the database
-     * @param product The product that has been archived
-     * @since 1.0.0
-     */
-    void archived(Product product)
+  /**
+   * A product has been archived in the database
+   * @param product The product that has been archived
+   * @since 1.0.0
+   */
+  void archived(Product product)
 }

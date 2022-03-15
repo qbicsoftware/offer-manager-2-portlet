@@ -10,19 +10,18 @@ import life.qbic.business.products.Product
  */
 interface ListProductsDataSource {
 
-    /**
-     * <p>Queries a data source for all available service
-     * product that have been defined by the organisation.</p>
-     *
-     * <p>Throws a {@link DatabaseQueryException} if the query
-     * fails for some reason. An exception must NOT be thrown,
-     * if no product can be found. The returned list needs to
-     * be empty then.</p>
-     *
-     * @return A list of service {@link Product}.
-     * @throws DatabaseQueryException
-     * @since 1.0.0
-     */
-    List<Product> listProducts() throws DatabaseQueryException
+  /**
+   * <p>Queries a data source for all available service
+   * product that have been defined by the organisation.</p>
+   *
+   * <p>Throws a {@link DatabaseQueryException} if the query
+   * fails for some reason. An exception must NOT be thrown,
+   * if no product can be found. The returned list needs to
+   * be empty then.</p>
+   *
+   * @return A list of service {@link Product}.
+   * @throws DatabaseQueryException* @since 1.0.0
+   */
+  List<Product> listProducts() throws DatabaseQueryException
 
 }

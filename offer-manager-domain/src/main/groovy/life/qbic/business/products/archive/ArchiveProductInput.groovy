@@ -8,11 +8,11 @@ package life.qbic.business.products.archive
  */
 interface ArchiveProductInput {
 
-    /**
-     * A product defined by its product id should be archived
-     * @param productId the product id for the product that will be archived
-     * @since 1.0.0
-     */
-    void archive(String productId)
+  /**
+   * A product defined by its product id should be archived
+   * @param productId the product id for the product that will be archived
+   * @since 1.0.0
+   */
+  void archive(String productId)
 
 }

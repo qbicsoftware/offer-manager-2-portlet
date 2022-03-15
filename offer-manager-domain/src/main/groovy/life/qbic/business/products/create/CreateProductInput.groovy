@@ -11,11 +11,11 @@ import life.qbic.business.products.ProductDraft
  */
 interface CreateProductInput {
 
-    /**
-     * A product is created in the database
-     * @param productDraft The productDraft containing information about the product to be added the database
-     * @since 1.0.0
-     */
-    void create(ProductDraft productDraft)
+  /**
+   * A product is created in the database
+   * @param productDraft The productDraft containing information about the product to be added the database
+   * @since 1.0.0
+   */
+  void create(ProductDraft productDraft)
 
 }

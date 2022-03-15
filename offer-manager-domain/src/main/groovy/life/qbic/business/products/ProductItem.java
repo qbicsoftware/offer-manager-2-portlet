@@ -41,6 +41,9 @@ public class ProductItem {
     this.totalPrice = totalPrice;
   }
 
+  protected ProductItem() {
+  }
+
   public BigDecimal getUnitDiscount() {
     return unitDiscount;
   }
