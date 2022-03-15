@@ -32,7 +32,7 @@ class QuantityDiscountSpec extends Specification {
         then: "the discount is applied correctly"
         thrown(Exception)
         where: "the number of samples and the discountable price are as follows"
-        sampleCount << [-1, 0]
+        sampleCount << [-1, -200]
         discountablePrice = new BigDecimal(42.5)
     }
 
