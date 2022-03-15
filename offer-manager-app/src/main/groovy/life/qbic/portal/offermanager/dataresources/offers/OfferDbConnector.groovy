@@ -28,6 +28,8 @@ import java.sql.*
 @Log4j2
 class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant, OfferOverviewDataSource{
 
+    //TODO implement interfaces @sven
+
     ConnectionProvider connectionProvider
 
     PersonDbConnector customerGateway
