@@ -1,9 +1,9 @@
 package life.qbic.business.offers.create
 
-import life.qbic.business.exceptions.DatabaseQueryException
+
+import life.qbic.business.offers.OfferExistsException
 import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.identifier.OfferId
-
 
 /**
  * Provides methods to store offers in a data-source
@@ -23,13 +23,13 @@ interface CreateOfferDataSource {
      * then this method will throw a DatabaseQueryException.
      *
      * If the passed offer cannot be saved successfully, this method
-     * will also throw a DatabaseQueryException.
+     * will also throw a {@link OfferExistsException}.
      *
      * @param offer
-     * @throws DatabaseQueryException
+     * @throws OfferExistsException
      * @since 1.0.0
      */
-    void store(OfferV2 offer) throws DatabaseQueryException
+    void store(OfferV2 offer) throws OfferExistsException
 
 
     /**
@@ -40,7 +40,6 @@ interface CreateOfferDataSource {
      */
     List<OfferId> fetchAllVersionsForOfferId(OfferId id)
 
-    //ToDo Deprecate this method once the FetchOffer Use Case is implemented
     /**
      * This method will be replaced with the one provided by{@link life.qbic.business.offers.fetch.FetchOfferDataSource}
      * Returns the offer content based on the given offer id

@@ -21,7 +21,9 @@ class FetchOfferSpec extends Specification {
   private FetchOfferDataSource datasource = Stub()
   private FetchOfferOutput output = Mock()
   private OfferId offerId = new OfferId("projectPart", 1)
-  private OfferV2 offerV2 = new OfferV2(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL))
+  private OfferV2 offerV2 = new OfferV2(
+          new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL),
+          offerId)
 
   def "given the offer exists in the datasource, when the offer is requested, then the offer is returned"() {
     given: "the offer identifier and corresponding offer"
