@@ -76,4 +76,14 @@ class OfferId implements Comparable<OfferId>{
         }
         return this.version <=> other.version
     }
+
+
+    @Override
+    String toString() {
+        return "OfferId{" +
+                "projectPart='" + projectPart + '\'' +
+                ", randomPart='" + randomPart + '\'' +
+                ", version=" + version +
+                '}'
+    }
 }
