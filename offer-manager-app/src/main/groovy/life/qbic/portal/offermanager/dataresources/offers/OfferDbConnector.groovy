@@ -6,10 +6,8 @@ import life.qbic.business.offers.OfferExistsException
 import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.fetch.FetchOfferDataSource
-import life.qbic.datamodel.dtos.business.*
-import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
+import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
-import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import life.qbic.portal.offermanager.dataresources.database.SessionProvider
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
@@ -17,8 +15,6 @@ import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 import org.hibernate.HibernateException
 import org.hibernate.Session
 import org.hibernate.query.Query
-
-import java.sql.*
 
 /**
  * Handles the connection to the offer database
@@ -31,7 +27,7 @@ import java.sql.*
  *
  */
 @Log4j2
-class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant, OfferOverviewDataSource{
+class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant, OfferOverviewDataSource {
 
     SessionProvider sessionProvider
 
@@ -47,7 +43,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             "checksum, experimentalDesign)"
 
     private static final String OFFER_SELECT_QUERY = "SELECT offerId, creationDate, expirationDate, customerId, projectManagerId, projectTitle," +
-                                                        "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, experimentalDesign FROM offer"
+            "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, experimentalDesign FROM offer"
 
 
     /**
@@ -59,7 +55,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
      * @deprecated since 1.3.0, please use {@link OfferDbConnector#OfferDbConnector(ConnectionProvider, PersonDbConnector, ProductsDbConnector, SessionProvider)}
      */
     @Deprecated
-    OfferDbConnector(ConnectionProvider connectionProvider, PersonDbConnector personDbConnector, ProductsDbConnector productsDbConnector){
+    OfferDbConnector(ConnectionProvider connectionProvider, PersonDbConnector personDbConnector, ProductsDbConnector productsDbConnector) {
         this.connectionProvider = connectionProvider
         this.customerGateway = personDbConnector
         this.productGateway = productsDbConnector
@@ -75,7 +71,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
      * @param sessionProvider
      * @since 1.3.0
      */
-    OfferDbConnector(ConnectionProvider connectionProvider, PersonDbConnector personDbConnector, ProductsDbConnector productsDbConnector, SessionProvider sessionProvider){
+    OfferDbConnector(ConnectionProvider connectionProvider, PersonDbConnector personDbConnector, ProductsDbConnector productsDbConnector, SessionProvider sessionProvider) {
         this.connectionProvider = connectionProvider
         this.customerGateway = personDbConnector
         this.productGateway = productsDbConnector
@@ -120,7 +116,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
 
     private List<OfferOverview> loadOfferOverview() {
         try (Session session = sessionProvider.getCurrentSession()) {
-            List<OfferV2> offerV2List = session.createQuery("FROM OfferV2" ).list()
+            List<OfferV2> offerV2List = session.createQuery("FROM OfferV2").list()
             return createOverviewList(offerV2List)
         } catch (HibernateException e) {
             log.error(e.message, e)
@@ -136,7 +132,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
         String businessOfferId = life.qbic.business.offers.identifier.OfferId.from(offerId.toString()).toString()
         List<OfferV2> result = []
         try (Session session = sessionProvider.getCurrentSession()) {
-            Query query = session.createQuery("select offer from OfferV2 offer where offer.identifier=:offerIdToMatch")
+            Query query = session.createQuery("select offer from OfferV2 offer where offer.offerId=:offerIdToMatch")
             query.setParameter("offerIdToMatch", businessOfferId)
             result.addAll(query.list() as List<OfferV2>)
             if (result.isEmpty()) {
@@ -177,12 +173,17 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             return result.stream().map((OfferV2 offer) -> offer.getIdentifier()).collect()
         } catch (HibernateException e) {
             log.error(e.message, e)
-            throw new DatabaseQueryException("Unexpected exception during the search for all versions of offer "+ id.toString())
+            throw new DatabaseQueryException("Unexpected exception during the search for all versions of offer " + id.toString())
         }
     }
 
     @Override
     Optional<OfferV2> getOffer(life.qbic.business.offers.identifier.OfferId oldId) {
-        return null
+        try (Session session = sessionProvider.getCurrentSession()) {
+            Query query = session.createQuery("select offer from OfferV2 offer where offer.offerId = :idOfInterest", OfferV2.class)
+            query.setParameter("idOfInterest", oldId.toString())
+            List<OfferV2> result = query.list()
+            return result ? Optional.ofNullable(result.get(0)) : Optional.empty() as Optional<OfferV2>
+        }
     }
 }
