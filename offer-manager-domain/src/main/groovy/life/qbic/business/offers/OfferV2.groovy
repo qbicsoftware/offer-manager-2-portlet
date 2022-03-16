@@ -414,7 +414,7 @@ class OfferV2 {
         OfferV2 offerCopy = new OfferV2()
 
         //sorted alphabetically
-        offerCopy.setAssociatedProject(this.getAssociatedProject())
+        offerCopy.setAssociatedProject(this.getAssociatedProject()?.orElse(null))
         offerCopy.setCreationDate(this.getCreationDate())
         offerCopy.setCustomer(this.getCustomer())
         offerCopy.setExperimentalDesign(this.getExperimentalDesign())

@@ -77,7 +77,7 @@ public class RefactorConverter {
     BigDecimal totalVat = BigDecimal.valueOf(offerDto.getTaxes());
 
     OfferV2 offer = new OfferV2();
-    offer.setAssociatedProject(offerDto.getAssociatedProject());
+    offer.setAssociatedProject(offerDto.getAssociatedProject().orElse(null));
     offer.setCreationDate(creationDate);
     offer.setCustomer(customer);
     offer.setExperimentalDesign(offerDto.getExperimentalDesign());
