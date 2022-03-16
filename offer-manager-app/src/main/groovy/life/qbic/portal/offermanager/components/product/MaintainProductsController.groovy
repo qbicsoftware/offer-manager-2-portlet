@@ -1,10 +1,11 @@
 package life.qbic.portal.offermanager.components.product
 
+import life.qbic.business.RefactorConverter
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
+import life.qbic.business.products.ProductDraft
 import life.qbic.business.products.archive.ArchiveProductInput
 import life.qbic.business.products.create.CreateProductInput
-import life.qbic.business.products.dtos.ProductDraft
 import life.qbic.datamodel.dtos.business.ProductCategory
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.facilities.Facility
@@ -43,8 +44,10 @@ class MaintainProductsController {
      * @since 1.1.0
      */
     void createNewProduct(ProductCategory category, String description, String name, double internalUnitPrice, double externalUnitPrice, ProductUnit unit, Facility facility){
+        RefactorConverter converter = new RefactorConverter()
         try {
-            ProductDraft productDraft = ProductDraft.create(category, name, description, internalUnitPrice, externalUnitPrice, unit, facility)
+            ProductDraft productDraft = ProductDraft.create(converter.toProductCategory(category),
+                    name, description, internalUnitPrice, externalUnitPrice, unit.value, facility.getLabel())
             createProductInput.create(productDraft)
         } catch (Exception unexpected) {
             log.error("unexpected exception during create product call", unexpected)

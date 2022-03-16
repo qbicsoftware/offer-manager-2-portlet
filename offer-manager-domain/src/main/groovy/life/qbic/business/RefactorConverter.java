@@ -17,6 +17,7 @@ import life.qbic.business.persons.Person;
 import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
 import life.qbic.business.products.Product;
+import life.qbic.business.products.ProductCategory;
 import life.qbic.business.products.ProductDraft;
 import life.qbic.business.products.ProductItem;
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
@@ -158,6 +159,10 @@ public class RefactorConverter {
         productDto,
         totalPrice,
         unitDiscount);
+  }
+
+  public ProductCategory toProductCategory(life.qbic.datamodel.dtos.business.ProductCategory category) {
+    return ProductCategory.forLabel(category.getValue());
   }
 
   public life.qbic.datamodel.dtos.business.ProjectManager toProjectManagerDto(Person person) {
