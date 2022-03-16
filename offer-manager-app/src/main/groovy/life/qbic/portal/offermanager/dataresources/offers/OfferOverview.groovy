@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
 import groovy.transform.EqualsAndHashCode
+import life.qbic.business.offers.OfferV2
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
@@ -36,38 +37,16 @@ class OfferOverview {
 
     final Optional<ProjectIdentifier> associatedProject
 
-    @Deprecated
-    OfferOverview(
-            OfferId offerId,
-            Date modificationDate,
-            String projectTitle,
-            String projectId,
-            String customer,
-            double totalPrice) {
-        this.offerId = offerId
-        this.modificationDate = modificationDate
-        this.projectId = projectId
-        this.projectTitle = projectTitle
-        this.customer = customer
-        this.totalPrice = totalPrice
-        this.associatedProject = Optional.empty()
-    }
-
-    @Deprecated
-    OfferOverview(
-            OfferId offerId,
-            Date modificationDate,
-            String projectTitle,
-            String customer,
-            double totalPrice,
-            ProjectIdentifier associatedProject) {
-        this.offerId = offerId
-        this.modificationDate = modificationDate
-        this.projectId = ""
-        this.projectTitle = projectTitle
-        this.customer = customer
-        this.totalPrice = totalPrice
-        this.associatedProject = Optional.of(associatedProject)
+    static OfferOverview from(OfferV2 offer) {
+        return new OfferOverview(
+                new OfferId(offer.identifier.getProjectPart(),offer.identifier.getRandomPart(), offer.identifier.getVersion() as String),
+                offer.getCreationDate().toDate(),
+                offer.getProjectTitle(),
+                "",
+                String.format("%s %s", offer.getCustomer().firstName, offer.getCustomer().lastName),
+                String.format("%s %s", offer.getProjectManager().firstName, offer.getProjectManager().lastName),
+                offer.getTotalCost().doubleValue()
+        )
     }
 
     OfferOverview(

@@ -80,12 +80,8 @@ class OfferV2 {
     @OneToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
     private List<ProductItem> items = []
 
-    /**
-     * The identifier for the offer which makes it distinguishable from other offers
-     */
     @Column(name = "offerId")
-    @Convert(converter = OfferIdConverter.class)
-    private OfferId identifier
+    private String offerId
 
     /**
      * The affiliation of the customer selected for this offer
@@ -107,6 +103,9 @@ class OfferV2 {
      *  e.g. 0.4 or a 40% markup for external customers
      */
     private double overheadRatio
+
+    @Column(name = "checksum")
+    private String checksum
 
     private List<OfferItem> dataAnalysisItems = new ArrayList<>()
     private List<OfferItem> dataGenerationItems = new ArrayList<>()
@@ -137,6 +136,18 @@ class OfferV2 {
     OfferV2(Affiliation selectedCustomerAffiliation, OfferId identifier) {
         this.selectedCustomerAffiliation = selectedCustomerAffiliation
         this.identifier = identifier
+    }
+
+    /**
+     * Thread-safe request of the current offer content's SHA-256 checksum
+     * @return the checksum at the time of request execution
+     */
+    String getChecksum() {
+        String checksum
+        synchronized (this) {
+            checksum = new OfferChecksumSupplier(this).get()
+        }
+        return  checksum
     }
 
     BigDecimal getOverheadsDataAnalysis() {
@@ -315,11 +326,11 @@ class OfferV2 {
     }
 
     OfferId getIdentifier() {
-        return this.identifier
+        return OfferId.from(offerId)
     }
 
     void setIdentifier(OfferId identifier) {
-        this.identifier = identifier
+        this.offerId = identifier.toString()
     }
 
     Affiliation getSelectedCustomerAffiliation() {
@@ -350,8 +361,8 @@ class OfferV2 {
         return associatedProject
     }
 
-    void setAssociatedProject(Optional<ProjectIdentifier> associatedProject) {
-        this.associatedProject = associatedProject
+    void setAssociatedProject(ProjectIdentifier associatedProject) {
+        this.associatedProject = Optional.ofNullable(associatedProject)
     }
 
     void addDataManagementItem(OfferItem item) {
@@ -391,6 +402,14 @@ class OfferV2 {
         return original.copy()
     }
 
+    String getOfferId() {
+        return offerId
+    }
+
+    String setOfferId(String offerId) {
+        this.offerId = offerId
+    }
+
     private OfferV2 copy() {
         OfferV2 offerCopy = new OfferV2()
 
@@ -400,7 +419,7 @@ class OfferV2 {
         offerCopy.setCustomer(this.getCustomer())
         offerCopy.setExperimentalDesign(this.getExperimentalDesign())
         offerCopy.setExpirationDate(this.getExpirationDate())
-        offerCopy.setIdentifier(this.getIdentifier())
+        offerCopy.setOfferId(this.getOfferId())
         offerCopy.setItems(this.getItems())
         offerCopy.setNetSumDataAnalysis(this.getNetSumDataAnalysis())
         offerCopy.setNetSumDataGeneration(this.getNetSumDataGeneration())
@@ -479,19 +498,6 @@ class OfferV2 {
                 throw new IllegalArgumentException(String.format("Cannot parse %s to a project identifier.", identifier))
             }
             return identifier
-        }
-    }
-
-    private static class OfferIdConverter implements AttributeConverter<OfferId, String> {
-
-        @Override
-        String convertToDatabaseColumn(OfferId offerId) {
-            return offerId.toString()
-        }
-
-        @Override
-        OfferId convertToEntityAttribute(String s) {
-            return OfferId.from(s)
         }
     }
 }

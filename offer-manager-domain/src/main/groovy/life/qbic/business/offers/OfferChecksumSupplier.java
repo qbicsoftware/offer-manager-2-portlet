@@ -12,7 +12,7 @@ import life.qbic.business.products.ProductItem;
  * <p>Supplies a checksum for a specific offer. The returned checksum is a SHA-256 checksum on
  * fields of the offer and formatted as a HEX String</p>
  */
-public class OfferChecksumSupplier implements
+class OfferChecksumSupplier implements
     Supplier<String> {
 
   private final OfferV2 offer;

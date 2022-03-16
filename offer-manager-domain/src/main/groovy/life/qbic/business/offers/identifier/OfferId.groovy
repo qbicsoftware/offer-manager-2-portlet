@@ -80,10 +80,6 @@ class OfferId implements Comparable<OfferId>{
 
     @Override
     String toString() {
-        return "OfferId{" +
-                "projectPart='" + projectPart + '\'' +
-                ", randomPart='" + randomPart + '\'' +
-                ", version=" + version +
-                '}'
+        return String.format("O_%s_%s_%s", projectPart, randomPart, version)
     }
 }
