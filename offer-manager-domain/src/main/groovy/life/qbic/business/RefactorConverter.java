@@ -17,6 +17,7 @@ import life.qbic.business.persons.Person;
 import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
 import life.qbic.business.products.Product;
+import life.qbic.business.products.ProductCategory;
 import life.qbic.business.products.ProductDraft;
 import life.qbic.business.products.ProductItem;
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
@@ -34,6 +35,7 @@ import life.qbic.datamodel.dtos.business.services.ProjectManagement;
 import life.qbic.datamodel.dtos.business.services.ProteomicAnalysis;
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis;
 import life.qbic.datamodel.dtos.business.services.Sequencing;
+import life.qbic.datamodel.dtos.general.CommonPerson;
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode;
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier;
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace;
@@ -159,6 +161,10 @@ public class RefactorConverter {
         unitDiscount);
   }
 
+  public ProductCategory toProductCategory(life.qbic.datamodel.dtos.business.ProductCategory category) {
+    return ProductCategory.forLabel(category.getValue());
+  }
+
   public life.qbic.datamodel.dtos.business.ProjectManager toProjectManagerDto(Person person) {
     life.qbic.datamodel.dtos.business.ProjectManager.Builder projectManagerDtoBuilder = new life.qbic.datamodel.dtos.business.ProjectManager.Builder(
         person.getFirstName(),
@@ -199,6 +205,19 @@ public class RefactorConverter {
         title,
         emailAddress,
         affiliations);
+  }
+
+  public life.qbic.datamodel.dtos.general.Person toPersonDTO(Person person) {
+    CommonPerson.Builder personBuilder = new CommonPerson.Builder(
+        person.getFirstName(),
+        person.getLastName(),
+        person.getEmail());
+    personBuilder.affiliations(
+        person.getAffiliations().stream()
+            .map(this::toAffiliationDto)
+            .collect(Collectors.toList()));
+    personBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
+    return personBuilder.build();
   }
 
 
@@ -294,7 +313,7 @@ public class RefactorConverter {
     return product;
   }
 
-  life.qbic.datamodel.dtos.business.services.Product toProductDto(Product product) {
+  public life.qbic.datamodel.dtos.business.services.Product toProductDto(Product product) {
     String productName = product.getProductName();
     String productDescription = product.getDescription();
     Double internalUnitPrice = product.getInternalUnitPrice();

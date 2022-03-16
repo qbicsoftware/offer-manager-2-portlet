@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.products
 
+import life.qbic.business.RefactorConverter
 import life.qbic.business.products.list.ListProductsDataSource
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.communication.EventEmitter
@@ -25,6 +26,7 @@ class ProductsResourcesService implements ResourcesService<Product> {
      */
     private final EventEmitter<Product> productEventEmitter
 
+    private final RefactorConverter refactorConverter = new RefactorConverter()
 
     /**
      * Constructor expecting a customer database connector
@@ -41,14 +43,14 @@ class ProductsResourcesService implements ResourcesService<Product> {
     void reloadResources() {
         products.clear()
 
-        List<Product> updatedEntries = listProductsDataSource.listProducts()
+        List<Product> updatedEntries = listProductsDataSource.listProducts().stream().map(refactorConverter::toProductDto).collect()
         updatedEntries.each {
             addToResource(it)
         }
     }
 
     private void populateResources() {
-        this.products.addAll(listProductsDataSource.listProducts())
+        this.products.addAll(listProductsDataSource.listProducts().stream().map(refactorConverter::toProductDto).collect())
     }
 
     @Override

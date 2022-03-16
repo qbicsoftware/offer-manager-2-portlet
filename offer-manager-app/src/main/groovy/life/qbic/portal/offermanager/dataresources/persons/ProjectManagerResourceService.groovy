@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
+import life.qbic.business.RefactorConverter
 import life.qbic.business.persons.list.ListPersonsDataSource
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.portal.offermanager.communication.EventEmitter
@@ -21,8 +22,10 @@ class ProjectManagerResourceService implements ResourcesService<ProjectManager>{
 
     private final EventEmitter<ProjectManager> resourceUpdateEvent
 
+    private final RefactorConverter refactorConverter = new RefactorConverter()
+
     ProjectManagerResourceService(ListPersonsDataSource listPersonsDataSource) {
-        availableProjectManagers = listPersonsDataSource.listAllProjectManagers()
+        availableProjectManagers = listPersonsDataSource.listPersons().stream().map(refactorConverter::toProjectManagerDto).collect()
         this.listPersonsDataSource = listPersonsDataSource
         resourceUpdateEvent = new EventEmitter<>()
     }
@@ -31,7 +34,7 @@ class ProjectManagerResourceService implements ResourcesService<ProjectManager>{
     void reloadResources() {
         availableProjectManagers.clear()
 
-        List<ProjectManager> updatedEntries = listPersonsDataSource.listAllProjectManagers()
+        List<ProjectManager> updatedEntries = listPersonsDataSource.listPersons().stream().map(refactorConverter::toProjectManagerDto).collect()
         updatedEntries.each {
             addToResource(it)
         }

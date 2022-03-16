@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
+import life.qbic.business.RefactorConverter
 import life.qbic.business.persons.list.ListPersonsDataSource
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.offermanager.communication.EventEmitter
@@ -22,9 +23,11 @@ class CustomerResourceService implements ResourcesService<Customer>{
 
     private final EventEmitter<Customer> eventEmitter
 
+    private final RefactorConverter refactorConverter = new RefactorConverter()
+
     CustomerResourceService(ListPersonsDataSource listPersonsDataSource) {
         this.listPersonsDataSource = listPersonsDataSource
-        this.customerList = listPersonsDataSource.listAllCustomers()
+        this.customerList = listPersonsDataSource.listPersons().stream().map(refactorConverter::toCustomerDto).collect()
         this.eventEmitter = new EventEmitter<>()
     }
 
@@ -32,7 +35,7 @@ class CustomerResourceService implements ResourcesService<Customer>{
     void reloadResources() {
         customerList.clear()
 
-        List<Customer> updatedEntries = listPersonsDataSource.listAllCustomers()
+        List<Customer> updatedEntries = listPersonsDataSource.listPersons().stream().map(refactorConverter::toCustomerDto).collect()
         updatedEntries.each {
             addToResource(it)
         }

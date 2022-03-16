@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
+import life.qbic.business.RefactorConverter
 import life.qbic.business.projects.list.ListProjectsDataSource
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.portal.offermanager.communication.EventEmitter
@@ -22,10 +23,12 @@ class ProjectResourceService implements ResourcesService<ProjectIdentifier>{
 
     private final EventEmitter<ProjectIdentifier> eventEmitter
 
+    private final RefactorConverter refactorConverter = new RefactorConverter()
+
     ProjectResourceService(ListProjectsDataSource listProjectsDataSource) {
         this.listProjectsDataSource = Objects.requireNonNull(listProjectsDataSource, "Connector " +
                 "must not be null.")
-        this.existingProjects = listProjectsDataSource.listProjects()
+        this.existingProjects = listProjectsDataSource.listProjects().stream().map(refactorConverter::toProjectIdentifierDTO).collect()
         this.eventEmitter = new EventEmitter<>()
     }
 
