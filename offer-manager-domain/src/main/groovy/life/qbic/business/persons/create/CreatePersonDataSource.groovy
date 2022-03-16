@@ -3,6 +3,7 @@ package life.qbic.business.persons.create
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.persons.Person
 import life.qbic.business.persons.PersonExistsException
+import life.qbic.business.persons.PersonNotFoundException
 
 /**
  * Creates a person in the database for the CreatePerson use case
@@ -33,7 +34,7 @@ interface CreatePersonDataSource {
      * database
      * @since 1.0.0
      */
-    void updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException
+    void updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException, PersonNotFoundException
 
     /**
      * Updates affiliations of a person specified by a customer ID.
