@@ -18,6 +18,13 @@ interface CreatePersonOutput extends UseCaseFailure {
      */
     void personCreated(Person person)
 
+
+    /**
+     * Is called by the use case, when a customer resource has been updated
+     * @param person The updated created person resource
+     */
+    void personUpdated(Person person)
+
     /**
      * To be called if a person entry was not found in the database
      * @param notFoundPerson The person that was searched for but not found

@@ -6,8 +6,6 @@ import life.qbic.business.logging.Logging
 import life.qbic.business.persons.Person
 import life.qbic.business.persons.PersonExistsException
 import life.qbic.business.persons.PersonNotFoundException
-import life.qbic.business.persons.update.UpdatePerson
-import life.qbic.business.persons.update.UpdatePersonOutput
 
 /**
  * This use case creates a customer in the system
@@ -16,11 +14,10 @@ import life.qbic.business.persons.update.UpdatePersonOutput
  *
  * @since: 1.0.0
  */
-class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
+class CreatePerson implements CreatePersonInput {
 
   private CreatePersonDataSource dataSource
   private CreatePersonOutput output
-  private UpdatePerson updatePerson
 
   private final Logging log = Logger.getLogger(CreatePerson.class)
 
@@ -28,7 +25,6 @@ class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
   CreatePerson(CreatePersonOutput output, CreatePersonDataSource dataSource) {
     this.output = output
     this.dataSource = dataSource
-    this.updatePerson = new UpdatePerson(this, dataSource)
   }
 
   @Override
@@ -50,28 +46,35 @@ class CreatePerson implements CreatePersonInput, UpdatePersonOutput {
   }
 
   @Override
-  void updatePerson(Person oldPerson, Person newPerson) {
+  void updatePerson(Person outdatedPerson, Person personWithUpdate) {
     try {
-      dataSource.updatePerson(oldPerson, newPerson)
-    } catch (PersonNotFoundException ignore) {
-      output.personNotFound(oldPerson, "Cannot update person entry for ${oldPerson.firstName} ${oldPerson.lastName}. \n" +
-              "Person was not found. Please try again.")
-    } catch (NullPointerException ignore) {
-      output.personNotFound(oldPerson, "Cannot update person entry for ${oldPerson.firstName} ${oldPerson.lastName}. \n" +
-              "Person was not found. Please try again.")
-    } catch (Exception ignore) {
-      output.failNotification("Cannot update person entry for ${oldPerson.firstName} ${oldPerson.lastName}. \n" +
-              "Please try again.")
+      if (hasBasicPersonDataChanged(outdatedPerson, personWithUpdate)) {
+        personWithUpdate.setUserId(outdatedPerson.getUserId())
+        dataSource.updatePerson(outdatedPerson, personWithUpdate)
+      } else {
+        dataSource.updatePersonAffiliations(personWithUpdate)
+      }
+      output.personUpdated(personWithUpdate)
+    } catch (PersonNotFoundException notFoundException) {
+      String message = "Cannot update person entry for ${outdatedPerson.firstName} ${outdatedPerson.lastName}. \nPerson was not found. Please try again."
+      log.error(message, notFoundException)
+      output.personNotFound(outdatedPerson, message)
+    } catch (DatabaseQueryException databaseQueryException) {
+      String message = "Could not update ${outdatedPerson.firstName} ${outdatedPerson.lastName}. Please try again."
+      log.error(message, databaseQueryException)
+      output.failNotification(message)
+    } catch (Exception unexpected) {
+      String message = "Could not update person."
+      log.error("$message : $unexpected.message", unexpected)
+      output.failNotification(message)
     }
   }
 
-  @Override
-  void personUpdated(Person person) {
-    output.personCreated(person)
-  }
-
-  @Override
-  void failNotification(String notification) {
-    output.failNotification(notification)
+  // determines if customer properties other than affiliations have changed
+  private static boolean hasBasicPersonDataChanged(Person existingPerson, Person newPerson) {
+    return !(existingPerson.firstName.equals(newPerson.firstName)
+            && existingPerson.lastName.equals(newPerson.lastName)
+            && existingPerson.email.equals(newPerson.email)
+            && existingPerson.title.equals(newPerson.title))
   }
 }
