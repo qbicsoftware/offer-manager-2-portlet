@@ -11,6 +11,8 @@ import life.qbic.business.products.ProductCategory
 import life.qbic.business.products.ProductItem
 import spock.lang.Specification
 
+import static org.junit.jupiter.api.Assertions.assertNotNull
+
 /**
  * <short description>
  *
@@ -78,10 +80,10 @@ class CreateOfferSpec extends Specification {
         then: "a failure notification is sent"
         1 * output.createdNewOffer(_) >> { arguments ->
             final OfferV2 storedOffer = arguments.get(0)
-            assert storedOffer.getOverhead() >= 0
-            assert storedOffer.getTotalNetPrice() >= 0
-            assert storedOffer.getTotalCost() >= 0
-            assert storedOffer.getTotalVat() >= 0
+            assertNotNull(storedOffer.getOverhead())
+            assertNotNull(storedOffer.getTotalNetPrice())
+            assertNotNull(storedOffer.getTotalCost())
+            assertNotNull(storedOffer.getTotalVat())
         }
     }
 
