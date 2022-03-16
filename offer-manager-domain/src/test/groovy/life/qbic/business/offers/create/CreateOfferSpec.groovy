@@ -48,7 +48,7 @@ class CreateOfferSpec extends Specification {
     def "given the offer exists in the datasource, when the offer is created, then a failure notification is sent"() {
         given: "the offer exists in the datasource"
         datasource = Stub()
-        datasource.store(_ as OfferV2) >> {throw new OfferExistsException()}
+        datasource.store(_ as OfferV2) >> {throw new OfferExistsException("offer supposedly exists")}
         when: "the offer is requested"
         CreateOffer createOffer = new CreateOffer(datasource, output)
         createOffer.createOffer(offerV2)
