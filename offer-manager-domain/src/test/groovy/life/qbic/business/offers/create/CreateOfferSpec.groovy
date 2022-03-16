@@ -87,6 +87,43 @@ class CreateOfferSpec extends Specification {
         }
     }
 
+    private OfferV2 existingOffer = offerV2
+    private OfferV2 updatedOffer = {
+        def offer = OfferV2.copyOf(offerV2)
+        offer.setProjectTitle("Different Project Title")
+        return offer
+    } as OfferV2
+
+    def "given a datasource providing an offer, when the use case updates the offer, then a success notification is sent"() {
+        given: "a datasource providing an offer"
+        datasource.getOffer(existingOffer.getIdentifier())
+        when: "the use case updates the offer"
+        CreateOffer createOffer = new CreateOffer(datasource, output)
+        createOffer.updateOffer(updatedOffer)
+        then: "a success notification is sent"
+        and: "no failure notification is sent"
+    }
+
+    def "given a datasource without offers, when the use case updates the offer, then a failure notification is sent"() {
+        given: "a datasource without offers"
+        when: "the use case updates the offer"
+        then: "a failure notification is sent"
+        and: "no success notification is sent"
+    }
+
+    def "given an existing offer with identical content, when the use case updates the offer, then a failure notification is sent"() {
+        given: "a datasource with an identical offer"
+        when: "the use case updates the offer"
+        then: "a failure notification is sent"
+        and: "no success notification is sent"
+    }
+
+    def "given a datasource providing an offer, when the use case updates the offer, then the offer identifier increases its version by one"() {
+        given: "a datasource providing an offer"
+        when: "the use case updates the offer"
+        then: "the offer identifier increases its version by one"
+    }
+
 
     private ProductItem mockProductItem() {
         Product product = new Product()
