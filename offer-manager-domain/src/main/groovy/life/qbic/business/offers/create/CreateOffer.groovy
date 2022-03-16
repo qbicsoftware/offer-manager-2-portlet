@@ -6,6 +6,7 @@ import life.qbic.business.logging.Logging
 import life.qbic.business.offers.OfferCalculus
 import life.qbic.business.offers.OfferExistsException
 import life.qbic.business.offers.OfferV2
+import life.qbic.business.offers.identifier.OfferId
 
 /**
  * This class implements logic to create new offers.
@@ -50,6 +51,35 @@ class CreateOffer implements CreateOfferInput {
 
     @Override
     void updateOffer(OfferV2 offer) {
+        Optional<OfferV2> persistentOffer = dataSource.getOffer(offer.getIdentifier())
+        if (!persistentOffer.isPresent()) {
+            output.failNotification("The provided offer (${offer.getIdentifier().toString()} is unknown to the system.")
+            return
+        }
+        OfferV2 workingCopy = updateIdToLatestVersion(offer)
+        OfferV2 processedOffer = OfferCalculus.process(workingCopy)
+        try {
+            dataSource.store(processedOffer)
+            output.createdNewOffer(processedOffer)
 
+        } catch (OfferExistsException offerExistsException) {
+            log.error("Failed to update offer $offer.identifier", offerExistsException)
+            output.failNotification("The provided offer is the same as the stored.")
+        }
+    }
+
+    private OfferV2 updateIdToLatestVersion(OfferV2 offer) {
+        OfferV2 workingCopy = OfferV2.copyOf(offer)
+        Optional<OfferId> latestOfferId = dataSource.fetchAllVersionsForOfferId(offer.getIdentifier()).stream()
+                .max(OfferId::compareTo)
+                .map(this::increaseVersion)
+        latestOfferId.ifPresent({ workingCopy.setIdentifier(it) })
+        return workingCopy
+    }
+
+    private static OfferId increaseVersion(OfferId identifier) {
+        def copy = new OfferId(identifier.getProjectPart(), identifier.getRandomPart(), identifier.getVersion())
+        copy.increaseVersion()
+        return copy
     }
 }

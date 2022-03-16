@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull
  */
 class CreateOfferSpec extends Specification {
 
-    private CreateOfferDataSource datasource = Stub()
+    private CreateOfferDataSource datasource = Mock()
     private CreateOfferOutput output = Mock()
     private OfferId offerId = new OfferId("projectPart", 1)
     private OfferV2 offerV2 = new OfferV2(
@@ -52,8 +52,6 @@ class CreateOfferSpec extends Specification {
         when: "the offer is requested"
         CreateOffer createOffer = new CreateOffer(datasource, output)
         createOffer.createOffer(offerV2)
-//        then:"the database is queried"
-//        1 * datasource.store({ OfferV2 it -> it.identifier == offerId } as OfferV2)
         then: "a failure notification is sent"
         1 * output.failNotification(_)
     }
@@ -88,40 +86,87 @@ class CreateOfferSpec extends Specification {
     }
 
     private OfferV2 existingOffer = offerV2
-    private OfferV2 updatedOffer = {
-        def offer = OfferV2.copyOf(offerV2)
-        offer.setProjectTitle("Different Project Title")
-        return offer
-    } as OfferV2
+    private OfferV2 updatedOffer = offerCopyWithModifiedTitle()
 
     def "given a datasource providing an offer, when the use case updates the offer, then a success notification is sent"() {
         given: "a datasource providing an offer"
-        datasource.getOffer(existingOffer.getIdentifier())
+        datasource.getOffer(existingOffer.getIdentifier()) >> Optional.of(existingOffer)
+        datasource.store(existingOffer) >> {throw new OfferExistsException("test exception")}
         when: "the use case updates the offer"
         CreateOffer createOffer = new CreateOffer(datasource, output)
         createOffer.updateOffer(updatedOffer)
         then: "a success notification is sent"
+        1 * output.createdNewOffer({ it.getIdentifier() == updatedOffer.getIdentifier() })
         and: "no failure notification is sent"
+        0 * output.failNotification(_)
     }
 
     def "given a datasource without offers, when the use case updates the offer, then a failure notification is sent"() {
         given: "a datasource without offers"
+        datasource.getOffer(existingOffer.getIdentifier()) >> Optional.empty()
         when: "the use case updates the offer"
+        CreateOffer createOffer = new CreateOffer(datasource, output)
+        createOffer.updateOffer(updatedOffer)
         then: "a failure notification is sent"
+        0 * output.createdNewOffer(_)
         and: "no success notification is sent"
+        1 * output.failNotification(_)
     }
 
     def "given an existing offer with identical content, when the use case updates the offer, then a failure notification is sent"() {
         given: "a datasource with an identical offer"
+        datasource.getOffer(existingOffer.getIdentifier()) >> Optional.of(existingOffer)
+        datasource.store(_ as OfferV2) >> {
+            args -> if (args.get(0).getIdentifier() == existingOffer.getIdentifier()) {
+                throw  new OfferExistsException("offer exists")
+            }
+        }
         when: "the use case updates the offer"
+        CreateOffer createOffer = new CreateOffer(datasource, output)
+        createOffer.updateOffer(existingOffer)
         then: "a failure notification is sent"
+        1 * output.failNotification(_)
         and: "no success notification is sent"
+        0 * output.createdNewOffer(_)
+
     }
 
-    def "given a datasource providing an offer, when the use case updates the offer, then the offer identifier increases its version by one"() {
+    def "given a datasource providing an offer, when the use case updates the offer, then the offer identifier increases its version by the latest plus one"() {
         given: "a datasource providing an offer"
+        datasource.getOffer(existingOffer.getIdentifier()) >> Optional.of(existingOffer)
+        and: "the provided offer is the latest version"
+        datasource.fetchAllVersionsForOfferId(existingOffer.getIdentifier()) >> [existingOffer.getIdentifier()]
         when: "the use case updates the offer"
+        CreateOffer createOffer = new CreateOffer(datasource, output)
+        createOffer.updateOffer(existingOffer)
         then: "the offer identifier increases its version by one"
+        1 * output.createdNewOffer({it.getIdentifier().getVersion() == existingOffer.getIdentifier().getVersion() + 1})
+        and: "no failure is sent"
+        0 * output.failNotification(_)
+    }
+
+    def "given a datasource providing an offer, when the use case updates the offer, then the offer prices are updated"() {
+        given: "a datasource providing an offer"
+        datasource.getOffer(existingOffer.getIdentifier()) >> Optional.of(existingOffer)
+        and: "the provided offer is the latest version"
+        datasource.fetchAllVersionsForOfferId(existingOffer.getIdentifier()) >> [existingOffer.getIdentifier()]
+        when: "the use case updates the offer"
+        CreateOffer createOffer = new CreateOffer(datasource, output)
+        createOffer.updateOffer(existingOffer)
+        then: "the offer costs are populated"
+        1 * output.createdNewOffer(_) >> { arguments ->
+            final OfferV2 storedOffer = arguments.get(0)
+            assertNotNull(storedOffer.getOverhead())
+            assertNotNull(storedOffer.getTotalNetPrice())
+            assertNotNull(storedOffer.getTotalCost())
+            assertNotNull(storedOffer.getTotalVat())
+        }
+    }
+
+    private OfferV2 offerCopyWithModifiedTitle() {
+        def offer = OfferV2.copyOf(offerV2)
+        offer.setProjectTitle("Different Project Title")
+        return offer
     }
 
 

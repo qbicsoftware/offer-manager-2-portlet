@@ -1,4 +1,4 @@
-package life.qbic.portal.portlet.persons.create
+package life.qbic.business.persons.create
 
 import life.qbic.business.persons.Person
 import life.qbic.business.persons.PersonExistsException
