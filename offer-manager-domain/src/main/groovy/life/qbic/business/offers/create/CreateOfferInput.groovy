@@ -24,9 +24,19 @@ interface CreateOfferInput {
    *
    * If the identifier is passed with the content, it will be ignored.
    *
-   * @param offer {@link life.qbic.datamodel.dtos.business.Offer}
+   * @param offer {@link OfferV2} the offer to be created
    * @since 1.0.0
    */
-  void createOffer(OfferV2 offerContent)
+  void createOffer(OfferV2 offer)
+
+  /**
+   * Saves changes to an offer in the database.
+   * This method causes the use case to fail in case the provided offer has an invalid identifier.
+   * An identifier is valid if it is known to the system.
+   * For offers with a valid identifier, the price information will be updated and offer
+   * information will be stored in a persistent manner.
+   * @param offer an offer containing information to be set
+   */
+  void updateOffer(OfferV2 offer)
 
 }
