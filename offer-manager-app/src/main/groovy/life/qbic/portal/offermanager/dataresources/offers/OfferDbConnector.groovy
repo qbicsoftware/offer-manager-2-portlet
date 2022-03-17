@@ -3,7 +3,6 @@ package life.qbic.portal.offermanager.dataresources.offers
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.business.offers.Offer
 import life.qbic.business.offers.OfferExistsException
 import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.create.CreateOfferDataSource
@@ -96,7 +95,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
     }
 
     private boolean offerChecksumExists(String checksum) {
-        boolean checksumPresent = false
+        boolean checksumPresent
         try (Session session = sessionProvider.getCurrentSession()) {
             Query query = session.createQuery("Select o FROM OfferV2 o where o.checksum=:checksumOfInterest ", OfferV2.class)
             query.setParameter("checksumOfInterest", checksum)
