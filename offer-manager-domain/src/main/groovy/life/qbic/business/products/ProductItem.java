@@ -9,6 +9,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import life.qbic.business.offers.OfferV2;
 
 @Entity
 @Table(name = "productitem", uniqueConstraints = {
@@ -28,8 +29,9 @@ public class ProductItem {
   @Column(name = "quantity", nullable = false)
   private Double quantity;
 
-  @Column(name = "offerId", nullable = false)
-  private Integer offerId;
+  @ManyToOne
+  @JoinColumn(name = "offerId")
+  private OfferV2 offer;
 
   public ProductItem(Product product, Double quantity) {
     this.product = product;
@@ -39,12 +41,8 @@ public class ProductItem {
   protected ProductItem() {
   }
 
-  public Integer getOfferId() {
-    return offerId;
-  }
-
-  public void setOfferId(Integer offerId) {
-    this.offerId = offerId;
+  public void setOffer(OfferV2 offer) {
+    this.offer = offer;
   }
 
   public Double getQuantity() {

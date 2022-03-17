@@ -77,7 +77,7 @@ class OfferV2 {
     /**
      * A list of items for which the customer will be charged
      */
-    @OneToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
+    @OneToMany(mappedBy = "offer", cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
     private List<ProductItem> items = []
 
     @Column(name = "offerId")
@@ -148,6 +148,11 @@ class OfferV2 {
     OfferV2(Affiliation selectedCustomerAffiliation, OfferId identifier) {
         this.selectedCustomerAffiliation = selectedCustomerAffiliation
         this.identifier = identifier
+    }
+
+    void addProductItem(ProductItem productItem) {
+        productItem.setOffer(this)
+        this.items.add(productItem)
     }
 
     /**

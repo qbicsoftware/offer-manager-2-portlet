@@ -116,13 +116,13 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
         return offerV2List.stream().map(OfferOverview::from).collect() as List<OfferOverview>
     }
 
-
     private List<OfferOverview> loadOfferOverview() {
         try (Session session = sessionProvider.getCurrentSession()) {
             session.beginTransaction()
             List<OfferV2> offerV2List = session.createQuery("Select offer FROM OfferV2 offer", OfferV2.class).list()
+            List<OfferOverview> overviewList = createOverviewList(offerV2List)
             session.getTransaction().commit()
-            return createOverviewList(offerV2List)
+            return overviewList
         } catch (HibernateException e) {
             log.error(e.message, e)
             throw new DatabaseQueryException("Unable to load offer overviews.")
