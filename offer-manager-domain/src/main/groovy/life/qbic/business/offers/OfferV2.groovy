@@ -46,8 +46,8 @@ class OfferV2 {
      */
     @OneToOne(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
     @JoinColumn(name = "customerId")
-
     private Person customer
+
     /**
      * The QBiC project manager who was assigned to the project
      */
@@ -102,29 +102,41 @@ class OfferV2 {
      * based on the customer's affiliation.
      *  e.g. 0.4 or a 40% markup for external customers
      */
+    @Transient
     private double overheadRatio
 
     @Column(name = "checksum")
     private String checksum
 
-    private List<OfferItem> dataAnalysisItems = new ArrayList<>()
+    /**
+     * A project that has been created from this offer (optional)
+     */
+    @Column(name = "associatedProject")
+    @Convert(converter = OptionalProjectIdentifierConverter.class)
+    private ProjectIdentifier associatedProject
+
+    @Transient
     private List<OfferItem> dataGenerationItems = new ArrayList<>()
+    @Transient
+    private List<OfferItem> dataAnalysisItems = new ArrayList<>()
+    @Transient
     private List<OfferItem> dataManagementItems = new ArrayList<>()
+    @Transient
     private List<OfferItem> externalServiceItems = new ArrayList<>()
 
-    private BigDecimal overheadsDataAnalysis
-    private BigDecimal overheadsDataGeneration
-    private BigDecimal overheadsDataManagement
-    private BigDecimal overheadsExternalServices
-    private BigDecimal netSumDataAnalysis
-    private BigDecimal netSumDataGeneration
-    private BigDecimal netSumDataManagement
-    private BigDecimal netSumExternalServices
-    private BigDecimal totalNetPrice
-    private BigDecimal vatRatio
-    private BigDecimal totalVat
-    private BigDecimal totalCost
-    private BigDecimal totalDiscountAmount
+    @Transient private BigDecimal overheadsDataAnalysis
+    @Transient private BigDecimal overheadsDataGeneration
+    @Transient private BigDecimal overheadsDataManagement
+    @Transient private BigDecimal overheadsExternalServices
+    @Transient private BigDecimal netSumDataAnalysis
+    @Transient private BigDecimal netSumDataGeneration
+    @Transient private BigDecimal netSumDataManagement
+    @Transient private BigDecimal netSumExternalServices
+    @Transient private BigDecimal totalNetPrice
+    @Transient private BigDecimal vatRatio
+    @Transient private BigDecimal totalVat
+    @Transient private BigDecimal totalCost
+    @Transient private BigDecimal totalDiscountAmount
 
     OfferV2() {}
 
@@ -254,13 +266,6 @@ class OfferV2 {
         this.totalDiscountAmount = totalDiscountAmount
     }
 
-    /**
-     * A project that has been created from this offer (optional)
-     */
-    @Column(name = "associatedProject")
-    @Convert(converter = OptionalProjectIdentifierConverter.class)
-    private Optional<ProjectIdentifier> associatedProject
-
     LocalDate getCreationDate() {
         return creationDate
     }
@@ -358,11 +363,11 @@ class OfferV2 {
     }
 
     Optional<ProjectIdentifier> getAssociatedProject() {
-        return associatedProject
+        return Optional.ofNullable(associatedProject)
     }
 
     void setAssociatedProject(ProjectIdentifier associatedProject) {
-        this.associatedProject = Optional.ofNullable(associatedProject)
+        this.associatedProject = associatedProject
     }
 
     void addDataManagementItem(OfferItem item) {
@@ -463,20 +468,20 @@ class OfferV2 {
         }
     }
 
-    private static class OptionalProjectIdentifierConverter implements AttributeConverter<Optional<ProjectIdentifier>, String> {
+    private static class OptionalProjectIdentifierConverter implements AttributeConverter<ProjectIdentifier, String> {
 
         @Override
-        String convertToDatabaseColumn(Optional<ProjectIdentifier> projectIdentifier) {
-            if (projectIdentifier.isPresent()) {
+        String convertToDatabaseColumn(ProjectIdentifier projectIdentifier) {
+            if (projectIdentifier) {
                 return projectIdentifier.toString()
             } else {
-                return ""
+                return null
             }
         }
 
         @Override
-        Optional<ProjectIdentifier> convertToEntityAttribute(String projectIdentifier) {
-            Optional<ProjectIdentifier> identifier = Optional.empty()
+        ProjectIdentifier convertToEntityAttribute(String projectIdentifier) {
+            ProjectIdentifier identifier = null
             if (!projectIdentifier) {
                 return identifier
             }
@@ -493,9 +498,9 @@ class OfferV2 {
                 }
                 def space = new ProjectSpace(splittedIdentifier[1])
                 def code = new ProjectCode(splittedIdentifier[2])
-                identifier = Optional.of(new ProjectIdentifier(space, code))
+                identifier =new ProjectIdentifier(space, code)
             } catch (Exception ignored) {
-                throw new IllegalArgumentException(String.format("Cannot parse %s to a project identifier.", identifier))
+                throw new IllegalArgumentException(String.format("Cannot parse %s to a project identifier.", projectIdentifier))
             }
             return identifier
         }
