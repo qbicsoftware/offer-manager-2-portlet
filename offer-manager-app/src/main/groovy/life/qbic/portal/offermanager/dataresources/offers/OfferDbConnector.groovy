@@ -1,6 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
-import groovy.transform.CompileStatic
+
 import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.OfferExistsException
@@ -30,7 +30,6 @@ import java.util.stream.Collectors
  *
  */
 @Log4j2
-@CompileStatic
 class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant, OfferOverviewDataSource {
 
     SessionProvider sessionProvider
@@ -120,7 +119,9 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
 
     private List<OfferOverview> loadOfferOverview() {
         try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
             List<OfferV2> offerV2List = session.createQuery("Select offer FROM OfferV2 offer", OfferV2.class).list()
+            session.getTransaction().commit()
             return createOverviewList(offerV2List)
         } catch (HibernateException e) {
             log.error(e.message, e)
