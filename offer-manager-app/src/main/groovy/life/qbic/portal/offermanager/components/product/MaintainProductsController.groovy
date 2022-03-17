@@ -25,6 +25,8 @@ class MaintainProductsController {
     private final ArchiveProductInput archiveProductInput
     private static final Logging log = Logger.getLogger(this.class)
 
+    private static final RefactorConverter refactorConverter = new RefactorConverter()
+
     MaintainProductsController(CreateProductInput createProductInput,
                                ArchiveProductInput archiveProductInput){
         this.createProductInput = createProductInput
@@ -61,7 +63,7 @@ class MaintainProductsController {
      */
     void archiveProduct(ProductId productId){
         try{
-            archiveProductInput.archive(productId)
+            archiveProductInput.archive(refactorConverter.toProductId(productId))
         }catch(Exception unexpected){
             log.error("unexpected exception at archive product call", unexpected)
             throw new IllegalArgumentException("Could not archive products from provided arguments.")

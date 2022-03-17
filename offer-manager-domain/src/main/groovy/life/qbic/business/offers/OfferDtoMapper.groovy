@@ -12,7 +12,9 @@ import java.util.function.Function
  * <p>A mapper class containing mapping functions with regards to the Offer object.</p>
  *
  * @since 1.2.2
+ * @deprecated since 1.3.0 use the {@link life.qbic.business.RefactorConverter} instead
  */
+@Deprecated
 class OfferDtoMapper {
 
     public static final Function<? extends life.qbic.datamodel.dtos.business.Offer, Offer> DTO_TO_OFFER = (life.qbic.datamodel.dtos.business.Offer offerDto) -> {

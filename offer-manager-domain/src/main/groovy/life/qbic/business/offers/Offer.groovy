@@ -26,7 +26,9 @@ import java.util.function.Predicate
  * offers based on the persons affiliation.
  *
  * @since 0.1.0
+ * @deprecated since 1.3.0 please use {@link OfferV2} instead
  */
+@Deprecated
 class Offer {
     /**
      * Holds all available versions of an existing offer

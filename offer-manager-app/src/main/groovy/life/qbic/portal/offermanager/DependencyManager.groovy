@@ -417,6 +417,7 @@ class DependencyManager {
 
         CreateOffer createOffer = new CreateOffer(createOfferDataSource, createOfferPresenter)
         FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, createOfferPresenter)
+
         CreateOfferController createOfferController = new CreateOfferController(createOffer, fetchOffer, createOffer)
 
         CreatePersonView createPersonView = createCreatePersonView()
@@ -465,6 +466,8 @@ class DependencyManager {
         OfferOverviewModel offerOverviewViewModel = new OfferOverviewModel(offerOverviewResourcesService, sharedViewModel, offerSelectedEvent)
         OfferOverviewPresenter offerOverviewPresenter = new OfferOverviewPresenter(sharedViewModel, offerOverviewViewModel)
         FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, offerOverviewPresenter)
+
+        //TODO: @tkoch empty class without constructor?
         CreateOfferContent createOfferContent = new CreateOfferContent(offerOverviewPresenter, fetchOfferDataSource)
         OfferOverviewController offerOverviewController = new OfferOverviewController(fetchOffer, createOfferContent)
 
@@ -523,7 +526,7 @@ class DependencyManager {
         UpdatePersonView updatePersonView = createUpdatePersonView(updatePersonEvent)
         CreateAffiliationView createAffiliationView = createCreateAffiliationView()
 
-        CreateOfferController updateOfferController = new CreateOfferController(updateOffer, fetchOffer, updateOffer)
+        CreateOfferController updateOfferController = new CreateOfferController(updateOffer, fetchOffer)
         CreateOfferView updateOfferView = new CreateOfferView(
                 sharedViewModel,
                 updateOfferViewModel,

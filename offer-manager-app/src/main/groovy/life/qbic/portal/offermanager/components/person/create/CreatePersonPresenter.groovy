@@ -88,10 +88,16 @@ class CreatePersonPresenter implements CreatePersonOutput {
         }
         createPersonViewModel.customerService.addToResource(customer)
         createPersonViewModel.managerResourceService.addToResource(manager)
-        createPersonViewModel.personResourceService.addToResource(personDto)
+        createPersonViewModel.personResourceService.addToResource(refactorConverter.toPersonDTO(person))
         //reset the view model
         clearPersonData()
         viewModel.successNotifications.add("Successfully created new person entry.")
+    }
+
+    @Override
+    void personUpdated(life.qbic.business.persons.Person person) {
+        // TODO implement
+        throw new RuntimeException("Not implemented method called: " + CreatePersonPresenter.class.getMethod("personUpdated").toString())
     }
 
     private static Customer translateToCustomer(Person person){
