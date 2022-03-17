@@ -418,7 +418,7 @@ class DependencyManager {
         CreateOffer createOffer = new CreateOffer(createOfferDataSource, createOfferPresenter)
         FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, createOfferPresenter)
 
-        CreateOfferController createOfferController = new CreateOfferController(createOffer, fetchOffer, createOffer)
+        CreateOfferController createOfferController = new CreateOfferController(createOffer, fetchOffer)
 
         CreatePersonView createPersonView = createCreatePersonView()
         UpdatePersonView updatePersonView = createUpdatePersonView(personUpdateEvent)

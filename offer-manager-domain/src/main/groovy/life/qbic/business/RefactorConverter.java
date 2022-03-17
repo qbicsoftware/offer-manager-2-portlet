@@ -11,6 +11,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import life.qbic.business.offers.OfferContent;
+import life.qbic.business.offers.OfferItem;
 import life.qbic.business.offers.OfferV2;
 import life.qbic.business.offers.identifier.OfferId;
 import life.qbic.business.persons.Person;
@@ -97,6 +99,63 @@ public class RefactorConverter {
     offer.setTotalNetPrice(totalNetPrice);
     offer.setTotalVat(totalVat);
     return offer;
+  }
+
+  public OfferContent toOfferContent(OfferV2 offer) {
+    LocalDate creationDate = offer.getCreationDate();
+    LocalDate expirationDate = offer.getExpirationDate();
+    String id = offer.getOfferId();
+    OfferContent.Builder offerContentBuilder = new OfferContent.Builder(
+        toCustomerDto(offer.getCustomer()),
+        toAffiliationDto(offer.getSelectedCustomerAffiliation()),
+        toProjectManagerDto(offer.getProjectManager()),
+        toUtilDate(creationDate),
+        toUtilDate(expirationDate),
+        offer.getProjectTitle(),
+        offer.getProjectObjective(),
+        offer.getExperimentalDesign().orElse(""),
+        id,
+        totalNetWithOverheads(offer));
+
+    List<OfferItem> dataManagementOfferItems = offer.getDataManagementItems();
+    List<OfferItem> dataAnalysisOfferItems = offer.getDataAnalysisItems();
+    List<OfferItem> dataGenerationOfferItems = offer.getDataGenerationItems();
+    List<OfferItem> externalServiceItems = offer.getExternalServiceItems();
+
+    offerContentBuilder.dataGenerationItems(dataGenerationOfferItems)
+        .dataAnalysisItems(dataAnalysisOfferItems)
+        .dataManagementItems(dataManagementOfferItems)
+        .externalServiceItems(externalServiceItems);
+
+    double overheadsDA = offer.getOverheadsDataAnalysis().doubleValue();
+    double overheadsDG = offer.getOverheadsDataGeneration().doubleValue();
+    double overheadsPMandDS = offer.getOverheadsDataManagement().doubleValue();
+    double overheadsExternalServices = offer.getOverheadsExternalServices().doubleValue();
+
+    offerContentBuilder.overheadsDataAnalysis(overheadsDA)
+        .overheadsDataGeneration(overheadsDG)
+        .overheadsProjectManagementAndDataStorage(overheadsPMandDS)
+        .overheadsExternalServices(overheadsExternalServices)
+        .overheadTotal(offer.getOverhead())
+        .overheadRatio(offer.getOverheadRatio());
+
+    offerContentBuilder.netDataAnalysis(offer.getNetSumDataAnalysis().doubleValue())
+        .netDataGeneration(offer.getNetSumDataGeneration().doubleValue())
+        .netProjectManagementAndDataStorage(offer.getNetSumDataManagement().doubleValue())
+        .netExternalServices(offer.getNetSumExternalServices().doubleValue())
+        .netCost(offer.getTotalNetPrice().doubleValue());
+
+    offerContentBuilder.totalVat(offer.getTotalVat().doubleValue())
+        .vatRatio(offer.getVatRatio().doubleValue())
+        .totalCost(offer.getTotalCost().doubleValue())
+        .totalDiscountAmount(offer.getTotalDiscountAmount().doubleValue());
+
+    return offerContentBuilder.build();
+  }
+
+  private static double totalNetWithOverheads(OfferV2 fetchedOffer) {
+    return fetchedOffer.getTotalNetPrice().add(BigDecimal.valueOf(fetchedOffer.getOverhead()))
+        .doubleValue();
   }
 
   public life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
