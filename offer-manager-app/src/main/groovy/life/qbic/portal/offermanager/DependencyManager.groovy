@@ -202,7 +202,7 @@ class DependencyManager {
              *  life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
             */
             OfferDbConnector offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(),
-                    personDbConnector, productsDbConnector)
+                    personDbConnector, productsDbConnector, sessionProvider)
             createOfferDataSource = offerDbConnector
             fetchOfferDataSource = offerDbConnector
             projectAssistant = offerDbConnector
