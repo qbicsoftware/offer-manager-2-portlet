@@ -28,7 +28,7 @@ class QuantityDiscountSpec extends Specification {
     def "Apply leads Exception in case of unspecified behaviour"() {
         when:"a discount is applied to a discountable price"
         def function = new QuantityDiscount()
-        double result = function.apply(sampleCount, discountablePrice)
+        function.apply(sampleCount, discountablePrice)
         then: "the discount is applied correctly"
         thrown(Exception)
         where: "the number of samples and the discountable price are as follows"
@@ -41,7 +41,7 @@ class QuantityDiscountSpec extends Specification {
         def function = new QuantityDiscount()
         double result = function.apply(sampleCount, discountablePrice)
         then: "the discount is applied correctly"
-        result == BigDecimal.ZERO
+        result == BigDecimal.ZERO.toDouble()
         where: "the number of samples and the discountable price are as follows"
         sampleCount << [0, 0.1, 0.5, 0.9]
         discountablePrice = new BigDecimal(42.5)
