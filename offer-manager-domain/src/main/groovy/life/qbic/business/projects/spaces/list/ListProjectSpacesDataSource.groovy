@@ -1,5 +1,7 @@
 package life.qbic.business.projects.spaces.list
 
+import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
+
 /**
  * Provides functionality to list project spaces
  *
@@ -12,5 +14,5 @@ interface ListProjectSpacesDataSource {
      * @return a list of all project spaces
      * @since 1.0.0
      */
-    List<String> listSpaces()
+    List<ProjectSpace> listSpaces()
 }

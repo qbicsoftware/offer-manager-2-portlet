@@ -178,7 +178,7 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
      */
     @Override
     List<ProjectIdentifier> listProjects() {
-        return new ArrayList<ProjectIdentifier>(openbisProjects)
+        new ArrayList<ProjectIdentifier>(openbisProjects)
     }
 
     @Override
@@ -205,6 +205,7 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
     - project objective
     - linked offer
      */
+
     @Override
     Project createProject(ProjectApplication projectApplication) throws ProjectExistsException, DatabaseQueryException {
         //collect infos needed for openBIS

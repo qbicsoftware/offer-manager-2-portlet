@@ -1,7 +1,9 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
+import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.offers.Offer
 import life.qbic.business.offers.OfferExistsException
 import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.create.CreateOfferDataSource
@@ -14,7 +16,9 @@ import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
 import org.hibernate.HibernateException
 import org.hibernate.Session
-import org.hibernate.query.Query
+
+import javax.persistence.Query
+import java.util.stream.Collectors
 
 /**
  * Handles the connection to the offer database
@@ -27,6 +31,7 @@ import org.hibernate.query.Query
  *
  */
 @Log4j2
+@CompileStatic
 class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant, OfferOverviewDataSource {
 
     SessionProvider sessionProvider
@@ -93,7 +98,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
     private boolean offerChecksumExists(String checksum) {
         boolean checksumPresent = false
         try (Session session = sessionProvider.getCurrentSession()) {
-            Query query = session.createQuery("Select o FROM OfferV2 o where o.checksum=:checksumOfInterest ")
+            Query query = session.createQuery("Select o FROM OfferV2 o where o.checksum=:checksumOfInterest ", OfferV2.class)
             query.setParameter("checksumOfInterest", checksum)
             checksumPresent = !query.list().isEmpty()
             session.getTransaction().commit()
@@ -110,13 +115,13 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
     }
 
     private static List<OfferOverview> createOverviewList(List<OfferV2> offerV2List) {
-        return offerV2List.stream().map(OfferOverview::from).collect()
+        return offerV2List.stream().map(OfferOverview::from).collect() as List<OfferOverview>
     }
 
 
     private List<OfferOverview> loadOfferOverview() {
         try (Session session = sessionProvider.getCurrentSession()) {
-            List<OfferV2> offerV2List = session.createQuery("FROM OfferV2").list()
+            List<OfferV2> offerV2List = session.createQuery("Select offer FROM OfferV2 offer", OfferV2.class).list()
             return createOverviewList(offerV2List)
         } catch (HibernateException e) {
             log.error(e.message, e)
@@ -132,7 +137,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
         String businessOfferId = life.qbic.business.offers.identifier.OfferId.from(offerId.toString()).toString()
         List<OfferV2> result = []
         try (Session session = sessionProvider.getCurrentSession()) {
-            Query query = session.createQuery("select offer from OfferV2 offer where offer.offerId=:offerIdToMatch")
+            Query query = session.createQuery("select offer from OfferV2 offer where offer.offerId=:offerIdToMatch", OfferV2.class)
             query.setParameter("offerIdToMatch", businessOfferId)
             result.addAll(query.list() as List<OfferV2>)
             if (result.isEmpty()) {
@@ -161,7 +166,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
 
 
     @Override
-    List<OfferId> fetchAllVersionsForOfferId(life.qbic.business.offers.identifier.OfferId id) {
+    List<life.qbic.business.offers.identifier.OfferId> fetchAllVersionsForOfferId(life.qbic.business.offers.identifier.OfferId id) {
         String project = id.getProjectPart()
         String randomIdPart = id.getRandomPart()
         String searchTerm = project + "_" + randomIdPart
@@ -170,7 +175,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             Query query = session.createQuery("select offer from OfferV2 offer where offer.offerId like '%:id%'", OfferV2.class)
             query.setParameter("id", searchTerm)
             List<OfferV2> result = query.list()
-            return result.stream().map((OfferV2 offer) -> offer.getIdentifier()).collect()
+            return result.stream().map((OfferV2 offer) -> offer.getIdentifier()).collect(Collectors.toList())
         } catch (HibernateException e) {
             log.error(e.message, e)
             throw new DatabaseQueryException("Unexpected exception during the search for all versions of offer " + id.toString())
