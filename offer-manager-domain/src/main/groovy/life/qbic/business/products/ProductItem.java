@@ -69,4 +69,7 @@ public class ProductItem {
     this.id = id;
   }
 
+  public double getUnitPrice() {
+    return 0;
+  }
 }
