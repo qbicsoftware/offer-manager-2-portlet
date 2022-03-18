@@ -14,14 +14,10 @@ import spock.lang.Specification
  */
 class ProductItemSpec extends Specification {
 
-    @Shared
-    private Affiliation internalAffiliation
-    @Shared
-    private ProductItem testItem
-    @Shared
-    Affiliation externalAcademicAffiliation
-    @Shared
-    Affiliation externalAffiliation
+    private static Affiliation internalAffiliation
+    private static ProductItem testItem
+    private static Affiliation externalAcademicAffiliation
+    private static Affiliation externalAffiliation
 
     void setupSpec() {
         createTestAffiliations()
