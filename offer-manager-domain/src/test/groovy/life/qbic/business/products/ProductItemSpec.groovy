@@ -1,5 +1,6 @@
 package life.qbic.business.products
 
+
 import life.qbic.business.offers.OfferV2
 import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.AffiliationCategory
@@ -168,6 +169,54 @@ class ProductItemSpec extends Specification {
                 quantity as BigDecimal,
                 productCategory as String)
         expectedResult = dataStorageDiscount.max(quantityDiscount)
+    }*/
+    // ITEM DISCOUNT USING OFFERv2
+    /*def "when an item is accounted for, then the correct discount is applied: #productCategory: #quantity * #unitPrice = #expectedDiscount"() {
+        given: "an offer with at least one item"
+        def offer = new OfferV2()
+        offer.setSelectedCustomerAffiliation(setupInternalAffiliation())
+        offer.setItems([item])
+        when: "the offer is processed"
+        def processedOffer = withGroupedOfferItems(offer)
+        OfferItem offerItem = processedOffer.getDataAnalysisItems().first()
+        then: "the discount per unit of that item is equal to the expected discount"
+        offerItem.unitDiscount == expectedDiscount as double
+        and: "the total discount for that item is equal to the product of unit discount and quantity"
+        offerItem.itemDiscount == expectedTotalDiscount as double
+
+        where: "the quantity and unit price are as follows"
+        quantity | unitPrice
+        10.0     | 10.0
+        20.0     | 0.34
+        10.0     | 0.67
+        4.53     | 1004.45
+
+        item = createDataAnalysisProductItem(quantity, unitPrice)
+        productCategory = item.getProduct().getCategory()
+
+        and: "the expected discount is the item discount for that item"
+        expectedDiscount = calculateUnitDiscount(
+                item.getProduct().getCategory(),
+                AffiliationCategory.INTERNAL,
+                unitPrice,
+                quantity)
+        expectedTotalDiscount = (BigDecimal.valueOf(expectedDiscount) * BigDecimal.valueOf(quantity))
+                .setScale(2, RoundingMode.HALF_UP)
+
+    }*/
+    // ITEM NET
+    /*def "expect the item net to be (#unitPrice - #unitDiscount) * #quantity = #expectedItemNet"() {
+        expect:
+        itemNetPrice(unitPrice, quantity, unitDiscount) == expectedItemNet
+
+        where:
+        unitPrice | quantity | unitDiscount
+        100.33    | 33.0     | 57.19
+        33.34     | 44.0     | 20.34
+        10.0      | 10000.0  | 8.20
+        100.33    | 33.5     | 100.33
+
+        expectedItemNet = (unitPrice - unitDiscount) * quantity
     }*/
 
     void createTestAffiliations() {
