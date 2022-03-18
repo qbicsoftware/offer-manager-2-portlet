@@ -158,4 +158,125 @@ class OfferV2Spec extends Specification {
 //
 //    vatRatioString = "${expectedVatRatio * 100}%"
   }
+
+  // Upon offer update:
+/*
+  def "when an offer is processed, then the total net is correct for #affiliationCategory affiliations"() {
+    given: "an unprocessed offer with items"
+    OfferV2 unprocessedOffer = createUnprocessedOffer(affiliationCategory as AffiliationCategory)
+    and: "an offer with filled net prices"
+    OfferV2 offerWithNets = withNetPrices(withGroupedOfferItems(unprocessedOffer))
+
+    expect: "after processing the total net is correct"
+    process(unprocessedOffer).getTotalNetPrice() == offerWithNets.getTotalNetPrice()
+
+    where:
+    affiliationCategory << AffiliationCategory.values()
+  }
+
+  def "when an offer is processed, then the total discount is correct for #affiliationCategory affiliations"() {
+    given: "an unprocessed offer with items"
+    OfferV2 unprocessedOffer = createUnprocessedOffer(affiliationCategory as AffiliationCategory)
+    and: "an offer with filled net prices"
+    OfferV2 offerWithTotalDiscount = withTotalDiscount(withGroupedOfferItems(unprocessedOffer))
+
+    expect: "after processing the total net is correct"
+    process(unprocessedOffer).getTotalDiscountAmount() == offerWithTotalDiscount.getTotalDiscountAmount()
+
+    where:
+    affiliationCategory << AffiliationCategory.values()
+  }
+
+  def "when an offer is processed, then the group nets are correct for #affiliationCategory affiliations"() {
+    given: "an unprocessed offer with items"
+    OfferV2 unprocessedOffer = createUnprocessedOffer(affiliationCategory as AffiliationCategory)
+    and: "an offer with filled net prices"
+    OfferV2 offerWithNets = withNetPrices(withGroupedOfferItems(unprocessedOffer))
+
+    when: "the offer was processed"
+    OfferV2 processedOffer = process(unprocessedOffer)
+
+    then: "the group net prices are correct"
+    processedOffer.getNetSumDataGeneration() == offerWithNets.getNetSumDataGeneration()
+    processedOffer.getNetSumDataAnalysis() == offerWithNets.getNetSumDataAnalysis()
+    processedOffer.getNetSumDataManagement() == offerWithNets.getNetSumDataManagement()
+    processedOffer.getNetSumExternalServices() == offerWithNets.getNetSumExternalServices()
+
+    where:
+    affiliationCategory << AffiliationCategory.values()
+  }
+
+  def "when an offer is processed, then the group overheads are correct for #affiliationCategory affiliations"() {
+    given: "an unprocessed offer with items"
+    OfferV2 unprocessedOffer = createUnprocessedOffer(affiliationCategory as AffiliationCategory)
+    and: "an offer with filled net prices"
+    OfferV2 offerWithOverheads = withOverheads(withGroupedOfferItems(unprocessedOffer))
+
+    when: "the offer was processed"
+    OfferV2 processedOffer = process(unprocessedOffer)
+
+    then: "the group net prices are correct"
+    processedOffer.getOverheadsDataGeneration() == offerWithOverheads.getOverheadsDataGeneration()
+    processedOffer.getOverheadsDataAnalysis() == offerWithOverheads.getOverheadsDataAnalysis()
+    processedOffer.getOverheadsDataManagement() == offerWithOverheads.getOverheadsDataManagement()
+    processedOffer.getOverheadsExternalServices() == offerWithOverheads.getOverheadsExternalServices()
+
+    where:
+    affiliationCategory << AffiliationCategory.values()
+  }
+
+  def "when an offer is processed, then the total overhead is correct for #affiliationCategory affiliations"() {
+    given: "an unprocessed offer with items"
+    OfferV2 unprocessedOffer = createUnprocessedOffer(affiliationCategory as AffiliationCategory)
+    and: "an offer with filled net prices"
+    OfferV2 offerWithOverheads = withOverheads(withGroupedOfferItems(unprocessedOffer))
+
+    expect: "after processing the total net is correct"
+    process(unprocessedOffer).getOverhead() == offerWithOverheads.getOverhead()
+
+    where:
+    affiliationCategory << AffiliationCategory.values()
+  }
+
+  def "when a german offer is processed, then the vat is #vatRatioString"() {
+    given: "an unprocessed offer with items"
+    OfferV2 unprocessedOffer = createUnprocessedOffer(affiliationCategory as AffiliationCategory, country)
+    and: "an offer with filled VAT prices"
+    OfferV2 offerWithVat = withVat(withNetPrices(withGroupedOfferItems(unprocessedOffer)))
+
+    when: "the offer is processed"
+
+    OfferV2 processedOffer = process(unprocessedOffer)
+    then: "the vat ratio is correct"
+    processedOffer.getVatRatio() == expectedVatRatio
+    and: "the calculated vat is correct"
+    processedOffer.getTotalVat() == offerWithVat.getTotalVat()
+    where:
+    country = "Germany"
+    expectedVatRatio = vatRatio(country)
+    affiliationCategory << AffiliationCategory.values()
+    vatRatioString = "${expectedVatRatio*100.0}%"
+
+  }
+
+  def "when a foreign offer is processed, then the vat is #vatRatioString for #country"() {
+    given: "an unprocessed offer with items"
+    OfferV2 unprocessedOffer = createUnprocessedOffer(affiliationCategory as AffiliationCategory, country)
+    and: "an offer with filled VAT prices"
+    OfferV2 offerWithVat = withVat(withNetPrices(withGroupedOfferItems(unprocessedOffer)))
+
+    when: "the offer is processed"
+
+    OfferV2 processedOffer = process(unprocessedOffer)
+    then: "the vat ratio is correct"
+    processedOffer.getVatRatio() == expectedVatRatio
+    and: "the calculated vat is correct"
+    processedOffer.getTotalVat() == offerWithVat.getTotalVat()
+
+    where:
+    affiliationCategory << AffiliationCategory.values()
+    country = "Not-Germany"
+    expectedVatRatio = vatRatio(country)
+    vatRatioString = "${expectedVatRatio*100}%"
+  }*/
 }
