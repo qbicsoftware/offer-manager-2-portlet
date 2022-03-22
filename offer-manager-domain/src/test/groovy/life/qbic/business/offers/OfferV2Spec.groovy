@@ -7,9 +7,11 @@ import life.qbic.business.products.Product
 import life.qbic.business.products.ProductItem
 import spock.lang.Specification
 
+import java.math.RoundingMode
+
 class OfferV2Spec extends Specification {
 
-  private static OfferV2 offer = new OfferV2(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL), new OfferId("test", 1))
+  private static OfferV2 internalOffer =  new OfferV2(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL), new OfferId("test", 1))
 
   def "when an item is added to the offer, it is also added to the corresponding group"() {
     given:
@@ -28,15 +30,16 @@ class OfferV2Spec extends Specification {
     offer.getExternalServiceItems().contains(externalServices)
 
     where: "the items are as follows"
-    dataGeneration = createDataGenerationItem(offer)
-    dataAnalysis = createDataAnalysisItem(offer)
-    dataManagement = createDataManagementItem(offer)
-    externalServices = createExternalServiceItem(offer)
+    dataGeneration = createDataGenerationItem()
+    dataAnalysis = createDataAnalysisItem()
+    dataManagement = createDataManagementItem()
+    externalServices = createExternalServiceItem()
   }
 
   def "the group's sale price is the sum of its items sale prices."() {
     given:
-    OfferV2 offer = new OfferV2(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL), new OfferId("test", 1))
+    OfferV2 offer = new OfferV2()
+    offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL))
     when:
     offer.addItems([dataGeneration, dataAnalysis, dataManagement, externalServices])
     then: "the groups overheads are the sum of the items overheads"
@@ -46,15 +49,16 @@ class OfferV2Spec extends Specification {
     offer.externalServiceSalePrice == externalServices.salePrice
 
     where: "the items are as follows"
-    dataGeneration = createDataGenerationItem(offer)
-    dataAnalysis = createDataAnalysisItem(offer)
-    dataManagement = createDataManagementItem(offer)
-    externalServices = createExternalServiceItem(offer)
+    dataGeneration = createDataGenerationItem()
+    dataAnalysis = createDataAnalysisItem()
+    dataManagement = createDataManagementItem()
+    externalServices = createExternalServiceItem()
   }
 
   def "the offer's sale price is the sum of the group sale prices"() {
     given:
-    OfferV2 offer = new OfferV2(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL), new OfferId("test", 1))
+    OfferV2 offer = new OfferV2()
+    offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL))
     when:
     offer.addItems([dataGeneration, dataAnalysis, dataManagement, externalServices])
     then: "the groups overheads are the sum of the items overheads"
@@ -65,15 +69,16 @@ class OfferV2Spec extends Specification {
 
 
     where: "the items are as follows"
-    dataGeneration = createDataGenerationItem(offer)
-    dataAnalysis = createDataAnalysisItem(offer)
-    dataManagement = createDataManagementItem(offer)
-    externalServices = createExternalServiceItem(offer)
+    dataGeneration = createDataGenerationItem()
+    dataAnalysis = createDataAnalysisItem()
+    dataManagement = createDataManagementItem()
+    externalServices = createExternalServiceItem()
   }
 
   def "overhead ratio is #overheadPercentage% for customer affiliation with category #category"() {
     when: "the calculus determines the overhead ratio for an affiliation"
-    OfferV2 offer = new OfferV2(affiliation, new OfferId("test", 1))
+    OfferV2 offer = new OfferV2()
+    offer.setSelectedCustomerAffiliation(affiliation)
     then: "the overhead ratio is #expectedRatio"
     offer.getOverheadRatio() == expectedRatio.doubleValue()
     where:
@@ -88,75 +93,135 @@ class OfferV2Spec extends Specification {
 
   def "the group's overhead price is the group's sale price multiplied with the overhead rate"() {
     given:
-    OfferV2 offer = new OfferV2(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL), new OfferId("test", 1))
+    OfferV2 offer = new OfferV2()
+    offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.EXTERNAL))
     when:
     offer.addItems([dataGeneration, dataAnalysis, dataManagement, externalServices])
-    then: "the groups overheads are the sum of the items overheads"
+    then: "the groups overhead is the group's sale price multiplied with the overhead rate"
     offer.dataGenerationOverhead == dataGeneration.salePrice * offer.overheadRatio
     offer.dataAnalysisOverhead == dataAnalysis.salePrice * offer.overheadRatio
     offer.dataManagementOverhead == dataManagement.salePrice * offer.overheadRatio
     offer.externalServiceOverhead == externalServices.salePrice * offer.overheadRatio
 
     where: "the items are as follows"
-    dataGeneration = createDataGenerationItem(offer)
-    dataAnalysis = createDataAnalysisItem(offer)
-    dataManagement = createDataManagementItem(offer)
-    externalServices = createExternalServiceItem(offer)
+    dataGeneration = createDataGenerationItem()
+    dataAnalysis = createDataAnalysisItem()
+    dataManagement = createDataManagementItem()
+    externalServices = createExternalServiceItem()
+  }
+
+  def "the offer's overhead is the sum of the group overheads"() {
+    given:
+    OfferV2 offer = new OfferV2()
+    offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.EXTERNAL))
+    when:
+    offer.addItems([dataGeneration, dataAnalysis, dataManagement, externalServices])
+    then: "the offer overhead is the sum of the group overheads"
+    offer.overhead == offer.dataGenerationOverhead
+            .add(offer.dataAnalysisOverhead)
+            .add(offer.dataManagementOverhead)
+            .add(offer.externalServiceOverhead).doubleValue()
+
+    where: "the items are as follows"
+    dataGeneration = createDataGenerationItem()
+    dataAnalysis = createDataAnalysisItem()
+    dataManagement = createDataManagementItem()
+    externalServices = createExternalServiceItem()
   }
 
 
+  def "The VAT for Germany applied is 19%"() {
+    given:
+    String country = "Germany"
+    OfferV2 offer = new OfferV2()
+    offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", country, AffiliationCategory.EXTERNAL))
+    expect:
+    offer.getVatRatio() == expected
+    where:
+    expected = 0.19
+  }
 
-  private static createDataGenerationItem(OfferV2 offer) {
+  def "The VAT outside of Germany applied is 0%"() {
+    given:
+    String country = "No man's land"
+    OfferV2 offer = new OfferV2()
+    offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", country, AffiliationCategory.EXTERNAL))
+    expect:
+    offer.getVatRatio() == expected
+    where:
+    expected = 0.0
+  }
+
+  def "expect the VAT ratio to be #vatRatioString for #country"() {
+    given:
+    OfferV2 offer = new OfferV2()
+    offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", country, AffiliationCategory.EXTERNAL))
+    expect:
+    offer.getVatRatio() == expected
+    where:
+    country            | expected
+    "Germany"          | 0.19
+    "some other place" | 0
+    "France"           | 0
+    and:
+    vatRatioString = "${expected * 100}%"
+  }
+
+  def "expect the tax amount to be the cost before tax multiplied with the VAT rate."() {
+    given:
+    String country = "Germany"
+    OfferV2 offer = new OfferV2()
+    offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", country, AffiliationCategory.EXTERNAL))
+    expect:
+    offer.getTaxAmount() == offer.getSalePrice() * offer.getVatRatio()
+  }
+
+  def "expect the discount amount ot be the sum of the items discount amounts"() {
+    given:
+    OfferV2 offer = new OfferV2()
+    offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL))
+    when:
+    offer.addItems([dataGeneration, dataAnalysis, dataManagement, externalServices])
+    then: "the offer overhead is the sum of the group overheads"
+    offer.totalDiscountAmount == (
+            dataGeneration.getDiscountAmount()
+            .add(dataAnalysis.getDiscountAmount())
+            .add(dataManagement.getDiscountAmount())
+            .add(externalServices.getDiscountAmount())
+    ).setScale(2, RoundingMode.HALF_UP)
+
+    where: "the items are as follows"
+    dataGeneration = createDataGenerationItem()
+    dataAnalysis = createDataAnalysisItem()
+    dataManagement = createDataManagementItem()
+    externalServices = createExternalServiceItem()
+  }
+
+
+  private static createDataGenerationItem() {
     def category = "Sequencing"
     def product = new Product(category, 0.5, 1)
-    return new ProductItem(offer, product, 10.0)
+    return new ProductItem(internalOffer, product, 10.0)
   }
 
-  private static createDataAnalysisItem(OfferV2 offer) {
+  private static createDataAnalysisItem() {
     def category = "Primary Bioinformatics"
     def product = new Product(category, 0.5, 1)
-    return new ProductItem(offer, product, 10.0)
+    return new ProductItem(internalOffer, product, 10.0)
   }
 
-  private static createDataManagementItem(OfferV2 offer) {
+  private static createDataManagementItem() {
     def category = "Project Management"
     def product = new Product(category, 0.5, 1)
-    return new ProductItem(offer, product, 10.0)
+    return new ProductItem(internalOffer, product, 10.0)
   }
 
-  private static createExternalServiceItem(OfferV2 offer) {
+  private static createExternalServiceItem() {
     def category = "External Service"
     def product = new Product(category, 0.5, 1)
-    return new ProductItem(offer, product, 10.0)
+    return new ProductItem(internalOffer, product, 10.0)
   }
 
-
-  def "the offer net is the sum of the group nets"() {
-//    def dataGenerationProductItem = createDataGenerationProductItem(20.9, 5.6)
-//    def dataAnalysisProductItem = createDataAnalysisProductItem(20.9, 5.6)
-//    def dataManagementProductItem = createDataManagementProductItem(20.9, 5.6)
-//    def externalServicesProductItem = createExternalServicesProductItem(20.9, 5.6)
-//
-//    OfferV2 offerWithItems = createFilledOffer(
-//            [
-//                    dataGenerationProductItem,
-//                    dataAnalysisProductItem,
-//                    dataManagementProductItem,
-//                    externalServicesProductItem
-//            ], affiliation)
-//    when: "the net prices are recomputed"
-//    OfferV2 offerWithNet = withNetPrices(offerWithItems)
-//
-//    then: "the offer net is the sum of all of its item's net prices"
-//    offerWithNet.getTotalNetPrice() == offerWithNet.getNetSumDataGeneration()
-//            .add(offerWithNet.getNetSumDataAnalysis())
-//            .add(offerWithNet.getNetSumDataManagement())
-//            .add(offerWithNet.getNetSumExternalServices())
-//
-//    where: "the affiliation category varies"
-//    affiliationCategory << AffiliationCategory.values()
-//    affiliation = createAffiliation(affiliationCategory as AffiliationCategory, "Germany")
-  }
 
 
   def "the offer discount is the sum of the item discounts"() {
@@ -233,42 +298,6 @@ class OfferV2Spec extends Specification {
 //    affiliation = createAffiliation(affiliationCategory as AffiliationCategory, "Germany")
 //    expectedRatio = overheadRatio(affiliationCategory as AffiliationCategory)
   }
-
-  def "The VAT for Germany applied is 19% vat(#netprice) = #expected"() {
-//    when:
-//    BigDecimal result = calcVat(netprice as BigDecimal, "Germany")
-//
-//    then:
-//    result == expected
-//
-//    where:
-//    netprice << [6.0, 1.5, 2.5]
-//    expected = (0.19 * netprice).setScale(2, RoundingMode.HALF_UP)
-  }
-
-  def "The VAT outside of Germany applied is 0% vat(#netprice) = #expected"() {
-//    when:
-//    BigDecimal result = calcVat(netprice as BigDecimal, _ as String)
-//
-//    then:
-//    result == expected
-//
-//    where:
-//    netprice << [6.0, 1.5, 2.5]
-//    expected = (0.0 * netprice).setScale(2, RoundingMode.HALF_UP)
-  }
-
-  def "expect the VAT ratio to be #vatRatioString for #country"() {
-//    expect:
-//    vatRatio(country as String) == expectedVatRatio
-//    where:
-//    country   | expectedVatRatio
-//    "Germany" | 0.19
-//    _         | 0
-//
-//    vatRatioString = "${expectedVatRatio * 100}%"
-  }
-
   // Upon offer update:
 /*
   def "when an offer is processed, then the total net is correct for #affiliationCategory affiliations"() {
