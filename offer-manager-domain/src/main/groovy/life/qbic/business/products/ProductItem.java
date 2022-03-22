@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,8 +16,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import javax.validation.constraints.NotNull;
 import life.qbic.business.offers.OfferV2;
 import life.qbic.business.offers.QuantityDiscountFactor;
+import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
 
 @Entity
@@ -47,22 +50,30 @@ public class ProductItem {
   private OfferV2 offer;
 
   @Transient
+  private Affiliation affiliation;
+
+  @Transient
   private BigDecimal unitPrice;
 
   @Transient
   private BigDecimal discountRate;
 
   public ProductItem(OfferV2 offer, Product product, Double quantity) {
-    this.offer = offer;
-    this.product = product;
-    this.quantity = quantity;
+    this.offer = Objects.requireNonNull(offer, "Offer must not be null");
+    this.affiliation = offer.getSelectedCustomerAffiliation();
+    this.product = Objects.requireNonNull(product, "Product must not be null");
+    this.quantity = Objects.requireNonNull(quantity, "Quantity must not be null");
     refreshProductItem();
   }
 
   protected ProductItem() {
   }
 
-  public void setOffer(OfferV2 offer) {
+  private boolean affiliationChanged() {
+    return !affiliation.equals(this.offer.getSelectedCustomerAffiliation());
+  }
+
+  public void setOffer(@NotNull OfferV2 offer) {
     this.offer = offer;
     refreshProductItem();
   }
@@ -93,13 +104,6 @@ public class ProductItem {
   }
 
   private void refreshProductItem() {
-    if (offer == null || product == null) {
-//      // Illegal state, when either offer or product is missing
-//      throw new IllegalStateException(
-//          "A product item denotes a product on an offer. Product and offer must not be null! product: "
-//              + product + "\toffer: " + offer);
-      return;
-    }
     AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory();
     unitPrice = determineUnitPrice(affiliationCategory, product);
     discountRate = getDiscountRate(affiliationCategory, BigDecimal.valueOf(quantity),
@@ -176,6 +180,9 @@ public class ProductItem {
    * <code>false</code>
    */
   public boolean hasDiscount() {
+    if (affiliationChanged()) {
+      refreshProductItem();
+    }
     return discountRate.compareTo(BigDecimal.ZERO) > 0;
   }
 
@@ -185,6 +192,9 @@ public class ProductItem {
    * @return between 0 for no discount and {@link ProductItem#getUnitPrice()} for 100% discount
    */
   public BigDecimal getUnitDiscountAmount() {
+    if (affiliationChanged()) {
+      refreshProductItem();
+    }
     return this.unitPrice.multiply(this.discountRate).setScale(2, RoundingMode.HALF_UP);
   }
 
@@ -193,6 +203,9 @@ public class ProductItem {
    * @return between 0 for no discount and {@link ProductItem#getListPrice()} for 100% discount.
    */
   public BigDecimal getDiscountAmount() {
+    if (affiliationChanged()) {
+      refreshProductItem();
+    }
     return getUnitDiscountAmount().multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
   }
 
@@ -202,6 +215,9 @@ public class ProductItem {
    * @return the numerical value of the unit list price
    */
   public BigDecimal getUnitPrice() {
+    if (affiliationChanged()) {
+      refreshProductItem();
+    }
     return this.unitPrice;
   }
 
@@ -212,6 +228,9 @@ public class ProductItem {
    * @return the list price of this item.
    */
   public BigDecimal getListPrice() {
+    if (affiliationChanged()) {
+      refreshProductItem();
+    }
     return this.unitPrice.multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
   }
 
@@ -221,6 +240,9 @@ public class ProductItem {
    * @return the discounted item's unit price multiplied with its quantity minus applied discounts.
    */
   public BigDecimal getSalePrice() {
+    if (affiliationChanged()) {
+      refreshProductItem();
+    }
     return getListPrice().subtract(getDiscountAmount()).setScale(2, RoundingMode.HALF_UP);
   }
 
@@ -233,6 +255,9 @@ public class ProductItem {
    * @return value in the range [0, 1]
    */
   public BigDecimal getDiscountRate() {
+    if (affiliationChanged()) {
+      refreshProductItem();
+    }
     return discountRate;
   }
 }
