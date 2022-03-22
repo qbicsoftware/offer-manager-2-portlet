@@ -103,6 +103,13 @@ public class ProductItem {
     this.id = id;
   }
 
+  private void refresh() {
+    // If the affiliation has not changed, nothing to re-calculate
+    if (affiliationChanged()) {
+      refreshProductItem();
+    }
+  }
+
   private void refreshProductItem() {
     AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory();
     unitPrice = determineUnitPrice(affiliationCategory, product);
@@ -180,9 +187,7 @@ public class ProductItem {
    * <code>false</code>
    */
   public boolean hasDiscount() {
-    if (affiliationChanged()) {
-      refreshProductItem();
-    }
+    refresh();
     return discountRate.compareTo(BigDecimal.ZERO) > 0;
   }
 
@@ -192,9 +197,7 @@ public class ProductItem {
    * @return between 0 for no discount and {@link ProductItem#getUnitPrice()} for 100% discount
    */
   public BigDecimal getUnitDiscountAmount() {
-    if (affiliationChanged()) {
-      refreshProductItem();
-    }
+    refresh();
     return this.unitPrice.multiply(this.discountRate).setScale(2, RoundingMode.HALF_UP);
   }
 
@@ -203,9 +206,7 @@ public class ProductItem {
    * @return between 0 for no discount and {@link ProductItem#getListPrice()} for 100% discount.
    */
   public BigDecimal getDiscountAmount() {
-    if (affiliationChanged()) {
-      refreshProductItem();
-    }
+    refresh();
     return getUnitDiscountAmount().multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
   }
 
@@ -215,9 +216,7 @@ public class ProductItem {
    * @return the numerical value of the unit list price
    */
   public BigDecimal getUnitPrice() {
-    if (affiliationChanged()) {
-      refreshProductItem();
-    }
+    refresh();
     return this.unitPrice;
   }
 
@@ -228,9 +227,7 @@ public class ProductItem {
    * @return the list price of this item.
    */
   public BigDecimal getListPrice() {
-    if (affiliationChanged()) {
-      refreshProductItem();
-    }
+    refresh();
     return this.unitPrice.multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
   }
 
@@ -240,9 +237,7 @@ public class ProductItem {
    * @return the discounted item's unit price multiplied with its quantity minus applied discounts.
    */
   public BigDecimal getSalePrice() {
-    if (affiliationChanged()) {
-      refreshProductItem();
-    }
+    refresh();
     return getListPrice().subtract(getDiscountAmount()).setScale(2, RoundingMode.HALF_UP);
   }
 
@@ -255,9 +250,7 @@ public class ProductItem {
    * @return value in the range [0, 1]
    */
   public BigDecimal getDiscountRate() {
-    if (affiliationChanged()) {
-      refreshProductItem();
-    }
+    refresh();
     return discountRate;
   }
 }
