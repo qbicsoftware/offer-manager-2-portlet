@@ -70,7 +70,7 @@ class CreateOfferSpec extends Specification {
 
     def "when the offer is created, then the stored offer has price information loaded"() {
         given: "the offer with items"
-        ArrayList<ProductItem> productItems = [mockProductItem()]
+        ArrayList<ProductItem> productItems = [mockProductItem(offerV2)]
         offerV2.setItems(productItems)
         when: "the offer is requested"
         CreateOffer createOffer = new CreateOffer(datasource, output)
@@ -79,7 +79,7 @@ class CreateOfferSpec extends Specification {
         1 * output.createdNewOffer(_) >> { arguments ->
             final OfferV2 storedOffer = arguments.get(0)
             assertNotNull(storedOffer.getOverhead())
-            assertNotNull(storedOffer.getTotalNetPrice())
+            assertNotNull(storedOffer.getSalePrice())
             assertNotNull(storedOffer.getTotalCost())
             assertNotNull(storedOffer.getTotalVat())
         }
@@ -157,7 +157,7 @@ class CreateOfferSpec extends Specification {
         1 * output.createdNewOffer(_) >> { arguments ->
             final OfferV2 storedOffer = arguments.get(0)
             assertNotNull(storedOffer.getOverhead())
-            assertNotNull(storedOffer.getTotalNetPrice())
+            assertNotNull(storedOffer.getSalePrice())
             assertNotNull(storedOffer.getTotalCost())
             assertNotNull(storedOffer.getTotalVat())
         }
@@ -170,7 +170,7 @@ class CreateOfferSpec extends Specification {
     }
 
 
-    private ProductItem mockProductItem() {
+    private ProductItem mockProductItem(OfferV2 offer) {
         Product product = new Product()
         product.description = ""
         product.productName = ""
@@ -179,6 +179,6 @@ class CreateOfferSpec extends Specification {
         product.setInternalUnitPrice(0.5)
         product.setExternalUnitPrice(1.0)
         product.setCategory(ProductCategory.PRIMARY_BIOINFO.getLabel())
-        return new ProductItem(product, 2)
+        return new ProductItem(offer, product, 2)
     }
 }

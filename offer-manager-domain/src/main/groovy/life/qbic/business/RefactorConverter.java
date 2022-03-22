@@ -66,8 +66,7 @@ public class RefactorConverter {
   }
 
   public OfferV2 toOffer(life.qbic.datamodel.dtos.business.Offer offerDto) {
-    List<ProductItem> productItems = offerDto.getItems().stream().map(this::toProductItem)
-        .collect(Collectors.toList());
+
     LocalDate creationDate = toLocalDate(offerDto.getModificationDate());
     Person customer = toPerson(offerDto.getCustomer());
     LocalDate expirationDate = toLocalDate(offerDto.getExpirationDate());
@@ -87,18 +86,38 @@ public class RefactorConverter {
     offer.setExperimentalDesign(offerDto.getExperimentalDesign());
     offer.setExpirationDate(expirationDate);
     offer.setIdentifier(offerId);
-    offer.setItems(productItems);
-    offer.setOverhead(offerDto.getOverheads());
-    offer.setOverheadRatio(offerDto.getOverheadRatio());
+//    offer.setOverhead(offerDto.getOverheads());
+//    offer.setOverheadRatio(offerDto.getOverheadRatio());
     offer.setProjectManager(projectManager);
     offer.setProjectObjective(offerDto.getProjectObjective());
     offer.setProjectTitle(offerDto.getProjectTitle());
     offer.setSelectedCustomerAffiliation(selectedCustomerAffiliation);
-    offer.setTotalCost(totalCost);
-    offer.setTotalDiscountAmount(totalDiscountAmount);
-    offer.setTotalNetPrice(totalNetPrice);
-    offer.setTotalVat(totalVat);
+//    offer.setTotalCost(totalCost);
+//    offer.setTotalDiscountAmount(totalDiscountAmount);
+//    offer.setTotalNetPrice(totalNetPrice);
+//    offer.setTotalVat(totalVat);
+    // product items depend on the offer
+    List<ProductItem> productItems = offerDto.getItems().stream().map(it -> toProductItem(offer, it))
+        .collect(Collectors.toList());
+    offer.addItems(productItems);
+
     return offer;
+  }
+
+  OfferItem toOfferItem(ProductItem productItem) {
+    return new OfferItem.Builder(
+        productItem.getQuantity(),
+        productItem.getProduct().getDescription(),
+        productItem.getProduct().getProductName(),
+        productItem.getUnitPrice().doubleValue(),
+        productItem.getDiscountAmount().doubleValue(),
+        productItem.getUnitDiscountAmount().doubleValue(),
+        productItem.getDiscountRate().doubleValue(),
+        productItem.getProduct().getServiceProvider(),
+        productItem.getProduct().getUnit(),
+        productItem.getListPrice().doubleValue(),
+        productItem.getSalePrice().doubleValue()
+    ).build();
   }
 
   public OfferContent toOfferContent(OfferV2 offer) {
@@ -117,20 +136,24 @@ public class RefactorConverter {
         id,
         totalNetWithOverheads(offer));
 
-    List<OfferItem> dataManagementOfferItems = offer.getDataManagementItems();
-    List<OfferItem> dataAnalysisOfferItems = offer.getDataAnalysisItems();
-    List<OfferItem> dataGenerationOfferItems = offer.getDataGenerationItems();
-    List<OfferItem> externalServiceItems = offer.getExternalServiceItems();
+    List<OfferItem> dataManagementOfferItems = offer.getDataManagementItems().stream().map(this::toOfferItem).collect(
+        Collectors.toList());
+    List<OfferItem> dataAnalysisOfferItems = offer.getDataAnalysisItems().stream().map(this::toOfferItem).collect(
+        Collectors.toList());
+    List<OfferItem> dataGenerationOfferItems = offer.getDataGenerationItems().stream().map(this::toOfferItem).collect(
+        Collectors.toList());
+    List<OfferItem> externalServiceItems = offer.getExternalServiceItems().stream().map(this::toOfferItem).collect(
+        Collectors.toList());
 
     offerContentBuilder.dataGenerationItems(dataGenerationOfferItems)
         .dataAnalysisItems(dataAnalysisOfferItems)
         .dataManagementItems(dataManagementOfferItems)
         .externalServiceItems(externalServiceItems);
 
-    double overheadsDA = offer.getOverheadsDataAnalysis().doubleValue();
-    double overheadsDG = offer.getOverheadsDataGeneration().doubleValue();
-    double overheadsPMandDS = offer.getOverheadsDataManagement().doubleValue();
-    double overheadsExternalServices = offer.getOverheadsExternalServices().doubleValue();
+    double overheadsDA = offer.getDataAnalysisOverhead().doubleValue();
+    double overheadsDG = offer.getDataGenerationOverhead().doubleValue();
+    double overheadsPMandDS = offer.getDataManagementOverhead().doubleValue();
+    double overheadsExternalServices = offer.getExternalServiceOverhead().doubleValue();
 
     offerContentBuilder.overheadsDataAnalysis(overheadsDA)
         .overheadsDataGeneration(overheadsDG)
@@ -139,11 +162,11 @@ public class RefactorConverter {
         .overheadTotal(offer.getOverhead())
         .overheadRatio(offer.getOverheadRatio());
 
-    offerContentBuilder.netDataAnalysis(offer.getNetSumDataAnalysis().doubleValue())
-        .netDataGeneration(offer.getNetSumDataGeneration().doubleValue())
-        .netProjectManagementAndDataStorage(offer.getNetSumDataManagement().doubleValue())
-        .netExternalServices(offer.getNetSumExternalServices().doubleValue())
-        .netCost(offer.getTotalNetPrice().doubleValue());
+    offerContentBuilder.netDataAnalysis(offer.getDataAnalysisSalePrice().doubleValue())
+        .netDataGeneration(offer.getDataGenerationSalePrice().doubleValue())
+        .netProjectManagementAndDataStorage(offer.getDataManagementSalePrice().doubleValue())
+        .netExternalServices(offer.getExternalServiceSalePrice().doubleValue())
+        .netCost(offer.getSalePrice().doubleValue());
 
     offerContentBuilder.totalVat(offer.getTotalVat().doubleValue())
         .vatRatio(offer.getVatRatio().doubleValue())
@@ -154,7 +177,7 @@ public class RefactorConverter {
   }
 
   private static double totalNetWithOverheads(OfferV2 fetchedOffer) {
-    return fetchedOffer.getTotalNetPrice().add(BigDecimal.valueOf(fetchedOffer.getOverhead()))
+    return fetchedOffer.getSalePrice().add(BigDecimal.valueOf(fetchedOffer.getOverhead()))
         .doubleValue();
   }
 
@@ -179,7 +202,7 @@ public class RefactorConverter {
     offer.getAssociatedProject().ifPresent(offerDtoBuilder::associatedProject);
     offerDtoBuilder.expirationDate(expirationDate);
     offerDtoBuilder.modificationDate(modificationDate);
-    offerDtoBuilder.netPrice(offer.getTotalNetPrice().doubleValue());
+    offerDtoBuilder.netPrice(offer.getSalePrice().doubleValue());
     offerDtoBuilder.overheads(offer.getOverhead());
     offerDtoBuilder.taxes(offer.getTotalVat().doubleValue());
     offerDtoBuilder.totalPrice(offerDtoBuilder.getTotalPrice());
@@ -190,11 +213,11 @@ public class RefactorConverter {
     return offerDtoBuilder.build();
   }
 
-  private ProductItem toProductItem(
+  private ProductItem toProductItem(OfferV2 offer,
       life.qbic.datamodel.dtos.business.ProductItem productItemDto) {
     Product product = toProduct(productItemDto.getProduct());
     double quantity = productItemDto.getQuantity();
-    return new ProductItem(product, quantity);
+    return new ProductItem(offer, product, quantity);
   }
 
   private java.util.Date toUtilDate(LocalDate localDate) {
@@ -343,11 +366,9 @@ public class RefactorConverter {
   private <T extends life.qbic.datamodel.dtos.business.services.Product> Product toProduct(
       T productDto) {
     String productCategory = new ProductCategoryFormatter().apply(productDto.getClass());
-    Product product = new Product();
-    product.setCategory(productCategory);
+    Product product = new Product(productCategory, productDto.getInternalUnitPrice(),
+        productDto.getExternalUnitPrice());
     product.setDescription(productDto.getDescription());
-    product.setExternalUnitPrice(productDto.getExternalUnitPrice());
-    product.setInternalUnitPrice(productDto.getInternalUnitPrice());
     product.setProductId(productDto.getProductId().toString());
     product.setProductName(productDto.getProductName());
     product.setServiceProvider(productDto.getServiceProvider().getLabel());
@@ -362,11 +383,8 @@ public class RefactorConverter {
     double internalUnitPrice = productDraft.getInternalUnitPrice();
     String productName = productDraft.getName();
 
-    Product product = new Product();
-    product.setCategory(productCategory);
+    Product product = new Product(productCategory, internalUnitPrice, externalUnitPrice);
     product.setDescription(description);
-    product.setExternalUnitPrice(externalUnitPrice);
-    product.setInternalUnitPrice(internalUnitPrice);
     product.setProductName(productName);
     product.setServiceProvider(serviceProvider);
     return product;

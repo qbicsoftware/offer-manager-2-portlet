@@ -8,7 +8,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import life.qbic.business.offers.identifier.OfferId;
+import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
+import life.qbic.business.products.Product;
 import life.qbic.business.products.ProductItem;
 
 
@@ -37,22 +40,22 @@ public class OfferCalculus {
 
   /**
    * Uses the {@link ProductItem} items provided in the offer and creates a list
-   * of converted {@link OfferItem} items. The affiliation is used to determine,
+   * of converted {@link ProductItem} items. The affiliation is used to determine,
    * if the customer has an internal or external affiliation. Based on the affiliation, the
    * internal or external unit price is used for the calculation.
    * @param offer the offer to use to access the product items
-   * @return a list of prepared OfferItem items
+   * @return a list of prepared ProductItem items
    */
-  protected static List<OfferItem> createOfferItems(OfferV2 offer) {
+  protected static List<ProductItem> createProductItems(OfferV2 offer) {
     AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory();
-    List<OfferItem> offerItems;
+    List<ProductItem> ProductItems;
     // Discounting for an internal customer is different, so we check the affiliation first.
     if (affiliationCategory == AffiliationCategory.INTERNAL) {
-      offerItems = createOfferItems(offer.getItems(), OfferCalculus::offerItemFromInternal);
+      ProductItems = createProductItems(offer.getItems(), OfferCalculus::ProductItemFromInternal);
     } else {
-      offerItems = createOfferItems(offer.getItems(), OfferCalculus::offerItemFromExternal);
+      ProductItems = createProductItems(offer.getItems(), OfferCalculus::ProductItemFromExternal);
     }
-    return offerItems;
+    return ProductItems;
   }
 
   /**
@@ -64,7 +67,7 @@ public class OfferCalculus {
    */
   public static OfferV2 process(OfferV2 offer) {
     // we always need to group the items to calculate anything
-    OfferV2 preparedOffer = withGroupedOfferItems(OfferV2.copyOf(offer));
+    OfferV2 preparedOffer = withGroupedProductItems(OfferV2.copyOf(offer));
 
     /* order of calculation
      *calc net costs----calc VAT----\
@@ -86,8 +89,8 @@ public class OfferCalculus {
   protected static OfferV2 withVat(OfferV2 offer) {
     OfferV2 offerCopy = OfferV2.copyOf(offer);
     BigDecimal vatRatio = vatRatio(offer.getSelectedCustomerAffiliation().getCountry());
-    offerCopy.setVatRatio(vatRatio);
-    offerCopy.setTotalVat(calcVat(offerCopy.getTotalNetPrice(), vatRatio));
+//    offerCopy.setVatRatio(vatRatio);
+//    offerCopy.setTotalVat(calcVat(offerCopy.getTotalNetPrice(), vatRatio));
     return offerCopy;
   }
 
@@ -151,9 +154,9 @@ public class OfferCalculus {
   protected static OfferV2 withTotalCosts(OfferV2 offer) {
     OfferV2 offerCopy = OfferV2.copyOf(offer);
     BigDecimal offerOverhead = BigDecimal.valueOf(offerCopy.getOverhead());
-    BigDecimal offerNet = offerCopy.getTotalNetPrice();
+    BigDecimal offerNet = offerCopy.getSalePrice();
     BigDecimal offerVat = offerCopy.getTotalVat();
-    offerCopy.setTotalCost(addTotalCosts(offerOverhead, offerNet, offerVat));
+//    offerCopy.setTotalCost(addTotalCosts(offerOverhead, offerNet, offerVat));
     return offerCopy;
   }
 
@@ -190,12 +193,12 @@ public class OfferCalculus {
             .add(projectAndDataManagementNetTotal)
             .add(externalServicesNetTotal);
 
-    offerCopy.setNetSumDataAnalysis(dataAnalysisNetTotal);
-    offerCopy.setNetSumDataGeneration(dataGenerationNetTotal);
-    offerCopy.setNetSumDataManagement(projectAndDataManagementNetTotal);
-    offerCopy.setNetSumExternalServices(externalServicesNetTotal);
-
-    offerCopy.setTotalNetPrice(totalNet);
+//    offerCopy.setNetSumDataAnalysis(dataAnalysisNetTotal);
+//    offerCopy.setNetSumDataGeneration(dataGenerationNetTotal);
+//    offerCopy.setNetSumDataManagement(projectAndDataManagementNetTotal);
+//    offerCopy.setNetSumExternalServices(externalServicesNetTotal);
+//
+//    offerCopy.setTotalNetPrice(totalNet);
 
     return offerCopy;
   }
@@ -211,28 +214,27 @@ public class OfferCalculus {
         .add(dataManagementDiscount)
         .add(externalServiceDiscount);
 
-    offerCopy.setTotalDiscountAmount(totalDiscount);
+//    offerCopy.setTotalDiscountAmount(totalDiscount);
     return offerCopy;
   }
 
-  private static BigDecimal discountSum(List<OfferItem> dataAnalysisItems) {
+  private static BigDecimal discountSum(List<ProductItem> dataAnalysisItems) {
     return dataAnalysisItems.stream()
-        .map(OfferItem::getItemDiscount)
-        .map(BigDecimal::valueOf)
+        .map(ProductItem::getDiscountAmount)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
   }
 
   /**
    * Converts all product items of an offer into offer items and passes them to {@link
-   * #withGroupedOfferItems(OfferV2, List)}
+   * #withGroupedProductItems(OfferV2, List)}
    *
    * @param offerV2 an offer with product items
    * @return an offer with filled offer items
    * @throws OfferCalculusException the product category could not be determined for one or more
    *     product items in the provided offer
    */
-  protected static OfferV2 withGroupedOfferItems(OfferV2 offerV2) throws OfferCalculusException {
-    return withGroupedOfferItems(offerV2, createOfferItems(offerV2));
+  protected static OfferV2 withGroupedProductItems(OfferV2 offerV2) throws OfferCalculusException {
+    return withGroupedProductItems(offerV2, createProductItems(offerV2));
   }
 
   /**
@@ -268,12 +270,12 @@ public class OfferCalculus {
                 .add(overheadProjectManagementDataStorage)
                 .add(overheadExternalServices));
 
-    offerCopy.setOverheadRatio(overheadRatio.doubleValue());
-    offerCopy.setOverheadsDataAnalysis(overheadDataAnalysis);
-    offerCopy.setOverheadsDataGeneration(overheadDataGeneration);
-    offerCopy.setOverheadsDataManagement(overheadProjectManagementDataStorage);
-    offerCopy.setOverheadsExternalServices(overheadExternalServices);
-    offerCopy.setOverhead(totalOverheads.doubleValue());
+//    offerCopy.setOverheadRatio(overheadRatio.doubleValue());
+//    offerCopy.setOverheadsDataAnalysis(overheadDataAnalysis);
+//    offerCopy.setOverheadsDataGeneration(overheadDataGeneration);
+//    offerCopy.setOverheadsDataManagement(overheadProjectManagementDataStorage);
+//    offerCopy.setOverheadsExternalServices(overheadExternalServices);
+//    offerCopy.setOverhead(totalOverheads.doubleValue());
 
     return offerCopy;
   }
@@ -284,10 +286,9 @@ public class OfferCalculus {
    * @param items the items to calculate the net sum for
    * @return the net sum including discounts.
    */
-  protected static BigDecimal netSum(List<OfferItem> items) {
+  protected static BigDecimal netSum(List<ProductItem> items) {
     return items.stream()
-        .map(OfferItem::getItemNet)
-        .map(BigDecimal::valueOf)
+        .map(ProductItem::getSalePrice)
         .reduce(BigDecimal.ZERO, BigDecimal::add);
   }
 
@@ -322,16 +323,15 @@ public class OfferCalculus {
    * @param overheadRatio the overhead ratio to apply
    * @return the overhead sum based on the overhead ratio and items
    */
-  protected static BigDecimal overheads(List<OfferItem> items, BigDecimal overheadRatio) {
+  protected static BigDecimal overheads(List<ProductItem> items, BigDecimal overheadRatio) {
     if (overheadRatio.compareTo(BigDecimal.ZERO) < 0
         || overheadRatio.compareTo(BigDecimal.ONE) > 0) {
       throw new IllegalArgumentException(
           "Overhead ratio must be between 0 and 1. Provided ratio: " + overheadRatio);
     }
     return items.stream()
-        .map(OfferItem::getItemNet)
-        .filter((x) -> x > 0)
-        .map(BigDecimal::valueOf)
+        .map(ProductItem::getSalePrice)
+        .filter((x) -> x.compareTo(BigDecimal.ZERO) > 0)
         .map(itemPrice -> itemPrice.multiply(overheadRatio))
         .reduce(BigDecimal.ZERO, BigDecimal::add);
   }
@@ -343,37 +343,37 @@ public class OfferCalculus {
    *
    * <p>If the offer items list passed is empty, this method tries to create the offer items first
    * based on the ProductItems in the offer. Internally, the method {@link
-   * OfferCalculus#createOfferItems(OfferV2)} is used for this.
+   * OfferCalculus#createProductItems(OfferV2)} is used for this.
    *
    * @param offer the offer to use as basis for the calculations
-   * @param offerItems the offer items to use to group the items into their belonging category
+   * @param ProductItems the offer items to use to group the items into their belonging category
    * @return A copy of the input offer, with the offer items sorted in the categories.
    * @throws OfferCalculusException if anything goes wrong
    */
-  protected static OfferV2 withGroupedOfferItems(OfferV2 offer, List<OfferItem> offerItems)
+  protected static OfferV2 withGroupedProductItems(OfferV2 offer, List<ProductItem> ProductItems)
       throws OfferCalculusException {
-    if (offerItems.isEmpty()) {
-      offerItems = createOfferItems(offer);
+    if (ProductItems.isEmpty()) {
+      ProductItems = createProductItems(offer);
     }
     OfferV2 offerCopy = OfferV2.copyOf(offer);
-    List<OfferItem> ungroupedItems = new ArrayList<>();
+    List<ProductItem> ungroupedItems = new ArrayList<>();
     // And then sort them into the correct categories
-    for (OfferItem item : offerItems) {
-      String category = item.getCategory();
+    for (ProductItem item : ProductItems) {
+      String category = item.getProduct().getCategory();
       if (DATA_GENERATION.contains(category)) {
-        offerCopy.addDataGenerationItem(item);
+//        offerCopy.addDataGenerationItem(item);
         continue;
       }
       if (DATA_ANALYSIS.contains(category)) {
-        offerCopy.addDataAnalysisItem(item);
+//        offerCopy.addDataAnalysisItem(item);
         continue;
       }
       if (PROJECT_AND_DATA_MANAGEMENT.contains(category)) {
-        offerCopy.addDataManagementItem(item);
+//        offerCopy.addDataManagementItem(item);
         continue;
       }
       if (EXTERNAL_SERVICES.contains(category)) {
-        offerCopy.addExternalServiceItem(item);
+//        offerCopy.addExternalServiceItem(item);
       } else {
         ungroupedItems.add(item);
       }
@@ -386,17 +386,17 @@ public class OfferCalculus {
   }
 
   /**
-   * Creates an {@link OfferItem} object with all its properties calculated based on the given
+   * Creates an {@link ProductItem} object with all its properties calculated based on the given
    * {@link ProductItem}. This method uses the <b>external unit price</b>.
    *
-   * @param item the item from which to create an OfferItem instance.
+   * @param item the item from which to create an ProductItem instance.
    * @return the offer item based on the given product item
    */
-  protected static OfferItem offerItemFromExternal(ProductItem item) {
+  protected static ProductItem ProductItemFromExternal(ProductItem item) {
     Double unitPrice = item.getProduct().getExternalUnitPrice();
     AffiliationCategory affiliationCategory = AffiliationCategory.EXTERNAL;
 
-    return createOfferItem(
+    return createProductItem(
         item.getQuantity(),
         unitPrice,
         item.getProduct().getCategory(),
@@ -408,17 +408,17 @@ public class OfferCalculus {
   }
 
   /**
-   * Creates an {@link OfferItem} object with all its properties calculated based on the given
+   * Creates an {@link ProductItem} object with all its properties calculated based on the given
    * {@link ProductItem}. This method uses the <b>internal unit price</b>.
    *
-   * @param item the item from which to create an OfferItem instance.
+   * @param item the item from which to create an ProductItem instance.
    * @return the offer item based on the given product item
    */
-  protected static OfferItem offerItemFromInternal(ProductItem item) {
+  protected static ProductItem ProductItemFromInternal(ProductItem item) {
     Double unitPrice = item.getProduct().getInternalUnitPrice();
     AffiliationCategory affiliationCategory = AffiliationCategory.INTERNAL;
 
-    return createOfferItem(
+    return createProductItem(
         item.getQuantity(),
         unitPrice,
         item.getProduct().getCategory(),
@@ -443,7 +443,7 @@ public class OfferCalculus {
    * @param unit the unit in which the quantity is counted
    * @return a complete offer item with calculated netPrice, listPrice and discounts
    */
-  protected static OfferItem createOfferItem(
+  protected static ProductItem createProductItem(
       double quantity,
       double unitPrice,
       String productCategory,
@@ -469,20 +469,23 @@ public class OfferCalculus {
 
     BigDecimal totalDiscount = roundToCurrency(roundedQuantity.multiply(unitDiscount));
 
-    return new OfferItem.Builder(
-            roundedQuantity.doubleValue(),
-            description,
-            productName,
-            roundedUnitPrice.doubleValue(),
-            totalDiscount.doubleValue(),
-            unitDiscount.doubleValue(),
-            discountPercentage.doubleValue(),
-            serviceProvider,
-            unit,
-            listPrice.doubleValue(),
-            netPrice.doubleValue())
-        .setCategory(productCategory)
-        .build();
+    OfferV2 offer = new OfferV2(new Affiliation("", "", "", "", "", "", affiliationCategory), new OfferId("something", 1));
+    Product product = new Product(productCategory, unitPrice, unitPrice);
+    return new ProductItem(offer, product, quantity);
+//    return new ProductItem.Builder(
+//            roundedQuantity.doubleValue(),
+//            description,
+//            productName,
+//            roundedUnitPrice.doubleValue(),
+//            totalDiscount.doubleValue(),
+//            unitDiscount.doubleValue(),
+//            discountPercentage.doubleValue(),
+//            serviceProvider,
+//            unit,
+//            listPrice.doubleValue(),
+//            netPrice.doubleValue())
+//        .setCategory(productCategory)
+//        .build();
   }
 
   /**
@@ -550,8 +553,8 @@ public class OfferCalculus {
    * @param converter the mapping function from product item to offer item
    * @return a list of offer items representing converted product items
    */
-  protected static List<OfferItem> createOfferItems(
-      List<ProductItem> productItems, Function<ProductItem, OfferItem> converter) {
+  protected static List<ProductItem> createProductItems(
+      List<ProductItem> productItems, Function<ProductItem, ProductItem> converter) {
     return productItems.stream().map(converter).collect(Collectors.toList());
   }
 
@@ -562,9 +565,9 @@ public class OfferCalculus {
    * @param item the item to calculate the net sum for
    * @return the net sum of the provided item
    */
-  protected static BigDecimal itemNetPrice(OfferItem item) {
-    BigDecimal unitPrice = BigDecimal.valueOf(item.getUnitPrice());
-    BigDecimal unitDiscount = BigDecimal.valueOf(item.getUnitDiscount());
+  protected static BigDecimal itemNetPrice(ProductItem item) {
+    BigDecimal unitPrice = item.getUnitPrice();
+    BigDecimal unitDiscount = item.getUnitDiscountAmount();
     BigDecimal quantity = BigDecimal.valueOf(item.getQuantity());
     return itemNetPrice(unitPrice, quantity, unitDiscount);
   }
@@ -577,7 +580,7 @@ public class OfferCalculus {
    * @param quantity the amount of units to consider
    * @param unitPrice the price per unit
    * @return the net sum of the provided item
-   * @see #itemNetPrice(OfferItem)
+   * @see #itemNetPrice(ProductItem)
    */
   protected static BigDecimal itemNetPrice(
       BigDecimal unitPrice, BigDecimal quantity, BigDecimal unitDiscount) {

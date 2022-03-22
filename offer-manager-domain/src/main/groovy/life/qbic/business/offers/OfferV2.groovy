@@ -3,12 +3,14 @@ package life.qbic.business.offers
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.persons.Person
 import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.business.persons.affiliation.AffiliationCategory
 import life.qbic.business.products.ProductItem
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 
 import javax.persistence.*
+import java.math.RoundingMode
 import java.time.LocalDate
 
 /**
@@ -116,23 +118,23 @@ class OfferV2 {
     private ProjectIdentifier associatedProject
 
     @Transient
-    private List<OfferItem> dataGenerationItems = new ArrayList<>()
+    private ItemGroup dataGenerationItems = new ItemGroup()
     @Transient
-    private List<OfferItem> dataAnalysisItems = new ArrayList<>()
+    private ItemGroup dataAnalysisItems = new ItemGroup()
     @Transient
-    private List<OfferItem> dataManagementItems = new ArrayList<>()
+    private ItemGroup dataManagementItems = new ItemGroup()
     @Transient
-    private List<OfferItem> externalServiceItems = new ArrayList<>()
+    private ItemGroup externalServiceItems = new ItemGroup()
 
-    @Transient private BigDecimal overheadsDataAnalysis
-    @Transient private BigDecimal overheadsDataGeneration
-    @Transient private BigDecimal overheadsDataManagement
-    @Transient private BigDecimal overheadsExternalServices
-    @Transient private BigDecimal netSumDataAnalysis
-    @Transient private BigDecimal netSumDataGeneration
-    @Transient private BigDecimal netSumDataManagement
-    @Transient private BigDecimal netSumExternalServices
-    @Transient private BigDecimal totalNetPrice
+    @Transient private BigDecimal dataAnalysisOverhead
+    @Transient private BigDecimal dataGenerationOverhead
+    @Transient private BigDecimal dataManagementOverhead
+    @Transient private BigDecimal externalServiceOverhead
+//    @Transient private BigDecimal dataAnalysisSalePrice
+//    @Transient private BigDecimal dataGenerationSalePrice
+//    @Transient private BigDecimal dataManagementSalePrice
+//    @Transient private BigDecimal externalServiceSalePrice
+    @Transient private BigDecimal salePrice
     @Transient private BigDecimal vatRatio
     @Transient private BigDecimal totalVat
     @Transient private BigDecimal totalCost
@@ -148,11 +150,29 @@ class OfferV2 {
     OfferV2(Affiliation selectedCustomerAffiliation, OfferId identifier) {
         this.selectedCustomerAffiliation = selectedCustomerAffiliation
         this.identifier = identifier
+        updateOverheadRatio()
     }
 
-    void addProductItem(ProductItem productItem) {
-        productItem.setOffer(this)
-        this.items.add(productItem)
+    /**
+     * Adds the item to the corresponding item group based on the product category.
+     * @param item the added item
+     */
+    private void addItemToGroup(ProductItem item) {
+        List<String> dataGenerationCategories = Arrays.asList("Sequencing", "Proteomics", "Metabolomics");
+        List<String> dataAnalysisCategories = Arrays.asList("Primary Bioinformatics", "Secondary Bioinformatics");
+        List<String> projectManagementCategories = Arrays.asList("Project Management", "Data Storage");
+        List<String> externalServiceCategories = Collections.singletonList("External Service");
+
+        String category = item.getProduct().getCategory();
+        if (dataGenerationCategories.contains(category)) {
+            this.dataGenerationItems.add(item);
+        } else if (dataAnalysisCategories.contains(category)) {
+            this.dataAnalysisItems.add(item);
+        } else if (projectManagementCategories.contains(category)) {
+            this.dataManagementItems.add(item);
+        } else if (externalServiceCategories.contains(category)) {
+            this.externalServiceItems.add(item);
+        }
     }
 
     /**
@@ -167,108 +187,59 @@ class OfferV2 {
         return  checksum
     }
 
-    BigDecimal getOverheadsDataAnalysis() {
-        return overheadsDataAnalysis
+    BigDecimal getDataAnalysisOverhead() {
+        return dataAnalysisItems.salePrice * overheadRatio
     }
 
-    void setOverheadsDataAnalysis(BigDecimal overheadsDataAnalysis) {
-        this.overheadsDataAnalysis = overheadsDataAnalysis
+    BigDecimal getDataGenerationOverhead() {
+        return dataGenerationItems.salePrice * overheadRatio
     }
 
-    BigDecimal getOverheadsDataGeneration() {
-        return overheadsDataGeneration
+    BigDecimal getDataManagementOverhead() {
+        return dataManagementItems.salePrice * overheadRatio
     }
 
-    void setOverheadsDataGeneration(BigDecimal overheadsDataGeneration) {
-        this.overheadsDataGeneration = overheadsDataGeneration
+    BigDecimal getExternalServiceOverhead() {
+        return externalServiceItems.salePrice * overheadRatio
     }
 
-    BigDecimal getOverheadsDataManagement() {
-        return overheadsDataManagement
+    BigDecimal getDataAnalysisSalePrice() {
+        return dataAnalysisItems.getSalePrice()
     }
 
-    void setOverheadsDataManagement(BigDecimal overheadsDataManagement) {
-        this.overheadsDataManagement = overheadsDataManagement
+    BigDecimal getDataGenerationSalePrice() {
+        return dataGenerationItems.getSalePrice()
     }
 
-    BigDecimal getOverheadsExternalServices() {
-        return overheadsExternalServices
+    BigDecimal getDataManagementSalePrice() {
+        return dataManagementItems.getSalePrice()
     }
 
-    void setOverheadsExternalServices(BigDecimal overheadsExternalServices) {
-        this.overheadsExternalServices = overheadsExternalServices
+    BigDecimal getExternalServiceSalePrice() {
+        return externalServiceItems.getSalePrice()
     }
 
-    BigDecimal getNetSumDataAnalysis() {
-        return netSumDataAnalysis
-    }
-
-    void setNetSumDataAnalysis(BigDecimal netSumDataAnalysis) {
-        this.netSumDataAnalysis = netSumDataAnalysis
-    }
-
-    BigDecimal getNetSumDataGeneration() {
-        return netSumDataGeneration
-    }
-
-    void setNetSumDataGeneration(BigDecimal netSumDataGeneration) {
-        this.netSumDataGeneration = netSumDataGeneration
-    }
-
-    BigDecimal getNetSumDataManagement() {
-        return netSumDataManagement
-    }
-
-    void setNetSumDataManagement(BigDecimal netSumDataManagement) {
-        this.netSumDataManagement = netSumDataManagement
-    }
-
-    BigDecimal getNetSumExternalServices() {
-        return netSumExternalServices
-    }
-
-    void setNetSumExternalServices(BigDecimal netSumExternalServices) {
-        this.netSumExternalServices = netSumExternalServices
-    }
-
-    BigDecimal getTotalNetPrice() {
-        return totalNetPrice
-    }
-
-    void setTotalNetPrice(BigDecimal totalNetPrice) {
-        this.totalNetPrice = totalNetPrice
+    BigDecimal getSalePrice() {
+        return getDataGenerationSalePrice()
+                .add(getDataAnalysisSalePrice())
+                .add(getDataManagementSalePrice())
+                .add(getExternalServiceSalePrice())
     }
 
     BigDecimal getVatRatio() {
         return vatRatio
     }
 
-    void setVatRatio(BigDecimal vatRatio) {
-        this.vatRatio = vatRatio
-    }
-
     BigDecimal getTotalVat() {
         return totalVat
-    }
-
-    void setTotalVat(BigDecimal totalVat) {
-        this.totalVat = totalVat
     }
 
     BigDecimal getTotalCost() {
         return totalCost
     }
 
-    void setTotalCost(BigDecimal totalCost) {
-        this.totalCost = totalCost
-    }
-
     BigDecimal getTotalDiscountAmount() {
         return totalDiscountAmount
-    }
-
-    void setTotalDiscountAmount(BigDecimal totalDiscountAmount) {
-        this.totalDiscountAmount = totalDiscountAmount
     }
 
     LocalDate getCreationDate() {
@@ -327,14 +298,6 @@ class OfferV2 {
         this.experimentalDesign = experimentalDesign
     }
 
-    List<ProductItem> getItems() {
-        return items
-    }
-
-    void setItems(List<ProductItem> items) {
-        this.items = items
-    }
-
     OfferId getIdentifier() {
         return OfferId.from(offerId)
     }
@@ -349,22 +312,19 @@ class OfferV2 {
 
     void setSelectedCustomerAffiliation(Affiliation selectedCustomerAffiliation) {
         this.selectedCustomerAffiliation = selectedCustomerAffiliation
+        updateOverheadRatio()
     }
 
     double getOverhead() {
         return overhead
     }
 
-    void setOverhead(double overhead) {
+    protected void setOverhead(double overhead) {
         this.overhead = overhead
     }
 
     double getOverheadRatio() {
         return overheadRatio
-    }
-
-    void setOverheadRatio(double overheadRatio) {
-        this.overheadRatio = overheadRatio
     }
 
     Optional<ProjectIdentifier> getAssociatedProject() {
@@ -375,37 +335,45 @@ class OfferV2 {
         this.associatedProject = associatedProject
     }
 
-    void addDataManagementItem(OfferItem item) {
-        this.dataManagementItems.add(item)
+    List<ProductItem> getItems() {
+        return items.collect()
     }
 
-    void addExternalServiceItem(OfferItem item) {
-        this.externalServiceItems.add(item)
+    protected void setItems(List<ProductItem> items) {
+        items.clear()
+        dataManagementItems.clear()
+        dataAnalysisItems.clear()
+        dataGenerationItems.clear()
+        externalServiceItems.clear()
+        items.forEach(this::addItem)
     }
 
-    void addDataGenerationItem(OfferItem item) {
-        this.dataGenerationItems.add(item)
+    void addItems(List<ProductItem> items) {
+        items.forEach(this::addItem)
     }
 
-    void addDataAnalysisItem(OfferItem item) {
-        this.dataAnalysisItems.add(item)
+    void addItem(ProductItem productItem) {
+        productItem.setOffer(this)
+        this.addItemToGroup(productItem)
+        this.items.add(productItem)
     }
 
-    List<OfferItem> getDataManagementItems() {
+
+    List<ProductItem> getDataManagementItems() {
         // Create a copy of the item collection
-        return dataManagementItems.collect()
+        return dataManagementItems.iterator().collect()
     }
 
-    List<OfferItem> getDataAnalysisItems() {
-        return dataAnalysisItems.collect()
+    List<ProductItem> getDataAnalysisItems() {
+        return dataAnalysisItems.iterator().collect()
     }
 
-    List<OfferItem> getDataGenerationItems() {
-        return dataGenerationItems.collect()
+    List<ProductItem> getDataGenerationItems() {
+        return dataGenerationItems.iterator().collect()
     }
 
-    List<OfferItem> getExternalServiceItems() {
-        return externalServiceItems.collect()
+    List<ProductItem> getExternalServiceItems() {
+        return externalServiceItems.iterator().collect()
     }
 
     static OfferV2 copyOf(OfferV2 original) {
@@ -431,33 +399,56 @@ class OfferV2 {
         offerCopy.setExpirationDate(this.getExpirationDate())
         offerCopy.setOfferId(this.getOfferId())
         offerCopy.setItems(this.getItems())
-        offerCopy.setNetSumDataAnalysis(this.getNetSumDataAnalysis())
-        offerCopy.setNetSumDataGeneration(this.getNetSumDataGeneration())
-        offerCopy.setNetSumDataManagement(this.getNetSumDataManagement())
-        offerCopy.setNetSumExternalServices(this.getNetSumExternalServices())
+//        offerCopy.dataAnalysisSalePrice = this.getDataAnalysisSalePrice()
+//        offerCopy.dataGenerationSalePrice = this.getDataGenerationSalePrice()
+//        offerCopy.dataManagementSalePrice = this.getDataManagementSalePrice()
+//        offerCopy.externalServiceSalePrice = this.getExternalServiceSalePrice()
         offerCopy.setOverhead(this.getOverhead())
-        offerCopy.setOverheadRatio(this.getOverheadRatio())
-        offerCopy.setOverheadsDataAnalysis(this.getOverheadsDataAnalysis())
-        offerCopy.setOverheadsDataGeneration(this.getOverheadsDataGeneration())
-        offerCopy.setOverheadsDataManagement(this.getOverheadsDataManagement())
-        offerCopy.setOverheadsExternalServices(this.getOverheadsExternalServices())
+        offerCopy.overheadRatio = this.getOverheadRatio()
+        offerCopy.dataAnalysisOverhead= this.getDataAnalysisOverhead()
+        offerCopy.dataGenerationOverhead= this.getDataGenerationOverhead()
+        offerCopy.dataManagementOverhead = this.getDataManagementOverhead()
+        offerCopy.externalServiceOverhead = (this.getExternalServiceOverhead())
         offerCopy.setProjectManager(this.getProjectManager())
         offerCopy.setProjectObjective(this.getProjectObjective())
         offerCopy.setProjectTitle(this.getProjectTitle())
         offerCopy.setSelectedCustomerAffiliation(this.getSelectedCustomerAffiliation())
-        offerCopy.setTotalCost(this.getTotalCost())
-        offerCopy.setTotalDiscountAmount(this.getTotalDiscountAmount())
-        offerCopy.setTotalNetPrice(this.getTotalNetPrice())
-        offerCopy.setTotalVat(this.getTotalVat())
-        offerCopy.setVatRatio(this.getVatRatio())
+        offerCopy.totalCost = this.getTotalCost()
+        offerCopy.totalDiscountAmount = this.getTotalDiscountAmount()
+        offerCopy.salePrice = this.getSalePrice()
+        offerCopy.totalVat = this.getTotalVat()
+        offerCopy.vatRatio = this.getVatRatio()
         //fields
-        offerCopy.dataAnalysisItems = this.getDataAnalysisItems()
-        offerCopy.dataGenerationItems = this.getDataGenerationItems()
-        offerCopy.dataManagementItems = this.getDataManagementItems()
-        offerCopy.externalServiceItems = this.getExternalServiceItems()
+        offerCopy.setItems(this.getItems())
 
         return offerCopy
     }
+
+    private void updateOverheadRatio() {
+        def category = selectedCustomerAffiliation.getCategory()
+        this.overheadRatio = determineOverheadRate(category)
+    }
+
+    private static BigDecimal determineOverheadRate(AffiliationCategory category) {
+        if (category == AffiliationCategory.INTERNAL) {
+            return BigDecimal.ZERO;
+        }
+        if (category == AffiliationCategory.EXTERNAL_ACADEMIC) {
+            return new BigDecimal("0.2");
+        }
+        return new BigDecimal("0.4");
+    }
+
+    private static class ItemGroup extends ArrayList<ProductItem> {
+        BigDecimal getSalePrice() {
+            this.stream().map(ProductItem::getSalePrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+        }
+
+        BigDecimal getOverhead(BigDecimal overheadRate) {
+            return getSalePrice().multiply(overheadRate).setScale(2, RoundingMode.HALF_UP)
+        }
+    }
+
 
     private static class OptionalStringConverter implements AttributeConverter<Optional<String>, String> {
 

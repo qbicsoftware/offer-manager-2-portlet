@@ -66,7 +66,7 @@ class FetchOfferSpec extends Specification {
             final OfferV2 retrievedOffer = arguments.get(0)
             println retrievedOffer.overhead
             assert retrievedOffer.getOverhead() >= 0
-            assert retrievedOffer.getTotalNetPrice() >= 0
+            assert retrievedOffer.getSalePrice() >= 0
             assert retrievedOffer.getTotalCost() >= 0
             assert retrievedOffer.getTotalVat() >= 0
         }
@@ -81,6 +81,6 @@ class FetchOfferSpec extends Specification {
     product.setInternalUnitPrice(0.5)
     product.setExternalUnitPrice(1.0)
     product.setCategory(ProductCategory.PRIMARY_BIOINFO.getLabel())
-    return new ProductItem(product, 2)
+    return new ProductItem(offerV2, product, 2)
   }
 }

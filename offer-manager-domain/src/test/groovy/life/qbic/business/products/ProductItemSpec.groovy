@@ -5,7 +5,6 @@ import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.AffiliationCategory
 import spock.lang.Specification
-
 /**
  * <b>Unit tests for the {@link ProductItem} class</b>
  *
@@ -69,14 +68,16 @@ class ProductItemSpec extends Specification {
     product.setInternalUnitPrice(20.0)
     product.setExternalUnitPrice(40.0)
     product.setCategory("Primary Bioinformatics")
-    def item = new ProductItem(product, 20.0)
+    def item = new ProductItem()
+    item.setProduct(product)
+    item.setQuantity(20.0)
 
     and: "A product item with a data analysis product"
     def offer = new OfferV2(affiliation as Affiliation, new OfferId("test", "abcd", 1))
     item.setOffer(offer)
 
     when: "We request the discount"
-    double discountedUnitPrice = item.getUnitDiscountPrice()
+    double discountedUnitPrice = item.getUnitDiscountAmount()
 
     then: "The discounted unit price shall be smaller that the unit list price"
     discountedUnitPrice < item.getUnitPrice()
@@ -93,14 +94,16 @@ class ProductItemSpec extends Specification {
     product.setInternalUnitPrice(20.0)
     product.setExternalUnitPrice(40.0)
     product.setCategory(productCategory as String)
-    def item = new ProductItem(product, 20.0)
+    def item = new ProductItem()
+    item.setProduct(product)
+    item.setQuantity(20.0)
 
     and: "A product item"
     def offer = new OfferV2(affiliation as Affiliation, new OfferId("test", "abcd", 1))
     item.setOffer(offer)
 
     when:
-    BigDecimal discountedUnitPrice = item.getUnitDiscountPrice()
+    BigDecimal discountedUnitPrice = item.getUnitDiscountAmount()
 
     then:
     discountedUnitPrice == 0
@@ -118,12 +121,14 @@ class ProductItemSpec extends Specification {
     product.internalUnitPrice = 10.0
     product.externalUnitPrice = 20.0
     product.category = "Primary Bioinformatics"
-    def item = new ProductItem(product, 10.0)
+    def item = new ProductItem()
+    item.setProduct(product)
+    item.setQuantity(10.0)
     def offer = new OfferV2(internalAffiliation, new OfferId("test", "abc", 1))
     item.setOffer(offer)
 
     expect:
-    item.getDiscountPercentage() > 0.0
+    item.getDiscountRate() > 0.0
 
   }
 
@@ -132,14 +137,16 @@ class ProductItemSpec extends Specification {
     def product = new Product()
     product.setCategory("Data Storage")
     product.setInternalUnitPrice(20.0)
-    def item = new ProductItem(product, 20.0)
+    def item = new ProductItem()
+    item.setProduct(product)
+    item.setQuantity(20.0)
 
     and: "An offer for an internal customer"
     def offer = new OfferV2(internalAffiliation, new OfferId("test", "abcd", 1))
     item.setOffer(offer)
 
     expect: "a 100% discount shall be applied"
-    item.unitDiscountPrice == item.unitPrice
+    item.unitDiscountAmount == item.unitPrice
     item.hasDiscount()
   }
 
@@ -149,14 +156,16 @@ class ProductItemSpec extends Specification {
     def product = new Product()
     product.setCategory("Data Storage")
     product.setExternalUnitPrice(40.0)
-    def item = new ProductItem(product, 20.0)
+    def item = new ProductItem()
+    item.setProduct(product)
+    item.setQuantity( 20.0)
 
     and: "An offer for an external customer"
     def offer = new OfferV2(affiliation, new OfferId("test", "abcd", 1))
     item.setOffer(offer)
 
     expect: "No discount shall be applied"
-    item.unitDiscountPrice == 0
+    item.unitDiscountAmount == 0
     !item.hasDiscount()
 
     where:
@@ -165,46 +174,23 @@ class ProductItemSpec extends Specification {
 
   def "expect the data storage discount is 0 for external and external academic affiliations"() {
     expect: "the data storage discount is 0 for external and external academic"
-    ProductItem.calculateDataStorageDiscount(AffiliationCategory.EXTERNAL_ACADEMIC,
-            "Data Storage",
-            unitPrice as BigDecimal) == BigDecimal.ZERO
+    ProductItem.calculateDataStorageDiscountRate(AffiliationCategory.EXTERNAL_ACADEMIC,
+            "Data Storage") == BigDecimal.ZERO
 
-    ProductItem.calculateDataStorageDiscount(AffiliationCategory.EXTERNAL,
-            "Data Storage",
-            unitPrice as BigDecimal) == BigDecimal.ZERO
-
-    where: "the product category, unit price and quantity are as follows"
-    unitPrice | quantity
-    10        | 10
-    20        | 30.33
-    0         | 0
-    0.33      | 100
+    ProductItem.calculateDataStorageDiscountRate(AffiliationCategory.EXTERNAL,
+            "Data Storage") == BigDecimal.ZERO
   }
 
   def "expect the data storage discount is 100% for internal affiliation and data storage product"() {
     expect: "the data storage discount is 0 for external and external academic"
-    ProductItem.calculateDataStorageDiscount(AffiliationCategory.INTERNAL,
-            "Data Storage",
-            unitPrice as BigDecimal) == expectedPrice
-
-    where: "the product category, unit price and quantity are as follows"
-    unitPrice | quantity | expectedPrice
-    10        | 10       | 10.0
-    20        | 30.33    | 20.0
-    0         | 0        | 0.00
-    0.33      | 100      | 0.33
+    ProductItem.calculateDataStorageDiscountRate(AffiliationCategory.INTERNAL, "Data Storage") == BigDecimal.ONE
   }
 
   def "expect the data storage discount is 0 for #productCategory products"() {
     expect:
-    ProductItem.calculateDataStorageDiscount(AffiliationCategory.INTERNAL,
-            productCategory,
-            unitPrice as BigDecimal) == BigDecimal.ZERO
+    ProductItem.calculateDataStorageDiscountRate(AffiliationCategory.INTERNAL, productCategory) == BigDecimal.ZERO
 
-    where: "the unit price and quantity are as follows"
-    unitPrice = 30.33
-    quantity = 94
-    and: "the product category is one of"
+    where: "the product category is one of"
     productCategory << ["Sequencing",
                         "Proteomics",
                         "Metabolomics",
@@ -215,9 +201,8 @@ class ProductItemSpec extends Specification {
 
   def "expect the quantity discount is 0 for #productCategory products"() {
     expect:
-    ProductItem.calculateQuantityDiscount(unitPrice, quantity, productCategory) == BigDecimal.ZERO
+    ProductItem.calculateQuantityDiscountRate(quantity, productCategory) == BigDecimal.ZERO
     where:
-    unitPrice = 33.34
     quantity = 44.0
 
     and:
@@ -230,48 +215,37 @@ class ProductItemSpec extends Specification {
   // QUANTITY DISCOUNT
   def "expect the quantity discount is #expectedResult for primary and secondary bioinformatics products"() {
     expect:
-    ProductItem.calculateQuantityDiscount(unitPrice, quantity, "Primary Bioinformatics") == expectedResult
-    ProductItem.calculateQuantityDiscount(unitPrice, quantity, "Secondary Bioinformatics") == expectedResult
+    ProductItem.calculateQuantityDiscountRate(quantity, "Primary Bioinformatics") == expectedResult
+    ProductItem.calculateQuantityDiscountRate(quantity, "Secondary Bioinformatics") == expectedResult
     where:
-    unitPrice | quantity | expectedResult
-    100.33    | 33.0     | 57.19 //57.1881
-    33.34     | 44.0     | 20.34 // 20.3374
-    10.0      | 10000.0  | 8.20 // 8.20
+    quantity | expectedResult
+    33.0     | 0.57
+    44.0     | 0.61
+    10000.0  | 0.82
   }
 
-  def "expect the quantity discount to be rounded up 2 digits after the comma"() {
-    expect: "the quantity discount is computed"
-    ProductItem.calculateQuantityDiscount(unitPrice, quantity, "Primary Bioinformatics")
-            == expectedResult
-    where:
-    unitPrice | quantity | expectedResult
-    100.33    | 33.0     | 57.19 //57.1881
-    33.34     | 44.0     | 20.34 // 20.3374
-    10.0      | 10000.0  | 8.20 // 8.20
-  }
-
-  def "expect the item net to be (#unitPrice - #unitDiscount) * #quantity = #expectedItemNet"() {
+  def "expect the item sales price to be listPrice - discountAmount"() {
     given:
     def product = new Product()
     product.externalUnitPrice = unitPrice.doubleValue()
     product.internalUnitPrice = unitPrice.doubleValue()
     product.category = "Primary Bioinformatics"
-    def item = new ProductItem(product, quantity)
+    def item = new ProductItem()
+    item.setProduct(product)
+    item.setQuantity(quantity)
 
     and:
     def offer = new OfferV2(affiliation, new OfferId("test", "abc", 1))
     item.setOffer(offer)
 
     expect:
-    item.getItemNetPrice() == expectedItemNet
+    item.getSalePrice() == item.getListPrice() - item.getDiscountAmount()
 
     where:
-    unitPrice | quantity | unitDiscount | affiliation
-    100.33    | 33.0     | 57.19        | internalAffiliation
-    33.34     | 44.0     | 20.34        | externalAcademicAffiliation
-    10.0      | 10000.0  | 8.20         | externalAffiliation
-
-    expectedItemNet = (unitPrice - unitDiscount) * quantity
+    unitPrice | quantity | affiliation
+    1.01      | 22.01    | internalAffiliation
+    33.34     | 44.0     | externalAcademicAffiliation
+    10.0      | 10000.0  | externalAffiliation
   }
 
   static ProductItem createItem() {
@@ -279,7 +253,10 @@ class ProductItemSpec extends Specification {
     product.internalUnitPrice = 20.0
     product.externalUnitPrice = 40.0
     product.setCategory("Primary Bioinformatics")
-    return new ProductItem(product, 10)
+    ProductItem item = new ProductItem()
+    item.setProduct(product)
+    item.setQuantity(10)
+    return item
   }
 
   private static Affiliation createAffiliation(AffiliationCategory affiliationCategory) {

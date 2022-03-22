@@ -5,10 +5,10 @@ import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonView
-import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
  * This class generates a Layout in which the user
@@ -158,8 +158,8 @@ class CreateOfferView extends FormLayout{
             navigationView.showPreviousStep()
         })
         this.selectItemsView.next.addClickListener({
-            controller.calculatePriceForItems(getProductItems(viewModel.productItems),
-                    viewModel.customerAffiliation)
+//            controller.calculatePriceForItems(getProductItems(viewModel.productItems),
+//                    viewModel.customerAffiliation)
             overviewView.fillPanel()
             viewHistory.loadNewView(overviewView)
             navigationView.showNextStep()

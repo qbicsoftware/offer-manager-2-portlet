@@ -50,6 +50,15 @@ public class Product {
   @Column(name = "active", nullable = false)
   private Boolean active = false;
 
+  protected Product() {
+  }
+
+  public Product(String category, Double internalUnitPrice, Double externalUnitPrice) {
+    this.category = category;
+    this.internalUnitPrice = internalUnitPrice;
+    this.externalUnitPrice = externalUnitPrice;
+  }
+
   public Boolean getActive() {
     return active;
   }

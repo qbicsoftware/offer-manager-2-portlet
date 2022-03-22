@@ -16,7 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import life.qbic.business.offers.OfferV2;
-import life.qbic.business.offers.QuantityDiscount;
+import life.qbic.business.offers.QuantityDiscountFactor;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
 
 @Entity
@@ -43,18 +43,20 @@ public class ProductItem {
   private Double quantity;
 
   @ManyToOne
-  @JoinColumn(name = "offerId")
+  @JoinColumn(name = "offerId", nullable = false)
   private OfferV2 offer;
 
   @Transient
   private BigDecimal unitPrice;
 
   @Transient
-  private BigDecimal unitDiscountPrice;
+  private BigDecimal discountRate;
 
-  public ProductItem(Product product, Double quantity) {
+  public ProductItem(OfferV2 offer, Product product, Double quantity) {
+    this.offer = offer;
     this.product = product;
     this.quantity = quantity;
+    refreshProductItem();
   }
 
   protected ProductItem() {
@@ -92,24 +94,32 @@ public class ProductItem {
 
   private void refreshProductItem() {
     if (offer == null || product == null) {
-      // Nothing to do, when either offer or product is missing
-      // TODO clarify whether a reset on already set fields is required in those cases as the productitems is in an indetermined state here.
+//      // Illegal state, when either offer or product is missing
+//      throw new IllegalStateException(
+//          "A product item denotes a product on an offer. Product and offer must not be null! product: "
+//              + product + "\toffer: " + offer);
       return;
     }
     AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory();
     unitPrice = determineUnitPrice(affiliationCategory, product);
+    discountRate = getDiscountRate(affiliationCategory, BigDecimal.valueOf(quantity),
+        product.getCategory());
+  }
 
-    BigDecimal quantityDiscount =
-        calculateQuantityDiscount(unitPrice, BigDecimal.valueOf(quantity), product.getCategory());
-    BigDecimal storageDiscount =
-        calculateDataStorageDiscount(affiliationCategory, product.getCategory(), unitPrice);
-    unitDiscountPrice = quantityDiscount.max(storageDiscount);
+  private BigDecimal getDiscountRate(AffiliationCategory affiliationCategory, BigDecimal quantity,
+      String productCategory) {
+    BigDecimal quantityDiscountRate =
+        calculateQuantityDiscountRate(quantity, productCategory);
+    BigDecimal storageDiscountRate =
+        calculateDataStorageDiscountRate(affiliationCategory, productCategory);
+    return quantityDiscountRate.max(storageDiscountRate);
   }
 
   /**
    * <p>The relevant unit price for a product in an offer depends on the customer's affiliation.
-   * The current business policy is to provide base prices for internal and external customer affiliations.
-   * In some cases VAT of i.e. purchased consumables can be reflected in the internal base price.</p>
+   * The current business policy is to provide base prices for internal and external customer
+   * affiliations. In some cases VAT of i.e. purchased consumables can be reflected in the internal
+   * base price.</p>
    *
    * @param affiliationCategory internal, external or external academic
    * @param product             the product of interest
@@ -126,20 +136,19 @@ public class ProductItem {
   }
 
   /**
-   * Calculate the storage discount for a given unit price. For internal affiliations, this is set
-   * to 100%, for other affiliations this is set to 0%. Data storage discount is only applicable on
-   * data storage products.
+   * Calculate the storage discount rate for a given unit price. For internal affiliations, this is
+   * set to 100%, for other affiliations this is set to 0%. Data storage discount is only applicable
+   * on data storage products.
    *
    * @param affiliationCategory the considered affiliation category for discount determination
    * @param productCategory     the considered product category for discount determination
-   * @param unitPrice           the discounted unit price
-   * @return the amount of discount per unit for the provided unit price
+   * @return the discount rate for the provided product. In range [0,1]
    */
-  protected static BigDecimal calculateDataStorageDiscount(
-      AffiliationCategory affiliationCategory, String productCategory, BigDecimal unitPrice) {
+  protected static BigDecimal calculateDataStorageDiscountRate(
+      AffiliationCategory affiliationCategory, String productCategory) {
     if (productCategory.equalsIgnoreCase("data storage")
         && affiliationCategory == AffiliationCategory.INTERNAL) {
-      return unitPrice; // full discount
+      return BigDecimal.ONE; // full discount
     }
     return BigDecimal.ZERO;
   }
@@ -147,17 +156,16 @@ public class ProductItem {
   /**
    * Calculates the discounted unit price based on the quantity.
    *
-   * @param unitPrice the pre-selected unit price
-   * @param quantity  the quantity of the product
+   * @param quantity the quantity of the product
    * @return the discounted unit price
    */
-  protected static BigDecimal calculateQuantityDiscount(
-      BigDecimal unitPrice, BigDecimal quantity, String productCategory) {
-    QuantityDiscount quantityDiscount = new QuantityDiscount();
-    BigDecimal unitDiscount = quantityDiscount.apply(quantity, unitPrice);
+  protected static BigDecimal calculateQuantityDiscountRate(
+      BigDecimal quantity, String productCategory) {
+    QuantityDiscountFactor quantityDiscount = new QuantityDiscountFactor();
+    BigDecimal discountRate = quantityDiscount.apply(quantity);
     // Round up to the second digit
     return DATA_ANALYSIS.contains(productCategory)
-        ? unitDiscount.setScale(2, RoundingMode.UP)
+        ? discountRate.setScale(4, RoundingMode.HALF_UP)
         : BigDecimal.ZERO;
   }
 
@@ -168,17 +176,24 @@ public class ProductItem {
    * <code>false</code>
    */
   public boolean hasDiscount() {
-    return unitPrice.subtract(unitDiscountPrice).compareTo(unitPrice) < 0;
+    return discountRate.compareTo(BigDecimal.ZERO) > 0;
   }
 
   /**
    * Returns the amount of money discounted from the unit price.
    *
-   * @return between 0 for no discount or the value of {@link ProductItem#getUnitPrice()} for
-   * 100% discount
+   * @return between 0 for no discount and {@link ProductItem#getUnitPrice()} for 100% discount
    */
-  public BigDecimal getUnitDiscountPrice() {
-    return this.unitDiscountPrice;
+  public BigDecimal getUnitDiscountAmount() {
+    return this.unitPrice.multiply(this.discountRate).setScale(2, RoundingMode.HALF_UP);
+  }
+
+  /**
+   * Returns the amount of money discounted from the list price.
+   * @return between 0 for no discount and {@link ProductItem#getListPrice()} for 100% discount.
+   */
+  public BigDecimal getDiscountAmount() {
+    return getUnitDiscountAmount().multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
   }
 
   /**
@@ -191,25 +206,33 @@ public class ProductItem {
   }
 
   /**
-   * <p>Provides the total item net price of the product item, including discounts.</p>
+   * Provides the list price defined by the unit price multiplied by the quantity. This price does
+   * not account for discounts.
    *
-   * @return the discounted item's unit price multiplied with its quantity.
+   * @return the list price of this item.
    */
-  public BigDecimal getItemNetPrice() {
-    BigDecimal discountedUnitPrice = unitPrice.subtract(unitDiscountPrice);
-    return discountedUnitPrice.multiply(BigDecimal.valueOf(quantity))
-        .setScale(2, RoundingMode.HALF_UP);
+  public BigDecimal getListPrice() {
+    return this.unitPrice.multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
   }
 
   /**
-   * <p>Provides the relative discount in percentage.</p>
+   * <p>Provides the total item's sale price including discounts.</p>
    *
-   * <p>When no discount applies, this method returns 0. When full discount applies, this method returns 100.</p>
-   *
-   * @return a value in the range [0, 100]. The discounted percentage of the list price.
+   * @return the discounted item's unit price multiplied with its quantity minus applied discounts.
    */
-  public BigDecimal getDiscountPercentage() {
-    return unitDiscountPrice.divide(unitPrice, 4, RoundingMode.HALF_UP)
-        .multiply(new BigDecimal("100"));
+  public BigDecimal getSalePrice() {
+    return getListPrice().subtract(getDiscountAmount()).setScale(2, RoundingMode.HALF_UP);
+  }
+
+  /**
+   * <p>Provides the discount rate. The rate is a value between 0 and 1 inclusive, e.g. 0.15 for
+   * 15% discount.</p>
+   * <p>When no discount applies, this method returns 0. When full discount applies, this method
+   * returns 1.</p>
+   *
+   * @return value in the range [0, 1]
+   */
+  public BigDecimal getDiscountRate() {
+    return discountRate;
   }
 }
