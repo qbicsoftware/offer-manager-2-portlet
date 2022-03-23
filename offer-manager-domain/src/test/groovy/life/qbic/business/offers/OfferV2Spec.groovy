@@ -11,11 +11,14 @@ import java.math.RoundingMode
 
 class OfferV2Spec extends Specification {
 
-  private static OfferV2 internalOffer =  new OfferV2(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL), new OfferId("test", 1))
-
   def "when an item is added to the offer, it is also added to the corresponding group"() {
     given:
     OfferV2 offer = new OfferV2(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL), new OfferId("test", 1))
+    and: "some one product item of each category once"
+    def dataGeneration = createDataGenerationItem(offer)
+    def dataAnalysis = createDataAnalysisItem(offer)
+    def dataManagement = createDataManagementItem(offer)
+    def externalServices = createExternalServiceItem(offer)
     when:
     offer.addItems([dataGeneration, dataAnalysis, dataManagement, externalServices])
     then: "the offer contains the added item"
@@ -28,18 +31,17 @@ class OfferV2Spec extends Specification {
     offer.getDataAnalysisItems().contains(dataAnalysis)
     offer.getDataManagementItems().contains(dataManagement)
     offer.getExternalServiceItems().contains(externalServices)
-
-    where: "the items are as follows"
-    dataGeneration = createDataGenerationItem()
-    dataAnalysis = createDataAnalysisItem()
-    dataManagement = createDataManagementItem()
-    externalServices = createExternalServiceItem()
   }
 
   def "the group's sale price is the sum of its items sale prices."() {
     given:
     OfferV2 offer = new OfferV2()
     offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL))
+    and: "some one product item of each category once"
+    def dataGeneration = createDataGenerationItem(offer)
+    def dataAnalysis = createDataAnalysisItem(offer)
+    def dataManagement = createDataManagementItem(offer)
+    def externalServices = createExternalServiceItem(offer)
     when:
     offer.addItems([dataGeneration, dataAnalysis, dataManagement, externalServices])
     then: "the groups overheads are the sum of the items overheads"
@@ -47,18 +49,17 @@ class OfferV2Spec extends Specification {
     offer.dataAnalysisSalePrice == dataAnalysis.salePrice
     offer.dataManagementSalePrice == dataManagement.salePrice
     offer.externalServiceSalePrice == externalServices.salePrice
-
-    where: "the items are as follows"
-    dataGeneration = createDataGenerationItem()
-    dataAnalysis = createDataAnalysisItem()
-    dataManagement = createDataManagementItem()
-    externalServices = createExternalServiceItem()
   }
 
   def "the offer's sale price is the sum of the group sale prices"() {
     given:
     OfferV2 offer = new OfferV2()
     offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL))
+    and: "some one product item of each category once"
+    def dataGeneration = createDataGenerationItem(offer)
+    def dataAnalysis = createDataAnalysisItem(offer)
+    def dataManagement = createDataManagementItem(offer)
+    def externalServices = createExternalServiceItem(offer)
     when:
     offer.addItems([dataGeneration, dataAnalysis, dataManagement, externalServices])
     then: "the groups overheads are the sum of the items overheads"
@@ -68,11 +69,6 @@ class OfferV2Spec extends Specification {
             .add(offer.getExternalServiceSalePrice())
 
 
-    where: "the items are as follows"
-    dataGeneration = createDataGenerationItem()
-    dataAnalysis = createDataAnalysisItem()
-    dataManagement = createDataManagementItem()
-    externalServices = createExternalServiceItem()
   }
 
   def "overhead ratio is #overheadPercentage% for customer affiliation with category #category"() {
@@ -95,6 +91,11 @@ class OfferV2Spec extends Specification {
     given:
     OfferV2 offer = new OfferV2()
     offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.EXTERNAL))
+    and: "some one product item of each category once"
+    def dataGeneration = createDataGenerationItem(offer)
+    def dataAnalysis = createDataAnalysisItem(offer)
+    def dataManagement = createDataManagementItem(offer)
+    def externalServices = createExternalServiceItem(offer)
     when:
     offer.addItems([dataGeneration, dataAnalysis, dataManagement, externalServices])
     then: "the groups overhead is the group's sale price multiplied with the overhead rate"
@@ -102,18 +103,17 @@ class OfferV2Spec extends Specification {
     offer.dataAnalysisOverhead == dataAnalysis.salePrice * offer.overheadRatio
     offer.dataManagementOverhead == dataManagement.salePrice * offer.overheadRatio
     offer.externalServiceOverhead == externalServices.salePrice * offer.overheadRatio
-
-    where: "the items are as follows"
-    dataGeneration = createDataGenerationItem()
-    dataAnalysis = createDataAnalysisItem()
-    dataManagement = createDataManagementItem()
-    externalServices = createExternalServiceItem()
   }
 
   def "the offer's overhead is the sum of the group overheads"() {
     given:
     OfferV2 offer = new OfferV2()
     offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.EXTERNAL))
+    and: "some one product item of each category once"
+    def dataGeneration = createDataGenerationItem(offer)
+    def dataAnalysis = createDataAnalysisItem(offer)
+    def dataManagement = createDataManagementItem(offer)
+    def externalServices = createExternalServiceItem(offer)
     when:
     offer.addItems([dataGeneration, dataAnalysis, dataManagement, externalServices])
     then: "the offer overhead is the sum of the group overheads"
@@ -121,12 +121,6 @@ class OfferV2Spec extends Specification {
             .add(offer.dataAnalysisOverhead)
             .add(offer.dataManagementOverhead)
             .add(offer.externalServiceOverhead).doubleValue()
-
-    where: "the items are as follows"
-    dataGeneration = createDataGenerationItem()
-    dataAnalysis = createDataAnalysisItem()
-    dataManagement = createDataManagementItem()
-    externalServices = createExternalServiceItem()
   }
 
 
@@ -176,50 +170,49 @@ class OfferV2Spec extends Specification {
     offer.getTaxAmount() == offer.getSalePrice() * offer.getVatRatio()
   }
 
-  def "expect the discount amount ot be the sum of the items discount amounts"() {
+  def "expect the discount amount to be the sum of the items discount amounts"() {
     given:
     OfferV2 offer = new OfferV2()
     offer.setSelectedCustomerAffiliation(new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL))
+    and: "some one product item of each category once"
+    def dataGeneration = createDataGenerationItem(offer)
+    def dataAnalysis = createDataAnalysisItem(offer)
+    def dataManagement = createDataManagementItem(offer)
+    def externalServices = createExternalServiceItem(offer)
     when:
     offer.addItems([dataGeneration, dataAnalysis, dataManagement, externalServices])
     then: "the offer overhead is the sum of the group overheads"
     offer.totalDiscountAmount == (
             dataGeneration.getDiscountAmount()
-            .add(dataAnalysis.getDiscountAmount())
-            .add(dataManagement.getDiscountAmount())
-            .add(externalServices.getDiscountAmount())
+                    .add(dataAnalysis.getDiscountAmount())
+                    .add(dataManagement.getDiscountAmount())
+                    .add(externalServices.getDiscountAmount())
     ).setScale(2, RoundingMode.HALF_UP)
-
-    where: "the items are as follows"
-    dataGeneration = createDataGenerationItem()
-    dataAnalysis = createDataAnalysisItem()
-    dataManagement = createDataManagementItem()
-    externalServices = createExternalServiceItem()
   }
 
 
-  private static createDataGenerationItem() {
+  private static createDataGenerationItem(OfferV2 offer) {
     def category = "Sequencing"
     def product = new Product(category, 0.5, 1)
-    return new ProductItem(internalOffer, product, 10.0)
+    return new ProductItem(offer, product, 10.0)
   }
 
-  private static createDataAnalysisItem() {
+  private static createDataAnalysisItem(OfferV2 offer) {
     def category = "Primary Bioinformatics"
     def product = new Product(category, 0.5, 1)
-    return new ProductItem(internalOffer, product, 10.0)
+    return new ProductItem(offer, product, 10.0)
   }
 
-  private static createDataManagementItem() {
+  private static createDataManagementItem(OfferV2 offer) {
     def category = "Project Management"
     def product = new Product(category, 0.5, 1)
-    return new ProductItem(internalOffer, product, 10.0)
+    return new ProductItem(offer, product, 10.0)
   }
 
-  private static createExternalServiceItem() {
+  private static createExternalServiceItem(OfferV2 offer) {
     def category = "External Service"
     def product = new Product(category, 0.5, 1)
-    return new ProductItem(internalOffer, product, 10.0)
+    return new ProductItem(offer, product, 10.0)
   }
 
 
