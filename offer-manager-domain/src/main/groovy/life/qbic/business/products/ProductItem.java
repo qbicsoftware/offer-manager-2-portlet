@@ -1,5 +1,7 @@
 package life.qbic.business.products;
 
+import static java.util.Objects.requireNonNull;
+
 import groovy.transform.CompileStatic;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -18,7 +20,6 @@ import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import life.qbic.business.offers.OfferV2;
 import life.qbic.business.offers.QuantityDiscountFactor;
-import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
 
 @Entity
@@ -49,24 +50,16 @@ public class ProductItem {
   private OfferV2 offer;
 
   @Transient
-  private Affiliation affiliation;
-
-  @Transient
   private BigDecimal unitPrice;
 
   @Transient
   private BigDecimal discountRate;
 
   public ProductItem(OfferV2 offer, Product product, Double quantity) {
-    this.offer = Objects.requireNonNull(offer, "Offer must not be null");
-    this.affiliation = offer.getSelectedCustomerAffiliation();
-    this.product = Objects.requireNonNull(product, "Product must not be null");
-    this.quantity = Objects.requireNonNull(quantity, "Quantity must not be null");
+    this.offer = requireNonNull(offer, "Offer must not be null");
+    this.product = requireNonNull(product, "Product must not be null");
+    this.quantity = requireNonNull(quantity, "Quantity must not be null");
     refreshProductItem();
-  }
-
-  private boolean affiliationChanged() {
-    return !affiliation.equals(this.offer.getSelectedCustomerAffiliation());
   }
 
   public Double getQuantity() {
@@ -86,17 +79,27 @@ public class ProductItem {
   }
 
   private void refresh() {
-    // If the affiliation has not changed, nothing to re-calculate
-    if (affiliationChanged()) {
-      refreshProductItem();
-    }
+    refreshProductItem();
   }
 
   private void refreshProductItem() {
+    validateObjectState();
     AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory();
     unitPrice = determineUnitPrice(affiliationCategory, product);
     discountRate = getDiscountRate(affiliationCategory, BigDecimal.valueOf(quantity),
         product.getCategory());
+  }
+
+  private void validateObjectState() {
+    requireNonNull(offer, "Offer must not be null");
+    requireNonNull(product, "Product must not be null");
+    requireNonNull(quantity, "Quantity must not be null");
+    requireNonNull(offer.getSelectedCustomerAffiliation(),
+        "Offer must have a customer affiliation selected");
+    requireNonNull(offer.getSelectedCustomerAffiliation().getCategory(),
+        "Selected customer affiliation must provide a category.");
+    requireNonNull(product.getInternalUnitPrice(), "Product must have an internal unit price");
+    requireNonNull(product.getExternalUnitPrice(), "Product must have an external unit price");
   }
 
   private BigDecimal getDiscountRate(AffiliationCategory affiliationCategory, BigDecimal quantity,
