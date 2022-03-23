@@ -155,7 +155,7 @@ public class OfferCalculus {
     OfferV2 offerCopy = OfferV2.copyOf(offer);
     BigDecimal offerOverhead = BigDecimal.valueOf(offerCopy.getOverhead());
     BigDecimal offerNet = offerCopy.getSalePrice();
-    BigDecimal offerVat = offerCopy.getTotalVat();
+    BigDecimal offerVat = offerCopy.getTaxAmount();
 //    offerCopy.setTotalCost(addTotalCosts(offerOverhead, offerNet, offerVat));
     return offerCopy;
   }
