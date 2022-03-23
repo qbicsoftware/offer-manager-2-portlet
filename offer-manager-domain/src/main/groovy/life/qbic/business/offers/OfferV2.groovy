@@ -167,13 +167,13 @@ class OfferV2 {
 
     String category = item.getProduct().getCategory();
     if (dataGenerationCategories.contains(category)) {
-      this.dataGenerationItems.add(item);
+      this.dataGenerationItems.add(item)
     } else if (dataAnalysisCategories.contains(category)) {
-      this.dataAnalysisItems.add(item);
+      this.dataAnalysisItems.add(item)
     } else if (projectManagementCategories.contains(category)) {
-      this.dataManagementItems.add(item);
+      this.dataManagementItems.add(item)
     } else if (externalServiceCategories.contains(category)) {
-      this.externalServiceItems.add(item);
+      this.externalServiceItems.add(item)
     }
   }
 
@@ -393,7 +393,7 @@ class OfferV2 {
   }
 
   protected void setItems(List<ProductItem> items) {
-    items.clear()
+    this.items.clear()
     dataManagementItems.clear()
     dataAnalysisItems.clear()
     dataGenerationItems.clear()
