@@ -21,8 +21,7 @@ class ProductItemSpec extends Specification {
     def offer = new OfferV2(internalAffiliation, new OfferId("test", "abcd", 1))
 
     and: "The product item belongs to this offer"
-    ProductItem testItem = createItem()
-    testItem.setOffer(offer)
+    ProductItem testItem = createItem(offer, "Primary Bioinformatics")
 
     when: "We access the unit price"
     BigDecimal unitPrice = testItem.getUnitPrice()
@@ -37,8 +36,7 @@ class ProductItemSpec extends Specification {
     def offer = new OfferV2(externalAcademicAffiliation, new OfferId("test", "abcd", 1))
 
     and: "The product item belongs to this offer"
-    ProductItem testItem = createItem()
-    testItem.setOffer(offer)
+    ProductItem testItem = createItem(offer, "Primary Bioinformatics")
 
     when: "We access the unit price"
     double unitPrice = testItem.getUnitPrice()
@@ -52,8 +50,7 @@ class ProductItemSpec extends Specification {
     def offer = new OfferV2(externalAffiliation, new OfferId("test", "abcd", 1))
 
     and: "The product item belongs to this offer"
-    ProductItem testItem = createItem()
-    testItem.setOffer(offer)
+    ProductItem testItem = createItem(offer, "Primary Bioinformatics")
 
     when: "We access the unit price"
     double unitPrice = testItem.getUnitPrice()
@@ -64,17 +61,15 @@ class ProductItemSpec extends Specification {
 
   def "Given a product is a primary bioinformatics service, apply quantity discount to the unit price for every affiliation"() {
     given: "An offer for an internal customer"
+    def offer = new OfferV2(affiliation as Affiliation, new OfferId("test", "abcd", 1))
+
+    and: "A product item with a data analysis product"
     def product = new Product()
     product.setInternalUnitPrice(20.0)
     product.setExternalUnitPrice(40.0)
     product.setCategory("Primary Bioinformatics")
-    def item = new ProductItem()
-    item.setProduct(product)
-    item.setQuantity(20.0)
+    def item = createItem(offer, "Primary Bioinformatics")
 
-    and: "A product item with a data analysis product"
-    def offer = new OfferV2(affiliation as Affiliation, new OfferId("test", "abcd", 1))
-    item.setOffer(offer)
 
     when: "We request the discount"
     double discountedUnitPrice = item.getUnitDiscountAmount()
@@ -89,18 +84,10 @@ class ProductItemSpec extends Specification {
 
   // Discounting
   def "Given a product is neither a primary bioinformatics analysis service nor data storage , apply no discount to the unit price"() {
-    given: "A product item with a product that is not a Primary Bioinformatics or Data Storage service"
-    def product = new Product()
-    product.setInternalUnitPrice(20.0)
-    product.setExternalUnitPrice(40.0)
-    product.setCategory(productCategory as String)
-    def item = new ProductItem()
-    item.setProduct(product)
-    item.setQuantity(20.0)
-
-    and: "A product item"
+    given: "An offer with an affiliation"
     def offer = new OfferV2(affiliation as Affiliation, new OfferId("test", "abcd", 1))
-    item.setOffer(offer)
+    and: "A product item with a product that is not a Primary Bioinformatics or Data Storage service"
+    def item = createItem(offer, productCategory as String)
 
     when:
     BigDecimal discountedUnitPrice = item.getUnitDiscountAmount()
@@ -116,16 +103,11 @@ class ProductItemSpec extends Specification {
   }
 
   def "Given any discount has been applied to a product item, the request for the discount percentage returns the relative unit price discount"() {
-    given: "A product with quantity discount"
-    def product = new Product()
-    product.internalUnitPrice = 10.0
-    product.externalUnitPrice = 20.0
-    product.category = "Primary Bioinformatics"
-    def item = new ProductItem()
-    item.setProduct(product)
-    item.setQuantity(10.0)
+    given: "An offer with an internal affiliation"
     def offer = new OfferV2(internalAffiliation, new OfferId("test", "abc", 1))
-    item.setOffer(offer)
+
+    and: "A product with quantity discount"
+    def item = createItem(offer, "Primary Bioinformatics")
 
     expect:
     item.getDiscountRate() > 0.0
@@ -133,17 +115,15 @@ class ProductItemSpec extends Specification {
   }
 
   def "Given a product is a data storage service and the customer is internal, apply 100% discount to the unit price"() {
-    given: "A data storage service product item"
+
+    given: "An offer with an internal affiliaton"
+    def offer = new OfferV2(internalAffiliation, new OfferId("test", "abcd", 1))
+    and: "A data storage service product item"
     def product = new Product()
     product.setCategory("Data Storage")
     product.setInternalUnitPrice(20.0)
-    def item = new ProductItem()
-    item.setProduct(product)
+    def item = createItem(offer, "Data Storage")
     item.setQuantity(20.0)
-
-    and: "An offer for an internal customer"
-    def offer = new OfferV2(internalAffiliation, new OfferId("test", "abcd", 1))
-    item.setOffer(offer)
 
     expect: "a 100% discount shall be applied"
     item.unitDiscountAmount == item.unitPrice
@@ -152,17 +132,11 @@ class ProductItemSpec extends Specification {
 
   // DATA STORAGE DISCOUNT
   def "Given a product is a data storage service and the customer is external or external academic, apply 0% discount to the unit price"() {
-    given: "A data storage service product item"
-    def product = new Product()
-    product.setCategory("Data Storage")
-    product.setExternalUnitPrice(40.0)
-    def item = new ProductItem()
-    item.setProduct(product)
-    item.setQuantity( 20.0)
-
-    and: "An offer for an external customer"
+    given: "An offer for an external customer"
     def offer = new OfferV2(affiliation, new OfferId("test", "abcd", 1))
-    item.setOffer(offer)
+
+    and: "A data storage service product item"
+    def item = createItem(offer, "Data Storage")
 
     expect: "No discount shall be applied"
     item.unitDiscountAmount == 0
@@ -225,37 +199,24 @@ class ProductItemSpec extends Specification {
   }
 
   def "expect the item sales price to be listPrice - discountAmount"() {
-    given:
-    def product = new Product()
-    product.externalUnitPrice = unitPrice.doubleValue()
-    product.internalUnitPrice = unitPrice.doubleValue()
-    product.category = "Primary Bioinformatics"
-    def item = new ProductItem()
-    item.setProduct(product)
-    item.setQuantity(quantity)
-
-    and:
+    given: "An offer with an affiliation"
     def offer = new OfferV2(affiliation, new OfferId("test", "abc", 1))
-    item.setOffer(offer)
+    and: "a product item with this offer"
+    def item = createItem(offer, "Primary Bioinformatics")
 
     expect:
     item.getSalePrice() == item.getListPrice() - item.getDiscountAmount()
 
     where:
-    unitPrice | quantity | affiliation
-    1.01      | 22.01    | internalAffiliation
-    33.34     | 44.0     | externalAcademicAffiliation
-    10.0      | 10000.0  | externalAffiliation
+    affiliation << [internalAffiliation, externalAcademicAffiliation, externalAffiliation]
   }
 
-  static ProductItem createItem() {
+  static ProductItem createItem(OfferV2 offer, String productCategory) {
     Product product = new Product()
     product.internalUnitPrice = 20.0
     product.externalUnitPrice = 40.0
-    product.setCategory("Primary Bioinformatics")
-    ProductItem item = new ProductItem()
-    item.setProduct(product)
-    item.setQuantity(10)
+    product.setCategory(productCategory)
+    ProductItem item = new ProductItem(offer, product, 20)
     return item
   }
 
