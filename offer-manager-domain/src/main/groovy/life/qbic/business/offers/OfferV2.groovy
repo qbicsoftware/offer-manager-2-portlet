@@ -141,7 +141,6 @@ class OfferV2 {
   @Transient private BigDecimal priceAfterTax = BigDecimal.ZERO
   @Transient private BigDecimal taxAmount = BigDecimal.ZERO
   @Transient private BigDecimal priceBeforeTax = BigDecimal.ZERO
-  @Transient private BigDecimal totalCost = BigDecimal.ZERO
   @Transient private BigDecimal discountAmount = BigDecimal.ZERO
 
   OfferV2() {}
@@ -255,11 +254,13 @@ class OfferV2 {
   }
 
   BigDecimal getTotalVat() {
-    return priceAfterTax
+    //FIXME
+    return taxAmount
   }
 
   BigDecimal getTotalCost() {
-    return totalCost
+    //FIXME
+    return priceAfterTax
   }
 
   BigDecimal getTotalDiscountAmount() {
@@ -346,19 +347,13 @@ class OfferV2 {
 
   private void updateVatRatio() {
     this.vatRatio = vatRatio(selectedCustomerAffiliation.country)
-    applyTaxes()
-  }
-
-  private void applyTaxes() {
-    this.taxAmount = priceBeforeTax.multiply(vatRatio).setScale(2, RoundingMode.HALF_UP)
-    this.priceAfterTax = priceBeforeTax.add(taxAmount)
   }
 
   private void updatePriceBeforeTax() {
     this.priceBeforeTax = BigDecimal.valueOf(overhead).add(salePrice)
   }
 
-  private void updateOverheads() {
+  private void updateOverheadAmount() {
     this.dataGenerationOverhead = dataGenerationSalePrice * overheadRatio
     this.dataAnalysisOverhead = dataAnalysisSalePrice * overheadRatio
     this.dataManagementOverhead = dataManagementSalePrice * overheadRatio
@@ -412,13 +407,33 @@ class OfferV2 {
   }
 
   private void aggregateCosts() {
+    //ATTENTION: TEMPORAL COUPLING! Do not change the order
     updateSalePrices()
-    updateOverheadRatio()
-    updateOverheads()
+    //-
+    updateOverhead()
     updatePriceBeforeTax()
-    updateVatRatio()
-    applyTaxes()
+    updateVat()
+    updatePriceAfterTax()
+    //-
     updateDiscountAmount()
+  }
+
+  private void updateVat() {
+    updateVatRatio()
+    updateVatAmount()
+  }
+
+  private void updateOverhead() {
+    updateOverheadRatio()
+    updateOverheadAmount()
+  }
+
+  private void updatePriceAfterTax() {
+    this.priceAfterTax = priceBeforeTax.add(taxAmount)
+  }
+
+  private void updateVatAmount() {
+    this.taxAmount = priceBeforeTax.multiply(vatRatio).setScale(2, RoundingMode.HALF_UP)
   }
 
   /**
