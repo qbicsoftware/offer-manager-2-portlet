@@ -5,6 +5,7 @@ import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.AffiliationCategory
 import life.qbic.business.products.Product
 import life.qbic.business.products.ProductItem
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import java.math.RoundingMode
@@ -18,6 +19,7 @@ import static life.qbic.business.offers.OfferCalculus.*
  *
  * @since <version tag>
  */
+@Ignore
 class OfferCalculusSpec extends Specification {
 
   private static OfferV2 offer = new OfferV2(createAffiliation(AffiliationCategory.INTERNAL, "Germany"), new OfferId("test", 1))
