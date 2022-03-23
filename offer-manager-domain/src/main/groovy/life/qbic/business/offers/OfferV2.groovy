@@ -5,6 +5,7 @@ import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.persons.Person
 import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.AffiliationCategory
+import life.qbic.business.products.Product
 import life.qbic.business.products.ProductItem
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
@@ -393,25 +394,42 @@ class OfferV2 {
   }
 
   protected void setItems(List<ProductItem> items) {
-    this.items.clear()
+    clearItems()
+    addItems(items)
+  }
+
+  private void clearItems() {
+    items.clear()
     dataManagementItems.clear()
     dataAnalysisItems.clear()
     dataGenerationItems.clear()
     externalServiceItems.clear()
-    items.forEach(this::addItem)
   }
 
   void addItems(List<ProductItem> items) {
-    items.forEach(this::addItem)
+    items.forEach(it -> addItem(it.getProduct(), it.getQuantity()))
+    aggregateCosts()
   }
 
-  void addItem(ProductItem productItem) {
-    productItem.setOffer(this)
+  private void aggregateCosts() {
+    updateSalePrices()
+    updateOverheadRatio()
+    updateOverheads()
+    updatePriceBeforeTax()
+    updateVatRatio()
+    applyTaxes()
+    updateDiscountAmount()
+  }
+
+  /**
+   * This method does not recompute the prices! For internal use only!
+   * @param product the product for which an item shall be added
+   * @param quantity the amount of the product
+   */
+  private void addItem(Product product, Double quantity) {
+    ProductItem productItem = new ProductItem(this, product, quantity)
     this.addItemToGroup(productItem)
     this.items.add(productItem)
-    recomputeWithAffiliation()
-    updateSalePrices()
-    updateDiscountAmount()
   }
 
   private void updateSalePrices() {
@@ -503,9 +521,6 @@ class OfferV2 {
   private void updateOverheadRatio() {
     def category = selectedCustomerAffiliation.getCategory()
     this.overheadRatio = determineOverheadRate(category)
-    updateOverheads()
-    updatePriceBeforeTax()
-    applyTaxes()
   }
 
   /*
@@ -523,7 +538,7 @@ class OfferV2 {
     }
     return new BigDecimal("0.4");
   }
-
+  //Note this is only used for Reporting and not in the offer
   private void updateDiscountAmount() {
     this.discountAmount = dataGenerationItems.discountAmount
             .add(dataAnalysisItems.discountAmount)
