@@ -237,4 +237,22 @@ public class ProductItem {
     refresh();
     return discountRate;
   }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) {
+      return true;
+    }
+    if (o == null || getClass() != o.getClass()) {
+      return false;
+    }
+    ProductItem that = (ProductItem) o;
+    return product.equals(that.product) && quantity.equals(that.quantity) && offer.equals(
+        that.offer);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(product, quantity, offer);
+  }
 }
