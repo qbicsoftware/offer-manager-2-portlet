@@ -64,12 +64,7 @@ class ProductItemSpec extends Specification {
     def offer = new OfferV2(affiliation as Affiliation, new OfferId("test", "abcd", 1))
 
     and: "A product item with a data analysis product"
-    def product = new Product()
-    product.setInternalUnitPrice(20.0)
-    product.setExternalUnitPrice(40.0)
-    product.setCategory("Primary Bioinformatics")
     def item = createItem(offer, "Primary Bioinformatics")
-
 
     when: "We request the discount"
     double discountedUnitPrice = item.getUnitDiscountAmount()
@@ -119,11 +114,7 @@ class ProductItemSpec extends Specification {
     given: "An offer with an internal affiliaton"
     def offer = new OfferV2(internalAffiliation, new OfferId("test", "abcd", 1))
     and: "A data storage service product item"
-    def product = new Product()
-    product.setCategory("Data Storage")
-    product.setInternalUnitPrice(20.0)
     def item = createItem(offer, "Data Storage")
-    item.setQuantity(20.0)
 
     expect: "a 100% discount shall be applied"
     item.unitDiscountAmount == item.unitPrice
