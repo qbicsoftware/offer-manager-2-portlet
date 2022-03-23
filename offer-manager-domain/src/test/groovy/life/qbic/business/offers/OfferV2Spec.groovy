@@ -1,6 +1,5 @@
 package life.qbic.business.offers
 
-
 import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.AffiliationCategory
 import life.qbic.business.products.Product
@@ -178,12 +177,55 @@ class OfferV2Spec extends Specification {
     when:
     offer.addItems([dataGeneration, dataAnalysis, dataManagement, externalServices])
     then: "the offer overhead is the sum of the group overheads"
-    offer.totalDiscountAmount == (
-            dataGeneration.getDiscountAmount()
-                    .add(dataAnalysis.getDiscountAmount())
-                    .add(dataManagement.getDiscountAmount())
-                    .add(externalServices.getDiscountAmount())
-    ).setScale(2, RoundingMode.HALF_UP)
+    offer.totalDiscountAmount == (dataGeneration.getDiscountAmount()
+            .add(dataAnalysis.getDiscountAmount())
+            .add(dataManagement.getDiscountAmount())
+            .add(externalServices.getDiscountAmount())).setScale(2, RoundingMode.HALF_UP)
+    where:
+    affiliationCategory << AffiliationCategory.values()
+  }
+
+  def "two offers with identical affiliation and items with the same product and quantity have the same prices"() {
+    given: "two offers"
+    OfferV2 offerOne = createOfferWithItemsOfEachCategory(affiliationCategory as AffiliationCategory, "Germany")
+    OfferV2 offerTwo = createOfferWithItemsOfEachCategory(affiliationCategory as AffiliationCategory, "Germany")
+    expect:
+    haveSamePrices(offerOne, offerTwo)
+    where:
+    affiliationCategory << AffiliationCategory.values()
+  }
+
+  private static boolean haveSamePrices(OfferV2 offerOne, OfferV2 offerTwo) {
+    def sameSellPrices = offerOne.salePrice == offerTwo.salePrice
+            && offerOne.dataGenerationSalePrice == offerTwo.dataGenerationSalePrice
+            && offerOne.dataAnalysisSalePrice == offerTwo.dataAnalysisSalePrice
+            && offerOne.dataManagementSalePrice == offerTwo.dataManagementSalePrice
+            && offerOne.externalServiceSalePrice == offerTwo.externalServiceSalePrice
+    def sameOverheads = offerOne.overhead == offerTwo.overhead
+            && offerOne.dataGenerationOverhead == offerTwo.dataGenerationOverhead
+            && offerOne.dataAnalysisOverhead == offerTwo.dataAnalysisOverhead
+            && offerOne.dataManagementOverhead == offerTwo.dataManagementOverhead
+            && offerOne.externalServiceOverhead == offerTwo.externalServiceOverhead
+            && offerOne.overheadRatio == offerTwo.overheadRatio
+    def sameVats = offerOne.priceBeforeTax == offerTwo.priceBeforeTax
+            && offerOne.priceAfterTax == offerTwo.priceAfterTax
+            && offerOne.taxAmount == offerTwo.taxAmount
+            && offerOne.vatRatio == offerTwo.vatRatio
+    def sameTotalDiscountAmount = offerOne.totalDiscountAmount == offerTwo.totalDiscountAmount
+    return sameSellPrices && sameOverheads && sameVats && sameTotalDiscountAmount
+  }
+
+  def "expect the prices to be updated after an affiliation change"() {
+    given: "a reference offer and Affiliation"
+    String country = "Germany"
+    Affiliation referenceAffiliation = new Affiliation("", "", "", "", "", country, affiliationCategory as AffiliationCategory)
+    OfferV2 referenceOffer = createOfferWithItemsOfEachCategory(referenceAffiliation.category, country)
+    and: "an offer under test"
+    OfferV2 testOffer = createOfferWithItemsOfEachCategory(AffiliationCategory.INTERNAL, country)
+    when: "the affiliation's category is changed"
+    testOffer.setSelectedCustomerAffiliation(referenceAffiliation)
+    then: "the recomputed offer prices match the reference offer prices"
+    haveSamePrices(referenceOffer, testOffer)
     where:
     affiliationCategory << AffiliationCategory.values()
   }
