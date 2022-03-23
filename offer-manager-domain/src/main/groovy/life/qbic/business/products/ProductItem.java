@@ -16,7 +16,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.NotNull;
 import life.qbic.business.offers.OfferV2;
 import life.qbic.business.offers.QuantityDiscountFactor;
 import life.qbic.business.persons.affiliation.Affiliation;
@@ -66,33 +65,16 @@ public class ProductItem {
     refreshProductItem();
   }
 
-  protected ProductItem() {
-  }
-
   private boolean affiliationChanged() {
     return !affiliation.equals(this.offer.getSelectedCustomerAffiliation());
-  }
-
-  public void setOffer(@NotNull OfferV2 offer) {
-    this.offer = offer;
-    refreshProductItem();
   }
 
   public Double getQuantity() {
     return quantity;
   }
 
-  public void setQuantity(Double quantity) {
-    this.quantity = quantity;
-  }
-
   public Product getProduct() {
     return product;
-  }
-
-  protected void setProduct(Product product) {
-    this.product = product;
-    refreshProductItem();
   }
 
   public Integer getId() {
@@ -203,11 +185,13 @@ public class ProductItem {
 
   /**
    * Returns the amount of money discounted from the list price.
+   *
    * @return between 0 for no discount and {@link ProductItem#getListPrice()} for 100% discount.
    */
   public BigDecimal getDiscountAmount() {
     refresh();
-    return getUnitDiscountAmount().multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_UP);
+    return getUnitDiscountAmount().multiply(BigDecimal.valueOf(quantity))
+        .setScale(2, RoundingMode.HALF_UP);
   }
 
   /**
