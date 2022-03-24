@@ -3,7 +3,6 @@ package life.qbic.business.offers.create
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.offers.OfferCalculus
 import life.qbic.business.offers.OfferExistsException
 import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.identifier.OfferId
@@ -32,9 +31,8 @@ class CreateOffer implements CreateOfferInput {
 
     @Override
     void createOffer(OfferV2 offer) {
-        OfferV2 processedOffer = OfferCalculus.process(offer)
         try {
-            dataSource.store(processedOffer)
+            dataSource.store(offer)
         } catch (OfferExistsException offerExistsException) {
             String message = "Offer $offer already exists in the database."
             log.error(message, offerExistsException)
@@ -56,8 +54,7 @@ class CreateOffer implements CreateOfferInput {
             output.failNotification("The provided offer (${offer.getIdentifier().toString()} is unknown to the system.")
             return
         }
-        OfferV2 workingCopy = updateIdToLatestVersion(offer)
-        OfferV2 processedOffer = OfferCalculus.process(workingCopy)
+        OfferV2 processedOffer = updateIdToLatestVersion(offer)
         try {
             dataSource.store(processedOffer)
             output.createdNewOffer(processedOffer)

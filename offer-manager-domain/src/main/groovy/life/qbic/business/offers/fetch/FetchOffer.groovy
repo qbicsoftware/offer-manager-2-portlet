@@ -3,7 +3,6 @@ package life.qbic.business.offers.fetch
 import groovy.transform.CompileStatic
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.offers.OfferCalculus
 import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.identifier.OfferId
 
@@ -59,8 +58,7 @@ class FetchOffer implements FetchOfferInput {
             output.failNotification(message)
         }
         fetchedOffer.ifPresent({
-            OfferV2 processedOffer = OfferCalculus.process(it)
-            output.fetchedOffer(processedOffer)
+            output.fetchedOffer(it)
         })
     }
 }
