@@ -58,8 +58,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       final ResultSet resultSet = statement.executeQuery()
       return convertResultSet(resultSet)
     } catch (SQLException e) {
-      log.error("Unexpected exception: $e.message")
-      log.debug("Unexpected exception: $e.message", e)
+      log.error("Unexpected exception: $e.message", e)
       throw new DatabaseQueryException("Unable to list all available products.")
     }
   }
@@ -298,7 +297,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       preparedStatement.setString(7, productId)
       preparedStatement.setString(8, productDraft.serviceProvider)
 
-      ResultSet resultSet = preparedStatement.getResultSet()
+      ResultSet resultSet = preparedStatement.executeQuery()
       List<Product> createdProducts = convertResultSet(resultSet)
       assert createdProducts.size() == 1: "Exactly one product was created."
       return createdProducts.first()
@@ -307,22 +306,18 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   private static Product parseProductFromResultSet(ResultSet resultSet) {
-    String dbCategory = resultSet.getString(1)
-    String dbDescription = resultSet.getString(2)
-    String dbProductName = resultSet.getString(3)
-    double dbInternalUnitPrice = resultSet.getDouble(4)
-    double dbExternalUnitPrice = resultSet.getDouble(5)
-    String dbProductUnit = resultSet.getString(6)
-    String dbProductId = resultSet.getString(7)
-    String dbServiceProvider = resultSet.getString(8)
+    String dbCategory = resultSet.getString(2)
+    String dbDescription = resultSet.getString(3)
+    String dbProductName = resultSet.getString(4)
+    double dbInternalUnitPrice = resultSet.getDouble(5)
+    double dbExternalUnitPrice = resultSet.getDouble(6)
+    String dbProductUnit = resultSet.getString(7)
+    String dbProductId = resultSet.getString(8)
+    String dbServiceProvider = resultSet.getString(9)
 
-    Product result = new Product()
-
-    result.setCategory(dbCategory)
+    Product result = new Product(dbCategory, dbInternalUnitPrice, dbExternalUnitPrice)
     result.setDescription(dbDescription)
     result.setProductName(dbProductName)
-    result.setInternalUnitPrice(dbInternalUnitPrice)
-    result.setExternalUnitPrice(dbExternalUnitPrice)
     result.setUnit(dbProductUnit)
     result.setProductId(dbProductId)
     result.setServiceProvider(dbServiceProvider)
