@@ -59,6 +59,8 @@ class CreateOfferController {
         if (experimentalDesign) {
             offerBuilder.experimentalDesign(experimentalDesign)
         }
+        offerBuilder.modificationDate(new Date())
+
         Offer offer = offerBuilder.build()
 
         this.input.createOffer(refactorConverter.toOffer(offer))
