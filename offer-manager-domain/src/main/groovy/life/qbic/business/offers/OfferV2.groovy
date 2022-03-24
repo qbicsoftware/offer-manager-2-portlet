@@ -342,8 +342,7 @@ class OfferV2 {
   }
 
   private void recomputeWithAffiliation() {
-    updateOverheadRatio()
-    updateVatRatio()
+    aggregateCosts()
   }
 
   private void updateVatRatio() {
