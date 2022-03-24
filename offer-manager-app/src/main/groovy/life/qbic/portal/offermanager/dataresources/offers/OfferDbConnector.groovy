@@ -96,6 +96,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
     private boolean offerChecksumExists(String checksum) {
         boolean checksumPresent
         try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
             Query query = session.createQuery("Select o FROM OfferV2 o where o.checksum=:checksumOfInterest ", OfferV2.class)
             query.setParameter("checksumOfInterest", checksum)
             checksumPresent = !query.list().isEmpty()
@@ -157,6 +158,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             throw new OfferExistsException("Offer with equal content of ${offer.identifier.toString()} already exists.")
         }
         try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
             session.save(offer)
         } catch (HibernateException e) {
             log.error(e.getMessage(), e)
