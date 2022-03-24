@@ -62,6 +62,10 @@ public class ProductItem {
     refreshProductItem();
   }
 
+  protected ProductItem() {
+    //needed for hibernate
+  }
+
   public Double getQuantity() {
     return quantity;
   }
