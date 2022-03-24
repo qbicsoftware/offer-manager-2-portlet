@@ -62,10 +62,6 @@ public class RefactorConverter {
     Person projectManager = toPerson(offerDto.getProjectManager());
     Affiliation selectedCustomerAffiliation = toAffiliation(
         offerDto.getSelectedCustomerAffiliation());
-    BigDecimal totalCost = BigDecimal.valueOf(offerDto.getTotalPrice());
-    BigDecimal totalDiscountAmount = BigDecimal.valueOf(offerDto.getTotalDiscountPrice());
-    BigDecimal totalNetPrice = BigDecimal.valueOf(offerDto.getNetPrice());
-    BigDecimal totalVat = BigDecimal.valueOf(offerDto.getTaxes());
 
     OfferV2 offer = new OfferV2();
     offer.setAssociatedProject(offerDto.getAssociatedProject().orElse(null));
@@ -74,17 +70,10 @@ public class RefactorConverter {
     offer.setExperimentalDesign(offerDto.getExperimentalDesign());
     offer.setExpirationDate(expirationDate);
     offer.setIdentifier(offerId);
-//    offer.setOverhead(offerDto.getOverheads());
-//    offer.setOverheadRatio(offerDto.getOverheadRatio());
     offer.setProjectManager(projectManager);
     offer.setProjectObjective(offerDto.getProjectObjective());
     offer.setProjectTitle(offerDto.getProjectTitle());
     offer.setSelectedCustomerAffiliation(selectedCustomerAffiliation);
-//    offer.setTotalCost(totalCost);
-//    offer.setTotalDiscountAmount(totalDiscountAmount);
-//    offer.setTotalNetPrice(totalNetPrice);
-//    offer.setTotalVat(totalVat);
-    // product items depend on the offer
     List<ProductItem> productItems = offerDto.getItems().stream().map(it -> toProductItem(offer, it))
         .collect(Collectors.toList());
     offer.addItems(productItems);
