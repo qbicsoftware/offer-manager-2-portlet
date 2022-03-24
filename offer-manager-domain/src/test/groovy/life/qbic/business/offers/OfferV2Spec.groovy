@@ -7,6 +7,7 @@ import life.qbic.business.products.ProductItem
 import spock.lang.Specification
 
 import java.math.RoundingMode
+import java.time.LocalDate
 
 class OfferV2Spec extends Specification {
 
@@ -229,6 +230,22 @@ class OfferV2Spec extends Specification {
     where:
     affiliationCategory << AffiliationCategory.values()
   }
+
+  def "expect an offer to have an expiration date of 90 days after upon creation"() {
+    when: "an offer is created"
+    def offer = createOfferWithoutItems(AffiliationCategory.INTERNAL, "no country")
+    then: "the offer expiration date is set to 90 days in the future"
+    offer.expirationDate == offer.creationDate.plusDays(90)
+  }
+
+
+  def "expect an offer to have the current time as the creation date upon creation"() {
+    when: "an offer is created"
+    def offer = createOfferWithoutItems(AffiliationCategory.INTERNAL, "no country")
+    then: "the offer creation date is set to the Date of offer generation"
+    offer.creationDate == LocalDate.now()
+  }
+
 
   private static createDataGenerationItem(OfferV2 offer) {
     def category = "Sequencing"
