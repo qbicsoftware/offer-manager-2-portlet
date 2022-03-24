@@ -2,9 +2,8 @@ package life.qbic.business.offers
 
 import groovy.transform.EqualsAndHashCode
 import life.qbic.business.RefactorConverter
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.business.persons.Person
+import life.qbic.business.persons.affiliation.Affiliation
 
 /**
  * <h1>A DTO containing the fields required in the offer pdf</h1>
@@ -253,9 +252,9 @@ class OfferContent {
      */
     static OfferContent from(OfferV2 offer) {
         String offerIdString = offer.getOfferId()
-        Customer customer = refactorConverter.toCustomerDto(offer.getCustomer())
-        Affiliation affiliation = refactorConverter.toAffiliationDto(offer.getSelectedCustomerAffiliation())
-        ProjectManager projectManager = refactorConverter.toProjectManagerDto(offer.getProjectManager())
+        Person customer = offer.getCustomer()
+        Affiliation affiliation = offer.getSelectedCustomerAffiliation()
+        Person projectManager = offer.getProjectManager()
         Date creationDate = refactorConverter.toUtilDate(offer.getCreationDate())
         Date expirationDate = refactorConverter.toUtilDate(offer.getExpirationDate())
         String projectTitle = offer.getProjectTitle()
@@ -268,20 +267,20 @@ class OfferContent {
 
 
         def projectManagerAffiliation = projectManager.affiliations.first()
-        new OfferContent(customer.getFirstName(),
-                customer.getLastName(),
-                customer.getTitle().toString(),
-                affiliation.getOrganisation(),
+        new OfferContent(customer.firstName,
+                customer.lastName,
+                customer.title,
+                affiliation.organization,
                 affiliation.getAddressAddition(),
                 affiliation.getStreet(),
-                affiliation.postalCode,
+                affiliation.getPostalCode(),
                 affiliation.city,
                 affiliation.country,
                 projectManager.firstName,
                 projectManager.lastName,
-                projectManager.title.toString(),
-                projectManager.emailAddress,
-                projectManagerAffiliation.organisation,
+                projectManager.title,
+                projectManager.email,
+                projectManagerAffiliation.organization,
                 projectManagerAffiliation.street,
                 projectManagerAffiliation.postalCode,
                 projectManagerAffiliation.city,
