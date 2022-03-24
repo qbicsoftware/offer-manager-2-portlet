@@ -261,10 +261,10 @@ class OfferContent {
         String projectTitle = offer.getProjectTitle()
         String projectObjective = offer.getProjectObjective()
         String experimentalDesign = offer.getExperimentalDesign().orElse("")
-        List<OfferItem> dataGenerationItems = offer.dataGenerationItems.stream().map(RefactorConverter::toOfferItem).collect()
-        List<OfferItem> dataAnalysisItems = offer.dataAnalysisItems.stream().map(RefactorConverter::toOfferItem).collect()
-        List<OfferItem> dataManagementItems = offer.dataManagementItems.stream().map(RefactorConverter::toOfferItem).collect()
-        List<OfferItem> externalServiceItems = offer.externalServiceItems.stream().map(RefactorConverter::toOfferItem).collect()
+        List<OfferItem> dataGenerationItems = offer.dataGenerationItems.stream().map(refactorConverter::toOfferItem).collect()
+        List<OfferItem> dataAnalysisItems = offer.dataAnalysisItems.stream().map(refactorConverter::toOfferItem).collect()
+        List<OfferItem> dataManagementItems = offer.dataManagementItems.stream().map(refactorConverter::toOfferItem).collect()
+        List<OfferItem> externalServiceItems = offer.externalServiceItems.stream().map(refactorConverter::toOfferItem).collect()
 
 
         def projectManagerAffiliation = projectManager.affiliations.first()

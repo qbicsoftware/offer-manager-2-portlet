@@ -82,7 +82,6 @@ class OfferV2 {
    * A list of items for which the customer will be charged
    */
   @OneToMany(mappedBy = "offer", cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
-  @Access(AccessType.PROPERTY)
   private List<ProductItem> items = []
 
   @Column(name = "offerId")
@@ -145,6 +144,8 @@ class OfferV2 {
   @Transient private BigDecimal discountAmount = BigDecimal.ZERO
 
   OfferV2() {}
+
+
 
   /**
    * Constructor for an OfferV2 entity on which price calculation can be performed on.
@@ -445,6 +446,17 @@ class OfferV2 {
     ProductItem productItem = new ProductItem(this, product, quantity)
     this.addItemToGroup(productItem)
     this.items.add(productItem)
+  }
+
+  /**
+   * This method is executed after loading the offer from the database.
+   * It is responsible to update all the prices
+   */
+  @PostLoad
+  protected void onPostLoad() {
+    println "I am SPARTA!"
+    items.forEach(ProductItem::refresh)
+    items.forEach(this::addItemToGroup)
   }
 
   private void updateSalePrices() {

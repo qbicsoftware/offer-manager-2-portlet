@@ -89,7 +89,7 @@ public class RefactorConverter {
         productItem.getUnitPrice().doubleValue(),
         productItem.getDiscountAmount().doubleValue(),
         productItem.getUnitDiscountAmount().doubleValue(),
-        productItem.getDiscountRate().doubleValue(),
+        productItem.getDiscountRate().multiply(BigDecimal.valueOf(100)).doubleValue(),
         productItem.getProduct().getServiceProvider(),
         productItem.getProduct().getUnit(),
         productItem.getListPrice().doubleValue(),

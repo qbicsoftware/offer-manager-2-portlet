@@ -82,7 +82,7 @@ public class ProductItem {
     this.id = id;
   }
 
-  private void refresh() {
+  protected void refresh() {
     refreshProductItem();
   }
 
