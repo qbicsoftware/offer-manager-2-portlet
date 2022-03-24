@@ -454,9 +454,9 @@ class OfferV2 {
    */
   @PostLoad
   protected void onPostLoad() {
-    println "I am SPARTA!"
     items.forEach(ProductItem::refresh)
     items.forEach(this::addItemToGroup)
+    aggregateCosts()
   }
 
   private void updateSalePrices() {
