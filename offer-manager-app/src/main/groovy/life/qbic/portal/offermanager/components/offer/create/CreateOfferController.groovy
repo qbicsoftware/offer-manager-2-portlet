@@ -65,28 +65,4 @@ class CreateOfferController {
 
         this.input.createOffer(refactorConverter.toOffer(offer))
     }
-
-    /**
-     * Method to trigger the calculation of the price based on a list of items and a category
-     * @param items A list of product items with a quantity and product
-     * @param category defining the category of the affiliation
-     */
-    void calculatePriceForItems(List<ProductItem> items, Affiliation affiliation) {
-        try {
-            this.calculatePrice.calculatePrice(items, affiliation)
-        } catch (Exception ignored) {
-            log.error(ignored.message)
-            log.error(ignored.stackTrace.join("\n"))
-            throw new IllegalArgumentException("Could not calculate price from provided arguments.")
-        }
-    }
-    /**
-     * Triggers the FetchOffer use case on execution
-     *
-     * @param offerId The identifier of the offer to be fetched
-     */
-    void fetchOffer(OfferId offerId) {
-        this.fetchOfferInput.fetchOffer(refactorConverter.toOfferId(offerId))
-    }
-
 }
