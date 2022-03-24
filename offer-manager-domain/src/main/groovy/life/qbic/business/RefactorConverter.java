@@ -52,17 +52,6 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace;
  */
 public class RefactorConverter {
 
-  // CreateOfferContent can be replaced by the OfferCalculus
-  // vat calculation logic in the offer calculus can be redirected to the Tax office /Tax office can
-  // be removed
-  // ProductDraft and ProductEntity can be replaced
-
-  OfferV2 toOffer(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
-    OfferV2 offer = new OfferV2();
-    OfferId offerId = toOfferId(offerIdDto);
-    offer.setIdentifier(offerId);
-    return offer;
-  }
 
   public OfferV2 toOffer(life.qbic.datamodel.dtos.business.Offer offerDto) {
 
@@ -103,7 +92,7 @@ public class RefactorConverter {
     return offer;
   }
 
-  OfferItem toOfferItem(ProductItem productItem) {
+  public OfferItem toOfferItem(ProductItem productItem) {
     return new OfferItem.Builder(
         productItem.getQuantity(),
         productItem.getProduct().getDescription(),
@@ -120,59 +109,7 @@ public class RefactorConverter {
   }
 
   public OfferContent toOfferContent(OfferV2 offer) {
-    LocalDate creationDate = offer.getCreationDate();
-    LocalDate expirationDate = offer.getExpirationDate();
-    String id = offer.getOfferId();
-    OfferContent.Builder offerContentBuilder = new OfferContent.Builder(
-        toCustomerDto(offer.getCustomer()),
-        toAffiliationDto(offer.getSelectedCustomerAffiliation()),
-        toProjectManagerDto(offer.getProjectManager()),
-        toUtilDate(creationDate),
-        toUtilDate(expirationDate),
-        offer.getProjectTitle(),
-        offer.getProjectObjective(),
-        offer.getExperimentalDesign().orElse(""),
-        id,
-        totalNetWithOverheads(offer));
-
-    List<OfferItem> dataManagementOfferItems = offer.getDataManagementItems().stream().map(this::toOfferItem).collect(
-        Collectors.toList());
-    List<OfferItem> dataAnalysisOfferItems = offer.getDataAnalysisItems().stream().map(this::toOfferItem).collect(
-        Collectors.toList());
-    List<OfferItem> dataGenerationOfferItems = offer.getDataGenerationItems().stream().map(this::toOfferItem).collect(
-        Collectors.toList());
-    List<OfferItem> externalServiceItems = offer.getExternalServiceItems().stream().map(this::toOfferItem).collect(
-        Collectors.toList());
-
-    offerContentBuilder.dataGenerationItems(dataGenerationOfferItems)
-        .dataAnalysisItems(dataAnalysisOfferItems)
-        .dataManagementItems(dataManagementOfferItems)
-        .externalServiceItems(externalServiceItems);
-
-    double overheadsDA = offer.getDataAnalysisOverhead().doubleValue();
-    double overheadsDG = offer.getDataGenerationOverhead().doubleValue();
-    double overheadsPMandDS = offer.getDataManagementOverhead().doubleValue();
-    double overheadsExternalServices = offer.getExternalServiceOverhead().doubleValue();
-
-    offerContentBuilder.overheadsDataAnalysis(overheadsDA)
-        .overheadsDataGeneration(overheadsDG)
-        .overheadsProjectManagementAndDataStorage(overheadsPMandDS)
-        .overheadsExternalServices(overheadsExternalServices)
-        .overheadTotal(offer.getOverhead())
-        .overheadRatio(offer.getOverheadRatio());
-
-    offerContentBuilder.netDataAnalysis(offer.getDataAnalysisSalePrice().doubleValue())
-        .netDataGeneration(offer.getDataGenerationSalePrice().doubleValue())
-        .netProjectManagementAndDataStorage(offer.getDataManagementSalePrice().doubleValue())
-        .netExternalServices(offer.getExternalServiceSalePrice().doubleValue())
-        .netCost(offer.getSalePrice().doubleValue());
-
-    offerContentBuilder.totalVat(offer.getTotalVat().doubleValue())
-        .vatRatio(offer.getVatRatio().doubleValue())
-        .totalCost(offer.getTotalCost().doubleValue())
-        .totalDiscountAmount(offer.getTotalDiscountAmount().doubleValue());
-
-    return offerContentBuilder.build();
+    return OfferContent.from(offer);
   }
 
   private static double totalNetWithOverheads(OfferV2 fetchedOffer) {
@@ -219,7 +156,7 @@ public class RefactorConverter {
     return new ProductItem(offer, product, quantity);
   }
 
-  private java.util.Date toUtilDate(LocalDate localDate) {
+  public java.util.Date toUtilDate(LocalDate localDate) {
     return Date.from(
         localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
   }
