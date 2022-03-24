@@ -234,6 +234,7 @@ class OfferV2Spec extends Specification {
   def "expect an offer to have an expiration date of 90 days after upon creation"() {
     when: "an offer is created"
     def offer = createOfferWithoutItems(AffiliationCategory.INTERNAL, "no country")
+    offer.setCreationDate(LocalDate.now())
     then: "the offer expiration date is set to 90 days in the future"
     offer.expirationDate == offer.creationDate.plusDays(90)
   }

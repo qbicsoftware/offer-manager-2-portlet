@@ -37,7 +37,7 @@ class OfferV2 {
    * Date on which the offer was lastly modified
    */
   @Column(name = "creationDate")
-  private LocalDate creationDate
+  private LocalDate creationDate = LocalDate.now()
 
   /**
    * The date on which the offer expires
@@ -275,6 +275,7 @@ class OfferV2 {
 
   void setCreationDate(LocalDate creationDate) {
     this.creationDate = creationDate
+    expireNinetyDaysAfterCreation()
   }
 
   LocalDate getExpirationDate() {
@@ -457,6 +458,7 @@ class OfferV2 {
     items.forEach(ProductItem::refresh)
     items.forEach(this::addItemToGroup)
     aggregateCosts()
+    expireNinetyDaysAfterCreation()
   }
 
   private void updateSalePrices() {
@@ -570,6 +572,10 @@ class OfferV2 {
             .add(dataAnalysisItems.discountAmount)
             .add(dataManagementItems.discountAmount)
             .add(externalServiceItems.discountAmount)
+  }
+
+  private void expireNinetyDaysAfterCreation() {
+    expirationDate = creationDate.plusDays(90)
   }
 
   private static class ItemGroup extends ArrayList<ProductItem> {
