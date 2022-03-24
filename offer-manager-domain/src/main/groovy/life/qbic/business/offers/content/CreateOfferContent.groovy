@@ -42,7 +42,7 @@ class CreateOfferContent implements CreateOfferContentInput, FetchOfferOutput {
     @Override
     void fetchedOffer(OfferV2 fetchedOffer) {
         //collect the content for the offerpdf
-        OfferContent offerContent = refactorConverter.toOfferContent(fetchedOffer)
+        OfferContent offerContent = OfferContent.from(fetchedOffer)
         output.createdOfferContent(offerContent)
     }
 
