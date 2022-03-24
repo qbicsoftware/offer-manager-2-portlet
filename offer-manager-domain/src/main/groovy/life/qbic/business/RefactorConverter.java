@@ -58,7 +58,6 @@ public class RefactorConverter {
 
     LocalDate creationDate = toLocalDate(offerDto.getModificationDate());
     Person customer = toPerson(offerDto.getCustomer());
-    LocalDate expirationDate = toLocalDate(offerDto.getExpirationDate());
     OfferId offerId = toOfferId(offerDto.getIdentifier());
     Person projectManager = toPerson(offerDto.getProjectManager());
     Affiliation selectedCustomerAffiliation = toAffiliation(
@@ -69,7 +68,6 @@ public class RefactorConverter {
     offer.setCreationDate(creationDate);
     offer.setCustomer(customer);
     offer.setExperimentalDesign(offerDto.getExperimentalDesign());
-    offer.setExpirationDate(expirationDate);
     offer.setIdentifier(offerId);
     offer.setProjectManager(projectManager);
     offer.setProjectObjective(offerDto.getProjectObjective());
@@ -182,7 +180,12 @@ public class RefactorConverter {
         person.getAffiliations().stream()
             .map(this::toAffiliationDto)
             .collect(Collectors.toList()));
-    projectManagerDtoBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
+    if (person.getTitle() == null || person.getTitle().isEmpty() || person.getTitle()
+        .equals("None")) {
+      projectManagerDtoBuilder.title(AcademicTitle.NONE);
+    } else {
+      projectManagerDtoBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
+    }
     return projectManagerDtoBuilder.build();
   }
 
@@ -195,7 +198,12 @@ public class RefactorConverter {
         person.getAffiliations().stream()
             .map(this::toAffiliationDto)
             .collect(Collectors.toList()));
-    customerBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
+    if (person.getTitle() == null || person.getTitle().isEmpty() || person.getTitle()
+        .equals("None")) {
+      customerBuilder.title(AcademicTitle.NONE);
+    } else {
+      customerBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
+    }
     return customerBuilder.build();
   }
 
@@ -224,7 +232,12 @@ public class RefactorConverter {
         person.getAffiliations().stream()
             .map(this::toAffiliationDto)
             .collect(Collectors.toList()));
-    personBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
+    if (person.getTitle() == null || person.getTitle().isEmpty() || person.getTitle()
+        .equals("None")) {
+      personBuilder.title(AcademicTitle.NONE);
+    } else {
+      personBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
+    }
     return personBuilder.build();
   }
 
