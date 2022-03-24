@@ -28,7 +28,7 @@ class ProjectResourceService implements ResourcesService<ProjectIdentifier>{
     ProjectResourceService(ListProjectsDataSource listProjectsDataSource) {
         this.listProjectsDataSource = Objects.requireNonNull(listProjectsDataSource, "Connector " +
                 "must not be null.")
-        this.existingProjects = listProjectsDataSource.listProjects().stream().map(refactorConverter::toProjectIdentifierDTO).collect()
+        this.existingProjects = listProjectsDataSource.listProjects()
         this.eventEmitter = new EventEmitter<>()
     }
 

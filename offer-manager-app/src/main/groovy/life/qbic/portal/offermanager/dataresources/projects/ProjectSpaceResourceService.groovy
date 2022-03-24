@@ -28,7 +28,7 @@ class ProjectSpaceResourceService implements ResourcesService<ProjectSpace>{
     ProjectSpaceResourceService(ListProjectSpacesDataSource listProjectSpacesDataSource) {
         this.listProjectSpacesDataSource = Objects.requireNonNull(listProjectSpacesDataSource,
                 "Connector must not be null.")
-        this.availableSpaces = listProjectSpacesDataSource.listSpaces().stream().map(refactorConverter::toProjectSpaceDTO).collect()
+        this.availableSpaces = listProjectSpacesDataSource.listSpaces()
         this.eventEmitter = new EventEmitter<>()
     }
 
