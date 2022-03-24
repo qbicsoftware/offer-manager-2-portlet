@@ -22,6 +22,7 @@ import life.qbic.business.products.Product;
 import life.qbic.business.products.ProductCategory;
 import life.qbic.business.products.ProductDraft;
 import life.qbic.business.products.ProductItem;
+import life.qbic.datamodel.dtos.business.AcademicTitle;
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
 import life.qbic.datamodel.dtos.business.Customer;
 import life.qbic.datamodel.dtos.business.ProductId;
@@ -202,7 +203,7 @@ public class RefactorConverter {
     String emailAddress = personDto.getEmailAddress();
     String firstName = personDto.getFirstName();
     String lastName = personDto.getLastName();
-    String title = personDto.getTitle().getValue();
+    String title = personDto.getTitle() != AcademicTitle.NONE ? personDto.getTitle().getValue() : "";
     List<Affiliation> affiliations = personDto.getAffiliations().stream()
         .map(this::toAffiliation)
         .collect(Collectors.toList());
