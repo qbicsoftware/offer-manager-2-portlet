@@ -189,7 +189,9 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             Query query = session.createQuery("select offer from OfferV2 offer where offer.offerId = :idOfInterest", OfferV2.class)
             query.setParameter("idOfInterest", oldId.toString())
             List<OfferV2> result = query.list()
-            return result ? Optional.ofNullable(result.get(0)) : Optional.empty() as Optional<OfferV2>
+            Optional<OfferV2> firstOffer = result ? Optional.ofNullable(result.get(0)) : Optional.empty()
+            firstOffer.ifPresent(OfferV2::getItems)
+            return firstOffer
         }
     }
 }
