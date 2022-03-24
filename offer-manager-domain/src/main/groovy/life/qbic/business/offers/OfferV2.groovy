@@ -82,6 +82,7 @@ class OfferV2 {
    * A list of items for which the customer will be charged
    */
   @OneToMany(mappedBy = "offer", cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
+  @Access(AccessType.PROPERTY)
   private List<ProductItem> items = []
 
   @Column(name = "offerId")
@@ -388,7 +389,7 @@ class OfferV2 {
     return items.collect()
   }
 
-  protected void setItems(List<ProductItem> items) {
+  void setItems(List<ProductItem> items) {
     clearItems()
     addItems(items)
   }
