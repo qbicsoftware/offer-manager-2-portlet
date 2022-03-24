@@ -44,7 +44,7 @@ class CreateOffer implements CreateOfferInput {
             output.failNotification(message)
             return
         }
-        output.createdNewOffer(processedOffer)
+        output.createdNewOffer(offer)
     }
 
     @Override
