@@ -42,9 +42,8 @@ class CopyProductView extends CreateProductView {
     @Override
     protected boolean allValuesValid() {
         boolean wasModified = false
-        ProductCategory originalProductCategory = new ProductClassToCategory().apply(copyProductViewModel.originalProduct.getClass())
-
         if (super.allValuesValid()) {
+            ProductCategory originalProductCategory = new ProductClassToCategory().apply(copyProductViewModel.originalProduct.getClass())
             if (copyProductViewModel.productName != copyProductViewModel.originalProduct.productName) {
                 wasModified = true
             } else if (copyProductViewModel.productDescription != copyProductViewModel.originalProduct.description) {
