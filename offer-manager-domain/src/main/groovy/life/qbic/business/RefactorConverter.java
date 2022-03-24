@@ -26,7 +26,6 @@ import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
 import life.qbic.datamodel.dtos.business.Customer;
 import life.qbic.datamodel.dtos.business.ProductId;
 import life.qbic.datamodel.dtos.business.facilities.Facility;
-import life.qbic.datamodel.dtos.business.facilities.FacilityFactory;
 import life.qbic.datamodel.dtos.business.services.DataStorage;
 import life.qbic.datamodel.dtos.business.services.ExternalServiceProduct;
 import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis;
@@ -398,7 +397,7 @@ public class RefactorConverter {
     ProductUnit productUnit = new ProductUnitFactory().getForString(product.getUnit());
     Long runningNumber = toProductIdDto(
         product.getProductId()).getUniqueId();
-    Facility serviceProvider = new FacilityFactory().getForString(product.getServiceProvider());
+    Facility serviceProvider = Facility.valueOf(product.getServiceProvider());
     Class<? extends life.qbic.datamodel.dtos.business.services.Product> requestedProductClass = new ProductCategoryParser().apply(
         product.getCategory());
     if (Sequencing.class.equals(requestedProductClass)) {
