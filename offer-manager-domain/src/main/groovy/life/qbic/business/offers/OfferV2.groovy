@@ -160,12 +160,12 @@ class OfferV2 {
    * @param item the added item
    */
   private void addItemToGroup(ProductItem item) {
-    List<String> dataGenerationCategories = Arrays.asList("Sequencing", "Proteomics", "Metabolomics");
-    List<String> dataAnalysisCategories = Arrays.asList("Primary Bioinformatics", "Secondary Bioinformatics");
-    List<String> projectManagementCategories = Arrays.asList("Project Management", "Data Storage");
-    List<String> externalServiceCategories = Collections.singletonList("External Service");
+    List<String> dataGenerationCategories = Arrays.asList("Sequencing", "Proteomics", "Metabolomics")
+    List<String> dataAnalysisCategories = Arrays.asList("Primary Bioinformatics", "Secondary Bioinformatics")
+    List<String> projectManagementCategories = Arrays.asList("Project Management", "Data Storage")
+    List<String> externalServiceCategories = Collections.singletonList("External Service")
 
-    String category = item.getProduct().getCategory();
+    String category = item.getProduct().getCategory()
     if (dataGenerationCategories.contains(category)) {
       this.dataGenerationItems.add(item)
     } else if (dataAnalysisCategories.contains(category)) {
@@ -502,10 +502,9 @@ class OfferV2 {
     offerCopy.setProjectObjective(this.getProjectObjective())
     offerCopy.setProjectTitle(this.getProjectTitle())
     offerCopy.setSelectedCustomerAffiliation(this.getSelectedCustomerAffiliation())
-    offerCopy.totalCost = this.getTotalCost()
     offerCopy.discountAmount = this.getTotalDiscountAmount()
     offerCopy.salePrice = this.getSalePrice()
-    offerCopy.priceAfterTax = this.getTotalVat()
+    offerCopy.priceAfterTax = this.getTotalCost()
     offerCopy.vatRatio = this.getVatRatio()
 
     offerCopy.dataAnalysisSalePrice = this.getDataAnalysisSalePrice()
@@ -546,12 +545,12 @@ class OfferV2 {
 
   private static BigDecimal determineOverheadRate(AffiliationCategory category) {
     if (category == AffiliationCategory.INTERNAL) {
-      return BigDecimal.ZERO;
+      return BigDecimal.ZERO
     }
     if (category == AffiliationCategory.EXTERNAL_ACADEMIC) {
-      return new BigDecimal("0.2");
+      return new BigDecimal("0.2")
     }
-    return new BigDecimal("0.4");
+    return new BigDecimal("0.4")
   }
   //Note this is only used for Reporting and not in the offer
   private void updateDiscountAmount() {
@@ -563,7 +562,7 @@ class OfferV2 {
 
   private static class ItemGroup extends ArrayList<ProductItem> {
     BigDecimal getSalePrice() {
-      this.stream().map(ProductItem::getSalePrice).reduce(BigDecimal.ZERO, BigDecimal::add);
+      this.stream().map(ProductItem::getSalePrice).reduce(BigDecimal.ZERO, BigDecimal::add)
     }
 
     BigDecimal getDiscountAmount() {
