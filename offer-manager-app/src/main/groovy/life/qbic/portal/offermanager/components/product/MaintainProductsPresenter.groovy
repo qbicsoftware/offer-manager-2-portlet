@@ -1,10 +1,9 @@
 package life.qbic.portal.offermanager.components.product
 
 import life.qbic.business.RefactorConverter
+import life.qbic.business.products.Product
 import life.qbic.business.products.archive.ArchiveProductOutput
 import life.qbic.business.products.create.CreateProductOutput
-import life.qbic.datamodel.dtos.business.ProductId
-import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
@@ -33,22 +32,22 @@ class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOu
     }
 
     @Override
-    void archived(life.qbic.business.products.Product product) {
+    void archived(Product product) {
         mainViewModel.successNotifications << "Successfully archived product $product.productId - $product.productName."
         productsViewModel.productsResourcesService.removeFromResource(refactorConverter.toProductDto(product))
     }
 
     @Override
-    void created(life.qbic.business.products.Product product) {
+    void created(Product product) {
         mainViewModel.successNotifications << "Successfully added new product $product.productId - $product.productName."
         productsViewModel.productsResourcesService.addToResource(refactorConverter.toProductDto(product))
         productsViewModel.productCreatedSuccessfully = true
     }
 
     @Override
-    void foundDuplicates(List<life.qbic.business.products.Product> products) {
-        life.qbic.business.products.Product duplicateProduct = products.first()
-        List<ProductId> duplicateProductIds = []
+    void foundDuplicates(List<Product> products) {
+        Product duplicateProduct = products.first()
+        List<String> duplicateProductIds = []
         products.forEach { Product product ->
             duplicateProductIds << product.getProductId()
         }

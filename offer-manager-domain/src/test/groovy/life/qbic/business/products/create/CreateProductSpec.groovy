@@ -17,8 +17,6 @@ import spock.lang.Specification
 class CreateProductSpec extends Specification {
 
     CreateProductOutput output = Mock(CreateProductOutput)
-//    ProductId createdProductId = new ProductId("SE", "1")
-//    ProductCategoryFactory productCategoryFactory = new ProductCategoryFactory()
     ProductCategory category = ProductCategory.forLabel("Sequencing")
     ProductDraft productDraft = ProductDraft.create(category, "test product", "this is a test product", 0.5, 0.5, "Gigabyte", "CEGAT")
     Product product = new RefactorConverter().toProduct(productDraft)

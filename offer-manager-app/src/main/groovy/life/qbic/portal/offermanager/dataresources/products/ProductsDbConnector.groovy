@@ -149,32 +149,45 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   @Override
   List<Product> findDuplicateProducts(ProductDraft productDraft) {
 
-    provider.connect().withCloseable {
-      PreparedStatement preparedStatement = it.prepareStatement(Queries.FIND_ACTIVE_PRODUCTID_BY_PROPERTIES)
-      preparedStatement.setString(1, productDraft.category.getLabel())
-      preparedStatement.setString(2, productDraft.description)
-      preparedStatement.setString(3, productDraft.name)
-      preparedStatement.setDouble(4, productDraft.internalUnitPrice)
-      preparedStatement.setDouble(5, productDraft.externalUnitPrice)
-      preparedStatement.setString(6, productDraft.unit)
-      preparedStatement.setString(7, productDraft.serviceProvider)
+    String productCategory = productDraft.category.getLabel()
+    String productDescription = productDraft.description
+    String productName = productDraft.name
+    double internalUnitPrice = productDraft.internalUnitPrice
+    double externalUnitPrice = productDraft.externalUnitPrice
+    String productUnit = productDraft.unit
+    String serviceProvider = productDraft.serviceProvider
 
-      ResultSet resultSet = preparedStatement.executeQuery()
-      List<Product> products = []
-      while (resultSet.next()) {
-        String productId = resultSet.getString("productId")
-        try {
-          fetch(productId).ifPresent({ Product retrievedProduct ->
-            products << retrievedProduct
-          })
-        }
-        catch (DatabaseQueryException databaseQueryException) {
-          log.warn("Could not check for duplicate Products for $productDraft.name  'Skipping.")
-          log.debug("Could not check for duplicate Products for $productDraft.name. Skipping.", databaseQueryException)
-        }
-      }
-      return products
+    provider.connect().withCloseable {
+      Connection connection -> findProducts(connection, productCategory, productDescription, productName, internalUnitPrice, externalUnitPrice, productUnit, serviceProvider)
     }
+
+  }
+
+  private List<Product> findProducts(Connection it, String productCategory, String productDescription, String productName, double internalUnitPrice, double externalUnitPrice, String productUnit, String serviceProvider) {
+    PreparedStatement preparedStatement = it.prepareStatement(Queries.FIND_ACTIVE_PRODUCTID_BY_PROPERTIES)
+    preparedStatement.setString(1, productCategory)
+    preparedStatement.setString(2, productDescription)
+    preparedStatement.setString(3, productName)
+    preparedStatement.setDouble(4, internalUnitPrice)
+    preparedStatement.setDouble(5, externalUnitPrice)
+    preparedStatement.setString(6, productUnit)
+    preparedStatement.setString(7, serviceProvider)
+
+    ResultSet resultSet = preparedStatement.executeQuery()
+    List<Product> products = []
+    while (resultSet.next()) {
+      String productId = resultSet.getString("productId")
+      try {
+        fetch(productId).ifPresent({ Product retrievedProduct ->
+          products << retrievedProduct
+        })
+      }
+      catch (DatabaseQueryException databaseQueryException) {
+        log.warn("Could not check for duplicate Products for ${productName}  'Skipping.")
+        log.debug("Could not check for duplicate Products for ${productName}. Skipping.", databaseQueryException)
+      }
+    }
+    return products
   }
 //
 //  /**
@@ -297,10 +310,9 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       preparedStatement.setString(7, productId)
       preparedStatement.setString(8, productDraft.serviceProvider)
 
-      ResultSet resultSet = preparedStatement.executeQuery()
-      List<Product> createdProducts = convertResultSet(resultSet)
-      assert createdProducts.size() == 1: "Exactly one product was created."
-      return createdProducts.first()
+      preparedStatement.execute()
+      Product createdProduct = fetch(productId).orElseThrow(() -> new RuntimeException("Product creation failed for $productId"))
+      return createdProduct
     }
     return null
   }

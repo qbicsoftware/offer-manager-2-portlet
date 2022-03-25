@@ -34,4 +34,17 @@ class ProductDraft {
             unit,
             serviceProvider)
   }
+
+  @Override
+  public String toString() {
+    return "ProductDraft{" +
+            "category=" + category +
+            ", name='" + name + '\'' +
+            ", description='" + description + '\'' +
+            ", internalUnitPrice=" + internalUnitPrice +
+            ", externalUnitPrice=" + externalUnitPrice +
+            ", unit='" + unit + '\'' +
+            ", serviceProvider='" + serviceProvider + '\'' +
+            '}';
+  }
 }
