@@ -138,6 +138,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
         String businessOfferId = life.qbic.business.offers.identifier.OfferId.from(offerId.toString()).toString()
         List<OfferV2> result = []
         try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
             Query query = session.createQuery("select offer from OfferV2 offer where offer.offerId=:offerIdToMatch", OfferV2.class)
             query.setParameter("offerIdToMatch", businessOfferId)
             result.addAll(query.list() as List<OfferV2>)

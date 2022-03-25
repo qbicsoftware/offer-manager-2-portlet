@@ -251,7 +251,7 @@ class OfferContent {
      * @return OfferContent
      */
     static OfferContent from(OfferV2 offer) {
-        String offerIdString = offer.getOfferId()
+        String offerIdString = offer.getIdentifier().toString()
         Person customer = offer.getCustomer()
         Affiliation affiliation = offer.getSelectedCustomerAffiliation()
         Person projectManager = offer.getProjectManager()

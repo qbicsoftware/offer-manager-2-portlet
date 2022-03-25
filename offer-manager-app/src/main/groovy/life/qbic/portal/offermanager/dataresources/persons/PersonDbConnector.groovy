@@ -53,19 +53,41 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
   @Override
   void addAffiliation(Affiliation affiliation) throws DatabaseQueryException, AffiliationExistsException {
-    try (Session session = sessionProvider.getCurrentSession()) {
-      session.beginTransaction()
-      int id = session.getIdentifier(affiliation) as int
-      if (id) {
-        // If the query returns an identifier, an entry with this data already exists
+    try (Session session = sessionProvider.openSession()) {
+      if (isAffiliationInSession(session, affiliation)) {
         throw new AffiliationExistsException("The affiliation already exists.")
       }
       // we ignore the generated primary id for now
+      session.beginTransaction()
       session.save(affiliation)
     } catch (HibernateException e) {
       log.error(e.message, e)
       throw new DatabaseQueryException("An unexpected exception occurred during new affiliation creation")
     }
+  }
+
+  private static boolean isAffiliationInSession(Session session, Affiliation affiliation) {
+    session.beginTransaction()
+    Query<List<Person>> query =
+            session.createQuery("SELECT a FROM Affiliation a  " +
+                    "WHERE a.addressAddition = :addressAddition " +
+                    "AND a.category = :category " +
+                    "AND a.city = :city " +
+                    "AND a.country = :country " +
+                    "AND a.organization = :organization " +
+                    "AND a.postalCode = :postalCode " +
+                    "AND a.street = :street")
+    query.setParameter("addressAddition", affiliation.getAddressAddition())
+    query.setParameter("category", affiliation.getCategory())
+    query.setParameter("city", affiliation.getCity())
+    query.setParameter("country", affiliation.getCountry())
+    query.setParameter("organization", affiliation.getOrganization())
+    query.setParameter("postalCode", affiliation.getPostalCode())
+    query.setParameter("street", affiliation.getStreet())
+
+    boolean isInSession = !query.list().isEmpty()
+    session.getTransaction().commit()
+    return isInSession
   }
 
   @Override
@@ -114,10 +136,10 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     // the user id nees to be preserved
     updatedPersonData.setUserId(outdatedPersonData.getUserId())
     try (Session session = sessionProvider.openSession()) {
-      session.beginTransaction()
       if (!isPersonInSession(session, outdatedPersonData)) {
         throw new DatabaseQueryException("Person was not found in the database and can't be updated.")
       }
+      session.beginTransaction()
       session.save(outdatedPersonData)
       session.save(updatedPersonData)
       session.getTransaction().commit()

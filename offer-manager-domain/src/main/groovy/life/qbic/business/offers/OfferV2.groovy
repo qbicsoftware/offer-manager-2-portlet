@@ -110,6 +110,7 @@ class OfferV2 {
   private double overheadRatio
 
   @Column(name = "checksum")
+//  @Access(AccessType.PROPERTY)
   private String checksum
 
   /**
@@ -145,9 +146,14 @@ class OfferV2 {
 
   OfferV2() {}
 
+  void setPersistentId(int id) {
+    this.id = id
+  }
 
-
-  /**
+  int getPersistentId() {
+    return this.id
+  }
+/**
    * Constructor for an OfferV2 entity on which price calculation can be performed on.
    * @param items
    * @param selectedCustomerAffiliation
@@ -203,16 +209,22 @@ class OfferV2 {
   BigDecimal getPriceBeforeTax() {
     return priceBeforeTax
   }
-/**
- * Thread-safe request of the current offer content's SHA-256 checksum
- * @return the checksum at the time of request execution
- */
+
+  protected void setChecksum(String checksum) {
+    this.checksum = checksum
+  }
+
+  /**
+   * Thread-safe request of the current offer content's SHA-256 checksum
+   * @return the checksum at the time of request execution
+   */
   String getChecksum() {
-    String checksum
-    synchronized (this) {
-      checksum = new OfferChecksumSupplier(this).get()
-    }
-    return checksum
+//    String checksum
+//    synchronized (this) {
+//      checksum = new OfferChecksumSupplier(this).get()
+//    }
+//    return new OfferChecksumSupplier(this).get()
+    return "notProvided"
   }
 
   BigDecimal getDataAnalysisOverhead() {
@@ -499,13 +511,13 @@ class OfferV2 {
     return original.copy()
   }
 
-  String getOfferId() {
-    return offerId
-  }
+//  String getOfferId() {
+//    return offerId
+//  }
 
-  String setOfferId(String offerId) {
-    this.offerId = offerId
-  }
+//  String setOfferId(String offerId) {
+//    this.offerId = offerId
+//  }
 
   private OfferV2 copy() {
     OfferV2 offerCopy = new OfferV2()
@@ -516,7 +528,7 @@ class OfferV2 {
     offerCopy.setCustomer(this.getCustomer())
     offerCopy.setExperimentalDesign(this.getExperimentalDesign())
     offerCopy.setExpirationDate(this.getExpirationDate())
-    offerCopy.setOfferId(this.getOfferId())
+    offerCopy.setIdentifier(OfferId.from(this.getOfferId()))
     offerCopy.setProjectManager(this.getProjectManager())
     offerCopy.setProjectObjective(this.getProjectObjective())
     offerCopy.setProjectTitle(this.getProjectTitle())

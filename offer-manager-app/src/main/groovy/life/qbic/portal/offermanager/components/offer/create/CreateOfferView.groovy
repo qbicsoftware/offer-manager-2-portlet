@@ -158,8 +158,8 @@ class CreateOfferView extends FormLayout{
             navigationView.showPreviousStep()
         })
         this.selectItemsView.next.addClickListener({
-//            controller.calculatePriceForItems(getProductItems(viewModel.productItems),
-//                    viewModel.customerAffiliation)
+            controller.calculatePriceForItems(getProductItems(viewModel.productItems),
+                    viewModel.customerAffiliation)
             overviewView.fillPanel()
             viewHistory.loadNewView(overviewView)
             navigationView.showNextStep()

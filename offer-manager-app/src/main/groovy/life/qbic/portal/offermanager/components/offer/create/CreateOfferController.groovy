@@ -2,7 +2,9 @@ package life.qbic.portal.offermanager.components.offer.create
 
 import groovy.util.logging.Log4j2
 import life.qbic.business.RefactorConverter
+import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.create.CreateOfferInput
+import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.fetch.FetchOfferInput
 import life.qbic.datamodel.dtos.business.*
 
@@ -19,12 +21,14 @@ class CreateOfferController {
 
     private final CreateOfferInput input
     private final FetchOfferInput fetchOfferInput
+    private final CreateOfferOutput priceCalculationResultsOutput
 
     private static final RefactorConverter refactorConverter = new RefactorConverter()
 
-    CreateOfferController(CreateOfferInput input, FetchOfferInput fetchOfferInput) {
+    CreateOfferController(CreateOfferInput input, FetchOfferInput fetchOfferInput, CreateOfferOutput priceCalculationResultsOutput) {
         this.input = input
         this.fetchOfferInput = fetchOfferInput
+        this.priceCalculationResultsOutput = priceCalculationResultsOutput
     }
 
     /**
@@ -64,5 +68,12 @@ class CreateOfferController {
         Offer offer = offerBuilder.build()
 
         this.input.createOffer(refactorConverter.toOffer(offer))
+    }
+
+
+    void calculatePriceForItems(List<ProductItem> productItems, Affiliation affiliation) {
+        OfferV2 offer = new OfferV2(refactorConverter.toAffiliation(affiliation), new life.qbic.business.offers.identifier.OfferId("price", 1))
+        offer.setItems(productItems.stream().map(it -> refactorConverter.toProductItem(offer, it)).collect() as List<life.qbic.business.products.ProductItem>)
+        priceCalculationResultsOutput.calculatedPrice(offer.salePrice, offer.taxAmount, offer.overhead, offer.priceAfterTax, offer.totalDiscountAmount)
     }
 }

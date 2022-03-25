@@ -418,7 +418,7 @@ class DependencyManager {
         CreateOffer createOffer = new CreateOffer(createOfferDataSource, createOfferPresenter)
         FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, createOfferPresenter)
 
-        CreateOfferController createOfferController = new CreateOfferController(createOffer, fetchOffer)
+        CreateOfferController createOfferController = new CreateOfferController(createOffer, fetchOffer, createOfferPresenter)
 
         CreatePersonView createPersonView = createCreatePersonView()
         UpdatePersonView updatePersonView = createUpdatePersonView(personUpdateEvent)
@@ -526,7 +526,7 @@ class DependencyManager {
         UpdatePersonView updatePersonView = createUpdatePersonView(updatePersonEvent)
         CreateAffiliationView createAffiliationView = createCreateAffiliationView()
 
-        CreateOfferController updateOfferController = new CreateOfferController(updateOffer, fetchOffer)
+        CreateOfferController updateOfferController = new CreateOfferController(updateOffer, fetchOffer, null)
         CreateOfferView updateOfferView = new CreateOfferView(
                 sharedViewModel,
                 updateOfferViewModel,

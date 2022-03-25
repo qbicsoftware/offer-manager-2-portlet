@@ -36,7 +36,7 @@ public class ProductItem {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   @Column(name = "id", nullable = false)
-  private Integer id;
+  private int id;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "productId", nullable = false)

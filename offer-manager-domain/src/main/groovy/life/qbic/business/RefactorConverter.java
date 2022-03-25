@@ -9,9 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import life.qbic.business.offers.OfferContent;
 import life.qbic.business.offers.OfferItem;
 import life.qbic.business.offers.OfferV2;
 import life.qbic.business.offers.identifier.OfferId;
@@ -38,9 +38,6 @@ import life.qbic.datamodel.dtos.business.services.ProteomicAnalysis;
 import life.qbic.datamodel.dtos.business.services.SecondaryAnalysis;
 import life.qbic.datamodel.dtos.business.services.Sequencing;
 import life.qbic.datamodel.dtos.general.CommonPerson;
-import life.qbic.datamodel.dtos.projectmanagement.ProjectCode;
-import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier;
-import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace;
 
 /**
  * <b>ATTENTION: Only for refactor purposes. Meant to be removed.</b>
@@ -64,6 +61,7 @@ public class RefactorConverter {
         offerDto.getSelectedCustomerAffiliation());
 
     OfferV2 offer = new OfferV2();
+    offer.setPersistentId(offerDto.getId());
     offer.setAssociatedProject(offerDto.getAssociatedProject().orElse(null));
     offer.setCreationDate(creationDate);
     offer.setCustomer(customer);
@@ -96,15 +94,6 @@ public class RefactorConverter {
     ).build();
   }
 
-  public OfferContent toOfferContent(OfferV2 offer) {
-    return OfferContent.from(offer);
-  }
-
-  private static double totalNetWithOverheads(OfferV2 fetchedOffer) {
-    return fetchedOffer.getSalePrice().add(BigDecimal.valueOf(fetchedOffer.getOverhead()))
-        .doubleValue();
-  }
-
   public life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
     life.qbic.datamodel.dtos.business.Customer customer = toCustomerDto(offer.getCustomer());
     life.qbic.datamodel.dtos.business.ProjectManager projectManager = toProjectManagerDto(
@@ -134,14 +123,17 @@ public class RefactorConverter {
     offerDtoBuilder.identifier(offerIdDto);
     offerDtoBuilder.overheadRatio(offer.getOverheadRatio());
     offerDtoBuilder.totalDiscountPrice(offer.getTotalDiscountAmount().doubleValue());
+    offerDtoBuilder.setId(offer.getPersistentId());
     return offerDtoBuilder.build();
   }
 
-  private ProductItem toProductItem(OfferV2 offer,
+  public ProductItem toProductItem(OfferV2 offer,
       life.qbic.datamodel.dtos.business.ProductItem productItemDto) {
     Product product = toProduct(productItemDto.getProduct());
     double quantity = productItemDto.getQuantity();
-    return new ProductItem(offer, product, quantity);
+    ProductItem productItem = new ProductItem(offer, product, quantity);
+    productItem.setId(productItemDto.getId());
+    return productItem;
   }
 
   public java.util.Date toUtilDate(LocalDate localDate) {
@@ -215,12 +207,14 @@ public class RefactorConverter {
     List<Affiliation> affiliations = personDto.getAffiliations().stream()
         .map(this::toAffiliation)
         .collect(Collectors.toList());
-    return new Person(emailAddress,
+    Person person = new Person(emailAddress,
         firstName,
         lastName,
         title,
         emailAddress,
         affiliations);
+    person.setId(personDto.getId());
+    return person;
   }
 
   public life.qbic.datamodel.dtos.general.Person toPersonDTO(Person person) {
@@ -228,6 +222,7 @@ public class RefactorConverter {
         person.getFirstName(),
         person.getLastName(),
         person.getEmail());
+    personBuilder.setId(person.getId());
     personBuilder.affiliations(
         person.getAffiliations().stream()
             .map(this::toAffiliationDto)
@@ -249,6 +244,7 @@ public class RefactorConverter {
             affiliation.getStreet(),
             affiliation.getPostalCode(),
             affiliation.getCity());
+    affiliationDtoBuilder.setId(affiliation.getId());
     affiliationDtoBuilder.category(toAffiliationCategoryDto(affiliation.getCategory()));
     affiliationDtoBuilder.country(affiliation.getCountry());
     if (affiliation.getAddressAddition() != null && !affiliation.getAddressAddition().isEmpty()) {
@@ -260,7 +256,7 @@ public class RefactorConverter {
   public Affiliation toAffiliation(
       life.qbic.datamodel.dtos.business.Affiliation affiliationDto) {
     AffiliationCategory affiliationCategory = toAffiliationCategory(affiliationDto.getCategory());
-    return new Affiliation(
+    Affiliation affiliation = new Affiliation(
         affiliationDto.getOrganisation(),
         affiliationDto.getAddressAddition(),
         affiliationDto.getStreet(),
@@ -268,6 +264,8 @@ public class RefactorConverter {
         affiliationDto.getCity(),
         affiliationDto.getCountry(),
         affiliationCategory);
+    affiliation.setId(affiliationDto.getId());
+    return affiliation;
   }
 
   life.qbic.datamodel.dtos.business.AffiliationCategory toAffiliationCategoryDto(AffiliationCategory affiliationCategory) {
@@ -296,6 +294,9 @@ public class RefactorConverter {
   }
 
   public OfferId toOfferId(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
+    if (offerIdDto == null) {
+      return new OfferId("", 1);
+    }
     int version = Integer.parseInt(offerIdDto.getVersion());
     return new OfferId(offerIdDto.getProjectConservedPart(), offerIdDto.getRandomPart(), version);
   }
@@ -314,10 +315,11 @@ public class RefactorConverter {
     product.setProductId(productDto.getProductId().toString());
     product.setProductName(productDto.getProductName());
     product.setServiceProvider(productDto.getServiceProvider().getLabel());
+    product.setId(productDto.getId());
     return product;
   }
 
-  public Product toProduct(ProductDraft productDraft) {
+  protected Product toProduct(ProductDraft productDraft) {
     String productCategory = productDraft.getCategory().getLabel();
     String serviceProvider = productDraft.getServiceProvider();
     String description = productDraft.getDescription();
@@ -338,39 +340,40 @@ public class RefactorConverter {
     Double internalUnitPrice = product.getInternalUnitPrice();
     Double externalUnitPrice = product.getExternalUnitPrice();
     ProductUnit productUnit = new ProductUnitFactory().getForString(product.getUnit());
+    int id = Optional.ofNullable(product.getId()).orElse(0);//fixme
     Long runningNumber = toProductIdDto(
         product.getProductId()).getUniqueId();
     Facility serviceProvider = Facility.valueOf(product.getServiceProvider());
     Class<? extends life.qbic.datamodel.dtos.business.services.Product> requestedProductClass = new ProductCategoryParser().apply(
         product.getCategory());
     if (Sequencing.class.equals(requestedProductClass)) {
-      return new Sequencing(productName, productDescription, internalUnitPrice, externalUnitPrice,
+      return new Sequencing(id, productName, productDescription, internalUnitPrice, externalUnitPrice,
           productUnit, runningNumber, serviceProvider);
     } else if (ProteomicAnalysis.class.equals(requestedProductClass)) {
-      return new ProteomicAnalysis(productName, productDescription, internalUnitPrice,
+      return new ProteomicAnalysis(id, productName, productDescription, internalUnitPrice,
           externalUnitPrice,
           productUnit, runningNumber, serviceProvider);
     } else if (MetabolomicAnalysis.class.equals(requestedProductClass)) {
-      return new MetabolomicAnalysis(productName, productDescription, internalUnitPrice,
+      return new MetabolomicAnalysis(id, productName, productDescription, internalUnitPrice,
           externalUnitPrice,
           productUnit, runningNumber, serviceProvider);
     } else if (PrimaryAnalysis.class.equals(requestedProductClass)) {
-      return new PrimaryAnalysis(productName, productDescription, internalUnitPrice,
+      return new PrimaryAnalysis(id, productName, productDescription, internalUnitPrice,
           externalUnitPrice,
           productUnit, runningNumber, serviceProvider);
     } else if (SecondaryAnalysis.class.equals(requestedProductClass)) {
-      return new SecondaryAnalysis(productName, productDescription, internalUnitPrice,
+      return new SecondaryAnalysis(id, productName, productDescription, internalUnitPrice,
           externalUnitPrice,
           productUnit, runningNumber, serviceProvider);
     } else if (ProjectManagement.class.equals(requestedProductClass)) {
-      return new ProjectManagement(productName, productDescription, internalUnitPrice,
+      return new ProjectManagement(id, productName, productDescription, internalUnitPrice,
           externalUnitPrice,
           productUnit, runningNumber, serviceProvider);
     } else if (DataStorage.class.equals(requestedProductClass)) {
-      return new DataStorage(productName, productDescription, internalUnitPrice, externalUnitPrice,
+      return new DataStorage(id, productName, productDescription, internalUnitPrice, externalUnitPrice,
           productUnit, runningNumber, serviceProvider);
     } else if (ExternalServiceProduct.class.equals(requestedProductClass)) {
-      return new ExternalServiceProduct(productName, productDescription, internalUnitPrice,
+      return new ExternalServiceProduct(id, productName, productDescription, internalUnitPrice,
           externalUnitPrice,
           productUnit, runningNumber, serviceProvider);
     }
@@ -401,106 +404,6 @@ public class RefactorConverter {
   public life.qbic.datamodel.dtos.business.ProductId toProductIdDto(String productId)
       throws IllegalArgumentException {
     return new ProductIdParser().apply(productId);
-  }
-
-  /**
-   * Converts a {@link life.qbic.datamodel.dtos.projectmanagement.ProjectSpace} object to its
-   * uppercase String representation.
-   *
-   * @param projectSpace the project space object
-   * @return the uppercase String representation
-   */
-  public String toProjectSpace(
-      life.qbic.datamodel.dtos.projectmanagement.ProjectSpace projectSpace) {
-    return projectSpace.getName().toUpperCase();
-  }
-
-  /**
-   * Converts a project space String representation into a {@link
-   * life.qbic.datamodel.dtos.projectmanagement.ProjectSpace} object.
-   *
-   * @param projectSpace the project space String representation
-   * @return its dto representation
-   * @throws IllegalArgumentException if the String cannot be converted, for example due to format
-   *     rule violations
-   */
-  public life.qbic.datamodel.dtos.projectmanagement.ProjectSpace toProjectSpaceDTO(
-      String projectSpace) throws IllegalArgumentException {
-    try {
-      return new ProjectSpace(projectSpace);
-    } catch (Exception e) {
-      throw new IllegalArgumentException("Could not convert project space", e);
-    }
-  }
-
-  /**
-   * Converts a {@link life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier} object to its
-   * String representation.
-   *
-   * <p>The resulting format is upper case: <code>/#projectspace/#projectcode</code>
-   *
-   * @param projectIdentifier the project identifier to convert
-   * @return its String representation
-   */
-  public String toProjectIdentifier(
-      life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier projectIdentifier) {
-    // we do not want to  depend on the class String format implementation, so we are explicit
-    return String.format(
-        "/%s/%s",
-        projectIdentifier.getProjectSpace().getName().toUpperCase(),
-        projectIdentifier.getProjectCode().getCode().toUpperCase());
-  }
-
-  /**
-   * Converts a project identifier String representation into an instance of
-   * {@link life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier}.
-   * @param projectIdentifier the project identifier in its String representation
-   * @return the project identifier DTO form
-   * @throws IllegalArgumentException if the conversion failed, for example due to format rule violations
-   */
-  public life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier toProjectIdentifierDTO(
-      String projectIdentifier) throws IllegalArgumentException {
-    return new ProjectIdentifierParser().apply(projectIdentifier);
-  }
-
-  /**
-   * Converts a project code String representation into an instance of {@link life.qbic.datamodel.dtos.projectmanagement.ProjectCode}.
-   * @param projectCode the project code in String representation
-   * @throws IllegalArgumentException if the project code cannot be converted, for example due to format rule violations
-   */
-  public life.qbic.datamodel.dtos.projectmanagement.ProjectCode toProjectCodeDTO(String projectCode)
-      throws IllegalArgumentException {
-    try {
-      return new ProjectCode(projectCode);
-    } catch (Exception e) {
-      throw new IllegalArgumentException(
-          String.format("Could not convert project code %s.", projectCode), e);
-    }
-  }
-
-  /**
-   * Small helper class to provide project identifier parsing functionality. Since we control the
-   * String representation of the project identifier, we know that we can expect it to be in the
-   * format <code>/#projectspace/#projectcode</code>.
-   */
-  protected static class ProjectIdentifierParser
-      implements Function<String, life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier> {
-
-    @Override
-    public life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier apply(String s) {
-      return null; // todo implement
-    }
-
-    private static life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier parseFrom(
-        String s) {
-      String[] splitString = s.split("/");
-      if (splitString.length != 3) {
-        throw new IllegalArgumentException(
-            String.format("Unknown project identifier format %s", s));
-      }
-      return new ProjectIdentifier(
-          new ProjectSpace(splitString[1]), new ProjectCode(splitString[2]));
-    }
   }
 
   /**
