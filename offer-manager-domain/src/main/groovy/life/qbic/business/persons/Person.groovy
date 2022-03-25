@@ -32,6 +32,7 @@ class Person {
     String lastName
 
     @Column(name = "title")
+    @Convert(converter = EmptyTitleRemover.class)
     String title
 
     @Column(name = "email")
@@ -131,4 +132,21 @@ class Person {
         }
     }
 
+    protected static class EmptyTitleRemover implements AttributeConverter<String, String> {
+        @Override
+        String convertToDatabaseColumn(String s) {
+            if (s.isEmpty()) {
+                return "None"
+            }
+            return s
+        }
+
+        @Override
+        String convertToEntityAttribute(String s) {
+            if (s.equals("None")) {
+                return ""
+            }
+            return s
+        }
+    }
 }
