@@ -311,10 +311,9 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
       preparedStatement.setString(8, productDraft.serviceProvider)
 
       preparedStatement.execute()
-      Product createdProduct = fetch(productId).orElseThrow(() -> new RuntimeException("Product creation failed for $productId"))
-      return createdProduct
+      Optional<Product> createdProduct = fetch(productId)
+      return createdProduct.orElse(null)
     }
-    return null
   }
 
   private static Product parseProductFromResultSet(ResultSet resultSet) {
