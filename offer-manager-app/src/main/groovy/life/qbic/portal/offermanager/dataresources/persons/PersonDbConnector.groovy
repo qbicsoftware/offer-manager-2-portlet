@@ -44,7 +44,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     List<Person> persons = new ArrayList<>()
     try (Session session = sessionProvider.getCurrentSession()) {
       session.beginTransaction()
-      Query<Person> query = session.createQuery("FROM Person ")
+      Query<Person> query = session.createQuery("SELECT p FROM Person p WHERE p.isActive = TRUE")
       // Print entities
       persons.addAll(query.list() as List<Person>)
     }
