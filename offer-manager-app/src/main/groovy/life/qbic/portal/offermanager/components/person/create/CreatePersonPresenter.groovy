@@ -96,8 +96,7 @@ class CreatePersonPresenter implements CreatePersonOutput {
 
     @Override
     void personUpdated(life.qbic.business.persons.Person person) {
-        // TODO implement
-        throw new RuntimeException("Not implemented method called: " + CreatePersonPresenter.class.getMethod("personUpdated").toString())
+        personCreated(person)
     }
 
     private static Customer translateToCustomer(Person person){
