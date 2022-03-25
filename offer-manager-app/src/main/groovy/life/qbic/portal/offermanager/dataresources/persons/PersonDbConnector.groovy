@@ -83,10 +83,11 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
   @Override
   void addPerson(Person person) throws DatabaseQueryException, PersonExistsException {
-    try (Session session = sessionProvider.getCurrentSession()) {
+    try (Session session = sessionProvider.openSession()) {
+      if(isPersonInSession(session, person)) {
+        throw new PersonExistsException("The person already exists.")
+      }
       session.beginTransaction()
-      findPersonInSession(session, person).ifPresent(() -> {throw new PersonExistsException("The person already exists.")})
-      // we ignore the generated primary id for now
       session.save(person)
     } catch (HibernateException e) {
       log.error(e.message, e)
@@ -94,12 +95,16 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     }
   }
 
-  private static Optional<Person> findPersonInSession(Session session, Person person) {
-    int id = session.getIdentifier(person) as int
-    if (id) {
-      return Optional.of(person)
-    }
-    return Optional.empty()
+  private static boolean isPersonInSession(Session session, Person person) {
+    session.beginTransaction()
+    Query<List<Person>> query =
+            session.createQuery("SELECT p FROM Person p  LEFT JOIN FETCH p.affiliations WHERE p.firstName=:firstName AND p.lastName=:lastName AND p.email=:email")
+    query.setParameter("firstName", person.getFirstName())
+    query.setParameter("lastName", person.getLastName())
+    query.setParameter("email", person.getEmail())
+    boolean isInSession = !query.list().isEmpty()
+    session.getTransaction().commit()
+    return isInSession
   }
 
   @Override
@@ -108,9 +113,9 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     updatedPersonData.setIsActive(true)
     // the user id nees to be preserved
     updatedPersonData.setUserId(outdatedPersonData.getUserId())
-    try (Session session = sessionProvider.getCurrentSession()) {
+    try (Session session = sessionProvider.openSession()) {
       session.beginTransaction()
-      if (!findPersonInSession(session, outdatedPersonData).isPresent()) {
+      if (!isPersonInSession(session, outdatedPersonData)) {
         throw new DatabaseQueryException("Person was not found in the database and can't be updated.")
       }
       session.save(outdatedPersonData)
