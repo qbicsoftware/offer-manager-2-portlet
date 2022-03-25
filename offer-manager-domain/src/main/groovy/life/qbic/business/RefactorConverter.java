@@ -251,6 +251,9 @@ public class RefactorConverter {
             affiliation.getCity());
     affiliationDtoBuilder.category(toAffiliationCategoryDto(affiliation.getCategory()));
     affiliationDtoBuilder.country(affiliation.getCountry());
+    if (affiliation.getAddressAddition() != null && !affiliation.getAddressAddition().isEmpty()) {
+      affiliationDtoBuilder.setAddressAddition(affiliation.getAddressAddition());
+    }
     return affiliationDtoBuilder.build();
   }
 
