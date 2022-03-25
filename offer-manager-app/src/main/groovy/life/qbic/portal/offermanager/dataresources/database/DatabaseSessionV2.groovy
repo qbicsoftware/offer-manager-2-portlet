@@ -53,4 +53,9 @@ class DatabaseSessionV2 implements SessionProvider{
     Session getCurrentSession() {
         return sessionFactory.getCurrentSession()
     }
+
+    @Override
+    Session openSession() {
+        return sessionFactory.openSession()
+    }
 }
