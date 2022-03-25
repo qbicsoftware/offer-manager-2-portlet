@@ -455,10 +455,15 @@ class OfferV2 {
    */
   @PostLoad
   protected void onPostLoad() {
+    loadFields()
     items.forEach(ProductItem::refresh)
     items.forEach(this::addItemToGroup)
     aggregateCosts()
     expireNinetyDaysAfterCreation()
+  }
+
+  private void loadFields() {
+    getItems()
   }
 
   private void updateSalePrices() {
