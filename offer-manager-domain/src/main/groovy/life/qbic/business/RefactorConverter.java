@@ -27,6 +27,7 @@ import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
 import life.qbic.datamodel.dtos.business.Customer;
 import life.qbic.datamodel.dtos.business.ProductId;
 import life.qbic.datamodel.dtos.business.facilities.Facility;
+import life.qbic.datamodel.dtos.business.facilities.FacilityFactory;
 import life.qbic.datamodel.dtos.business.services.DataStorage;
 import life.qbic.datamodel.dtos.business.services.ExternalServiceProduct;
 import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis;
@@ -318,6 +319,7 @@ public class RefactorConverter {
     product.setProductId(productDto.getProductId().toString());
     product.setProductName(productDto.getProductName());
     product.setServiceProvider(productDto.getServiceProvider().getLabel());
+    product.setUnit(productDto.getUnit().toString());
     product.setId(productDto.getId());
     return product;
   }
@@ -346,11 +348,13 @@ public class RefactorConverter {
     int id = Optional.ofNullable(product.getId()).orElse(0);//fixme
     Long runningNumber = toProductIdDto(
         product.getProductId()).getUniqueId();
-    Facility serviceProvider = Facility.valueOf(product.getServiceProvider());
+    //fixme error during buildup because of invalid pct mapping
+    Facility serviceProvider = new FacilityFactory().getForString(product.getServiceProvider());
     Class<? extends life.qbic.datamodel.dtos.business.services.Product> requestedProductClass = new ProductCategoryParser().apply(
         product.getCategory());
     if (Sequencing.class.equals(requestedProductClass)) {
-      return new Sequencing(id, productName, productDescription, internalUnitPrice, externalUnitPrice,
+      return new Sequencing(id, productName, productDescription, internalUnitPrice,
+          externalUnitPrice,
           productUnit, runningNumber, serviceProvider);
     } else if (ProteomicAnalysis.class.equals(requestedProductClass)) {
       return new ProteomicAnalysis(id, productName, productDescription, internalUnitPrice,
