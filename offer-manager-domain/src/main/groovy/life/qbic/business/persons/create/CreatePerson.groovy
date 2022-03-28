@@ -47,14 +47,18 @@ class CreatePerson implements CreatePersonInput {
 
   @Override
   void updatePerson(Person outdatedPerson, Person personWithUpdate) {
+    Person storedPerson
+    personWithUpdate.setUserId(outdatedPerson.getUserId())
+
     try {
       if (hasBasicPersonDataChanged(outdatedPerson, personWithUpdate)) {
-        personWithUpdate.setUserId(outdatedPerson.getUserId())
-        dataSource.updatePerson(outdatedPerson, personWithUpdate)
+        // we need to retrieve the updated entry to have the correct id in it
+        storedPerson = dataSource.updatePerson(outdatedPerson, personWithUpdate)
       } else {
-        dataSource.updatePersonAffiliations(personWithUpdate)
+        personWithUpdate.setId(outdatedPerson.getId()) // we need to use the same person
+        storedPerson = dataSource.updatePersonAffiliations(personWithUpdate)
       }
-      output.personUpdated(personWithUpdate)
+      output.personUpdated(storedPerson)
     } catch (PersonNotFoundException notFoundException) {
       String message = "Cannot update person entry for ${outdatedPerson.firstName} ${outdatedPerson.lastName}. \nPerson was not found. Please try again."
       log.error(message, notFoundException)

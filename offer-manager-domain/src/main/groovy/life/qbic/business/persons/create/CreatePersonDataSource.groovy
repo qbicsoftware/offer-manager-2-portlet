@@ -34,12 +34,12 @@ interface CreatePersonDataSource {
      * database
      * @since 1.0.0
      */
-    void updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException, PersonNotFoundException
+  Person updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException, PersonNotFoundException
 
     /**
      * Updates affiliations of a person specified by a customer ID.
      *
      * @param personId to specify the person whose affiliations should be updated
      */
-    void updatePersonAffiliations(Person person) throws DatabaseQueryException
+  Person updatePersonAffiliations(Person person) throws DatabaseQueryException
 }

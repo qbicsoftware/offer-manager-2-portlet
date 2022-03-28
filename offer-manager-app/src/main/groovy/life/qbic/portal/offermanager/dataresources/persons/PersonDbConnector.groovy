@@ -130,7 +130,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   }
 
   @Override
-  void updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException {
+  Person updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException {
     outdatedPersonData.setIsActive(false)
     updatedPersonData.setIsActive(true)
     // the user id nees to be preserved
@@ -143,6 +143,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       session.save(outdatedPersonData)
       session.save(updatedPersonData)
       session.getTransaction().commit()
+      return updatedPersonData
     } catch (HibernateException e) {
       log.error(e.message, e)
       throw new DatabaseQueryException("Unable to update person entry.")
@@ -150,11 +151,12 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   }
 
   @Override
-  void updatePersonAffiliations(Person person) throws DatabaseQueryException {
+  Person updatePersonAffiliations(Person person) throws DatabaseQueryException {
     try (Session session = sessionProvider.getCurrentSession()) {
       session.beginTransaction()
-      session.merge(person)
+      Person mergedPerson = session.<Person>merge(person) //have to un-generify groovy here
       session.getTransaction().commit()
+      return mergedPerson
     } catch (HibernateException e) {
       log.error(e.message, e)
       throw new DatabaseQueryException("Unable to update person affiliations.")
