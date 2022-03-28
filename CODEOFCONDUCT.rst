@@ -76,3 +76,5 @@ by other members of the project’s leadership.
 
 Attribution
 -----------
+
+This Code of Conduct is adapted from the `version 1.4 <http://contributor-covenant.org/version/1/4/>`_ of the `Contributor Covenant <http://contributor-covenant.org>`_
