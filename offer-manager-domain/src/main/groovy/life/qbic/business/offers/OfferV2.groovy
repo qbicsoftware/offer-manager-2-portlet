@@ -81,7 +81,7 @@ class OfferV2 {
   /**
    * A list of items for which the customer will be charged
    */
-  @OneToMany(mappedBy = "offer", cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
+  @OneToMany(mappedBy = "offer", cascade = CascadeType.ALL)
   private List<ProductItem> items = []
 
   @Column(name = "offerId")
@@ -378,7 +378,7 @@ class OfferV2 {
   }
 
   double getOverhead() {
-    return BigDecimal.valueOf(overhead)
+    return BigDecimal.valueOf(overhead).doubleValue()
   }
 
   protected void setOverhead(double overhead) {
