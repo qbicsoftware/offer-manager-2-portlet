@@ -45,7 +45,7 @@ public class ProductItem {
   @Column(name = "quantity", nullable = false)
   private Double quantity;
 
-  @ManyToOne
+  @ManyToOne(optional = false)
   @JoinColumn(name = "offerId", nullable = false)
   private OfferV2 offer;
 
