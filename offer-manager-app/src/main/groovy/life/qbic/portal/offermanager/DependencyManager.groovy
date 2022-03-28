@@ -263,9 +263,10 @@ class DependencyManager {
     }
 
     private AppView setupAppView() {
+        EventEmitter<Person> personUpdateEvent = new EventEmitter<Person>()
 
         CreateAffiliationView createAffiliationView = createCreateAffiliationView()
-        CreateOfferView createOfferView = createCreateOfferView()
+        CreateOfferView createOfferView = createCreateOfferView(personUpdateEvent)
         CreatePersonView createPersonView = createCreatePersonView()
         MaintainProductsView maintainProductsView = createMaintainProductsView()
         SearchAffiliationView searchAffiliationView = createSearchAffiliationView()
@@ -274,7 +275,7 @@ class DependencyManager {
         // Used to emit offers that shall be updated
         EventEmitter<Offer> offerUpdateEvent = new EventEmitter<Offer>()
 
-        UpdateOfferView updateOfferView = createUpdateOfferView(offerUpdateEvent)
+        UpdateOfferView updateOfferView = createUpdateOfferView(offerUpdateEvent, personUpdateEvent)
         OfferOverviewView overviewView = createOfferOverviewView(offerUpdateEvent, projectCreatedEvent)
 
 
@@ -391,8 +392,9 @@ class DependencyManager {
      * </ul>
      *
      * @return a new CreateOfferView
+     * @param personUpdateEvent the event emitter where person update and creation events are emitted to
      */
-    private CreateOfferView createCreateOfferView() {
+    private CreateOfferView createCreateOfferView(EventEmitter<Person> personUpdateEvent) {
 
         AppViewModel sharedViewModel = this.viewModel
         CreateOfferDataSource createOfferDataSource = this.createOfferDataSource
@@ -402,7 +404,6 @@ class DependencyManager {
         ResourcesService<Product> productResourcesService = this.productsResourcesService
         ResourcesService<ProjectManager> projectManagerResourcesService = this.managerResourceService
 
-        EventEmitter<Person> personUpdateEvent = new EventEmitter<>()
 
         CreateOfferViewModel createOfferViewModel = new CreateOfferViewModel(
                 customerResourcesService,
@@ -499,9 +500,10 @@ class DependencyManager {
      *     <li>{@link #createCreateAffiliationView()}</li>
      * </ul>
      * @param offerUpdateEvent emits the offer to be updated
+     * @param updatePersonEvent used to listen for person updates
      * @return a new CreateOfferView to be used as update offer view
      */
-    private UpdateOfferView createUpdateOfferView(EventEmitter<Offer> offerUpdateEvent) {
+    private UpdateOfferView createUpdateOfferView(EventEmitter<Offer> offerUpdateEvent, EventEmitter<Person> updatePersonEvent) {
 
         AppViewModel sharedViewModel = this.viewModel
         ResourcesService<Customer> customerResourcesService = this.customerResourceService
@@ -511,7 +513,6 @@ class DependencyManager {
         CreateOfferDataSource createOfferDataSource = this.createOfferDataSource
         FetchOfferDataSource fetchOfferDataSource = this.fetchOfferDataSource
 
-        EventEmitter<Person> updatePersonEvent = new EventEmitter<Person>()
 
         UpdateOfferViewModel updateOfferViewModel = new UpdateOfferViewModel(
                 customerResourcesService,
