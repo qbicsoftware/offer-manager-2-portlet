@@ -317,6 +317,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
   }
 
   private static Product parseProductFromResultSet(ResultSet resultSet) {
+    int id = resultSet.getInt(1)
     String dbCategory = resultSet.getString(2)
     String dbDescription = resultSet.getString(3)
     String dbProductName = resultSet.getString(4)
@@ -332,6 +333,7 @@ class ProductsDbConnector implements ArchiveProductDataSource, CreateProductData
     result.setUnit(dbProductUnit)
     result.setProductId(dbProductId)
     result.setServiceProvider(dbServiceProvider)
+    result.setId(id)
     return result
   }
 
