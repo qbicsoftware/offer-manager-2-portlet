@@ -38,7 +38,7 @@ class OfferChecksumSupplier implements
   private String getChecksum(byte[] checksumBytes) {
     StringBuilder result = new StringBuilder();
     for (byte checksumByte : checksumBytes) {
-      result.append(Integer.toHexString(checksumByte));
+      result.append(Integer.toHexString(checksumByte & 0xff));
     }
     return result.toString();
   }

@@ -109,6 +109,8 @@ class OfferV2 {
   @Transient
   private double overheadRatio
 
+
+  //Note Currently all offer checksums are updated during the offerOverview loading process
   @Column(name = "checksum")
   @Access(AccessType.PROPERTY)
   private String checksum
@@ -219,12 +221,9 @@ class OfferV2 {
    * @return the checksum at the time of request execution
    */
   String getChecksum() {
-//    String checksum
-//    synchronized (this) {
-//      checksum = new OfferChecksumSupplier(this).get()
-//    }
-//    return new OfferChecksumSupplier(this).get()
-    return Math.random()
+    synchronized (this) {
+      return checksum = new OfferChecksumSupplier(this).get()
+    }
   }
 
   BigDecimal getDataAnalysisOverhead() {
@@ -379,7 +378,7 @@ class OfferV2 {
   }
 
   double getOverhead() {
-    return overhead
+    return BigDecimal.valueOf(overhead)
   }
 
   protected void setOverhead(double overhead) {
