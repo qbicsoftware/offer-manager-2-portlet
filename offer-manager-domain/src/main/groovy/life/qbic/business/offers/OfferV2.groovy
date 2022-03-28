@@ -224,7 +224,7 @@ class OfferV2 {
 //      checksum = new OfferChecksumSupplier(this).get()
 //    }
 //    return new OfferChecksumSupplier(this).get()
-    return "notProvided"
+    return Math.random()
   }
 
   BigDecimal getDataAnalysisOverhead() {
