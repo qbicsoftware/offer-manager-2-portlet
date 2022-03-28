@@ -44,7 +44,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     List<Person> persons = new ArrayList<>()
     try (Session session = sessionProvider.getCurrentSession()) {
       session.beginTransaction()
-      Query<Person> query = session.createQuery("SELECT p FROM Person p WHERE p.isActive = TRUE")
+      Query<Person> query = session.createQuery("SELECT p FROM Person p WHERE p.isActive = TRUE ")
       // Print entities
       persons.addAll(query.list() as List<Person>)
     }
@@ -131,8 +131,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
 
   @Override
   Person updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException {
-    outdatedPersonData.setIsActive(false)
-    updatedPersonData.setIsActive(true)
+
     // the user id nees to be preserved
     updatedPersonData.setUserId(outdatedPersonData.getUserId())
     try (Session session = sessionProvider.openSession()) {
@@ -140,7 +139,9 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
         throw new DatabaseQueryException("Person was not found in the database and can't be updated.")
       }
       session.beginTransaction()
-      session.save(outdatedPersonData)
+      session.clear()
+      outdatedPersonData.setIsActive(false)
+      session.update(outdatedPersonData)
       session.save(updatedPersonData)
       session.getTransaction().commit()
       return updatedPersonData

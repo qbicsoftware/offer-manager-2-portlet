@@ -110,7 +110,7 @@ class OfferV2 {
   private double overheadRatio
 
   @Column(name = "checksum")
-//  @Access(AccessType.PROPERTY)
+  @Access(AccessType.PROPERTY)
   private String checksum
 
   /**

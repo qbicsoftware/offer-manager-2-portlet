@@ -32,7 +32,7 @@ class CreateOffer implements CreateOfferInput {
     @Override
     void createOffer(OfferV2 offer) {
         try {
-            offer.setIdentifier(new OfferId(offer.getCustomer().getLastName(), 1))
+            offer.setIdentifier(new OfferId(offer.getCustomer().getLastName().toLowerCase(), 1))
             dataSource.store(offer)
         } catch (OfferExistsException offerExistsException) {
             String message = "Offer $offer already exists in the database."

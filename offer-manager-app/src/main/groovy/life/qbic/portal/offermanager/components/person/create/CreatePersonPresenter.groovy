@@ -66,21 +66,7 @@ class CreatePersonPresenter implements CreatePersonOutput {
         ProjectManager manager = refactorConverter.toProjectManagerDto(person)
         try {
             if (createPersonViewModel.outdatedPerson) {
-                Iterator<Customer> customerIterator = createPersonViewModel.customerService.iterator()
-                Customer outdatedCustomer = translateToCustomer(createPersonViewModel.outdatedPerson)
-                customerIterator.each {
-                    if (it == outdatedCustomer) {
-                        createPersonViewModel.customerService.removeFromResource(it)
-                    }
-                }
-                Iterator<ProjectManager> managerIterator = createPersonViewModel.managerResourceService.iterator()
-                ProjectManager outdatedManager = translateToProjectManager(createPersonViewModel.outdatedPerson)
-                managerIterator.each {
-                    if (it == outdatedManager) {
-                        createPersonViewModel.managerResourceService.removeFromResource(it)
-                    }
-                }
-                createPersonViewModel.personResourceService.removeFromResource(createPersonViewModel.outdatedPerson)
+                removeOutdatedPersonFromResources()
             }
         } catch (Exception e) {
             log.error e.message
@@ -92,6 +78,38 @@ class CreatePersonPresenter implements CreatePersonOutput {
         //reset the view model
         clearPersonData()
         viewModel.successNotifications.add("Successfully created new person entry.")
+    }
+
+    private void removeOutdatedPersonFromResources() {
+        removeOutdatedPersonFromCustomers()
+        removeOutdatedPersonFromProjectManagers()
+    }
+
+    private void removeOutdatedPersonFromProjectManagers() {
+        Iterator<ProjectManager> managerIterator = createPersonViewModel.managerResourceService.iterator()
+        ProjectManager outdatedManager = translateToProjectManager(createPersonViewModel.outdatedPerson)
+        managerIterator.each {
+            if (semanticallySamePerson(it, outdatedManager)) {
+                createPersonViewModel.managerResourceService.removeFromResource(it)
+            }
+        }
+        createPersonViewModel.personResourceService.removeFromResource(createPersonViewModel.outdatedPerson)
+    }
+
+    private void removeOutdatedPersonFromCustomers() {
+        Iterator<Customer> customerIterator = createPersonViewModel.customerService.iterator()
+        Customer outdatedCustomer = translateToCustomer(createPersonViewModel.outdatedPerson)
+        customerIterator.each {
+            if (semanticallySamePerson(it, outdatedCustomer)) {
+                createPersonViewModel.customerService.removeFromResource(it)
+            }
+        }
+    }
+
+    private static boolean semanticallySamePerson(Person person, Person other) {
+        return person.firstName == other.firstName
+                && person.lastName == other.lastName
+                && person.emailAddress == other.emailAddress
     }
 
     @Override

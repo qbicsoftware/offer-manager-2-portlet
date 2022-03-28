@@ -178,6 +178,7 @@ public class RefactorConverter {
     } else {
       projectManagerDtoBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
     }
+    projectManagerDtoBuilder.setId(person.getId());
     return projectManagerDtoBuilder.build();
   }
 
@@ -196,6 +197,7 @@ public class RefactorConverter {
     } else {
       customerBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
     }
+    customerBuilder.setId(person.getId());
     return customerBuilder.build();
   }
 
@@ -233,6 +235,7 @@ public class RefactorConverter {
     } else {
       personBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
     }
+    personBuilder.setId(person.getId());
     return personBuilder.build();
   }
 
