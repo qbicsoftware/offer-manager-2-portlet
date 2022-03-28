@@ -34,7 +34,7 @@ class CreateProductView extends VerticalLayout{
 
     ComboBox<String> productUnitComboBox
     ComboBox<String> productCategoryComboBox
-    ComboBox<String> productFacilityComboBox
+    ComboBox<Facility> productFacilityComboBox
     Button abortButton
 
     Button createProductButton
@@ -113,11 +113,12 @@ class CreateProductView extends VerticalLayout{
         productCategoryComboBox.setItems(Arrays.asList(ProductCategory.values()) as List<String>)
         productCategoryComboBox.setWidthFull()
 
-        productFacilityComboBox = new ComboBox<>("Facility")
+        productFacilityComboBox = new ComboBox<Facility>("Facility")
+        productFacilityComboBox.setItemCaptionGenerator(Facility::getLabel)
         productFacilityComboBox.setRequiredIndicatorVisible(true)
         productFacilityComboBox.setPlaceholder("Select facility that provides the product")
         productFacilityComboBox.setEmptySelectionAllowed(false)
-        productFacilityComboBox.setItems(Arrays.asList(Facility.values()) as List<String>)
+        productFacilityComboBox.setItems(Arrays.asList(Facility.values()) as List<Facility>)
         productFacilityComboBox.setWidthFull()
     }
 
