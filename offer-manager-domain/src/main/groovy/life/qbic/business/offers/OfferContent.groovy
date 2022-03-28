@@ -308,7 +308,7 @@ class OfferContent {
                 offer.priceAfterTax.doubleValue(),
                 offer.salePrice.doubleValue(),
                 offer.priceBeforeTax.doubleValue(),
-                offer.totalVat.doubleValue(),
+                offer.taxAmount.doubleValue(),
                 offer.vatRatio.doubleValue(),
                 offer.totalDiscountAmount.doubleValue()
         )

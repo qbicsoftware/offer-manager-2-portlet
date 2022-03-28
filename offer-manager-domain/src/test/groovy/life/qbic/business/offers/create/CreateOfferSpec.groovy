@@ -4,6 +4,7 @@ import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.OfferExistsException
 import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.identifier.OfferId
+import life.qbic.business.persons.Person
 import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.AffiliationCategory
 import life.qbic.business.products.Product
@@ -26,9 +27,15 @@ class CreateOfferSpec extends Specification {
     private CreateOfferDataSource datasource = Mock()
     private CreateOfferOutput output = Mock()
     private OfferId offerId = new OfferId("projectPart", 1)
-    private OfferV2 offerV2 = new OfferV2(
-            new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL),
-            offerId)
+    private OfferV2 offerV2 = setupOfferV2()
+
+    private OfferV2 setupOfferV2() {
+        OfferV2 offer = new OfferV2(
+                new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL),
+                offerId)
+        offer.setCustomer(new Person("","","lastname","","",[]))
+        return offer;
+    }
 
     def "given the offer does not exist in the datasource, when the offer is created, then a OfferExistsException is thrown"() {
         given: "the offer does not exist in the datasource"
@@ -80,8 +87,8 @@ class CreateOfferSpec extends Specification {
             final OfferV2 storedOffer = arguments.get(0)
             assertNotNull(storedOffer.getOverhead())
             assertNotNull(storedOffer.getSalePrice())
-            assertNotNull(storedOffer.getTotalCost())
-            assertNotNull(storedOffer.getTotalVat())
+            assertNotNull(storedOffer.getPriceAfterTax())
+            assertNotNull(storedOffer.getTaxAmount())
         }
     }
 
@@ -158,8 +165,8 @@ class CreateOfferSpec extends Specification {
             final OfferV2 storedOffer = arguments.get(0)
             assertNotNull(storedOffer.getOverhead())
             assertNotNull(storedOffer.getSalePrice())
-            assertNotNull(storedOffer.getTotalCost())
-            assertNotNull(storedOffer.getTotalVat())
+            assertNotNull(storedOffer.getPriceAfterTax())
+            assertNotNull(storedOffer.getTaxAmount())
         }
     }
 

@@ -266,16 +266,6 @@ class OfferV2 {
     return vatRatio
   }
 
-  BigDecimal getTotalVat() {
-    //FIXME
-    return taxAmount
-  }
-
-  BigDecimal getTotalCost() {
-    //FIXME
-    return priceAfterTax
-  }
-
   BigDecimal getTotalDiscountAmount() {
     return discountAmount
   }

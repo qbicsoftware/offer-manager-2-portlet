@@ -67,8 +67,8 @@ class FetchOfferSpec extends Specification {
             println retrievedOffer.overhead
             assert retrievedOffer.getOverhead() >= 0
             assert retrievedOffer.getSalePrice() >= 0
-            assert retrievedOffer.getTotalCost() >= 0
-            assert retrievedOffer.getTotalVat() >= 0
+            assert retrievedOffer.getPriceAfterTax() >= 0
+            assert retrievedOffer.getTaxAmount() >= 0
         }
   }
 

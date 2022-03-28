@@ -45,7 +45,7 @@ class OfferOverview {
                 "",
                 String.format("%s %s", offer.getCustomer().firstName, offer.getCustomer().lastName),
                 String.format("%s %s", offer.getProjectManager().firstName, offer.getProjectManager().lastName),
-                offer.getTotalCost().doubleValue()
+                offer.getPriceAfterTax().doubleValue()
         )
     }
 
