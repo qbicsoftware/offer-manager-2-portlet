@@ -178,7 +178,7 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
      */
     @Override
     List<ProjectIdentifier> listProjects() {
-        return new ArrayList<ProjectIdentifier>(openbisProjects)
+        new ArrayList<ProjectIdentifier>(openbisProjects)
     }
 
     @Override
@@ -197,6 +197,14 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
             throw new DatabaseQueryException("Could not create project space.")
         }
     }
+
+    /*
+    ProjectApplication
+    - project space
+    - project code
+    - project objective
+    - linked offer
+     */
 
     @Override
     Project createProject(ProjectApplication projectApplication) throws ProjectExistsException, DatabaseQueryException {

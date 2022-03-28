@@ -1,10 +1,9 @@
 package life.qbic.portal.offermanager.components.product.copy
 
-
-import life.qbic.business.products.Converter
 import life.qbic.datamodel.dtos.business.ProductId
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.communication.EventEmitter
+import life.qbic.portal.offermanager.components.product.ProductClassToCategory
 import life.qbic.portal.offermanager.components.product.create.CreateProductViewModel
 
 /**
@@ -35,7 +34,7 @@ class CopyProductViewModel extends CreateProductViewModel {
         internalUnitPrice = product.internalUnitPrice
         externalUnitPrice = product.externalUnitPrice
         productFacility = product.serviceProvider
-        productCategory = Converter.getCategory(product)
+        productCategory = new ProductClassToCategory().apply(product.getClass())
         productId = product.productId
     }
 }

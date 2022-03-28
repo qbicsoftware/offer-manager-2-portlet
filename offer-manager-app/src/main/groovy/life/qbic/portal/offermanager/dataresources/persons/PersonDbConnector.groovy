@@ -28,123 +28,157 @@ import org.hibernate.query.Query
 @Log4j2
 class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSource, ListPersonsDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
 
-    private final SessionProvider sessionProvider
+  private final SessionProvider sessionProvider
 
-    /**
-     * Uses a Hibernate session to perform the transactions with the persistence layer
-     * @param sessionProvider
-     * @since 1.3.0
-     */
-    PersonDbConnector(SessionProvider sessionProvider) {
-      this.sessionProvider = sessionProvider
+  /**
+   * Uses a Hibernate session to perform the transactions with the persistence layer
+   * @param sessionProvider
+   * @since 1.3.0
+   */
+  PersonDbConnector(SessionProvider sessionProvider) {
+    this.sessionProvider = sessionProvider
+  }
+
+  @Override
+  List<Person> listPersons() {
+    List<Person> persons = new ArrayList<>()
+    try (Session session = sessionProvider.getCurrentSession()) {
+      session.beginTransaction()
+      Query<Person> query = session.createQuery("SELECT p FROM Person p WHERE p.isActive = TRUE ")
+      // Print entities
+      persons.addAll(query.list() as List<Person>)
     }
+    return persons
+  }
 
-    @Override
-    List<Person> listPersons() {
-      List<Person> persons = new ArrayList<>()
-      try(Session session = sessionProvider.getCurrentSession()) {
-        session.beginTransaction()
-        Query<Person> query = session.createQuery("FROM Person ")
-        // Print entities
-        persons.addAll(query.list() as List<Person>)
+  @Override
+  void addAffiliation(Affiliation affiliation) throws DatabaseQueryException, AffiliationExistsException {
+    try (Session session = sessionProvider.openSession()) {
+      if (isAffiliationInSession(session, affiliation)) {
+        throw new AffiliationExistsException("The affiliation already exists.")
       }
-      return persons
+      // we ignore the generated primary id for now
+      session.beginTransaction()
+      session.save(affiliation)
+    } catch (HibernateException e) {
+      log.error(e.message, e)
+      throw new DatabaseQueryException("An unexpected exception occurred during new affiliation creation")
     }
+  }
 
-    @Override
-    void addAffiliation(Affiliation affiliation) throws DatabaseQueryException, AffiliationExistsException {
-      try(Session session = sessionProvider.getCurrentSession()) {
-        session.beginTransaction()
-        int id = session.getIdentifier(affiliation) as int
-        if (id) {
-          // If the query returns an identifier, an entry with this data already exists
-          throw new AffiliationExistsException("The affiliation already exists.")
-        }
-        // we ignore the generated primary id for now
-        session.save(affiliation)
-      } catch (HibernateException e ){
-        logException(e)
-        throw new DatabaseQueryException("An unexpected exception occurred during new affiliation creation")
+  private static boolean isAffiliationInSession(Session session, Affiliation affiliation) {
+    session.beginTransaction()
+    Query<List<Person>> query =
+            session.createQuery("SELECT a FROM Affiliation a  " +
+                    "WHERE a.addressAddition = :addressAddition " +
+                    "AND a.category = :category " +
+                    "AND a.city = :city " +
+                    "AND a.country = :country " +
+                    "AND a.organization = :organization " +
+                    "AND a.postalCode = :postalCode " +
+                    "AND a.street = :street")
+    query.setParameter("addressAddition", affiliation.getAddressAddition())
+    query.setParameter("category", affiliation.getCategory())
+    query.setParameter("city", affiliation.getCity())
+    query.setParameter("country", affiliation.getCountry())
+    query.setParameter("organization", affiliation.getOrganization())
+    query.setParameter("postalCode", affiliation.getPostalCode())
+    query.setParameter("street", affiliation.getStreet())
+
+    boolean isInSession = !query.list().isEmpty()
+    session.getTransaction().commit()
+    return isInSession
+  }
+
+  @Override
+  List<Affiliation> listAllAffiliations() {
+    List<Affiliation> affiliations = new ArrayList<>()
+    try (Session session = sessionProvider.getCurrentSession()) {
+      session.beginTransaction()
+      // we ignore the generated primary id for now
+      Query<Affiliation> query = session.createQuery("FROM Affiliation ")
+      // Print entities
+      affiliations.addAll(query.list() as List<Affiliation>)
+    }
+    return affiliations
+  }
+
+  @Override
+  void addPerson(Person person) throws DatabaseQueryException, PersonExistsException {
+    try (Session session = sessionProvider.openSession()) {
+      if(isPersonInSession(session, person)) {
+        throw new PersonExistsException("The person already exists.")
       }
+      session.beginTransaction()
+      session.save(person)
+    } catch (HibernateException e) {
+      log.error(e.message, e)
+      throw new DatabaseQueryException("An unexpected exception occurred during new affiliation creation")
     }
+  }
 
-    @Override
-    List<Affiliation> listAllAffiliations() {
-        List<Affiliation> affiliations = new ArrayList<>()
-        try(Session session = sessionProvider.getCurrentSession()) {
-            session.beginTransaction()
-            // we ignore the generated primary id for now
-            Query<Affiliation> query = session.createQuery("FROM Affiliation ")
-            // Print entities
-            affiliations.addAll(query.list() as List<Affiliation>)
-        }
-        return affiliations
-    }
+  private static boolean isPersonInSession(Session session, Person person) {
+    session.beginTransaction()
+    Query<List<Person>> query =
+            session.createQuery("SELECT p FROM Person p  LEFT JOIN FETCH p.affiliations WHERE p.firstName=:firstName AND p.lastName=:lastName AND p.email=:email")
+    query.setParameter("firstName", person.getFirstName())
+    query.setParameter("lastName", person.getLastName())
+    query.setParameter("email", person.getEmail())
+    boolean isInSession = !query.list().isEmpty()
+    session.getTransaction().commit()
+    return isInSession
+  }
 
-    @Override
-    void addPerson(Person person) throws DatabaseQueryException, PersonExistsException {
-        try(Session session = sessionProvider.getCurrentSession()) {
-            session.beginTransaction()
-            int id = session.getIdentifier(person) as int
-            if (id) {
-                // If the query returns an identifier, an entry with this data already exists
-                throw new AffiliationExistsException("The person already exists.")
-            }
-            // we ignore the generated primary id for now
-            session.save(person)
-        } catch (HibernateException e ){
-            logException(e)
-            throw new DatabaseQueryException("An unexpected exception occurred during new affiliation creation")
-        }
-    }
+  @Override
+  Person updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException {
 
-    @Override
-    void updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException {
-        outdatedPersonData.setIsActive(false)
-        updatedPersonData.setIsActive(true)
-        try(Session session = sessionProvider.getCurrentSession()) {
-            session.beginTransaction()
-            session.save(outdatedPersonData)
-            session.save(updatedPersonData)
-            session.getTransaction().commit()
-        } catch (HibernateException e) {
-            logException(e)
-            throw new DatabaseQueryException("Unable to update person entry.")
-        }
+    // the user id nees to be preserved
+    updatedPersonData.setUserId(outdatedPersonData.getUserId())
+    try (Session session = sessionProvider.openSession()) {
+      if (!isPersonInSession(session, outdatedPersonData)) {
+        throw new DatabaseQueryException("Person was not found in the database and can't be updated.")
+      }
+      session.beginTransaction()
+      session.clear()
+      outdatedPersonData.setIsActive(false)
+      session.update(outdatedPersonData)
+      session.save(updatedPersonData)
+      session.getTransaction().commit()
+      return updatedPersonData
+    } catch (HibernateException e) {
+      log.error(e.message, e)
+      throw new DatabaseQueryException("Unable to update person entry.")
     }
+  }
 
-    @Override
-    void updatePersonAffiliations(Person person) throws DatabaseQueryException {
-        try(Session session = sessionProvider.getCurrentSession()) {
-            session.beginTransaction()
-            session.merge(person)
-            session.getTransaction().commit()
-        } catch (HibernateException e) {
-            logException(e)
-            throw new DatabaseQueryException("Unable to update person affiliations.")
-        }
+  @Override
+  Person updatePersonAffiliations(Person person) throws DatabaseQueryException {
+    try (Session session = sessionProvider.getCurrentSession()) {
+      session.beginTransaction()
+      Person mergedPerson = session.<Person>merge(person) //have to un-generify groovy here
+      session.getTransaction().commit()
+      return mergedPerson
+    } catch (HibernateException e) {
+      log.error(e.message, e)
+      throw new DatabaseQueryException("Unable to update person affiliations.")
     }
+  }
 
-    @Override
-    List<Person> findPerson(String firstName, String lastName) throws DatabaseQueryException {
-        List<Person> matches = new ArrayList<>()
-        try(Session session = sessionProvider.getCurrentSession()) {
-            session.beginTransaction()
-            Query<List<Person>> query =
-                    session.createQuery("SELECT p FROM Person p  LEFT JOIN FETCH p.affiliations WHERE p.firstName=:firstName AND p.lastName=:lastName")
-            query.setParameter("firstName", firstName)
-            query.setParameter("lastName", lastName)
-            matches.addAll(query.list() as List<Person>)
-            session.getTransaction().commit()
-        } catch (HibernateException e) {
-            logException(e)
-            throw new DatabaseQueryException("An unexpected exception occurred during the search.")
-        }
-      return matches
+  @Override
+  List<Person> findPerson(String firstName, String lastName) throws DatabaseQueryException {
+    List<Person> matches = new ArrayList<>()
+    try (Session session = sessionProvider.getCurrentSession()) {
+      session.beginTransaction()
+      Query<List<Person>> query =
+              session.createQuery("SELECT p FROM Person p  LEFT JOIN FETCH p.affiliations WHERE p.firstName=:firstName AND p.lastName=:lastName")
+      query.setParameter("firstName", firstName)
+      query.setParameter("lastName", lastName)
+      matches.addAll(query.list() as List<Person>)
+      session.getTransaction().commit()
+    } catch (HibernateException e) {
+      log.error(e.message, e)
+      throw new DatabaseQueryException("An unexpected exception occurred during the search.")
     }
-
-    private static void logException(Exception e) {
-        log.error(e.message)
-        log.error(e.getStackTrace().join("\n"))
-    }
+    return matches
+  }
 }

@@ -32,16 +32,16 @@ class Person {
     String lastName
 
     @Column(name = "title")
+    @Convert(converter = EmptyTitleRemover.class)
     String title
 
     @Column(name = "email")
     String email
 
     @Column(name = "active", columnDefinition = "tinyint", nullable = false)
-    boolean isActive
+    boolean isActive = true
 
-    @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH],
-        fetch = FetchType.LAZY)
+    @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH], fetch = FetchType.EAGER)
     @JoinTable(name = "person_affiliation", joinColumns = [ @JoinColumn(name = "person_id") ],
             inverseJoinColumns = [ @JoinColumn(name = "affiliation_id")])
     List<Affiliation> affiliations
@@ -132,4 +132,21 @@ class Person {
         }
     }
 
+    protected static class EmptyTitleRemover implements AttributeConverter<String, String> {
+        @Override
+        String convertToDatabaseColumn(String s) {
+            if (s.isEmpty()) {
+                return "None"
+            }
+            return s
+        }
+
+        @Override
+        String convertToEntityAttribute(String s) {
+            if (s.equals("None")) {
+                return ""
+            }
+            return s
+        }
+    }
 }

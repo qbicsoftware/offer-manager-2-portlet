@@ -1,16 +1,12 @@
 package life.qbic.portal.offermanager.components.offer.create
 
 import groovy.util.logging.Log4j2
-import life.qbic.business.offers.fetch.FetchOfferInput
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.OfferId
-import life.qbic.datamodel.dtos.business.ProductItem
-import life.qbic.datamodel.dtos.business.ProjectManager
-
-import life.qbic.business.offers.create.CalculatePrice
+import life.qbic.business.RefactorConverter
+import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.create.CreateOfferInput
+import life.qbic.business.offers.create.CreateOfferOutput
+import life.qbic.business.offers.fetch.FetchOfferInput
+import life.qbic.datamodel.dtos.business.*
 
 /**
  * Controller class adapter from view information into use case input interface
@@ -24,13 +20,15 @@ import life.qbic.business.offers.create.CreateOfferInput
 class CreateOfferController {
 
     private final CreateOfferInput input
-    private final CalculatePrice calculatePrice
     private final FetchOfferInput fetchOfferInput
+    private final CreateOfferOutput priceCalculationResultsOutput
 
-    CreateOfferController(CreateOfferInput input, FetchOfferInput fetchOfferInput ,CalculatePrice calculatePrice){
+    private static final RefactorConverter refactorConverter = new RefactorConverter()
+
+    CreateOfferController(CreateOfferInput input, FetchOfferInput fetchOfferInput, CreateOfferOutput priceCalculationResultsOutput) {
         this.input = input
-        this.calculatePrice = calculatePrice
         this.fetchOfferInput = fetchOfferInput
+        this.priceCalculationResultsOutput = priceCalculationResultsOutput
     }
 
     /**
@@ -52,45 +50,56 @@ class CreateOfferController {
             ProjectManager manager,
             List<ProductItem> items,
             Affiliation customerAffiliation,
-            String experimentalDesign){
+            String experimentalDesign) {
 
         Offer.Builder offerBuilder = new Offer.Builder(
-                    customer,
-                    manager,
-                    projectTitle,
-                    projectDescription,
-                    customerAffiliation)
-                    .items(items)
-                    .identifier(offerId)
+                customer,
+                manager,
+                projectTitle,
+                projectDescription,
+                customerAffiliation)
+                .items(items)
+                .identifier(offerId)
         if (experimentalDesign) {
             offerBuilder.experimentalDesign(experimentalDesign)
         }
+        offerBuilder.modificationDate(new Date())
+
         Offer offer = offerBuilder.build()
 
-        this.input.createOffer(offer)
+        this.input.createOffer(refactorConverter.toOffer(offer))
     }
 
-    /**
-     * Method to trigger the calculation of the price based on a list of items and a category
-     * @param items A list of product items with a quantity and product
-     * @param category defining the category of the affiliation
-     */
-    void calculatePriceForItems(List<ProductItem> items, Affiliation affiliation){
-        try {
-            this.calculatePrice.calculatePrice(items, affiliation)
-        } catch(Exception ignored) {
-            log.error(ignored.message)
-            log.error(ignored.stackTrace.join("\n"))
-            throw new IllegalArgumentException("Could not calculate price from provided arguments.")
+
+    void calculatePriceForItems(List<ProductItem> productItems, Affiliation affiliation) {
+        OfferV2 offer = new OfferV2(refactorConverter.toAffiliation(affiliation), new life.qbic.business.offers.identifier.OfferId("price", 1))
+        offer.setItems(productItems.stream().map(it -> refactorConverter.toProductItem(offer, it)).collect() as List<life.qbic.business.products.ProductItem>)
+        priceCalculationResultsOutput.calculatedPrice(offer.salePrice, offer.taxAmount, offer.overhead, offer.priceAfterTax, offer.totalDiscountAmount)
+    }
+
+    void updateOffer(OfferId offerId,
+                     String projectTitle,
+                     String projectDescription,
+                     Customer customer,
+                     ProjectManager manager,
+                     List<ProductItem> items,
+                     Affiliation customerAffiliation,
+                     String experimentalDesign) {
+        Offer.Builder offerBuilder = new Offer.Builder(
+                customer,
+                manager,
+                projectTitle,
+                projectDescription,
+                customerAffiliation)
+                .items(items)
+                .identifier(offerId)
+        if (experimentalDesign) {
+            offerBuilder.experimentalDesign(experimentalDesign)
         }
-    }
-    /**
-     * Triggers the FetchOffer use case on execution
-     *
-     * @param offerId The identifier of the offer to be fetched
-     */
-    void fetchOffer(OfferId offerId) {
-        this.fetchOfferInput.fetchOffer(offerId)
-    }
+        offerBuilder.modificationDate(new Date())
 
+        Offer offer = offerBuilder.build()
+
+        this.input.updateOffer(refactorConverter.toOffer(offer))
+    }
 }

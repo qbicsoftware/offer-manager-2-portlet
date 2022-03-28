@@ -1,6 +1,6 @@
 package life.qbic.portal.offermanager.components.person.create
 
-import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.datamodel.dtos.business.Affiliation
 
 /**
  * <h1>Organisation of an affiliation</h1>
@@ -26,7 +26,7 @@ class Organisation {
     List<Affiliation> affiliations
 
     Organisation(Affiliation affiliation) {
-        this.name = affiliation.getOrganization()
+        this.name = affiliation.organisation
         this.affiliations = new ArrayList<Affiliation>([affiliation])
     }
 

@@ -1,8 +1,10 @@
 package life.qbic.portal.offermanager.components.offer.create
 
-import life.qbic.business.offers.Offer
+import life.qbic.business.RefactorConverter
+import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.fetch.FetchOfferOutput
+import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
@@ -19,6 +21,8 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
     private final CreateOfferViewModel createOfferViewModel
     private final ResourcesService<Offer> offerService
 
+    private final RefactorConverter refactorConverter = new RefactorConverter()
+
     CreateOfferPresenter(AppViewModel viewModel, CreateOfferViewModel createOfferViewModel,
                          ResourcesService<Offer> offerService){
         this.viewModel = viewModel
@@ -27,11 +31,13 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
     }
 
     @Override
-    void createdNewOffer(Offer createdOffer) {
-        this.viewModel.successNotifications.add("Created offer with title " +
-                "\'${createdOffer.projectTitle}\' successfully")
+    void createdNewOffer(OfferV2 offer) {
+        Offer offerDto = refactorConverter.toOfferDto(offer)
 
-        this.offerService.addToResource(createdOffer)
+        this.viewModel.successNotifications.add("Created offer with title " +
+                "\'${offerDto.projectTitle}\' successfully")
+
+        this.offerService.addToResource(offerDto)
         this.createOfferViewModel.setOfferCreatedSuccessfully(true)
     }
 
@@ -75,7 +81,8 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput{
      * {@inheritDoc}
      */
     @Override
-    void fetchedOffer(Offer fetchedOffer) {
-        this.createOfferViewModel.savedOffer = Optional.of(fetchedOffer)
+    void fetchedOffer(OfferV2 fetchedOffer) {
+        Offer offerDto = refactorConverter.toOfferDto(fetchedOffer)
+        this.createOfferViewModel.savedOffer = Optional.of(offerDto)
     }
 }

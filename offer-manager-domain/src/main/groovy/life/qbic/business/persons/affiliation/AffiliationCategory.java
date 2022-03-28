@@ -1,7 +1,9 @@
 package life.qbic.business.persons.affiliation;
 
 import java.util.Arrays;
-import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * We define three major business affiliation categories here, which means that we decide between
@@ -30,15 +32,15 @@ public enum AffiliationCategory {
    * @since 1.3.0
    * @throws IllegalArgumentException in case no enum value has the provided label
    */
-  public static AffiliationCategory from(String label) throws IllegalArgumentException {
-    Optional<AffiliationCategory> affiliationCategory =
-        Arrays.stream(AffiliationCategory.values())
-            .filter(it -> it.getLabel().equals(label))
-            .findAny();
-    return affiliationCategory.orElseThrow(
-        () ->
-            new IllegalArgumentException(
-                String.format("No AffiliationCategory with label %s", label)));
+  public static AffiliationCategory forLabel(String label) throws IllegalArgumentException {
+    Stream<AffiliationCategory> availableCategories = Arrays.stream(AffiliationCategory.values());
+    Predicate<AffiliationCategory> hasProvidedLabel = it -> it.getLabel().equals(label);
+    Supplier<IllegalArgumentException> noCategoryFound = () -> new IllegalArgumentException(
+        String.format("No AffiliationCategory with label %s exists", label));
+    return availableCategories
+        .filter(hasProvidedLabel)
+        .findAny()
+        .orElseThrow(noCategoryFound);
   }
 
   /**

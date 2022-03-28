@@ -1,8 +1,9 @@
 package life.qbic.portal.offermanager.components.affiliation.create
 
 import groovy.util.logging.Log4j2
-import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.business.RefactorConverter
 import life.qbic.business.persons.affiliation.create.CreateAffiliationOutput
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
@@ -51,9 +52,11 @@ class CreateAffiliationPresenter implements CreateAffiliationOutput {
 
 
     @Override
-    void affiliationCreated(Affiliation affiliation) {
-        createAffiliationViewModel.affiliationService.addToResource(affiliation)
-        sharedViewModel.successNotifications.add("Successfully added new affiliation " + affiliation.getOrganization())
+    void affiliationCreated(life.qbic.business.persons.affiliation.Affiliation affiliation) {
+        Affiliation affiliationDto = new RefactorConverter().toAffiliationDto(affiliation)
+
+        createAffiliationViewModel.affiliationService.addToResource(affiliationDto)
+        sharedViewModel.successNotifications.add("Successfully added new affiliation " + affiliationDto.organisation)
         clearAffiliationData()
     }
 }

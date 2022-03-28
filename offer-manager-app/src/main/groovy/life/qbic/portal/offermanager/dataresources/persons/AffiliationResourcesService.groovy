@@ -1,7 +1,8 @@
 package life.qbic.portal.offermanager.dataresources.persons
 
-import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.business.RefactorConverter
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
@@ -25,15 +26,24 @@ class AffiliationResourcesService implements ResourcesService<Affiliation> {
 
     AffiliationResourcesService(ListAffiliationsDataSource listAffiliationsDataSource) {
         this.listAffiliationsDataSource = listAffiliationsDataSource
-        this.availableAffiliations = listAffiliationsDataSource.listAllAffiliations()
+
+        this.availableAffiliations = fetchAllAffiliations(listAffiliationsDataSource)
+
         this.eventEmitter = new EventEmitter<>()
+    }
+
+    private static Collection fetchAllAffiliations(ListAffiliationsDataSource listAffiliationsDataSource) {
+        RefactorConverter refactorConverter = new RefactorConverter()
+        return listAffiliationsDataSource.listAllAffiliations().stream()
+                .map(refactorConverter::toAffiliationDto)
+                .collect()
     }
 
     @Override
     void reloadResources() {
         availableAffiliations.clear()
 
-        List<Affiliation> updatedEntries = listAffiliationsDataSource.listAllAffiliations()
+        List<Affiliation> updatedEntries = fetchAllAffiliations(listAffiliationsDataSource)
         updatedEntries.each {
             addToResource(it)
         }

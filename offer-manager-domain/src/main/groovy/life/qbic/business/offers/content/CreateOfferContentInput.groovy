@@ -1,6 +1,6 @@
 package life.qbic.business.offers.content
 
-import life.qbic.datamodel.dtos.business.OfferId
+import life.qbic.business.offers.identifier.OfferId
 
 /**
  * <h1>Input for the {@link CreateOfferContent}</h1>

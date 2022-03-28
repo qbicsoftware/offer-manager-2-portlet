@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.projects
 
+import life.qbic.business.RefactorConverter
 import life.qbic.business.projects.spaces.list.ListProjectSpacesDataSource
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 import life.qbic.portal.offermanager.communication.EventEmitter
@@ -21,6 +22,8 @@ class ProjectSpaceResourceService implements ResourcesService<ProjectSpace>{
     private final List<ProjectSpace> availableSpaces
 
     private final EventEmitter<ProjectSpace> eventEmitter
+
+    private final RefactorConverter refactorConverter = new RefactorConverter()
 
     ProjectSpaceResourceService(ListProjectSpacesDataSource listProjectSpacesDataSource) {
         this.listProjectSpacesDataSource = Objects.requireNonNull(listProjectSpacesDataSource,

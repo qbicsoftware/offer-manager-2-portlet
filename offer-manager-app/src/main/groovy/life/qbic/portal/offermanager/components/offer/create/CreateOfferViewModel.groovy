@@ -3,11 +3,9 @@ package life.qbic.portal.offermanager.components.offer.create
 import groovy.beans.Bindable
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.offers.Offer
-import life.qbic.business.offers.identifier.OfferId
-import life.qbic.business.persons.Person
-import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.*
+import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
@@ -36,7 +34,8 @@ class CreateOfferViewModel {
     List<Product> externalServiceProduct = new ObservableList(new ArrayList<Product>())
 
     ObservableList productItems = new ObservableList(new ArrayList<ProductItemViewModel>())
-    ObservableList persons = new ArrayList<Person>()
+    ObservableList foundCustomers = new ObservableList(new ArrayList<Customer>())
+    ObservableList availableProjectManagers = new ObservableList(new ArrayList<ProjectManager>())
 
     @Bindable
     OfferId offerId
@@ -47,11 +46,11 @@ class CreateOfferViewModel {
     @Bindable
     String experimentalDesign
     @Bindable
-    Person customer
+    Customer customer
     @Bindable
     Affiliation customerAffiliation
     @Bindable
-    Person projectManager
+    ProjectManager projectManager
     @Bindable
     double offerPrice
 
@@ -110,8 +109,9 @@ class CreateOfferViewModel {
 
     Optional<Offer> savedOffer = Optional.empty()
 
-    private final ResourcesService<Person> personResourceService
+    private final ResourcesService<Customer> customerResourceService
     private final ResourcesService<Product> productsResourcesService
+    private final ResourcesService<ProjectManager> managerResourceService
     // where to emit selection for updatable person to
     private final EventEmitter<Person> personUpdateEvent
 
@@ -120,11 +120,13 @@ class CreateOfferViewModel {
 
     private final Logging log = Logger.getLogger(this.class)
 
-    CreateOfferViewModel(ResourcesService<Person> personResourceService,
+    CreateOfferViewModel(ResourcesService<Customer> customerResourceService,
+                         ResourcesService<ProjectManager> managerResourceService,
                          ResourcesService<Product> productsResourcesService,
                          EventEmitter<Person> personUpdateEvent) {
-        this.personResourceService = personResourceService
+        this.customerResourceService = customerResourceService
         this.productsResourcesService = productsResourcesService
+        this.managerResourceService = managerResourceService
         this.personUpdateEvent = personUpdateEvent
 
         resetViewRequired = new EventEmitter<>()
@@ -145,10 +147,7 @@ class CreateOfferViewModel {
             return
         }
         List<ProductItemViewModel> alreadyExistingItems =
-        productItems.stream()
-                .filter( it -> (it as ProductItemViewModel).getProduct().getProductId() == item.getProduct().getProductId())
-                .collect()
-
+                productItems.findAll { it.product.productId.equals(item.product.productId) } as List<ProductItemViewModel>
         double totalAmount = item.quantity
         for (ProductItemViewModel currentItem : alreadyExistingItems) {
             totalAmount = totalAmount + currentItem.quantity
@@ -182,8 +181,10 @@ class CreateOfferViewModel {
     }
 
     private void fetchPersonData() {
-        this.persons.clear()
-        this.persons.addAll(personResourceService.iterator())
+        this.availableProjectManagers.clear()
+        this.availableProjectManagers.addAll(managerResourceService.iterator())
+        this.foundCustomers.clear()
+        this.foundCustomers.addAll(customerResourceService.iterator())
     }
 
     private void fetchProductData() {
@@ -191,13 +192,21 @@ class CreateOfferViewModel {
     }
 
     private void subscribeToResources() {
-        Subscription<Person> personSubscription = new Subscription<Person>() {
+        Subscription<Customer> customerSubscription = new Subscription<Customer>() {
             @Override
-            void receive(Person customer) {
-                refreshPersons()
+            void receive(Customer customer) {
+                refreshCustomers()
             }
         }
-        this.personResourceService.subscribe(personSubscription)
+        this.customerResourceService.subscribe(customerSubscription)
+
+        Subscription<ProjectManager> managerSubscription = new Subscription<ProjectManager>() {
+            @Override
+            void receive(ProjectManager projectManager) {
+                refreshManagers()
+            }
+        }
+        this.managerResourceService.subscribe(managerSubscription)
 
         Subscription<Product> productSubscription = new Subscription<Product>() {
             @Override
@@ -214,10 +223,22 @@ class CreateOfferViewModel {
      * This method will be triggered when a service event is triggered and is intended
      * to refresh the customers shown in the grid with the ones currently stored in tce service
      */
-    protected void refreshPersons() {
-        List<Person> people = personResourceService.iterator().toList()
-        this.persons.clear()
-        persons.addAll(people)
+    protected void refreshCustomers() {
+        List<Customer> customers = customerResourceService.iterator().toList()
+        this.foundCustomers.clear()
+        foundCustomers.addAll(customers)
+    }
+
+    /**
+     * This method replaces the availableProjectManager list with the list provided by the managerResourceService
+     *
+     * This method will be triggered when a service event is triggered and is intended
+     * to refresh the project managers shown in the grid with the ones currently stored in the service
+     */
+    protected void refreshManagers() {
+        List<ProjectManager> projectManagers = managerResourceService.iterator().toList()
+        this.availableProjectManagers.clear()
+        availableProjectManagers.addAll(projectManagers)
     }
 
     private void refreshProducts() {
@@ -273,7 +294,7 @@ class CreateOfferViewModel {
      * Sets the customer for the offer. Whenever a change is detected an event is emitted.
      * @param customer
      */
-    void setCustomer(Person customer) {
+    void setCustomer(Customer customer) {
         if (this.customer != customer) {
             personUpdateEvent.emit(customer)
         } else {

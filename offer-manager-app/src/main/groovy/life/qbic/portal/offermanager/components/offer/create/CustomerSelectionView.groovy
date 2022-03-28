@@ -6,8 +6,9 @@ import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
-import life.qbic.business.persons.Person
-import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.datamodel.dtos.business.AcademicTitle
+import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.Resettable
 
@@ -32,7 +33,7 @@ class CustomerSelectionView extends VerticalLayout implements Resettable {
 
     HorizontalLayout addButtonsLayout
     Button createCustomerButton
-    Grid<Person> customerGrid
+    Grid<Customer> customerGrid
     HorizontalLayout customerLayout
     Grid<Affiliation> affiliationGrid
     HorizontalLayout affiliationLayout
@@ -85,7 +86,7 @@ class CustomerSelectionView extends VerticalLayout implements Resettable {
         selectedCustomerOverview.addComponents(selectedCustomer)
 
         // We also add some basic affiliation information in the overview
-        String affiliationInfo = "${viewModel.customerAffiliation?.getOrganization() ?: "-"}"
+        def affiliationInfo = "${viewModel.customerAffiliation?.organisation ?: "-"}"
         selectedAffiliation = new Label(affiliationInfo)
         selectedAffiliation.setCaption("Current Affiliation")
         selectedCustomerOverview.addComponents(selectedAffiliation)
@@ -146,8 +147,8 @@ class CustomerSelectionView extends VerticalLayout implements Resettable {
     /**
      * This method adds the retrieved Customer Information to the Customer grid
      */
-    private ListDataProvider<Person> setupCustomerDataProvider() {
-        def customerListDataProvider = new ListDataProvider<>(viewModel.getPersons() as List<Person>)
+    private ListDataProvider setupCustomerDataProvider() {
+        def customerListDataProvider = new ListDataProvider<>(viewModel.getFoundCustomers())
         this.customerGrid.setDataProvider(customerListDataProvider)
         return customerListDataProvider
     }
@@ -182,7 +183,7 @@ class CustomerSelectionView extends VerticalLayout implements Resettable {
         /*
         Let's not forget to setup the grid's data provider
          */
-        ListDataProvider<Person> customerDataProvider = setupCustomerDataProvider()
+        def customerDataProvider = setupCustomerDataProvider()
         /*
         Lastly, we add some content filters for the columns
          */
@@ -196,13 +197,13 @@ class CustomerSelectionView extends VerticalLayout implements Resettable {
      */
     private def generateAffiliationGrid() {
         try {
-            this.affiliationGrid.addColumn({ affiliation -> affiliation.getOrganization() }).setCaption("Organization")
+            this.affiliationGrid.addColumn({ affiliation -> affiliation.organisation }).setCaption("Organization")
             this.affiliationGrid.addColumn({ affiliation -> affiliation.addressAddition }).setCaption("Address Addition")
             this.affiliationGrid.addColumn({ affiliation -> affiliation.street }).setCaption("Street")
             this.affiliationGrid.addColumn({ affiliation -> affiliation.postalCode }).setCaption("Postal Code")
             this.affiliationGrid.addColumn({ affiliation -> affiliation.city }).setCaption("City")
             this.affiliationGrid.addColumn({ affiliation -> affiliation.country }).setCaption("Country")
-            this.affiliationGrid.addColumn({ affiliation -> affiliation.category }).setCaption("Category")
+            this.affiliationGrid.addColumn({ affiliation -> affiliation.category.value }).setCaption("Category")
 
             //specify size of grid and layout
             affiliationLayout.setSizeFull()
@@ -220,7 +221,7 @@ class CustomerSelectionView extends VerticalLayout implements Resettable {
 
         customerGrid.addSelectionListener({ selection ->
             if (selection.firstSelectedItem.isPresent()) {
-                Person selectedCustomer = selection.getFirstSelectedItem().get()
+                Customer selectedCustomer = selection.getFirstSelectedItem().get()
                 //vaadin is in single selection mode, selecting the first item will be fine
                 List<Affiliation> affiliations = selectedCustomer.affiliations
 
@@ -268,7 +269,7 @@ class CustomerSelectionView extends VerticalLayout implements Resettable {
                 }
             }
             if (it.propertyName.equals("customerAffiliation")) {
-                def affiliationInfo = "${viewModel.customerAffiliation?.getOrganization() ?: "-"}"
+                def affiliationInfo = "${viewModel.customerAffiliation?.organisation ?: "-"}"
                 selectedAffiliation.setValue(affiliationInfo)
             }
             /*
@@ -282,14 +283,14 @@ class CustomerSelectionView extends VerticalLayout implements Resettable {
             }
         })
 
-        viewModel.addPropertyChangeListener("persons", {
+        viewModel.addPropertyChangeListener("foundCustomers", {
             if (it instanceof ObservableList.ElementEvent) {
                 this.customerGrid.getDataProvider().refreshAll()
             }
         })
     }
 
-    private void addFilters(ListDataProvider<Person> customerListDataProvider) {
+    private void addFilters(ListDataProvider customerListDataProvider) {
         HeaderRow customerFilterRow = customerGrid.appendHeaderRow()
         GridUtils.setupColumnFilter(customerListDataProvider,
                 customerGrid.getColumn("FirstName"),

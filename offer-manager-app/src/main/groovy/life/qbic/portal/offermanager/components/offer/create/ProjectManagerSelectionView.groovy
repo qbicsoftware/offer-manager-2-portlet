@@ -1,15 +1,15 @@
 package life.qbic.portal.offermanager.components.offer.create
 
 import com.vaadin.data.provider.ListDataProvider
-import com.vaadin.event.selection.SingleSelectionEvent
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
-import life.qbic.business.persons.Person
+import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.Resettable
+import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
 
 /**
  * This class generates a Layout in which the user
@@ -28,7 +28,7 @@ class ProjectManagerSelectionView extends VerticalLayout implements Resettable {
     Button next
     Button previous
 
-    Grid<Person> projectManagerGrid
+    Grid<ProjectManager> projectManagerGrid
     HorizontalLayout projectManagerLayout
 
     Label selectedProjectManager
@@ -36,7 +36,7 @@ class ProjectManagerSelectionView extends VerticalLayout implements Resettable {
     ProjectManagerSelectionView(CreateOfferViewModel viewModel){
         this.viewModel = viewModel
         initLayout()
-        generateProjectManagerGrid()
+        generateCustomerGrid()
         addListener()
     }
 
@@ -55,7 +55,7 @@ class ProjectManagerSelectionView extends VerticalLayout implements Resettable {
         this.addComponent(title)
 
         /*
-        Provide a display the current selected person with the selected affiliation
+        Provide a display the current selected customer with the selected affiliation
          */
         HorizontalLayout selectedManagerOverview = new HorizontalLayout()
         def managerFullName =
@@ -79,7 +79,7 @@ class ProjectManagerSelectionView extends VerticalLayout implements Resettable {
         buttonLayout.setComponentAlignment(previous, Alignment.BOTTOM_LEFT)
         buttonLayout.setSizeFull()
 
-        this.projectManagerGrid = new Grid<Person>()
+        this.projectManagerGrid = new Grid<ProjectManager>()
         projectManagerLayout = new HorizontalLayout(projectManagerGrid)
 
         this.addComponents(
@@ -94,8 +94,8 @@ class ProjectManagerSelectionView extends VerticalLayout implements Resettable {
     /**
      * This method adds the retrieved Customer Information to the Customer grid
      */
-    private ListDataProvider<Person> setupDataProvider() {
-        def dataProvider = new ListDataProvider<>(viewModel.getPersons() as List<Person>)
+    private ListDataProvider setupDataProvider() {
+        def dataProvider = new ListDataProvider<>(viewModel.availableProjectManagers)
         this.projectManagerGrid.setDataProvider(dataProvider)
         return dataProvider
     }
@@ -105,13 +105,13 @@ class ProjectManagerSelectionView extends VerticalLayout implements Resettable {
      *
      * This Method is responsible for setting up the grid and setting the customer information to the individual grid columns.
      */
-    private def generateProjectManagerGrid() {
+    private def generateCustomerGrid() {
         try {
-            this.projectManagerGrid.addColumn({ person -> person.getFirstName() })
+            this.projectManagerGrid.addColumn({ customer -> customer.getFirstName() })
                     .setCaption("First Name").setId("FirstName")
-            this.projectManagerGrid.addColumn({ person -> person.getLastName() })
+            this.projectManagerGrid.addColumn({ customer -> customer.getLastName() })
                     .setCaption("Last Name").setId("LastName")
-            this.projectManagerGrid.addColumn({ person -> person.getEmail() })
+            this.projectManagerGrid.addColumn({ customer -> customer.getEmailAddress() })
                     .setCaption("Email Address").setId("EmailAddress")
 
             //specify size of grid and layout
@@ -126,11 +126,11 @@ class ProjectManagerSelectionView extends VerticalLayout implements Resettable {
         /*
         We need to add a data provider for the grid content
          */
-        ListDataProvider<Person> projectManagerDataProvider = setupDataProvider()
+        def projectManagerDataProvider = setupDataProvider()
         /*
         Lastly, we add some nice content filters
          */
-        setupFilters(projectManagerDataProvider)
+        setupFilters(projectManagerDataProvider as ListDataProvider<ProjectManager>) //fixme type mismatch
     }
 
     /**
@@ -139,9 +139,10 @@ class ProjectManagerSelectionView extends VerticalLayout implements Resettable {
     private void addListener() {
 
         projectManagerGrid.addSelectionListener({ selection ->
-            if (selection instanceof SingleSelectionEvent<Person>) {
-                viewModel.projectManager = selection.getValue()
-            }
+            //vaadin is in single selection mode, selecting the first item will be fine
+            ProjectManager projectManager = projectManagerGrid.getSelectedItems().getAt(0)
+
+            viewModel.projectManager = projectManager
         })
 
         /*
@@ -162,24 +163,24 @@ class ProjectManagerSelectionView extends VerticalLayout implements Resettable {
             }
         })
 
-        viewModel.addPropertyChangeListener("persons", {
+        viewModel.addPropertyChangeListener("availableProjectManagers", {
             if (it instanceof ObservableList.ElementEvent) {
                 this.projectManagerGrid.getDataProvider().refreshAll()
             }
         })
     }
 
-    private void setupFilters(ListDataProvider<Person> projectManagerListDataProvider) {
-        HeaderRow projectManagerFilterRow = projectManagerGrid.appendHeaderRow()
+    private void setupFilters(ListDataProvider<ProjectManager> projectManagerListDataProvider) {
+        HeaderRow customerFilterRow = projectManagerGrid.appendHeaderRow()
         GridUtils.setupColumnFilter(projectManagerListDataProvider,
                 projectManagerGrid.getColumn("FirstName"),
-                projectManagerFilterRow)
+                customerFilterRow)
         GridUtils.setupColumnFilter(projectManagerListDataProvider,
                 projectManagerGrid.getColumn("LastName"),
-                projectManagerFilterRow)
+                customerFilterRow)
         GridUtils.setupColumnFilter(projectManagerListDataProvider,
                 projectManagerGrid.getColumn("EmailAddress"),
-                projectManagerFilterRow)
+                customerFilterRow)
     }
 
     @Override

@@ -1,8 +1,7 @@
 package life.qbic.business.products.archive
 
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.datamodel.dtos.business.ProductId
-import life.qbic.datamodel.dtos.business.services.Product
+import life.qbic.business.products.Product
 
 /**
  * <h1>4.3.2 Archive Service Product</h1>
@@ -16,27 +15,27 @@ import life.qbic.datamodel.dtos.business.services.Product
  */
 class ArchiveProduct implements ArchiveProductInput {
 
-    private final ArchiveProductDataSource dataSource
-    private final ArchiveProductOutput output
+  private final ArchiveProductDataSource dataSource
+  private final ArchiveProductOutput output
 
-    ArchiveProduct(ArchiveProductDataSource dataSource, ArchiveProductOutput output) {
-        this.dataSource = dataSource
-        this.output = output
+  ArchiveProduct(ArchiveProductDataSource dataSource, ArchiveProductOutput output) {
+    this.dataSource = dataSource
+    this.output = output
+  }
+
+  @Override
+  void archive(String productId) {
+    try {
+      Optional<Product> searchResult = this.dataSource.fetch(productId)
+      if (searchResult.isPresent()) {
+        dataSource.archive(searchResult.get())
+        output.archived(searchResult.get())
+      } else {
+        output.failNotification("Could not find a product with identifier ${productId.toString()}")
+      }
+    } catch (DatabaseQueryException ignored) {
+      output.failNotification("Could not archive product ${productId.toString()}")
     }
 
-    @Override
-    void archive(ProductId productId) {
-        try {
-            Optional<Product> searchResult = this.dataSource.fetch(productId)
-            if (searchResult.isPresent()) {
-                dataSource.archive(searchResult.get())
-                output.archived(searchResult.get())
-            } else {
-                output.failNotification("Could not find a product with identifier ${productId.toString()}")
-            }
-        } catch (DatabaseQueryException ignored) {
-            output.failNotification("Could not archive product ${productId.toString()}")
-        }
-
-    }
+  }
 }

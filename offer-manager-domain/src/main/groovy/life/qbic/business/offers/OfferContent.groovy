@@ -1,10 +1,9 @@
 package life.qbic.business.offers
 
 import groovy.transform.EqualsAndHashCode
-import life.qbic.datamodel.dtos.business.AcademicTitle
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.business.RefactorConverter
+import life.qbic.business.persons.Person
+import life.qbic.business.persons.affiliation.Affiliation
 
 /**
  * <h1>A DTO containing the fields required in the offer pdf</h1>
@@ -17,6 +16,8 @@ import life.qbic.datamodel.dtos.business.ProjectManager
 
 @EqualsAndHashCode
 class OfferContent {
+
+    private static final RefactorConverter refactorConverter = new RefactorConverter()
 
     /*Person Information*/
     /**
@@ -153,6 +154,7 @@ class OfferContent {
      * The total VAT costs of the offer
      */
     final double totalVat
+
     /**
      * The ratio/percentage of vat applied in the offer
      */
@@ -161,267 +163,6 @@ class OfferContent {
      * The total discount amount that has been applied in the offer
      */
     final Double totalDiscountAmount
-
-    static class Builder {
-        /*Person Information*/
-        String customerFirstName
-        String customerLastName
-        String customerTitle
-        String customerOrganisation
-        String customerAddressAddition
-        String customerStreet
-        String customerPostalCode
-        String customerCity
-        String customerCountry
-        String projectManagerFirstName
-        String projectManagerLastName
-        String projectManagerTitle
-        String projectManagerEmail
-        String projectManagerOrganisation
-        String projectManagerStreet
-        String projectManagerPostalCode
-        String projectManagerCity
-        String projectManagerCountry
-
-        /*Project Information*/
-        Date creationDate
-        Date expirationDate
-        String projectTitle
-        String projectObjective
-        String experimentalDesign
-        String offerIdentifier
-
-        /*Items*/
-        List<OfferItem> dataGenerationItems
-        List<OfferItem> dataAnalysisItems
-        List<OfferItem> dataManagementItems
-        List<OfferItem> externalServiceItems
-
-        /*Overheads*/
-        Double overheadTotal
-        Double overheadsDataGeneration
-        Double overheadsDataAnalysis
-        Double overheadsProjectManagementAndDataStorage
-        Double overheadsExternalServices
-        Double overheadRatio
-
-        /*Prices*/
-        Double netDataGeneration
-        Double netDataAnalysis
-        Double netPMandDS
-        Double netExternalServices
-        Double totalCost
-        Double netCostsWithOverheads
-        Double netCost
-        Double totalVat
-        Double vatRatio
-        Double totalDiscountAmount
-
-        Builder(Customer customer, Affiliation customerAffiliation, ProjectManager projectManager, Date creationDate, Date expirationDate, String projectTitle,
-        String projectObjective, String experimentalDesign, String offerIdentifier, double netCostsWithOverheads){
-            /*Customer*/
-            customerFirstName = Objects.requireNonNull(customer.firstName,"Customer must not be null")
-            customerLastName = Objects.requireNonNull(customer.lastName, "Customer must not be null")
-            String customerTitle = customer.title == AcademicTitle.NONE ? "" : customer.title
-            this.customerTitle = Objects.requireNonNull(customerTitle, "Customer must not be null")
-
-            customerOrganisation = Objects.requireNonNull(customerAffiliation.organisation, "Customer affiliation must not be null")
-            customerAddressAddition = customerAffiliation.addressAddition ?: ""
-            customerStreet = Objects.requireNonNull(customerAffiliation.street, "Customer affiliation must not be null")
-            customerPostalCode = Objects.requireNonNull(customerAffiliation.postalCode, "Customer affiliation  must not be null")
-            customerCity = Objects.requireNonNull(customerAffiliation.city, "Customer affiliation must not be null")
-            customerCountry = Objects.requireNonNull(customerAffiliation.country, "Customer affiliation must not be null")
-            /*Projectmanager*/
-            projectManagerFirstName = Objects.requireNonNull(projectManager.firstName, "Projectmanager must not be null")
-            projectManagerLastName = Objects.requireNonNull(projectManager.lastName, "Projectmanager must not be null")
-            String projectManagerTitle = projectManager.title == AcademicTitle.NONE ? "" : projectManager.title
-            this.projectManagerTitle = Objects.requireNonNull(projectManagerTitle, "Projectmanager must not be null")
-            projectManagerEmail = Objects.requireNonNull(projectManager.emailAddress, "Projectmanager must not be null")
-
-            Affiliation pmAffiliation = projectManager.affiliations.get(0)
-            projectManagerOrganisation = Objects.requireNonNull(pmAffiliation.organisation, "Projectmanager affiliation must not be null")
-            projectManagerStreet = Objects.requireNonNull(pmAffiliation.street, "Projectmanager affiliation must not be null")
-            projectManagerPostalCode = Objects.requireNonNull(pmAffiliation.postalCode, "Projectmanager affiliation  must not be null")
-            projectManagerCity = Objects.requireNonNull(pmAffiliation.city, "Projectmanager affiliation must not be null")
-            projectManagerCountry = Objects.requireNonNull(pmAffiliation.country, "Projectmanager affiliation must not be null")
-
-            /*Projectinformation*/
-            this.creationDate = Objects.requireNonNull(creationDate, "Creation date must not be null")
-            this.expirationDate = Objects.requireNonNull(expirationDate, "Expiration date must not be null")
-            this.projectTitle = Objects.requireNonNull(projectTitle, "Project title must not be null")
-            this.projectObjective = Objects.requireNonNull(projectObjective, "Project objective must not be null")
-            this.experimentalDesign = Objects.requireNonNull(experimentalDesign, "Experimental design must not be  null")
-            this.offerIdentifier = Objects.requireNonNull(offerIdentifier, "Offer identifier must not be null")
-
-            /*costs*/
-            this.netCostsWithOverheads = Objects.requireNonNull(netCostsWithOverheads, "Net costs with overheads must not be null")
-
-            /*
-            Provides NPE safe extension of the builder and keeps developers happy
-             */
-            this.externalServiceItems = []
-            this.netExternalServices = 0
-            this.overheadsExternalServices = 0
-        }
-        Builder dataGenerationItems(List<OfferItem> dataGenerationItems){
-            this.dataGenerationItems = dataGenerationItems
-            return this
-        }
-        Builder dataAnalysisItems(List<OfferItem> dataAnalysisItems){
-            this.dataAnalysisItems = dataAnalysisItems
-            return this
-        }
-        Builder dataManagementItems(List<OfferItem> dataManagementItems){
-            this.dataManagementItems = dataManagementItems
-            return this
-        }
-        Builder externalServiceItems(List<OfferItem> externalServiceItems) {
-            this.externalServiceItems = externalServiceItems
-            return this
-        }
-        Builder overheadTotal(double overheadTotal){
-            this.overheadTotal = overheadTotal
-            return this
-        }
-        Builder overheadRatio(double overheadRatio){
-            this.overheadRatio = overheadRatio
-            return this
-        }
-        Builder overheadsDataGeneration(double overheadDG){
-            this.overheadsDataGeneration = overheadDG
-            return this
-        }
-        Builder overheadsDataAnalysis(double overheadDA){
-            this.overheadsDataAnalysis = overheadDA
-            return this
-        }
-        Builder overheadsProjectManagementAndDataStorage(double overheadPmAndDs){
-            this.overheadsProjectManagementAndDataStorage = overheadPmAndDs
-            return this
-        }
-        Builder overheadsExternalServices(double overheadExternalServices) {
-            this.overheadsExternalServices = overheadExternalServices
-            return this
-        }
-        Builder netDataGeneration(double net){
-            this.netDataGeneration = net
-            return this
-        }
-        Builder netDataAnalysis(double net){
-            this.netDataAnalysis = net
-            return this
-        }
-        Builder netProjectManagementAndDataStorage(double net){
-            this.netPMandDS = net
-            return this
-        }
-        Builder netExternalServices(double net) {
-            this.netExternalServices = net
-            return this
-        }
-        Builder totalCost(double total){
-            this.totalCost = total
-            return this
-        }
-        Builder netCost(double net){
-            this.netCost = net
-            return this
-        }
-        Builder totalVat(double vat){
-            this.totalVat = vat
-            return this
-        }
-        Builder vatRatio(double vat){
-            this.vatRatio = vat
-            return this
-        }
-        Builder totalDiscountAmount(double totalDiscount){
-            this.totalDiscountAmount = totalDiscount
-            return this
-        }
-
-        OfferContent build(){
-            //require all fields to be set before the object can be created
-            if(dataGenerationItems == null) throw new NullPointerException("Missing data generation items")
-            if(dataAnalysisItems == null) throw new NullPointerException("Missing data analysis items")
-            if(dataManagementItems == null) throw new NullPointerException("Missing data management items")
-            if(externalServiceItems == null) throw new NullPointerException("Missing external service items")
-            if(overheadTotal == null) throw new NullPointerException("Missing overhead total costs")
-            if(overheadRatio == null) throw new NullPointerException("Missing overhead ratio")
-            if(overheadsDataAnalysis == null) throw new NullPointerException("Missing data analysis overhead costs")
-            if(overheadsDataGeneration == null) throw new NullPointerException("Missing data generation overhead costs")
-            if(overheadsProjectManagementAndDataStorage == null) throw new NullPointerException("Missing project management and data storage overhead costs")
-            if(netDataGeneration == null) throw new NullPointerException("Missing net data generation costs")
-            if(netDataAnalysis == null) throw new NullPointerException("Missing net data analysis costs")
-            if(netPMandDS == null) throw new NullPointerException("Missing net project management and data storage costs")
-            if(totalCost == null) throw new NullPointerException("Missing total costs")
-            if(netCost == null) throw new NullPointerException("Missing net costs")
-            if(totalVat == null) throw new NullPointerException("Missing total vat costs")
-            if(vatRatio == null) throw new NullPointerException("Missing vat ratio")
-            if(totalDiscountAmount == null) throw new NullPointerException("Missing total discount amount")
-
-            return new OfferContent(this)
-        }
-    }
-
-    private OfferContent(Builder builder){
-        /*Person Information*/
-        /*Customer*/
-        customerFirstName = builder.customerFirstName
-        customerLastName = builder.customerLastName
-        customerTitle = builder.customerTitle
-
-        customerOrganisation = builder.customerOrganisation
-        customerAddressAddition = builder.customerAddressAddition
-        customerStreet = builder.customerStreet
-        customerPostalCode = builder.customerPostalCode
-        customerCity = builder.customerCity
-        customerCountry = builder.customerCountry
-        /*Projectmanager*/
-        projectManagerFirstName = builder.projectManagerFirstName
-        projectManagerLastName = builder.projectManagerLastName
-        projectManagerTitle = builder.projectManagerTitle
-        projectManagerEmail = builder.projectManagerEmail
-        projectManagerOrganisation = builder.projectManagerOrganisation
-        projectManagerStreet = builder.projectManagerStreet
-        projectManagerPostalCode = builder.projectManagerPostalCode
-        projectManagerCity = builder.projectManagerCity
-        projectManagerCountry = builder.projectManagerCountry
-
-        /*Project Information*/
-        creationDate = builder.creationDate
-        expirationDate = builder.expirationDate
-        projectTitle = builder.projectTitle
-        projectObjective = builder.projectObjective
-        experimentalDesign = builder.experimentalDesign
-        offerIdentifier = builder.offerIdentifier
-
-        /*Items*/
-        dataGenerationItems = builder.dataGenerationItems.collect()
-        dataAnalysisItems = builder.dataAnalysisItems.collect()
-        dataManagementItems = builder.dataManagementItems.collect()
-        externalServiceItems = builder.externalServiceItems.collect()
-
-        /*Overheads*/
-        overheadTotal = builder.overheadTotal
-        overheadRatio = builder.overheadRatio
-        overheadsDataGeneration = builder.overheadsDataGeneration
-        overheadsDataAnalysis = builder.overheadsDataAnalysis
-        overheadsProjectManagementAndDataStorage = builder.overheadsProjectManagementAndDataStorage
-        overheadsExternalService = builder.overheadsExternalServices
-
-        /*Prices*/
-        netDataGeneration = builder.netDataGeneration
-        netDataAnalysis = builder.netDataAnalysis
-        netPMandDS = builder.netPMandDS
-        netExternalServices = builder.netExternalServices
-        totalCost = builder.totalCost
-        netCost = builder.netCost
-        netCostsWithOverheads = builder.netCostsWithOverheads
-        totalVat = builder.totalVat
-        vatRatio = builder.vatRatio
-        totalDiscountAmount = builder.totalDiscountAmount
-    }
 
     /**
      * Returns a true copy of the data generation items.
@@ -453,5 +194,123 @@ class OfferContent {
      */
     List<OfferItem> getExternalServiceItems() {
         return externalServiceItems.collect()
+    }
+
+    OfferContent(String customerFirstName, String customerLastName, String customerTitle, String customerOrganisation, String customerAddressAddition, String customerStreet, String customerPostalCode, String customerCity, String customerCountry, String projectManagerFirstName, String projectManagerLastName, String projectManagerTitle, String projectManagerEmail, String projectManagerOrganisation, String projectManagerStreet, String projectManagerPostalCode, String projectManagerCity, String projectManagerCountry, Date creationDate, Date expirationDate, String projectTitle, String projectObjective, String experimentalDesign, String offerIdentifier, List<OfferItem> dataGenerationItems, List<OfferItem> dataAnalysisItems, List<OfferItem> dataManagementItems, List<OfferItem> externalServiceItems, double overheadTotal, double overheadRatio, double overheadsDataGeneration, double overheadsDataAnalysis, double overheadsProjectManagementAndDataStorage, double overheadsExternalService, double netDataGeneration, double netDataAnalysis, double netPMandDS, double netExternalServices, double totalCost, double netCost, double netCostsWithOverheads, double totalVat, double vatRatio, Double totalDiscountAmount) {
+        this.customerFirstName = customerFirstName
+        this.customerLastName = customerLastName
+        this.customerTitle = customerTitle
+        this.customerOrganisation = customerOrganisation
+        this.customerAddressAddition = customerAddressAddition
+        this.customerStreet = customerStreet
+        this.customerPostalCode = customerPostalCode
+        this.customerCity = customerCity
+        this.customerCountry = customerCountry
+        this.projectManagerFirstName = projectManagerFirstName
+        this.projectManagerLastName = projectManagerLastName
+        this.projectManagerTitle = projectManagerTitle
+        this.projectManagerEmail = projectManagerEmail
+        this.projectManagerOrganisation = projectManagerOrganisation
+        this.projectManagerStreet = projectManagerStreet
+        this.projectManagerPostalCode = projectManagerPostalCode
+        this.projectManagerCity = projectManagerCity
+        this.projectManagerCountry = projectManagerCountry
+        this.creationDate = creationDate
+        this.expirationDate = expirationDate
+        this.projectTitle = projectTitle
+        this.projectObjective = projectObjective
+        this.experimentalDesign = experimentalDesign
+        this.offerIdentifier = offerIdentifier
+        this.dataGenerationItems = dataGenerationItems
+        this.dataAnalysisItems = dataAnalysisItems
+        this.dataManagementItems = dataManagementItems
+        this.externalServiceItems = externalServiceItems
+        this.overheadTotal = overheadTotal
+        this.overheadRatio = overheadRatio
+        this.overheadsDataGeneration = overheadsDataGeneration
+        this.overheadsDataAnalysis = overheadsDataAnalysis
+        this.overheadsProjectManagementAndDataStorage = overheadsProjectManagementAndDataStorage
+        this.overheadsExternalService = overheadsExternalService
+        this.netDataGeneration = netDataGeneration
+        this.netDataAnalysis = netDataAnalysis
+        this.netPMandDS = netPMandDS
+        this.netExternalServices = netExternalServices
+        this.totalCost = totalCost
+        this.netCost = netCost
+        this.netCostsWithOverheads = netCostsWithOverheads
+        this.totalVat = totalVat
+        this.vatRatio = vatRatio
+        this.totalDiscountAmount = totalDiscountAmount
+    }
+
+    /**
+     * Converts to OfferContent from OfferV2
+     *
+     *
+     * @param offer OfferV2 containing the information to be translated into the OfferContent
+     * @return OfferContent
+     */
+    static OfferContent from(OfferV2 offer) {
+        String offerIdString = offer.getIdentifier().toString()
+        Person customer = offer.getCustomer()
+        Affiliation affiliation = offer.getSelectedCustomerAffiliation()
+        Person projectManager = offer.getProjectManager()
+        Date creationDate = refactorConverter.toUtilDate(offer.getCreationDate())
+        Date expirationDate = refactorConverter.toUtilDate(offer.getExpirationDate())
+        String projectTitle = offer.getProjectTitle()
+        String projectObjective = offer.getProjectObjective()
+        String experimentalDesign = offer.getExperimentalDesign().orElse("")
+        List<OfferItem> dataGenerationItems = offer.dataGenerationItems.stream().map(refactorConverter::toOfferItem).collect()
+        List<OfferItem> dataAnalysisItems = offer.dataAnalysisItems.stream().map(refactorConverter::toOfferItem).collect()
+        List<OfferItem> dataManagementItems = offer.dataManagementItems.stream().map(refactorConverter::toOfferItem).collect()
+        List<OfferItem> externalServiceItems = offer.externalServiceItems.stream().map(refactorConverter::toOfferItem).collect()
+
+
+        def projectManagerAffiliation = projectManager.affiliations.first()
+        new OfferContent(customer.firstName,
+                customer.lastName,
+                customer.title,
+                affiliation.organization,
+                affiliation.getAddressAddition(),
+                affiliation.getStreet(),
+                affiliation.getPostalCode(),
+                affiliation.city,
+                affiliation.country,
+                projectManager.firstName,
+                projectManager.lastName,
+                projectManager.title,
+                projectManager.email,
+                projectManagerAffiliation.organization,
+                projectManagerAffiliation.street,
+                projectManagerAffiliation.postalCode,
+                projectManagerAffiliation.city,
+                projectManagerAffiliation.country,
+                creationDate,
+                expirationDate,
+                projectTitle,
+                projectObjective,
+                experimentalDesign,
+                offerIdString,
+                dataGenerationItems,
+                dataAnalysisItems,
+                dataManagementItems,
+                externalServiceItems,
+                offer.overhead,
+                offer.overheadRatio,
+                offer.dataGenerationOverhead.doubleValue(),
+                offer.dataAnalysisOverhead.doubleValue(),
+                offer.dataManagementOverhead.doubleValue(),
+                offer.externalServiceOverhead.doubleValue(),
+                offer.dataGenerationSalePrice.doubleValue(),
+                offer.dataAnalysisSalePrice.doubleValue(),
+                offer.dataManagementSalePrice.doubleValue(),
+                offer.externalServiceSalePrice.doubleValue(),
+                offer.priceAfterTax.doubleValue(),
+                offer.salePrice.doubleValue(),
+                offer.priceBeforeTax.doubleValue(),
+                offer.totalVat.doubleValue(),
+                offer.vatRatio.doubleValue(),
+                offer.totalDiscountAmount.doubleValue()
+        )
     }
 }

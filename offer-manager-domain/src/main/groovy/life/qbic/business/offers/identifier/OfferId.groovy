@@ -31,7 +31,7 @@ class OfferId implements Comparable<OfferId>{
 
     OfferId(String projectPart, int version) {
         this.randomPart = generateFourLetterString()
-        this.projectPart = projectPart
+        this.projectPart = projectPart?.toLowerCase()
         this.version = version
     }
 
@@ -75,5 +75,11 @@ class OfferId implements Comparable<OfferId>{
             return 0
         }
         return this.version <=> other.version
+    }
+
+
+    @Override
+    String toString() {
+        return String.format("O_%s_%s_%s", projectPart, randomPart, version)
     }
 }

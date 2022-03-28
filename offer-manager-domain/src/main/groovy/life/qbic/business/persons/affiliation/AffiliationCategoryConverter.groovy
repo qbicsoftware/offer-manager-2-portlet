@@ -18,6 +18,6 @@ class AffiliationCategoryConverter implements AttributeConverter<AffiliationCate
 
     @Override
     AffiliationCategory convertToEntityAttribute(String s) {
-        return AffiliationCategory.from(s)
+        return AffiliationCategory.forLabel(s)
     }
 }

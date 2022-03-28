@@ -1,0 +1,47 @@
+{
+  "CreateOffercontentInput": "OfferId",
+  "CalculatePrice": [
+    "AffiliationCategory",
+    "ProductItem"
+  ],
+  "CreateOfferDataSource": [
+    "Offer",
+    "OfferId"
+  ],
+  "CreateOfferInput": "Offer",
+  "CreateOfferOutput": "Offer",
+  "FetchOfferDataSource": [
+    "Offer",
+    "OfferId"
+  ],
+  "FetchOfferInput": "OfferId",
+  "FetchOfferOutput": "Offer",
+  "UpdateOfferOutput": "Offer",
+  "ArchiveProductDataSource": [
+    "Product",
+    "ProductId"
+  ],
+  "ArchiveProductInput": "ProductId",
+  "ArchiveProductOutput": "Product",
+  "CreateProductDataSource": [
+    "Product",
+    "ProductId"
+  ],
+  "CreateProductOutput": "Product",
+  "ListProductsDataSource": "Product",
+  "CreateProjectDataSource": [
+    "Project",
+    "ProjectApplication"
+  ],
+  "CreateProjectInput": "ProjectApplication",
+  "CreateProjectOutput": [
+    "OfferId",
+    "Project",
+    "ProjectIdentifier"
+  ],
+  "ListProjectsDataSource": "ProjectIdentifer",
+  "CreateProjectSpaceDataSource": "ProjectSpace",
+  "CreateProjectSpaceInput": "ProjectSpace",
+  "CreateProjectSpaceOutput": "ProjectSpace",
+  "ListProjectSpacesDataSource": "ProjectSpace"
+}

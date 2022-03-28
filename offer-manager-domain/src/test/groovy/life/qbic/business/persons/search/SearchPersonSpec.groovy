@@ -1,10 +1,10 @@
-package life.qbic.portal.portlet.persons.search
+package life.qbic.business.persons.search
 
+import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.persons.search.SearchPerson
 import life.qbic.business.persons.search.SearchPersonDataSource
 import life.qbic.business.persons.search.SearchPersonOutput
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.business.exceptions.DatabaseQueryException
 import spock.lang.Specification
 
 /**

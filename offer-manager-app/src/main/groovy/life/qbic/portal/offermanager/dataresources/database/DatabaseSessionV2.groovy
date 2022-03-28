@@ -1,8 +1,11 @@
 package life.qbic.portal.offermanager.dataresources.database
 
 import groovy.util.logging.Log4j2
+import life.qbic.business.offers.OfferV2
 import life.qbic.business.persons.Person
 import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.business.products.Product
+import life.qbic.business.products.ProductItem
 import org.hibernate.Session
 import org.hibernate.SessionFactory
 import org.hibernate.cfg.Configuration
@@ -39,11 +42,20 @@ class DatabaseSessionV2 implements SessionProvider{
         config.setProperties(properties)
         // build session factory
         sessionFactory = config.addAnnotatedClass(Person.class)
-                .addAnnotatedClass(Affiliation.class).buildSessionFactory()
+                .addAnnotatedClass(Affiliation.class)
+                .addAnnotatedClass(OfferV2.class)
+                .addAnnotatedClass(ProductItem.class)
+                .addAnnotatedClass(Product.class)
+                .buildSessionFactory()
     }
 
     @Override
     Session getCurrentSession() {
         return sessionFactory.getCurrentSession()
+    }
+
+    @Override
+    Session openSession() {
+        return sessionFactory.openSession()
     }
 }

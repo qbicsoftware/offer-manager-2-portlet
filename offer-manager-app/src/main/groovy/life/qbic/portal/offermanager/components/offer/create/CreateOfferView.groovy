@@ -5,10 +5,10 @@ import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonView
-import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
  * This class generates a Layout in which the user
@@ -59,7 +59,7 @@ class CreateOfferView extends FormLayout{
 
         this.projectManagerSelectionView = new ProjectManagerSelectionView(viewModel)
         this.selectItemsView = new SelectItemsView(viewModel,sharedViewModel)
-        this.overviewView = new OfferOverviewView(viewModel, controller)
+        this.overviewView = new OfferOverviewView(viewModel)
 
         initLayout()
         registerListeners()

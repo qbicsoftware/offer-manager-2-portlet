@@ -50,6 +50,15 @@ public class Product {
   @Column(name = "active", nullable = false)
   private Boolean active = false;
 
+  protected Product() {
+  }
+
+  public Product(String category, Double internalUnitPrice, Double externalUnitPrice) {
+    this.category = category;
+    this.internalUnitPrice = internalUnitPrice;
+    this.externalUnitPrice = externalUnitPrice;
+  }
+
   public Boolean getActive() {
     return active;
   }
@@ -88,9 +97,10 @@ public class Product {
 
   /**
    * <p>Since this is a currency value, we eradicate rounding issues
-   * and apply the method {@link java.math.BigDecimal#setScale(int, RoundingMode)} with
-   * a scale of 2 and {@link java.math.RoundingMode#HALF_UP} explicitly.</p>
-   * For example <code>2.356</code> becomes <code>2.36</code>.
+   * and apply the method {@link java.math.BigDecimal#setScale(int, RoundingMode)} with a scale of 2
+   * and {@link java.math.RoundingMode#HALF_UP} explicitly.</p> For example <code>2.356</code>
+   * becomes <code>2.36</code>.
+   *
    * @param externalUnitPrice the internal unit price of the service product
    */
   public void setExternalUnitPrice(Double externalUnitPrice) {
@@ -105,9 +115,10 @@ public class Product {
 
   /**
    * <p>Since this is a currency value, we eradicate rounding issues
-   * and apply the method {@link java.math.BigDecimal#setScale(int, RoundingMode)} with
-   * a scale of 2 and {@link java.math.RoundingMode#HALF_UP} explicitly.</p>
-   * For example <code>2.356</code> becomes <code>2.36</code>.
+   * and apply the method {@link java.math.BigDecimal#setScale(int, RoundingMode)} with a scale of 2
+   * and {@link java.math.RoundingMode#HALF_UP} explicitly.</p> For example <code>2.356</code>
+   * becomes <code>2.36</code>.
+   *
    * @param internalUnitPrice the internal unit price of the service product
    */
   public void setInternalUnitPrice(Double internalUnitPrice) {

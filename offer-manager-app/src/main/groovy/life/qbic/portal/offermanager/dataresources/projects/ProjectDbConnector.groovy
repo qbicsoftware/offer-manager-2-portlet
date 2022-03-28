@@ -7,6 +7,7 @@ import life.qbic.business.projects.create.ProjectExistsException
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.ProjectApplication
 import life.qbic.datamodel.dtos.business.ProjectManager
+import life.qbic.datamodel.dtos.general.Person
 import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
@@ -89,8 +90,8 @@ class ProjectDbConnector {
         ProjectManager projectManager = projectApplication.getProjectManager()
 
         //fetch needed person ids from database
-        int customerID = personDbConnector.getPersonId(customer)
-        int managerID = personDbConnector.getPersonId(projectManager)
+        int customerID = getPersonDbId(customer)
+        int managerID = getPersonDbId(projectManager)
 
         Connection connection = connectionProvider.connect()
         connection.setAutoCommit(false)
@@ -115,6 +116,21 @@ class ProjectDbConnector {
         }
         return new Project.Builder(projectIdentifier, projectTitle)
                 .linkedOfferId(projectApplication.linkedOffer).build()
+    }
+
+    private int getPersonDbId(Person personDto) {
+        return personDbConnector.listPersons().stream().filter(it -> matches(it, personDto))
+                .map(it -> it.getId())
+                .findFirst()
+                .orElseThrow(() ->
+                        new RuntimeException("No person matching customer found for linking in project"))
+    }
+
+    private static boolean matches(life.qbic.business.persons.Person person, Person personDto) {
+        return person.firstName.equals(personDto.getFirstName())
+                && person.lastName.equals(personDto.getLastName())
+                && person.email.equals(personDto.emailAddress)
+                && person.isActive
     }
 
     private boolean isProjectInDB(String projectIdentifier) {

@@ -1,6 +1,6 @@
 package life.qbic.portal.offermanager.components.person.search
 
-import life.qbic.business.persons.Person
+import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 

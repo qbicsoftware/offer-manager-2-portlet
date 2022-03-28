@@ -52,6 +52,8 @@ import life.qbic.portal.offermanager.components.offer.overview.projectcreation.C
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectPresenter
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectViewModel
+import life.qbic.portal.offermanager.components.offer.update.UpdateOfferController
+import life.qbic.portal.offermanager.components.offer.update.UpdateOfferView
 import life.qbic.portal.offermanager.components.offer.update.UpdateOfferViewModel
 import life.qbic.portal.offermanager.components.person.create.CreatePersonController
 import life.qbic.portal.offermanager.components.person.create.CreatePersonPresenter
@@ -84,8 +86,6 @@ import life.qbic.portal.offermanager.dataresources.projects.ProjectSpaceResource
 import life.qbic.portal.offermanager.security.Role
 import life.qbic.portal.utils.ConfigurationManager
 import life.qbic.portal.utils.ConfigurationManagerFactory
-import org.hibernate.Session
-import org.hibernate.query.Query
 
 /**
  * Class that manages all the dependency injections and class instance creations
@@ -187,9 +187,6 @@ class DependencyManager {
 
             DatabaseSession.init(user, password, host, port, sqlDatabase)
             PersonDbConnector personDbConnector = new PersonDbConnector(sessionProvider)
-            // Todo can be removed
-            tryPersonDbConnector(personDbConnector)
-
             createPersonDataSource = personDbConnector
             searchPersonDataSource = personDbConnector
             createAffiliationDataSource = personDbConnector
@@ -207,7 +204,7 @@ class DependencyManager {
              *  life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
             */
             OfferDbConnector offerDbConnector = new OfferDbConnector(DatabaseSession.getInstance(),
-                    personDbConnector, productsDbConnector)
+                    personDbConnector, productsDbConnector, sessionProvider)
             createOfferDataSource = offerDbConnector
             fetchOfferDataSource = offerDbConnector
             projectAssistant = offerDbConnector
@@ -277,7 +274,7 @@ class DependencyManager {
         // Used to emit offers that shall be updated
         EventEmitter<Offer> offerUpdateEvent = new EventEmitter<Offer>()
 
-        CreateOfferView updateOfferView = createUpdateOfferView(offerUpdateEvent)
+        UpdateOfferView updateOfferView = createUpdateOfferView(offerUpdateEvent)
         OfferOverviewView overviewView = createOfferOverviewView(offerUpdateEvent, projectCreatedEvent)
 
 
@@ -422,7 +419,8 @@ class DependencyManager {
 
         CreateOffer createOffer = new CreateOffer(createOfferDataSource, createOfferPresenter)
         FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, createOfferPresenter)
-        CreateOfferController createOfferController = new CreateOfferController(createOffer, fetchOffer, createOffer)
+
+        CreateOfferController createOfferController = new CreateOfferController(createOffer, fetchOffer, createOfferPresenter)
 
         CreatePersonView createPersonView = createCreatePersonView()
         UpdatePersonView updatePersonView = createUpdatePersonView(personUpdateEvent)
@@ -470,6 +468,8 @@ class DependencyManager {
         OfferOverviewModel offerOverviewViewModel = new OfferOverviewModel(offerOverviewResourcesService, sharedViewModel, offerSelectedEvent)
         OfferOverviewPresenter offerOverviewPresenter = new OfferOverviewPresenter(sharedViewModel, offerOverviewViewModel)
         FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, offerOverviewPresenter)
+
+        //TODO: @tkoch empty class without constructor?
         CreateOfferContent createOfferContent = new CreateOfferContent(offerOverviewPresenter, fetchOfferDataSource)
         OfferOverviewController offerOverviewController = new OfferOverviewController(fetchOffer, createOfferContent)
 
@@ -501,7 +501,7 @@ class DependencyManager {
      * @param offerUpdateEvent emits the offer to be updated
      * @return a new CreateOfferView to be used as update offer view
      */
-    private CreateOfferView createUpdateOfferView(EventEmitter<Offer> offerUpdateEvent) {
+    private UpdateOfferView createUpdateOfferView(EventEmitter<Offer> offerUpdateEvent) {
 
         AppViewModel sharedViewModel = this.viewModel
         ResourcesService<Customer> customerResourcesService = this.customerResourceService
@@ -528,8 +528,8 @@ class DependencyManager {
         UpdatePersonView updatePersonView = createUpdatePersonView(updatePersonEvent)
         CreateAffiliationView createAffiliationView = createCreateAffiliationView()
 
-        CreateOfferController updateOfferController = new CreateOfferController(updateOffer, fetchOffer, updateOffer)
-        CreateOfferView updateOfferView = new CreateOfferView(
+        UpdateOfferController updateOfferController = new UpdateOfferController(updateOffer, fetchOffer, updateOfferPresenter)
+        UpdateOfferView updateOfferView = new UpdateOfferView(
                 sharedViewModel,
                 updateOfferViewModel,
                 updateOfferController,
