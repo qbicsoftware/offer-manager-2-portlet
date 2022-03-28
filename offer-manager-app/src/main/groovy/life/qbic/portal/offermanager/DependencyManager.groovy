@@ -52,6 +52,8 @@ import life.qbic.portal.offermanager.components.offer.overview.projectcreation.C
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectPresenter
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectViewModel
+import life.qbic.portal.offermanager.components.offer.update.UpdateOfferController
+import life.qbic.portal.offermanager.components.offer.update.UpdateOfferView
 import life.qbic.portal.offermanager.components.offer.update.UpdateOfferViewModel
 import life.qbic.portal.offermanager.components.person.create.CreatePersonController
 import life.qbic.portal.offermanager.components.person.create.CreatePersonPresenter
@@ -272,7 +274,7 @@ class DependencyManager {
         // Used to emit offers that shall be updated
         EventEmitter<Offer> offerUpdateEvent = new EventEmitter<Offer>()
 
-        CreateOfferView updateOfferView = createUpdateOfferView(offerUpdateEvent)
+        UpdateOfferView updateOfferView = createUpdateOfferView(offerUpdateEvent)
         OfferOverviewView overviewView = createOfferOverviewView(offerUpdateEvent, projectCreatedEvent)
 
 
@@ -499,7 +501,7 @@ class DependencyManager {
      * @param offerUpdateEvent emits the offer to be updated
      * @return a new CreateOfferView to be used as update offer view
      */
-    private CreateOfferView createUpdateOfferView(EventEmitter<Offer> offerUpdateEvent) {
+    private UpdateOfferView createUpdateOfferView(EventEmitter<Offer> offerUpdateEvent) {
 
         AppViewModel sharedViewModel = this.viewModel
         ResourcesService<Customer> customerResourcesService = this.customerResourceService
@@ -526,8 +528,8 @@ class DependencyManager {
         UpdatePersonView updatePersonView = createUpdatePersonView(updatePersonEvent)
         CreateAffiliationView createAffiliationView = createCreateAffiliationView()
 
-        CreateOfferController updateOfferController = new CreateOfferController(updateOffer, fetchOffer, null)
-        CreateOfferView updateOfferView = new CreateOfferView(
+        UpdateOfferController updateOfferController = new UpdateOfferController(updateOffer, fetchOffer, updateOfferPresenter)
+        UpdateOfferView updateOfferView = new UpdateOfferView(
                 sharedViewModel,
                 updateOfferViewModel,
                 updateOfferController,

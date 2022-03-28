@@ -172,10 +172,11 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
     List<life.qbic.business.offers.identifier.OfferId> fetchAllVersionsForOfferId(life.qbic.business.offers.identifier.OfferId id) {
         String project = id.getProjectPart()
         String randomIdPart = id.getRandomPart()
-        String searchTerm = project + "_" + randomIdPart
+        String searchTerm = "%" + project + "_" + randomIdPart + "%"
 
         try (Session session = sessionProvider.getCurrentSession()) {
-            Query query = session.createQuery("select offer from OfferV2 offer where offer.offerId like '%:id%'", OfferV2.class)
+            session.beginTransaction()
+            Query query = session.createQuery("SELECT offer FROM OfferV2 offer WHERE offer.offerId LIKE :id", OfferV2.class)
             query.setParameter("id", searchTerm)
             List<OfferV2> result = query.list()
             return result.stream().map((OfferV2 offer) -> offer.getIdentifier()).collect(Collectors.toList())

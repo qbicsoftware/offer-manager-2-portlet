@@ -76,4 +76,30 @@ class CreateOfferController {
         offer.setItems(productItems.stream().map(it -> refactorConverter.toProductItem(offer, it)).collect() as List<life.qbic.business.products.ProductItem>)
         priceCalculationResultsOutput.calculatedPrice(offer.salePrice, offer.taxAmount, offer.overhead, offer.priceAfterTax, offer.totalDiscountAmount)
     }
+
+    void updateOffer(OfferId offerId,
+                     String projectTitle,
+                     String projectDescription,
+                     Customer customer,
+                     ProjectManager manager,
+                     List<ProductItem> items,
+                     Affiliation customerAffiliation,
+                     String experimentalDesign) {
+        Offer.Builder offerBuilder = new Offer.Builder(
+                customer,
+                manager,
+                projectTitle,
+                projectDescription,
+                customerAffiliation)
+                .items(items)
+                .identifier(offerId)
+        if (experimentalDesign) {
+            offerBuilder.experimentalDesign(experimentalDesign)
+        }
+        offerBuilder.modificationDate(new Date())
+
+        Offer offer = offerBuilder.build()
+
+        this.input.updateOffer(refactorConverter.toOffer(offer))
+    }
 }

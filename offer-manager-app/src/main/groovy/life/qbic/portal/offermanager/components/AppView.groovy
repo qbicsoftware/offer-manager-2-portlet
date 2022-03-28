@@ -10,6 +10,7 @@ import life.qbic.portal.offermanager.components.affiliation.create.CreateAffilia
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationView
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
+import life.qbic.portal.offermanager.components.offer.update.UpdateOfferView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.product.MaintainProductsView
@@ -35,7 +36,7 @@ class AppView extends VerticalLayout {
     private final OfferOverviewView overviewView
     private final SearchPersonView searchPersonView
     private final MaintainProductsView maintainProductsView
-    private final CreateOfferView updateOfferView
+    private final UpdateOfferView updateOfferView
 
     AppView(AppViewModel portletViewModel,
             CreatePersonView createPersonView,
@@ -43,7 +44,7 @@ class AppView extends VerticalLayout {
             SearchAffiliationView searchAffiliationView,
             CreateOfferView createOfferView,
             OfferOverviewView overviewView,
-            CreateOfferView updateOfferView,
+            UpdateOfferView updateOfferView,
             SearchPersonView searchPersonView,
             MaintainProductsView maintainProductsView) {
         super()

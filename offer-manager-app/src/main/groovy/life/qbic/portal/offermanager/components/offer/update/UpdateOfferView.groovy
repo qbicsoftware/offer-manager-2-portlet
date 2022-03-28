@@ -1,4 +1,4 @@
-package life.qbic.portal.offermanager.components.offer.create
+package life.qbic.portal.offermanager.components.offer.update
 
 import com.vaadin.ui.Component
 import com.vaadin.ui.FormLayout
@@ -7,6 +7,7 @@ import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
+import life.qbic.portal.offermanager.components.offer.create.*
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonView
 
@@ -20,12 +21,12 @@ import life.qbic.portal.offermanager.components.person.update.UpdatePersonView
  * @since: 0.1.0
  *
  */
-class CreateOfferView extends FormLayout{
+class UpdateOfferView extends FormLayout {
 
     final private AppViewModel sharedViewModel
     final CreateOfferViewModel viewModel
 
-    private final CreateOfferController controller
+    private final UpdateOfferController controller
 
     private final ProjectInformationView projectInformationView
     private final CustomerSelectionView customerSelectionView
@@ -41,15 +42,15 @@ class CreateOfferView extends FormLayout{
     private final ViewHistory viewHistory
 
 
-    CreateOfferView(AppViewModel sharedViewModel,
-                    CreateOfferViewModel createOfferViewModel,
-                    CreateOfferController controller,
+    UpdateOfferView(AppViewModel sharedViewModel,
+                    UpdateOfferViewModel updateOfferViewModel,
+                    UpdateOfferController controller,
                     CreatePersonView createCustomerView,
                     CreateAffiliationView createAffiliationView,
                     UpdatePersonView updatePersonView) {
         super()
         this.sharedViewModel = sharedViewModel
-        this.viewModel = createOfferViewModel
+        this.viewModel = updateOfferViewModel
         this.controller = controller
         this.createCustomerView = createCustomerView
         this.updatePersonView = updatePersonView
@@ -58,7 +59,7 @@ class CreateOfferView extends FormLayout{
         this.customerSelectionView = new CustomerSelectionView(viewModel)
 
         this.projectManagerSelectionView = new ProjectManagerSelectionView(viewModel)
-        this.selectItemsView = new SelectItemsView(viewModel,sharedViewModel)
+        this.selectItemsView = new SelectItemsView(viewModel, sharedViewModel)
         this.overviewView = new OfferOverviewView(viewModel)
 
         initLayout()
@@ -76,7 +77,7 @@ class CreateOfferView extends FormLayout{
     /**
      * Initializes the view with the ProjectInformationView, which is the first component to be shown
      */
-    private void initLayout(){
+    private void initLayout() {
         final Label label = new Label("Create A New Offer")
 
         label.addStyleName(ValoTheme.LABEL_HUGE)
@@ -173,7 +174,7 @@ class CreateOfferView extends FormLayout{
             navigationView.showPreviousStep()
         })
         this.overviewView.save.addClickListener({
-            controller.createOffer(
+            controller.updateOffer(
                     viewModel.offerId,
                     viewModel.projectTitle,
                     viewModel.projectObjective,
@@ -196,10 +197,10 @@ class CreateOfferView extends FormLayout{
      * @param items The items of type ProductItemViewModel which are used from the view
      * @return list of items of type ProductItem
      */
-    private static List<ProductItem> getProductItems(List<ProductItemViewModel> items){
+    private static List<ProductItem> getProductItems(List<ProductItemViewModel> items) {
         List<ProductItem> productItems = []
         items.each {
-            productItems.add(new ProductItem(it.quantity,it.product))
+            productItems.add(new ProductItem(it.quantity, it.product))
         }
         return productItems
     }
@@ -240,6 +241,7 @@ class CreateOfferView extends FormLayout{
      * Small helper class that assists us keeping track of the view components
      * history.
      */
+
     private class ViewHistory {
 
         private List<Component> history
@@ -257,7 +259,7 @@ class CreateOfferView extends FormLayout{
         }
 
         def loadNewView(Component view) {
-            history = history.size() > 1 ? history.subList(0, currentPosition+1) : history
+            history = history.size() > 1 ? history.subList(0, currentPosition + 1) : history
             history.add(view)
             currentView.setVisible(false)
             currentView = view
@@ -266,7 +268,7 @@ class CreateOfferView extends FormLayout{
         }
 
         def showNext() {
-            if(currentPosition == history.size()-1) {
+            if (currentPosition == history.size() - 1) {
                 // the current view is the latest view in history
             } else {
                 currentPosition++
@@ -277,7 +279,7 @@ class CreateOfferView extends FormLayout{
         }
 
         def showPrevious() {
-            if(currentPosition == 0) {
+            if (currentPosition == 0) {
                 // the current view is the oldest view in history
             } else {
                 currentPosition -= 1
