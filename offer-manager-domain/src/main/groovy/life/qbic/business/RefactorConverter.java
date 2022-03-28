@@ -27,6 +27,7 @@ import life.qbic.datamodel.dtos.business.AcademicTitleFactory;
 import life.qbic.datamodel.dtos.business.Customer;
 import life.qbic.datamodel.dtos.business.ProductId;
 import life.qbic.datamodel.dtos.business.facilities.Facility;
+import life.qbic.datamodel.dtos.business.facilities.FacilityFactory;
 import life.qbic.datamodel.dtos.business.services.DataStorage;
 import life.qbic.datamodel.dtos.business.services.ExternalServiceProduct;
 import life.qbic.datamodel.dtos.business.services.MetabolomicAnalysis;
@@ -79,6 +80,8 @@ public class RefactorConverter {
   }
 
   public OfferItem toOfferItem(ProductItem productItem) {
+    String serviceProviderLabel = new FacilityFactory().getForString(productItem.getProduct().getServiceProvider())
+        .getLabel();
     return new OfferItem.Builder(
         productItem.getQuantity(),
         productItem.getProduct().getDescription(),
@@ -87,7 +90,7 @@ public class RefactorConverter {
         productItem.getDiscountAmount().doubleValue(),
         productItem.getUnitDiscountAmount().doubleValue(),
         productItem.getDiscountRate().multiply(BigDecimal.valueOf(100)).doubleValue(),
-        productItem.getProduct().getServiceProvider(),
+        serviceProviderLabel,
         productItem.getProduct().getUnit(),
         productItem.getListPrice().doubleValue(),
         productItem.getSalePrice().doubleValue()
