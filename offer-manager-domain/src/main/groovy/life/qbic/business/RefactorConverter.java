@@ -121,7 +121,7 @@ public class RefactorConverter {
     offerDtoBuilder.netPrice(offer.getSalePrice().doubleValue());
     offerDtoBuilder.overheads(offer.getOverhead());
     offerDtoBuilder.taxes(offer.getTaxAmount().doubleValue());
-    offerDtoBuilder.totalPrice(offerDtoBuilder.getTotalPrice());
+    offerDtoBuilder.totalPrice(offer.getPriceAfterTax().doubleValue());
     offerDtoBuilder.items(productItemDtos);
     offerDtoBuilder.identifier(offerIdDto);
     offerDtoBuilder.overheadRatio(offer.getOverheadRatio());

@@ -2,7 +2,6 @@ package life.qbic.portal.offermanager.components.offer.overview
 
 import groovy.util.logging.Log4j2
 import life.qbic.business.RefactorConverter
-import life.qbic.business.offers.content.CreateOfferContentInput
 import life.qbic.business.offers.fetch.FetchOfferInput
 import life.qbic.datamodel.dtos.business.OfferId
 
@@ -18,14 +17,10 @@ import life.qbic.datamodel.dtos.business.OfferId
 class OfferOverviewController {
 
     private final FetchOfferInput input
-
-    private final CreateOfferContentInput offerContentInput
-
     private static final RefactorConverter refactorConverter = new RefactorConverter()
 
-    OfferOverviewController(FetchOfferInput input, CreateOfferContentInput offerContentInput) {
+    OfferOverviewController(FetchOfferInput input) {
         this.input = input
-        this.offerContentInput = offerContentInput
     }
 
     /**
@@ -35,6 +30,5 @@ class OfferOverviewController {
      */
     void fetchOffer(OfferId offerId) {
         this.input.fetchOffer(refactorConverter.toOfferId(offerId))
-        this.offerContentInput.createOfferContent(refactorConverter.toOfferId(offerId))
     }
 }
