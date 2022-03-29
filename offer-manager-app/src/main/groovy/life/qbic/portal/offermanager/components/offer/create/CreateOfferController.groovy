@@ -3,8 +3,8 @@ package life.qbic.portal.offermanager.components.offer.create
 import groovy.util.logging.Log4j2
 import life.qbic.business.RefactorConverter
 import life.qbic.business.offers.OfferV2
+import life.qbic.business.offers.create.CalculatePriceOutput
 import life.qbic.business.offers.create.CreateOfferInput
-import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.fetch.FetchOfferInput
 import life.qbic.datamodel.dtos.business.*
 
@@ -21,11 +21,11 @@ class CreateOfferController {
 
     private final CreateOfferInput input
     private final FetchOfferInput fetchOfferInput
-    private final CreateOfferOutput priceCalculationResultsOutput
+    private final CalculatePriceOutput priceCalculationResultsOutput
 
     private static final RefactorConverter refactorConverter = new RefactorConverter()
 
-    CreateOfferController(CreateOfferInput input, FetchOfferInput fetchOfferInput, CreateOfferOutput priceCalculationResultsOutput) {
+    CreateOfferController(CreateOfferInput input, FetchOfferInput fetchOfferInput, CalculatePriceOutput priceCalculationResultsOutput) {
         this.input = input
         this.fetchOfferInput = fetchOfferInput
         this.priceCalculationResultsOutput = priceCalculationResultsOutput
@@ -75,31 +75,5 @@ class CreateOfferController {
         OfferV2 offer = new OfferV2(refactorConverter.toAffiliation(affiliation), new life.qbic.business.offers.identifier.OfferId("price", 1))
         offer.setItems(productItems.stream().map(it -> refactorConverter.toProductItem(offer, it)).collect() as List<life.qbic.business.products.ProductItem>)
         priceCalculationResultsOutput.calculatedPrice(offer.salePrice, offer.taxAmount, offer.overhead, offer.priceAfterTax, offer.totalDiscountAmount)
-    }
-
-    void updateOffer(OfferId offerId,
-                     String projectTitle,
-                     String projectDescription,
-                     Customer customer,
-                     ProjectManager manager,
-                     List<ProductItem> items,
-                     Affiliation customerAffiliation,
-                     String experimentalDesign) {
-        Offer.Builder offerBuilder = new Offer.Builder(
-                customer,
-                manager,
-                projectTitle,
-                projectDescription,
-                customerAffiliation)
-                .items(items)
-                .identifier(offerId)
-        if (experimentalDesign) {
-            offerBuilder.experimentalDesign(experimentalDesign)
-        }
-        offerBuilder.modificationDate(new Date())
-
-        Offer offer = offerBuilder.build()
-
-        this.input.updateOffer(refactorConverter.toOffer(offer))
     }
 }

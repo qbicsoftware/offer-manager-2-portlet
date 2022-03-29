@@ -46,7 +46,6 @@ class CreateOffer implements CreateOfferInput {
             return
         }
         output.createdNewOffer(offer)
-        output.calculatedPrice(offer.salePrice, offer.taxAmount, offer.overhead, offer.priceAfterTax, offer.totalDiscountAmount)
     }
 
 

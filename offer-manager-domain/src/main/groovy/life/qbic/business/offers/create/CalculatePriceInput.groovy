@@ -1,7 +1,6 @@
 package life.qbic.business.offers.create
 
 import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.business.AffiliationCategory
 import life.qbic.datamodel.dtos.business.ProductItem
 
 /**
@@ -12,7 +11,7 @@ import life.qbic.datamodel.dtos.business.ProductItem
  * @since: 0.1.0
  *
  */
-interface CalculatePrice {
+interface CalculatePriceInput {
 
     /**
      * This method calculates the price of a list of items based on an affiliation

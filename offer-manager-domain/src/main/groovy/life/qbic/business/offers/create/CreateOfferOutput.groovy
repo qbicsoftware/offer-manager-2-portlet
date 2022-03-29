@@ -19,38 +19,4 @@ interface CreateOfferOutput extends UseCaseFailure {
    * @since 1.0.0
    */
   void createdNewOffer(OfferV2 createdOffer)
-
-  /**
-   * Transfers the calculated price to an implementing class
-   * @param price The total price
-   * @deprecated Please use {@link #calculatedPrice(double, double, double, double)}
-   * @since 1.0.0
-   */
-  @Deprecated
-  void calculatedPrice(double price)
-
-  /**
-   * Transfers the calculated net price, taxes, overheads and total price
-   * to an implementing class
-   * @param netPrice The net price calculated for the requested services
-   * @param taxes The amount of taxes for the requested services
-   * @param overheads The amount of overheads for the requested services
-   * @param totalPrice The total price for the requested services, includes taxes and overheads
-   * @since 1.0.0
-   * @deprecated since 1.1.0, please use {@link #calculatedPrice(double, double, double, double, double)}
-   */
-  @Deprecated
-  void calculatedPrice(double netPrice, double taxes, double overheads, double totalPrice)
-
-  /**
-   * Transfers the calculated net price, taxes, overheads and total price
-   * to an implementing class
-   * @param netPrice The net price calculated for the requested services
-   * @param taxes The amount of taxes for the requested services
-   * @param overheads The amount of overheads for the requested services
-   * @param totalPrice The total price for the requested services, includes taxes and overheads
-   * @param totalDiscountAmount The total discount amount applied on the offer
-   * @since 1.1.0
-   */
-  void calculatedPrice(double netPrice, double taxes, double overheads, double totalPrice, double totalDiscountAmount)
 }
