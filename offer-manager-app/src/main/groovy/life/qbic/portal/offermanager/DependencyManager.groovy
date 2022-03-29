@@ -655,8 +655,4 @@ class DependencyManager {
 
         return maintainProductsView
     }
-
-    private static void tryPersonDbConnector(PersonDbConnector personDbConnector) {
-        personDbConnector.findPerson("Sven", "Fillinger").stream().forEach(System.out::println)
-    }
 }
