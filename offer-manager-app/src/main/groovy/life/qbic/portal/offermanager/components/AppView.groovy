@@ -100,8 +100,6 @@ class AppView extends VerticalLayout {
         verticalLayout.setMargin(false)
 
         verticalLayout.setSizeFull()
-        //ToDo Find solution on how to best host different views in the portlet
-        //gridLayout.addComponent(this.searchCustomerView)
         verticalLayout.addComponent(new TomatoFeatures())
         verticalLayout.addComponent(this.createPersonView)
         verticalLayout.addComponent(this.createOfferView)
@@ -174,8 +172,8 @@ class AppView extends VerticalLayout {
     }
 
     private void makeAppViewScrollable () {
-        this.setWidth("100%");
-        this.setHeight("100%");
+        this.setWidth("100%")
+        this.setHeight("100%")
         this.addStyleName("scrollable-layout")
     }
 

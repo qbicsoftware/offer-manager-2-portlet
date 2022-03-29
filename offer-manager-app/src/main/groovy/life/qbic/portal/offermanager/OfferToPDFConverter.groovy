@@ -11,7 +11,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.nio.file.StandardCopyOption
-import java.time.LocalDate
 import java.util.concurrent.TimeUnit
 
 /**
@@ -91,10 +90,7 @@ class OfferToPDFConverter implements OfferExporter {
     }
 
     private void setHtmlTitle() {
-        // TODO this could be replaced by refactoring the OfferFileNameFormatter.
-        LocalDate offerDate = offer.getCreationDate().toLocalDate()
-        String dateString =String.format("%04d_%02d_%02d", offerDate.getYear(), offerDate.getMonthValue(), offerDate.getDayOfMonth())
-        this.htmlContent.title("${dateString}_${offer.getOfferIdentifier()}")
+        this.htmlContent.title(OfferFileNameFormatter.getFileNameForOfferContent(offer))
     }
 
     InputStream getOfferAsPdf() {

@@ -14,7 +14,6 @@ import life.qbic.portal.offermanager.security.Role
 import life.qbic.portal.offermanager.security.RoleService
 import life.qbic.portal.offermanager.security.liferay.LiferayRoleService
 import life.qbic.portal.offermanager.security.local.LocalAdminRoleService
-import life.qbic.portal.offermanager.security.local.LocalManagerRoleService
 
 /**
  * Entry point for the application. This class derives from {@link life.qbic.portal.portlet.QBiCPortletUI}.
@@ -59,7 +58,6 @@ class OfferManagerApp extends QBiCPortletUI {
             roleService = new LiferayRoleService()
             userId = VaadinService.getCurrentRequest().getRemoteUser()
         }
-        //fixme empty userId might lead to NullPointer if no ' environment' is set
         return loadAppRole(roleService, userId)
     }
 

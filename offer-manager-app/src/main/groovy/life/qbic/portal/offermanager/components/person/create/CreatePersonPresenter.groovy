@@ -48,7 +48,6 @@ class CreatePersonPresenter implements CreatePersonOutput {
             viewModel.successNotifications.add(message)
             clearPersonData()
         } catch (MethodException listenerMethodException) {
-            //fixme
             // Invocation of method selectionChange failed for `null`
             // See https://github.com/qbicsoftware/qoffer-2-portlet/issues/208
             log.error("Issue #208 $listenerMethodException.message")

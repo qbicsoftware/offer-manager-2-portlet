@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager
 
+import life.qbic.business.offers.OfferContent
 import life.qbic.business.offers.identifier.OfferIdFormatter
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
@@ -19,7 +20,7 @@ class OfferFileNameFormatter {
     /**
      * Returns an offer file name in this schema:
      *
-     * <p>{@code <year>_<month>_<day>_O_<project-conserved-part>_<random-id-part>_<offer-version>.pdf</code>}</p>
+     * <p><code> year_month_day_O_project-conserved-part_random-id-part_offer-version.pdf</code></p>
      * @param offer
      * @return
      */
@@ -28,14 +29,30 @@ class OfferFileNameFormatter {
         OfferFileName fileName = new OfferFileName(date, offer.getIdentifier())
         return fileName.toString()
     }
+    /**
+     * Returns an offer file name in this schema:
+     *
+     * <p><code> year_month_day_O_project-conserved-part_random-id-part_offer-version.pdf</code></p>
+     * @param offer
+     * @return
+     */
+    static String getFileNameForOfferContent(OfferContent offer) {
+        LocalDate date = offer.creationDate.toLocalDate()
+        OfferFileName fileName = new OfferFileName(date, offer.getOfferIdentifier())
+        return fileName.toString()
+    }
 
     private static class OfferFileName {
-        LocalDate date
-        OfferId offerId
+        String dateString
+        String offerIdentifierPart
 
-        OfferFileName(LocalDate date, OfferId offerId) {
-            this.date = date
-            this.offerId = offerId
+        OfferFileName(LocalDate date, OfferId offerIdentifierPart) {
+            this.dateString = createDateString(date)
+            this.offerIdentifierPart = OfferIdFormatter.formatAsOfferId(offerIdentifierPart)
+        }
+        OfferFileName(LocalDate date, String offerIdentifierPart) {
+            this.dateString = createDateString(date)
+            this.offerIdentifierPart = offerIdentifierPart
         }
 
         private static String createDateString(LocalDate date) {
@@ -52,8 +69,7 @@ class OfferFileNameFormatter {
          */
         @Override
         String toString() {
-            return "${createDateString(this.date)}_${OfferIdFormatter.formatAsOfferId(offerId)}" +
-                    ".pdf"
+            return "${dateString}_${offerIdentifierPart}.pdf"
         }
     }
 

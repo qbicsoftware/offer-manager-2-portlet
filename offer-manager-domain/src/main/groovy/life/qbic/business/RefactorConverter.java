@@ -347,7 +347,7 @@ public class RefactorConverter {
     Double internalUnitPrice = product.getInternalUnitPrice();
     Double externalUnitPrice = product.getExternalUnitPrice();
     ProductUnit productUnit = new ProductUnitFactory().getForString(product.getUnit());
-    int id = Optional.ofNullable(product.getId()).orElse(0);//fixme
+    int id = Optional.ofNullable(product.getId()).orElse(0);
     Long runningNumber = toProductIdDto(
         product.getProductId()).getUniqueId();
     Facility serviceProvider = Facility.valueOf(product.getServiceProvider());
