@@ -104,13 +104,16 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
   }
 
   @Override
-  void addPerson(Person person) throws DatabaseQueryException, PersonExistsException {
+  Person addPerson(Person person) throws DatabaseQueryException, PersonExistsException {
     try (Session session = sessionProvider.openSession()) {
       if(isPersonInSession(session, person)) {
         throw new PersonExistsException("The person already exists.")
       }
+      session.clear()
       session.beginTransaction()
-      session.save(person)
+      session.save(person) //sets the id of the person
+      session.getTransaction().commit()
+      return person
     } catch (HibernateException e) {
       log.error(e.message, e)
       throw new DatabaseQueryException("An unexpected exception occurred during new affiliation creation")

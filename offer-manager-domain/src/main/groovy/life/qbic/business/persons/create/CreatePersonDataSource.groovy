@@ -19,11 +19,12 @@ interface CreatePersonDataSource {
      * Adds a person to the user database
      *
      * @param person a person to be added to known persons
+     * @return the stored person
      * @throws DatabaseQueryException When a person could not been added to the person database
      * @throws PersonExistsException When a person already exists in the database
      * @since 1.0.0
      */
-    void addPerson(Person person) throws DatabaseQueryException, PersonExistsException
+  Person addPerson(Person person) throws DatabaseQueryException, PersonExistsException
 
     /**
      * Updates the information of a given person specified by a person ID

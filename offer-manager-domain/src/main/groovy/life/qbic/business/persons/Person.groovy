@@ -41,7 +41,7 @@ class Person {
     @Column(name = "active", columnDefinition = "tinyint", nullable = false)
     boolean isActive = true
 
-    @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH], fetch = FetchType.EAGER)
+    @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
     @JoinTable(name = "person_affiliation", joinColumns = [ @JoinColumn(name = "person_id") ],
             inverseJoinColumns = [ @JoinColumn(name = "affiliation_id")])
     List<Affiliation> affiliations = []
@@ -50,6 +50,7 @@ class Person {
 
     @PostLoad
     protected void onPostLoad() {
+        this.getAffiliations()
         if (affiliations.isEmpty()) {
             throw new IllegalStateException("Person $this was loaded without affiliations. Illegal State: A person must have at least one affiliation.")
         }
