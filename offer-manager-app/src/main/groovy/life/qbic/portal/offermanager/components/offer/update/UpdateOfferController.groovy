@@ -3,8 +3,8 @@ package life.qbic.portal.offermanager.components.offer.update
 import groovy.util.logging.Log4j2
 import life.qbic.business.RefactorConverter
 import life.qbic.business.offers.OfferV2
+import life.qbic.business.offers.create.CalculatePriceOutput
 import life.qbic.business.offers.create.CreateOfferInput
-import life.qbic.business.offers.create.CreateOfferOutput
 import life.qbic.business.offers.fetch.FetchOfferInput
 import life.qbic.datamodel.dtos.business.*
 
@@ -21,11 +21,11 @@ class UpdateOfferController {
 
   private final CreateOfferInput input
   private final FetchOfferInput fetchOfferInput
-  private final CreateOfferOutput priceCalculationResultsOutput
+  private final CalculatePriceOutput priceCalculationResultsOutput
 
   private static final RefactorConverter refactorConverter = new RefactorConverter()
 
-  UpdateOfferController(CreateOfferInput input, FetchOfferInput fetchOfferInput, CreateOfferOutput priceCalculationResultsOutput) {
+  UpdateOfferController(CreateOfferInput input, FetchOfferInput fetchOfferInput, CalculatePriceOutput priceCalculationResultsOutput) {
     this.input = input
     this.fetchOfferInput = fetchOfferInput
     this.priceCalculationResultsOutput = priceCalculationResultsOutput
@@ -34,7 +34,7 @@ class UpdateOfferController {
   void calculatePriceForItems(List<ProductItem> productItems, Affiliation affiliation) {
     OfferV2 offer = new OfferV2(refactorConverter.toAffiliation(affiliation), new life.qbic.business.offers.identifier.OfferId("price", 1))
     offer.setItems(productItems.stream().map(it -> refactorConverter.toProductItem(offer, it)).collect() as List<life.qbic.business.products.ProductItem>)
-    priceCalculationResultsOutput.calculatedPrice(offer.salePrice, offer.taxAmount, offer.overhead, offer.priceAfterTax, offer.totalDiscountAmount)
+    priceCalculationResultsOutput.calculatedPrice(offer.salePrice.doubleValue(), offer.taxAmount.doubleValue(), offer.overhead, offer.priceAfterTax.doubleValue(), offer.totalDiscountAmount.doubleValue())
   }
 
   void updateOffer(OfferId offerId,

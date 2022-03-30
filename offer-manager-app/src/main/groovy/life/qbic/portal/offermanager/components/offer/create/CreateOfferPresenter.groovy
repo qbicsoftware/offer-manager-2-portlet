@@ -51,6 +51,7 @@ class CreateOfferPresenter implements CreateOfferOutput, FetchOfferOutput, Calcu
         this.createOfferViewModel.taxes = taxes
         this.createOfferViewModel.overheads = overheads
         this.createOfferViewModel.totalDiscountAmount = totalDiscountAmount
+        this.createOfferViewModel.totalPrice = totalPrice
     }
 
     /**

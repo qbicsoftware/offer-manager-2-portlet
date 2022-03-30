@@ -74,6 +74,6 @@ class CreateOfferController {
     void calculatePriceForItems(List<ProductItem> productItems, Affiliation affiliation) {
         OfferV2 offer = new OfferV2(refactorConverter.toAffiliation(affiliation), new life.qbic.business.offers.identifier.OfferId("price", 1))
         offer.setItems(productItems.stream().map(it -> refactorConverter.toProductItem(offer, it)).collect() as List<life.qbic.business.products.ProductItem>)
-        priceCalculationResultsOutput.calculatedPrice(offer.salePrice, offer.taxAmount, offer.overhead, offer.priceAfterTax, offer.totalDiscountAmount)
+        priceCalculationResultsOutput.calculatedPrice(offer.salePrice.doubleValue(), offer.taxAmount.doubleValue(), offer.overhead, offer.priceAfterTax.doubleValue(), offer.totalDiscountAmount.doubleValue())
     }
 }
