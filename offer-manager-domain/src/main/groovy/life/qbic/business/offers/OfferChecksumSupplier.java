@@ -90,6 +90,7 @@ class OfferChecksumSupplier implements
   private MessageDigest updateWithSelectedAffiliation(MessageDigest digest) {
     Affiliation selectedCustomerAffiliation = offer.getSelectedCustomerAffiliation();
     digest.update(selectedCustomerAffiliation.getOrganization().getBytes(StandardCharsets.UTF_8));
+    digest.update(selectedCustomerAffiliation.getAddressAddition().getBytes(StandardCharsets.UTF_8));
     digest.update(selectedCustomerAffiliation.getStreet().getBytes(StandardCharsets.UTF_8));
     return digest;
   }
