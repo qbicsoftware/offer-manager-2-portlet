@@ -44,9 +44,16 @@ class Person {
     @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH], fetch = FetchType.EAGER)
     @JoinTable(name = "person_affiliation", joinColumns = [ @JoinColumn(name = "person_id") ],
             inverseJoinColumns = [ @JoinColumn(name = "affiliation_id")])
-    List<Affiliation> affiliations
+    List<Affiliation> affiliations = []
 
     Person() {}
+
+    @PostLoad
+    protected void onPostLoad() {
+        if (affiliations.isEmpty()) {
+            throw new IllegalStateException("Person $this was loaded without affiliations. Illegal State: A person must have at least one affiliation.")
+        }
+    }
 
     Person(String userId, String firstName, String lastName, String title, String email, List<Affiliation> affiliations) {
         this.userId = userId
@@ -118,7 +125,11 @@ class Person {
     }
 
     void setAffiliations(List<Affiliation> affiliations) {
-        this.affiliations = affiliations
+        if (affiliations.isEmpty()) {
+            throw new IllegalArgumentException("A person must have at least one affiliation.")
+        }
+        this.affiliations.clear()
+        this.affiliations.addAll(affiliations)
     }
 
     void addAffiliation(Affiliation affiliation) {
@@ -128,6 +139,9 @@ class Person {
 
     void removeAffiliation(Affiliation affiliation) {
         if (affiliation in affiliations) {
+            if (affiliations.size() == 1) {
+                throw new IllegalArgumentException("Cannot remove the last remaining affiliation: $affiliation")
+            }
             affiliations.remove(affiliation)
         }
     }
