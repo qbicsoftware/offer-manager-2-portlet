@@ -94,8 +94,8 @@ class ProjectManagerSelectionView extends VerticalLayout implements Resettable {
     /**
      * This method adds the retrieved Customer Information to the Customer grid
      */
-    private ListDataProvider setupDataProvider() {
-        def dataProvider = new ListDataProvider<>(viewModel.availableProjectManagers)
+    private ListDataProvider<ProjectManager> setupDataProvider() {
+        def dataProvider = new ListDataProvider<ProjectManager>(viewModel.availableProjectManagers)
         this.projectManagerGrid.setDataProvider(dataProvider)
         return dataProvider
     }
@@ -126,11 +126,11 @@ class ProjectManagerSelectionView extends VerticalLayout implements Resettable {
         /*
         We need to add a data provider for the grid content
          */
-        def projectManagerDataProvider = setupDataProvider()
+        ListDataProvider<ProjectManager> projectManagerDataProvider = setupDataProvider()
         /*
         Lastly, we add some nice content filters
          */
-        setupFilters(projectManagerDataProvider) //fixme type mismatch
+        setupFilters(projectManagerDataProvider as ListDataProvider<ProjectManager>)
     }
 
     /**

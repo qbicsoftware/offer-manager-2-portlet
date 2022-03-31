@@ -30,11 +30,9 @@ class OfferOverviewView extends VerticalLayout {
     Grid<ProductItemViewModel> itemGrid
     Button previous
     Button save
-    CreateOfferController createOfferController
 
-    OfferOverviewView(CreateOfferViewModel viewModel, CreateOfferController controller) {
+    OfferOverviewView(CreateOfferViewModel viewModel) {
         this.createOfferViewModel = viewModel
-        this.createOfferController = controller
         initLayout()
         setUpGrid()
     }

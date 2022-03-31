@@ -1,10 +1,9 @@
 package life.qbic.business.persons.create
 
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.persons.Person
 import life.qbic.business.persons.PersonExistsException
-import life.qbic.datamodel.dtos.business.Affiliation
-import life.qbic.datamodel.dtos.general.CommonPerson
-import life.qbic.datamodel.dtos.general.Person
+import life.qbic.business.persons.PersonNotFoundException
 
 /**
  * Creates a person in the database for the CreatePerson use case
@@ -15,48 +14,33 @@ import life.qbic.datamodel.dtos.general.Person
  * @since: 1.0.0
  */
 interface CreatePersonDataSource {
-  
+
     /**
      * Adds a person to the user database
      *
      * @param person a person to be added to known persons
+     * @return the stored person
      * @throws DatabaseQueryException When a person could not been added to the person database
      * @throws PersonExistsException When a person already exists in the database
      * @since 1.0.0
      */
-    void addPerson(Person person) throws DatabaseQueryException, PersonExistsException
+  Person addPerson(Person person) throws DatabaseQueryException, PersonExistsException
 
     /**
      * Updates the information of a given person specified by a person ID
      *
-     * @param personId to specify the person to be updated
-     * @param updatedPerson person containing all information and the updates of a person
+     * @param outdatedPersonData specifies the person to be updated
+     * @param updatedPersonData person containing all information and the updates of a person
      * @throws DatabaseQueryException When a person could not been updated in the person
      * database
      * @since 1.0.0
      */
-    void updatePerson(int personId, Person updatedPerson) throws DatabaseQueryException
-
-    /**
-     * Returns a person given a person specified by a person ID
-     *
-     * @param personId to specify and existing customer
-     */
-    CommonPerson getPerson(int personId)
-
-    /**
-     * Searches for a person in a database and returns its id
-     *
-     * @param person The person that needs to be searched in the database
-     * @return an optional containing the person if found
-     */
-    Optional<Integer> findPerson(Person person)
+  Person updatePerson(Person outdatedPersonData, Person updatedPersonData) throws DatabaseQueryException, PersonNotFoundException
 
     /**
      * Updates affiliations of a person specified by a customer ID.
      *
      * @param personId to specify the person whose affiliations should be updated
-     * @param affiliations that the person should be associated to
      */
-    void updatePersonAffiliations(int personId, List<Affiliation> affiliations) throws DatabaseQueryException
+  Person updatePersonAffiliations(Person person) throws DatabaseQueryException
 }

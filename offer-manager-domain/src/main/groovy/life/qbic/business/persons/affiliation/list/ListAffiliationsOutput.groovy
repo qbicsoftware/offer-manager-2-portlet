@@ -1,6 +1,6 @@
 package life.qbic.business.persons.affiliation.list
 
-import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.business.persons.affiliation.Affiliation
 
 /**
  * This interface serves as output for the List Affiliation use case

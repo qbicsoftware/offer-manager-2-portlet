@@ -81,7 +81,7 @@ class CreateAffiliationView extends FormLayout {
         countryBox.setDescription("Select the name of the country e.g. Germany")
         countryBox.setItems(Country.availableCountryNames())
 
-        this.affiliationCategoryField = generateAffiliationCategorySelect(createAffiliationViewModel.affiliationCategories)
+        this.affiliationCategoryField = generateAffiliationCategorySelect(createAffiliationViewModel.affiliationCategories) as ComboBox<String>
 
         this.abortButton = new Button("Abort Affiliation Creation")
         abortButton.setIcon(VaadinIcons.CLOSE_CIRCLE)
@@ -145,7 +145,6 @@ class CreateAffiliationView extends FormLayout {
         // Check if the caption for new item already exists in the list of item
         // captions before approving it as a new item.
         ComboBox.NewItemProvider<String> itemHandler = (String newItemCaption) -> {
-            //todo error: newItemCaption cannot be inferred --> duplicated entries are still possible
             boolean newItem = organisationNames.stream().noneMatch(data -> data.equalsIgnoreCase(newItemCaption))
             if (newItem) {
                 // Adds new option
@@ -363,7 +362,7 @@ class CreateAffiliationView extends FormLayout {
             try {
                 clearAllFields()
             }
-            catch (Exception e) {
+            catch (Exception ignored) {
                 sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
             }
         })

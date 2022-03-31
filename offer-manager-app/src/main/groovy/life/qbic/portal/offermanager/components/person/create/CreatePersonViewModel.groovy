@@ -57,10 +57,10 @@ class CreatePersonViewModel implements Resettable{
         refreshAvailableOrganizations()
 
         this.affiliationService.subscribe({
-            List foundOrganisations = availableOrganisations.findAll(){organisation -> (organisation as Organisation).name == it.organisation}
-            if(foundOrganisations.empty){
+            List foundOrganisations = availableOrganisations.findAll() { organisation -> (organisation as Organisation).name == it.organisation }
+            if (foundOrganisations.empty) {
                 //create a new organisation
-                availableOrganisations << new Organisation(it.organisation,[it])
+                availableOrganisations << new Organisation(it.organisation, [it])
             }else{
                 //add the new affiliation
                 (foundOrganisations.get(0) as Organisation).affiliations << it

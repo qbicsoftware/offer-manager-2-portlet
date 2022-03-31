@@ -158,8 +158,6 @@ class MaintainProductsView extends FormLayout {
 
     private void updateProductDescription(Product product){
         VerticalLayout content = new VerticalLayout()
-        //todo get product category
-        //content.addComponent(new Label("<strong>${product}</strong>", ContentMode.HTML))
         content.addComponent(new Label("${product.description}"))
         content.setMargin(true)
         content.setSpacing(false)

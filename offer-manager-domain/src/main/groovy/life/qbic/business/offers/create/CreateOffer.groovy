@@ -1,130 +1,85 @@
 package life.qbic.business.offers.create
 
-import life.qbic.business.Constants
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
-import life.qbic.business.offers.Converter
+import life.qbic.business.offers.OfferExistsException
+import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.identifier.OfferId
-import life.qbic.business.offers.update.UpdateOffer
-import life.qbic.business.offers.update.UpdateOfferOutput
-import life.qbic.datamodel.dtos.business.*
 
 /**
  * This class implements logic to create new offers.
  *
  * A PM has received a new project request and uses the offer manager to create a new offer for the customer.
  * Alternatively a new offer is created from an existing offer.
- * @since: 1.0.0
- * @author: Tobias Koch
+ * @since 1.0.0
+ * @author Tobias Koch
  */
-class CreateOffer implements CreateOfferInput, CalculatePrice, UpdateOfferOutput{
+class CreateOffer implements CreateOfferInput {
+
+
 
     private static final Logging log = Logger.getLogger(this.class)
 
     private CreateOfferDataSource dataSource
     private CreateOfferOutput output
-    private UpdateOffer updateOffer
 
     CreateOffer(CreateOfferDataSource dataSource, CreateOfferOutput output){
         this.dataSource = dataSource
         this.output = output
-        updateOffer = new UpdateOffer(dataSource,this)
     }
 
     @Override
-    void createOffer(Offer offerContent) {
-
-        if(offerContent.identifier){
-            updateOffer.updateOffer(offerContent)
-        }else{
-            createNewOffer(offerContent)
-        }
-    }
-
-    private void createNewOffer(Offer offerContent){
-        OfferId newOfferId = generateTomatoId(offerContent.customer)
-
-        life.qbic.business.offers.Offer finalizedOffer = new life.qbic.business.offers.Offer.Builder(
-                offerContent.customer,
-                offerContent.projectManager,
-                offerContent.projectTitle,
-                offerContent.projectDescription,
-                offerContent.items,
-                offerContent.selectedCustomerAffiliation)
-                .experimentalDesign(offerContent.experimentalDesign)
-                .identifier(newOfferId)
-                .build()
-
-        storeOffer(finalizedOffer)
-    }
-
-    private void storeOffer(life.qbic.business.offers.Offer finalizedOffer) {
+    void createOffer(OfferV2 offer) {
         try {
-            final offer = Converter.convertOfferToDTO(finalizedOffer)
+            offer.setIdentifier(new OfferId(offer.getCustomer().getLastName().toLowerCase(), 1))
             dataSource.store(offer)
-            output.createdNewOffer(offer)
-        } catch (DatabaseQueryException e) {
-            output.failNotification(e.message)
-        } catch (Exception unexpected) {
-            log.error(unexpected.message)
-            log.debug(unexpected.message, unexpected)
-            output.failNotification("An unexpected during the saving of your offer occurred. " +
-                    "Please contact ${Constants.QBIC_HELPDESK_EMAIL}.")
+        } catch (OfferExistsException offerExistsException) {
+            String message = "Offer $offer already exists in the database."
+            log.error(message, offerExistsException)
+            output.failNotification(message)
+            return
+        } catch (DatabaseQueryException databaseQueryException) {
+            String message = "Offer $offer could not be stored."
+            log.error(message, databaseQueryException)
+            output.failNotification(message)
+            return
+        }
+        output.createdNewOffer(offer)
+    }
+
+
+
+    @Override
+    void updateOffer(OfferV2 offer) {
+        Optional<OfferV2> persistentOffer = dataSource.getOffer(offer.getIdentifier())
+        if (!persistentOffer.isPresent()) {
+            output.failNotification("The provided offer (${offer.getIdentifier().toString()} is unknown to the system.")
+            return
+        }
+        OfferV2 processedOffer = updateIdToLatestVersion(offer)
+        try {
+            dataSource.store(processedOffer)
+            output.createdNewOffer(processedOffer)
+
+        } catch (OfferExistsException offerExistsException) {
+            log.error("Failed to update offer $offer.identifier", offerExistsException)
+            output.failNotification("The provided offer is the same as the stored.")
         }
     }
 
-    /**
-     * Method to generate the identifier of an offer with the project conserved part, the random part and the version
-     * @param customer which is required for the project conserved part
-     * @return
-     */
-    private static OfferId generateTomatoId(Customer customer){
-        String projectConservedPart = customer.lastName.toLowerCase()
-        int version = 1
-
-        return new OfferId(projectConservedPart, version)
+    private OfferV2 updateIdToLatestVersion(OfferV2 offer) {
+        OfferV2 workingCopy = OfferV2.copyOf(offer)
+        Optional<OfferId> latestOfferId = dataSource.fetchAllVersionsForOfferId(offer.getIdentifier()).stream()
+                .max(OfferId::compareTo)
+                .map(this::increaseVersion)
+        latestOfferId.ifPresent({ workingCopy.setIdentifier(it) })
+        return workingCopy
     }
 
-    @Override
-    void calculatePrice(List<ProductItem> items, Affiliation affiliation) {
-        life.qbic.business.offers.Offer offer = buildOfferForCostCalculation(items, affiliation)
-        output.calculatedPrice(
-                offer.getTotalNetPrice(),
-                offer.getTaxCosts(),
-                offer.getOverheadSum(),
-                offer.getTotalCosts(),
-                offer.getTotalDiscountAmount())
-    }
-
-    /**
-     * Builds an offer entity with a dummy customer and a dummy project manager
-     * @param items the offer items to be used
-     * @param affiliation the affiliation to be used
-     * @return an offer object with the given items and affiliation
-     */
-    private static life.qbic.business.offers.Offer buildOfferForCostCalculation(List<ProductItem> items,
-                                                                        Affiliation affiliation) {
-        final def dummyCustomer = new Customer.Builder("Nobody", "Nobody",
-                "nobody@qbic.com").build()
-        final def dummyProjectManager = new ProjectManager.Builder("Nobody", "Nobody",
-                "nobody@qbic.com").build()
-        new life.qbic.business.offers.Offer.Builder(
-                dummyCustomer,
-                dummyProjectManager,
-                "",
-                "",
-                items,
-                affiliation).build()
-    }
-
-    @Override
-    void updatedOffer(Offer createdOffer) {
-        output.createdNewOffer(createdOffer)
-    }
-
-    @Override
-    void failNotification(String notification) {
-        output.failNotification(notification)
+    private static OfferId increaseVersion(OfferId identifier) {
+        def copy = new OfferId(identifier.getProjectPart(), identifier.getRandomPart(), identifier.getVersion())
+        copy.increaseVersion()
+        return copy
     }
 }

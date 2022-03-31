@@ -1,11 +1,12 @@
 package life.qbic.portal.offermanager.components.person.create
 
 import groovy.util.logging.Log4j2
+import life.qbic.business.RefactorConverter
+import life.qbic.business.persons.create.CreatePersonInput
 import life.qbic.datamodel.dtos.business.AcademicTitle
 import life.qbic.datamodel.dtos.business.AcademicTitleFactory
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.Customer
-import life.qbic.business.persons.create.CreatePersonInput
 import life.qbic.datamodel.dtos.general.Person
 
 /**
@@ -13,13 +14,13 @@ import life.qbic.datamodel.dtos.general.Person
  *
  * This class translates the information that was received from the view into method calls to the use case
  *
- * @since: 1.0.0
- * @author: Jennifer Bödker
+ * @since 1.0.0
  */
 @Log4j2
 class CreatePersonController {
 
     private final CreatePersonInput useCaseInput
+    private final RefactorConverter refactorConverter = new RefactorConverter()
 
     CreatePersonController(CreatePersonInput useCaseInput) {
         this.useCaseInput = useCaseInput
@@ -47,7 +48,7 @@ class CreatePersonController {
         }
 
         try {
-            Person person = new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build()
+            life.qbic.business.persons.Person person = refactorConverter.toPerson(new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build())
             this.useCaseInput.createPerson(person)
         } catch(Exception ignored) {
             throw new IllegalArgumentException("Could not create customer from provided arguments.")
@@ -75,8 +76,9 @@ class CreatePersonController {
         }
 
         try{
-            Person person = new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build()
-            this.useCaseInput.updatePerson(oldEntry,person)
+            Person personDto = new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build()
+            this.useCaseInput.updatePerson(refactorConverter.toPerson(oldEntry), refactorConverter.toPerson(personDto))
+
         }catch(Exception ignored) {
             throw new IllegalArgumentException("Could not update customer from provided arguments.")
         }

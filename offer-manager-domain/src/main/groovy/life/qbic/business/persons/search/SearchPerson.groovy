@@ -1,6 +1,6 @@
 package life.qbic.business.persons.search
 
-import life.qbic.datamodel.dtos.general.Person
+import life.qbic.business.persons.Person
 
 /**
  * A use case which describes how a customer is searched in the database

@@ -1,8 +1,8 @@
 package life.qbic.business.offers.fetch
 
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.datamodel.dtos.business.Offer
-import life.qbic.datamodel.dtos.business.OfferId
+import life.qbic.business.offers.OfferV2
+import life.qbic.business.offers.identifier.OfferId
 
 /**
  * Provides methods to retrieve offers in a data-source
@@ -15,8 +15,8 @@ interface FetchOfferDataSource {
      * Returns the offer content based on the given offer id
      * @param Id specifying the offer for which the content shall be fetched
      * @throws DatabaseQueryException
-     * @return the offer content in form of an Offer Dto
+     * @return the offer content in form of an Offer
      */
-    Optional<Offer> getOffer(OfferId Id) throws DatabaseQueryException
+    Optional<OfferV2> getOffer(OfferId Id) throws DatabaseQueryException
 
 }
