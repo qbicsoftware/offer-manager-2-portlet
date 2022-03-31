@@ -10,6 +10,7 @@ import life.qbic.portal.offermanager.components.affiliation.create.CreateAffilia
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationView
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
 import life.qbic.portal.offermanager.components.offer.overview.OfferOverviewView
+import life.qbic.portal.offermanager.components.offer.update.UpdateOfferView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.person.search.SearchPersonView
 import life.qbic.portal.offermanager.components.product.MaintainProductsView
@@ -35,7 +36,7 @@ class AppView extends VerticalLayout {
     private final OfferOverviewView overviewView
     private final SearchPersonView searchPersonView
     private final MaintainProductsView maintainProductsView
-    private final CreateOfferView updateOfferView
+    private final UpdateOfferView updateOfferView
 
     AppView(AppViewModel portletViewModel,
             CreatePersonView createPersonView,
@@ -43,7 +44,7 @@ class AppView extends VerticalLayout {
             SearchAffiliationView searchAffiliationView,
             CreateOfferView createOfferView,
             OfferOverviewView overviewView,
-            CreateOfferView updateOfferView,
+            UpdateOfferView updateOfferView,
             SearchPersonView searchPersonView,
             MaintainProductsView maintainProductsView) {
         super()
@@ -62,6 +63,8 @@ class AppView extends VerticalLayout {
         registerListeners()
         setupFeatureViews()
         hideAllFeatureViews()
+        makeAppViewScrollable()
+
         /*
          We set the offer overview view as first active view.
          You can set any other view to visible here for the startup
@@ -97,8 +100,6 @@ class AppView extends VerticalLayout {
         verticalLayout.setMargin(false)
 
         verticalLayout.setSizeFull()
-        //ToDo Find solution on how to best host different views in the portlet
-        //gridLayout.addComponent(this.searchCustomerView)
         verticalLayout.addComponent(new TomatoFeatures())
         verticalLayout.addComponent(this.createPersonView)
         verticalLayout.addComponent(this.createOfferView)
@@ -170,6 +171,12 @@ class AppView extends VerticalLayout {
         }
     }
 
+    private void makeAppViewScrollable () {
+        this.setWidth("100%")
+        this.setHeight("100%")
+        this.addStyleName("scrollable-layout")
+    }
+
     private class TomatoFeatures extends HorizontalLayout {
 
         TomatoFeatures() {
@@ -216,5 +223,6 @@ class AppView extends VerticalLayout {
             return dropDownButton
         }
 
-    }
+      }
+
 }

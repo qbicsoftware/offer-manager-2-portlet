@@ -1,7 +1,8 @@
 package life.qbic.business.persons.affiliation.create
 
-import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.business.persons.affiliation.AffiliationExistsException
 
 /**
  * <short description>
@@ -16,7 +17,8 @@ interface CreateAffiliationDataSource {
      *
      * @param customer a person to be added to known persons
      * @throws DatabaseQueryException in case an affiliation could not been added to the customer database
+     * @throws AffiliationExistsException in case the affiliation already exists
      * @since 1.0.0
      */
-    void addAffiliation(Affiliation affiliation) throws DatabaseQueryException
+    void addAffiliation(Affiliation affiliation) throws DatabaseQueryException, AffiliationExistsException
 }

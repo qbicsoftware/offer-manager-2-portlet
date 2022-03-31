@@ -1,9 +1,10 @@
 package life.qbic.business.persons.affiliation.create
 
-import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.logging.Logger
 import life.qbic.business.logging.Logging
+import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.business.persons.affiliation.AffiliationExistsException
 
 /**
  * This class implements the Create Affiliations use case.
@@ -36,12 +37,13 @@ class CreateAffiliation implements CreateAffiliationInput{
             dataSource.addAffiliation(affiliation)
             output.affiliationCreated(affiliation)
 
-            log.info("Successfully added new affiliation " + affiliation.organisation)
+            log.info("Successfully added new affiliation " + affiliation.getOrganization())
         } catch (DatabaseQueryException queryException) {
             output.failNotification("Could not create affiliation [$affiliation].\n" + queryException.message)
+        } catch (AffiliationExistsException existsException) {
+            output.failNotification("Could not create affiliation [$affiliation].\n" + existsException.message)
         } catch (Exception e) {
-            log.error(e.message)
-            log.error(e.stackTrace.join("\n"))
+            log.error(e.message, e)
             output.failNotification("Could not create new affiliation $affiliation")
         }
     }

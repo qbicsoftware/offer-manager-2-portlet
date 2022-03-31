@@ -1,19 +1,23 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
+
 import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.offers.OfferExistsException
+import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.fetch.FetchOfferDataSource
-import life.qbic.business.offers.identifier.TomatoIdFormatter
-import life.qbic.datamodel.dtos.business.*
-import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
+import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
-import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
+import life.qbic.portal.offermanager.dataresources.database.SessionProvider
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
 import life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
+import org.hibernate.HibernateException
+import org.hibernate.Session
 
-import java.sql.*
+import javax.persistence.Query
+import java.util.stream.Collectors
 
 /**
  * Handles the connection to the offer database
@@ -26,320 +30,104 @@ import java.sql.*
  *
  */
 @Log4j2
-class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant, OfferOverviewDataSource{
+class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant, OfferOverviewDataSource {
+
+    SessionProvider sessionProvider
 
     ConnectionProvider connectionProvider
 
     PersonDbConnector customerGateway
+
     ProductsDbConnector productGateway
 
     private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (offerId, " +
             "creationDate, expirationDate, customerId, projectManagerId, projectTitle, " +
-            "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, totalDiscount, " +
+            "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, itemDiscount, " +
             "checksum, experimentalDesign)"
 
     private static final String OFFER_SELECT_QUERY = "SELECT offerId, creationDate, expirationDate, customerId, projectManagerId, projectTitle," +
-                                                        "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, experimentalDesign FROM offer"
+            "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, experimentalDesign FROM offer"
 
 
-    OfferDbConnector(ConnectionProvider connectionProvider, PersonDbConnector personDbConnector, ProductsDbConnector productsDbConnector){
+    /**
+     * Creates a new instance of OfferDbConnector
+     *
+     * @param connectionProvider
+     * @param personDbConnector
+     * @param productsDbConnector
+     * @deprecated since 1.3.0, please use {@link OfferDbConnector#OfferDbConnector(ConnectionProvider, PersonDbConnector, ProductsDbConnector, SessionProvider)}
+     */
+    @Deprecated
+    OfferDbConnector(ConnectionProvider connectionProvider, PersonDbConnector personDbConnector, ProductsDbConnector productsDbConnector) {
         this.connectionProvider = connectionProvider
         this.customerGateway = personDbConnector
         this.productGateway = productsDbConnector
-    }
-
-    @Override
-    void store(Offer offer) throws DatabaseQueryException {
-
-        if (offerAlreadyInDataSource(offer)) {
-            throw new DatabaseQueryException("Offer with equal content of ${offer.identifier.toString()} already exists.")
-        }
-
-        Connection connection = connectionProvider.connect()
-        connection.setAutoCommit(false)
-
-        connection.withCloseable { it ->
-            try {
-                int projectManagerId = customerGateway.getPersonId(offer.projectManager)
-                int customerId = customerGateway.getPersonId(offer.customer)
-                int affiliationId = customerGateway.getAffiliationId(offer.selectedCustomerAffiliation)
-
-                int offerId = storeOffer(offer, projectManagerId, customerId, affiliationId)
-
-                productGateway.createOfferItems(offer.items, offerId)
-                connection.commit()
-            } catch (DatabaseQueryException e) {
-                // We can safely proxy DatabaseQueryExceptions back to the use case
-                throw new DatabaseQueryException(e.message)
-            } catch (Exception e) {
-                log.error(e.message)
-                log.error(e.stackTrace.join("\n"))
-                connection.rollback()
-                throw new DatabaseQueryException("Could not store offer {$offer.identifier}.")
-            }
-        }
-    }
-
-    @Override
-    List<OfferId> fetchAllVersionsForOfferId(OfferId id) {
-        String query = OFFER_SELECT_QUERY + " WHERE offerId LIKE ? "
-        Connection connection = null
-        List<OfferId> ids = []
-        String idPattern = TomatoIdFormatter.removeVersion(TomatoIdFormatter.formatAsOfferId(id))
-
-        try{
-            connection = connectionProvider.connect()
-            connection.withCloseable {
-                PreparedStatement preparedStatement = it.prepareStatement(query)
-                preparedStatement.setString(1, "${idPattern}_%")
-                ResultSet resultSet = preparedStatement.executeQuery()
-
-                while (resultSet.next()) {
-                    String resultID = resultSet.getString(1)
-                    OfferId offerId = parseOfferId(resultID)
-                    ids.add(offerId)
-                }
-
-                return ids
-            }
-        }catch(Exception e){
-            log.error(e.message)
-            log.error(e.stackTrace.join("\n"))
-            connection.rollback()
-            throw new DatabaseQueryException("Could fetch offer versions for id ${id.toString()}.")
-        }
-
-    }
-
-    private boolean offerAlreadyInDataSource(Offer offer) {
-        String query = "SELECT checksum FROM offer WHERE checksum=?"
-        Connection connection = null
-        boolean isAlreadyInDataSource = false
-
-        try{
-            connection = connectionProvider.connect()
-            connection.withCloseable {
-                PreparedStatement preparedStatement = it.prepareStatement(query)
-                preparedStatement.setString(1, "${offer.checksum}")
-                ResultSet resultSet = preparedStatement.executeQuery()
-                int numberOfRows = 0
-                while(resultSet.next()) {
-                    numberOfRows++
-                }
-                if (numberOfRows > 0) {
-                    isAlreadyInDataSource = true
-                }
-            }
-        } catch(Exception e){
-            log.error(e.message)
-            log.error(e.stackTrace.join("\n"))
-            connection.rollback()
-            throw new DatabaseQueryException("Could not check if offer ${offer.identifier} is " +
-                    "already in the database.")
-        }
-        return isAlreadyInDataSource
+        this.sessionProvider = null
     }
 
     /**
-     * The method stores the offer in the QBiC database
+     * Creates a new instance of OfferDbConnector
      *
-     * @param offer with the information of the offer to be stored
-     * @return the id of the stored offer in the database
+     * @param connectionProvider
+     * @param personDbConnector
+     * @param productsDbConnector
+     * @param sessionProvider
+     * @since 1.3.0
      */
-    private int storeOffer(Offer offer, int projectManagerId, int customerId, int affiliationId){
-        String sqlValues = "VALUE(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)"
-        String queryTemplate = OFFER_INSERT_QUERY + " " + sqlValues
-        def identifier = offer.identifier
-        List<Integer> generatedKeys = []
-        Connection connection = connectionProvider.connect()
-        log.info("New offer with id: ${offer.identifier}")
-        connection.withCloseable {
-            String experimentalDesign = offer.experimentalDesign.orElse(null)
-            PreparedStatement preparedStatement = it.prepareStatement(queryTemplate, Statement.RETURN_GENERATED_KEYS)
-            preparedStatement.setString(1, identifier.toString())
-            preparedStatement.setDate(2, new Date(offer.modificationDate.time))
-            preparedStatement.setDate(3, new Date(offer.expirationDate.time))
-            preparedStatement.setInt(4, customerId)
-            preparedStatement.setInt(5, projectManagerId)
-            preparedStatement.setString(6, offer.projectTitle)
-            preparedStatement.setString(7, offer.projectObjective)
-            preparedStatement.setDouble(8, offer.totalPrice)
-            preparedStatement.setInt(9, affiliationId)
-            preparedStatement.setDouble(10, offer.taxes)
-            preparedStatement.setDouble(11, offer.netPrice)
-            preparedStatement.setDouble(12, offer.overheads)
-            preparedStatement.setDouble(13,offer.totalDiscountPrice)
-            preparedStatement.setString(14, offer.checksum)
-            preparedStatement.setString(15, experimentalDesign)
-
-
-            preparedStatement.execute()
-
-            def keys = preparedStatement.getGeneratedKeys()
-            while (keys.next()) {
-                generatedKeys.add(keys.getInt(1))
-            }
-
-            return generatedKeys[0]
-        }
+    OfferDbConnector(ConnectionProvider connectionProvider, PersonDbConnector personDbConnector, ProductsDbConnector productsDbConnector, SessionProvider sessionProvider) {
+        this.connectionProvider = connectionProvider
+        this.customerGateway = personDbConnector
+        this.productGateway = productsDbConnector
+        this.sessionProvider = sessionProvider
     }
 
+
+    /**
+     * Searches for an offer with the same content in the database.
+     * The method performs an equality check based on the content, not based on the aggregate identity.
+     * @param offer offer to use for the search
+     * @return true, if an offer with equal content exists in the database, else false
+     */
+    protected boolean equalOfferExists(OfferV2 offer) {
+        String checksum = offer.getChecksum()
+        return offerChecksumExists(checksum)
+    }
+
+    private boolean offerChecksumExists(String checksum) {
+        boolean checksumPresent
+        try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            Query query = session.createQuery("Select o FROM OfferV2 o where o.checksum=:checksumOfInterest ", OfferV2.class)
+            query.setParameter("checksumOfInterest", checksum)
+            checksumPresent = !query.list().isEmpty()
+            session.getTransaction().commit()
+        }
+        return checksumPresent
+    }
+
+    /**
+     * {@inheritDocs}
+     */
     @Override
     List<OfferOverview> listOfferOverviews() {
         loadOfferOverview()
     }
 
+    private static List<OfferOverview> createOverviewList(List<OfferV2> offerV2List) {
+        return offerV2List.stream().map(OfferOverview::from).collect() as List<OfferOverview>
+    }
+
     private List<OfferOverview> loadOfferOverview() {
-        List<OfferOverview> offerOverviewList = []
-
-        String query = "SELECT offerId, creationDate, projectTitle, " +
-                "totalPrice, first_name, last_name, email, projectManagerId, associatedProject\n" +
-                "FROM offer \n" +
-                "LEFT JOIN person \n" +
-                "ON offer.customerId = person.id"
-
-        Connection connection = connectionProvider.connect()
-        connection.withCloseable {
-            PreparedStatement statement = it.prepareStatement(query)
-            ResultSet resultSet = statement.executeQuery()
-            while (resultSet.next()) {
-                Customer customer = new Customer.Builder(
-                        resultSet.getString("first_name"),
-                        resultSet.getString("last_name"),
-                        resultSet.getString("email"))
-                        .build()
-                int projectManagerId = resultSet.getInt("projectManagerId")
-                ProjectManager projectManager = customerGateway.getProjectManager(projectManagerId)
-                def projectTitle = resultSet.getString("projectTitle")
-                def totalCosts = resultSet.getDouble("totalPrice")
-                def creationDate = resultSet.getDate("creationDate")
-                def customerName = "${customer.getFirstName()} ${customer.getLastName()}"
-                def projectManagerName = "${projectManager.getFirstName()} ${projectManager.getLastName()}"
-                def offerId = parseOfferId(resultSet.getString("offerId"))
-                Optional<ProjectIdentifier> projectIdentifier = parseProjectIdentifier(
-                        resultSet.getString("associatedProject"))
-
-                OfferOverview offerOverview
-                if (projectIdentifier.isPresent()) {
-                    offerOverview = new OfferOverview(offerId,
-                            creationDate,projectTitle,
-                            customerName, projectManagerName ,totalCosts, projectIdentifier.get())
-                } else {
-                    offerOverview = new OfferOverview(offerId,
-                            creationDate,projectTitle, "",
-                            customerName, projectManagerName, totalCosts)
-                }
-                offerOverviewList.add(offerOverview)
-            }
+        try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            List<OfferV2> offerV2List = session.createQuery("Select offer FROM OfferV2 offer", OfferV2.class).list()
+            List<OfferOverview> overviewList = createOverviewList(offerV2List)
+            session.getTransaction().commit()
+            return overviewList
+        } catch (HibernateException e) {
+            log.error(e.message, e)
+            throw new DatabaseQueryException("Unable to load offer overviews.")
         }
-        return offerOverviewList
-    }
-
-    static OfferId parseOfferId(String offerId) {
-        def splitId = offerId.split("_")
-        // The first entry [0] contains the id prefix, no need to parse it.
-        def projectPart = splitId[1]
-        def randomPart = splitId[2]
-        def version = splitId[3]
-        return new OfferId(projectPart, randomPart, version)
-    }
-
-    @Override
-    Optional<Offer> getOffer(OfferId offerId) {
-        Optional<Offer> offer = Optional.empty()
-
-        String query = "SELECT * " +
-                "FROM offer \n" +
-                "WHERE offerId=?"
-
-        Connection connection = connectionProvider.connect()
-        connection.withCloseable {
-            PreparedStatement statement = it.prepareStatement(query)
-            statement.setString(1, TomatoIdFormatter.formatAsOfferId(offerId))
-            ResultSet resultSet = statement.executeQuery()
-            while (resultSet.next()) {
-                /*
-                Load the offer Id first
-                 */
-                OfferId fetchedOfferId = parseOfferId(resultSet.getString("offerId"))
-                int offerPrimaryId = resultSet.getInt("id")
-                /*
-                Load customer and project manager info
-                 */
-                int customerId =  resultSet.getInt("customerId")
-                int projectManagerId = resultSet.getInt("projectManagerId")
-                Customer customer = customerGateway.getCustomer(customerId)
-                ProjectManager projectManager = customerGateway.getProjectManager(projectManagerId)
-                /*
-                Load general offer info
-                 */
-                String projectTitle = resultSet.getString("projectTitle")
-                String projectObjective = resultSet.getString("projectObjective")
-                double totalCosts = resultSet.getDouble("totalPrice")
-                double vat = resultSet.getDouble("vat")
-                double overheads = resultSet.getDouble("overheads")
-                double net = resultSet.getDouble("netPrice")
-                Date creationDate = resultSet.getDate("creationDate")
-                Date expirationDate = resultSet.getDate("expirationDate")
-                int selectedAffiliationId = resultSet.getInt("customerAffiliationId")
-                Affiliation selectedAffiliation = customerGateway.getAffiliation(selectedAffiliationId)
-                List<ProductItem> items = productGateway.getItemsForOffer(offerPrimaryId)
-                String checksum = resultSet.getString("checksum")
-                String associatedProject = resultSet.getString("associatedProject")
-                String experimentalDesign = resultSet.getString("experimentalDesign")
-
-                def offerBuilder = new Offer.Builder(
-                        customer,
-                        projectManager,
-                        projectTitle,
-                        projectObjective,
-                        selectedAffiliation)
-                        .modificationDate(creationDate)
-                        .expirationDate(expirationDate)
-                        .identifier(fetchedOfferId)
-                        .items(items)
-                        .totalPrice(totalCosts)
-                        .taxes(vat)
-                        .overheads(overheads)
-                        .netPrice(net)
-                        .checksum(checksum)
-                Optional<ProjectIdentifier> projectIdentifier = parseProjectIdentifier(associatedProject)
-                if (projectIdentifier.isPresent()) {
-                    offerBuilder.associatedProject(projectIdentifier.get())
-                }
-                if(experimentalDesign){
-                    offerBuilder.experimentalDesign(experimentalDesign)
-                }
-                offer = Optional.of(offerBuilder.build())
-            }
-        }
-        return offer
-    }
-
-    private static Optional<ProjectIdentifier> parseProjectIdentifier(String projectIdentifier) {
-        Optional<ProjectIdentifier> identifier = Optional.empty()
-        if (!projectIdentifier) {
-            return identifier
-        }
-        try {
-            /*
-            A full openBIS project ID has the format: '/<space>/<project>', where
-            <space> and <project> are placeholders for real space and project names.
-             */
-            def splittedIdentifier = projectIdentifier.split("/")
-            if (splittedIdentifier.length != 3) {
-                throw new RuntimeException(
-                        "Project identifier has an unexpected number of separators: ${projectIdentifier}. " +
-                                "The expected format must follow this schema: \'/<space>/<project>\'")
-            }
-            def space = new ProjectSpace(splittedIdentifier[1])
-            def code = new ProjectCode(splittedIdentifier[2])
-            identifier = Optional.of(new ProjectIdentifier(space, code))
-        } catch (Exception e) {
-            log.error(e.message)
-            log.error(e.stackTrace.join("\n"))
-        }
-        return identifier
     }
 
     /**
@@ -347,14 +135,66 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
      */
     @Override
     void linkOfferWithProject(OfferId offerId, ProjectIdentifier projectIdentifier) {
-        String query = "UPDATE offer SET associatedProject = ? WHERE offerId = ?"
+        String businessOfferId = life.qbic.business.offers.identifier.OfferId.from(offerId.toString()).toString()
+        List<OfferV2> result = []
+        try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            Query query = session.createQuery("select offer from OfferV2 offer where offer.offerId=:offerIdToMatch", OfferV2.class)
+            query.setParameter("offerIdToMatch", businessOfferId)
+            result.addAll(query.list() as List<OfferV2>)
+            if (result.isEmpty()) {
+                throw new DatabaseQueryException("Cannot find offer with the id: " + offerId.toString())
+            }
+            OfferV2 offer = result.get(0)
+            offer.setAssociatedProject(projectIdentifier)
 
-        Connection connection = connectionProvider.connect()
-        connection.withCloseable {
-            PreparedStatement statement = it.prepareStatement(query)
-            statement.setString(1, projectIdentifier.toString())
-            statement.setString(2, TomatoIdFormatter.formatAsOfferId(offerId))
-            statement.executeUpdate()
+            session.save(offer)
+            session.getTransaction().commit()
+        }
+    }
+
+    @Override
+    void store(OfferV2 offer) throws OfferExistsException {
+        if (equalOfferExists(offer)) {
+            throw new OfferExistsException("Offer with equal content of ${offer.identifier.toString()} already exists.")
+        }
+        try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            session.save(offer)
+        } catch (HibernateException e) {
+            log.error(e.getMessage(), e)
+            throw new DatabaseQueryException("Unexpected error. Something went wrong during the offer saving.")
+        }
+    }
+
+
+    @Override
+    List<life.qbic.business.offers.identifier.OfferId> fetchAllVersionsForOfferId(life.qbic.business.offers.identifier.OfferId id) {
+        String project = id.getProjectPart()
+        String randomIdPart = id.getRandomPart()
+        String searchTerm = "%" + project + "_" + randomIdPart + "%"
+
+        try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            Query query = session.createQuery("SELECT offer FROM OfferV2 offer WHERE offer.offerId LIKE :id", OfferV2.class)
+            query.setParameter("id", searchTerm)
+            List<OfferV2> result = query.list()
+            return result.stream().map((OfferV2 offer) -> offer.getIdentifier()).collect(Collectors.toList())
+        } catch (HibernateException e) {
+            log.error(e.message, e)
+            throw new DatabaseQueryException("Unexpected exception during the search for all versions of offer " + id.toString())
+        }
+    }
+
+    @Override
+    Optional<OfferV2> getOffer(life.qbic.business.offers.identifier.OfferId oldId) {
+        try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            Query query = session.createQuery("select offer from OfferV2 offer where offer.offerId = :idOfInterest", OfferV2.class)
+            query.setParameter("idOfInterest", oldId.toString())
+            List<OfferV2> result = query.list()
+            Optional<OfferV2> firstOffer = result ? Optional.ofNullable(result.get(0)) : Optional.empty() as Optional<OfferV2>
+            return firstOffer
         }
     }
 }

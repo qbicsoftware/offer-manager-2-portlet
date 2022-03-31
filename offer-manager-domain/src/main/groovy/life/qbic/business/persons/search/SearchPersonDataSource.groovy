@@ -1,7 +1,7 @@
 package life.qbic.business.persons.search
 
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.datamodel.dtos.general.Person
+import life.qbic.business.persons.Person
 
 /**
  * Retrieves data for the SearchCustomer use case
@@ -26,18 +26,5 @@ interface SearchPersonDataSource {
      * @since 1.0.0
      */
     List<Person> findPerson(String firstName, String lastName) throws DatabaseQueryException
-    
-    
-    /**
-     * This method returns a person matching the given search criteria only if it is set to active
-     *
-     * @param firstName The persons first name that needs to be found
-     * @param lastName The persons last name that needs to be found
-     * @return A list of matching person entries with the given first and last name that are set to active
-     * @throws DatabaseQueryException If the data source query fails for technical reasons, this
-     * exception is thrown.
-     *
-     * @since 1.0.0
-     */
-    List<Person> findActivePerson(String firstName, String lastName) throws DatabaseQueryException
+
 }

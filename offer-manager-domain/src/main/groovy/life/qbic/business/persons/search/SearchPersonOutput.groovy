@@ -1,7 +1,7 @@
 package life.qbic.business.persons.search
 
 import life.qbic.business.UseCaseFailure
-import life.qbic.datamodel.dtos.general.Person
+import life.qbic.business.persons.Person
 
 /**
  * Output interface for the {@link SearchPerson} use

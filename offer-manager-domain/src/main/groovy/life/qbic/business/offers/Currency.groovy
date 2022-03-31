@@ -25,7 +25,6 @@ class Currency {
      * @return number like 5,000.00
      */
     static DecimalFormat getFormatterWithoutSymbol(){
-        //TODO rename to getDecimalFormatter()
         DecimalFormat dotFormat_withoutSymbol = (DecimalFormat) NUMBER_FORMAT
         dotFormat_withoutSymbol.applyPattern("#,##0.00")
 
@@ -39,8 +38,6 @@ class Currency {
      * @return number like 5,000.00 €
      */
     static DecimalFormat getFormatterWithSymbol(){
-        //TODO this can be done via the css classes and the .currency-symbol class
-        // replace all occurrences with getFormatterWithoutSymbol()
         DecimalFormat dotFormat_withSymbol = (DecimalFormat) NUMBER_FORMAT
         dotFormat_withSymbol.applyPattern("#,##0.00 €")
 

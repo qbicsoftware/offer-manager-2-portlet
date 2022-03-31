@@ -1,7 +1,7 @@
 package life.qbic.business.persons.affiliation.create
 
-import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.business.UseCaseFailure
+import life.qbic.business.persons.affiliation.Affiliation
 
 /**
  * Output interface for the {@link CreateAffiliation} use

@@ -8,6 +8,15 @@
         <Logger name="life.qbic" level="info" additivity="false">
             <AppenderRef ref="Console"/>
         </Logger>
+        <!-- Log everything in hibernate -->
+        <Logger name="org.hibernate" level="info" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+
+        <!-- Log all SQL statements -->
+        <Logger name="org.hibernate.SQL" level="info" additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
         <Root level="all">
             <AppenderRef ref="Console"/>
         </Root>

@@ -1,9 +1,9 @@
 package life.qbic.portal.offermanager.components.product
 
+import life.qbic.business.RefactorConverter
+import life.qbic.business.products.Product
 import life.qbic.business.products.archive.ArchiveProductOutput
 import life.qbic.business.products.create.CreateProductOutput
-import life.qbic.datamodel.dtos.business.ProductId
-import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
@@ -14,38 +14,16 @@ import life.qbic.portal.offermanager.components.AppViewModel
  * @since 1.0.0
  *
  */
-class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOutput{
+class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOutput {
 
     private final MaintainProductsViewModel productsViewModel
     private final AppViewModel mainViewModel
 
-    MaintainProductsPresenter(MaintainProductsViewModel productsViewModel, AppViewModel mainViewModel){
+    private static final RefactorConverter refactorConverter = new RefactorConverter()
+
+    MaintainProductsPresenter(MaintainProductsViewModel productsViewModel, AppViewModel mainViewModel) {
         this.productsViewModel = productsViewModel
         this.mainViewModel = mainViewModel
-    }
-
-    @Override
-    void archived(Product product) {
-        mainViewModel.successNotifications << "Successfully archived product $product.productId - $product.productName."
-        productsViewModel.productsResourcesService.removeFromResource(product)
-    }
-
-    @Override
-    void created(Product product) {
-        mainViewModel.successNotifications << "Successfully added new product $product.productId - $product.productName."
-        productsViewModel.productsResourcesService.addToResource(product)
-        productsViewModel.productCreatedSuccessfully = true
-    }
-
-    @Override
-    void foundDuplicates(List<Product> duplicateProducts) {
-        Product duplicateProduct = duplicateProducts.first()
-        List<ProductId> duplicateProductIds = []
-        duplicateProducts.forEach { Product product ->
-            duplicateProductIds << product.getProductId()
-        }
-        String productIds = duplicateProductIds.join(", ")
-        mainViewModel.failureNotifications << "Found multiple products for ${duplicateProduct.productName} : ${productIds}"
     }
 
     @Override
@@ -53,4 +31,27 @@ class MaintainProductsPresenter implements CreateProductOutput, ArchiveProductOu
         mainViewModel.failureNotifications << notification
     }
 
+    @Override
+    void archived(Product product) {
+        mainViewModel.successNotifications << "Successfully archived product $product.productId - $product.productName."
+        productsViewModel.productsResourcesService.removeFromResource(refactorConverter.toProductDto(product))
+    }
+
+    @Override
+    void created(Product product) {
+        mainViewModel.successNotifications << "Successfully added new product $product.productId - $product.productName."
+        productsViewModel.productsResourcesService.addToResource(refactorConverter.toProductDto(product))
+        productsViewModel.productCreatedSuccessfully = true
+    }
+
+    @Override
+    void foundDuplicates(List<Product> products) {
+        Product duplicateProduct = products.first()
+        List<String> duplicateProductIds = []
+        products.forEach { Product product ->
+            duplicateProductIds << product.getProductId()
+        }
+        String productIds = duplicateProductIds.join(", ")
+        mainViewModel.failureNotifications << "Found multiple products for ${duplicateProduct.productName} : ${productIds}"
+    }
 }
