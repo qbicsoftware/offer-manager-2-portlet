@@ -25,7 +25,7 @@ import java.time.LocalDate
  * @since 1.3.0
  */
 @Entity
-@Table(name = "offer")
+@Table(name = "offers")
 class OfferV2 {
 
   @Id
