@@ -22,7 +22,7 @@ class InternalCustomerTaxPolicySpec extends Specification {
 
         then:
         policy.vatRatio == BigDecimal.ZERO
-        policy.calculateTaxes(value) == value
+        policy.calculateTaxes(value) == BigDecimal.ZERO
     }
 
     def "The policy must not be applied to non internal customers" () {

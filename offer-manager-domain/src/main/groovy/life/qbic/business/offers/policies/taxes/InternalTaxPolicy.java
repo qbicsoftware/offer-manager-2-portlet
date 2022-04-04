@@ -21,7 +21,7 @@ public class InternalTaxPolicy implements TaxPolicy {
 
   @Override
   public BigDecimal calculateTaxes(BigDecimal value) {
-    return value;
+    return BigDecimal.ZERO;
   }
 
   @Override
