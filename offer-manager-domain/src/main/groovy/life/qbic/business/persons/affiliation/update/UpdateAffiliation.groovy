@@ -1,15 +1,42 @@
 package life.qbic.business.persons.affiliation.update
 
+import life.qbic.business.exceptions.DatabaseQueryException
+import life.qbic.business.logging.Logger
+import life.qbic.business.logging.Logging
 import life.qbic.business.persons.affiliation.Affiliation
+import life.qbic.business.persons.affiliation.AffiliationNotFoundException
+
 
 /**
- * Updates an affiliation entry
+ * Updates an affiliation entry by replacing it
  *
  * @since 1.3.0
  */
-class UpdateAffiliation implements UpdateAffiliationInput{
-    @Override
-    void updateAffiliation(Affiliation affiliation) {
+class UpdateAffiliation implements UpdateAffiliationInput {
 
+  private UpdateAffiliationDataSource affiliationDataSource
+  private UpdateAffiliationOutput affiliationOutput
+
+  private final Logging log = Logger.getLogger(UpdateAffiliation.class)
+
+  @Override
+  void updateAffiliation(Affiliation newAffiliation) {
+    try {
+      affiliationDataSource.updateAffiliation(newAffiliation)
+      affiliationOutput.updatedAffiliationCategory(newAffiliation)
+    } catch (AffiliationNotFoundException notFoundException) {
+      String message = "Cannot update affiliation entry for ${newAffiliation.getOrganization()} ${newAffiliation.getAddressAddition()}. \nAffiliation was not found. Please try again."
+      log.error(message, notFoundException)
+      affiliationOutput.affiliationNotFound(newAffiliation, message)
+    } catch (DatabaseQueryException databaseQueryException) {
+      String message = "Could not update ${newAffiliation.getOrganization()} ${newAffiliation.getAddressAddition()}. Please try again."
+      log.error(message, databaseQueryException)
+      affiliationOutput.failNotification(message)
+    } catch (Exception unexpected) {
+      String message = "An unexpected error occurred during the update of the ${newAffiliation.getOrganization()} ${newAffiliation.getAddressAddition()} affiliation."
+      log.error("$message : $unexpected.message", unexpected)
+      affiliationOutput.failNotification(message)
     }
+  }
+  
 }
