@@ -14,7 +14,7 @@ public class TaxOffice {
 
   public static TaxPolicy policyFor(AffiliationCategory category, String country) {
     if (!country.equalsIgnoreCase("germany")) {
-      return OutsideGermanyTaxPolicy.of(category, country);
+      return OutsideGermanyTaxPolicy.of(country);
     }
     if (category == AffiliationCategory.INTERNAL) {
       return InternalTaxPolicy.of(category, country);

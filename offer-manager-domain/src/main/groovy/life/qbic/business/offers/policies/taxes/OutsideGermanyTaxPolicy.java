@@ -1,21 +1,18 @@
 package life.qbic.business.offers.policies.taxes;
 
 import java.math.BigDecimal;
-import life.qbic.business.persons.affiliation.AffiliationCategory;
 
-public class OutsideGermanyTaxPolicy extends TaxPolicy {
+public class OutsideGermanyTaxPolicy implements TaxPolicy {
 
-  protected static OutsideGermanyTaxPolicy of(AffiliationCategory category, String country) {
+  protected static OutsideGermanyTaxPolicy of(String country) {
     if (country.equalsIgnoreCase("Germany")) {
-      throw new PolicyViolationException("Policy must be applied to countries outside of Germany only.");
+      throw new PolicyViolationException(
+          "Policy must be applied to countries outside of Germany only.");
     }
-    return new OutsideGermanyTaxPolicy(category, country);
+    return new OutsideGermanyTaxPolicy();
   }
 
-  private OutsideGermanyTaxPolicy(
-      AffiliationCategory targetAffiliationCategory,
-      String country) {
-    super(targetAffiliationCategory, country);
+  private OutsideGermanyTaxPolicy() {
   }
 
   @Override

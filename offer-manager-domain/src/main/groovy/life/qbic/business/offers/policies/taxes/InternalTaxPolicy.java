@@ -3,7 +3,7 @@ package life.qbic.business.offers.policies.taxes;
 import java.math.BigDecimal;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
 
-public class InternalTaxPolicy extends TaxPolicy {
+public class InternalTaxPolicy implements TaxPolicy {
 
   protected static InternalTaxPolicy of(AffiliationCategory category, String country) {
     if (category != AffiliationCategory.INTERNAL) {
@@ -13,13 +13,10 @@ public class InternalTaxPolicy extends TaxPolicy {
       throw new PolicyViolationException(
           "Cannot apply internal tax policy to countries outside of Germany: " + country);
     }
-    return new InternalTaxPolicy(category, country);
+    return new InternalTaxPolicy();
   }
 
-  private InternalTaxPolicy(
-      AffiliationCategory targetAffiliationCategory,
-      String country) {
-    super(targetAffiliationCategory, country);
+  private InternalTaxPolicy() {
   }
 
   @Override

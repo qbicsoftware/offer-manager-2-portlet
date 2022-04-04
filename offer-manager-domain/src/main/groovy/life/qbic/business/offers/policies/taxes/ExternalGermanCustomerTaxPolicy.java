@@ -3,7 +3,7 @@ package life.qbic.business.offers.policies.taxes;
 import java.math.BigDecimal;
 import life.qbic.business.persons.affiliation.AffiliationCategory;
 
-public class ExternalGermanCustomerTaxPolicy extends TaxPolicy {
+public class ExternalGermanCustomerTaxPolicy implements TaxPolicy {
 
   private static final BigDecimal VAT_RATIO = new BigDecimal("0.19");
 
@@ -15,13 +15,10 @@ public class ExternalGermanCustomerTaxPolicy extends TaxPolicy {
     if (!country.equalsIgnoreCase("Germany")) {
       throw new PolicyViolationException("The Policy must not be applied to customers outside of Germany");
     }
-    return new ExternalGermanCustomerTaxPolicy(affiliationCategory, country);
+    return new ExternalGermanCustomerTaxPolicy();
   }
 
-  private ExternalGermanCustomerTaxPolicy(
-      AffiliationCategory targetAffiliationCategory,
-      String country) {
-    super(targetAffiliationCategory, country);
+  private ExternalGermanCustomerTaxPolicy() {
   }
 
   @Override

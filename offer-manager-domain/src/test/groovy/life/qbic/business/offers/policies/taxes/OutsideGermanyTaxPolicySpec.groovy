@@ -14,7 +14,7 @@ class OutsideGermanyTaxPolicySpec extends Specification {
 
     def "Given an customer outside of Germany, apply no taxes"() {
         given:
-        TaxPolicy taxPolicy = OutsideGermanyTaxPolicy.of(affiliationCategory, "France")
+        TaxPolicy taxPolicy = OutsideGermanyTaxPolicy.of( "France")
         BigDecimal value = new BigDecimal("10")
 
         when:
@@ -29,13 +29,10 @@ class OutsideGermanyTaxPolicySpec extends Specification {
 
     def "The policy must not be applied to a customer from Germany"() {
         when:
-        OutsideGermanyTaxPolicy.of(affiliationCategory, "Germany")
+        OutsideGermanyTaxPolicy.of("Germany")
 
         then:
         thrown(PolicyViolationException)
-
-        where:
-        affiliationCategory << [AffiliationCategory.INTERNAL, AffiliationCategory.EXTERNAL_ACADEMIC, AffiliationCategory.EXTERNAL]
     }
 
 }

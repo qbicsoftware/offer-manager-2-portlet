@@ -1,7 +1,6 @@
 package life.qbic.business.offers.policies.taxes;
 
 import java.math.BigDecimal;
-import life.qbic.business.persons.affiliation.AffiliationCategory;
 
 /**
  * <b><class short description - 1 Line!></b>
@@ -10,19 +9,9 @@ import life.qbic.business.persons.affiliation.AffiliationCategory;
  *
  * @since <version tag>
  */
-public abstract class TaxPolicy {
+public interface TaxPolicy {
 
-    private final AffiliationCategory targetAffiliationCategory;
+  BigDecimal calculateTaxes(BigDecimal value);
 
-    private final String country;
-
-    protected TaxPolicy(
-        AffiliationCategory targetAffiliationCategory, String country) {
-        this.targetAffiliationCategory = targetAffiliationCategory;
-        this.country = country;
-    }
-
-    abstract public BigDecimal calculateTaxes(BigDecimal value);
-
-    abstract public BigDecimal getVatRatio();
+  BigDecimal getVatRatio();
 }
