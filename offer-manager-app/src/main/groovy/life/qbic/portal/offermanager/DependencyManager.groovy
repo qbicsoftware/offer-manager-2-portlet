@@ -39,6 +39,7 @@ import life.qbic.portal.offermanager.components.affiliation.create.CreateAffilia
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationViewModel
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationView
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationViewModel
+import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationView
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferController
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferPresenter
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
@@ -325,7 +326,7 @@ class DependencyManager {
     private SearchAffiliationView createSearchAffiliationView() {
         ResourcesService<Affiliation> affiliationResourcesService = this.affiliationService
         SearchAffiliationViewModel searchAffiliationViewModel = new SearchAffiliationViewModel(affiliationResourcesService)
-        SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel)
+        SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel, new UpdateAffiliationView())
         return searchAffiliationView
     }
 
