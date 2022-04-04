@@ -14,7 +14,7 @@ class ExternalGermanCustomerTaxPolicySpec extends Specification {
 
     def "Given an customer within Germany has an external affiliation, apply taxes"() {
         given:
-        TaxPolicy policy = new ExternalGermanCustomerTaxPolicy(affiliationCategory, "Germany")
+        TaxPolicy policy = ExternalGermanCustomerTaxPolicy.of(affiliationCategory, "Germany")
         BigDecimal value = new BigDecimal("1")
 
         when:
