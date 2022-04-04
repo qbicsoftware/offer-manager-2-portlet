@@ -136,20 +136,6 @@ class OfferV2Spec extends Specification {
     affiliationCategory << AffiliationCategory.values()
   }
 
-  def "expect the VAT ratio to be #vatRatioString for #country"() {
-    given:
-    OfferV2 offer = createOfferWithoutItems(affiliationCategory as AffiliationCategory, country)
-    expect:
-    offer.getVatRatio() == expected
-    where:
-    country            | expected
-    "Germany"          | 0.19
-    "some other place" | 0
-    "France"           | 0
-    and:
-    vatRatioString = "${expected * 100}%"
-    affiliationCategory << AffiliationCategory.values()
-  }
 
   def "expect the tax amount to be the cost before tax multiplied with the VAT rate."() {
     given: "an offer for external in Germany"
