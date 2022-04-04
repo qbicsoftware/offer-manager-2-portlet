@@ -86,6 +86,7 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
     query.setParameter("street", affiliation.getStreet())
 
     boolean isInSession = !query.list().isEmpty()
+    session.clear()
     session.getTransaction().commit()
     return isInSession
   }
