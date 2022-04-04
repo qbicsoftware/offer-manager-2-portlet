@@ -2,6 +2,8 @@ package life.qbic.business.offers
 
 
 import life.qbic.business.offers.identifier.OfferId
+import life.qbic.business.offers.policies.taxes.TaxOffice
+import life.qbic.business.offers.policies.taxes.TaxPolicy
 import life.qbic.business.persons.Person
 import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.AffiliationCategory
@@ -25,7 +27,7 @@ import java.time.LocalDate
  * @since 1.3.0
  */
 @Entity
-@Table(name = "offer")
+@Table(name = "offers")
 class OfferV2 {
 
   @Id
@@ -422,8 +424,9 @@ class OfferV2 {
   }
 
   private void updateVat() {
-    updateVatRatio()
-    updateVatAmount()
+    TaxPolicy taxPolicy = TaxOffice.policyFor(selectedCustomerAffiliation.category, selectedCustomerAffiliation.country)
+    vatRatio = taxPolicy.getVatRatio()
+    taxAmount = taxPolicy.calculateTaxes(priceBeforeTax).setScale(2, RoundingMode.HALF_UP)
   }
 
   private void updateOverhead() {
@@ -433,10 +436,6 @@ class OfferV2 {
 
   private void updatePriceAfterTax() {
     this.priceAfterTax = priceBeforeTax.add(taxAmount)
-  }
-
-  private void updateVatAmount() {
-    this.taxAmount = priceBeforeTax.multiply(vatRatio).setScale(2, RoundingMode.HALF_UP)
   }
 
   /**
@@ -500,14 +499,6 @@ class OfferV2 {
     return original.copy()
   }
 
-//  String getOfferId() {
-//    return offerId
-//  }
-
-//  String setOfferId(String offerId) {
-//    this.offerId = offerId
-//  }
-
   private OfferV2 copy() {
     OfferV2 offerCopy = new OfferV2()
 
@@ -542,12 +533,6 @@ class OfferV2 {
     def category = selectedCustomerAffiliation.getCategory()
     this.overheadRatio = determineOverheadRate(category)
   }
-
-  /*
-  item prices
-  group prices
-
-   */
 
   private static BigDecimal determineOverheadRate(AffiliationCategory category) {
     if (category == AffiliationCategory.INTERNAL) {
