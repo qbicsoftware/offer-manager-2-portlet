@@ -3,7 +3,7 @@ package life.qbic.business.persons.affiliation.update
 import life.qbic.business.persons.affiliation.Affiliation
 
 /**
- * Updates an affiliation entry by replacing it
+ * Updates an affiliation entry
  *
  * @since 1.3.0
  */

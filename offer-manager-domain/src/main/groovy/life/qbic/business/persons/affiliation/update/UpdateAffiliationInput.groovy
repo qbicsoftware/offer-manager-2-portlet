@@ -13,7 +13,7 @@ interface UpdateAffiliationInput {
 
     /**
      * Updates an affiliation entry
-     * @param affiliation The affiliation to be updated
+     * @param affiliation the requested affiliation state to be made persistent
      */
     void updateAffiliation(Affiliation affiliation)
 }

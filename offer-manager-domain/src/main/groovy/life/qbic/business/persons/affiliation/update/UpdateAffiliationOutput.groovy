@@ -13,7 +13,7 @@ interface UpdateAffiliationOutput {
 
     /**
      * Updates an affiliation entry
-     * @param affiliation The affiliation to be updated
+     * @param affiliation the affiliation after the update
      */
     void updatedAffiliation(Affiliation affiliation)
 }

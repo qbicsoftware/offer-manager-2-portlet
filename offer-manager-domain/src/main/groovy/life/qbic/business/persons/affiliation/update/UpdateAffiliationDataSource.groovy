@@ -12,8 +12,8 @@ import life.qbic.business.persons.affiliation.AffiliationNotFoundException
 interface UpdateAffiliationDataSource {
 
     /**
-     * Updates an affiliation entry in the database
-     * @param affiliation The affiliation to be updated
+     * Makes changes to an existing persistent affiliation
+     * @param affiliation the affiliation to be updated
      * @throws DatabaseQueryException
      */
     void updateAffiliation(Affiliation affiliation) throws DatabaseQueryException, AffiliationNotFoundException
