@@ -5,11 +5,14 @@ import life.qbic.business.persons.affiliation.AffiliationCategory;
 
 public class OutsideGermanyTaxPolicy extends TaxPolicy {
 
-  public static OutsideGermanyTaxPolicy of(AffiliationCategory category, String country) {
+  protected static OutsideGermanyTaxPolicy of(AffiliationCategory category, String country) {
+    if (country.equalsIgnoreCase("Germany")) {
+      throw new PolicyViolationException("Policy must be applied to countries outside of Germany only.");
+    }
     return new OutsideGermanyTaxPolicy(category, country);
   }
 
-  protected OutsideGermanyTaxPolicy(
+  private OutsideGermanyTaxPolicy(
       AffiliationCategory targetAffiliationCategory,
       String country) {
     super(targetAffiliationCategory, country);
@@ -17,7 +20,7 @@ public class OutsideGermanyTaxPolicy extends TaxPolicy {
 
   @Override
   public BigDecimal calculateTaxes(BigDecimal value) {
-    return value;
+    return BigDecimal.ZERO;
   }
 
   @Override

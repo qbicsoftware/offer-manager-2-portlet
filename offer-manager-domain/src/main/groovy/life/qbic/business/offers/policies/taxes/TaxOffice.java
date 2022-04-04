@@ -14,14 +14,14 @@ public class TaxOffice {
 
   public static TaxPolicy policyFor(AffiliationCategory category, String country) {
     if (!country.equalsIgnoreCase("germany")) {
-      return new OutsideGermanyTaxPolicy(category, country);
+      return OutsideGermanyTaxPolicy.of(category, country);
     }
     if (category == AffiliationCategory.INTERNAL) {
-      return new InternalTaxPolicy(category, country);
+      return InternalTaxPolicy.of(category, country);
     }
     // External but customer within Germany is our default policy when not
     // specified else
-    return new ExternalGermanCustomerTaxPolicy(category, country);
+    return ExternalGermanCustomerTaxPolicy.of(category, country);
   }
 
 }

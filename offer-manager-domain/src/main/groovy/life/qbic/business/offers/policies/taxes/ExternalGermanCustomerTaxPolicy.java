@@ -9,10 +9,16 @@ public class ExternalGermanCustomerTaxPolicy extends TaxPolicy {
 
   public static ExternalGermanCustomerTaxPolicy of(AffiliationCategory affiliationCategory,
       String country) {
+    if (affiliationCategory == AffiliationCategory.INTERNAL) {
+      throw new PolicyViolationException("Policy must not be applied to internal customers");
+    }
+    if (!country.equalsIgnoreCase("Germany")) {
+      throw new PolicyViolationException("The Policy must not be applied to customers outside of Germany");
+    }
     return new ExternalGermanCustomerTaxPolicy(affiliationCategory, country);
   }
 
-  protected ExternalGermanCustomerTaxPolicy(
+  private ExternalGermanCustomerTaxPolicy(
       AffiliationCategory targetAffiliationCategory,
       String country) {
     super(targetAffiliationCategory, country);

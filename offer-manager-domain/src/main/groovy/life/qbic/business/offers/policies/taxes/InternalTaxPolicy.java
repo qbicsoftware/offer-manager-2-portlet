@@ -5,7 +5,7 @@ import life.qbic.business.persons.affiliation.AffiliationCategory;
 
 public class InternalTaxPolicy extends TaxPolicy {
 
-  public static InternalTaxPolicy of(AffiliationCategory category, String country) {
+  protected static InternalTaxPolicy of(AffiliationCategory category, String country) {
     if (category != AffiliationCategory.INTERNAL) {
       throw new PolicyViolationException("Cannot apply internal tax policy to affiliation of type " + category);
     }
@@ -16,7 +16,7 @@ public class InternalTaxPolicy extends TaxPolicy {
     return new InternalTaxPolicy(category, country);
   }
 
-  protected InternalTaxPolicy(
+  private InternalTaxPolicy(
       AffiliationCategory targetAffiliationCategory,
       String country) {
     super(targetAffiliationCategory, country);
