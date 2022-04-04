@@ -15,13 +15,14 @@ class ExternalGermanCustomerTaxPolicySpec extends Specification {
     def "Given an customer within Germany has an external affiliation, apply taxes"() {
         given:
         TaxPolicy policy = ExternalGermanCustomerTaxPolicy.of(affiliationCategory, "Germany")
-        BigDecimal value = new BigDecimal("1")
+        BigDecimal value = new BigDecimal("10")
 
         when:
         def priceWithTaxes = policy.calculateTaxes(value)
 
         then:
-        priceWithTaxes == new BigDecimal("0.19")
+        priceWithTaxes == new BigDecimal("1.90")
+        policy.getVatRatio() == new BigDecimal("0.19")
 
         where:
         affiliationCategory << [AffiliationCategory.EXTERNAL, AffiliationCategory.EXTERNAL_ACADEMIC]

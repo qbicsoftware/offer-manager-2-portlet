@@ -21,7 +21,7 @@ class InternalCustomerTaxPolicySpec extends Specification {
         TaxPolicy policy = InternalTaxPolicy.of(category, "Germany")
 
         then:
-        policy.vatRatio == BigDecimal.ZERO
+        policy.getVatRatio() == BigDecimal.ZERO
         policy.calculateTaxes(value) == BigDecimal.ZERO
     }
 

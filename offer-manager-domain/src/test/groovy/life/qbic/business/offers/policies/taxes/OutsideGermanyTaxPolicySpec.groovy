@@ -22,6 +22,7 @@ class OutsideGermanyTaxPolicySpec extends Specification {
 
         then:
         taxes == BigDecimal.ZERO
+        taxPolicy.getVatRatio() == BigDecimal.ZERO
 
         where:
         affiliationCategory << [AffiliationCategory.EXTERNAL_ACADEMIC, AffiliationCategory.EXTERNAL]
