@@ -4,14 +4,20 @@ import life.qbic.business.persons.affiliation.AffiliationCategory;
 
 
 /**
- * <b><class short description - 1 Line!></b>
+ * <b>Tax Office</b>
  *
- * <p><More detailed description - When to use, what it solves, etc.></p>
+ * <p>The central class to apply the correct {@link TaxPolicy} for a given {@link AffiliationCategory} and country</p>
  *
- * @since <version tag>
+ * @since 1.3.0
  */
 public class TaxOffice {
 
+  /**
+   * Applies the correct tax policy for a given affiliation category and a country
+   * @param category The affilation category onto which the policy will be applied
+   * @param country The country of the affilition onto which the policy will be applied
+   * @return a {@link TaxPolicy} which returns the correct tax ratio and value
+   */
   public static TaxPolicy policyFor(AffiliationCategory category, String country) {
     if (!country.equalsIgnoreCase("germany")) {
       return OutsideGermanyTaxPolicy.of(country);
