@@ -13,9 +13,7 @@ interface UpdateAffiliationOutput {
 
     /**
      * Updates an affiliation entry
-     * @param oldAffiliation The affiliation to be updated
-     * @param newAffiliation The new affiliation entry
-     * @throws DatabaseQueryException
+     * @param affiliation The affiliation to be updated
      */
-    void updatedAffiliationCategory(Affiliation oldAffiliation, Affiliation newAffiliation) throws DatabaseQueryException
+    void updatedAffiliation(Affiliation affiliation)
 }
