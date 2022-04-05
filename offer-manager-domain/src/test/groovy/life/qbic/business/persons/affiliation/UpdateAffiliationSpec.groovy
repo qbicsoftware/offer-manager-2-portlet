@@ -41,9 +41,6 @@ class UpdateAffiliationSpec extends Specification {
     1 * output.failNotification(_ as String)
     0 * output.updatedAffiliation(_ as Affiliation)
 
-    where:
-    affilation = affiliation
-  }
 
   def "If the original affiliation can not be found during affiliation update, then a fail notification is sent"() {
     given: "a data source that throws an exception"
