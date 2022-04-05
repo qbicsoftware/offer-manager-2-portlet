@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.components.affiliation.create
 
 import groovy.beans.Bindable
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
@@ -17,6 +18,8 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  */
 class CreateAffiliationViewModel {
     List<String> affiliationCategories = new ArrayList<>()
+
+    Affiliation affiliationEntry
 
     @Bindable String organisation
     @Bindable String addressAddition

@@ -26,6 +26,7 @@ class SearchAffiliationView extends FormLayout{
 
     private Grid<Affiliation> affiliationGrid
     private Panel selectedAffiliationDetails
+    private VerticalLayout searchAffiliationLayout
 
     SearchAffiliationView(SearchAffiliationViewModel viewModel, UpdateAffiliationView updateAffiliationView) {
         this.viewModel = viewModel
@@ -34,6 +35,7 @@ class SearchAffiliationView extends FormLayout{
         initLayout()
         generateAffiliationGrid()
         listenToAffiliationSelection()
+        toggleViews()
     }
 
     private void initLayout() {
@@ -48,26 +50,29 @@ class SearchAffiliationView extends FormLayout{
         HorizontalLayout buttons = generateButtonLayout()
         refreshSelectionDetails()
 
-        this.addComponents(heading, buttons, affiliationGrid, selectedAffiliationDetails)
+        searchAffiliationLayout = new VerticalLayout(heading, buttons, affiliationGrid, selectedAffiliationDetails)
+        searchAffiliationLayout.setMargin(false)
 
+        updateAffiliationView.setMargin(false)
+        updateAffiliationView.setVisible(false)
+
+        this.addComponents(searchAffiliationLayout,updateAffiliationView)
     }
 
     private HorizontalLayout generateButtonLayout(){
         HorizontalLayout buttonLayout = new HorizontalLayout()
-
         buttonLayout.addComponent(generateUpdateButton())
 
         return buttonLayout
     }
 
     private Button generateUpdateButton(){
-        Button update = new Button("Update Person", VaadinIcons.EDIT)
+        Button update = new Button("Update Affiliation", VaadinIcons.EDIT)
         update.setEnabled(false)
         update.setStyleName(ValoTheme.BUTTON_LARGE)
 
         update.addClickListener({
-            //todo load updateAffiliation ui
-            this.setVisible(false)
+            searchAffiliationLayout.setVisible(false)
             updateAffiliationView.setVisible(true)
         })
 
@@ -75,13 +80,24 @@ class SearchAffiliationView extends FormLayout{
             if(it.firstSelectedItem.isPresent()){
                 update.setEnabled(true)
             }else{
-                setEnabled(false)
+                update.setEnabled(false)
             }
         })
 
         return update
     }
 
+    private void toggleViews(){
+        updateAffiliationView.abortButton.addClickListener({
+            searchAffiliationLayout.setVisible(true)
+            updateAffiliationView.setVisible(false)
+        })
+
+        updateAffiliationView.submitButton.addClickListener({
+            searchAffiliationLayout.setVisible(true)
+            updateAffiliationView.setVisible(false)
+        })
+    }
 
 
     private void generateAffiliationGrid() {
