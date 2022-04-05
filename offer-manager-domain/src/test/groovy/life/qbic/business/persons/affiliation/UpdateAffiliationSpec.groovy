@@ -54,10 +54,6 @@ class UpdateAffiliationSpec extends Specification {
     1 * output.failNotification(_ as String)
     0 * output.updatedAffiliation(_ as Affiliation)
 
-    where:
-    affilation = affiliation
-  }
-
   def "given a failed database query during affiliation update, then a fail notification is sent"() {
     given: "a data source that throws an exception"
     UpdateAffiliation updateAffiliation = new UpdateAffiliation(output, dataSource)
