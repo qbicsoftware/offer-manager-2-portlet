@@ -37,7 +37,7 @@ class UpdateAffiliation implements UpdateAffiliationInput {
       log.error(message, databaseQueryException)
       affiliationOutput.failNotification(message)
     } catch (Exception unexpected) {
-      String message = "An unexpected error occurred during the update of the ${affiliation.getOrganization()} ${affiliation.getAddressAddition()} affiliation."
+      String message = "Updating ${affiliation.getOrganization()} ${affiliation.getAddressAddition()} failed for unknown reasons."
       log.error("$message : $unexpected.message", unexpected)
       affiliationOutput.failNotification(message)
     }
