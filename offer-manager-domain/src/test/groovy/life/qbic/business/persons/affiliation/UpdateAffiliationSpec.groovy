@@ -65,8 +65,4 @@ class UpdateAffiliationSpec extends Specification {
     then: "the output receives a failure notification"
     1 * output.failNotification(_ as String)
     0 * output.updatedAffiliation(_ as Affiliation)
-
-    where:
-    affilation = affiliation
-  }
 }
