@@ -16,7 +16,7 @@ import spock.lang.Specification
 class UpdateAffiliationSpec extends Specification {
   private UpdateAffiliationOutput output = Mock()
   private UpdateAffiliationDataSource dataSource = Mock()
-  private static Affiliation affiliation = new Affiliation("orga", "addressAddition", "street", "1234", "city", "country", AffiliationCategory.EXTERNAL)
+  private static Affiliation affiliation = new Affiliation("Holmes Inc.", "Watson division", "baker street", "BR1", "london", "england", AffiliationCategory.EXTERNAL)
 
   def "given an affiliation change, update the affiliation using a mocked data source"() {
     given: "A new update affiliation use case instance"
@@ -28,6 +28,7 @@ class UpdateAffiliationSpec extends Specification {
     then: "The affiliation is updated using the data source"
     1 * dataSource.updateAffiliation(affiliation)
     1 * output.updatedAffiliation(affiliation)
+  }
 
   def "given an unexpected Exception, when an affiliation is updated, then a fail notification is sent"() {
     given: "a data source that throws an exception"
@@ -40,7 +41,7 @@ class UpdateAffiliationSpec extends Specification {
     then: "the output receives a failure notification"
     1 * output.failNotification(_ as String)
     0 * output.updatedAffiliation(_ as Affiliation)
-
+  }
 
   def "If the original affiliation can not be found during affiliation update, then a fail notification is sent"() {
     given: "a data source that throws an exception"
@@ -53,16 +54,18 @@ class UpdateAffiliationSpec extends Specification {
     then: "the output receives a failure notification"
     1 * output.failNotification(_ as String)
     0 * output.updatedAffiliation(_ as Affiliation)
+  }
 
   def "given a failed database query during affiliation update, then a fail notification is sent"() {
     given: "a data source that throws an exception"
     UpdateAffiliation updateAffiliation = new UpdateAffiliation(output, dataSource)
-    dataSource._ >> { throw new DatabaseQueryException("Query on my waywards son.") }
+    dataSource._ >> { throw new DatabaseQueryException("Query on my wayward son.") }
 
     when: "The use case method is called"
-    updateAffiliation.updateAffiliation(affilation)
+    updateAffiliation.updateAffiliation(affiliation)
 
     then: "the output receives a failure notification"
     1 * output.failNotification(_ as String)
     0 * output.updatedAffiliation(_ as Affiliation)
+  }
 }
