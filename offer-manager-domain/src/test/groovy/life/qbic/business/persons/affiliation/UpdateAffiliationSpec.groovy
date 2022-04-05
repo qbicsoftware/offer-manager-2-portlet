@@ -35,7 +35,7 @@ class UpdateAffiliationSpec extends Specification {
     dataSource._ >> { throw new Exception("Something went wrong.") }
 
     when: "The use case method is called"
-    updateAffiliation.updateAffiliation(affilation)
+    updateAffiliation.updateAffiliation(affiliation)
 
     then: "the output receives a failure notification"
     1 * output.failNotification(_ as String)
