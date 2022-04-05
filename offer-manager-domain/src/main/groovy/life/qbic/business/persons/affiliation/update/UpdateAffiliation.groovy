@@ -20,23 +20,23 @@ class UpdateAffiliation implements UpdateAffiliationInput {
   private final Logging log = Logger.getLogger(UpdateAffiliation.class)
 
   @Override
-  void updateAffiliation(Affiliation newAffiliation) {
+  void updateAffiliation(Affiliation affiliation) {
     try {
-      affiliationDataSource.updateAffiliation(newAffiliation)
-      affiliationOutput.updatedAffiliationCategory(newAffiliation)
+      affiliationDataSource.updateAffiliation(affiliation)
+      affiliationOutput.updatedAffiliation(affiliation)
     } catch (AffiliationNotFoundException notFoundException) {
-      String message = "Cannot update affiliation entry for ${newAffiliation.getOrganization()} ${newAffiliation.getAddressAddition()}. \nAffiliation was not found. Please try again."
+      String message = "Cannot update affiliation entry for ${affiliation.getOrganization()} ${affiliation.getAddressAddition()}. \nAffiliation was not found. Please try again."
       log.error(message, notFoundException)
-      affiliationOutput.affiliationNotFound(newAffiliation, message)
+      affiliationOutput.affiliationNotFound(affiliation, message)
     } catch (DatabaseQueryException databaseQueryException) {
-      String message = "Could not update ${newAffiliation.getOrganization()} ${newAffiliation.getAddressAddition()}. Please try again."
+      String message = "Could not update ${affiliation.getOrganization()} ${affiliation.getAddressAddition()}. Please try again."
       log.error(message, databaseQueryException)
       affiliationOutput.failNotification(message)
     } catch (Exception unexpected) {
-      String message = "An unexpected error occurred during the update of the ${newAffiliation.getOrganization()} ${newAffiliation.getAddressAddition()} affiliation."
+      String message = "An unexpected error occurred during the update of the ${affiliation.getOrganization()} ${affiliation.getAddressAddition()} affiliation."
       log.error("$message : $unexpected.message", unexpected)
       affiliationOutput.failNotification(message)
     }
   }
-  
+
 }
