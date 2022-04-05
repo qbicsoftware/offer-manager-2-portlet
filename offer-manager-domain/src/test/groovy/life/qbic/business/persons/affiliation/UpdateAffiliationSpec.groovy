@@ -11,7 +11,7 @@ import spock.lang.Specification
  *
  * The user wants to update an already existing affiliation in the system
  *
- * @since: 1.3.0
+ * @since 1.3.0
  */
 class UpdateAffiliationSpec extends Specification {
   private UpdateAffiliationOutput output = Mock()
