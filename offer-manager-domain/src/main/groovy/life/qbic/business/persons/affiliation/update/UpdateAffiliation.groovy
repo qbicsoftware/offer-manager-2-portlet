@@ -29,7 +29,7 @@ class UpdateAffiliation implements UpdateAffiliationInput {
       affiliationDataSource.updateAffiliation(affiliation)
       affiliationOutput.updatedAffiliation(affiliation)
     } catch (AffiliationNotFoundException notFoundException) {
-      String message = "Cannot update affiliation entry for ${affiliation.getOrganization()} ${affiliation.getAddressAddition()}. \nAffiliation was not found. Please try again."
+      String message = "Failed to update affiliation ${affiliation.getOrganization()} ${affiliation.getAddressAddition()}. \nAffiliation was not found. Please try again."
       log.error(message, notFoundException)
       affiliationOutput.failNotification(message)
     } catch (DatabaseQueryException databaseQueryException) {
