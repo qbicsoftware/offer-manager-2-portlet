@@ -48,7 +48,7 @@ class UpdateAffiliationSpec extends Specification {
     dataSource._ >> { throw new AffiliationNotFoundException("Your affiliation is in another castle.") }
 
     when: "The use case method is called"
-    updateAffiliation.updateAffiliation(affilation)
+    updateAffiliation.updateAffiliation(affiliation)
 
     then: "the output receives a failure notification"
     1 * output.failNotification(_ as String)
