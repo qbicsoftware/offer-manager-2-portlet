@@ -23,7 +23,7 @@ class UpdateAffiliationSpec extends Specification {
     UpdateAffiliation updateAffiliation = new UpdateAffiliation(output, dataSource)
 
     when: "The use case method is called"
-    updateAffiliation.updateAffiliation(affilation)
+    updateAffiliation.updateAffiliation(affiliation)
 
     then: "The affiliation is updated using the data source"
     1 * dataSource.updateAffiliation(affilation)
