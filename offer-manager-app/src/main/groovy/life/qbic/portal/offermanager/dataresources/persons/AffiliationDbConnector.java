@@ -39,7 +39,6 @@ public class AffiliationDbConnector implements CreateAffiliationDataSource,
       if (isAffiliationInSession(session, affiliation)) {
         throw new AffiliationExistsException("The affiliation already exists.");
       }
-      // we ignore the generated primary id for now
       session.beginTransaction();
       session.save(affiliation);
     } catch (HibernateException e) {
