@@ -33,7 +33,7 @@ class UpdateAffiliation implements UpdateAffiliationInput {
       log.error(message, notFoundException)
       affiliationOutput.failNotification(message)
     } catch (DatabaseQueryException databaseQueryException) {
-      String message = "Could not update ${affiliation.getOrganization()} ${affiliation.getAddressAddition()}. Please try again."
+      String message = "Failed to update ${affiliation.getOrganization()} ${affiliation.getAddressAddition()}. Please try again."
       log.error(message, databaseQueryException)
       affiliationOutput.failNotification(message)
     } catch (Exception unexpected) {
