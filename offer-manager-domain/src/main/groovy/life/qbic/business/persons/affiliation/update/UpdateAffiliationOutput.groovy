@@ -1,7 +1,6 @@
 package life.qbic.business.persons.affiliation.update
 
 import life.qbic.business.UseCaseFailure
-import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.persons.affiliation.Affiliation
 
 /**
