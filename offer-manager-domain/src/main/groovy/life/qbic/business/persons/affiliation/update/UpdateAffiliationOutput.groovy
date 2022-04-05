@@ -17,10 +17,4 @@ interface UpdateAffiliationOutput extends UseCaseFailure {
    */
   void updatedAffiliation(Affiliation affiliation)
 
-  /**
-   * To be called if an affiliation entry was not found in the database
-   * @param missingAffiliation The affiliation that was searched for but not found
-   * @param message The message the should be propagated to the view
-   */
-  void affiliationNotFound(Affiliation notFoundAffiliation, String message)
 }

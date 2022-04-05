@@ -6,7 +6,6 @@ import life.qbic.business.logging.Logging
 import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.AffiliationNotFoundException
 
-
 /**
  * Updates an affiliation entry by replacing it
  *
@@ -19,6 +18,11 @@ class UpdateAffiliation implements UpdateAffiliationInput {
 
   private final Logging log = Logger.getLogger(UpdateAffiliation.class)
 
+  UpdateAffiliation(UpdateAffiliationOutput affiliationOutput, UpdateAffiliationDataSource affiliationDataSource) {
+    this.affiliationDataSource = affiliationDataSource
+    this.affiliationOutput = affiliationOutput
+  }
+
   @Override
   void updateAffiliation(Affiliation affiliation) {
     try {
@@ -27,7 +31,7 @@ class UpdateAffiliation implements UpdateAffiliationInput {
     } catch (AffiliationNotFoundException notFoundException) {
       String message = "Cannot update affiliation entry for ${affiliation.getOrganization()} ${affiliation.getAddressAddition()}. \nAffiliation was not found. Please try again."
       log.error(message, notFoundException)
-      affiliationOutput.affiliationNotFound(affiliation, message)
+      affiliationOutput.failNotification(message)
     } catch (DatabaseQueryException databaseQueryException) {
       String message = "Could not update ${affiliation.getOrganization()} ${affiliation.getAddressAddition()}. Please try again."
       log.error(message, databaseQueryException)
