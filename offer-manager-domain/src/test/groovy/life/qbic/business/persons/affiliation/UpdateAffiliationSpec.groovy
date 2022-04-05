@@ -26,9 +26,8 @@ class UpdateAffiliationSpec extends Specification {
     updateAffiliation.updateAffiliation(affiliation)
 
     then: "The affiliation is updated using the data source"
-    1 * dataSource.updateAffiliation(affilation)
-    1 * output.updatedAffiliation(affilation)
-
+    1 * dataSource.updateAffiliation(affiliation)
+    1 * output.updatedAffiliation(affiliation)
 
   def "given an unexpected Exception, when an affiliation is updated, then a fail notification is sent"() {
     given: "a data source that throws an exception"
