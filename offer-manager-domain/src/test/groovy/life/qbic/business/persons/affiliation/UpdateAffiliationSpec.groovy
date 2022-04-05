@@ -1,11 +1,9 @@
 package life.qbic.business.persons.affiliation
 
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.business.persons.Person
 import life.qbic.business.persons.affiliation.update.UpdateAffiliation
 import life.qbic.business.persons.affiliation.update.UpdateAffiliationDataSource
 import life.qbic.business.persons.affiliation.update.UpdateAffiliationOutput
-import life.qbic.business.persons.create.CreatePerson
 import spock.lang.Specification
 
 /**
