@@ -31,7 +31,8 @@ class CreateAffiliationView extends FormLayout implements Resettable {
         this.sharedViewModel = sharedViewModel
         this.createAffiliationViewModel = createAffiliationViewModel
         this.controller = controller
-        this.affiliationFormView = new AffiliationFormView(createAffiliationViewModel)
+        this.affiliationFormView = new AffiliationFormView()
+//        this.affiliationFormView = new AffiliationFormView(createAffiliationViewModel)
 
         initLayout()
         registerListeners()
