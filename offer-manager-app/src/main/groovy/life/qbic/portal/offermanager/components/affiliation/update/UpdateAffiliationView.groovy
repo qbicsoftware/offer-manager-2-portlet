@@ -20,7 +20,6 @@ class UpdateAffiliationView extends FormLayout implements Resettable{
     private final CreateAffiliationViewModel viewModel
     private final UpdateAffiliationController controller
 
-
     Button abortButton
     Button submitButton
     private final AffiliationFormView affiliationFormView
