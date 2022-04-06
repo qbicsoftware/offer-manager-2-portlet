@@ -139,7 +139,7 @@ class SearchAffiliationView extends FormLayout{
 
         this.viewModel.addPropertyChangeListener("selectedAffiliation", {
             try {
-                viewModel.detailsVisible = it.newValue ? true : false
+                viewModel.detailsVisible = it.newValue
                 refreshSelectionDetails()
                 selectedAffiliationDetails.visible = viewModel.detailsVisible
             } catch (Exception e) {

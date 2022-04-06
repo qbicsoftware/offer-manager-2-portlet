@@ -16,7 +16,6 @@ class UpdateAffiliationView extends FormLayout implements Resettable {
   private final CreateAffiliationViewModel viewModel
   private final UpdateAffiliationController controller
 
-
   Button abortButton
   Button submitButton
   private final AffiliationFormView affiliationFormView
@@ -85,11 +84,11 @@ class UpdateAffiliationView extends FormLayout implements Resettable {
 
   private boolean allValuesValid() {
     return viewModel.affiliationCategoryValid \
-                && viewModel.cityValid \
-                && viewModel.countryValid \
-                && viewModel.organisationValid \
-                && viewModel.postalCodeValid \
-                && viewModel.streetValid
+               && viewModel.cityValid \
+               && viewModel.countryValid \
+               && viewModel.organisationValid \
+               && viewModel.postalCodeValid \
+               && viewModel.streetValid
   }
 
   @Override
