@@ -14,6 +14,7 @@ import com.vaadin.ui.VerticalLayout;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import life.qbic.business.persons.affiliation.Country;
 import life.qbic.datamodel.dtos.business.Affiliation;
@@ -31,8 +32,6 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
   private TextField cityField;
   private ComboBox<String> countryBox;
   private ComboBox<String> affiliationCategoryBox;
-  private final Validator<String> nonEmptyStringValidator = Validator.from( value -> (value != null && !value.trim().isEmpty()), "Empty input not supported.");
-  private final Validator<?> selectionValidator = Validator.from(Objects::nonNull,"Please make a selection.");
 
 
   /*
@@ -450,10 +449,10 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
   }
 
   private ComboBox<String> createAffiliationCategoryField() {
-    ComboBox<String> affiliationCategoryField = generateAffiliationCategorySelect(getPossibleCategories());
-    affiliationCategoryField.setRequiredIndicatorVisible(true);
-    affiliationCategoryField.setWidth(50, Unit.PERCENTAGE);
-    return affiliationCategoryField;
+    ComboBox<String> affiliationCategoryBox = generateAffiliationCategorySelect(getPossibleCategories());
+    requireSelection(affiliationCategoryBox);
+    affiliationCategoryBox.setWidth(50, Unit.PERCENTAGE);
+    return affiliationCategoryBox;
   }
 
   private List<String> getPossibleCategories() {
@@ -462,11 +461,10 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
         .collect(Collectors.toList());
   }
 
-  private static ComboBox<String> generateAffiliationCategorySelect(List<String> possibleCategories) {
-    ComboBox<String> comboBox = new ComboBox<>("Affiliation Category");
-    comboBox.setItems(possibleCategories);
-    comboBox.setEmptySelectionAllowed(false);
-    comboBox.setPlaceholder("Affiliation category");
+  private ComboBox<String> generateAffiliationCategorySelect(List<String> possibleCategories) {
+    ComboBox<String> affiliationCategoryBox = new ComboBox<>("Affiliation Category");
+    affiliationCategoryBox.setItems(possibleCategories);
+    affiliationCategoryBox.setPlaceholder("Affiliation category");
     String description =
         "We define three major business affiliation categories here\n" +
                "- internal:\n" +
@@ -477,8 +475,8 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
                +
                "- external:\n" +
                "    An outside affiliation but not academic (i.e. private sector, companies, etc)";
-    comboBox.setDescription(description, ContentMode.PREFORMATTED);
-    return comboBox;
+    affiliationCategoryBox.setDescription(description, ContentMode.PREFORMATTED);
+    return affiliationCategoryBox;
   }
 
   private ComboBox<String> createCountryBox() {
@@ -486,55 +484,32 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
     countryBox.setPlaceholder("Name of the country");
     countryBox.setDescription("Select the name of the country e.g. Germany");
     countryBox.setItems(Country.availableCountryNames());
-    countryBox.setRequiredIndicatorVisible(true);
     countryBox.setWidth(50, Unit.PERCENTAGE);
-
+    requireSelection(countryBox);
     return countryBox;
   }
 
   private TextField createCityField() {
     TextField cityField = new TextField("City");
     cityField.setPlaceholder("Name of the city");
-    cityField.setRequiredIndicatorVisible(true);
     cityField.setSizeFull();
-    addNotEmptyValidation(cityField);
+    requireTextInput(cityField);
     return cityField;
   }
 
   private TextField createPostalCodeField() {
     TextField postalCodeField = new TextField("Postal Code");
     postalCodeField.setPlaceholder("Customer postal code");
-    postalCodeField.setRequiredIndicatorVisible(true);
     postalCodeField.setSizeFull();
-    addNotEmptyValidation(postalCodeField);
+    requireTextInput(postalCodeField);
     return postalCodeField;
-  }
-
-  private void addNonEmptySelectionValidation(ComboBox<String> comboBox) {
-    comboBox.addValueChangeListener(event -> doStuff(comboBox, event));
-  }
-
-  private void doStuff(AbstractComponent component, ValueChangeEvent<String> event) {
-    ValidationResult result = nonEmptyStringValidator.apply(event.getValue(),
-        new ValueContext(component));
-    if (result.isError()) {
-      UserError error = new UserError(result.getErrorMessage());
-      component.setComponentError(error);
-    } else {
-      component.setComponentError(null);
-    }
-  }
-
-  private void addNotEmptyValidation(TextField textField) {
-    textField.addValueChangeListener(event -> doStuff(textField, event));
   }
 
   private TextField createStreetField() {
     TextField streetField = new TextField("Street");
     streetField.setPlaceholder("Street name and street number ");
-    streetField.setRequiredIndicatorVisible(true);
     streetField.setSizeFull();
-    addNotEmptyValidation(streetField);
+    requireTextInput(streetField);
     return streetField;
   }
 
@@ -544,9 +519,8 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
         "Department, Faculty, or other specification of affiliation name");
     addressAdditionField.setDescription(
         "In case the affiliation differs from the organisation you can further specify that here.");
-    addressAdditionField.setRequiredIndicatorVisible(false);
     addressAdditionField.setSizeFull();
-    addNotEmptyValidation(addressAdditionField);
+    requireTextInput(addressAdditionField);
     return addressAdditionField;
   }
 
@@ -555,9 +529,49 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
     organisationBox.setPlaceholder("Name of the organisation");
     organisationBox.setDescription(
         "Select or enter new name of the organisation e.g. Universität Tübingen.");
-    organisationBox.setRequiredIndicatorVisible(true);
     organisationBox.setSizeFull();
+    organisationBox.setNewItemProvider(Optional::of);
+    requireTextInput(organisationBox);
     return organisationBox;
+  }
+
+  private void requireTextInput(TextField textField) {
+    textField.setRequiredIndicatorVisible(true);
+    textField.addValueChangeListener(event -> addNotEmptyValidation(textField, event));
+  }
+
+  private void requireTextInput(ComboBox<String> comboBox) {
+    comboBox.setRequiredIndicatorVisible(true);
+    comboBox.addValueChangeListener(event -> addNotEmptyValidation(comboBox, event));
+  }
+
+  private <T> void requireSelection(ComboBox<T> comboBox) {
+    comboBox.setEmptySelectionAllowed(false);
+    comboBox.addValueChangeListener(event -> addSelectionPresentValidation(comboBox, event));
+  }
+
+  private <T> void addSelectionPresentValidation(ComboBox<T> comboBox, ValueChangeEvent<T> event) {
+    Validator<T> selectionValidator = Validator.from(Objects::nonNull, "Please make a selection.");
+    ValidationResult result = selectionValidator.apply(event.getValue(),
+        new ValueContext(comboBox));
+    if (result.isError()) {
+      UserError error = new UserError(result.getErrorMessage());
+      comboBox.setComponentError(error);
+    } else {
+      comboBox.setComponentError(null);
+    }
+  }
+
+  private void addNotEmptyValidation(AbstractComponent component, ValueChangeEvent<String> event) {
+    Validator<String> nonEmptyStringValidator = Validator.from( value -> (value != null && !value.trim().isEmpty()), "Empty input not supported.");
+    ValidationResult result = nonEmptyStringValidator.apply(event.getValue(),
+        new ValueContext(component));
+    if (result.isError()) {
+      UserError error = new UserError(result.getErrorMessage());
+      component.setComponentError(error);
+    } else {
+      component.setComponentError(null);
+    }
   }
 
   @Override
