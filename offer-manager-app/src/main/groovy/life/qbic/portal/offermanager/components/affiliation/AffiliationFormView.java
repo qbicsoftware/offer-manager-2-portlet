@@ -520,7 +520,6 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
     addressAdditionField.setDescription(
         "In case the affiliation differs from the organisation you can further specify that here.");
     addressAdditionField.setSizeFull();
-    requireTextInput(addressAdditionField);
     return addressAdditionField;
   }
 
@@ -547,6 +546,7 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
 
   private <T> void requireSelection(ComboBox<T> comboBox) {
     comboBox.setEmptySelectionAllowed(false);
+    comboBox.setRequiredIndicatorVisible(true);
     comboBox.addValueChangeListener(event -> addSelectionPresentValidation(comboBox, event));
   }
 
