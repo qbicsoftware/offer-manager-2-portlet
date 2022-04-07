@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import life.qbic.business.persons.affiliation.Country;
 import life.qbic.datamodel.dtos.business.Affiliation;
 import life.qbic.datamodel.dtos.business.AffiliationCategory;
+import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory;
 import life.qbic.portal.offermanager.components.Resettable;
 import life.qbic.portal.offermanager.components.Updatable;
 import life.qbic.portal.offermanager.components.UserInput;
@@ -596,7 +597,21 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
 
   @Override
   public void reset() {
+    addressAdditionField.clear();
+    affiliationCategoryBox.clear();
+    cityField.clear();
+    countryBox.clear();
+    organisationBox.clear();
+    postalCodeField.clear();
+    streetField.clear();
 
+    addressAdditionField.setComponentError(null);
+    affiliationCategoryBox.setComponentError(null);
+    cityField.setComponentError(null);
+    countryBox.setComponentError(null);
+    organisationBox.setComponentError(null);
+    postalCodeField.setComponentError(null);
+    streetField.setComponentError(null);
   }
 
   @Override
@@ -631,8 +646,21 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
   @Override
   public Affiliation get() {
     if (!isValid()) {
-      throw new RuntimeException("Shit");
+      throw new RuntimeException("Tried to get invalid user input for affiliation");
     }
-    return null;
+    Affiliation.Builder affiliationBuilder = new Affiliation.Builder(organisationBox.getValue(), streetField.getValue(), postalCodeField.getValue(), cityField.getValue());
+    affiliationBuilder.country(countryBox.getValue());
+
+    if (!addressAdditionField.isEmpty()) {
+      affiliationBuilder.addressAddition(addressAdditionField.getValue());
+    }
+
+    AffiliationCategoryFactory categoryFactory = new AffiliationCategoryFactory();
+
+    AffiliationCategory affiliationCategory;
+    affiliationCategory = categoryFactory.getForString(affiliationCategoryBox.getValue());
+    affiliationBuilder.setCategory(affiliationCategory);
+
+    return affiliationBuilder.build();
   }
 }

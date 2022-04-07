@@ -4,6 +4,7 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.components.affiliation.AffiliationFormView
@@ -62,15 +63,11 @@ class CreateAffiliationView extends FormLayout implements Resettable {
 
     private void registerListeners() {
         submitButton.addClickListener({
-            String addressAddition = createAffiliationViewModel.addressAddition
-            String category = createAffiliationViewModel.affiliationCategory
-            String city = createAffiliationViewModel.city
-            String country = createAffiliationViewModel.country
-            String organisation = createAffiliationViewModel.organisation
-            String postalCode = createAffiliationViewModel.postalCode
-            String street = createAffiliationViewModel.street
-            this.controller.createAffiliation(organisation, addressAddition, street, postalCode, city, country, category)
+            def affiliation = affiliationFormView.get()
+            this.controller.createAffiliation(affiliation.organisation, affiliation.addressAddition,
+                    affiliation.street, affiliation.postalCode, affiliation.city, affiliation.country, affiliation.category.value)
         })
+
         this.abortButton.addClickListener({ event ->
             try {
                 reset()
@@ -80,21 +77,9 @@ class CreateAffiliationView extends FormLayout implements Resettable {
             }
         })
 
-        createAffiliationViewModel.addPropertyChangeListener({
-            submitButton.setEnabled(allValuesValid())
-        })
-
         affiliationFormView.addChangeListener({ submitButton.setEnabled(affiliationFormView.isValid())});
     }
 
-    private boolean allValuesValid() {
-        return createAffiliationViewModel.affiliationCategoryValid \
-              && createAffiliationViewModel.cityValid \
-              && createAffiliationViewModel.countryValid \
-              && createAffiliationViewModel.organisationValid \
-              && createAffiliationViewModel.postalCodeValid \
-              && createAffiliationViewModel.streetValid
-    }
 
     @Override
     void reset() {

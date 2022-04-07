@@ -310,7 +310,7 @@ class DependencyManager {
         CreateAffiliationViewModel createAffiliationViewModel = new CreateAffiliationViewModel(affiliationResourcesService)
         createAffiliationViewModel.affiliationCategories.addAll(AffiliationCategory.values().collect { it.value })
 
-        CreateAffiliationPresenter createAffiliationPresenter = new CreateAffiliationPresenter(sharedViewModel, createAffiliationViewModel)
+        CreateAffiliationPresenter createAffiliationPresenter = new CreateAffiliationPresenter(sharedViewModel, createAffiliationViewModel, affiliationResourcesService)
         CreateAffiliation createAffiliation = new CreateAffiliation(createAffiliationPresenter, dataSource)
         CreateAffiliationController createAffiliationController = new CreateAffiliationController(createAffiliation)
         return new CreateAffiliationView(sharedViewModel, createAffiliationViewModel, createAffiliationController)

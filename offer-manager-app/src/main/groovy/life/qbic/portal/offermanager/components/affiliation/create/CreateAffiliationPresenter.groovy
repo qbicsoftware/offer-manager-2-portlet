@@ -5,6 +5,9 @@ import life.qbic.business.RefactorConverter
 import life.qbic.business.persons.affiliation.create.CreateAffiliationOutput
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
+import life.qbic.portal.offermanager.components.affiliation.AffiliationFormView
+import life.qbic.portal.offermanager.dataresources.ResourcesService
+import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 
 /**
  * AppPresenter for the CreateAffiliationView
@@ -17,32 +20,14 @@ import life.qbic.portal.offermanager.components.AppViewModel
 @Log4j2
 class CreateAffiliationPresenter implements CreateAffiliationOutput {
     private final AppViewModel sharedViewModel
-    private final CreateAffiliationViewModel createAffiliationViewModel
+    private final CreateAffiliationView createAffiliationView
+    private final ResourcesService<Affiliation> affiliationResourcesService
 
-    CreateAffiliationPresenter(AppViewModel sharedViewModel, CreateAffiliationViewModel createAffiliationViewModel) {
+    //todo dont provide the view here
+    CreateAffiliationPresenter(AppViewModel sharedViewModel, CreateAffiliationView createAffiliationView, ResourcesService<Affiliation> affiliationResourcesService) {
         this.sharedViewModel = sharedViewModel
-        this.createAffiliationViewModel = createAffiliationViewModel
-    }
-
-    /**
-     * clears the view model
-     */
-    private void clearAffiliationData() {
-        this.createAffiliationViewModel.organisation = null
-        this.createAffiliationViewModel.addressAddition = null
-        this.createAffiliationViewModel.street = null
-        this.createAffiliationViewModel.postalCode = null
-        this.createAffiliationViewModel.city = null
-        this.createAffiliationViewModel.country = null
-        this.createAffiliationViewModel.affiliationCategory = null
-
-        this.createAffiliationViewModel.organisationValid = null
-        this.createAffiliationViewModel.addressAdditionValid = null
-        this.createAffiliationViewModel.streetValid = null
-        this.createAffiliationViewModel.postalCodeValid = null
-        this.createAffiliationViewModel.cityValid = null
-        this.createAffiliationViewModel.countryValid = null
-        this.createAffiliationViewModel.affiliationCategoryValid = null
+        this.createAffiliationView = createAffiliationView
+        this.affiliationResourcesService = affiliationResourcesService
     }
 
     @Override
@@ -55,8 +40,8 @@ class CreateAffiliationPresenter implements CreateAffiliationOutput {
     void affiliationCreated(life.qbic.business.persons.affiliation.Affiliation affiliation) {
         Affiliation affiliationDto = new RefactorConverter().toAffiliationDto(affiliation)
 
-        createAffiliationViewModel.affiliationService.addToResource(affiliationDto)
+        affiliationResourcesService.addToResource(affiliationDto)
         sharedViewModel.successNotifications.add("Successfully added new affiliation " + affiliationDto.organisation)
-        clearAffiliationData()
+        createAffiliationView.reset()
     }
 }
