@@ -32,7 +32,6 @@ class CreateAffiliationView extends FormLayout implements Resettable {
         this.createAffiliationViewModel = createAffiliationViewModel
         this.controller = controller
         this.affiliationFormView = new AffiliationFormView()
-//        this.affiliationFormView = new AffiliationFormView(createAffiliationViewModel)
 
         initLayout()
         registerListeners()
@@ -84,6 +83,8 @@ class CreateAffiliationView extends FormLayout implements Resettable {
         createAffiliationViewModel.addPropertyChangeListener({
             submitButton.setEnabled(allValuesValid())
         })
+
+        affiliationFormView.addChangeListener({ submitButton.setEnabled(affiliationFormView.isValid())});
     }
 
     private boolean allValuesValid() {

@@ -6,15 +6,9 @@ import com.vaadin.data.Validator;
 import com.vaadin.data.ValueContext;
 import com.vaadin.server.UserError;
 import com.vaadin.shared.ui.ContentMode;
-import com.vaadin.ui.AbstractComponent;
-import com.vaadin.ui.ComboBox;
-import com.vaadin.ui.HorizontalLayout;
-import com.vaadin.ui.TextField;
-import com.vaadin.ui.VerticalLayout;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import com.vaadin.ui.*;
+
+import java.util.*;
 import java.util.stream.Collectors;
 import life.qbic.business.persons.affiliation.Country;
 import life.qbic.datamodel.dtos.business.Affiliation;
@@ -32,6 +26,8 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
   private TextField cityField;
   private ComboBox<String> countryBox;
   private ComboBox<String> affiliationCategoryBox;
+
+  private final List<ViewChangeListener> listeners = new ArrayList<>();
 
 
   /*
@@ -417,6 +413,14 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
     layoutComponents();
   }
 
+  public void addChangeListener(ViewChangeListener viewChangeListener) {
+    listeners.add(viewChangeListener);
+  }
+
+  private void fireViewChanged() {
+    listeners.forEach(ViewChangeListener::onViewChanged);
+  }
+
   private void layoutComponents() {
     HorizontalLayout row1 = new HorizontalLayout(organisationBox, addressAdditionField);
     row1.setSizeFull();
@@ -452,6 +456,9 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
     ComboBox<String> affiliationCategoryBox = generateAffiliationCategorySelect(getPossibleCategories());
     requireSelection(affiliationCategoryBox);
     affiliationCategoryBox.setWidth(50, Unit.PERCENTAGE);
+
+    affiliationCategoryBox.addValueChangeListener(it -> fireViewChanged());
+
     return affiliationCategoryBox;
   }
 
@@ -476,6 +483,7 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
                "- external:\n" +
                "    An outside affiliation but not academic (i.e. private sector, companies, etc)";
     affiliationCategoryBox.setDescription(description, ContentMode.PREFORMATTED);
+
     return affiliationCategoryBox;
   }
 
@@ -486,6 +494,8 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
     countryBox.setItems(Country.availableCountryNames());
     countryBox.setWidth(50, Unit.PERCENTAGE);
     requireSelection(countryBox);
+    countryBox.addValueChangeListener(it -> fireViewChanged());
+
     return countryBox;
   }
 
@@ -494,6 +504,8 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
     cityField.setPlaceholder("Name of the city");
     cityField.setSizeFull();
     requireTextInput(cityField);
+    cityField.addValueChangeListener(it -> fireViewChanged());
+
     return cityField;
   }
 
@@ -502,6 +514,8 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
     postalCodeField.setPlaceholder("Customer postal code");
     postalCodeField.setSizeFull();
     requireTextInput(postalCodeField);
+    postalCodeField.addValueChangeListener(it -> fireViewChanged());
+
     return postalCodeField;
   }
 
@@ -510,6 +524,8 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
     streetField.setPlaceholder("Street name and street number ");
     streetField.setSizeFull();
     requireTextInput(streetField);
+    streetField.addValueChangeListener(it -> fireViewChanged());
+
     return streetField;
   }
 
@@ -520,6 +536,8 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
     addressAdditionField.setDescription(
         "In case the affiliation differs from the organisation you can further specify that here.");
     addressAdditionField.setSizeFull();
+    addressAdditionField.addValueChangeListener(it -> fireViewChanged());
+
     return addressAdditionField;
   }
 
@@ -531,6 +549,8 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
     organisationBox.setSizeFull();
     organisationBox.setNewItemProvider(Optional::of);
     requireTextInput(organisationBox);
+    organisationBox.addValueChangeListener(it -> fireViewChanged());
+
     return organisationBox;
   }
 
@@ -586,8 +606,27 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
 
   @Override
   public boolean isValid() {
-    return false;
+    return requiredFieldsFilled() && hasNoComponentError();
   }
+
+  private boolean requiredFieldsFilled() {
+    return affiliationCategoryBox.getValue() != null &&
+            organisationBox.getComponentError() == null &&
+            countryBox.getComponentError() == null &&
+            streetField.getComponentError() == null &&
+            postalCodeField.getComponentError() == null &&
+            cityField.getComponentError() == null;
+  }
+
+  private boolean hasNoComponentError() {
+    return affiliationCategoryBox.getComponentError() == null &&
+            organisationBox.getComponentError() == null &&
+            countryBox.getComponentError() == null &&
+            streetField.getComponentError() == null &&
+            postalCodeField.getComponentError() == null &&
+            cityField.getComponentError() == null;
+  }
+
 
   @Override
   public Affiliation get() {
