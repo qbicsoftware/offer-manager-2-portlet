@@ -3,36 +3,48 @@ package life.qbic.portal.offermanager.components.affiliation.update
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
+import groovy.util.logging.Log4j2
+import life.qbic.business.Constants
 import life.qbic.business.persons.affiliation.Affiliation
-import life.qbic.business.persons.affiliation.AffiliationCategoryConverter
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.Resettable
+import life.qbic.portal.offermanager.components.Updatable
 import life.qbic.portal.offermanager.components.affiliation.AffiliationFormView
-import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationViewModel
 
-class UpdateAffiliationView extends FormLayout implements Resettable {
-
-  private final AppViewModel sharedViewModel
-  private final CreateAffiliationViewModel viewModel
+@Log4j2
+class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<Affiliation> {
+  final public AppViewModel sharedViewModel
   private final UpdateAffiliationController controller
+  private Affiliation outdatedAffiliation = null
 
-  Button abortButton
-  Button submitButton
-  private final AffiliationFormView affiliationFormView
+  private Button abortButton
+  private Button submitButton
+  private AffiliationFormView affiliationFormView
+  private String unexpectedErrorMessage = "An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to $Constants.QBIC_HELPDESK_EMAIL"
 
-  UpdateAffiliationView(AppViewModel sharedViewModel, CreateAffiliationViewModel createAffiliationViewModel, UpdateAffiliationController controller) {
+  UpdateAffiliationView(AppViewModel sharedViewModel, UpdateAffiliationController controller) {
     this.sharedViewModel = sharedViewModel
-    this.viewModel = createAffiliationViewModel
     this.controller = controller
     this.affiliationFormView = new AffiliationFormView()
-//    this.affiliationFormView = new AffiliationFormView(createAffiliationViewModel)
 
     initLayout()
     registerListeners()
   }
 
+  @Override
+  void reset() {
+    affiliationFormView.reset()
+    outdatedAffiliation = null
+  }
+
+  @Override
+  void update(Affiliation affiliation) {
+    this.outdatedAffiliation = affiliation
+    affiliationFormView.update(affiliation)
+  }
+
   private void initLayout() {
-    final Label label = new Label("Update Affiliation")
+    final Label label = new Label("Update An Affiliation")
     label.addStyleName(ValoTheme.LABEL_HUGE)
 
     this.abortButton = new Button("Abort Affiliation Update")
@@ -55,45 +67,36 @@ class UpdateAffiliationView extends FormLayout implements Resettable {
   }
 
   private void registerListeners() {
-    submitButton.addClickListener({
-      Affiliation affiliation = viewModel.affiliationEntry
-      AffiliationCategoryConverter categoryConverter = new AffiliationCategoryConverter()
+    submitButton.addClickListener(withHandledException( it -> onSubmit()))
+    abortButton.addClickListener(withHandledException(this::reset))
+    affiliationFormView.addChangeListener(it -> submitButton.setEnabled(affiliationFormView.isValid() && hasDataChanged()))
+  }
 
-      affiliation.addressAddition = viewModel.addressAddition
-      affiliation.category = categoryConverter.convertToEntityAttribute(viewModel.affiliationCategory)
-      affiliation.city = viewModel.city
-      affiliation.country = viewModel.country
-      affiliation.organization = viewModel.organisation
-      affiliation.postalCode = viewModel.postalCode
-      affiliation.street = viewModel.street
+  private boolean hasDataChanged() {
+    affiliationFormView.get() == outdatedAffiliation
+  }
 
-      this.controller.updateAffiliation(viewModel.affiliationEntry)
-    })
-    this.abortButton.addClickListener({ event ->
+
+  private void onSubmit() {
+    Affiliation affiliation = affiliationFormView.get()
+    //todo make sure changes in country and category are confirmed again by the user
+    this.controller.updateAffiliation(affiliation)
+  }
+
+
+  /**
+   * Wraps a button click listener to hide exceptions from the user.
+   * @param clickListener the click listener to wrap
+   * @return a click listener with proper exception display
+   */
+  private Button.ClickListener withHandledException(Button.ClickListener clickListener) {
+    return (it) -> {
       try {
-        reset()
+        clickListener.buttonClick(it)
+      } catch (Exception unexpectedException) {
+        log.error(unexpectedErrorMessage, unexpectedException)
+        sharedViewModel.failureNotifications.add(unexpectedErrorMessage)
       }
-      catch (Exception ignored) {
-        sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
-      }
-    })
-
-    viewModel.addPropertyChangeListener({
-      submitButton.setEnabled(allValuesValid())
-    })
-  }
-
-  private boolean allValuesValid() {
-    return viewModel.affiliationCategoryValid \
-               && viewModel.cityValid \
-               && viewModel.countryValid \
-               && viewModel.organisationValid \
-               && viewModel.postalCodeValid \
-               && viewModel.streetValid
-  }
-
-  @Override
-  void reset() {
-    affiliationFormView.reset()
+    }
   }
 }
