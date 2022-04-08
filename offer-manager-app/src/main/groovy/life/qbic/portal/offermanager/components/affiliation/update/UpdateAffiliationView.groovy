@@ -83,12 +83,13 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
   }
 
   private boolean hasDataChanged() {
-    affiliationFormView.get() == outdatedAffiliation
+    affiliationFormView.get() != outdatedAffiliation
   }
 
   private void onSubmit() {
     Affiliation affiliation = affiliationFormView.get()
     //todo make sure changes in country and category are confirmed again by the user
+    affiliation.setId(outdatedAffiliation.getId())
     this.controller.updateAffiliation(affiliation)
     fireUpdateSubmitted()
   }

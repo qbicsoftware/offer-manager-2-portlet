@@ -7,6 +7,7 @@ import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
+import life.qbic.business.RefactorConverter
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationView
@@ -35,7 +36,7 @@ class SearchAffiliationView extends FormLayout{
         initLayout()
         generateAffiliationGrid()
         listenToAffiliationSelection()
-        toggleViews()
+        listenToUpdateAffiliationView()
     }
 
     private void initLayout() {
@@ -61,7 +62,8 @@ class SearchAffiliationView extends FormLayout{
 
     private HorizontalLayout generateButtonLayout(){
         HorizontalLayout buttonLayout = new HorizontalLayout()
-        buttonLayout.addComponent(generateUpdateButton())
+        def updateButton = generateUpdateButton()
+        buttonLayout.addComponent(updateButton)
 
         return buttonLayout
     }
@@ -72,10 +74,9 @@ class SearchAffiliationView extends FormLayout{
         update.setStyleName(ValoTheme.BUTTON_LARGE)
 
         update.addClickListener({
-            searchAffiliationLayout.setVisible(false)
-            updateAffiliationView.setVisible(true)
+            updateAffiliationView.update(RefactorConverter.toAffiliation(viewModel.selectedAffiliation.get()))
+            showUpdateAffiliation()
         })
-
         affiliationGrid.addSelectionListener({
             if(it.firstSelectedItem.isPresent()){
                 update.setEnabled(true)
@@ -87,16 +88,19 @@ class SearchAffiliationView extends FormLayout{
         return update
     }
 
-    private void toggleViews(){
-        updateAffiliationView.addAbortListener(() -> {
-            searchAffiliationLayout.setVisible(true)
-            updateAffiliationView.setVisible(false)
-        })
+    private void listenToUpdateAffiliationView(){
+        updateAffiliationView.addAbortListener(this::hideUpdateAffiliation)
+        updateAffiliationView.addSubmitListener(this::hideUpdateAffiliation)
+    }
 
-        updateAffiliationView.addSubmitListener(() -> {
-            searchAffiliationLayout.setVisible(true)
-            updateAffiliationView.setVisible(false)
-        })
+    private void showUpdateAffiliation() {
+        searchAffiliationLayout.setVisible(false)
+        updateAffiliationView.setVisible(true)
+    }
+
+    private void hideUpdateAffiliation() {
+        searchAffiliationLayout.setVisible(true)
+        updateAffiliationView.setVisible(false)
     }
 
 

@@ -45,8 +45,14 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
   }
 
   @Override
-  public void update(Affiliation value) {
-
+  public void update(Affiliation affiliation) {
+    organisationBox.setValue(affiliation.getOrganization());
+    Optional.ofNullable(affiliation.getAddressAddition()).ifPresent(addressAdditionField::setValue);
+    streetField.setValue(affiliation.getStreet());
+    postalCodeField.setValue(affiliation.getPostalCode());
+    cityField.setValue(affiliation.getCity());
+    countryBox.setValue(affiliation.getCountry());
+    affiliationCategoryBox.setValue(affiliation.getCategory().getLabel());
   }
 
 

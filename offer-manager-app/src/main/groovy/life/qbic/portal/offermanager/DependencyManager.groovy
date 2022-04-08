@@ -345,9 +345,9 @@ class DependencyManager {
 
     private UpdateAffiliationView createUpdateAffiliationView() {
         UpdateAffiliationController updateAffiliationController = new UpdateAffiliationController()
-        UpdateAffiliationPresenter updateAffiliationPresenter = new UpdateAffiliationPresenter(affiliationService)
+        UpdateAffiliationPresenter updateAffiliationPresenter = new UpdateAffiliationPresenter(affiliationService, viewModel)
         UpdateAffiliation updateAffiliation = new UpdateAffiliation(updateAffiliationPresenter, updateAffiliationDataSource)
-        updateAffiliationController.setUseCaseInput(updateAffiliation) //TODO
+        updateAffiliationController.setUseCaseInput(updateAffiliation)
         return new UpdateAffiliationView(viewModel, updateAffiliationController)
     }
 

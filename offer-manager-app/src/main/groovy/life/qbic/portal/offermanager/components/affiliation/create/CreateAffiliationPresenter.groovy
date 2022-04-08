@@ -5,9 +5,7 @@ import life.qbic.business.RefactorConverter
 import life.qbic.business.persons.affiliation.create.CreateAffiliationOutput
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
-import life.qbic.portal.offermanager.components.affiliation.AffiliationFormView
 import life.qbic.portal.offermanager.dataresources.ResourcesService
-import life.qbic.portal.offermanager.dataresources.persons.AffiliationResourcesService
 
 /**
  * AppPresenter for the CreateAffiliationView
@@ -23,7 +21,6 @@ class CreateAffiliationPresenter implements CreateAffiliationOutput {
     private final CreateAffiliationView createAffiliationView
     private final ResourcesService<Affiliation> affiliationResourcesService
 
-    //todo dont provide the view here
     CreateAffiliationPresenter(AppViewModel sharedViewModel, CreateAffiliationView createAffiliationView, ResourcesService<Affiliation> affiliationResourcesService) {
         this.sharedViewModel = sharedViewModel
         this.createAffiliationView = createAffiliationView
