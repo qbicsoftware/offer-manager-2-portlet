@@ -6,16 +6,16 @@ import life.qbic.business.persons.affiliation.update.UpdateAffiliationInput
 
 class UpdateAffiliationController {
 
-  private UpdateAffiliationInput updateAffiliationInput
+  private UpdateAffiliationInput useCaseInput
 
   void updateAffiliation(Affiliation affiliation) {
-    if (updateAffiliationInput == null) {
+    if (useCaseInput == null) {
       throw new RuntimeException("$this is missing the use case input.")
     }
-    updateAffiliationInput.updateAffiliation(affiliation)
+    useCaseInput.updateAffiliation(affiliation)
   }
 
-  void setUpdateAffiliationInput(UpdateAffiliationInput updateAffiliationInput) {
-    this.updateAffiliationInput = updateAffiliationInput
+  void setUseCaseInput(UpdateAffiliationInput updateAffiliationInput) {
+    this.useCaseInput = updateAffiliationInput
   }
 }

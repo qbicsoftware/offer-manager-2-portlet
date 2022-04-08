@@ -8,6 +8,7 @@ import life.qbic.business.offers.fetch.FetchOfferDataSource
 import life.qbic.business.persons.affiliation.create.CreateAffiliation
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
+import life.qbic.business.persons.affiliation.update.UpdateAffiliation
 import life.qbic.business.persons.affiliation.update.UpdateAffiliationDataSource
 import life.qbic.business.persons.create.CreatePerson
 import life.qbic.business.persons.create.CreatePersonDataSource
@@ -41,6 +42,7 @@ import life.qbic.portal.offermanager.components.affiliation.create.CreateAffilia
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationView
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationViewModel
 import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationController
+import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationPresenter
 import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationView
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferController
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferPresenter
@@ -336,9 +338,17 @@ class DependencyManager {
         ResourcesService<Affiliation> affiliationResourcesService = this.affiliationService
         SearchAffiliationViewModel searchAffiliationViewModel = new SearchAffiliationViewModel(affiliationResourcesService)
 
-        UpdateAffiliationView updateAffiliationView = new UpdateAffiliationView(viewModel, new UpdateAffiliationController())
+        UpdateAffiliationView updateAffiliationView = createUpdateAffiliationView()
         SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel, updateAffiliationView)
         return searchAffiliationView
+    }
+
+    private UpdateAffiliationView createUpdateAffiliationView() {
+        UpdateAffiliationController updateAffiliationController = new UpdateAffiliationController()
+        UpdateAffiliationPresenter updateAffiliationPresenter = new UpdateAffiliationPresenter(affiliationService)
+        UpdateAffiliation updateAffiliation = new UpdateAffiliation(updateAffiliationPresenter, updateAffiliationDataSource)
+        updateAffiliationController.setUseCaseInput(updateAffiliation) //TODO
+        return new UpdateAffiliationView(viewModel, updateAffiliationController)
     }
 
     /**

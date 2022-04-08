@@ -144,10 +144,10 @@ class UpdateOfferView extends FormLayout {
             customerSelectionView.reset()
             viewHistory.showPrevious()
         })
-        this.createAffiliationView.abortButton.addClickListener({
+        this.createAffiliationView.addAbortListener({
             viewHistory.showPrevious()
         })
-        this.createAffiliationView.submitButton.addClickListener({
+        this.createAffiliationView.addSubmitListener({
             viewHistory.showPrevious()
         })
         this.projectManagerSelectionView.next.addClickListener({

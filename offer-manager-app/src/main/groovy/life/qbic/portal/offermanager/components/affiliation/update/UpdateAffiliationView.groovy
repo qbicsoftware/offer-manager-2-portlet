@@ -6,16 +6,18 @@ import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.Constants
 import life.qbic.business.persons.affiliation.Affiliation
-import life.qbic.portal.offermanager.components.AppViewModel
-import life.qbic.portal.offermanager.components.Resettable
-import life.qbic.portal.offermanager.components.Updatable
+import life.qbic.portal.offermanager.components.*
 import life.qbic.portal.offermanager.components.affiliation.AffiliationFormView
 
 @Log4j2
-class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<Affiliation> {
+class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<Affiliation>, SubmitNotifier, AbortNotifier {
+
   final public AppViewModel sharedViewModel
   private final UpdateAffiliationController controller
   private Affiliation outdatedAffiliation = null
+
+  private List<SubmitListener> submitListeners = new ArrayList<>()
+  private List<AbortListener> abortListeners = new ArrayList<>()
 
   private Button abortButton
   private Button submitButton
@@ -43,6 +45,14 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     affiliationFormView.update(affiliation)
   }
 
+  void addSubmitListener(SubmitListener submitListener) {
+    submitListeners.add(submitListener)
+  }
+
+  void addAbortListener(AbortListener abortListener) {
+    abortListeners.add(abortListener)
+  }
+
   private void initLayout() {
     final Label label = new Label("Update An Affiliation")
     label.addStyleName(ValoTheme.LABEL_HUGE)
@@ -68,7 +78,7 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
 
   private void registerListeners() {
     submitButton.addClickListener(withHandledException( it -> onSubmit()))
-    abortButton.addClickListener(withHandledException(this::reset))
+    abortButton.addClickListener(withHandledException(it -> onAbort()))
     affiliationFormView.addChangeListener(it -> submitButton.setEnabled(affiliationFormView.isValid() && hasDataChanged()))
   }
 
@@ -76,11 +86,24 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     affiliationFormView.get() == outdatedAffiliation
   }
 
-
   private void onSubmit() {
     Affiliation affiliation = affiliationFormView.get()
     //todo make sure changes in country and category are confirmed again by the user
     this.controller.updateAffiliation(affiliation)
+    fireUpdateSubmitted()
+  }
+
+  private void onAbort() {
+    reset()
+    fireUpdateAborted()
+  }
+
+  private void fireUpdateSubmitted() {
+    submitListeners.forEach(SubmitListener::onSubmit)
+  }
+
+  private void fireUpdateAborted() {
+    abortListeners.forEach(AbortListener::onAbort)
   }
 
 

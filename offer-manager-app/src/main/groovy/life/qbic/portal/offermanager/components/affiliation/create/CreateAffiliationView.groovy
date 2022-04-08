@@ -5,8 +5,10 @@ import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.Constants
+import life.qbic.portal.offermanager.components.AbortNotifier
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.Resettable
+import life.qbic.portal.offermanager.components.SubmitNotifier
 import life.qbic.portal.offermanager.components.affiliation.AffiliationFormView
 
 /**
@@ -19,9 +21,12 @@ import life.qbic.portal.offermanager.components.affiliation.AffiliationFormView
  * @since: 1.0.0
  */
 @Log4j2
-class CreateAffiliationView extends FormLayout implements Resettable {
+class CreateAffiliationView extends FormLayout implements Resettable, SubmitNotifier, AbortNotifier {
     final public AppViewModel sharedViewModel
     private final CreateAffiliationController controller
+
+    private List<SubmitListener> submitListeners = new ArrayList<>()
+    private List<AbortListener> abortListeners = new ArrayList<>()
 
     private Button abortButton
     private Button submitButton
@@ -62,12 +67,18 @@ class CreateAffiliationView extends FormLayout implements Resettable {
 
     private void registerListeners() {
         submitButton.addClickListener(withHandledException( it -> onSubmit()))
-        abortButton.addClickListener(withHandledException(this::reset))
+        abortButton.addClickListener(withHandledException(it -> onAbort()))
         affiliationFormView.addChangeListener(it -> submitButton.setEnabled(affiliationFormView.isValid()))
     }
 
     private void onSubmit() {
         this.controller.createAffiliation(affiliationFormView.get())
+        fireCreationSubmitted()
+    }
+
+    private void onAbort() {
+        reset()
+        fireCreationAborted()
     }
 
 
@@ -87,9 +98,27 @@ class CreateAffiliationView extends FormLayout implements Resettable {
         }
     }
 
+    private void fireCreationSubmitted() {
+        submitListeners.forEach(SubmitListener::onSubmit)
+    }
+
+    private void fireCreationAborted() {
+        abortListeners.forEach(AbortListener::onAbort)
+    }
+
 
     @Override
     void reset() {
         affiliationFormView.reset()
+    }
+
+    @Override
+    void addAbortListener(AbortListener abortListener) {
+        abortListeners.add(abortListener)
+    }
+
+    @Override
+    void addSubmitListener(SubmitListener submitListener) {
+        submitListeners.add(submitListener)
     }
 }

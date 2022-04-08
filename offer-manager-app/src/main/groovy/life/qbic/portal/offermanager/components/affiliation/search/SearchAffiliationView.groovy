@@ -88,12 +88,12 @@ class SearchAffiliationView extends FormLayout{
     }
 
     private void toggleViews(){
-        updateAffiliationView.abortButton.addClickListener({
+        updateAffiliationView.addAbortListener(() -> {
             searchAffiliationLayout.setVisible(true)
             updateAffiliationView.setVisible(false)
         })
 
-        updateAffiliationView.submitButton.addClickListener({
+        updateAffiliationView.addSubmitListener(() -> {
             searchAffiliationLayout.setVisible(true)
             updateAffiliationView.setVisible(false)
         })
