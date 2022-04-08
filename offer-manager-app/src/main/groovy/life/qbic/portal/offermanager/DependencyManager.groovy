@@ -8,6 +8,7 @@ import life.qbic.business.offers.fetch.FetchOfferDataSource
 import life.qbic.business.persons.affiliation.create.CreateAffiliation
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
+import life.qbic.business.persons.affiliation.update.UpdateAffiliationDataSource
 import life.qbic.business.persons.create.CreatePerson
 import life.qbic.business.persons.create.CreatePersonDataSource
 import life.qbic.business.persons.list.ListPersonsDataSource
@@ -135,8 +136,10 @@ class DependencyManager {
     // Implemented by life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
     private CreateAffiliationDataSource createAffiliationDataSource
     private CreatePersonDataSource createPersonDataSource
-    private ListAffiliationsDataSource listAffiliationsDataSource
     private ListPersonsDataSource listPersonsDataSource
+    // Implemented by life.qbic.portal.offermanager.dataresources.persons.AffiliationDbConnector
+    private ListAffiliationsDataSource listAffiliationsDataSource
+    private UpdateAffiliationDataSource updateAffiliationDataSource
     private SearchPersonDataSource searchPersonDataSource
     // Implemented by life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
     private ArchiveProductDataSource archiveProductDataSource
@@ -190,9 +193,12 @@ class DependencyManager {
             PersonDbConnector personDbConnector = new PersonDbConnector(sessionProvider)
             createPersonDataSource = personDbConnector
             searchPersonDataSource = personDbConnector
-            createAffiliationDataSource = personDbConnector
-            listAffiliationsDataSource = personDbConnector
             listPersonsDataSource = personDbConnector
+
+            AffiliationDbConnector affiliationDbConnector = new AffiliationDbConnector(sessionProvider)
+            createAffiliationDataSource = affiliationDbConnector
+            updateAffiliationDataSource = affiliationDbConnector
+            listAffiliationsDataSource = affiliationDbConnector
 
             ProductsDbConnector productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
             archiveProductDataSource = productsDbConnector
