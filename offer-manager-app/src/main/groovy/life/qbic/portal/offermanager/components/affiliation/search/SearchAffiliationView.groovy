@@ -96,6 +96,7 @@ class SearchAffiliationView extends FormLayout{
     private void showUpdateAffiliation() {
         searchAffiliationLayout.setVisible(false)
         updateAffiliationView.setVisible(true)
+        selectedAffiliationDetails.setVisible(false)
     }
 
     private void hideUpdateAffiliation() {
