@@ -5,7 +5,6 @@ import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.Constants
-import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.components.affiliation.AffiliationFormView
@@ -22,17 +21,15 @@ import life.qbic.portal.offermanager.components.affiliation.AffiliationFormView
 @Log4j2
 class CreateAffiliationView extends FormLayout implements Resettable {
     final public AppViewModel sharedViewModel
-    final public CreateAffiliationViewModel createAffiliationViewModel
     private final CreateAffiliationController controller
 
-    Button abortButton
-    Button submitButton
+    private Button abortButton
+    private Button submitButton
     private AffiliationFormView affiliationFormView
     private String unexpectedErrorMessage = "An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to $Constants.QBIC_HELPDESK_EMAIL"
 
-    CreateAffiliationView(AppViewModel sharedViewModel, CreateAffiliationViewModel createAffiliationViewModel, CreateAffiliationController controller) {
+    CreateAffiliationView(AppViewModel sharedViewModel, CreateAffiliationController controller) {
         this.sharedViewModel = sharedViewModel
-        this.createAffiliationViewModel = createAffiliationViewModel
         this.controller = controller
         this.affiliationFormView = new AffiliationFormView()
 
@@ -70,14 +67,7 @@ class CreateAffiliationView extends FormLayout implements Resettable {
     }
 
     private void onSubmit() {
-        Affiliation affiliation = affiliationFormView.get()
-        this.controller.createAffiliation(affiliation.organisation,
-                affiliation.addressAddition,
-                affiliation.street,
-                affiliation.postalCode,
-                affiliation.city,
-                affiliation.country,
-                affiliation.category.value)
+        this.controller.createAffiliation(affiliationFormView.get())
     }
 
 

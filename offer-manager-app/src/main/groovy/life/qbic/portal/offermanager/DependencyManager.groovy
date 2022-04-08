@@ -311,7 +311,7 @@ class DependencyManager {
         createAffiliationViewModel.affiliationCategories.addAll(AffiliationCategory.values().collect { it.value })
 
         CreateAffiliationController createAffiliationController = new CreateAffiliationController()
-        def createAffiliationView = new CreateAffiliationView(sharedViewModel, createAffiliationViewModel, createAffiliationController)
+        def createAffiliationView = new CreateAffiliationView(sharedViewModel, createAffiliationController)
         CreateAffiliationPresenter createAffiliationPresenter = new CreateAffiliationPresenter(sharedViewModel, createAffiliationView, affiliationResourcesService)
         CreateAffiliation createAffiliation = new CreateAffiliation(createAffiliationPresenter, dataSource)
         createAffiliationController.setUseCaseInput(createAffiliation)
@@ -329,7 +329,9 @@ class DependencyManager {
     private SearchAffiliationView createSearchAffiliationView() {
         ResourcesService<Affiliation> affiliationResourcesService = this.affiliationService
         SearchAffiliationViewModel searchAffiliationViewModel = new SearchAffiliationViewModel(affiliationResourcesService)
-        SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel, new UpdateAffiliationView(viewModel, new CreateAffiliationViewModel(affiliationResourcesService), new UpdateAffiliationController()))
+
+        UpdateAffiliationView updateAffiliationView = new UpdateAffiliationView(viewModel, new UpdateAffiliationController())
+        SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel, updateAffiliationView)
         return searchAffiliationView
     }
 

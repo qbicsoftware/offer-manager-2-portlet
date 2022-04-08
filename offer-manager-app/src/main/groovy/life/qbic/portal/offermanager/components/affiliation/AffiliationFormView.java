@@ -17,10 +17,9 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import life.qbic.business.persons.affiliation.Affiliation;
+import life.qbic.business.persons.affiliation.AffiliationCategory;
 import life.qbic.business.persons.affiliation.Country;
-import life.qbic.datamodel.dtos.business.Affiliation;
-import life.qbic.datamodel.dtos.business.AffiliationCategory;
-import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory;
 import life.qbic.portal.offermanager.components.Resettable;
 import life.qbic.portal.offermanager.components.Updatable;
 import life.qbic.portal.offermanager.components.UserInput;
@@ -36,8 +35,6 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
   private ComboBox<String> affiliationCategoryBox;
 
   private final List<ViewChangeListener> listeners = new ArrayList<>();
-
-
   public AffiliationFormView() {
     initializeComponents();
     layoutComponents();
@@ -45,6 +42,53 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
 
   public void addChangeListener(ViewChangeListener viewChangeListener) {
     listeners.add(viewChangeListener);
+  }
+
+  @Override
+  public void update(Affiliation value) {
+
+  }
+
+
+  @Override
+  public Affiliation get() {
+    if (!isValid()) {
+      throw new RuntimeException("Tried to get invalid user input for affiliation");
+    }
+    Affiliation affiliation = new Affiliation(organisationBox.getValue(),
+        "", streetField.getValue(), postalCodeField.getValue(),
+        cityField.getValue(), countryBox.getValue(),
+        AffiliationCategory.forLabel(affiliationCategoryBox.getValue()));
+
+    if (!addressAdditionField.isEmpty()) {
+      affiliation.setAddressAddition(addressAdditionField.getValue());
+    }
+
+    return affiliation;
+  }
+
+  @Override
+  public void reset() {
+    addressAdditionField.clear();
+    affiliationCategoryBox.clear();
+    cityField.clear();
+    countryBox.clear();
+    organisationBox.clear();
+    postalCodeField.clear();
+    streetField.clear();
+
+    addressAdditionField.setComponentError(null);
+    affiliationCategoryBox.setComponentError(null);
+    cityField.setComponentError(null);
+    countryBox.setComponentError(null);
+    organisationBox.setComponentError(null);
+    postalCodeField.setComponentError(null);
+    streetField.setComponentError(null);
+  }
+
+  @Override
+  public boolean isValid() {
+    return requiredFieldsFilled() && hasNoComponentError();
   }
 
   private void fireViewChanged() {
@@ -94,7 +138,7 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
 
   private List<String> getPossibleCategories() {
     return Arrays.stream(AffiliationCategory.values())
-        .map(AffiliationCategory::getValue)
+        .map(AffiliationCategory::getLabel)
         .collect(Collectors.toList());
   }
 
@@ -224,35 +268,6 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
     }
   }
 
-  @Override
-  public void reset() {
-    addressAdditionField.clear();
-    affiliationCategoryBox.clear();
-    cityField.clear();
-    countryBox.clear();
-    organisationBox.clear();
-    postalCodeField.clear();
-    streetField.clear();
-
-    addressAdditionField.setComponentError(null);
-    affiliationCategoryBox.setComponentError(null);
-    cityField.setComponentError(null);
-    countryBox.setComponentError(null);
-    organisationBox.setComponentError(null);
-    postalCodeField.setComponentError(null);
-    streetField.setComponentError(null);
-  }
-
-  @Override
-  public void update(Affiliation value) {
-
-  }
-
-  @Override
-  public boolean isValid() {
-    return requiredFieldsFilled() && hasNoComponentError();
-  }
-
   private boolean requiredFieldsFilled() {
     return affiliationCategoryBox.getValue() != null &&
             organisationBox.getComponentError() == null &&
@@ -269,27 +284,5 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
             streetField.getComponentError() == null &&
             postalCodeField.getComponentError() == null &&
             cityField.getComponentError() == null;
-  }
-
-
-  @Override
-  public Affiliation get() {
-    if (!isValid()) {
-      throw new RuntimeException("Tried to get invalid user input for affiliation");
-    }
-    Affiliation.Builder affiliationBuilder = new Affiliation.Builder(organisationBox.getValue(), streetField.getValue(), postalCodeField.getValue(), cityField.getValue());
-    affiliationBuilder.country(countryBox.getValue());
-
-    if (!addressAdditionField.isEmpty()) {
-      affiliationBuilder.addressAddition(addressAdditionField.getValue());
-    }
-
-    AffiliationCategoryFactory categoryFactory = new AffiliationCategoryFactory();
-
-    AffiliationCategory affiliationCategory;
-    affiliationCategory = categoryFactory.getForString(affiliationCategoryBox.getValue());
-    affiliationBuilder.setCategory(affiliationCategory);
-
-    return affiliationBuilder.build();
   }
 }
