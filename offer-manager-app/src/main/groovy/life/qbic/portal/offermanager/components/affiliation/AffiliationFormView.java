@@ -13,6 +13,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,6 +24,7 @@ import life.qbic.business.persons.affiliation.Country;
 import life.qbic.portal.offermanager.components.Resettable;
 import life.qbic.portal.offermanager.components.Updatable;
 import life.qbic.portal.offermanager.components.UserInput;
+import life.qbic.portal.offermanager.dataresources.ResourcesService;
 
 public class AffiliationFormView extends VerticalLayout implements Resettable, Updatable<Affiliation>, UserInput<Affiliation> {
 
@@ -35,9 +37,26 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
   private ComboBox<String> affiliationCategoryBox;
 
   private final List<ViewChangeListener> listeners = new ArrayList<>();
-  public AffiliationFormView() {
+  private final ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationResourcesService;
+
+  public AffiliationFormView(
+      ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationResourcesService) {
+    this.affiliationResourcesService = affiliationResourcesService;
     initializeComponents();
     layoutComponents();
+    loadOrganisationsFromResourceService();
+    subscribeToAffiliationService();
+  }
+
+  private void subscribeToAffiliationService() {
+    affiliationResourcesService.subscribe(it -> loadOrganisationsFromResourceService());
+  }
+
+  private void loadOrganisationsFromResourceService() {
+    Iterator<life.qbic.datamodel.dtos.business.Affiliation> affiliationIterator = affiliationResourcesService.iterator();
+    List<String> organisations = new ArrayList<>();
+    affiliationIterator.forEachRemaining(it -> organisations.add(it.getOrganisation()));
+    organisationBox.setItems(organisations.stream().distinct().collect(Collectors.toList()));
   }
 
   public void addChangeListener(ViewChangeListener viewChangeListener) {

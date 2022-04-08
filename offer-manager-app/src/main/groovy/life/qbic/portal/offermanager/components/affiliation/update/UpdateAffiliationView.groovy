@@ -8,26 +8,30 @@ import life.qbic.business.Constants
 import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.portal.offermanager.components.*
 import life.qbic.portal.offermanager.components.affiliation.AffiliationFormView
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 @Log4j2
 class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<Affiliation>, SubmitNotifier, AbortNotifier {
 
   final public AppViewModel sharedViewModel
   private final UpdateAffiliationController controller
+  private final ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationResourcesService
   private Affiliation outdatedAffiliation = null
 
   private List<SubmitListener> submitListeners = new ArrayList<>()
   private List<AbortListener> abortListeners = new ArrayList<>()
+
 
   private Button abortButton
   private Button submitButton
   private AffiliationFormView affiliationFormView
   private String unexpectedErrorMessage = "An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to $Constants.QBIC_HELPDESK_EMAIL"
 
-  UpdateAffiliationView(AppViewModel sharedViewModel, UpdateAffiliationController controller) {
+  UpdateAffiliationView(AppViewModel sharedViewModel, UpdateAffiliationController controller, ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationResourcesService) {
     this.sharedViewModel = sharedViewModel
     this.controller = controller
-    this.affiliationFormView = new AffiliationFormView()
+    this.affiliationResourcesService = affiliationResourcesService
+    this.affiliationFormView = new AffiliationFormView(affiliationResourcesService)
 
     initLayout()
     registerListeners()

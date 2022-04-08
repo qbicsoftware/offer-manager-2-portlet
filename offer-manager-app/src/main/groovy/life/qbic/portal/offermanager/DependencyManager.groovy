@@ -38,7 +38,6 @@ import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationController
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationPresenter
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
-import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationViewModel
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationView
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationViewModel
 import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationController
@@ -315,11 +314,8 @@ class DependencyManager {
         ResourcesService<Affiliation> affiliationResourcesService = this.affiliationService
         CreateAffiliationDataSource dataSource = this.createAffiliationDataSource
 
-        CreateAffiliationViewModel createAffiliationViewModel = new CreateAffiliationViewModel(affiliationResourcesService)
-        createAffiliationViewModel.affiliationCategories.addAll(AffiliationCategory.values().collect { it.value })
-
         CreateAffiliationController createAffiliationController = new CreateAffiliationController()
-        def createAffiliationView = new CreateAffiliationView(sharedViewModel, createAffiliationController)
+        def createAffiliationView = new CreateAffiliationView(sharedViewModel, createAffiliationController, affiliationResourcesService)
         CreateAffiliationPresenter createAffiliationPresenter = new CreateAffiliationPresenter(sharedViewModel, createAffiliationView, affiliationResourcesService)
         CreateAffiliation createAffiliation = new CreateAffiliation(createAffiliationPresenter, dataSource)
         createAffiliationController.setUseCaseInput(createAffiliation)
@@ -348,7 +344,7 @@ class DependencyManager {
         UpdateAffiliationPresenter updateAffiliationPresenter = new UpdateAffiliationPresenter(affiliationService, viewModel)
         UpdateAffiliation updateAffiliation = new UpdateAffiliation(updateAffiliationPresenter, updateAffiliationDataSource)
         updateAffiliationController.setUseCaseInput(updateAffiliation)
-        return new UpdateAffiliationView(viewModel, updateAffiliationController)
+        return new UpdateAffiliationView(viewModel, updateAffiliationController, affiliationService)
     }
 
     /**

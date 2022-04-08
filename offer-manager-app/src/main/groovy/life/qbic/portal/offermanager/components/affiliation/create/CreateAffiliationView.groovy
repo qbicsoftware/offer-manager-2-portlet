@@ -5,11 +5,13 @@ import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.Constants
+import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AbortNotifier
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.components.SubmitNotifier
 import life.qbic.portal.offermanager.components.affiliation.AffiliationFormView
+import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
  * This class generates a Layout in which the user
@@ -24,6 +26,7 @@ import life.qbic.portal.offermanager.components.affiliation.AffiliationFormView
 class CreateAffiliationView extends FormLayout implements Resettable, SubmitNotifier, AbortNotifier {
     final public AppViewModel sharedViewModel
     private final CreateAffiliationController controller
+    private final ResourcesService<Affiliation> affiliationResourcesService
 
     private List<SubmitListener> submitListeners = new ArrayList<>()
     private List<AbortListener> abortListeners = new ArrayList<>()
@@ -33,10 +36,11 @@ class CreateAffiliationView extends FormLayout implements Resettable, SubmitNoti
     private AffiliationFormView affiliationFormView
     private String unexpectedErrorMessage = "An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to $Constants.QBIC_HELPDESK_EMAIL"
 
-    CreateAffiliationView(AppViewModel sharedViewModel, CreateAffiliationController controller) {
+    CreateAffiliationView(AppViewModel sharedViewModel, CreateAffiliationController controller, ResourcesService<Affiliation> affiliationResourcesService) {
         this.sharedViewModel = sharedViewModel
         this.controller = controller
-        this.affiliationFormView = new AffiliationFormView()
+        this.affiliationResourcesService = affiliationResourcesService
+        this.affiliationFormView = new AffiliationFormView(affiliationResourcesService)
 
         initLayout()
         registerListeners()
@@ -57,7 +61,7 @@ class CreateAffiliationView extends FormLayout implements Resettable, SubmitNoti
 
         HorizontalLayout buttonLayout = new HorizontalLayout(abortButton, submitButton)
         buttonLayout.setComponentAlignment(abortButton, Alignment.MIDDLE_RIGHT)
-        buttonLayout.setComponentAlignment(submitButton,Alignment.MIDDLE_RIGHT)
+        buttonLayout.setComponentAlignment(submitButton, Alignment.MIDDLE_RIGHT)
         buttonLayout.setSizeFull()
 
         this.addComponents(label, affiliationFormView, buttonLayout)
@@ -66,7 +70,7 @@ class CreateAffiliationView extends FormLayout implements Resettable, SubmitNoti
     }
 
     private void registerListeners() {
-        submitButton.addClickListener(withHandledException( it -> onSubmit()))
+        submitButton.addClickListener(withHandledException(it -> onSubmit()))
         abortButton.addClickListener(withHandledException(it -> onAbort()))
         affiliationFormView.addChangeListener(it -> submitButton.setEnabled(affiliationFormView.isValid()))
     }
