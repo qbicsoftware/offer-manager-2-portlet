@@ -16,10 +16,9 @@ import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
  */
 @Log4j2
 class CreateAffiliationController {
-    private final CreateAffiliationInput useCaseInput
+    private CreateAffiliationInput useCaseInput
 
-    CreateAffiliationController(CreateAffiliationInput useCaseInput) {
-        this.useCaseInput = useCaseInput
+    CreateAffiliationController() {
     }
 
     /**
@@ -33,6 +32,9 @@ class CreateAffiliationController {
      * @see AffiliationCategory
      */
     void createAffiliation(String organisation, String addressAddition, String street, String postalCode, String city, String country, String category) {
+        if (useCaseInput == null) {
+            throw new RuntimeException("CreateAffiliationController was not setup properly.")
+        }
         Affiliation.Builder affiliationBuilder
         affiliationBuilder = new Affiliation.Builder(organisation, street, postalCode, city)
         if (addressAddition && addressAddition?.length() > 0) {
@@ -47,5 +49,9 @@ class CreateAffiliationController {
         affiliationBuilder.setCategory(affiliationCategory)
         Affiliation affiliation = affiliationBuilder.build()
         useCaseInput.createAffiliation(new RefactorConverter().toAffiliation(affiliation))
+    }
+
+    void setUseCaseInput(CreateAffiliationInput useCaseInput) {
+        this.useCaseInput = useCaseInput
     }
 }

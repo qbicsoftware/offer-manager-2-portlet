@@ -310,10 +310,12 @@ class DependencyManager {
         CreateAffiliationViewModel createAffiliationViewModel = new CreateAffiliationViewModel(affiliationResourcesService)
         createAffiliationViewModel.affiliationCategories.addAll(AffiliationCategory.values().collect { it.value })
 
-        CreateAffiliationPresenter createAffiliationPresenter = new CreateAffiliationPresenter(sharedViewModel, createAffiliationViewModel, affiliationResourcesService)
+        CreateAffiliationController createAffiliationController = new CreateAffiliationController()
+        def createAffiliationView = new CreateAffiliationView(sharedViewModel, createAffiliationViewModel, createAffiliationController)
+        CreateAffiliationPresenter createAffiliationPresenter = new CreateAffiliationPresenter(sharedViewModel, createAffiliationView, affiliationResourcesService)
         CreateAffiliation createAffiliation = new CreateAffiliation(createAffiliationPresenter, dataSource)
-        CreateAffiliationController createAffiliationController = new CreateAffiliationController(createAffiliation)
-        return new CreateAffiliationView(sharedViewModel, createAffiliationViewModel, createAffiliationController)
+        createAffiliationController.setUseCaseInput(createAffiliation)
+        return createAffiliationView
     }
 
 

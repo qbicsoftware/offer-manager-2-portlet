@@ -4,6 +4,7 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
+import life.qbic.business.Constants
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.Resettable
@@ -27,6 +28,7 @@ class CreateAffiliationView extends FormLayout implements Resettable {
     Button abortButton
     Button submitButton
     private AffiliationFormView affiliationFormView
+    private String unexpectedErrorMessage = "An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to $Constants.QBIC_HELPDESK_EMAIL"
 
     CreateAffiliationView(AppViewModel sharedViewModel, CreateAffiliationViewModel createAffiliationViewModel, CreateAffiliationController controller) {
         this.sharedViewModel = sharedViewModel
@@ -62,22 +64,37 @@ class CreateAffiliationView extends FormLayout implements Resettable {
     }
 
     private void registerListeners() {
-        submitButton.addClickListener({
-            def affiliation = affiliationFormView.get()
-            this.controller.createAffiliation(affiliation.organisation, affiliation.addressAddition,
-                    affiliation.street, affiliation.postalCode, affiliation.city, affiliation.country, affiliation.category.value)
-        })
+        submitButton.addClickListener(withHandledException( it -> onSubmit()))
+        abortButton.addClickListener(withHandledException(this::reset))
+        affiliationFormView.addChangeListener(it -> submitButton.setEnabled(affiliationFormView.isValid()))
+    }
 
-        this.abortButton.addClickListener({ event ->
+    private void onSubmit() {
+        Affiliation affiliation = affiliationFormView.get()
+        this.controller.createAffiliation(affiliation.organisation,
+                affiliation.addressAddition,
+                affiliation.street,
+                affiliation.postalCode,
+                affiliation.city,
+                affiliation.country,
+                affiliation.category.value)
+    }
+
+
+    /**
+     * Wraps a button click listener to hide exceptions from the user.
+     * @param clickListener the click listener to wrap
+     * @return a click listener with proper exception display
+     */
+    private Button.ClickListener withHandledException(Button.ClickListener clickListener) {
+        return (it) -> {
             try {
-                reset()
+                clickListener.buttonClick(it)
+            } catch (Exception unexpectedException) {
+                log.error(unexpectedErrorMessage, unexpectedException)
+                sharedViewModel.failureNotifications.add(unexpectedErrorMessage)
             }
-            catch (Exception ignored) {
-                sharedViewModel.failureNotifications.add("An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to support@qbic.zendesk.com.")
-            }
-        })
-
-        affiliationFormView.addChangeListener({ submitButton.setEnabled(affiliationFormView.isValid())});
+        }
     }
 
 
