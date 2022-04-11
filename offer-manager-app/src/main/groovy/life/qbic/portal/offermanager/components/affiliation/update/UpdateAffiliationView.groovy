@@ -75,10 +75,13 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     HorizontalLayout buttonLayout = new HorizontalLayout(abortButton, submitButton)
     buttonLayout.setComponentAlignment(abortButton, Alignment.MIDDLE_RIGHT)
     buttonLayout.setComponentAlignment(submitButton, Alignment.MIDDLE_RIGHT)
-    buttonLayout.setSizeFull()
+    HorizontalLayout buttonRow = new HorizontalLayout(buttonLayout)
+    buttonRow.setComponentAlignment(buttonLayout, Alignment.MIDDLE_RIGHT)
+    buttonRow.setWidthFull()
+    buttonRow.setSpacing(false)
+    buttonRow.setMargin(false)
 
-    this.addComponents(label, affiliationFormView, buttonLayout)
-    this.setComponentAlignment(buttonLayout, Alignment.BOTTOM_RIGHT)
+    this.addComponents(label, affiliationFormView, buttonRow)
     this.setMargin(false)
   }
 
