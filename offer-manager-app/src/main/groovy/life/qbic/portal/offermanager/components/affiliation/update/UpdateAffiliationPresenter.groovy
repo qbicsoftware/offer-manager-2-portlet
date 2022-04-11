@@ -24,6 +24,6 @@ class UpdateAffiliationPresenter implements UpdateAffiliationOutput {
 
   @Override
   void failNotification(String notification) {
-
+    sharedViewModel.failureNotifications.add(notification)
   }
 }
