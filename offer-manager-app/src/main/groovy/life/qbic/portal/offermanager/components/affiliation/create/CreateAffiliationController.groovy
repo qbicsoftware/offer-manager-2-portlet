@@ -1,11 +1,9 @@
 package life.qbic.portal.offermanager.components.affiliation.create
 
 import groovy.util.logging.Log4j2
-import life.qbic.business.RefactorConverter
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.create.CreateAffiliationInput
-import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.datamodel.dtos.business.AffiliationCategory
-import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
 
 /**
  * Controller class adapter from view information into use case input interface
@@ -16,36 +14,21 @@ import life.qbic.datamodel.dtos.business.AffiliationCategoryFactory
  */
 @Log4j2
 class CreateAffiliationController {
-    private final CreateAffiliationInput useCaseInput
+    private CreateAffiliationInput useCaseInput
 
-    CreateAffiliationController(CreateAffiliationInput useCaseInput) {
-        this.useCaseInput = useCaseInput
-    }
+    CreateAffiliationController() {}
 
     /**
-     * Creates an affiliation DTO and calls the use case with the data transfer object
-     * @param organisation Organisation of the affiliation
-     * @param street part of the address of the affiliation
-     * @param postalCode part of the address of the affiliation
-     * @param city part of the address of the affiliation
-     * @param category a string corresponding to an AffiliationCategory
+     * Calls the use case with the provided affiliation
      *
+     * @param affiliation the affiliation that shall be created.
      * @see AffiliationCategory
      */
-    void createAffiliation(String organisation, String addressAddition, String street, String postalCode, String city, String country, String category) {
-        Affiliation.Builder affiliationBuilder
-        affiliationBuilder = new Affiliation.Builder(organisation, street, postalCode, city)
-        if (addressAddition && addressAddition?.length() > 0) {
-            affiliationBuilder.setAddressAddition(addressAddition)
-        }
-        affiliationBuilder.setCountry(country)
-        AffiliationCategoryFactory categoryFactory = new AffiliationCategoryFactory()
+    void createAffiliation(Affiliation affiliation) {
+        this.useCaseInput.createAffiliation(affiliation)
+    }
 
-        AffiliationCategory affiliationCategory
-        assert category && ! category.isEmpty()
-        affiliationCategory = categoryFactory.getForString(category)
-        affiliationBuilder.setCategory(affiliationCategory)
-        Affiliation affiliation = affiliationBuilder.build()
-        useCaseInput.createAffiliation(new RefactorConverter().toAffiliation(affiliation))
+    void setUseCaseInput(CreateAffiliationInput useCaseInput) {
+        this.useCaseInput = useCaseInput
     }
 }

@@ -461,11 +461,11 @@ class CreatePersonView extends VerticalLayout implements Resettable {
             this.createPersonViewModel.affiliationViewVisible = true
         })
 
-        this.createAffiliationView.submitButton.addClickListener({
+        this.createAffiliationView.addSubmitListener({
             this.createPersonViewModel.affiliationViewVisible = false
         })
 
-        this.createAffiliationView.abortButton.addClickListener({
+        this.createAffiliationView.addAbortListener({
             this.createPersonViewModel.affiliationViewVisible = false
         })
 
