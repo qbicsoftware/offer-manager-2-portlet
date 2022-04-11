@@ -98,6 +98,7 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
   private void onSubmit() {
     Affiliation affiliation = affiliationFormView.get()
     //todo make sure changes in country and category are confirmed again by the user
+    confirmAffiliationCategoryChange(affiliation)
     affiliation.setId(outdatedAffiliation.getId())
     this.controller.updateAffiliation(affiliation)
     fireUpdateSubmitted()
@@ -130,6 +131,16 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
         log.error(unexpectedErrorMessage, unexpectedException)
         sharedViewModel.failureNotifications.add(unexpectedErrorMessage)
       }
+    }
+  }
+
+  private boolean isAffiliationCategoryChangeConfirmed(Affiliation affiliation) {
+    boolean affiliationCategoryChangeConfirmed
+    if (affiliation.getCategory().equals(outdatedAffiliation.getCategory())) {
+      //ToDo Generate Popup asking for confirmation
+      //ToDo Listen on Button in Popup and set Boolean
+      //toDo Return Boolean and adapt controller to only be triggered if boolean == true
+
     }
   }
 }
