@@ -49,10 +49,12 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     affiliationFormView.update(affiliation)
   }
 
+  @Override
   void addSubmitListener(SubmitListener submitListener) {
     submitListeners.add(submitListener)
   }
 
+  @Override
   void addAbortListener(AbortListener abortListener) {
     abortListeners.add(abortListener)
   }
