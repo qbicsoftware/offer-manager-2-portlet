@@ -10,7 +10,7 @@ import life.qbic.portal.offermanager.components.AbortNotifier
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.Resettable
 import life.qbic.portal.offermanager.components.SubmitNotifier
-import life.qbic.portal.offermanager.components.affiliation.AffiliationFormView
+import life.qbic.portal.offermanager.components.affiliation.AffiliationUserInput
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
@@ -33,14 +33,14 @@ class CreateAffiliationView extends FormLayout implements Resettable, SubmitNoti
 
     private Button abortButton
     private Button submitButton
-    private AffiliationFormView affiliationFormView
+    private AffiliationUserInput affiliationFormView
     private String unexpectedErrorMessage = "An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to $Constants.QBIC_HELPDESK_EMAIL"
 
     CreateAffiliationView(AppViewModel sharedViewModel, CreateAffiliationController controller, ResourcesService<Affiliation> affiliationResourcesService) {
         this.sharedViewModel = sharedViewModel
         this.controller = controller
         this.affiliationResourcesService = affiliationResourcesService
-        this.affiliationFormView = new AffiliationFormView(affiliationResourcesService)
+        this.affiliationFormView = new AffiliationUserInput(affiliationResourcesService)
 
         initLayout()
         registerListeners()

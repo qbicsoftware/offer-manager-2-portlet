@@ -26,7 +26,10 @@ import life.qbic.portal.offermanager.components.Updatable;
 import life.qbic.portal.offermanager.components.UserInput;
 import life.qbic.portal.offermanager.dataresources.ResourcesService;
 
-public class AffiliationFormView extends VerticalLayout implements Resettable, Updatable<Affiliation>, UserInput<Affiliation> {
+/**
+ * Provides a user interface that queries for all information concerning an affiliation.
+ */
+public class AffiliationUserInput extends VerticalLayout implements Resettable, Updatable<Affiliation>, UserInput<Affiliation> {
 
   private ComboBox<String> organisationBox;
   private TextField addressAdditionField;
@@ -39,7 +42,7 @@ public class AffiliationFormView extends VerticalLayout implements Resettable, U
   private final List<ViewChangeListener> listeners = new ArrayList<>();
   private final ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationResourcesService;
 
-  public AffiliationFormView(
+  public AffiliationUserInput(
       ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationResourcesService) {
     this.affiliationResourcesService = affiliationResourcesService;
     initializeComponents();
