@@ -1,6 +1,5 @@
 package life.qbic.portal.offermanager.components.affiliation.update
 
-
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
@@ -28,8 +27,6 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
   private AffiliationUserInput affiliationFormView
   private String unexpectedErrorMessage = "An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to $Constants.QBIC_HELPDESK_EMAIL"
 
-  private boolean categoryChangeConfirmed = false
-
   UpdateAffiliationView(AppViewModel sharedViewModel, UpdateAffiliationController controller, ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationResourcesService) {
     this.sharedViewModel = sharedViewModel
     this.controller = controller
@@ -44,7 +41,6 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
   void reset() {
     affiliationFormView.reset()
     outdatedAffiliation = null
-    categoryChangeConfirmed = false
   }
 
   @Override
