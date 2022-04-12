@@ -1,6 +1,8 @@
 package life.qbic.portal.offermanager.components.affiliation.update
 
+
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
@@ -21,11 +23,12 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
   private List<SubmitListener> submitListeners = new ArrayList<>()
   private List<AbortListener> abortListeners = new ArrayList<>()
 
-
   private Button abortButton
   private Button submitButton
   private AffiliationUserInput affiliationFormView
   private String unexpectedErrorMessage = "An unexpected error occurred. We apologize for any inconveniences. Please inform us via email to $Constants.QBIC_HELPDESK_EMAIL"
+
+  private boolean categoryChangeConfirmed = false
 
   UpdateAffiliationView(AppViewModel sharedViewModel, UpdateAffiliationController controller, ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationResourcesService) {
     this.sharedViewModel = sharedViewModel
@@ -41,6 +44,7 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
   void reset() {
     affiliationFormView.reset()
     outdatedAffiliation = null
+    categoryChangeConfirmed = false
   }
 
   @Override
@@ -86,7 +90,7 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
   }
 
   private void registerListeners() {
-    submitButton.addClickListener(withHandledException( it -> onSubmit()))
+    submitButton.addClickListener(withHandledException(it -> onSubmit()))
     abortButton.addClickListener(withHandledException(it -> onAbort()))
     affiliationFormView.addChangeListener(it -> submitButton.setEnabled(affiliationFormView.isValid() && hasDataChanged()))
   }
@@ -97,9 +101,16 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
 
   private void onSubmit() {
     Affiliation affiliation = affiliationFormView.get()
-    //todo make sure changes in country and category are confirmed again by the user
-    confirmAffiliationCategoryChange(affiliation)
     affiliation.setId(outdatedAffiliation.getId())
+    if (isAffiliationCategoryChanged(affiliation)) {
+      ConfirmAffiliationChangeWindow confirmAffiliationChangeWindow = new ConfirmAffiliationChangeWindow(affiliation)
+      this.getUI().addWindow(confirmAffiliationChangeWindow)
+    } else {
+      triggerAffiliationUpdate(affiliation)
+    }
+  }
+
+  private void triggerAffiliationUpdate(Affiliation affiliation) {
     this.controller.updateAffiliation(affiliation)
     fireUpdateSubmitted()
   }
@@ -115,6 +126,10 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
 
   private void fireUpdateAborted() {
     abortListeners.forEach(AbortListener::onAbort)
+  }
+
+  private boolean isAffiliationCategoryChanged(Affiliation updatedAffiliation) {
+    return !updatedAffiliation.getCategory().equals(outdatedAffiliation.getCategory())
   }
 
 
@@ -134,13 +149,81 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     }
   }
 
-  private boolean isAffiliationCategoryChangeConfirmed(Affiliation affiliation) {
-    boolean affiliationCategoryChangeConfirmed
-    if (affiliation.getCategory().equals(outdatedAffiliation.getCategory())) {
-      //ToDo Generate Popup asking for confirmation
-      //ToDo Listen on Button in Popup and set Boolean
-      //toDo Return Boolean and adapt controller to only be triggered if boolean == true
+  /**
+   * Modal window which prompts the user to confirm that the affiliation category change was intended
+   * @param Affiliation affiliation the to be updated affiliation for which the category was changed
+   */
 
+  private class ConfirmAffiliationChangeWindow extends Window {
+    private Button abortButton
+    private Button submitButton
+    private Affiliation updatedAffiliation
+
+    ConfirmAffiliationChangeWindow(Affiliation affiliation) {
+      this.updatedAffiliation = affiliation
+      generateAffiliationChangeWindow()
+    }
+
+    private void generateAffiliationChangeWindow() {
+      this.setCaption("Confirm affiliation update")
+      this.setContent(generateWindowContent())
+      setupWindowStyle()
+      registerListeners()
+    }
+
+    private VerticalLayout generateWindowContent() {
+      VerticalLayout windowContent = new VerticalLayout()
+      windowContent.addComponents(generateText(), generateButtonRow())
+      return windowContent
+    }
+
+    private Label generateText() {
+      Label windowText = new Label("Changing the affiliation category affects the pricing of <b> ALL </b> offers associated with this affiliation!")
+      windowText.setContentMode(ContentMode.HTML)
+      return windowText
+    }
+
+    private void setupButtons() {
+      this.abortButton = new Button("Abort Affiliation Update")
+      this.abortButton.setIcon(VaadinIcons.CLOSE_CIRCLE)
+      this.abortButton.addStyleName(ValoTheme.BUTTON_DANGER)
+      this.submitButton = new Button("Confirm Affiliation Update")
+      this.submitButton.setIcon(VaadinIcons.OFFICE)
+      this.submitButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
+    }
+
+    private HorizontalLayout generateButtonRow() {
+      setupButtons()
+      HorizontalLayout buttonLayout = new HorizontalLayout(abortButton, submitButton)
+      HorizontalLayout buttonRow = new HorizontalLayout()
+      buttonRow.setDefaultComponentAlignment(Alignment.BOTTOM_CENTER)
+      buttonRow.addComponent(buttonLayout)
+      buttonRow.setWidthFull()
+      buttonRow.setSpacing(false)
+      buttonRow.setMargin(false)
+      return buttonRow
+    }
+
+    private void setupWindowStyle() {
+      this.setWidthUndefined()
+      this.center()
+      this.setClosable(false)
+      this.setModal(true)
+      this.setResizable(false)
+    }
+
+    private void registerListeners() {
+      this.submitButton.addClickListener(withHandledException(it -> onSubmit()))
+      this.abortButton.addClickListener(withHandledException(it -> onAbort()))
+    }
+
+    private void onSubmit() {
+      triggerAffiliationUpdate(updatedAffiliation)
+      this.close()
+    }
+
+    private void onAbort() {
+      this.close()
     }
   }
 }
