@@ -100,7 +100,7 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     Affiliation affiliation = affiliationFormView.get()
     affiliation.setId(outdatedAffiliation.getId())
     if (isAffiliationCategoryChanged(affiliation)) {
-      ConfirmAffiliationChangeWindow confirmAffiliationChangeWindow = new ConfirmAffiliationChangeWindow()
+      ConfirmAffiliationChangeWindow confirmAffiliationChangeWindow = new ConfirmAffiliationChangeWindow(outdatedAffiliation.getCategory().getLabel(), affiliation.getCategory().getLabel())
       this.getUI().addWindow(confirmAffiliationChangeWindow)
       confirmAffiliationChangeWindow.addCloseListener(it -> {
         if (confirmAffiliationChangeWindow.wasConfirmed()) {
@@ -157,16 +157,22 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
    */
 
   private class ConfirmAffiliationChangeWindow extends Window {
-    private Button abortButton
-    private Button submitButton
-    boolean answer = false
+    private Button cancelButton
+    private Button confirmButton
+    private final String oldCategory
+    private final String newCategory
+    private boolean wasConfirmed = false
 
-    ConfirmAffiliationChangeWindow() {
+    ConfirmAffiliationChangeWindow(String oldCategory, String newCategory) {
+      this.oldCategory = oldCategory
+      this.newCategory = newCategory
       generateAffiliationChangeWindow()
     }
 
     private void generateAffiliationChangeWindow() {
-      this.setCaption("Confirm affiliation update")
+      this.setCaption("<b>Changes can affect existing offers!</b>")
+      this.setCaptionAsHtml(true)
+      this.setIcon(VaadinIcons.WARNING)
       this.setContent(generateWindowContent())
       setupWindowStyle()
       registerListeners()
@@ -179,23 +185,22 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     }
 
     private Label generateText() {
-      Label windowText = new Label("Changing the affiliation category affects the pricing of <b> ALL </b> offers associated with this affiliation!")
+      Label windowText = new Label("Do you want to change the affiliation category from <b>$oldCategory</b> to <b>$newCategory</b> ?")
       windowText.setContentMode(ContentMode.HTML)
       return windowText
     }
 
     private void setupButtons() {
-      this.abortButton = new Button("Back to Editing")
-      this.abortButton.setIcon(VaadinIcons.CLOSE_CIRCLE)
-      this.abortButton.addStyleName(ValoTheme.BUTTON_DANGER)
-      this.submitButton = new Button("Update Affiliation")
-      this.submitButton.setIcon(VaadinIcons.OFFICE)
-      this.submitButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
+      this.cancelButton = new Button("Cancel")
+      this.cancelButton.setIcon(VaadinIcons.CLOSE_CIRCLE)
+      this.confirmButton = new Button("Update Affiliation")
+      this.confirmButton.setIcon(VaadinIcons.CHECK)
+      this.confirmButton.addStyleName(ValoTheme.BUTTON_PRIMARY)
     }
 
     private HorizontalLayout generateButtonRow() {
       setupButtons()
-      HorizontalLayout buttonLayout = new HorizontalLayout(abortButton, submitButton)
+      HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton, confirmButton)
       HorizontalLayout buttonRow = new HorizontalLayout()
       buttonRow.setDefaultComponentAlignment(Alignment.BOTTOM_CENTER)
       buttonRow.addComponent(buttonLayout)
@@ -214,22 +219,22 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     }
 
     private void registerListeners() {
-      this.submitButton.addClickListener(withHandledException(it -> onSubmit()))
-      this.abortButton.addClickListener(withHandledException(it -> onAbort()))
+      this.confirmButton.addClickListener(withHandledException(it -> onConfirmation()))
+      this.cancelButton.addClickListener(withHandledException(it -> onCancellation()))
     }
 
-    private void onSubmit() {
-      answer = true
+    private void onConfirmation() {
+      wasConfirmed = true
       this.close()
     }
 
-    private void onAbort() {
-      answer = false
+    private void onCancellation() {
+      wasConfirmed = false
       this.close()
     }
 
     boolean wasConfirmed() {
-      return answer
+      return wasConfirmed
     }
   }
 }
