@@ -1,6 +1,8 @@
 package life.qbic.portal.offermanager.components.affiliation.update
 
+
 import com.vaadin.icons.VaadinIcons
+import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
@@ -20,7 +22,6 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
 
   private List<SubmitListener> submitListeners = new ArrayList<>()
   private List<AbortListener> abortListeners = new ArrayList<>()
-
 
   private Button abortButton
   private Button submitButton
@@ -86,7 +87,7 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
   }
 
   private void registerListeners() {
-    submitButton.addClickListener(withHandledException( it -> onSubmit()))
+    submitButton.addClickListener(withHandledException(it -> onSubmit()))
     abortButton.addClickListener(withHandledException(it -> onAbort()))
     affiliationFormView.addChangeListener(it -> submitButton.setEnabled(affiliationFormView.isValid() && hasDataChanged()))
   }
@@ -97,8 +98,21 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
 
   private void onSubmit() {
     Affiliation affiliation = affiliationFormView.get()
-    //todo make sure changes in country and category are confirmed again by the user
     affiliation.setId(outdatedAffiliation.getId())
+    if (isAffiliationCategoryChanged(affiliation)) {
+      ConfirmAffiliationChangeWindow confirmAffiliationChangeWindow = new ConfirmAffiliationChangeWindow()
+      this.getUI().addWindow(confirmAffiliationChangeWindow)
+      confirmAffiliationChangeWindow.addCloseListener(it -> {
+        if (confirmAffiliationChangeWindow.wasConfirmed()) {
+          triggerAffiliationUpdate(affiliation)
+        }
+      })
+    } else {
+      triggerAffiliationUpdate(affiliation)
+    }
+  }
+
+  private void triggerAffiliationUpdate(Affiliation affiliation) {
     this.controller.updateAffiliation(affiliation)
     fireUpdateSubmitted()
   }
@@ -116,6 +130,10 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     abortListeners.forEach(AbortListener::onAbort)
   }
 
+  private boolean isAffiliationCategoryChanged(Affiliation updatedAffiliation) {
+    return !updatedAffiliation.getCategory().equals(outdatedAffiliation.getCategory())
+  }
+
 
   /**
    * Wraps a button click listener to hide exceptions from the user.
@@ -130,6 +148,88 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
         log.error(unexpectedErrorMessage, unexpectedException)
         sharedViewModel.failureNotifications.add(unexpectedErrorMessage)
       }
+    }
+  }
+
+  /**
+   * Modal window which prompts the user to confirm that the affiliation category change was intended
+   * @param Affiliation affiliation the to be updated affiliation for which the category was changed
+   */
+
+  private class ConfirmAffiliationChangeWindow extends Window {
+    private Button abortButton
+    private Button submitButton
+    boolean answer = false
+
+    ConfirmAffiliationChangeWindow() {
+      generateAffiliationChangeWindow()
+    }
+
+    private void generateAffiliationChangeWindow() {
+      this.setCaption("Confirm affiliation update")
+      this.setContent(generateWindowContent())
+      setupWindowStyle()
+      registerListeners()
+    }
+
+    private VerticalLayout generateWindowContent() {
+      VerticalLayout windowContent = new VerticalLayout()
+      windowContent.addComponents(generateText(), generateButtonRow())
+      return windowContent
+    }
+
+    private Label generateText() {
+      Label windowText = new Label("Changing the affiliation category affects the pricing of <b> ALL </b> offers associated with this affiliation!")
+      windowText.setContentMode(ContentMode.HTML)
+      return windowText
+    }
+
+    private void setupButtons() {
+      this.abortButton = new Button("Back to Editing")
+      this.abortButton.setIcon(VaadinIcons.CLOSE_CIRCLE)
+      this.abortButton.addStyleName(ValoTheme.BUTTON_DANGER)
+      this.submitButton = new Button("Update Affiliation")
+      this.submitButton.setIcon(VaadinIcons.OFFICE)
+      this.submitButton.addStyleName(ValoTheme.BUTTON_FRIENDLY)
+    }
+
+    private HorizontalLayout generateButtonRow() {
+      setupButtons()
+      HorizontalLayout buttonLayout = new HorizontalLayout(abortButton, submitButton)
+      HorizontalLayout buttonRow = new HorizontalLayout()
+      buttonRow.setDefaultComponentAlignment(Alignment.BOTTOM_CENTER)
+      buttonRow.addComponent(buttonLayout)
+      buttonRow.setWidthFull()
+      buttonRow.setSpacing(false)
+      buttonRow.setMargin(false)
+      return buttonRow
+    }
+
+    private void setupWindowStyle() {
+      this.setWidthUndefined()
+      this.center()
+      this.setClosable(false)
+      this.setModal(true)
+      this.setResizable(false)
+    }
+
+    private void registerListeners() {
+      this.submitButton.addClickListener(withHandledException(it -> onSubmit()))
+      this.abortButton.addClickListener(withHandledException(it -> onAbort()))
+    }
+
+    private void onSubmit() {
+      answer = true
+      this.close()
+    }
+
+    private void onAbort() {
+      answer = false
+      this.close()
+    }
+
+    boolean wasConfirmed() {
+      return answer
     }
   }
 }
