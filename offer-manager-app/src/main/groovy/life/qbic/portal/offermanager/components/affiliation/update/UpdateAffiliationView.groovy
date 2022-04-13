@@ -185,7 +185,7 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     }
 
     private void setupButtons() {
-      this.abortButton = new Button("Abort Affiliation Update")
+      this.abortButton = new Button("Back to editing!")
       this.abortButton.setIcon(VaadinIcons.CLOSE_CIRCLE)
       this.abortButton.addStyleName(ValoTheme.BUTTON_DANGER)
       this.submitButton = new Button("Confirm Affiliation Update")
