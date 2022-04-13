@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.components.affiliation.update
 
+
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.ContentMode
 import com.vaadin.ui.*
@@ -99,7 +100,7 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     Affiliation affiliation = affiliationFormView.get()
     affiliation.setId(outdatedAffiliation.getId())
     if (isAffiliationCategoryChanged(affiliation)) {
-      ConfirmAffiliationChangeWindow confirmAffiliationChangeWindow = new ConfirmAffiliationChangeWindow(affiliation)
+      ConfirmAffiliationChangeWindow confirmAffiliationChangeWindow = new ConfirmAffiliationChangeWindow()
       this.getUI().addWindow(confirmAffiliationChangeWindow)
     } else {
       triggerAffiliationUpdate(affiliation)
@@ -153,10 +154,9 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
   private class ConfirmAffiliationChangeWindow extends Window {
     private Button abortButton
     private Button submitButton
-    private Affiliation updatedAffiliation
+    boolean answer = false
 
-    ConfirmAffiliationChangeWindow(Affiliation affiliation) {
-      this.updatedAffiliation = affiliation
+    ConfirmAffiliationChangeWindow() {
       generateAffiliationChangeWindow()
     }
 
@@ -214,12 +214,17 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     }
 
     private void onSubmit() {
-      triggerAffiliationUpdate(updatedAffiliation)
+      answer = true
       this.close()
     }
 
     private void onAbort() {
+      answer = false
       this.close()
+    }
+
+    boolean wasConfirmed() {
+      return answer
     }
   }
 }
