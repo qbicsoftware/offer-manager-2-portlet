@@ -102,6 +102,11 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     if (isAffiliationCategoryChanged(affiliation)) {
       ConfirmAffiliationChangeWindow confirmAffiliationChangeWindow = new ConfirmAffiliationChangeWindow()
       this.getUI().addWindow(confirmAffiliationChangeWindow)
+      confirmAffiliationChangeWindow.addCloseListener(it -> {
+        if (confirmAffiliationChangeWindow.wasConfirmed()) {
+          triggerAffiliationUpdate(affiliation)
+        }
+      })
     } else {
       triggerAffiliationUpdate(affiliation)
     }
