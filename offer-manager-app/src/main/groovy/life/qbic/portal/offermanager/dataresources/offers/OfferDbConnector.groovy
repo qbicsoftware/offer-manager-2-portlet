@@ -30,7 +30,7 @@ import java.util.stream.Collectors
  *
  */
 @Log4j2
-class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant, OfferOverviewDataSource {
+class OfferDbConnector implements ListOffersDataSource, CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant, OfferOverviewDataSource {
 
     SessionProvider sessionProvider
 
@@ -39,15 +39,6 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
     PersonDbConnector customerGateway
 
     ProductsDbConnector productGateway
-
-    private static final String OFFER_INSERT_QUERY = "INSERT INTO offer (offerId, " +
-            "creationDate, expirationDate, customerId, projectManagerId, projectTitle, " +
-            "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, itemDiscount, " +
-            "checksum, experimentalDesign)"
-
-    private static final String OFFER_SELECT_QUERY = "SELECT offerId, creationDate, expirationDate, customerId, projectManagerId, projectTitle," +
-            "projectObjective, totalPrice, customerAffiliationId, vat, netPrice, overheads, experimentalDesign FROM offer"
-
 
     /**
      * Creates a new instance of OfferDbConnector
@@ -118,16 +109,9 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
     }
 
     private List<OfferOverview> loadOfferOverview() {
-        try (Session session = sessionProvider.getCurrentSession()) {
-            session.beginTransaction()
-            List<OfferV2> offerV2List = session.createQuery("Select offer FROM OfferV2 offer", OfferV2.class).list()
+        List<OfferV2> offerV2List = findAll()
             List<OfferOverview> overviewList = createOverviewList(offerV2List)
-            session.getTransaction().commit()
             return overviewList
-        } catch (HibernateException e) {
-            log.error(e.message, e)
-            throw new DatabaseQueryException("Unable to load offer overviews.")
-        }
     }
 
     /**
@@ -195,6 +179,19 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             List<OfferV2> result = query.list()
             Optional<OfferV2> firstOffer = result ? Optional.ofNullable(result.get(0)) : Optional.empty() as Optional<OfferV2>
             return firstOffer
+        }
+    }
+
+    @Override
+    Collection<OfferV2> findAll() {
+        try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            List<OfferV2> offerV2List = session.createQuery("Select offer FROM OfferV2 offer", OfferV2.class).list()
+            session.getTransaction().commit()
+            return offerV2List
+        } catch (HibernateException e) {
+            log.error(e.message, e)
+            throw new DatabaseQueryException("Unable to load offers.")
         }
     }
 }
