@@ -35,9 +35,7 @@ class SearchPersonViewModel {
     }
 
     private void subscribeToResources() {
-        this.personService.subscribe((Person person) -> {
-            this.fetchPersonData()
-        })
+        this.personService.subscribe(it -> this.fetchPersonData())
     }
 
     Person getSelectedPerson() {

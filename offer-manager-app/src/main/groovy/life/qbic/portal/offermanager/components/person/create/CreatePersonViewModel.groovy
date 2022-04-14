@@ -16,6 +16,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  * Whenever values change it should be reflected in the corresponding view. This class can be used
  * for UI unit testing purposes.
  *
+ *
  * This class can contain JavaBean objects to enable views to listen to changes in the values.
  *
  * @since: 1.0.0
@@ -42,12 +43,12 @@ class CreatePersonViewModel implements Resettable{
 
     final ResourcesService<Customer> customerService
     final ResourcesService<ProjectManager> managerResourceService
-    final ResourcesService<Affiliation> affiliationService
+    final ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationService
     final ResourcesService<Person> personResourceService
 
     CreatePersonViewModel(ResourcesService<Customer> customerService,
                           ResourcesService<ProjectManager> managerResourceService,
-                          ResourcesService<Affiliation> affiliationService,
+                          ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationService,
                           ResourcesService<Person> personResourceService) {
         this.affiliationService = affiliationService
         this.customerService = customerService
@@ -55,17 +56,18 @@ class CreatePersonViewModel implements Resettable{
         this.personResourceService = personResourceService
         availableOrganisations = new ObservableList()
         refreshAvailableOrganizations()
+        this.affiliationService.subscribe(affiliation -> updateDisplayedAffiliation(affiliation))
+    }
 
-        this.affiliationService.subscribe({
-            List foundOrganisations = availableOrganisations.findAll() { organisation -> (organisation as Organisation).name == it.organisation }
-            if (foundOrganisations.empty) {
-                //create a new organisation
-                availableOrganisations << new Organisation(it.organisation, [it])
-            }else{
-                //add the new affiliation
-                (foundOrganisations.get(0) as Organisation).affiliations << it
-            }
-        })
+    private void updateDisplayedAffiliation(Affiliation affiliation) {
+        List<Organisation> organisationsMatchingAffiliation = (availableOrganisations as List<Organisation>).stream()
+                .filter(organisation -> organisation.name == affiliation.getOrganisation())
+                .collect()
+        if (organisationsMatchingAffiliation.isEmpty()) {
+            availableOrganisations << new Organisation(affiliation.getOrganisation(), [affiliation])
+        } else {
+            organisationsMatchingAffiliation.get(0).affiliations << affiliation
+        }
     }
 
     private void refreshAvailableOrganizations() {

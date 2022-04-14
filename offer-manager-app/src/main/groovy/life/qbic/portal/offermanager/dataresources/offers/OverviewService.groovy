@@ -64,14 +64,7 @@ class OverviewService implements ResourcesService<OfferOverview> {
     }
 
     private void subscribeToNewOffers() {
-        /*
-        Whenever a new offer is created, we want
-        to update the offer overview content.
-         */
-        offerService.subscribe({
-            def newOfferOverview = createOverviewFromOffer(it)
-            addToResource(newOfferOverview)
-        })
+        offerService.subscribe(it -> reloadResources())
     }
 
     static OfferOverview createOverviewFromOffer(Offer offer) {
@@ -88,7 +81,9 @@ class OverviewService implements ResourcesService<OfferOverview> {
 
     @Override
     void reloadResources() {
-
+        offerOverviewList.clear()
+        List<OfferOverview> reloadedOverviews = offerService.iterator().collect().stream().map(this::createOverviewFromOffer).collect()
+        reloadedOverviews.forEach(this::addToResource)
     }
 
     @Override

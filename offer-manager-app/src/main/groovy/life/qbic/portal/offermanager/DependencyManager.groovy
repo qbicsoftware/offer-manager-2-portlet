@@ -258,11 +258,11 @@ class DependencyManager {
      */
     private void setupServices() {
         this.affiliationService = new AffiliationResourcesService(listAffiliationsDataSource)
-        this.customerResourceService = new CustomerResourceService(listPersonsDataSource)
-        this.managerResourceService = new ProjectManagerResourceService(listPersonsDataSource)
-        this.offerService = new OfferResourcesService(listOffersDataSource)
+        this.customerResourceService = new CustomerResourceService(listPersonsDataSource, affiliationService)
+        this.managerResourceService = new ProjectManagerResourceService(listPersonsDataSource, affiliationService)
+        this.offerService = new OfferResourcesService(listOffersDataSource, customerResourceService, managerResourceService)
         this.overviewService = new OverviewService(offerOverviewDataSource, offerService, projectCreatedEvent)
-        this.personResourceService = new PersonResourceService(listPersonsDataSource)
+        this.personResourceService = new PersonResourceService(listPersonsDataSource, affiliationService)
         this.productsResourcesService = new ProductsResourcesService(listProductsDataSource)
         this.projectResourceService = new ProjectResourceService(listProjectsDataSource)
         this.projectSpaceResourceService = new ProjectSpaceResourceService(listProjectSpacesDataSource)
