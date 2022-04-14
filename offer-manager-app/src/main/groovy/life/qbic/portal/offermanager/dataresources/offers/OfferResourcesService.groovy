@@ -1,10 +1,10 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
+import life.qbic.business.RefactorConverter
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
-
 
 /**
  * ResourcesService that represents available offer for downloads.
@@ -18,13 +18,14 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
 class OfferResourcesService implements ResourcesService<Offer> {
 
     private final EventEmitter<Offer> offerResourceEvent
-
+    private final ListOffersDataSource listOffersDataSource
     private final List<Offer> availableOffers
 
-    OfferResourcesService() {
+    OfferResourcesService(ListOffersDataSource listOffersDataSource) {
         offerResourceEvent = new EventEmitter<>()
         // For now it is fine to not preload the content from the database (time intensive)
         availableOffers = []
+        this.listOffersDataSource = listOffersDataSource
     }
 
     /**
@@ -32,7 +33,9 @@ class OfferResourcesService implements ResourcesService<Offer> {
      */
     @Override
     void reloadResources() {
-        throw new UnsupportedOperationException("Reloading resources is not supported for the OfferResourceService!")
+        availableOffers.clear()
+        List<Offer> updatedOffers = listOffersDataSource.findAll().stream().map(RefactorConverter::toOfferDto).collect()
+        updatedOffers.forEach(this::addToResource)
     }
 
     @Override

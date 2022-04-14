@@ -133,6 +133,7 @@ class DependencyManager {
     private CreateOfferDataSource createOfferDataSource
     private FetchOfferDataSource fetchOfferDataSource
     private OfferOverviewDataSource offerOverviewDataSource
+    private ListOffersDataSource listOffersDataSource
     private ProjectAssistant projectAssistant
     // Implemented by life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
     private CreateAffiliationDataSource createAffiliationDataSource
@@ -217,6 +218,7 @@ class DependencyManager {
             fetchOfferDataSource = offerDbConnector
             projectAssistant = offerDbConnector
             offerOverviewDataSource = offerDbConnector
+            listOffersDataSource = offerDbConnector
 
             /* Currently life.qbic.portal.offermanager.dataresources.projects.ProjectDbConnector
              *  cannot be decoupled by interfaces from
@@ -258,7 +260,7 @@ class DependencyManager {
         this.affiliationService = new AffiliationResourcesService(listAffiliationsDataSource)
         this.customerResourceService = new CustomerResourceService(listPersonsDataSource)
         this.managerResourceService = new ProjectManagerResourceService(listPersonsDataSource)
-        this.offerService = new OfferResourcesService()
+        this.offerService = new OfferResourcesService(listOffersDataSource)
         this.overviewService = new OverviewService(offerOverviewDataSource, offerService, projectCreatedEvent)
         this.personResourceService = new PersonResourceService(listPersonsDataSource)
         this.productsResourcesService = new ProductsResourcesService(listProductsDataSource)
