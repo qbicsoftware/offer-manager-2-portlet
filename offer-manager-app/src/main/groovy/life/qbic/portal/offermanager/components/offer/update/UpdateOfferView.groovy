@@ -78,7 +78,7 @@ class UpdateOfferView extends FormLayout {
      * Initializes the view with the ProjectInformationView, which is the first component to be shown
      */
     private void initLayout() {
-        final Label label = new Label("Create A New Offer")
+        final Label label = new Label("Update Offer")
 
         label.addStyleName(ValoTheme.LABEL_HUGE)
         this.addComponent(label)

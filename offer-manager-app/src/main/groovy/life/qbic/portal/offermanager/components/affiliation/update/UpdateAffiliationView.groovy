@@ -61,7 +61,7 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
   }
 
   private void initLayout() {
-    final Label label = new Label("Update An Affiliation")
+    final Label label = new Label("Update Affiliation")
     label.addStyleName(ValoTheme.LABEL_HUGE)
 
     this.abortButton = new Button("Abort Affiliation Update")
