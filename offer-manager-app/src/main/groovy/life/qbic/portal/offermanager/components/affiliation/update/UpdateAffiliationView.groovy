@@ -61,7 +61,7 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
   }
 
   private void initLayout() {
-    final Label label = new Label("Update An Affiliation")
+    final Label label = new Label("Update Affiliation")
     label.addStyleName(ValoTheme.LABEL_HUGE)
 
     this.abortButton = new Button("Abort Affiliation Update")
@@ -170,7 +170,7 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     }
 
     private void generateAffiliationChangeWindow() {
-      this.setCaption("<b>Changes can affect existing offers!</b>")
+      this.setCaption(" <b>Confirm update</b>")
       this.setCaptionAsHtml(true)
       this.setIcon(VaadinIcons.WARNING)
       this.setContent(generateWindowContent())
@@ -185,7 +185,7 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     }
 
     private Label generateText() {
-      Label windowText = new Label("Do you want to change the affiliation category from <b>$oldCategory</b> to <b>$newCategory</b> ?")
+      Label windowText = new Label("Updating the affiliation category affects pricing in existing offers.")
       windowText.setContentMode(ContentMode.HTML)
       return windowText
     }
@@ -193,7 +193,7 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
     private void setupButtons() {
       this.cancelButton = new Button("Cancel")
       this.cancelButton.setIcon(VaadinIcons.CLOSE_CIRCLE)
-      this.confirmButton = new Button("Update Affiliation")
+      this.confirmButton = new Button("Update")
       this.confirmButton.setIcon(VaadinIcons.CHECK)
       this.confirmButton.addStyleName(ValoTheme.BUTTON_PRIMARY)
     }
@@ -202,11 +202,9 @@ class UpdateAffiliationView extends FormLayout implements Resettable, Updatable<
       setupButtons()
       HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton, confirmButton)
       HorizontalLayout buttonRow = new HorizontalLayout()
-      buttonRow.setDefaultComponentAlignment(Alignment.BOTTOM_CENTER)
+      buttonRow.setDefaultComponentAlignment(Alignment.BOTTOM_RIGHT)
       buttonRow.addComponent(buttonLayout)
       buttonRow.setWidthFull()
-      buttonRow.setSpacing(false)
-      buttonRow.setMargin(false)
       return buttonRow
     }
 

@@ -47,7 +47,7 @@ class CreateAffiliationView extends FormLayout implements Resettable, SubmitNoti
     }
 
     private void initLayout() {
-        final Label label = new Label("Create A New Affiliation")
+        final Label label = new Label("Create New Affiliation")
         label.addStyleName(ValoTheme.LABEL_HUGE)
 
         this.abortButton = new Button("Abort Affiliation Creation")

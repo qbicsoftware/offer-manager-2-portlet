@@ -58,6 +58,7 @@ class SearchAffiliationView extends FormLayout{
         updateAffiliationView.setVisible(false)
 
         this.addComponents(searchAffiliationLayout,updateAffiliationView)
+        this.setMargin(false)
     }
 
     private HorizontalLayout generateButtonLayout(){
