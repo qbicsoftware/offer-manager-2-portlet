@@ -77,7 +77,7 @@ class CreateOfferView extends FormLayout{
      * Initializes the view with the ProjectInformationView, which is the first component to be shown
      */
     private void initLayout(){
-        final Label label = new Label("Create A New Offer")
+        final Label label = new Label("Create New Offer")
 
         label.addStyleName(ValoTheme.LABEL_HUGE)
         this.addComponent(label)
@@ -143,10 +143,10 @@ class CreateOfferView extends FormLayout{
             customerSelectionView.reset()
             viewHistory.showPrevious()
         })
-        this.createAffiliationView.abortButton.addClickListener({
+        this.createAffiliationView.addAbortListener({
             viewHistory.showPrevious()
         })
-        this.createAffiliationView.submitButton.addClickListener({
+        this.createAffiliationView.addSubmitListener({
             viewHistory.showPrevious()
         })
         this.projectManagerSelectionView.next.addClickListener({

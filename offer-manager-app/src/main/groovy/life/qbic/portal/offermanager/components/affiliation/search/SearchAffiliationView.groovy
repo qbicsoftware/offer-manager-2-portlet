@@ -7,8 +7,10 @@ import com.vaadin.ui.*
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
+import life.qbic.business.RefactorConverter
 import life.qbic.datamodel.dtos.business.Affiliation
 import life.qbic.portal.offermanager.components.GridUtils
+import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationView
 
 /**
  * <h1>View allowing the user to search for an affiliation</h1>
@@ -21,15 +23,20 @@ import life.qbic.portal.offermanager.components.GridUtils
 class SearchAffiliationView extends FormLayout{
 
     private final SearchAffiliationViewModel viewModel
+    private final UpdateAffiliationView updateAffiliationView
 
     private Grid<Affiliation> affiliationGrid
     private Panel selectedAffiliationDetails
+    private VerticalLayout searchAffiliationLayout
 
-    SearchAffiliationView(SearchAffiliationViewModel viewModel) {
+    SearchAffiliationView(SearchAffiliationViewModel viewModel, UpdateAffiliationView updateAffiliationView) {
         this.viewModel = viewModel
+        this.updateAffiliationView = updateAffiliationView
+
         initLayout()
         generateAffiliationGrid()
         listenToAffiliationSelection()
+        listenToUpdateAffiliationView()
     }
 
     private void initLayout() {
@@ -40,10 +47,64 @@ class SearchAffiliationView extends FormLayout{
         affiliationGrid.setSelectionMode(Grid.SelectionMode.SINGLE)
         selectedAffiliationDetails = new Panel("Affiliation Details")
         selectedAffiliationDetails.setVisible(viewModel.detailsVisible)
-        refreshSelectionDetails()
-        this.addComponents(heading, affiliationGrid, selectedAffiliationDetails)
 
+        HorizontalLayout buttons = generateButtonLayout()
+        refreshSelectionDetails()
+
+        searchAffiliationLayout = new VerticalLayout(heading, buttons, affiliationGrid, selectedAffiliationDetails)
+        searchAffiliationLayout.setMargin(false)
+
+        updateAffiliationView.setMargin(false)
+        updateAffiliationView.setVisible(false)
+
+        this.addComponents(searchAffiliationLayout,updateAffiliationView)
+        this.setMargin(false)
     }
+
+    private HorizontalLayout generateButtonLayout(){
+        HorizontalLayout buttonLayout = new HorizontalLayout()
+        def updateButton = generateUpdateButton()
+        buttonLayout.addComponent(updateButton)
+
+        return buttonLayout
+    }
+
+    private Button generateUpdateButton(){
+        Button update = new Button("Update Affiliation", VaadinIcons.EDIT)
+        update.setEnabled(false)
+        update.setStyleName(ValoTheme.BUTTON_LARGE)
+
+        update.addClickListener({
+            updateAffiliationView.update(RefactorConverter.toAffiliation(viewModel.selectedAffiliation.get()))
+            showUpdateAffiliation()
+        })
+        affiliationGrid.addSelectionListener({
+            if(it.firstSelectedItem.isPresent()){
+                update.setEnabled(true)
+            }else{
+                update.setEnabled(false)
+            }
+        })
+
+        return update
+    }
+
+    private void listenToUpdateAffiliationView(){
+        updateAffiliationView.addAbortListener(this::hideUpdateAffiliation)
+        updateAffiliationView.addSubmitListener(this::hideUpdateAffiliation)
+    }
+
+    private void showUpdateAffiliation() {
+        searchAffiliationLayout.setVisible(false)
+        updateAffiliationView.setVisible(true)
+        selectedAffiliationDetails.setVisible(false)
+    }
+
+    private void hideUpdateAffiliation() {
+        searchAffiliationLayout.setVisible(true)
+        updateAffiliationView.setVisible(false)
+    }
+
 
     private void generateAffiliationGrid() {
         Grid<Affiliation> affiliationGrid = this.affiliationGrid
@@ -84,7 +145,7 @@ class SearchAffiliationView extends FormLayout{
 
         this.viewModel.addPropertyChangeListener("selectedAffiliation", {
             try {
-                viewModel.detailsVisible = it.newValue ? true : false
+                viewModel.detailsVisible = it.newValue
                 refreshSelectionDetails()
                 selectedAffiliationDetails.visible = viewModel.detailsVisible
             } catch (Exception e) {

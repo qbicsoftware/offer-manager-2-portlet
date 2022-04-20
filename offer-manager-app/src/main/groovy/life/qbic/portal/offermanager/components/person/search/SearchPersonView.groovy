@@ -48,6 +48,7 @@ class SearchPersonView extends FormLayout{
         updatePerson = new Button("Update Person", VaadinIcons.EDIT)
         updatePerson.setEnabled(false)
         updatePerson.setStyleName(ValoTheme.BUTTON_LARGE)
+        updatePersonView.setVisible(false)
 
         personGrid = new Grid<>()
         selectedPersonInformation = new Panel()
@@ -60,7 +61,6 @@ class SearchPersonView extends FormLayout{
 
         this.addComponents(searchPersonLayout,updatePersonView)
         this.setMargin(false)
-        updatePersonView.setVisible(false)
     }
 
     private void generateAffiliationGrid() {

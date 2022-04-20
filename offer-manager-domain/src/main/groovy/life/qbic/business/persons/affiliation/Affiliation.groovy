@@ -1,5 +1,6 @@
 package life.qbic.business.persons.affiliation
 
+import groovy.transform.EqualsAndHashCode
 import groovy.transform.ToString
 
 import javax.persistence.*
@@ -12,6 +13,7 @@ import javax.persistence.*
 @ToString
 @Entity
 @Table(name = "affiliation")
+@EqualsAndHashCode(excludes = ["id"])
 class Affiliation {
 
     @Id
