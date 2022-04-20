@@ -4,10 +4,6 @@ import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.persons.Person
 import life.qbic.business.persons.PersonExistsException
-import life.qbic.business.persons.affiliation.Affiliation
-import life.qbic.business.persons.affiliation.AffiliationExistsException
-import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
-import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
 import life.qbic.business.persons.create.CreatePersonDataSource
 import life.qbic.business.persons.list.ListPersonsDataSource
 import life.qbic.business.persons.search.SearchPersonDataSource
@@ -26,7 +22,7 @@ import org.hibernate.query.Query
  *
  */
 @Log4j2
-class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSource, ListPersonsDataSource, CreateAffiliationDataSource, ListAffiliationsDataSource {
+class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSource, ListPersonsDataSource {
 
   private final SessionProvider sessionProvider
 
@@ -49,58 +45,6 @@ class PersonDbConnector implements CreatePersonDataSource, SearchPersonDataSourc
       persons.addAll(query.list() as List<Person>)
     }
     return persons
-  }
-
-  @Override
-  void addAffiliation(Affiliation affiliation) throws DatabaseQueryException, AffiliationExistsException {
-    try (Session session = sessionProvider.openSession()) {
-      if (isAffiliationInSession(session, affiliation)) {
-        throw new AffiliationExistsException("The affiliation already exists.")
-      }
-      // we ignore the generated primary id for now
-      session.beginTransaction()
-      session.save(affiliation)
-    } catch (HibernateException e) {
-      log.error(e.message, e)
-      throw new DatabaseQueryException("An unexpected exception occurred during new affiliation creation")
-    }
-  }
-
-  private static boolean isAffiliationInSession(Session session, Affiliation affiliation) {
-    session.beginTransaction()
-    Query<List<Person>> query =
-            session.createQuery("SELECT a FROM Affiliation a  " +
-                    "WHERE a.addressAddition = :addressAddition " +
-                    "AND a.category = :category " +
-                    "AND a.city = :city " +
-                    "AND a.country = :country " +
-                    "AND a.organization = :organization " +
-                    "AND a.postalCode = :postalCode " +
-                    "AND a.street = :street")
-    query.setParameter("addressAddition", affiliation.getAddressAddition())
-    query.setParameter("category", affiliation.getCategory())
-    query.setParameter("city", affiliation.getCity())
-    query.setParameter("country", affiliation.getCountry())
-    query.setParameter("organization", affiliation.getOrganization())
-    query.setParameter("postalCode", affiliation.getPostalCode())
-    query.setParameter("street", affiliation.getStreet())
-
-    boolean isInSession = !query.list().isEmpty()
-    session.getTransaction().commit()
-    return isInSession
-  }
-
-  @Override
-  List<Affiliation> listAllAffiliations() {
-    List<Affiliation> affiliations = new ArrayList<>()
-    try (Session session = sessionProvider.getCurrentSession()) {
-      session.beginTransaction()
-      // we ignore the generated primary id for now
-      Query<Affiliation> query = session.createQuery("FROM Affiliation ")
-      // Print entities
-      affiliations.addAll(query.list() as List<Affiliation>)
-    }
-    return affiliations
   }
 
   @Override

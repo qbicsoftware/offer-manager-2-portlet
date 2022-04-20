@@ -46,7 +46,7 @@ import life.qbic.datamodel.dtos.general.CommonPerson;
 public class RefactorConverter {
 
 
-  public OfferV2 toOffer(life.qbic.datamodel.dtos.business.Offer offerDto) {
+  public static OfferV2 toOffer(life.qbic.datamodel.dtos.business.Offer offerDto) {
 
     LocalDate creationDate = toLocalDate(offerDto.getModificationDate());
     Person customer = toPerson(offerDto.getCustomer());
@@ -73,7 +73,7 @@ public class RefactorConverter {
     return offer;
   }
 
-  public OfferItem toOfferItem(ProductItem productItem) {
+  public static OfferItem toOfferItem(ProductItem productItem) {
     String serviceProviderLabel = new FacilityFactory().getForString(productItem.getProduct().getServiceProvider())
         .getLabel();
     return new OfferItem.Builder(
@@ -91,7 +91,7 @@ public class RefactorConverter {
     ).build();
   }
 
-  public life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
+  public static life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
     life.qbic.datamodel.dtos.business.Customer customer = toCustomerDto(offer.getCustomer());
     life.qbic.datamodel.dtos.business.ProjectManager projectManager = toProjectManagerDto(
         offer.getProjectManager());
@@ -100,7 +100,7 @@ public class RefactorConverter {
     java.util.Date expirationDate = toUtilDate(offer.getExpirationDate());
     java.util.Date modificationDate = toUtilDate(offer.getCreationDate());
     List<life.qbic.datamodel.dtos.business.ProductItem> productItemDtos = offer.getItems().stream()
-        .map(this::toProductItemDto)
+        .map(RefactorConverter::toProductItemDto)
         .collect(Collectors.toList());
     life.qbic.datamodel.dtos.business.OfferId offerIdDto = toOfferIdDto(offer.getIdentifier());
 
@@ -124,7 +124,7 @@ public class RefactorConverter {
     return offerDtoBuilder.build();
   }
 
-  public ProductItem toProductItem(OfferV2 offer,
+  public static ProductItem toProductItem(OfferV2 offer,
       life.qbic.datamodel.dtos.business.ProductItem productItemDto) {
     Product product = toProduct(productItemDto.getProduct());
     double quantity = productItemDto.getQuantity();
@@ -133,18 +133,18 @@ public class RefactorConverter {
     return productItem;
   }
 
-  public java.util.Date toUtilDate(LocalDate localDate) {
+  public static java.util.Date toUtilDate(LocalDate localDate) {
     return Date.from(
         localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
   }
 
-  private LocalDate toLocalDate(java.util.Date utilDate) {
+  private static LocalDate toLocalDate(java.util.Date utilDate) {
     return Instant.ofEpochMilli(utilDate.getTime())
         .atZone(ZoneId.systemDefault())
         .toLocalDate();
   }
 
-  private life.qbic.datamodel.dtos.business.ProductItem toProductItemDto(ProductItem productItem) {
+  private static life.qbic.datamodel.dtos.business.ProductItem toProductItemDto(ProductItem productItem) {
     double quantity = productItem.getQuantity();
     life.qbic.datamodel.dtos.business.services.Product productDto = toProductDto(
         productItem.getProduct());
@@ -156,17 +156,17 @@ public class RefactorConverter {
         unitDiscount);
   }
 
-  public ProductCategory toProductCategory(life.qbic.datamodel.dtos.business.ProductCategory category) {
+  public static ProductCategory toProductCategory(life.qbic.datamodel.dtos.business.ProductCategory category) {
     return ProductCategory.forLabel(category.getValue());
   }
 
-  public life.qbic.datamodel.dtos.business.ProjectManager toProjectManagerDto(Person person) {
+  public static life.qbic.datamodel.dtos.business.ProjectManager toProjectManagerDto(Person person) {
     life.qbic.datamodel.dtos.business.ProjectManager.Builder projectManagerDtoBuilder = new life.qbic.datamodel.dtos.business.ProjectManager.Builder(
         person.getFirstName(),
         person.getLastName(),
         person.getEmail());
     List<life.qbic.datamodel.dtos.business.Affiliation> personAffiliationsAsDto = person.getAffiliations().stream()
-        .map(this::toAffiliationDto)
+        .map(RefactorConverter::toAffiliationDto)
         .collect(Collectors.toList());
     projectManagerDtoBuilder.affiliations(personAffiliationsAsDto);
     if (person.getTitle() == null || person.getTitle().isEmpty() || person.getTitle()
@@ -179,13 +179,13 @@ public class RefactorConverter {
     return projectManagerDtoBuilder.build();
   }
 
-  public life.qbic.datamodel.dtos.business.Customer toCustomerDto(Person person) {
+  public static life.qbic.datamodel.dtos.business.Customer toCustomerDto(Person person) {
     life.qbic.datamodel.dtos.business.Customer.Builder customerBuilder = new Customer.Builder(
         person.getFirstName(),
         person.getLastName(),
         person.getEmail());
     List<life.qbic.datamodel.dtos.business.Affiliation> personAffiliationsAsDto = person.getAffiliations().stream()
-        .map(this::toAffiliationDto)
+        .map(RefactorConverter::toAffiliationDto)
         .collect(Collectors.toList());
     customerBuilder.affiliations(personAffiliationsAsDto);
     if (person.getTitle() == null || person.getTitle().isEmpty() || person.getTitle()
@@ -198,13 +198,13 @@ public class RefactorConverter {
     return customerBuilder.build();
   }
 
-  public Person toPerson(life.qbic.datamodel.dtos.general.Person personDto) {
+  public static Person toPerson(life.qbic.datamodel.dtos.general.Person personDto) {
     String emailAddress = personDto.getEmailAddress();
     String firstName = personDto.getFirstName();
     String lastName = personDto.getLastName();
     String title = personDto.getTitle() != AcademicTitle.NONE ? personDto.getTitle().getValue() : "";
     List<Affiliation> affiliations = personDto.getAffiliations().stream()
-        .map(this::toAffiliation)
+        .map(RefactorConverter::toAffiliation)
         .collect(Collectors.toList());
     Person person = new Person(emailAddress,
         firstName,
@@ -216,7 +216,7 @@ public class RefactorConverter {
     return person;
   }
 
-  public life.qbic.datamodel.dtos.general.Person toPersonDTO(Person person) {
+  public static life.qbic.datamodel.dtos.general.Person toPersonDTO(Person person) {
     CommonPerson.Builder personBuilder = new CommonPerson.Builder(
         person.getFirstName(),
         person.getLastName(),
@@ -224,7 +224,7 @@ public class RefactorConverter {
     personBuilder.setId(person.getId());
     personBuilder.affiliations(
         person.getAffiliations().stream()
-            .map(this::toAffiliationDto)
+            .map(RefactorConverter::toAffiliationDto)
             .collect(Collectors.toList()));
     if (person.getTitle() == null || person.getTitle().isEmpty() || person.getTitle()
         .equals("None")) {
@@ -237,7 +237,7 @@ public class RefactorConverter {
   }
 
 
-  public life.qbic.datamodel.dtos.business.Affiliation toAffiliationDto(Affiliation affiliation) {
+  public static life.qbic.datamodel.dtos.business.Affiliation toAffiliationDto(Affiliation affiliation) {
     life.qbic.datamodel.dtos.business.Affiliation.Builder affiliationDtoBuilder =
         new life.qbic.datamodel.dtos.business.Affiliation.Builder(
             affiliation.getOrganization(),
@@ -253,7 +253,7 @@ public class RefactorConverter {
     return affiliationDtoBuilder.build();
   }
 
-  public Affiliation toAffiliation(
+  public static Affiliation toAffiliation(
       life.qbic.datamodel.dtos.business.Affiliation affiliationDto) {
     AffiliationCategory affiliationCategory = toAffiliationCategory(affiliationDto.getCategory());
     Affiliation affiliation = new Affiliation(
@@ -268,7 +268,7 @@ public class RefactorConverter {
     return affiliation;
   }
 
-  life.qbic.datamodel.dtos.business.AffiliationCategory toAffiliationCategoryDto(AffiliationCategory affiliationCategory) {
+  static life.qbic.datamodel.dtos.business.AffiliationCategory toAffiliationCategoryDto(AffiliationCategory affiliationCategory) {
     switch (affiliationCategory) {
       case INTERNAL:
         return life.qbic.datamodel.dtos.business.AffiliationCategory.INTERNAL;
@@ -280,7 +280,7 @@ public class RefactorConverter {
     return life.qbic.datamodel.dtos.business.AffiliationCategory.EXTERNAL;
   }
 
-  private AffiliationCategory toAffiliationCategory(
+  static private AffiliationCategory toAffiliationCategory(
       life.qbic.datamodel.dtos.business.AffiliationCategory affiliationCategoryDto) {
     switch (affiliationCategoryDto) {
       case INTERNAL:
@@ -293,7 +293,7 @@ public class RefactorConverter {
     return AffiliationCategory.EXTERNAL;
   }
 
-  public OfferId toOfferId(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
+  public static OfferId toOfferId(life.qbic.datamodel.dtos.business.OfferId offerIdDto) {
     if (offerIdDto == null) {
       return new OfferId("", 1);
     }
@@ -301,12 +301,12 @@ public class RefactorConverter {
     return new OfferId(offerIdDto.getProjectConservedPart(), offerIdDto.getRandomPart(), version);
   }
 
-  public life.qbic.datamodel.dtos.business.OfferId toOfferIdDto(OfferId offerId) {
+  public static life.qbic.datamodel.dtos.business.OfferId toOfferIdDto(OfferId offerId) {
     return new life.qbic.datamodel.dtos.business.OfferId(offerId.getProjectPart(),
         offerId.getRandomPart(), Integer.toString(offerId.getVersion()));
   }
 
-  private <T extends life.qbic.datamodel.dtos.business.services.Product> Product toProduct(
+  private static <T extends life.qbic.datamodel.dtos.business.services.Product> Product toProduct(
       T productDto) {
     String productCategory = new ProductCategoryFormatter().apply(productDto.getClass());
     Product product = new Product(productCategory, productDto.getInternalUnitPrice(),
@@ -320,7 +320,7 @@ public class RefactorConverter {
     return product;
   }
 
-  protected Product toProduct(ProductDraft productDraft) {
+  protected static Product toProduct(ProductDraft productDraft) {
     String productCategory = productDraft.getCategory().getLabel();
     String serviceProvider = productDraft.getServiceProvider();
     String description = productDraft.getDescription();
@@ -335,7 +335,7 @@ public class RefactorConverter {
     return product;
   }
 
-  public life.qbic.datamodel.dtos.business.services.Product toProductDto(Product product) {
+  public static life.qbic.datamodel.dtos.business.services.Product toProductDto(Product product) {
     String productName = product.getProductName();
     String productDescription = product.getDescription();
     Double internalUnitPrice = product.getInternalUnitPrice();
@@ -391,7 +391,7 @@ public class RefactorConverter {
    * @param productId the product id object
    * @return the String representation of the product id
    */
-  public String toProductId(life.qbic.datamodel.dtos.business.ProductId productId) {
+  public static String toProductId(life.qbic.datamodel.dtos.business.ProductId productId) {
     // we do not want to be dependent on the objects toString() implementation
     // therefore we define the String format explicitly to have control
     return String.format("%s_%d", productId.getType().toUpperCase(), productId.getUniqueId());
@@ -403,7 +403,7 @@ public class RefactorConverter {
    * @param productId the product id String
    * @return the converted product id DTO
    */
-  public life.qbic.datamodel.dtos.business.ProductId toProductIdDto(String productId)
+  public static life.qbic.datamodel.dtos.business.ProductId toProductIdDto(String productId)
       throws IllegalArgumentException {
     return new ProductIdParser().apply(productId);
   }

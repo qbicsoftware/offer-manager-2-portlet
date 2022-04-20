@@ -8,6 +8,8 @@ import life.qbic.business.offers.fetch.FetchOfferDataSource
 import life.qbic.business.persons.affiliation.create.CreateAffiliation
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
+import life.qbic.business.persons.affiliation.update.UpdateAffiliation
+import life.qbic.business.persons.affiliation.update.UpdateAffiliationDataSource
 import life.qbic.business.persons.create.CreatePerson
 import life.qbic.business.persons.create.CreatePersonDataSource
 import life.qbic.business.persons.list.ListPersonsDataSource
@@ -36,9 +38,11 @@ import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationController
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationPresenter
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
-import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationViewModel
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationView
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationViewModel
+import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationController
+import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationPresenter
+import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationView
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferController
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferPresenter
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferView
@@ -133,8 +137,10 @@ class DependencyManager {
     // Implemented by life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
     private CreateAffiliationDataSource createAffiliationDataSource
     private CreatePersonDataSource createPersonDataSource
-    private ListAffiliationsDataSource listAffiliationsDataSource
     private ListPersonsDataSource listPersonsDataSource
+    // Implemented by life.qbic.portal.offermanager.dataresources.persons.AffiliationDbConnector
+    private ListAffiliationsDataSource listAffiliationsDataSource
+    private UpdateAffiliationDataSource updateAffiliationDataSource
     private SearchPersonDataSource searchPersonDataSource
     // Implemented by life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
     private ArchiveProductDataSource archiveProductDataSource
@@ -188,9 +194,12 @@ class DependencyManager {
             PersonDbConnector personDbConnector = new PersonDbConnector(sessionProvider)
             createPersonDataSource = personDbConnector
             searchPersonDataSource = personDbConnector
-            createAffiliationDataSource = personDbConnector
-            listAffiliationsDataSource = personDbConnector
             listPersonsDataSource = personDbConnector
+
+            AffiliationDbConnector affiliationDbConnector = new AffiliationDbConnector(sessionProvider)
+            createAffiliationDataSource = affiliationDbConnector
+            updateAffiliationDataSource = affiliationDbConnector
+            listAffiliationsDataSource = affiliationDbConnector
 
             ProductsDbConnector productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
             archiveProductDataSource = productsDbConnector
@@ -305,13 +314,12 @@ class DependencyManager {
         ResourcesService<Affiliation> affiliationResourcesService = this.affiliationService
         CreateAffiliationDataSource dataSource = this.createAffiliationDataSource
 
-        CreateAffiliationViewModel createAffiliationViewModel = new CreateAffiliationViewModel(affiliationResourcesService)
-        createAffiliationViewModel.affiliationCategories.addAll(AffiliationCategory.values().collect { it.value })
-
-        CreateAffiliationPresenter createAffiliationPresenter = new CreateAffiliationPresenter(sharedViewModel, createAffiliationViewModel)
+        CreateAffiliationController createAffiliationController = new CreateAffiliationController()
+        def createAffiliationView = new CreateAffiliationView(sharedViewModel, createAffiliationController, affiliationResourcesService)
+        CreateAffiliationPresenter createAffiliationPresenter = new CreateAffiliationPresenter(sharedViewModel, createAffiliationView, affiliationResourcesService)
         CreateAffiliation createAffiliation = new CreateAffiliation(createAffiliationPresenter, dataSource)
-        CreateAffiliationController createAffiliationController = new CreateAffiliationController(createAffiliation)
-        return new CreateAffiliationView(sharedViewModel, createAffiliationViewModel, createAffiliationController)
+        createAffiliationController.setUseCaseInput(createAffiliation)
+        return createAffiliationView
     }
 
 
@@ -325,8 +333,18 @@ class DependencyManager {
     private SearchAffiliationView createSearchAffiliationView() {
         ResourcesService<Affiliation> affiliationResourcesService = this.affiliationService
         SearchAffiliationViewModel searchAffiliationViewModel = new SearchAffiliationViewModel(affiliationResourcesService)
-        SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel)
+
+        UpdateAffiliationView updateAffiliationView = createUpdateAffiliationView()
+        SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel, updateAffiliationView)
         return searchAffiliationView
+    }
+
+    private UpdateAffiliationView createUpdateAffiliationView() {
+        UpdateAffiliationController updateAffiliationController = new UpdateAffiliationController()
+        UpdateAffiliationPresenter updateAffiliationPresenter = new UpdateAffiliationPresenter(affiliationService, viewModel)
+        UpdateAffiliation updateAffiliation = new UpdateAffiliation(updateAffiliationPresenter, updateAffiliationDataSource)
+        updateAffiliationController.setUseCaseInput(updateAffiliation)
+        return new UpdateAffiliationView(viewModel, updateAffiliationController, affiliationService)
     }
 
     /**
