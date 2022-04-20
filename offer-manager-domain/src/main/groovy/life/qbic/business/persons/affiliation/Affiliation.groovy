@@ -43,6 +43,9 @@ class Affiliation {
     @Convert(converter = AffiliationCategoryConverter.class)
     AffiliationCategory category
 
+    @Column(name = "active", columnDefinition = "tinyint", nullable = false)
+    boolean isActive = true
+
     Affiliation(String organization, String addressAddition, String street, String postalCode, String city, String country, AffiliationCategory category) {
         this.organization = organization
         this.addressAddition = addressAddition
@@ -119,5 +122,21 @@ class Affiliation {
 
     void setCategory(AffiliationCategory category) {
         this.category = category
+    }
+
+    protected boolean getIsActive() {
+        return isActive
+    }
+
+    boolean isActive() {
+        return getIsActive()
+    }
+
+    void inactivate() {
+        setIsActive(false)
+    }
+
+    protected void setIsActive(boolean isActive) {
+        this.isActive = isActive
     }
 }
