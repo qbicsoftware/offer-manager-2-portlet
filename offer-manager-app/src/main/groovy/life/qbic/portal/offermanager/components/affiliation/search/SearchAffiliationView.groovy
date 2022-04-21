@@ -32,6 +32,8 @@ class SearchAffiliationView extends FormLayout {
 
     private Button archiveAffiliationButton
 
+    private DataProvider affiliationDataProvider
+
     SearchAffiliationView(SearchAffiliationViewModel viewModel, UpdateAffiliationView updateAffiliationView,
                           ArchiveAffiliationController archiveAffiliationController) {
         this.viewModel = viewModel
@@ -139,10 +141,14 @@ class SearchAffiliationView extends FormLayout {
         affiliationGrid.setWidthFull()
         affiliationGrid.setHeightByRows(5)
 
-        DataProvider affiliationDataProvider = new ListDataProvider<Affiliation>(viewModel.getAffiliations())
+        affiliationDataProvider = new ListDataProvider<Affiliation>(viewModel.getAffiliations())
         affiliationGrid.setDataProvider(affiliationDataProvider)
 
         addColumnFilters(affiliationGrid, affiliationDataProvider)
+    }
+
+    void refresh() {
+        affiliationDataProvider.refreshAll()
     }
 
     private static addColumnFilters(Grid<Affiliation> grid, ListDataProvider<Affiliation> dataProvider) {

@@ -340,7 +340,7 @@ class DependencyManager {
         ArchiveAffiliationController archiveAffiliationController = new ArchiveAffiliationController()
         UpdateAffiliationView updateAffiliationView = createUpdateAffiliationView()
         SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel, updateAffiliationView, archiveAffiliationController)
-        ArchiveAffiliationOutput archiveAffiliationOutput = new ArchiveAffiliationPresenter(viewModel, searchAffiliationViewModel, affiliationResourcesService)
+        ArchiveAffiliationOutput archiveAffiliationOutput = new ArchiveAffiliationPresenter(viewModel, searchAffiliationViewModel, searchAffiliationView, affiliationResourcesService)
         ArchiveAffiliation archiveAffiliation = new ArchiveAffiliation(archiveAffiliationOutput, updateAffiliationDataSource)
         archiveAffiliationController.setUseCaseInput(archiveAffiliation)
         return searchAffiliationView

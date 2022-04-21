@@ -18,14 +18,16 @@ public class ArchiveAffiliationPresenter implements ArchiveAffiliationOutput {
   private final AppViewModel sharedViewModel;
 
   private final SearchAffiliationViewModel searchAffiliationViewModel;
+  private final SearchAffiliationView searchAffiliationView;
 
   private final ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationResourcesService;
 
   public ArchiveAffiliationPresenter(AppViewModel sharedViewModel,
-      SearchAffiliationViewModel searchAffiliationViewModel,
+      SearchAffiliationViewModel searchAffiliationViewModel, SearchAffiliationView searchAffiliationView,
       ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationResourcesService) {
     this.sharedViewModel = sharedViewModel;
     this.searchAffiliationViewModel = searchAffiliationViewModel;
+    this.searchAffiliationView = searchAffiliationView;
     this.affiliationResourcesService = affiliationResourcesService;
   }
 
@@ -39,7 +41,8 @@ public class ArchiveAffiliationPresenter implements ArchiveAffiliationOutput {
     life.qbic.datamodel.dtos.business.Affiliation affiliationDto = RefactorConverter.toAffiliationDto(
         affiliation);
     affiliationResourcesService.removeFromResource(affiliationDto);
-    searchAffiliationViewModel.getAffiliations().remove(affiliationDto);
+    searchAffiliationViewModel.resetAffiliations();
+    searchAffiliationView.refresh();
     sharedViewModel.getSuccessNotifications().add("Archived affiliation!");
   }
 }
