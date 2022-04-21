@@ -5,6 +5,8 @@ import life.qbic.business.offers.create.CreateOffer
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.fetch.FetchOffer
 import life.qbic.business.offers.fetch.FetchOfferDataSource
+import life.qbic.business.persons.affiliation.archive.ArchiveAffiliation
+import life.qbic.business.persons.affiliation.archive.ArchiveAffiliationOutput
 import life.qbic.business.persons.affiliation.create.CreateAffiliation
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
@@ -38,6 +40,8 @@ import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationController
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationPresenter
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
+import life.qbic.portal.offermanager.components.affiliation.search.ArchiveAffiliationController
+import life.qbic.portal.offermanager.components.affiliation.search.ArchiveAffiliationPresenter
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationView
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationViewModel
 import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationController
@@ -333,9 +337,12 @@ class DependencyManager {
     private SearchAffiliationView createSearchAffiliationView() {
         ResourcesService<Affiliation> affiliationResourcesService = this.affiliationService
         SearchAffiliationViewModel searchAffiliationViewModel = new SearchAffiliationViewModel(affiliationResourcesService)
-
+        ArchiveAffiliationController archiveAffiliationController = new ArchiveAffiliationController()
         UpdateAffiliationView updateAffiliationView = createUpdateAffiliationView()
-        SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel, updateAffiliationView)
+        SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel, updateAffiliationView, archiveAffiliationController)
+        ArchiveAffiliationOutput archiveAffiliationOutput = new ArchiveAffiliationPresenter(viewModel, searchAffiliationViewModel, affiliationResourcesService)
+        ArchiveAffiliation archiveAffiliation = new ArchiveAffiliation(archiveAffiliationOutput, updateAffiliationDataSource)
+        archiveAffiliationController.setUseCaseInput(archiveAffiliation)
         return searchAffiliationView
     }
 

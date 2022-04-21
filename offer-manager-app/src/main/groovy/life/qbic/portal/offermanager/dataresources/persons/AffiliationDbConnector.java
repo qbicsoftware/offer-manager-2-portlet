@@ -4,10 +4,12 @@ import static org.apache.logging.log4j.LogManager.getLogger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import life.qbic.business.exceptions.DatabaseQueryException;
 import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.persons.affiliation.AffiliationExistsException;
 import life.qbic.business.persons.affiliation.AffiliationNotFoundException;
+import life.qbic.business.persons.affiliation.archive.ArchiveAffiliationDataSource;
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource;
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource;
 import life.qbic.business.persons.affiliation.update.UpdateAffiliationDataSource;
@@ -57,7 +59,7 @@ public class AffiliationDbConnector implements CreateAffiliationDataSource,
       affiliations = new ArrayList<>(query.list());
       session.clear();
     }
-    return affiliations;
+    return affiliations.stream().filter(Affiliation::isActive).collect(Collectors.toList());
   }
 
   @Override
