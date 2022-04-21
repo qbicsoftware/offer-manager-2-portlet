@@ -17,7 +17,7 @@
 	<version>1.4.1</version> <!-- <<QUBE_FORCE_BUMP>> -->
 	<groupId>life.qbic</groupId>
 	<name>The new offer manager</name>
-	<url>https://github.com/qbicsoftware/qOffer_2.0</url>
+	<url>https://github.com/qbicsoftware/offer-manager-2-portlet</url>
 	<description>qOffer assists in managing and creating offers</description>
 	<packaging>pom</packaging>
 	<properties>
