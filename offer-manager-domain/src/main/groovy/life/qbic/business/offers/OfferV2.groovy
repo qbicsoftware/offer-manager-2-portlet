@@ -464,6 +464,7 @@ class OfferV2 {
 
   private void loadFields() {
     getItems()
+    getAssociatedProject()
   }
 
   private void updateSalePrices() {
