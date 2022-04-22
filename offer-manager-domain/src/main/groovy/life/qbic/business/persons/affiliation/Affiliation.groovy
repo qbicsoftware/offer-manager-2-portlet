@@ -146,7 +146,8 @@ class Affiliation {
      * @return
      */
     boolean isActive() {
-        return getIsActive()
+boolean isArchived() {
+        return !getIsActive()
     }
 
     /**
