@@ -7,11 +7,12 @@ import life.qbic.portal.offermanager.components.AppViewModel;
 import life.qbic.portal.offermanager.dataresources.ResourcesService;
 
 /**
- * <b><class short description - 1 Line!></b>
+ * <b>Archive Affiliation Presenter</b>
+ * <p>
+ * Callback implementation for the
+ * {@link life.qbic.business.persons.affiliation.archive.ArchiveAffiliation} use case.
  *
- * <p><More detailed description - When to use, what it solves, etc.></p>
- *
- * @since <version tag>
+ * @since 1.5.0
  */
 public class ArchiveAffiliationPresenter implements ArchiveAffiliationOutput {
 
@@ -23,7 +24,8 @@ public class ArchiveAffiliationPresenter implements ArchiveAffiliationOutput {
   private final ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationResourcesService;
 
   public ArchiveAffiliationPresenter(AppViewModel sharedViewModel,
-      SearchAffiliationViewModel searchAffiliationViewModel, SearchAffiliationView searchAffiliationView,
+      SearchAffiliationViewModel searchAffiliationViewModel,
+      SearchAffiliationView searchAffiliationView,
       ResourcesService<life.qbic.datamodel.dtos.business.Affiliation> affiliationResourcesService) {
     this.sharedViewModel = sharedViewModel;
     this.searchAffiliationViewModel = searchAffiliationViewModel;

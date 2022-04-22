@@ -15,10 +15,6 @@ public class ArchiveAffiliationController {
 
   public ArchiveAffiliationController(){}
 
-  public ArchiveAffiliationController(ArchiveAffiliationInput archiveAffiliationInput) {
-    this.archiveAffiliationInput = archiveAffiliationInput;
-  }
-
   public void setUseCaseInput(ArchiveAffiliationInput archiveAffiliationInput) {
     this.archiveAffiliationInput = archiveAffiliationInput;
   }
@@ -29,8 +25,8 @@ public class ArchiveAffiliationController {
    * @since 1.5.0
    */
   public void archiveAffiliation(Affiliation affiliation) {
-    life.qbic.business.persons.affiliation.Affiliation affiliationConverted = RefactorConverter.toAffiliation(affiliation);
-    archiveAffiliationInput.archiveAffiliation(affiliationConverted);
+    life.qbic.business.persons.affiliation.Affiliation affiliationEntity = RefactorConverter.toAffiliation(affiliation);
+    archiveAffiliationInput.archiveAffiliation(affiliationEntity);
   }
 
 }
