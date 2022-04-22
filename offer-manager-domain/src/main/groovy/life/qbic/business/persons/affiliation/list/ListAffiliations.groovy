@@ -1,5 +1,9 @@
 package life.qbic.business.persons.affiliation.list
 
+import life.qbic.business.persons.affiliation.Affiliation
+
+import java.util.stream.Collectors
+
 
 /**
  * This class implements the List Affiliations use case.
@@ -32,7 +36,9 @@ class ListAffiliations implements ListAffiliationsInput {
 
   @Override
   void listAffiliations() {
-    def affiliations = dataSource.listAllAffiliations()
-    this.output.reportAvailableAffiliations(affiliations)
+    def activeAffiliations = dataSource.listAllAffiliations()
+            .stream().filter( Affiliation::isActive )
+            .collect(Collectors.toList())
+    this.output.reportAvailableAffiliations(activeAffiliations)
   }
 }
