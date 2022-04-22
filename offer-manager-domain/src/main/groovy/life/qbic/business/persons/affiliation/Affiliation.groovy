@@ -128,11 +128,28 @@ class Affiliation {
         return isActive
     }
 
+    /**
+     * Requests the current status of the affiliation entity.
+     * <p>
+     * An affiliation that has been archived, is inactive. So this method will return
+     * <code>false</code> in this case. Otherwise the return value is <code>true<code>.
+     * <p>
+     * We need to keep affiliations stored, even if they are not used anymore, to preserve
+     * backwards compatibility for offer generation.
+     * <p>
+     * To make the intention clear, that they should not be used anymore (outdated, wrong, etc),
+     * this flag has been introduced.
+     * @return
+     */
     boolean isActive() {
         return getIsActive()
     }
 
-    void inactivate() {
+    /**
+     * Archives the current affiliation, and make the intention clear that the affiliation
+     * shall not be used anymore in future offers.
+     */
+    void archive() {
         setIsActive(false)
     }
 

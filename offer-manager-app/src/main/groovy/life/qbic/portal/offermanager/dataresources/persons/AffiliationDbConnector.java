@@ -28,6 +28,7 @@ public class AffiliationDbConnector implements CreateAffiliationDataSource,
 
   /**
    * Uses a Hibernate session to perform the transactions with the persistence layer.
+   *
    * @param sessionProvider the session provider providing hibernate sessions
    */
   public AffiliationDbConnector(SessionProvider sessionProvider) {
@@ -35,7 +36,8 @@ public class AffiliationDbConnector implements CreateAffiliationDataSource,
   }
 
   @Override
-  public void addAffiliation(Affiliation affiliation) throws DatabaseQueryException, AffiliationExistsException {
+  public void addAffiliation(Affiliation affiliation)
+      throws DatabaseQueryException, AffiliationExistsException {
     try (Session session = sessionProvider.openSession()) {
       if (isAffiliationInSession(session, affiliation)) {
         throw new AffiliationExistsException("The affiliation already exists.");
@@ -68,7 +70,8 @@ public class AffiliationDbConnector implements CreateAffiliationDataSource,
       session.beginTransaction();
       boolean affiliationWasNotFound = session.get(Affiliation.class, affiliation.getId()) == null;
       if (affiliationWasNotFound) {
-        throw new AffiliationNotFoundException("Affiliation was not found in the database and can't be updated.");
+        throw new AffiliationNotFoundException(
+            "Affiliation was not found in the database and can't be updated.");
       }
       session.merge(affiliation);
       session.getTransaction().commit();
