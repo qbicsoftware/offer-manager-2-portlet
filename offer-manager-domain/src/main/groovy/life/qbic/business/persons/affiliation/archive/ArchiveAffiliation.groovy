@@ -35,7 +35,7 @@ class ArchiveAffiliation implements ArchiveAffiliationInput {
     /** {@inheritdoc} */
     @Override
     void archiveAffiliation(Affiliation affiliation) {
-        affiliation.inactivate()
+        affiliation.archive()
         try {
             dataSource.updateAffiliation(affiliation)
             output.affiliationArchived(affiliation)
