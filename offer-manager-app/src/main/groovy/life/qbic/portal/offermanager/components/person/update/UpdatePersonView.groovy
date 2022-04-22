@@ -62,16 +62,17 @@ class UpdatePersonView extends CreatePersonView {
         generateAffiliationGrid()
         HorizontalLayout gridHeader = new HorizontalLayout()
         Label currentAffiliationLabel = new Label("Current Affiliations")
-        removeSelectedAffiliationsButton = new Button("Remove affiliations")
+        removeSelectedAffiliationsButton = new Button("Remove")
         removeSelectedAffiliationsButton.setEnabled(false)
         removeSelectedAffiliationsButton.setIcon(VaadinIcons.TRASH)
         affiliations.setSelectionMode(Grid.SelectionMode.MULTI)
-        gridHeader.addComponents(currentAffiliationLabel, removeSelectedAffiliationsButton)
+        gridHeader.addComponents(currentAffiliationLabel)
         defaultContent.addComponent(gridHeader, 3)
-        defaultContent.addComponent(affiliations, 4)
+        defaultContent.addComponent(removeSelectedAffiliationsButton, 4)
+        defaultContent.addComponent(affiliations, 5)
         //add a heading for adding a new affiliation
         Label newAffiliation = new Label("Add a new affiliation")
-        defaultContent.addComponent(newAffiliation, 5)
+        defaultContent.addComponent(newAffiliation, 6)
 
         //add the add button
         addAffiliationButton = new Button("Add Affiliation")
