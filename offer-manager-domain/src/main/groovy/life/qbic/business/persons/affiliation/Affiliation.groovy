@@ -124,6 +124,10 @@ class Affiliation {
         this.category = category
     }
 
+    /**
+     * Getter that is required by Hibernate and other JPA implementing frameworks.
+     * @return the status of the current affiliation
+     */
     protected boolean getIsActive() {
         return isActive
     }
