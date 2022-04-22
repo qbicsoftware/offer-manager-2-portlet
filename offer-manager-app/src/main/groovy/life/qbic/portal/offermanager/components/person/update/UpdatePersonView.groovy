@@ -1,10 +1,13 @@
 package life.qbic.portal.offermanager.components.person.update
 
+
 import com.vaadin.data.provider.ListDataProvider
+import com.vaadin.event.selection.SelectionListener
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Button
 import com.vaadin.ui.Grid
+import com.vaadin.ui.HorizontalLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.components.grid.HeaderRow
 import groovy.util.logging.Log4j2
@@ -28,6 +31,8 @@ class UpdatePersonView extends CreatePersonView {
     private final AppViewModel sharedViewModel
 
     private Grid<Affiliation> affiliations
+    private ListDataProvider<Affiliation> affiliationListDataProvider
+    private Button removeSelectedAffiliationsButton
     private Button addAffiliationButton
 
     UpdatePersonView(CreatePersonController controller, AppViewModel sharedViewModel, UpdatePersonViewModel updatePersonViewModel, CreateAffiliationView createAffiliationView) {
@@ -55,13 +60,19 @@ class UpdatePersonView extends CreatePersonView {
         //add a grid
         affiliations = new Grid<>()
         generateAffiliationGrid()
+        HorizontalLayout gridHeader = new HorizontalLayout()
         Label currentAffiliationLabel = new Label("Current Affiliations")
-        affiliations.setSelectionMode(Grid.SelectionMode.NONE)
-        defaultContent.addComponent(currentAffiliationLabel, 3)
-        defaultContent.addComponent(affiliations, 4)
+        removeSelectedAffiliationsButton = new Button("Remove")
+        removeSelectedAffiliationsButton.setEnabled(false)
+        removeSelectedAffiliationsButton.setIcon(VaadinIcons.TRASH)
+        affiliations.setSelectionMode(Grid.SelectionMode.MULTI)
+        gridHeader.addComponents(currentAffiliationLabel)
+        defaultContent.addComponent(gridHeader, 3)
+        defaultContent.addComponent(removeSelectedAffiliationsButton, 4)
+        defaultContent.addComponent(affiliations, 5)
         //add a heading for adding a new affiliation
         Label newAffiliation = new Label("Add a new affiliation")
-        defaultContent.addComponent(newAffiliation, 5)
+        defaultContent.addComponent(newAffiliation, 6)
 
         //add the add button
         addAffiliationButton = new Button("Add Affiliation")
@@ -99,18 +110,18 @@ class UpdatePersonView extends CreatePersonView {
         /*
         Let's not forget to setup the grid's data provider
         */
-        def affiliationDataProvider = setupAffiliationDataProvider()
+        affiliationListDataProvider = setupAffiliationDataProvider()
         /*
         Lastly, we add some content filters for the columns
          */
-        addFilters(affiliationDataProvider)
+        addFilters(affiliationListDataProvider)
     }
 
-    private ListDataProvider setupAffiliationDataProvider() {
+    private ListDataProvider<Affiliation> setupAffiliationDataProvider() {
         def affiliationListDataProvider = new ListDataProvider<>(updatePersonViewModel.affiliationList)
         this.affiliations.setDataProvider(affiliationListDataProvider)
 
-        return affiliationListDataProvider
+        return affiliationListDataProvider as ListDataProvider<Affiliation>
     }
 
     private void addFilters(ListDataProvider affiliationListDataProvider) {
@@ -136,6 +147,19 @@ class UpdatePersonView extends CreatePersonView {
     }
 
     private void registerListener() {
+        affiliations.getSelectionModel().addSelectionListener({
+            if (affiliations.getSelectedItems().size() > 0) {
+                removeSelectedAffiliationsButton.setEnabled(true)
+            } else {
+                removeSelectedAffiliationsButton.setEnabled(false)
+            }
+        })
+
+        removeSelectedAffiliationsButton.addClickListener({
+            updatePersonViewModel.getAffiliationList().removeAll(affiliations.getSelectedItems())
+            affiliationListDataProvider.refreshAll()
+        })
+
         submitButtonClickListenerRegistration.remove()
         submitButton.addClickListener({
             try {
