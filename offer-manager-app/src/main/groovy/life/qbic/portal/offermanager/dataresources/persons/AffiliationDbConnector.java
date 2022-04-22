@@ -9,7 +9,6 @@ import life.qbic.business.exceptions.DatabaseQueryException;
 import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.persons.affiliation.AffiliationExistsException;
 import life.qbic.business.persons.affiliation.AffiliationNotFoundException;
-import life.qbic.business.persons.affiliation.archive.ArchiveAffiliationDataSource;
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource;
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource;
 import life.qbic.business.persons.affiliation.update.UpdateAffiliationDataSource;
