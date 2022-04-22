@@ -29,7 +29,6 @@ public class ArchiveAffiliationController {
    * @since 1.5.0
    */
   public void archiveAffiliation(Affiliation affiliation) {
-    System.out.println("Here");
     life.qbic.business.persons.affiliation.Affiliation affiliationConverted = RefactorConverter.toAffiliation(affiliation);
     archiveAffiliationInput.archiveAffiliation(affiliationConverted);
   }
