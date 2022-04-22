@@ -145,8 +145,7 @@ class Affiliation {
      * this flag has been introduced.
      * @return
      */
-    boolean isActive() {
-boolean isArchived() {
+    boolean isArchived() {
         return !getIsActive()
     }
 
