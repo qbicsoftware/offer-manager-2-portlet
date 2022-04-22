@@ -42,10 +42,10 @@ class OfferOverview {
                 new OfferId(offer.identifier.getProjectPart(),offer.identifier.getRandomPart(), offer.identifier.getVersion() as String),
                 offer.getCreationDate().toDate(),
                 offer.getProjectTitle(),
-                "",
                 String.format("%s %s", offer.getCustomer().firstName, offer.getCustomer().lastName),
                 String.format("%s %s", offer.getProjectManager().firstName, offer.getProjectManager().lastName),
-                offer.getPriceAfterTax().doubleValue()
+                offer.getPriceAfterTax().doubleValue(),
+                offer.getAssociatedProject().orElse(null)
         )
     }
 
@@ -82,6 +82,6 @@ class OfferOverview {
         this.customer = customer
         this.projectManager = projectManager
         this.totalPrice = totalPrice
-        this.associatedProject = Optional.of(associatedProject)
+        this.associatedProject = Optional.ofNullable(associatedProject)
     }
 }
