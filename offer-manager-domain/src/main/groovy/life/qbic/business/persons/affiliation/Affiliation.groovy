@@ -44,7 +44,7 @@ class Affiliation {
     AffiliationCategory category
 
     @Column(name = "active", columnDefinition = "tinyint", nullable = false)
-    boolean isActive = true
+    boolean active = true
 
     Affiliation(String organization, String addressAddition, String street, String postalCode, String city, String country, AffiliationCategory category) {
         this.organization = organization
@@ -125,14 +125,6 @@ class Affiliation {
     }
 
     /**
-     * Getter that is required by Hibernate and other JPA implementing frameworks.
-     * @return the status of the current affiliation
-     */
-    protected boolean getIsActive() {
-        return isActive
-    }
-
-    /**
      * Requests the current status of the affiliation entity.
      * <p>
      * An affiliation that has been archived, is inactive. So this method will return
@@ -146,7 +138,15 @@ class Affiliation {
      * @return
      */
     boolean isActive() {
-        return getIsActive()
+        return active
+    }
+
+    /**
+     * Requests the current archived status. Is the direct inversion of {@link Affiliation#isActive}.
+     * @return true, if archived else if still active
+     */
+    boolean isArchived() {
+        return !isActive()
     }
 
     /**
@@ -154,10 +154,10 @@ class Affiliation {
      * shall not be used anymore in future offers.
      */
     void archive() {
-        setIsActive(false)
+        setActive(false)
     }
 
-    protected void setIsActive(boolean isActive) {
-        this.isActive = isActive
+    protected void setActive(boolean active) {
+        this.active = active
     }
 }
