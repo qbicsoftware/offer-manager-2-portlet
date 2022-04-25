@@ -5,13 +5,6 @@ import life.qbic.business.persons.affiliation.Affiliation
 
 import javax.persistence.*
 
-/**
- * <b><class short description - 1 Line!></b>
- *
- * <p><More detailed description - When to use, what it solves, etc.></p>
- *
- * @since <version tag>
- */
 @ToString
 @Entity
 @Table(name = "person")
@@ -42,8 +35,8 @@ class Person {
     boolean isActive = true
 
     @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
-    @JoinTable(name = "person_affiliation", joinColumns = [ @JoinColumn(name = "person_id") ],
-            inverseJoinColumns = [ @JoinColumn(name = "affiliation_id")])
+    @JoinTable(name = "person_affiliation", joinColumns = [@JoinColumn(name = "person_id")],
+            inverseJoinColumns = [@JoinColumn(name = "affiliation_id")])
     List<Affiliation> affiliations = []
 
     Person() {}
@@ -51,8 +44,11 @@ class Person {
     @PostLoad
     protected void onPostLoad() {
         this.getAffiliations()
-        if (affiliations.isEmpty()) {
-            throw new IllegalStateException("Person $this was loaded without affiliations. Illegal State: A person must have at least one affiliation.")
+        // We need to set the affiliations to an empty list explicitly if the proxy is empty
+        // otherwise an persistence bag remains there forever, which will lead
+        // to LazyInitialisationExceptions
+        if (this.affiliations.isEmpty()) {
+            affiliations = []
         }
     }
 
