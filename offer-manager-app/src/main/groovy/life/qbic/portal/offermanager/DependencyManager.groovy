@@ -16,6 +16,7 @@ import life.qbic.business.persons.create.CreatePerson
 import life.qbic.business.persons.create.CreatePersonDataSource
 import life.qbic.business.persons.list.ListPersonsDataSource
 import life.qbic.business.persons.search.SearchPersonDataSource
+import life.qbic.business.persons.update.UpdatePersonDataSource
 import life.qbic.business.products.archive.ArchiveProduct
 import life.qbic.business.products.archive.ArchiveProductDataSource
 import life.qbic.business.products.create.CreateProduct
@@ -155,6 +156,7 @@ class DependencyManager {
     private CreateProjectSpaceDataSource createProjectSpaceDataSource
     private ListProjectSpacesDataSource listProjectSpacesDataSource
     private ListProjectsDataSource listProjectsDataSource
+    private UpdatePersonDataSource updatePersonDataSource
 
     /**
      * Public constructor.
@@ -199,6 +201,7 @@ class DependencyManager {
             createPersonDataSource = personDbConnector
             searchPersonDataSource = personDbConnector
             listPersonsDataSource = personDbConnector
+            updatePersonDataSource = personDbConnector
 
             AffiliationDbConnector affiliationDbConnector = new AffiliationDbConnector(sessionProvider)
             createAffiliationDataSource = affiliationDbConnector
@@ -341,7 +344,7 @@ class DependencyManager {
         UpdateAffiliationView updateAffiliationView = createUpdateAffiliationView()
         SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel, updateAffiliationView, archiveAffiliationController)
         ArchiveAffiliationOutput archiveAffiliationOutput = new ArchiveAffiliationPresenter(viewModel, searchAffiliationViewModel, searchAffiliationView, affiliationResourcesService)
-        ArchiveAffiliation archiveAffiliation = new ArchiveAffiliation(archiveAffiliationOutput, updateAffiliationDataSource)
+        ArchiveAffiliation archiveAffiliation = new ArchiveAffiliation(archiveAffiliationOutput, updateAffiliationDataSource, updatePersonDataSource)
         archiveAffiliationController.setUseCaseInput(archiveAffiliation)
         return searchAffiliationView
     }

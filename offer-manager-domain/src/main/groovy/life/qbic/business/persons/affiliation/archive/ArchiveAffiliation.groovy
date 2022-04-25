@@ -6,6 +6,7 @@ import life.qbic.business.logging.Logging
 import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.business.persons.affiliation.AffiliationExistsException
 import life.qbic.business.persons.affiliation.update.UpdateAffiliationDataSource
+import life.qbic.business.persons.update.UpdatePersonDataSource
 
 /**
  * This class implements the Archive Affiliations use case.
@@ -22,13 +23,17 @@ class ArchiveAffiliation implements ArchiveAffiliationInput {
 
     private final Logging log = Logger.getLogger(this.class)
 
+    private final UpdatePersonDataSource updatePersonDataSource
+
     /**
      * Creates a use case interactor for archiving an affiliation in the provided customer database
      * @param dataSource the gateway to the database
      * @param output an output to publish the results to
      */
-    ArchiveAffiliation(ArchiveAffiliationOutput output, UpdateAffiliationDataSource dataSource) {
+    ArchiveAffiliation(ArchiveAffiliationOutput output, UpdateAffiliationDataSource dataSource,
+                       UpdatePersonDataSource updatePersonDataSource) {
         this.dataSource = dataSource
+        this.updatePersonDataSource = updatePersonDataSource
         this.output = output
     }
 
@@ -38,6 +43,9 @@ class ArchiveAffiliation implements ArchiveAffiliationInput {
         affiliation.archive()
         try {
             dataSource.updateAffiliation(affiliation)
+            // Since the affiliation was marked as archived, we need to remove
+            // all existing relations from persons with this affiliation
+            updatePersonDataSource.removeAffiliationFromAllPersons(affiliation.getId())
             output.affiliationArchived(affiliation)
 
             log.info("Successfully archived affiliation " + affiliation.getOrganization())
