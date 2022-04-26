@@ -20,25 +20,18 @@ import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffilia
  * @since 1.0.0
  */
 @Log4j2
-class SearchAffiliationView extends FormLayout {
+class SearchAffiliationView extends FormLayout{
 
     private final SearchAffiliationViewModel viewModel
     private final UpdateAffiliationView updateAffiliationView
-    private final ArchiveAffiliationController archiveAffiliationController
 
     private Grid<Affiliation> affiliationGrid
     private Panel selectedAffiliationDetails
     private VerticalLayout searchAffiliationLayout
 
-    private Button archiveAffiliationButton
-
-    private DataProvider affiliationDataProvider
-
-    SearchAffiliationView(SearchAffiliationViewModel viewModel, UpdateAffiliationView updateAffiliationView,
-                          ArchiveAffiliationController archiveAffiliationController) {
+    SearchAffiliationView(SearchAffiliationViewModel viewModel, UpdateAffiliationView updateAffiliationView) {
         this.viewModel = viewModel
         this.updateAffiliationView = updateAffiliationView
-        this.archiveAffiliationController = archiveAffiliationController
 
         initLayout()
         generateAffiliationGrid()
@@ -56,12 +49,6 @@ class SearchAffiliationView extends FormLayout {
         selectedAffiliationDetails.setVisible(viewModel.detailsVisible)
 
         HorizontalLayout buttons = generateButtonLayout()
-        archiveAffiliationButton = new Button("Archive")
-        archiveAffiliationButton.setIcon(VaadinIcons.ARCHIVE)
-        archiveAffiliationButton.setEnabled(false)
-        archiveAffiliationButton.setStyleName(ValoTheme.BUTTON_LARGE)
-        executeArchiveUseCaseOnClick(archiveAffiliationButton)
-        buttons.addComponent(archiveAffiliationButton)
         refreshSelectionDetails()
 
         searchAffiliationLayout = new VerticalLayout(heading, buttons, affiliationGrid, selectedAffiliationDetails)
@@ -70,11 +57,11 @@ class SearchAffiliationView extends FormLayout {
         updateAffiliationView.setMargin(false)
         updateAffiliationView.setVisible(false)
 
-        this.addComponents(searchAffiliationLayout, updateAffiliationView)
+        this.addComponents(searchAffiliationLayout,updateAffiliationView)
         this.setMargin(false)
     }
 
-    private HorizontalLayout generateButtonLayout() {
+    private HorizontalLayout generateButtonLayout(){
         HorizontalLayout buttonLayout = new HorizontalLayout()
         def updateButton = generateUpdateButton()
         buttonLayout.addComponent(updateButton)
@@ -82,17 +69,7 @@ class SearchAffiliationView extends FormLayout {
         return buttonLayout
     }
 
-    private void executeArchiveUseCaseOnClick(Button button) {
-        button.addClickListener({
-            Affiliation affiliation = affiliationGrid.getSelectedItems()[0]
-            if (affiliation) {
-                archiveAffiliationController.archiveAffiliation(affiliation)
-                affiliationGrid.deselectAll()
-            }
-        })
-    }
-
-    private Button generateUpdateButton() {
+    private Button generateUpdateButton(){
         Button update = new Button("Update Affiliation", VaadinIcons.EDIT)
         update.setEnabled(false)
         update.setStyleName(ValoTheme.BUTTON_LARGE)
@@ -102,9 +79,9 @@ class SearchAffiliationView extends FormLayout {
             showUpdateAffiliation()
         })
         affiliationGrid.addSelectionListener({
-            if (it.firstSelectedItem.isPresent()) {
+            if(it.firstSelectedItem.isPresent()){
                 update.setEnabled(true)
-            } else {
+            }else{
                 update.setEnabled(false)
             }
         })
@@ -112,7 +89,7 @@ class SearchAffiliationView extends FormLayout {
         return update
     }
 
-    private void listenToUpdateAffiliationView() {
+    private void listenToUpdateAffiliationView(){
         updateAffiliationView.addAbortListener(this::hideUpdateAffiliation)
         updateAffiliationView.addSubmitListener(this::hideUpdateAffiliation)
     }
@@ -141,14 +118,10 @@ class SearchAffiliationView extends FormLayout {
         affiliationGrid.setWidthFull()
         affiliationGrid.setHeightByRows(5)
 
-        affiliationDataProvider = new ListDataProvider<Affiliation>(viewModel.getAffiliations())
+        DataProvider affiliationDataProvider = new ListDataProvider<Affiliation>(viewModel.getAffiliations())
         affiliationGrid.setDataProvider(affiliationDataProvider)
 
         addColumnFilters(affiliationGrid, affiliationDataProvider)
-    }
-
-    void refresh() {
-        affiliationDataProvider.refreshAll()
     }
 
     private static addColumnFilters(Grid<Affiliation> grid, ListDataProvider<Affiliation> dataProvider) {
@@ -168,9 +141,6 @@ class SearchAffiliationView extends FormLayout {
     private void listenToAffiliationSelection() {
         this.affiliationGrid.addSelectionListener({
             viewModel.selectedAffiliation = it.firstSelectedItem
-            // Enable/disable archive button
-            it.firstSelectedItem.isPresent() ? archiveAffiliationButton.setEnabled(true)
-                    : archiveAffiliationButton.setEnabled(false)
         })
 
         this.viewModel.addPropertyChangeListener("selectedAffiliation", {
