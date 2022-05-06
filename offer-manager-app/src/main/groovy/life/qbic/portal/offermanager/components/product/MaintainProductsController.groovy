@@ -49,7 +49,7 @@ class MaintainProductsController {
         RefactorConverter converter = new RefactorConverter()
         try {
             ProductDraft productDraft = ProductDraft.create(converter.toProductCategory(category),
-                    name, description, internalUnitPrice, externalUnitPrice, unit.value, facility.getLabel())
+                    name, description, internalUnitPrice, externalUnitPrice, unit.value, facility.name())
             createProductInput.create(productDraft)
         } catch (Exception unexpected) {
             log.error("unexpected exception during create product call", unexpected)
