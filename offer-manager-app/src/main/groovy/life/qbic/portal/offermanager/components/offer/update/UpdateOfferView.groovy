@@ -1,10 +1,15 @@
 package life.qbic.portal.offermanager.components.offer.update
 
-import com.vaadin.ui.*
+import com.vaadin.shared.ui.MarginInfo
+import com.vaadin.ui.GridLayout
+import com.vaadin.ui.HorizontalLayout
+import com.vaadin.ui.Label
+import com.vaadin.ui.VerticalLayout
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 import life.qbic.portal.offermanager.components.offer.create.*
+import life.qbic.portal.offermanager.components.offer.update.UpdateOfferViewLayouts.*
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonView
 
@@ -25,18 +30,18 @@ class UpdateOfferView extends VerticalLayout {
 
   private final UpdateOfferController controller
 
-  //ToDo Remove Views once Layout is written
+  //ToDo Remove View once content is wired into ProjectInformationLayout
   private final ProjectInformationView projectInformationView
 
-  //ToDo Add Layouts for each View below for UpdateOfferMainView
+  //ToDo Wire information into each Layout and style layouts
   private GridLayout contentGridLayout
-  private VerticalLayout projectInformationLayout
-  private VerticalLayout customerInformationLayout
-  private VerticalLayout projectManagerLayout
-  private VerticalLayout pricingLayout
-  private HorizontalLayout productItemsLayout
-  private HorizontalLayout cancelSubmissionButtonBarLayout
-
+  private ProjectInformationLayout projectInformationLayout
+  private SelectCustomerLayout selectCustomerLayout
+  private SelectProjectManagerLayout selectProjectManagerLayout
+  private HorizontalLayout offerDetailsHeaderLayout
+  private PricingLayout pricingLayout
+  private ProductItemsLayout productItemsLayout
+  private SubmissionButtonBarLayout submissionButtonBarLayout
 
   private final CustomerSelectionView customerSelectionView
   private final ProjectManagerSelectionView projectManagerSelectionView
@@ -56,19 +61,17 @@ class UpdateOfferView extends VerticalLayout {
     this.sharedViewModel = sharedViewModel
     this.viewModel = updateOfferViewModel
     this.controller = controller
-    //ToDo Wire View Navigation into button functionality of MainView
+    //ToDo Wire View Navigation to each view into the buttons of the updateOfferView
     this.createCustomerView = createCustomerView
     this.updatePersonView = updatePersonView
     this.createAffiliationView = createAffiliationView
-    //ToDo Replace View with Layout
     this.projectInformationView = new ProjectInformationView(viewModel)
     this.customerSelectionView = new CustomerSelectionView(viewModel)
     this.projectManagerSelectionView = new ProjectManagerSelectionView(viewModel)
     this.selectItemsView = new SelectItemsView(viewModel, sharedViewModel)
-    //ToDo Include OverViewView Layout with Pricing for MainView
     initMainLayout()
     initSubLayouts()
-    positionLayoutsInMainLayout()
+    positionSubLayouts()
     this.addComponent(contentGridLayout)
   }
 
@@ -83,38 +86,38 @@ class UpdateOfferView extends VerticalLayout {
     this.setMargin(false)
     this.setSpacing(false)
   }
+  /**
+   * See https://miro.com/app/board/uXjVO4E_5wc=/ for explanation of Grid sections
+   */
 
   private void initSubLayouts() {
-    //ToDo Implement SubLayouts initialization for MainLayout
-    contentGridLayout = new GridLayout(2, 6)
-    projectInformationLayout = new VerticalLayout()
-    projectInformationLayout.addComponent(new Button("ProjectInformationArea"))
-    customerInformationLayout = new VerticalLayout()
-    customerInformationLayout.addComponent(new Button("CustomerInformationArea"))
-    projectManagerLayout = new VerticalLayout()
-    projectManagerLayout.addComponent(new Button("ProjectManagerArea"))
-    pricingLayout = new VerticalLayout()
-    pricingLayout.addComponent(new Button("PricingInformationArea"))
-    productItemsLayout = new HorizontalLayout()
-    productItemsLayout.addComponent(new Button("ProductItemsArea"))
-    cancelSubmissionButtonBarLayout = new HorizontalLayout()
-    cancelSubmissionButtonBarLayout.addComponent(new Button("SubmissionCancelArea"))
-    contentGridLayout.setWidthFull()
-    contentGridLayout.setHeightFull()
+    //Todo Implement Layout Styling and Alignment
+    contentGridLayout = new GridLayout(3, 6)
+    projectInformationLayout = new ProjectInformationLayout()
+    selectCustomerLayout = new SelectCustomerLayout()
+    selectProjectManagerLayout = new SelectProjectManagerLayout()
+    offerDetailsHeaderLayout = new HorizontalLayout()
+    //Todo Move margins to custom CSS?
+    offerDetailsHeaderLayout.addComponent(new Label("Offer Details:"))
+    offerDetailsHeaderLayout.setMargin(new MarginInfo(false, false, false, true))
+    pricingLayout = new PricingLayout()
+    productItemsLayout = new ProductItemsLayout()
+    submissionButtonBarLayout = new SubmissionButtonBarLayout()
+    contentGridLayout.setSizeFull()
   }
 
-  void positionLayoutsInMainLayout() {
-    //Todo Replace View with Layout
-    contentGridLayout.addComponent(projectInformationView, 0, 0, 0, 1)
-    contentGridLayout.addComponent(customerInformationLayout, 1, 1)
-    contentGridLayout.addComponent(projectManagerLayout, 1, 2)
+  private void positionSubLayouts() {
+
+    contentGridLayout.addComponent(projectInformationLayout, 0, 0, 1, 1)
+    contentGridLayout.addComponent(selectCustomerLayout, 2, 0)
+    contentGridLayout.addComponent(selectProjectManagerLayout, 2, 1)
+    contentGridLayout.addComponent(offerDetailsHeaderLayout, 0, 2)
     contentGridLayout.addComponent(pricingLayout, 1, 3)
-    //ToDo extract relevant view from layout
-    contentGridLayout.addComponent(selectItemsView, 0, 4, 1, 4)
-    contentGridLayout.addComponent(cancelSubmissionButtonBarLayout, 1, 5)
+    contentGridLayout.addComponent(productItemsLayout, 0, 4, 2, 4)
+    contentGridLayout.addComponent(submissionButtonBarLayout, 2, 5)
   }
 
-  void resetViewContent() {
+  void resetLayoutContent() {
     //ToDo Reset Content of all Layouts and Views
   }
 }
