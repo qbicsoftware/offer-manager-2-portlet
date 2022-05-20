@@ -4,11 +4,13 @@ import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 
 /**
- * <class short description - One Line!>
+ * This class generates a Layout in which the user can see the pricing of the offer selected in the
+ * UpdateOfferView
  * <p>
- * <More detailed description - When to use, what it solves, etc.>
+ * PricingLayout will be integrated into the UpdateOfferView and will list the net price, overhead
+ * price, price after taxes and the total Price of an offer to be updated
  *
- * @since <version tag>
+ * @since 1.6.0
  */
 public class PricingLayout extends HorizontalLayout {
 

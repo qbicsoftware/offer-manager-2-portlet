@@ -1,16 +1,19 @@
 package life.qbic.portal.offermanager.components.offer.update.UpdateOfferViewLayouts;
 
+import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.VerticalLayout;
 
 /**
- * <class short description - One Line!>
+ * This class generates a Layout in which the user can see the project manager information of the
+ * offer selected in the UpdateOfferView
  * <p>
- * <More detailed description - When to use, what it solves, etc.>
+ * SelectProjectManagerLayout will be integrated into the UpdateOfferView and will list the full
+ * name and the affiliation of a project Manager associated with the offer to be updated
  *
- * @since <version tag>
+ * @since 1.6.0
  */
 public class SelectProjectManagerLayout extends VerticalLayout {
 
@@ -41,6 +44,8 @@ public class SelectProjectManagerLayout extends VerticalLayout {
 
   private void styleLayout() {
     projectManagerDetailLayout.setMargin(false);
+    projectManagerHeaderLayout.setComponentAlignment(updateProjectManagerButton,
+        Alignment.TOP_RIGHT);
   }
 
 }

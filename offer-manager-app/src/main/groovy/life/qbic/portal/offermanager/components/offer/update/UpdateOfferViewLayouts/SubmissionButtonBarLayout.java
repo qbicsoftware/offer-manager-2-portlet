@@ -4,11 +4,13 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.HorizontalLayout;
 
 /**
- * <class short description - One Line!>
+ * This class generates a Layout in which the user can cancel or save changes made to an offer in
+ * the UpdateOfferView
  * <p>
- * <More detailed description - When to use, what it solves, etc.>
+ * SelectCustomerLayout will be integrated into the UpdateOfferView and will provide the
+ * functionality to discard or save the changes made to an offer in the UpdateOfferView
  *
- * @since <version tag>
+ * @since 1.6.0
  */
 public class SubmissionButtonBarLayout extends HorizontalLayout {
 
@@ -19,7 +21,6 @@ public class SubmissionButtonBarLayout extends HorizontalLayout {
   public SubmissionButtonBarLayout() {
     initLayout();
     styleLayout();
-
   }
 
   private void initLayout() {
@@ -29,6 +30,7 @@ public class SubmissionButtonBarLayout extends HorizontalLayout {
   }
 
   private void styleLayout() {
-
+    this.setMargin(false);
+    this.setSpacing(true);
   }
 }

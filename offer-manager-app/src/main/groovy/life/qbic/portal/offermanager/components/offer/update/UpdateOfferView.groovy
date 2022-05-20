@@ -1,10 +1,7 @@
 package life.qbic.portal.offermanager.components.offer.update
 
 import com.vaadin.shared.ui.MarginInfo
-import com.vaadin.ui.GridLayout
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Label
-import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
@@ -33,7 +30,7 @@ class UpdateOfferView extends VerticalLayout {
   //ToDo Remove View once content is wired into ProjectInformationLayout
   private final ProjectInformationView projectInformationView
 
-  //ToDo Wire information into each Layout and style layouts
+  //ToDo Wire information into each Layout and finalize layout style
   private GridLayout contentGridLayout
   private ProjectInformationLayout projectInformationLayout
   private SelectCustomerLayout selectCustomerLayout
@@ -72,6 +69,7 @@ class UpdateOfferView extends VerticalLayout {
     initMainLayout()
     initSubLayouts()
     positionSubLayouts()
+    styleSubLayouts()
     this.addComponent(contentGridLayout)
   }
 
@@ -86,24 +84,20 @@ class UpdateOfferView extends VerticalLayout {
     this.setMargin(false)
     this.setSpacing(false)
   }
+
   /**
    * See https://miro.com/app/board/uXjVO4E_5wc=/ for explanation of Grid sections
    */
-
   private void initSubLayouts() {
-    //Todo Implement Layout Styling and Alignment
     contentGridLayout = new GridLayout(3, 6)
     projectInformationLayout = new ProjectInformationLayout()
     selectCustomerLayout = new SelectCustomerLayout()
     selectProjectManagerLayout = new SelectProjectManagerLayout()
     offerDetailsHeaderLayout = new HorizontalLayout()
-    //Todo Move margins to custom CSS?
     offerDetailsHeaderLayout.addComponent(new Label("Offer Details:"))
-    offerDetailsHeaderLayout.setMargin(new MarginInfo(false, false, false, true))
     pricingLayout = new PricingLayout()
     productItemsLayout = new ProductItemsLayout()
     submissionButtonBarLayout = new SubmissionButtonBarLayout()
-    contentGridLayout.setSizeFull()
   }
 
   private void positionSubLayouts() {
@@ -115,6 +109,16 @@ class UpdateOfferView extends VerticalLayout {
     contentGridLayout.addComponent(pricingLayout, 1, 3)
     contentGridLayout.addComponent(productItemsLayout, 0, 4, 2, 4)
     contentGridLayout.addComponent(submissionButtonBarLayout, 2, 5)
+  }
+
+  private void styleSubLayouts() {
+    contentGridLayout.setComponentAlignment(submissionButtonBarLayout, Alignment.BOTTOM_RIGHT)
+    contentGridLayout.setComponentAlignment(pricingLayout, Alignment.BOTTOM_RIGHT)
+    contentGridLayout.setColumnExpandRatio(0, 0.5)
+    contentGridLayout.setColumnExpandRatio(1, 0.2)
+    contentGridLayout.setColumnExpandRatio(2, 0.2)
+    contentGridLayout.setSizeFull()
+    offerDetailsHeaderLayout.setMargin(new MarginInfo(false, false, false, true))
   }
 
   void resetLayoutContent() {

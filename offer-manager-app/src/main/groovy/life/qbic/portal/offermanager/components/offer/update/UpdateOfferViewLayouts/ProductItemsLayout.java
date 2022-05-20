@@ -7,11 +7,14 @@ import com.vaadin.ui.VerticalLayout;
 import life.qbic.business.products.ProductItem;
 
 /**
- * <class short description - One Line!>
+ * This class generates a Layout in which the user can see the productItems of the offer selected in
+ * the UpdateOfferView
  * <p>
- * <More detailed description - When to use, what it solves, etc.>
+ * ProductItemsLayout will be integrated into the UpdateOfferView and will provide an overview of
+ * all the productItems associated with an offer. Furthermore, it will provide the ability to inline
+ * edit and delete productItems directly in the OfferUpdateView
  *
- * @since <version tag>
+ * @since 1.6.0
  */
 public class ProductItemsLayout extends VerticalLayout {
 
@@ -37,5 +40,6 @@ public class ProductItemsLayout extends VerticalLayout {
 
   private void styleLayout() {
     productItemsGrid.setWidthFull();
+    this.setSizeFull();
   }
 }

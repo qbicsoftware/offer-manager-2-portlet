@@ -5,11 +5,13 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.VerticalLayout;
 
 /**
- * <class short description - One Line!>
+ * This class generates a Layout in which the user can see the project information associated of the
+ * offer selected in the UpdateOfferView
  * <p>
- * <More detailed description - When to use, what it solves, etc.>
+ * ProjectInformationLayout will be integrated into the UpdateOfferView and will list the project
+ * title, project description and experimental design of an offer to be updated
  *
- * @since <version tag>
+ * @since 1.6.0
  */
 public class ProjectInformationLayout extends VerticalLayout {
 
@@ -34,5 +36,6 @@ public class ProjectInformationLayout extends VerticalLayout {
     projectTitle.setSizeFull();
     projectObjective.setSizeFull();
     experimentalDesign.setSizeFull();
+    this.setSizeFull();
   }
 }
