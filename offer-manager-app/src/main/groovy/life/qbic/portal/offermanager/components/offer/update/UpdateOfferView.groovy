@@ -39,13 +39,13 @@ class UpdateOfferView extends VerticalLayout {
   private ProductItemsLayout productItemsLayout
   private SubmissionButtonBarLayout submissionButtonBarLayout
 
-  private final CustomerSelectionView customerSelectionView
-  private final ProjectManagerSelectionView projectManagerSelectionView
-  private final SelectItemsView selectItemsView
+  private CustomerSelectionView customerSelectionView
+  private ProjectManagerSelectionView projectManagerSelectionView
+  private SelectItemsView selectItemsView
 
-  private final CreatePersonView createCustomerView
-  private final UpdatePersonView updatePersonView
-  private final CreateAffiliationView createAffiliationView
+  private CreatePersonView createCustomerView
+  private UpdatePersonView updatePersonView
+  private CreateAffiliationView createAffiliationView
 
   UpdateOfferView(AppViewModel sharedViewModel,
                   UpdateOfferViewModel updateOfferViewModel,
@@ -58,17 +58,14 @@ class UpdateOfferView extends VerticalLayout {
     this.viewModel = updateOfferViewModel
     this.controller = controller
     //ToDo Wire View Navigation to each view into the buttons of the updateOfferView
-    this.createCustomerView = createCustomerView
-    this.updatePersonView = updatePersonView
-    this.createAffiliationView = createAffiliationView
-    this.customerSelectionView = new CustomerSelectionView(viewModel)
-    this.projectManagerSelectionView = new ProjectManagerSelectionView(viewModel)
-    this.selectItemsView = new SelectItemsView(viewModel, sharedViewModel)
     initMainLayout()
     initSubLayouts()
+    initLinkedViews(createCustomerView, createAffiliationView, updatePersonView)
     positionSubLayouts()
     styleSubLayouts()
     bindViewModelToLayouts()
+    addLinkedViewListeners()
+    addLayoutClickListeners()
     this.addComponent(contentGridLayout)
   }
 
@@ -97,6 +94,22 @@ class UpdateOfferView extends VerticalLayout {
     submissionButtonBarLayout = new SubmissionButtonBarLayout()
   }
 
+  private void initLinkedViews(CreatePersonView createCustomerView, CreateAffiliationView createAffiliationView, UpdatePersonView updatePersonView) {
+    this.createCustomerView = createCustomerView
+    this.updatePersonView = updatePersonView
+    this.createAffiliationView = createAffiliationView
+    this.customerSelectionView = new CustomerSelectionView(viewModel)
+    this.projectManagerSelectionView = new ProjectManagerSelectionView(viewModel)
+    this.selectItemsView = new SelectItemsView(viewModel, sharedViewModel)
+    this.addComponents(this.customerSelectionView,
+            this.createCustomerView,
+            this.updatePersonView,
+            this.createAffiliationView,
+            this.projectManagerSelectionView,
+            this.selectItemsView)
+    hideViews()
+  }
+
   private void positionSubLayouts() {
 
     contentGridLayout.addComponent(projectInformationLayout, 0, 0, 1, 1)
@@ -117,9 +130,21 @@ class UpdateOfferView extends VerticalLayout {
     contentGridLayout.setSizeFull()
     offerDetailsHeaderLayout.setMargin(new MarginInfo(false, false, false, true))
   }
+
+  private void hideViews() {
+    this.customerSelectionView.setVisible(false)
+    this.createCustomerView.setVisible(false)
+    this.updatePersonView.setVisible(false)
+    this.createAffiliationView.setVisible(false)
+    this.projectManagerSelectionView.setVisible(false)
+    this.selectItemsView.setVisible(false)
+  }
+
   //ToDo Wire Information from ViewModel to all subLayouts
   private void bindViewModelToLayouts() {
     bindViewModelToProjectInformationLayout()
+    bindViewModelToCustomerLayout()
+    bindViewModelToProjectManagerLayout()
   }
 
   private void bindViewModelToProjectInformationLayout() {
@@ -137,6 +162,131 @@ class UpdateOfferView extends VerticalLayout {
     viewModel.addPropertyChangeListener("experimentalDesign", {
       String newValue = it.newValue as String
       projectInformationLayout.experimentalDesign.value = newValue ?: projectInformationLayout.experimentalDesign.emptyValue
+    })
+  }
+
+  private void bindViewModelToCustomerLayout() {
+    viewModel.addPropertyChangeListener({
+      if (it.propertyName.equals("customer")) {
+        if (it.getNewValue()) {
+          String customerFullName =
+                  "${viewModel.customer?.firstName ?: ""} " + "${viewModel.customer?.lastName ?: ""}"
+          selectCustomerLayout.customerName.setValue(customerFullName)
+        }
+      }
+      if (it.propertyName.equals("customerAffiliation")) {
+        if (it.getNewValue()) {
+          String affiliationCategory = viewModel.customerAffiliation.getCategory().toString() ?: ""
+          selectCustomerLayout.affiliationCategory.setValue(affiliationCategory)
+          selectCustomerLayout.affiliationOrganisation.setValue(viewModel.customerAffiliation.getOrganisation() ?: "")
+          selectCustomerLayout.affiliationAddressAddition.setValue(viewModel.customerAffiliation.getAddressAddition() ?: "")
+        }
+      }
+    })
+  }
+
+  private void bindViewModelToProjectManagerLayout() {
+    viewModel.addPropertyChangeListener({
+      if (it.propertyName.equals("projectManager")) {
+        if (it.getNewValue()) {
+          String projectManagerFullName =
+                  "${viewModel.projectManager?.firstName ?: ""} " + "${viewModel.projectManager?.lastName ?: ""}"
+          selectProjectManagerLayout.projectManagerName.setValue(projectManagerFullName)
+          //ToDo  Which affiliation is the correct one here?
+          String projectManagerOrganization = viewModel.projectManager.affiliations.first().getOrganisation()
+          selectProjectManagerLayout.projectManagerOrganisation.setValue(projectManagerOrganization)
+        }
+      }
+    })
+  }
+
+  //ToDo Add ClickListeners for all Layouts
+  private void addLayoutClickListeners() {
+    selectCustomerLayout.updateCustomerButton.addClickListener({ event ->
+      contentGridLayout.setVisible(false)
+      customerSelectionView.setVisible(true)
+    })
+    selectProjectManagerLayout.updateProjectManagerButton.addClickListener({ event ->
+      contentGridLayout.setVisible(false)
+      projectManagerSelectionView.setVisible(true)
+    })
+  }
+
+  //ToDo Add Listeners for all Linked Views
+  private void addLinkedViewListeners() {
+    addCustomerViewListeners()
+    addProjectManagerViewListeners()
+  }
+
+  private void addCustomerViewListeners() {
+    addCustomerSelectionViewListeners()
+    addCreateCustomerViewListeners()
+    addUpdatePersonViewListeners()
+    addCreateAffiliationViewListeners()
+  }
+
+  private void addCustomerSelectionViewListeners() {
+    customerSelectionView.previous.addClickListener({ event ->
+      customerSelectionView.setVisible(false)
+      contentGridLayout.setVisible(true)
+    })
+    customerSelectionView.next.addClickListener({ event ->
+      customerSelectionView.setVisible(false)
+      contentGridLayout.setVisible(true)
+    })
+    this.customerSelectionView.createCustomerButton.addClickListener({
+      customerSelectionView.setVisible(false)
+      createCustomerView.setVisible(true)
+    })
+    this.customerSelectionView.updatePerson.addClickListener({
+      customerSelectionView.setVisible(false)
+      updatePersonView.setVisible(true)
+    })
+  }
+
+  private void addUpdatePersonViewListeners() {
+    this.updatePersonView.abortButton.addClickListener({
+      customerSelectionView.reset()
+      updatePersonView.setVisible(false)
+      customerSelectionView.setVisible(true)
+    })
+    this.updatePersonView.submitButton.addClickListener({
+      customerSelectionView.reset()
+      updatePersonView.setVisible(false)
+      customerSelectionView.setVisible(true)
+    })
+  }
+
+  private addCreateCustomerViewListeners() {
+    this.createCustomerView.submitButton.addClickListener({
+      createCustomerView.setVisible(false)
+      customerSelectionView.setVisible(true)
+    })
+    this.createCustomerView.abortButton.addClickListener({
+      createCustomerView.setVisible(false)
+      customerSelectionView.setVisible(true)
+    })
+  }
+
+  private void addCreateAffiliationViewListeners() {
+    this.createAffiliationView.addAbortListener({
+      createAffiliationView.setVisible(false)
+      createCustomerView.setVisible(true)
+    })
+    this.createAffiliationView.addSubmitListener({
+      createAffiliationView.setVisible(false)
+      createCustomerView.setVisible(true)
+    })
+  }
+
+  private void addProjectManagerViewListeners() {
+    projectManagerSelectionView.previous.addClickListener({ event ->
+      projectManagerSelectionView.setVisible(false)
+      contentGridLayout.setVisible(true)
+    })
+    projectManagerSelectionView.next.addClickListener({ event ->
+      projectManagerSelectionView.setVisible(false)
+      contentGridLayout.setVisible(true)
     })
   }
 
