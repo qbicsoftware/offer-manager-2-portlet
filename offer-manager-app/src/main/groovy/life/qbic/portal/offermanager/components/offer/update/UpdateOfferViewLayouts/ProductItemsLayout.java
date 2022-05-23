@@ -4,7 +4,7 @@ import com.vaadin.ui.Button;
 import com.vaadin.ui.Grid;
 import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.VerticalLayout;
-import life.qbic.business.products.ProductItem;
+import life.qbic.portal.offermanager.components.offer.create.ProductItemViewModel;
 
 /**
  * This class generates a Layout in which the user can see the productItems of the offer selected in
@@ -18,24 +18,53 @@ import life.qbic.business.products.ProductItem;
  */
 public class ProductItemsLayout extends VerticalLayout {
 
-  private Button updateItemButton;
-  private Button removeItemButton;
+  public Button updateItemButton;
+  public Button removeItemButton;
 
-  HorizontalLayout buttonBarLayout;
-  Grid<ProductItem> productItemsGrid;
+  private HorizontalLayout buttonBarLayout;
+  public Grid<ProductItemViewModel> productItemsGrid;
 
   public ProductItemsLayout() {
     initLayout();
+    fillGrid();
     styleLayout();
   }
 
   private void initLayout() {
-    productItemsGrid = new Grid<ProductItem>();
+    productItemsGrid = new Grid<>();
     buttonBarLayout = new HorizontalLayout();
     updateItemButton = new Button("Update Items");
     removeItemButton = new Button("Remove Items");
     buttonBarLayout.addComponents(updateItemButton, removeItemButton);
     this.addComponents(buttonBarLayout, productItemsGrid);
+  }
+
+  private void fillGrid() {
+    productItemsGrid.addColumn(
+            productItemViewModel -> productItemViewModel.getProduct().getProductId()).setCaption("ID")
+        .setId("ID");
+    productItemsGrid.addColumn(
+            productItemViewModel -> productItemViewModel.getProduct().getProductName())
+        .setCaption("Name")
+        .setId("Name");
+    productItemsGrid.addColumn(
+            productItemViewModel -> productItemViewModel.getProduct().getDescription())
+        .setCaption("Description")
+        .setId("Description");
+    productItemsGrid.addColumn(ProductItemViewModel::getQuantity).setCaption("Quantity");
+    //ToDo Which Unit Price is necessary
+    productItemsGrid.addColumn(
+            productItemViewModel -> productItemViewModel.getProduct().getUnitPrice())
+        .setCaption("Unit Price")
+        .setId("Unit Price");
+    productItemsGrid.addColumn(
+            productItemViewModel -> productItemViewModel.getProduct().getUnit().toString())
+        .setCaption("Unit")
+        .setId("Unit");
+    productItemsGrid.addColumn(
+            productItemViewModel -> productItemViewModel.getProduct().getServiceProvider().toString())
+        .setCaption("Facility")
+        .setId("Facility");
   }
 
   private void styleLayout() {

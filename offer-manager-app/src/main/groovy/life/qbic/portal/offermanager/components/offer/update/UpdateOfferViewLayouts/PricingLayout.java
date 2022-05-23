@@ -14,10 +14,10 @@ import com.vaadin.ui.Label;
  */
 public class PricingLayout extends HorizontalLayout {
 
-  Label netPrice;
-  Label overheadPrice;
-  Label taxesPrice;
-  Label totalPrice;
+  public Label netPrice;
+  public Label overheadPrice;
+  public Label taxesPrice;
+  public Label totalPrice;
 
   public PricingLayout() {
     initLayout();
@@ -25,13 +25,13 @@ public class PricingLayout extends HorizontalLayout {
   }
 
   private void initLayout() {
-    netPrice = new Label("Net Sum");
+    netPrice = new Label("");
     netPrice.setCaption("Net Price");
-    overheadPrice = new Label("Overhead Sum");
+    overheadPrice = new Label("");
     overheadPrice.setCaption("Overheads");
-    taxesPrice = new Label("Taxes Sum");
+    taxesPrice = new Label("");
     taxesPrice.setCaption("Taxes");
-    totalPrice = new Label("Total Sum");
+    totalPrice = new Label("");
     totalPrice.setCaption("Total Costs");
     this.addComponents(netPrice, overheadPrice, taxesPrice, totalPrice);
   }

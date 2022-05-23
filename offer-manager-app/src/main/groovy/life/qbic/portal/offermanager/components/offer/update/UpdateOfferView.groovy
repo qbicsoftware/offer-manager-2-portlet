@@ -1,14 +1,14 @@
 package life.qbic.portal.offermanager.components.offer.update
 
+import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.shared.ui.MarginInfo
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
+import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
-import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
-import life.qbic.portal.offermanager.components.offer.create.CustomerSelectionView
-import life.qbic.portal.offermanager.components.offer.create.ProjectManagerSelectionView
-import life.qbic.portal.offermanager.components.offer.create.SelectItemsView
+import life.qbic.portal.offermanager.components.offer.create.*
 import life.qbic.portal.offermanager.components.offer.update.UpdateOfferViewLayouts.*
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonView
@@ -145,6 +145,8 @@ class UpdateOfferView extends VerticalLayout {
     bindViewModelToProjectInformationLayout()
     bindViewModelToCustomerLayout()
     bindViewModelToProjectManagerLayout()
+    bindViewModelToProductItemsLayout()
+    bindViewModelToPricingLayout()
   }
 
   private void bindViewModelToProjectInformationLayout() {
@@ -198,6 +200,25 @@ class UpdateOfferView extends VerticalLayout {
         }
       }
     })
+  }
+
+  private void bindViewModelToProductItemsLayout() {
+    ListDataProvider<ProductItemViewModel> dataProvider =
+            new ListDataProvider(viewModel.getProductItems())
+    productItemsLayout.productItemsGrid.setDataProvider(dataProvider)
+  }
+
+  private void bindViewModelToPricingLayout() {
+    //ToDo Retrieve Offer from Update Event
+    viewModel.addPropertyChangeListener("offerUpdate") {
+      EventEmitter<Offer> offerEventEmitter = it.getNewValue() as EventEmitter<Offer>
+      offerEventEmitter.register (Offer offer) -> {
+        pricingLayout.netPrice.value = offer.getNetPrice() ?: ""
+        pricingLayout.netPrice.value = offer.getOverheads() ?: ""
+        pricingLayout.netPrice.value = offer.getTaxes() ?: ""
+      }
+      //ToDo Update Pricing if Affiliation Category or ProductItem changes
+    }
   }
 
   //ToDo Add ClickListeners for all Layouts
