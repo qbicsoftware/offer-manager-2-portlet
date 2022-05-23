@@ -18,10 +18,10 @@ import com.vaadin.ui.VerticalLayout;
 public class SelectProjectManagerLayout extends VerticalLayout {
 
   private Label projectManagerHeader;
-  private Button updateProjectManagerButton;
+  public Button updateProjectManagerButton;
   private HorizontalLayout projectManagerHeaderLayout;
-  private Label projectManagerName;
-  private Label projectManagerOrganisation;
+  public Label projectManagerName;
+  public Label projectManagerOrganisation;
 
   private VerticalLayout projectManagerDetailLayout;
 

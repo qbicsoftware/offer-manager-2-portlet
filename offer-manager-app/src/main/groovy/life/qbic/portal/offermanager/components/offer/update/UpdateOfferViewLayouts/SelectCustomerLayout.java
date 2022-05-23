@@ -18,16 +18,16 @@ import com.vaadin.ui.VerticalLayout;
 public class SelectCustomerLayout extends VerticalLayout {
 
   private Label customerHeader;
-  private Button updateCustomerButton;
-  private Label customerName;
+  public Button updateCustomerButton;
+  public Label customerName;
 
   private HorizontalLayout customerHeaderLayout;
 
-  private Label affiliationCategory;
+  public Label affiliationCategory;
 
-  private Label affiliationInstitute;
+  public Label affiliationAddressAddition;
 
-  private Label affiliationOrganisation;
+  public Label affiliationOrganisation;
 
   private VerticalLayout affiliationInformationLayout;
 
@@ -41,12 +41,12 @@ public class SelectCustomerLayout extends VerticalLayout {
     updateCustomerButton = new Button("Update");
     customerName = new Label("Max Mustermann");
     affiliationCategory = new Label("Internal");
-    affiliationInstitute = new Label("University Tübingen");
+    affiliationAddressAddition = new Label("University Tübingen");
     affiliationOrganisation = new Label("Quantitative Biology Center");
     customerHeaderLayout = new HorizontalLayout();
     customerHeaderLayout.addComponents(customerHeader, updateCustomerButton);
     affiliationInformationLayout = new VerticalLayout();
-    affiliationInformationLayout.addComponents(affiliationCategory, affiliationInstitute,
+    affiliationInformationLayout.addComponents(affiliationCategory, affiliationAddressAddition,
         affiliationOrganisation);
     this.addComponents(customerHeaderLayout, customerName, affiliationInformationLayout);
   }
