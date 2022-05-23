@@ -5,7 +5,10 @@ import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
-import life.qbic.portal.offermanager.components.offer.create.*
+import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
+import life.qbic.portal.offermanager.components.offer.create.CustomerSelectionView
+import life.qbic.portal.offermanager.components.offer.create.ProjectManagerSelectionView
+import life.qbic.portal.offermanager.components.offer.create.SelectItemsView
 import life.qbic.portal.offermanager.components.offer.update.UpdateOfferViewLayouts.*
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
 import life.qbic.portal.offermanager.components.person.update.UpdatePersonView
@@ -26,10 +29,6 @@ class UpdateOfferView extends VerticalLayout {
   final CreateOfferViewModel viewModel
 
   private final UpdateOfferController controller
-
-  //ToDo Remove View once content is wired into ProjectInformationLayout
-  private final ProjectInformationView projectInformationView
-
   //ToDo Wire information into each Layout and finalize layout style
   private GridLayout contentGridLayout
   private ProjectInformationLayout projectInformationLayout
@@ -62,7 +61,6 @@ class UpdateOfferView extends VerticalLayout {
     this.createCustomerView = createCustomerView
     this.updatePersonView = updatePersonView
     this.createAffiliationView = createAffiliationView
-    this.projectInformationView = new ProjectInformationView(viewModel)
     this.customerSelectionView = new CustomerSelectionView(viewModel)
     this.projectManagerSelectionView = new ProjectManagerSelectionView(viewModel)
     this.selectItemsView = new SelectItemsView(viewModel, sharedViewModel)
@@ -70,12 +68,12 @@ class UpdateOfferView extends VerticalLayout {
     initSubLayouts()
     positionSubLayouts()
     styleSubLayouts()
+    bindViewModelToLayouts()
     this.addComponent(contentGridLayout)
   }
 
   /**
-   * Initializes the view with the ProjectInformationView, which is the first component to be shown
-   */
+   * Initializes the view with the ProjectInformationView, which is the first component to be shown*/
   private void initMainLayout() {
     final Label label = new Label("Update Offer")
     label.addStyleName(ValoTheme.LABEL_HUGE)
@@ -86,8 +84,7 @@ class UpdateOfferView extends VerticalLayout {
   }
 
   /**
-   * See https://miro.com/app/board/uXjVO4E_5wc=/ for explanation of Grid sections
-   */
+   * See https://miro.com/app/board/uXjVO4E_5wc=/ for explanation of Grid sections*/
   private void initSubLayouts() {
     contentGridLayout = new GridLayout(3, 6)
     projectInformationLayout = new ProjectInformationLayout()
@@ -119,6 +116,28 @@ class UpdateOfferView extends VerticalLayout {
     contentGridLayout.setColumnExpandRatio(2, 0.2)
     contentGridLayout.setSizeFull()
     offerDetailsHeaderLayout.setMargin(new MarginInfo(false, false, false, true))
+  }
+  //ToDo Wire Information from ViewModel to all subLayouts
+  private void bindViewModelToLayouts() {
+    bindViewModelToProjectInformationLayout()
+  }
+
+  private void bindViewModelToProjectInformationLayout() {
+    projectInformationLayout.projectTitle.addValueChangeListener({ this.viewModel.projectTitle = it.value })
+    viewModel.addPropertyChangeListener("projectTitle", {
+      String newValue = it.newValue as String
+      projectInformationLayout.projectTitle.value = newValue ?: projectInformationLayout.projectTitle.emptyValue
+    })
+    projectInformationLayout.projectObjective.addValueChangeListener({ this.viewModel.projectObjective = it.value })
+    viewModel.addPropertyChangeListener("projectObjective", {
+      String newValue = it.newValue as String
+      projectInformationLayout.projectObjective.value = newValue ?: projectInformationLayout.projectObjective.emptyValue
+    })
+    projectInformationLayout.experimentalDesign.addValueChangeListener({ this.viewModel.experimentalDesign = it.value })
+    viewModel.addPropertyChangeListener("experimentalDesign", {
+      String newValue = it.newValue as String
+      projectInformationLayout.experimentalDesign.value = newValue ?: projectInformationLayout.experimentalDesign.emptyValue
+    })
   }
 
   void resetLayoutContent() {
