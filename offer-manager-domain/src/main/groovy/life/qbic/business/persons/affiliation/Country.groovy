@@ -22,6 +22,8 @@ class Country {
             countryDisplayNames << new Locale("", countryCode).getDisplayCountry()
         }
 
-        return countryDisplayNames.sort(Comparator.naturalOrder())
+        countryDisplayNames.sort(Comparator.naturalOrder())
+
+        return countryDisplayNames
     }
 }
