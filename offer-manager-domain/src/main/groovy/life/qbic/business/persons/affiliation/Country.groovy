@@ -12,10 +12,14 @@ class Country {
      * @return A list of unique country names in alphabetical order
      * @since 1.0.0
      */
-    static List<String> availableCountryNames(){
-        List<String> countryNames = Locale.US.getAvailableLocales().collect {it.getDisplayCountry()}.unique()
-        countryNames.removeAll{it.isEmpty()}
-        countryNames.sort()
-        return countryNames
+    static List<String> availableCountryNames() {
+        String[] twoLetterCountryCodes = Locale.getISOCountries()
+        List<String> countryDisplayNames = new ArrayList<>(twoLetterCountryCodes.length)
+
+        for (String countryCode : twoLetterCountryCodes) {
+            countryDisplayNames << new Locale("", countryCode).getDisplayCountry()
+        }
+
+        return countryDisplayNames
     }
 }
