@@ -8,7 +8,9 @@ package life.qbic.business.persons.affiliation
 class Country {
 
     /**
-     * Provides a list of US English names of all known countries. This list contains unique entries and no empty Strings.
+     * Provides a lexicographically ordered ascending list of US English names
+     * of all known countries. This list contains unique entries and no empty Strings.
+     *
      * @return A list of unique country names in alphabetical order
      * @since 1.0.0
      */
@@ -20,6 +22,6 @@ class Country {
             countryDisplayNames << new Locale("", countryCode).getDisplayCountry()
         }
 
-        return countryDisplayNames
+        return countryDisplayNames.sort(Comparator.naturalOrder())
     }
 }
