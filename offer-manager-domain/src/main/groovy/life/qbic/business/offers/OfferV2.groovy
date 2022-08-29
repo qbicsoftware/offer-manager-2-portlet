@@ -55,6 +55,13 @@ class OfferV2 {
   private Person customer
 
   /**
+   * The customer for which this offer was created
+   */
+  @OneToOne(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
+  @JoinColumn(name = "contactId")
+  private Person contact
+
+  /**
    * The QBiC project manager who was assigned to the project
    */
   @OneToOne(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
@@ -295,6 +302,14 @@ class OfferV2 {
 
   void setCustomer(Person customer) {
     this.customer = customer
+  }
+
+  Person getContact() {
+    return contact
+  }
+
+  void setContact(Person contact) {
+    this.contact = contact
   }
 
   Person getProjectManager() {
