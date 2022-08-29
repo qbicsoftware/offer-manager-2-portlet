@@ -87,5 +87,4 @@ class OfferManagerApp extends QBiCPortletUI {
         }
         return layout
     }
-
 }
