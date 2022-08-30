@@ -45,6 +45,7 @@ class UpdateOfferController {
                    List<ProductItem> items,
                    Affiliation customerAffiliation,
                    String experimentalDesign) {
+    //todo update this method to consume contact
     Offer.Builder offerBuilder = new Offer.Builder(
             customer,
             manager,
