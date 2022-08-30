@@ -50,6 +50,7 @@ public class RefactorConverter {
 
     LocalDate creationDate = toLocalDate(offerDto.getModificationDate());
     Person customer = toPerson(offerDto.getCustomer());
+    Person contact = toPerson(offerDto.getContact());
     OfferId offerId = toOfferId(offerDto.getIdentifier());
     Person projectManager = toPerson(offerDto.getProjectManager());
     Affiliation selectedCustomerAffiliation = toAffiliation(
@@ -60,6 +61,7 @@ public class RefactorConverter {
     offer.setAssociatedProject(offerDto.getAssociatedProject().orElse(null));
     offer.setCreationDate(creationDate);
     offer.setCustomer(customer);
+    offer.setContact(contact);
     offer.setExperimentalDesign(offerDto.getExperimentalDesign());
     offer.setIdentifier(offerId);
     offer.setProjectManager(projectManager);
@@ -93,6 +95,8 @@ public class RefactorConverter {
 
   public static life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
     life.qbic.datamodel.dtos.business.Customer customer = toCustomerDto(offer.getCustomer());
+    //todo do we need a contact DTO here? actually a contact is also a customer of QBiC and the customer stated above is the PI
+    life.qbic.datamodel.dtos.business.Customer contact = toCustomerDto(offer.getContact());
     life.qbic.datamodel.dtos.business.ProjectManager projectManager = toProjectManagerDto(
         offer.getProjectManager());
     life.qbic.datamodel.dtos.business.Affiliation customerAffiliation = toAffiliationDto(
@@ -106,7 +110,7 @@ public class RefactorConverter {
 
     // builder composition
     life.qbic.datamodel.dtos.business.Offer.Builder offerDtoBuilder =
-        new life.qbic.datamodel.dtos.business.Offer.Builder(customer, projectManager,
+        new life.qbic.datamodel.dtos.business.Offer.Builder(customer, contact, projectManager,
             offer.getProjectTitle(), offer.getProjectObjective(), customerAffiliation);
     offer.getExperimentalDesign().ifPresent(offerDtoBuilder::experimentalDesign);
     offer.getAssociatedProject().ifPresent(offerDtoBuilder::associatedProject);

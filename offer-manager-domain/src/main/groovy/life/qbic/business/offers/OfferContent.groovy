@@ -36,6 +36,12 @@ class OfferContent {
     final String customerCity
     final String customerCountry
     /**
+     * The information for the contact for which this offer was created
+     */
+    final String contactFirstName
+    final String contactLastName
+    final String contactTitle
+    /**
      * The information for the QBiC project manager who was assigned to the project
      */
     final String projectManagerFirstName
@@ -196,7 +202,7 @@ class OfferContent {
         return externalServiceItems.collect()
     }
 
-    OfferContent(String customerFirstName, String customerLastName, String customerTitle, String customerOrganisation, String customerAddressAddition, String customerStreet, String customerPostalCode, String customerCity, String customerCountry, String projectManagerFirstName, String projectManagerLastName, String projectManagerTitle, String projectManagerEmail, String projectManagerOrganisation, String projectManagerStreet, String projectManagerPostalCode, String projectManagerCity, String projectManagerCountry, Date creationDate, Date expirationDate, String projectTitle, String projectObjective, String experimentalDesign, String offerIdentifier, List<OfferItem> dataGenerationItems, List<OfferItem> dataAnalysisItems, List<OfferItem> dataManagementItems, List<OfferItem> externalServiceItems, double overheadTotal, double overheadRatio, double overheadsDataGeneration, double overheadsDataAnalysis, double overheadsProjectManagementAndDataStorage, double overheadsExternalService, double netDataGeneration, double netDataAnalysis, double netPMandDS, double netExternalServices, double totalCost, double netCost, double netCostsWithOverheads, double totalVat, double vatRatio, Double totalDiscountAmount) {
+    OfferContent(String customerFirstName, String customerLastName, String customerTitle, String customerOrganisation, String customerAddressAddition, String customerStreet, String customerPostalCode, String customerCity, String customerCountry, String contactFirstName, String contactLastName, String contactTitle, String projectManagerFirstName, String projectManagerLastName, String projectManagerTitle, String projectManagerEmail, String projectManagerOrganisation, String projectManagerStreet, String projectManagerPostalCode, String projectManagerCity, String projectManagerCountry, Date creationDate, Date expirationDate, String projectTitle, String projectObjective, String experimentalDesign, String offerIdentifier, List<OfferItem> dataGenerationItems, List<OfferItem> dataAnalysisItems, List<OfferItem> dataManagementItems, List<OfferItem> externalServiceItems, double overheadTotal, double overheadRatio, double overheadsDataGeneration, double overheadsDataAnalysis, double overheadsProjectManagementAndDataStorage, double overheadsExternalService, double netDataGeneration, double netDataAnalysis, double netPMandDS, double netExternalServices, double totalCost, double netCost, double netCostsWithOverheads, double totalVat, double vatRatio, Double totalDiscountAmount) {
         this.customerFirstName = customerFirstName
         this.customerLastName = customerLastName
         this.customerTitle = customerTitle
@@ -206,6 +212,9 @@ class OfferContent {
         this.customerPostalCode = customerPostalCode
         this.customerCity = customerCity
         this.customerCountry = customerCountry
+        this.contactFirstName = contactFirstName
+        this.contactLastName = contactLastName
+        this.contactTitle = contactTitle
         this.projectManagerFirstName = projectManagerFirstName
         this.projectManagerLastName = projectManagerLastName
         this.projectManagerTitle = projectManagerTitle
@@ -254,6 +263,7 @@ class OfferContent {
         String offerIdString = offer.getIdentifier().toString()
         Person customer = offer.getCustomer()
         Affiliation affiliation = offer.getSelectedCustomerAffiliation()
+        Person contact = offer.getContact()
         Person projectManager = offer.getProjectManager()
         Date creationDate = refactorConverter.toUtilDate(offer.getCreationDate())
         Date expirationDate = refactorConverter.toUtilDate(offer.getExpirationDate())
@@ -276,6 +286,9 @@ class OfferContent {
                 affiliation.getPostalCode(),
                 affiliation.city,
                 affiliation.country,
+                contact.firstName,
+                contact.lastName,
+                contact.title,
                 projectManager.firstName,
                 projectManager.lastName,
                 projectManager.title,
