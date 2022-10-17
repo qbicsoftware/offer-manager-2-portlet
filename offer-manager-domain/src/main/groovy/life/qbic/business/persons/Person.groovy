@@ -41,7 +41,7 @@ class Person {
     @Column(name = "active", columnDefinition = "tinyint", nullable = false)
     boolean isActive = true
 
-    @Column(name = "reference_id")
+    @Column(name = "reference_id", nullable = false)
     private String referenceId
 
     @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
