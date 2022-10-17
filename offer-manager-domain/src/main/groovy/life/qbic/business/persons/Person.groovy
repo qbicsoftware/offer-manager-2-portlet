@@ -41,6 +41,9 @@ class Person {
     @Column(name = "active", columnDefinition = "tinyint", nullable = false)
     boolean isActive = true
 
+    @Column(name = "reference_id")
+    private String referenceId
+
     @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
     @JoinTable(name = "person_affiliation", joinColumns = [ @JoinColumn(name = "person_id") ],
             inverseJoinColumns = [ @JoinColumn(name = "affiliation_id")])
@@ -63,6 +66,7 @@ class Person {
         this.title = title
         this.email = email
         this.affiliations = affiliations
+        this.referenceId = UUID.randomUUID().toString()
     }
 
     Integer getId() {
