@@ -84,12 +84,21 @@ public class ProductItem {
     this.offer = requireNonNull(offer, "Offer must not be null");
     this.product = requireNonNull(product, "Product must not be null");
     this.quantity = requireNonNull(quantity, "Quantity must not be null");
-    copy(product);
+    readProductValues(product);
     this.product = product;
     refreshProductItem();
   }
 
-  private void copy(Product product) {
+  /**
+   * Reads all product values and saves them in the {@link ProductItem} class.
+   *
+   * This ensures immutability for prices and other product related properties and
+   * conserves the product state at the time-point of addition to the offer.
+   *
+   * @param product the product to read
+   * @since 1.6.0
+   */
+  private void readProductValues(Product product) {
     this.productCategory = product.getCategory();
     this.description = product.getDescription();
     this.productName = product.getProductName();
@@ -103,7 +112,7 @@ public class ProductItem {
   @PostLoad
   private void triggerProductCopy() {
     if (Objects.isNull(this.productReference)) {
-      copy(product);
+      readProductValues(product);
     }
   }
 
