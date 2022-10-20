@@ -110,6 +110,15 @@ public class ProductItem {
     this.serviceProvider = product.getServiceProvider();
   }
 
+  /**
+   * Helper method for the transition to make product values immutable,
+   * once they have been added to an offer.
+   *
+   * The copy of values will only happen once, if the product reference field
+   * is null, which means the copy has not been done yet.
+   *
+   * @since 1.6.0
+   */
   @PostLoad
   private void triggerProductCopy() {
     if (Objects.isNull(this.productReference)) {
