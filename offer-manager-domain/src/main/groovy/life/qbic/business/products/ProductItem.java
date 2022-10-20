@@ -82,6 +82,7 @@ public class ProductItem {
 
   public ProductItem(OfferV2 offer, Product product, Double quantity) {
     this.offer = requireNonNull(offer, "Offer must not be null");
+    this.product = requireNonNull(product, "Product must not be null");
     this.quantity = requireNonNull(quantity, "Quantity must not be null");
     copy(product);
     this.product = product;
