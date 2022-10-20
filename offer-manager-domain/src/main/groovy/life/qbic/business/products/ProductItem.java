@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -42,8 +43,32 @@ public class ProductItem {
   @JoinColumn(name = "productId", nullable = false)
   private Product product;
 
+  @Column(name = "category")
+  private String productCategory;
+
   @Column(name = "quantity", nullable = false)
   private Double quantity;
+
+  @Column(name = "description", length = 2500)
+  private String description;
+
+  @Column(name = "productName", length = 500)
+  private String productName;
+
+  @Column(name = "internalUnitPrice", nullable = false)
+  private Double internalUnitPrice;
+
+  @Column(name = "externalUnitPrice", nullable = false)
+  private Double externalUnitPrice;
+
+  @Column(name = "unit")
+  private String unit;
+
+  @Column(name = "productReference")
+  private String productReference;
+
+  @Column(name = "serviceProvider", nullable = false)
+  private String serviceProvider;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "offerId", nullable = false)
@@ -59,7 +84,46 @@ public class ProductItem {
     this.offer = requireNonNull(offer, "Offer must not be null");
     this.product = requireNonNull(product, "Product must not be null");
     this.quantity = requireNonNull(quantity, "Quantity must not be null");
+    // Ensure immutability of product information (including prices!)
+    readProductValues(product);
+    this.product = product;
     refreshProductItem();
+  }
+
+  /**
+   * Reads all product values and saves them in the {@link ProductItem} class.
+   *
+   * This ensures immutability for prices and other product related properties and
+   * conserves the product state at the time-point of addition to the offer.
+   *
+   * @param product the product to read
+   * @since 1.6.0
+   */
+  private void readProductValues(Product product) {
+    this.productCategory = product.getCategory();
+    this.description = product.getDescription();
+    this.productName = product.getProductName();
+    this.internalUnitPrice = product.getInternalUnitPrice();
+    this.externalUnitPrice = product.getExternalUnitPrice();
+    this.unit = product.getUnit();
+    this.productReference = product.getProductId();
+    this.serviceProvider = product.getServiceProvider();
+  }
+
+  /**
+   * Helper method for the transition to make product values immutable,
+   * once they have been added to an offer.
+   *
+   * The copy of values will only happen once, if the product reference field
+   * is null, which means the copy has not been done yet.
+   *
+   * @since 1.6.0
+   */
+  @PostLoad
+  private void triggerProductCopy() {
+    if (Objects.isNull(this.productReference)) {
+      readProductValues(product);
+    }
   }
 
   protected ProductItem() {
@@ -89,7 +153,7 @@ public class ProductItem {
   private void refreshProductItem() {
     validateObjectState();
     AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory();
-    unitPrice = determineUnitPrice(affiliationCategory, product);
+    unitPrice = determineUnitPrice(affiliationCategory);
     discountRate = getDiscountRate(affiliationCategory, BigDecimal.valueOf(quantity),
         product.getCategory());
   }
@@ -111,8 +175,16 @@ public class ProductItem {
     BigDecimal quantityDiscountRate =
         calculateQuantityDiscountRate(quantity, productCategory);
     BigDecimal storageDiscountRate =
-        calculateDataStorageDiscountRate(affiliationCategory, productCategory);
+        calculateDataStorageDiscountRate(affiliationCategory);
     return quantityDiscountRate.max(storageDiscountRate);
+  }
+
+  protected Double getInternalUnitPrice() {
+    return this.internalUnitPrice;
+  }
+
+  protected Double getExternalUnitPrice() {
+    return this.externalUnitPrice;
   }
 
   /**
@@ -122,16 +194,14 @@ public class ProductItem {
    * base price.</p>
    *
    * @param affiliationCategory internal, external or external academic
-   * @param product             the product of interest
    * @return the determined base price
    */
-  protected static BigDecimal determineUnitPrice(AffiliationCategory affiliationCategory,
-      Product product) {
+  private BigDecimal determineUnitPrice(AffiliationCategory affiliationCategory) {
     if (affiliationCategory == AffiliationCategory.INTERNAL) {
-      return BigDecimal.valueOf(product.getInternalUnitPrice()).setScale(2,
+      return BigDecimal.valueOf(this.internalUnitPrice).setScale(2,
           RoundingMode.HALF_UP);
     }
-    return BigDecimal.valueOf(product.getExternalUnitPrice())
+    return BigDecimal.valueOf(this.externalUnitPrice)
         .setScale(2, RoundingMode.HALF_UP);
   }
 
@@ -141,11 +211,14 @@ public class ProductItem {
    * on data storage products.
    *
    * @param affiliationCategory the considered affiliation category for discount determination
-   * @param productCategory     the considered product category for discount determination
    * @return the discount rate for the provided product. In range [0,1]
    */
-  protected static BigDecimal calculateDataStorageDiscountRate(
-      AffiliationCategory affiliationCategory, String productCategory) {
+  private BigDecimal calculateDataStorageDiscountRate(
+      AffiliationCategory affiliationCategory) {
+    return calculateDataStorageDiscountRate(affiliationCategory, this.productCategory);
+  }
+
+  protected static BigDecimal calculateDataStorageDiscountRate(AffiliationCategory affiliationCategory, String productCategory) {
     if (productCategory.equalsIgnoreCase("data storage")
         && affiliationCategory == AffiliationCategory.INTERNAL) {
       return BigDecimal.ONE; // full discount
@@ -262,4 +335,5 @@ public class ProductItem {
   public int hashCode() {
     return Objects.hash(product, quantity, offer);
   }
+
 }
