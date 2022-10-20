@@ -156,7 +156,7 @@ public class ProductItem {
     BigDecimal quantityDiscountRate =
         calculateQuantityDiscountRate(quantity, productCategory);
     BigDecimal storageDiscountRate =
-        calculateDataStorageDiscountRate(affiliationCategory, productCategory);
+        calculateDataStorageDiscountRate(affiliationCategory);
     return quantityDiscountRate.max(storageDiscountRate);
   }
 
@@ -179,10 +179,10 @@ public class ProductItem {
    */
   protected BigDecimal determineUnitPrice(AffiliationCategory affiliationCategory) {
     if (affiliationCategory == AffiliationCategory.INTERNAL) {
-      return BigDecimal.valueOf(this.getInternalUnitPrice()).setScale(2,
+      return BigDecimal.valueOf(this.internalUnitPrice).setScale(2,
           RoundingMode.HALF_UP);
     }
-    return BigDecimal.valueOf(this.getExternalUnitPrice())
+    return BigDecimal.valueOf(this.externalUnitPrice)
         .setScale(2, RoundingMode.HALF_UP);
   }
 
@@ -192,11 +192,10 @@ public class ProductItem {
    * on data storage products.
    *
    * @param affiliationCategory the considered affiliation category for discount determination
-   * @param productCategory     the considered product category for discount determination
    * @return the discount rate for the provided product. In range [0,1]
    */
-  protected static BigDecimal calculateDataStorageDiscountRate(
-      AffiliationCategory affiliationCategory, String productCategory) {
+  protected BigDecimal calculateDataStorageDiscountRate(
+      AffiliationCategory affiliationCategory) {
     if (productCategory.equalsIgnoreCase("data storage")
         && affiliationCategory == AffiliationCategory.INTERNAL) {
       return BigDecimal.ONE; // full discount
