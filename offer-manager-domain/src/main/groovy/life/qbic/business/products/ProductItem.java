@@ -177,7 +177,7 @@ public class ProductItem {
    * @param affiliationCategory internal, external or external academic
    * @return the determined base price
    */
-  protected BigDecimal determineUnitPrice(AffiliationCategory affiliationCategory) {
+  private BigDecimal determineUnitPrice(AffiliationCategory affiliationCategory) {
     if (affiliationCategory == AffiliationCategory.INTERNAL) {
       return BigDecimal.valueOf(this.internalUnitPrice).setScale(2,
           RoundingMode.HALF_UP);
@@ -194,7 +194,7 @@ public class ProductItem {
    * @param affiliationCategory the considered affiliation category for discount determination
    * @return the discount rate for the provided product. In range [0,1]
    */
-  protected BigDecimal calculateDataStorageDiscountRate(
+  private BigDecimal calculateDataStorageDiscountRate(
       AffiliationCategory affiliationCategory) {
     return calculateDataStorageDiscountRate(affiliationCategory, this.productCategory);
   }
