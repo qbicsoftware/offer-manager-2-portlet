@@ -84,6 +84,7 @@ public class ProductItem {
     this.offer = requireNonNull(offer, "Offer must not be null");
     this.product = requireNonNull(product, "Product must not be null");
     this.quantity = requireNonNull(quantity, "Quantity must not be null");
+    // Ensure immutability of product information (including prices!)
     readProductValues(product);
     this.product = product;
     refreshProductItem();
