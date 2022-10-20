@@ -15,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.PostLoad;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
@@ -42,8 +43,32 @@ public class ProductItem {
   @JoinColumn(name = "productId", nullable = false)
   private Product product;
 
+  @Column(name = "category")
+  private String productCategory;
+
   @Column(name = "quantity", nullable = false)
   private Double quantity;
+
+  @Column(name = "description", length = 2500)
+  private String description;
+
+  @Column(name = "productName", length = 500)
+  private String productName;
+
+  @Column(name = "internalUnitPrice", nullable = false)
+  private Double internalUnitPrice;
+
+  @Column(name = "externalUnitPrice", nullable = false)
+  private Double externalUnitPrice;
+
+  @Column(name = "unit")
+  private String unit;
+
+  @Column(name = "productReference")
+  private String productReference;
+
+  @Column(name = "serviceProvider", nullable = false)
+  private String serviceProvider;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "offerId", nullable = false)
@@ -57,9 +82,28 @@ public class ProductItem {
 
   public ProductItem(OfferV2 offer, Product product, Double quantity) {
     this.offer = requireNonNull(offer, "Offer must not be null");
-    this.product = requireNonNull(product, "Product must not be null");
     this.quantity = requireNonNull(quantity, "Quantity must not be null");
+    copy(product);
+    this.product = product;
     refreshProductItem();
+  }
+
+  private void copy(Product product) {
+    this.productCategory = product.getCategory();
+    this.description = product.getDescription();
+    this.productName = product.getProductName();
+    this.internalUnitPrice = product.getInternalUnitPrice();
+    this.externalUnitPrice = product.getExternalUnitPrice();
+    this.unit = product.getUnit();
+    this.productReference = product.getProductId();
+    this.serviceProvider = product.getServiceProvider();
+  }
+
+  @PostLoad
+  private void triggerProductCopy() {
+    if (Objects.isNull(this.productReference)) {
+      copy(product);
+    }
   }
 
   protected ProductItem() {
@@ -89,7 +133,7 @@ public class ProductItem {
   private void refreshProductItem() {
     validateObjectState();
     AffiliationCategory affiliationCategory = offer.getSelectedCustomerAffiliation().getCategory();
-    unitPrice = determineUnitPrice(affiliationCategory, product);
+    unitPrice = determineUnitPrice(affiliationCategory);
     discountRate = getDiscountRate(affiliationCategory, BigDecimal.valueOf(quantity),
         product.getCategory());
   }
@@ -115,6 +159,14 @@ public class ProductItem {
     return quantityDiscountRate.max(storageDiscountRate);
   }
 
+  protected Double getInternalUnitPrice() {
+    return this.internalUnitPrice;
+  }
+
+  protected Double getExternalUnitPrice() {
+    return this.externalUnitPrice;
+  }
+
   /**
    * <p>The relevant unit price for a product in an offer depends on the customer's affiliation.
    * The current business policy is to provide base prices for internal and external customer
@@ -122,16 +174,14 @@ public class ProductItem {
    * base price.</p>
    *
    * @param affiliationCategory internal, external or external academic
-   * @param product             the product of interest
    * @return the determined base price
    */
-  protected static BigDecimal determineUnitPrice(AffiliationCategory affiliationCategory,
-      Product product) {
+  protected BigDecimal determineUnitPrice(AffiliationCategory affiliationCategory) {
     if (affiliationCategory == AffiliationCategory.INTERNAL) {
-      return BigDecimal.valueOf(product.getInternalUnitPrice()).setScale(2,
+      return BigDecimal.valueOf(this.getInternalUnitPrice()).setScale(2,
           RoundingMode.HALF_UP);
     }
-    return BigDecimal.valueOf(product.getExternalUnitPrice())
+    return BigDecimal.valueOf(this.getExternalUnitPrice())
         .setScale(2, RoundingMode.HALF_UP);
   }
 
@@ -262,4 +312,5 @@ public class ProductItem {
   public int hashCode() {
     return Objects.hash(product, quantity, offer);
   }
+
 }
