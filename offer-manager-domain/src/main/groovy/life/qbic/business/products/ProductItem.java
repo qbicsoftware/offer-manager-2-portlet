@@ -196,6 +196,10 @@ public class ProductItem {
    */
   protected BigDecimal calculateDataStorageDiscountRate(
       AffiliationCategory affiliationCategory) {
+    return calculateDataStorageDiscountRate(affiliationCategory, this.productCategory);
+  }
+
+  protected static BigDecimal calculateDataStorageDiscountRate(AffiliationCategory affiliationCategory, String productCategory) {
     if (productCategory.equalsIgnoreCase("data storage")
         && affiliationCategory == AffiliationCategory.INTERNAL) {
       return BigDecimal.ONE; // full discount
