@@ -4,12 +4,10 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
-import java.util.StringJoiner;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.products.ProductItem;
-import org.aspectj.bridge.Message;
 
 /**
  * <p>Supplies a checksum for a specific offer. The returned checksum is a SHA-256 checksum on

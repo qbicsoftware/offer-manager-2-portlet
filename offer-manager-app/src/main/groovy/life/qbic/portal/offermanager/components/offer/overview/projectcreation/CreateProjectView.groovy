@@ -2,24 +2,12 @@ package life.qbic.portal.offermanager.components.offer.overview.projectcreation
 
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.ContentMode
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Button
-import com.vaadin.ui.ComboBox
-import com.vaadin.ui.GridLayout
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Label
-import com.vaadin.ui.Panel
-import com.vaadin.ui.RadioButtonGroup
-import com.vaadin.ui.TextArea
-import com.vaadin.ui.TextField
-import com.vaadin.ui.VerticalLayout
+import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
-
-
 
 /**
  * <h1>Enables a user to create a project based on an existing offer</h1>
