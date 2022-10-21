@@ -169,7 +169,12 @@ class OfferContent {
      * @return
      */
     List<OfferItem> getDataGenerationItems() {
-        return dataGenerationItems.collect()
+        return dataGenerationItems.stream().sorted(new Comparator<OfferItem>() {
+            @Override
+            int compare(OfferItem o1, OfferItem o2) {
+                return o1.position - o2.position
+            }
+        }).collect()
     }
 
     /**
@@ -177,7 +182,12 @@ class OfferContent {
      * @return
      */
     List<OfferItem> getDataAnalysisItems() {
-        return dataAnalysisItems.collect()
+        return dataAnalysisItems.stream().sorted(new Comparator<OfferItem>() {
+            @Override
+            int compare(OfferItem o1, OfferItem o2) {
+                return o1.position - o2.position
+            }
+        }).collect()
     }
 
     /**
@@ -185,7 +195,12 @@ class OfferContent {
      * @return
      */
     List<OfferItem> getDataManagementItems() {
-        return dataManagementItems.collect()
+        return dataManagementItems.stream().sorted(new Comparator<OfferItem>() {
+            @Override
+            int compare(OfferItem o1, OfferItem o2) {
+                return o1.position - o2.position
+            }
+        }).collect()
     }
 
     /**
@@ -193,7 +208,12 @@ class OfferContent {
      * @return
      */
     List<OfferItem> getExternalServiceItems() {
-        return externalServiceItems.collect()
+        return externalServiceItems.stream().sorted(new Comparator<OfferItem>() {
+            @Override
+            int compare(OfferItem o1, OfferItem o2) {
+                return o1.position - o2.position
+            }
+        }).collect()
     }
 
     OfferContent(String customerFirstName, String customerLastName, String customerTitle, String customerOrganisation, String customerAddressAddition, String customerStreet, String customerPostalCode, String customerCity, String customerCountry, String projectManagerFirstName, String projectManagerLastName, String projectManagerTitle, String projectManagerEmail, String projectManagerOrganisation, String projectManagerStreet, String projectManagerPostalCode, String projectManagerCity, String projectManagerCountry, Date creationDate, Date expirationDate, String projectTitle, String projectObjective, String experimentalDesign, String offerIdentifier, List<OfferItem> dataGenerationItems, List<OfferItem> dataAnalysisItems, List<OfferItem> dataManagementItems, List<OfferItem> externalServiceItems, double overheadTotal, double overheadRatio, double overheadsDataGeneration, double overheadsDataAnalysis, double overheadsProjectManagementAndDataStorage, double overheadsExternalService, double netDataGeneration, double netDataAnalysis, double netPMandDS, double netExternalServices, double totalCost, double netCost, double netCostsWithOverheads, double totalVat, double vatRatio, Double totalDiscountAmount) {

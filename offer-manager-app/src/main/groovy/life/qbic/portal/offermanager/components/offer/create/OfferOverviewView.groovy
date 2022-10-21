@@ -3,11 +3,13 @@ package life.qbic.portal.offermanager.components.offer.create
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.*
+import com.vaadin.ui.components.grid.GridRowDragger
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.offers.Currency
+import life.qbic.business.products.ProductItem
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.GridUtils
 
@@ -30,6 +32,7 @@ class OfferOverviewView extends VerticalLayout {
     Grid<ProductItemViewModel> itemGrid
     Button previous
     Button save
+    GridRowDragger<ProductItemViewModel> productItemViewModelGridRowDragger;
 
     OfferOverviewView(CreateOfferViewModel viewModel) {
         this.createOfferViewModel = viewModel
@@ -42,6 +45,7 @@ class OfferOverviewView extends VerticalLayout {
         ListDataProvider<ProductItemViewModel> dataProvider =
                 new ListDataProvider(createOfferViewModel.getProductItems())
         itemGrid.setDataProvider(dataProvider)
+        productItemViewModelGridRowDragger = new GridRowDragger<>(itemGrid)
         setupFilters(dataProvider, itemGrid)
     }
 
@@ -210,7 +214,6 @@ class OfferOverviewView extends VerticalLayout {
     Small helper object, that will display information
     about individual price positions for offer overviews.
      */
-
     private class PriceField {
 
         String name

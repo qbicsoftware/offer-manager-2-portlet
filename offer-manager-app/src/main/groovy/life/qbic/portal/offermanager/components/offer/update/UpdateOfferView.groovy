@@ -199,9 +199,13 @@ class UpdateOfferView extends FormLayout {
      */
     private static List<ProductItem> getProductItems(List<ProductItemViewModel> items) {
         List<ProductItem> productItems = []
-        items.each {
-            productItems.add(new ProductItem(it.quantity, it.product))
+        for (int position = 0; position < items.size(); position++) {
+            ProductItemViewModel currentItem = items.get(position)
+            ProductItem productItem = new ProductItem(currentItem.quantity, currentItem.product)
+            productItem.setOrderPosition(position)
+            productItems.add(productItem)
         }
+
         return productItems
     }
 
