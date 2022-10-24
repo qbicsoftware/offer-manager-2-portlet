@@ -1,8 +1,6 @@
 package life.qbic.portal.offermanager.components.person.update
 
-
 import com.vaadin.data.provider.ListDataProvider
-import com.vaadin.event.selection.SelectionListener
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.Button

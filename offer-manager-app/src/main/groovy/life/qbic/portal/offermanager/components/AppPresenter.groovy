@@ -1,7 +1,6 @@
 package life.qbic.portal.offermanager.components
 
 import life.qbic.business.UseCaseFailure
-import life.qbic.portal.offermanager.components.AppViewModel
 
 /**
  *  Handles the presentation of the qoffer-2.0 use cases and its internal data model to the ViewModel.

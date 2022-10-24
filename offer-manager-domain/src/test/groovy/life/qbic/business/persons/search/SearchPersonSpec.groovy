@@ -1,9 +1,6 @@
 package life.qbic.business.persons.search
 
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.business.persons.search.SearchPerson
-import life.qbic.business.persons.search.SearchPersonDataSource
-import life.qbic.business.persons.search.SearchPersonOutput
 import life.qbic.datamodel.dtos.business.Customer
 import spock.lang.Specification
 

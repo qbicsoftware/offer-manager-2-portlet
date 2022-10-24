@@ -1,12 +1,6 @@
 package life.qbic.portal.offermanager.components
 
-import com.vaadin.ui.Alignment
-import com.vaadin.ui.Button
-import com.vaadin.ui.HorizontalLayout
-import com.vaadin.ui.Label
-import com.vaadin.ui.VerticalLayout
-import com.vaadin.ui.Window
-import com.vaadin.ui.themes.ValoTheme
+import com.vaadin.ui.*
 
 /**
  * <h1>Dialog to ask for user confirmation</h1>

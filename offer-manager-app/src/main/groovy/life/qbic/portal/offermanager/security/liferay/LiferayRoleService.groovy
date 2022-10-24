@@ -1,10 +1,8 @@
 package life.qbic.portal.offermanager.security.liferay
 
 import com.liferay.portal.kernel.exception.PortalException
-import com.liferay.portal.model.User
 import com.liferay.portal.model.UserGroupRole
 import com.liferay.portal.service.UserGroupRoleLocalServiceUtil
-import com.liferay.portal.service.UserLocalServiceUtil
 import groovy.util.logging.Log4j2
 import life.qbic.portal.offermanager.security.Role
 import life.qbic.portal.offermanager.security.RoleService

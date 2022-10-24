@@ -1,6 +1,5 @@
 package life.qbic.portal.offermanager.components.offer.create
 
-
 import com.vaadin.data.ValidationResult
 import com.vaadin.data.Validator
 import com.vaadin.data.ValueContext
@@ -8,7 +7,6 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.UserError
 import com.vaadin.ui.*
 import com.vaadin.ui.themes.ValoTheme
-import groovy.beans.Bindable
 import life.qbic.portal.offermanager.components.Resettable
 
 /**

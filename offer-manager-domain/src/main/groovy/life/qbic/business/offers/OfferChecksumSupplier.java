@@ -5,6 +5,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.products.ProductItem;
 
@@ -52,6 +53,7 @@ class OfferChecksumSupplier implements
         .map(this::updateWithCustomer)
         .map(this::updateWithProjectManager)
         .map(this::updateWithSelectedAffiliation)
+        .map(this::updateWithItemOrder)
         .orElseThrow(() -> new RuntimeException("Unexpected error updating offer checksum."));
   }
 
@@ -69,6 +71,12 @@ class OfferChecksumSupplier implements
     offer.getExperimentalDesign()
         .ifPresent(it ->
             digest.update(it.getBytes(StandardCharsets.UTF_8)));
+    return digest;
+  }
+
+  private MessageDigest updateWithItemOrder(MessageDigest digest) {
+    digest.update(offer.getItems().stream().map(ProductItem::offerPosition).map(String::valueOf)
+        .collect(Collectors.joining()).getBytes(StandardCharsets.UTF_8));
     return digest;
   }
 
@@ -90,7 +98,8 @@ class OfferChecksumSupplier implements
   private MessageDigest updateWithSelectedAffiliation(MessageDigest digest) {
     Affiliation selectedCustomerAffiliation = offer.getSelectedCustomerAffiliation();
     digest.update(selectedCustomerAffiliation.getOrganization().getBytes(StandardCharsets.UTF_8));
-    digest.update(selectedCustomerAffiliation.getAddressAddition().getBytes(StandardCharsets.UTF_8));
+    digest.update(
+        selectedCustomerAffiliation.getAddressAddition().getBytes(StandardCharsets.UTF_8));
     digest.update(selectedCustomerAffiliation.getStreet().getBytes(StandardCharsets.UTF_8));
     return digest;
   }
