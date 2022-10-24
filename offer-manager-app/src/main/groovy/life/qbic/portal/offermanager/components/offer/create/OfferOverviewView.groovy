@@ -46,6 +46,8 @@ class OfferOverviewView extends VerticalLayout {
         itemGrid.setDataProvider(dataProvider)
         productItemViewModelGridRowDragger = new GridRowDragger<>(itemGrid)
         setupFilters(dataProvider, itemGrid)
+
+        itemGrid.addStyleName("draggable-table-grab")
     }
 
     private static void setupFilters(ListDataProvider<Product> productListDataProvider,
