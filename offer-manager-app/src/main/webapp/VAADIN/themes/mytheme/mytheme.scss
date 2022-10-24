@@ -50,7 +50,11 @@
     overflow: auto;
   }
 
-  .draggable-table-grab:hover {
+  .draggable-row-grab:hover {
     cursor: grab;
+  }
+
+  .draggable-row-grab:active {
+    cursor: grabbing;
   }
 }

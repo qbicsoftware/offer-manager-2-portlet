@@ -81,6 +81,9 @@ class SelectItemsView extends VerticalLayout implements Resettable {
 
     static void enableDraggable(Grid<ProductItemViewModel> grid) {
         new GridRowDragger<>(grid)
+        grid.setStyleGenerator(row -> {
+            return "draggable-row-grab"
+        })
     }
 
     /**

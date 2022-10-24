@@ -31,7 +31,6 @@ class OfferOverviewView extends VerticalLayout {
     Grid<ProductItemViewModel> itemGrid
     Button previous
     Button save
-    GridRowDragger<ProductItemViewModel> productItemViewModelGridRowDragger;
 
     OfferOverviewView(CreateOfferViewModel viewModel) {
         this.createOfferViewModel = viewModel
@@ -44,10 +43,8 @@ class OfferOverviewView extends VerticalLayout {
         ListDataProvider<ProductItemViewModel> dataProvider =
                 new ListDataProvider(createOfferViewModel.getProductItems())
         itemGrid.setDataProvider(dataProvider)
-        productItemViewModelGridRowDragger = new GridRowDragger<>(itemGrid)
+        enableDraggable(itemGrid)
         setupFilters(dataProvider, itemGrid)
-
-        itemGrid.addStyleName("draggable-table-grab")
     }
 
     private static void setupFilters(ListDataProvider<Product> productListDataProvider,
@@ -59,6 +56,13 @@ class OfferOverviewView extends VerticalLayout {
         GridUtils.setupColumnFilter(productListDataProvider,
                 targetGrid.getColumn("ProductDescription"),
                 customerFilterRow)
+    }
+
+    static void enableDraggable(Grid<ProductItemViewModel> grid) {
+        new GridRowDragger<>(grid)
+        grid.setStyleGenerator(row -> {
+            return "draggable-row-grab"
+        })
     }
 
     /**
