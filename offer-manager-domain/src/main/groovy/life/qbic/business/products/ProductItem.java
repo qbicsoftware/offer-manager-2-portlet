@@ -80,6 +80,14 @@ public class ProductItem {
   @Transient
   private BigDecimal discountRate;
 
+  /**
+   * Stores the latest position on the offer.
+   * <p>
+   * A negative value indicates no specific position was stored in the item.
+   */
+  @Column(name = "offerPosition")
+  private int offerPosition = -1;
+
   public ProductItem(OfferV2 offer, Product product, Double quantity) {
     this.offer = requireNonNull(offer, "Offer must not be null");
     this.product = requireNonNull(product, "Product must not be null");
@@ -92,9 +100,9 @@ public class ProductItem {
 
   /**
    * Reads all product values and saves them in the {@link ProductItem} class.
-   *
-   * This ensures immutability for prices and other product related properties and
-   * conserves the product state at the time-point of addition to the offer.
+   * <p>
+   * This ensures immutability for prices and other product related properties and conserves the
+   * product state at the time-point of addition to the offer.
    *
    * @param product the product to read
    * @since 1.6.0
@@ -111,11 +119,11 @@ public class ProductItem {
   }
 
   /**
-   * Helper method for the transition to make product values immutable,
-   * once they have been added to an offer.
-   *
-   * The copy of values will only happen once, if the product reference field
-   * is null, which means the copy has not been done yet.
+   * Helper method for the transition to make product values immutable, once they have been added to
+   * an offer.
+   * <p>
+   * The copy of values will only happen once, if the product reference field is null, which means
+   * the copy has not been done yet.
    *
    * @since 1.6.0
    */
@@ -124,6 +132,30 @@ public class ProductItem {
     if (Objects.isNull(this.productReference)) {
       readProductValues(product);
     }
+  }
+
+  /**
+   * Sets the position information on the offer the item should be placed
+   * <p>
+   * A negative value indicates no positional information.
+   *
+   * @param position a positive value >= 0 indicating a position on the offer
+   * @since 1.6.0
+   */
+  public void setOfferPosition(int position) {
+    this.offerPosition = position;
+  }
+
+  /**
+   * The position on the offer >= 0.
+   * <p>
+   * Is negative, if no positional information is available.
+   *
+   * @return
+   * @since 1.6.0
+   */
+  public int offerPosition() {
+    return offerPosition;
   }
 
   protected ProductItem() {
@@ -218,7 +250,8 @@ public class ProductItem {
     return calculateDataStorageDiscountRate(affiliationCategory, this.productCategory);
   }
 
-  protected static BigDecimal calculateDataStorageDiscountRate(AffiliationCategory affiliationCategory, String productCategory) {
+  protected static BigDecimal calculateDataStorageDiscountRate(
+      AffiliationCategory affiliationCategory, String productCategory) {
     if (productCategory.equalsIgnoreCase("data storage")
         && affiliationCategory == AffiliationCategory.INTERNAL) {
       return BigDecimal.ONE; // full discount

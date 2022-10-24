@@ -9,8 +9,6 @@ import life.qbic.datamodel.dtos.projectmanagement.ProjectCode
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.datamodel.dtos.projectmanagement.ProjectSpace
 import life.qbic.portal.offermanager.dataresources.ResourcesService
-import life.qbic.portal.offermanager.dataresources.projects.ProjectResourceService
-import life.qbic.portal.offermanager.dataresources.projects.ProjectSpaceResourceService
 
 /**
  * <h1>Holds the create project state information and logic</h1>

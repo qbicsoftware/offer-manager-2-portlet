@@ -1,9 +1,8 @@
 package life.qbic.business.projects.create
 
-
 import life.qbic.business.exceptions.DatabaseQueryException
-import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.datamodel.dtos.business.ProjectApplication
+import life.qbic.datamodel.dtos.projectmanagement.Project
 
 /**
  * <h1>Access to the project management datasource</h1>

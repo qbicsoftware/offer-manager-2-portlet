@@ -1,7 +1,7 @@
 package life.qbic.business.offers.policies.taxes
 
-import life.qbic.business.persons.affiliation.AffiliationCategory;
-import spock.lang.Specification;
+import life.qbic.business.persons.affiliation.AffiliationCategory
+import spock.lang.Specification
 
 class TaxOfficeSpec extends Specification {
 

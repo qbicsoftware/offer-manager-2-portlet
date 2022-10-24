@@ -10,6 +10,7 @@ import com.vaadin.server.UserError
 import com.vaadin.shared.data.sort.SortDirection
 import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.*
+import com.vaadin.ui.components.grid.GridRowDragger
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
@@ -77,6 +78,13 @@ class SelectItemsView extends VerticalLayout implements Resettable {
     TextField amountExternalService
 
     TabSheet packageAccordion
+
+    static void enableDraggable(Grid<ProductItemViewModel> grid) {
+        new GridRowDragger<>(grid)
+        grid.setStyleGenerator(row -> {
+            return "draggable-row-grab"
+        })
+    }
 
     /**
      * Contains regex for filtering the different product types
@@ -312,6 +320,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         generateProductGrid(externalServiceGrid)
         // This grid summarises product items selected for this specific offer, so we set quantity = true
         generateItemGrid(overviewGrid)
+        enableDraggable(overviewGrid)
 
         packageAccordion = new TabSheet()
         packageAccordion.addTab(seqLayout, "Sequencing")

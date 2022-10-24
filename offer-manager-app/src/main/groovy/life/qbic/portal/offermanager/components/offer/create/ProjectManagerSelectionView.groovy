@@ -9,7 +9,6 @@ import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.Resettable
-import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
 
 /**
  * This class generates a Layout in which the user

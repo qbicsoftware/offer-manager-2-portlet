@@ -49,4 +49,12 @@
   .scrollable-layout {
     overflow: auto;
   }
+
+  .draggable-row-grab:hover {
+    cursor: grab;
+  }
+
+  .draggable-row-grab:active {
+    cursor: grabbing;
+  }
 }

@@ -26,6 +26,7 @@ class OfferItem {
     final double listPrice
     final double itemNet
     final String category
+    final int position
 
     static class Builder {
         final double quantity
@@ -39,6 +40,7 @@ class OfferItem {
         final String unit
         final double listPrice
         final double itemNet
+        int position = -1
         String category
 
         /**
@@ -77,6 +79,11 @@ class OfferItem {
             return this
         }
 
+        Builder setPosition(int position) {
+            this.position = position
+            return this
+        }
+
         OfferItem build() {
             return new OfferItem(this)
         }
@@ -99,5 +106,6 @@ class OfferItem {
         this.listPrice = builder.listPrice
         this.itemNet = builder.itemNet
         this.category = builder.category ? builder.category : ""
+        this.position = builder.position
     }
 }

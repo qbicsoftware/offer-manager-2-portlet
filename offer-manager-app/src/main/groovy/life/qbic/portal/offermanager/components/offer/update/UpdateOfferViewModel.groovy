@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.offer.update
 
 import life.qbic.datamodel.dtos.business.Customer
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.ProductItem
 import life.qbic.datamodel.dtos.business.ProjectManager
 import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.datamodel.dtos.general.Person
@@ -9,6 +10,8 @@ import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.components.offer.create.CreateOfferViewModel
 import life.qbic.portal.offermanager.components.offer.create.ProductItemViewModel
 import life.qbic.portal.offermanager.dataresources.ResourcesService
+
+import java.util.stream.Collectors
 
 /**
  * Model with data for updating an existing offer.
@@ -23,7 +26,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * @since 1.0.0
  */
-class UpdateOfferViewModel extends CreateOfferViewModel{
+class UpdateOfferViewModel extends CreateOfferViewModel {
 
     final private EventEmitter<Offer> offerUpdate
 
@@ -50,8 +53,15 @@ class UpdateOfferViewModel extends CreateOfferViewModel{
         super.projectManager = offer.projectManager
         super.experimentalDesign = offer.experimentalDesign.orElse("")
         super.productItems.clear()
-        super.productItems.addAll(offer.items.collect {
-            new ProductItemViewModel(it.quantity, it.product)})
+
+        super.productItems.addAll(
+                offer.items.stream().sorted(new Comparator<ProductItem>() {
+                    @Override
+                    int compare(ProductItem o1, ProductItem o2) {
+                        return o1.offerPosition() - o2.offerPosition()
+                    }
+                }).map(productItem -> new ProductItemViewModel(productItem.quantity, productItem.product)).collect(Collectors.toList())
+        )
         super.savedOffer = Optional.of(offer)
         validateProjectInformation()
     }

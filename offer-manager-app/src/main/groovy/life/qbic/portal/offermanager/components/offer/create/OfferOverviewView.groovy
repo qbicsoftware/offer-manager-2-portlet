@@ -3,6 +3,7 @@ package life.qbic.portal.offermanager.components.offer.create
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.*
+import com.vaadin.ui.components.grid.GridRowDragger
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
@@ -42,6 +43,7 @@ class OfferOverviewView extends VerticalLayout {
         ListDataProvider<ProductItemViewModel> dataProvider =
                 new ListDataProvider(createOfferViewModel.getProductItems())
         itemGrid.setDataProvider(dataProvider)
+        enableDraggable(itemGrid)
         setupFilters(dataProvider, itemGrid)
     }
 
@@ -54,6 +56,13 @@ class OfferOverviewView extends VerticalLayout {
         GridUtils.setupColumnFilter(productListDataProvider,
                 targetGrid.getColumn("ProductDescription"),
                 customerFilterRow)
+    }
+
+    static void enableDraggable(Grid<ProductItemViewModel> grid) {
+        new GridRowDragger<>(grid)
+        grid.setStyleGenerator(row -> {
+            return "draggable-row-grab"
+        })
     }
 
     /**
@@ -210,7 +219,6 @@ class OfferOverviewView extends VerticalLayout {
     Small helper object, that will display information
     about individual price positions for offer overviews.
      */
-
     private class PriceField {
 
         String name
