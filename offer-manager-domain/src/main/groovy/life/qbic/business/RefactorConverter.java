@@ -90,7 +90,7 @@ public class RefactorConverter {
         productItem.getProduct().getUnit(),
         productItem.getListPrice().doubleValue(),
         productItem.getSalePrice().doubleValue()
-    ).build();
+    ).setPosition(productItem.offerPosition()).build();
   }
 
   public static life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
