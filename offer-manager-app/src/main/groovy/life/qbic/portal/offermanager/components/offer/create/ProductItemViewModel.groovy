@@ -21,4 +21,8 @@ class ProductItemViewModel {
         this.quantity = quantity
         this.product = product
     }
+
+    void setQuantity(double quantity) {
+        this.quantity = quantity
+    }
 }
