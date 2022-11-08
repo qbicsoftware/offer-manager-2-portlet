@@ -2,11 +2,10 @@ package life.qbic.portal.offermanager.components.offer.create;
 
 import com.vaadin.data.Binder;
 import com.vaadin.data.Binder.Binding;
-import com.vaadin.data.ValidationResult;
 import com.vaadin.data.Validator;
-import com.vaadin.data.ValueContext;
 import com.vaadin.shared.ui.grid.HeightMode;
 import com.vaadin.ui.Grid;
+import com.vaadin.ui.TextField;
 import com.vaadin.ui.components.grid.GridRowDragger;
 import com.vaadin.ui.renderers.NumberRenderer;
 import groovy.util.ObservableList;
@@ -14,8 +13,6 @@ import java.util.Objects;
 import life.qbic.business.offers.Currency;
 import life.qbic.portal.offermanager.components.GridUtils;
 import life.qbic.portal.offermanager.components.ValidatorCombination;
-import life.qbic.portal.offermanager.components.offer.create.AmountEditFactory.AmountEdit;
-import life.qbic.portal.offermanager.components.offer.create.AmountEditFactory.InputPattern;
 
 /**
  * <b>short description</b>
@@ -27,30 +24,27 @@ import life.qbic.portal.offermanager.components.offer.create.AmountEditFactory.I
 public class ItemsGrid extends Grid<ProductItemViewModel> {
 
 
+  private final TextField editorComponent;
+
   public ItemsGrid() {
 
-    AmountEdit editorComponent = new AmountEdit();
+    editorComponent = new TextField();
     Binder<ProductItemViewModel> binder = getEditor().getBinder();
     ValidatorCombination<String> validatorCombination = new ValidatorCombination<>();
     validatorCombination.addValidator(
-        Validator.from(InputPattern.PARTIAL::test, "Please provide a decimal input"));
-    Binding<ProductItemViewModel, String> quantityBinding = binder
-        .bind(editorComponent,
-            model -> String.valueOf(model.getQuantity()),
-            (model, value) -> {
-              ValidationResult validationResult = validatorCombination.apply(value,
-                  new ValueContext());
-              if (!validationResult.isError()) {
-                model.setQuantity(Double.parseDouble(value));
-                throw new IllegalArgumentException("Blubb");
-              } else {
-                throw new IllegalArgumentException("Bla");
-              }
-            });
+        Validator.from(AmountInputPattern.PARTIAL::test, "Please provide a decimal input"));
+    Binding<ProductItemViewModel, String> binding = binder.forField(editorComponent)
+        .withValidator(validatorCombination)
+        .withNullRepresentation(editorComponent.getEmptyValue())
+        .bind(
+            (model) -> String.valueOf(model.getQuantity()),
+            (model, value) -> model.setQuantity(Double.parseDouble(value)));
     getEditor().setEnabled(true);
+    getEditor().addSaveListener(it -> getDataProvider().refreshAll());
 
     this.addColumn(ProductItemViewModel::getQuantity)
-        .setEditorBinding(quantityBinding)
+        .setEditorBinding(binding)
+        .setEditable(true)
         .setCaption("Quantity")
         .setId("Quantity");
     this.addColumn(it -> it.getProduct().getProductId())
