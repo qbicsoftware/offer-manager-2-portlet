@@ -41,28 +41,42 @@ class Person {
     @Column(name = "active", columnDefinition = "tinyint", nullable = false)
     boolean isActive = true
 
-    @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
+    @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH], fetch = FetchType.EAGER)
     @JoinTable(name = "person_affiliation", joinColumns = [ @JoinColumn(name = "person_id") ],
-            inverseJoinColumns = [ @JoinColumn(name = "affiliation_id")])
+            inverseJoinColumns = [ @JoinColumn(name = "affiliation_id")] )
     List<Affiliation> affiliations = []
+
+    @Column(name = "reference_id")
+    String referenceId
 
     Person() {}
 
     @PostLoad
     protected void onPostLoad() {
         this.getAffiliations()
-        if (affiliations.isEmpty()) {
-            throw new IllegalStateException("Person $this was loaded without affiliations. Illegal State: A person must have at least one affiliation.")
-        }
     }
 
-    Person(String userId, String firstName, String lastName, String title, String email, List<Affiliation> affiliations) {
+    static create(String userId, String firstName, String lastName, String title, String email, List<Affiliation> affiliations) {
+        return new Person(userId, firstName, lastName, title, email, affiliations, UUID.randomUUID().toString())
+    }
+
+    Person(String userId, String firstName, String lastName, String title, String email, List<Affiliation> affiliations, String referenceId) {
         this.userId = userId
         this.firstName = firstName
         this.lastName = lastName
         this.title = title
         this.email = email
         this.affiliations = affiliations
+        UUID.fromString(referenceId)
+        this.referenceId = referenceId
+    }
+
+    private setReferenceId(String id) {
+        this.referenceId = id
+    }
+
+    String getReferenceId() {
+        return referenceId
     }
 
     Integer getId() {
@@ -126,9 +140,6 @@ class Person {
     }
 
     void setAffiliations(List<Affiliation> affiliations) {
-        if (affiliations.isEmpty()) {
-            throw new IllegalArgumentException("A person must have at least one affiliation.")
-        }
         this.affiliations.clear()
         this.affiliations.addAll(affiliations)
     }
@@ -140,9 +151,6 @@ class Person {
 
     void removeAffiliation(Affiliation affiliation) {
         if (affiliation in affiliations) {
-            if (affiliations.size() == 1) {
-                throw new IllegalArgumentException("Cannot remove the last remaining affiliation: $affiliation")
-            }
             affiliations.remove(affiliation)
         }
     }
