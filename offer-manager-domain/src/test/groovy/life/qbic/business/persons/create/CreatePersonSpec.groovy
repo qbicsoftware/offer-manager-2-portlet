@@ -18,9 +18,9 @@ class CreatePersonSpec extends Specification {
   CreatePersonOutput output = Mock()
   CreatePersonDataSource dataSource = Mock()
 
-  private static Person newPerson = new Person(null, "first", "last", "", "first.last@n.ame", [])
-  private static Person existingPerson =  new Person("my-old-user-id", "test", "Mustermann", "Prof. Dr.", "abc@def.ge", [])
-  private static Person existingPersonPlusAffiliations = new Person(existingPerson.getUserId(), existingPerson.getFirstName(), existingPerson.getLastName(), existingPerson.getTitle(), existingPerson.getEmail(), [new Affiliation("orga", "addressAddition", "street", "1234", "city", "country", AffiliationCategory.EXTERNAL)])
+  private static Person newPerson = new Person(null, "first", "last", "", "first.last@n.ame", [], UUID.randomUUID().toString())
+  private static Person existingPerson =  new Person("my-old-user-id", "test", "Mustermann", "Prof. Dr.", "abc@def.ge", [], UUID.randomUUID().toString())
+  private static Person existingPersonPlusAffiliations = new Person(existingPerson.getUserId(), existingPerson.getFirstName(), existingPerson.getLastName(), existingPerson.getTitle(), existingPerson.getEmail(), [new Affiliation("orga", "addressAddition", "street", "1234", "city", "country", AffiliationCategory.EXTERNAL)], UUID.randomUUID().toString())
 
 
 
@@ -35,7 +35,7 @@ class CreatePersonSpec extends Specification {
     1 * dataSource.addPerson(customer)
 
     where:
-    customer = new Person("my.user@id.de", "FirstName", "LastName", "Title", "email", [])
+    customer = new Person("my.user@id.de", "FirstName", "LastName", "Title", "email", [], UUID.randomUUID().toString())
   }
 
 
@@ -52,7 +52,7 @@ class CreatePersonSpec extends Specification {
     0 * output.personCreated(_ as Person)
 
     where:
-    customer = new Person("my.user@id.de", "FirstName", "LastName", "Title", "email", [])
+    customer = new Person("my.user@id.de", "FirstName", "LastName", "Title", "email", [], UUID.randomUUID().toString())
   }
 
   def "when the person already exists, then a failure notification is send"() {
@@ -67,7 +67,7 @@ class CreatePersonSpec extends Specification {
     1 * output.failNotification(_)
 
     where:
-    customer = new Person("my.user@id.de", "FirstName", "LastName", "Title", "email", [])
+    customer = new Person("my.user@id.de", "FirstName", "LastName", "Title", "email", [], UUID.randomUUID().toString())
 
   }
 
@@ -154,7 +154,7 @@ class CreatePersonSpec extends Specification {
   }
 
   private static Person updatedPersonWithPreservedUserId(Person oldPerson, Person updatedPerson) {
-    Person person = new Person(oldPerson.getUserId(), updatedPerson.getFirstName(), updatedPerson.getLastName(), updatedPerson.getTitle(), updatedPerson.getEmail(), updatedPerson.getAffiliations())
+    Person person = new Person(oldPerson.getUserId(), updatedPerson.getFirstName(), updatedPerson.getLastName(), updatedPerson.getTitle(), updatedPerson.getEmail(), updatedPerson.getAffiliations(), updatedPerson.getReferenceId())
     person.setIsActive(true)
     person.setId(5)
     return person
