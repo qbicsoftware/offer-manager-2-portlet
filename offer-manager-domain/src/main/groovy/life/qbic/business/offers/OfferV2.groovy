@@ -1,6 +1,6 @@
 package life.qbic.business.offers
 
-
+import life.qbic.business.offers.customer.Customer
 import life.qbic.business.offers.identifier.OfferId
 import life.qbic.business.offers.policies.taxes.TaxOffice
 import life.qbic.business.offers.policies.taxes.TaxPolicy
@@ -123,6 +123,10 @@ class OfferV2 {
     @Column(name = "associatedProject")
     @Convert(converter = OptionalProjectIdentifierConverter.class)
     private ProjectIdentifier associatedProject
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "id", referencedColumnName = "customerDetailsId")
+    private Customer customerDetails
 
     @Transient
     private ItemGroup dataGenerationItems = new ItemGroup()
