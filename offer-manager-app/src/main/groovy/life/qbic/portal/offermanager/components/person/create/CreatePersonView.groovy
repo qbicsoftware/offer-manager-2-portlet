@@ -257,12 +257,6 @@ class CreatePersonView extends VerticalLayout implements Resettable {
                         emailField.componentError = null
                     }
                     break
-                case "affiliationValid":
-                    if (it.newValue || it.newValue == null) {
-                        organisationComboBox.componentError = null
-                        addressAdditionComboBox.componentError = null
-                    }
-                    break
                 default:
                     break
             }
@@ -349,16 +343,6 @@ class CreatePersonView extends VerticalLayout implements Resettable {
                 createPersonViewModel.emailValid = true
             }
         })
-        this.organisationComboBox.addSelectionListener({ selection ->
-            ValidationResult result = selectionValidator.apply(selection.getValue(), new ValueContext(this.organisationComboBox))
-            if (result.isError()) {
-                createPersonViewModel.affiliationValid = false
-                UserError error = new UserError(result.getErrorMessage())
-                organisationComboBox.setComponentError(error)
-            } else {
-                createPersonViewModel.affiliationValid = true
-            }
-        })
     }
 
     /**
@@ -407,8 +391,7 @@ class CreatePersonView extends VerticalLayout implements Resettable {
         return createPersonViewModel.academicTitleValid \
              && createPersonViewModel.firstNameValid \
              && createPersonViewModel.lastNameValid \
-             && createPersonViewModel.emailValid \
-             && createPersonViewModel.affiliationValid
+             && createPersonViewModel.emailValid
     }
 
     private void registerListeners() {
@@ -420,7 +403,9 @@ class CreatePersonView extends VerticalLayout implements Resettable {
                 String lastName = createPersonViewModel.lastName
                 String email = createPersonViewModel.email
                 List<Affiliation> affiliations = new ArrayList()
-                affiliations.add(createPersonViewModel.affiliation)
+                if (!Objects.isNull(createPersonViewModel.affiliation)) {
+                    affiliations.add(createPersonViewModel.affiliation)
+                }
 
                 if (!createPersonViewModel.outdatedPerson) {
                     controller.createNewPerson(firstName, lastName, title, email, affiliations)

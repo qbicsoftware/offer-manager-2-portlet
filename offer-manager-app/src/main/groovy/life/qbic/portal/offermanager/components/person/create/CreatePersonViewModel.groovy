@@ -34,7 +34,6 @@ class CreatePersonViewModel implements Resettable{
     @Bindable Boolean firstNameValid
     @Bindable Boolean lastNameValid
     @Bindable Boolean emailValid
-    @Bindable Boolean affiliationValid
 
     @Bindable Boolean affiliationViewVisible
 
@@ -119,7 +118,6 @@ class CreatePersonViewModel implements Resettable{
         this.setEmailValid(null)
 
         this.setAffiliation(null)
-        this.setAffiliationValid(null)
 
         refreshAvailableOrganizations()
     }

@@ -183,8 +183,8 @@ class UpdatePersonView extends CreatePersonView {
         })
 
         updatePersonViewModel.addPropertyChangeListener({
-            if (it.propertyName == "affiliation" || it.propertyName == "affiliationValid") {
-                boolean buttonEnabled = updatePersonViewModel.affiliation && updatePersonViewModel.affiliationValid
+            if (it.propertyName == "affiliation") {
+                boolean buttonEnabled = updatePersonViewModel.affiliation
                 addAffiliationButton.setEnabled(buttonEnabled)
             }
         })
@@ -202,8 +202,6 @@ class UpdatePersonView extends CreatePersonView {
         })
 
         updatePersonViewModel.affiliationList.addPropertyChangeListener({
-            //validation
-            updatePersonViewModel.affiliationsValid = ! updatePersonViewModel.affiliationList.isEmpty()
             if(updatePersonViewModel.outdatedPerson) {
                submitButton.enabled = allValuesValid()
             } else {
@@ -215,7 +213,6 @@ class UpdatePersonView extends CreatePersonView {
     private void resetAffiliation() {
         organisationComboBox.clear()
         addressAdditionComboBox.clear()
-        createPersonViewModel.affiliationValid = null
     }
 
     /**
@@ -232,7 +229,6 @@ class UpdatePersonView extends CreatePersonView {
                 && createPersonViewModel.firstNameValid
                 && createPersonViewModel.lastNameValid
                 && createPersonViewModel.emailValid
-                && updatePersonViewModel.affiliationsValid
                 && updatePersonViewModel.personChanged()
     }
 }
