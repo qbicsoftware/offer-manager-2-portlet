@@ -39,6 +39,9 @@ class Affiliation {
     @Column(name = "country")
     String country
 
+    @Column(name = "active")
+    Integer active
+
     @Column(name = "category")
     @Convert(converter = AffiliationCategoryConverter.class)
     AffiliationCategory category
@@ -51,6 +54,7 @@ class Affiliation {
         this.city = city
         this.country = country
         this.category = category
+        this.active = 1
     }
 
     Affiliation() {
@@ -119,5 +123,24 @@ class Affiliation {
 
     void setCategory(AffiliationCategory category) {
         this.category = category
+    }
+
+    private setActive(int value) {
+        if (value != 0 && value != 1) {
+            throw new IllegalArgumentException("Value must be 0 (inactive) or 1 (active)")
+        }
+        this.active = value
+    }
+
+    private Integer getActive() {
+        return active
+    }
+
+    Boolean isActive() {
+        return active == 1 ? Boolean.TRUE : Boolean.FALSE
+    }
+
+    void archive() {
+        this.active = 0
     }
 }

@@ -9,6 +9,7 @@ import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.RefactorConverter
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.portal.offermanager.components.ConfirmationDialog
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationView
 
@@ -20,7 +21,7 @@ import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffilia
  * @since 1.0.0
  */
 @Log4j2
-class SearchAffiliationView extends FormLayout{
+class SearchAffiliationView extends FormLayout implements Observer {
 
     private final SearchAffiliationViewModel viewModel
     private final UpdateAffiliationView updateAffiliationView
@@ -29,14 +30,22 @@ class SearchAffiliationView extends FormLayout{
     private Panel selectedAffiliationDetails
     private VerticalLayout searchAffiliationLayout
 
-    SearchAffiliationView(SearchAffiliationViewModel viewModel, UpdateAffiliationView updateAffiliationView) {
+    private ConfirmationDialog confirmationDialog
+
+    private ArchiveAffiliationController controller
+
+    SearchAffiliationView(SearchAffiliationViewModel viewModel, UpdateAffiliationView updateAffiliationView,
+                          ArchiveAffiliationController affiliationController) {
         this.viewModel = viewModel
         this.updateAffiliationView = updateAffiliationView
+        this.controller = Objects.requireNonNull(affiliationController)
 
         initLayout()
         generateAffiliationGrid()
         listenToAffiliationSelection()
         listenToUpdateAffiliationView()
+        // Register for changes in the affiliation list
+        this.viewModel.addObserver(this)
     }
 
     private void initLayout() {
@@ -57,19 +66,53 @@ class SearchAffiliationView extends FormLayout{
         updateAffiliationView.setMargin(false)
         updateAffiliationView.setVisible(false)
 
-        this.addComponents(searchAffiliationLayout,updateAffiliationView)
+        this.addComponents(searchAffiliationLayout, updateAffiliationView)
         this.setMargin(false)
     }
 
-    private HorizontalLayout generateButtonLayout(){
+    private HorizontalLayout generateButtonLayout() {
         HorizontalLayout buttonLayout = new HorizontalLayout()
         def updateButton = generateUpdateButton()
+        def archiveButton = generateArchivingButton()
         buttonLayout.addComponent(updateButton)
+        buttonLayout.addComponent(archiveButton)
 
         return buttonLayout
     }
 
-    private Button generateUpdateButton(){
+    private Button generateArchivingButton() {
+        Button archive = new Button("Archive", VaadinIcons.ARCHIVE)
+        archive.setEnabled(false)
+        archive.setStyleName(ValoTheme.BUTTON_LARGE)
+
+        archive.addClickListener({
+            confirmationDialog = new ConfirmationDialog("This archives the selected affiliation and removes it from all related persons!\n\n Existing offers are not affected.")
+            UI.getCurrent().addWindow(confirmationDialog)
+
+            confirmationDialog.confirm.caption = "Archive"
+            confirmationDialog.confirm.setIcon(VaadinIcons.ARCHIVE)
+            confirmationDialog.confirm.addStyleName(ValoTheme.BUTTON_DANGER)
+
+            confirmationDialog.decline.caption = "Abort"
+            confirmationDialog.decline.setIcon(VaadinIcons.CLOSE)
+
+            confirmationDialog.confirm.addClickListener({
+                controller.archive(viewModel.getSelectedAffiliation().get())
+            })
+        })
+
+        affiliationGrid.addSelectionListener({
+            if (it.firstSelectedItem.isPresent()) {
+                archive.setEnabled(true)
+            } else {
+                archive.setEnabled(false)
+            }
+        })
+
+        return archive
+    }
+
+    private Button generateUpdateButton() {
         Button update = new Button("Update Affiliation", VaadinIcons.EDIT)
         update.setEnabled(false)
         update.setStyleName(ValoTheme.BUTTON_LARGE)
@@ -79,9 +122,9 @@ class SearchAffiliationView extends FormLayout{
             showUpdateAffiliation()
         })
         affiliationGrid.addSelectionListener({
-            if(it.firstSelectedItem.isPresent()){
+            if (it.firstSelectedItem.isPresent()) {
                 update.setEnabled(true)
-            }else{
+            } else {
                 update.setEnabled(false)
             }
         })
@@ -89,7 +132,7 @@ class SearchAffiliationView extends FormLayout{
         return update
     }
 
-    private void listenToUpdateAffiliationView(){
+    private void listenToUpdateAffiliationView() {
         updateAffiliationView.addAbortListener(this::hideUpdateAffiliation)
         updateAffiliationView.addSubmitListener(this::hideUpdateAffiliation)
     }
@@ -136,8 +179,7 @@ class SearchAffiliationView extends FormLayout{
     }
 
     /**
-     * Sets a listener to the affiliation grid.
-     */
+     * Sets a listener to the affiliation grid.*/
     private void listenToAffiliationSelection() {
         this.affiliationGrid.addSelectionListener({
             viewModel.selectedAffiliation = it.firstSelectedItem
@@ -223,6 +265,13 @@ class SearchAffiliationView extends FormLayout{
             stringBuilder.append("$affiliation.country")
         }
         return stringBuilder.toString().trim()
+    }
+
+    @Override
+    void update(Observable o, Object arg) {
+        // We want to refresh the grid, so that cached items are removed and the content
+        // reflects the current content of available (active) affiliations
+        this.affiliationGrid.getDataProvider().refreshAll()
     }
 
 
