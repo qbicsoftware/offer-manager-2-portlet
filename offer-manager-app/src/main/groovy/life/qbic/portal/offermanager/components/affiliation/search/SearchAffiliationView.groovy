@@ -38,7 +38,7 @@ class SearchAffiliationView extends FormLayout implements Observer {
                           ArchiveAffiliationController affiliationController) {
         this.viewModel = viewModel
         this.updateAffiliationView = updateAffiliationView
-        this.controller = Objects.requireNonNull(affiliationController)
+        this.controller = Objects.requireNonNull(affiliationController, "affiliaiton controller must not be null")
 
         initLayout()
         generateAffiliationGrid()

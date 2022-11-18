@@ -39,8 +39,8 @@ class Affiliation {
     @Column(name = "country")
     String country
 
-    @Column(name = "active")
-    Integer active
+    @Column(name = "active", columnDefinition="TINYINT(1)")
+    boolean active
 
     @Column(name = "category")
     @Convert(converter = AffiliationCategoryConverter.class)
