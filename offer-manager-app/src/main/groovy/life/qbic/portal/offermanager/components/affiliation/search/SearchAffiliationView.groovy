@@ -34,6 +34,10 @@ class SearchAffiliationView extends FormLayout implements Observer {
 
     private ArchiveAffiliationController controller
 
+    private Button updateAffiliationButton
+
+    private Button archiveAffiliationButton
+
     SearchAffiliationView(SearchAffiliationViewModel viewModel, UpdateAffiliationView updateAffiliationView,
                           ArchiveAffiliationController affiliationController) {
         this.viewModel = viewModel
@@ -72,10 +76,10 @@ class SearchAffiliationView extends FormLayout implements Observer {
 
     private HorizontalLayout generateButtonLayout() {
         HorizontalLayout buttonLayout = new HorizontalLayout()
-        def updateButton = generateUpdateButton()
-        def archiveButton = generateArchivingButton()
-        buttonLayout.addComponent(updateButton)
-        buttonLayout.addComponent(archiveButton)
+        this.updateAffiliationButton = generateUpdateButton()
+        this.archiveAffiliationButton = generateArchivingButton()
+        buttonLayout.addComponent(updateAffiliationButton)
+        buttonLayout.addComponent(archiveAffiliationButton)
 
         return buttonLayout
     }
@@ -272,6 +276,12 @@ class SearchAffiliationView extends FormLayout implements Observer {
         // We want to refresh the grid, so that cached items are removed and the content
         // reflects the current content of available (active) affiliations
         this.affiliationGrid.getDataProvider().refreshAll()
+        disableActionButtons()
+    }
+
+    private void disableActionButtons() {
+        this.archiveAffiliationButton.setEnabled(false)
+        this.updateAffiliationButton.setEnabled(false)
     }
 
 
