@@ -39,7 +39,7 @@ class Affiliation {
     @Column(name = "country")
     String country
 
-    @Column(name = "active", columnDefinition="TINYINT(1)")
+    @Column(name = "active", columnDefinition = "TINYINT(1)")
     boolean active
 
     @Column(name = "category")
@@ -54,7 +54,7 @@ class Affiliation {
         this.city = city
         this.country = country
         this.category = category
-        this.active = 1
+        this.active = true // default setting is the affiliation to be active
     }
 
     Affiliation() {
@@ -125,22 +125,19 @@ class Affiliation {
         this.category = category
     }
 
-    private setActive(int value) {
-        if (value != 0 && value != 1) {
-            throw new IllegalArgumentException("Value must be 0 (inactive) or 1 (active)")
-        }
+    private setActive(boolean value) {
         this.active = value
     }
 
-    private Integer getActive() {
+    private boolean getActive() {
         return active
     }
 
     Boolean isActive() {
-        return active == 1 ? Boolean.TRUE : Boolean.FALSE
+        return active
     }
 
     void archive() {
-        this.active = 0
+        this.active = false
     }
 }
