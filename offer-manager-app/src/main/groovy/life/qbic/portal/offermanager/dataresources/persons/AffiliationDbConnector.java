@@ -8,6 +8,7 @@ import life.qbic.business.exceptions.DatabaseQueryException;
 import life.qbic.business.persons.affiliation.Affiliation;
 import life.qbic.business.persons.affiliation.AffiliationExistsException;
 import life.qbic.business.persons.affiliation.AffiliationNotFoundException;
+import life.qbic.business.persons.affiliation.archive.ArchiveAffiliationDataSource;
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource;
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource;
 import life.qbic.business.persons.affiliation.update.UpdateAffiliationDataSource;
@@ -19,7 +20,7 @@ import org.hibernate.query.Query;
 
 
 public class AffiliationDbConnector implements CreateAffiliationDataSource,
-    ListAffiliationsDataSource, UpdateAffiliationDataSource {
+    ListAffiliationsDataSource, UpdateAffiliationDataSource, ArchiveAffiliationDataSource {
 
   private final SessionProvider sessionProvider;
 
@@ -97,5 +98,17 @@ public class AffiliationDbConnector implements CreateAffiliationDataSource,
     session.clear();
     session.getTransaction().commit();
     return isInSession;
+  }
+
+  @Override
+  public void archiveAffiliation(Affiliation affiliation) throws DatabaseQueryException {
+    try(Session session = sessionProvider.getCurrentSession()) {
+      session.beginTransaction();
+      session.merge(affiliation);
+      session.getTransaction().commit();
+    } catch (HibernateException e) {
+      log.error(e);
+      throw new DatabaseQueryException("Archiving failed");
+    }
   }
 }

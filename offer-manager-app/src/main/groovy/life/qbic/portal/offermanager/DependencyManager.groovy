@@ -5,6 +5,9 @@ import life.qbic.business.offers.create.CreateOffer
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.fetch.FetchOffer
 import life.qbic.business.offers.fetch.FetchOfferDataSource
+import life.qbic.business.persons.affiliation.archive.ArchiveAffiliation
+import life.qbic.business.persons.affiliation.archive.ArchiveAffiliationDataSource
+import life.qbic.business.persons.affiliation.archive.ArchiveAffiliationOutput
 import life.qbic.business.persons.affiliation.create.CreateAffiliation
 import life.qbic.business.persons.affiliation.create.CreateAffiliationDataSource
 import life.qbic.business.persons.affiliation.list.ListAffiliationsDataSource
@@ -38,6 +41,8 @@ import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationController
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationPresenter
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
+import life.qbic.portal.offermanager.components.affiliation.search.ArchiveAffiliationController
+import life.qbic.portal.offermanager.components.affiliation.search.ArchiveAffiliationPresenter
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationView
 import life.qbic.portal.offermanager.components.affiliation.search.SearchAffiliationViewModel
 import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationController
@@ -142,6 +147,7 @@ class DependencyManager {
     private ListAffiliationsDataSource listAffiliationsDataSource
     private UpdateAffiliationDataSource updateAffiliationDataSource
     private SearchPersonDataSource searchPersonDataSource
+    private ArchiveAffiliationDataSource archiveAffiliationDataSource
     // Implemented by life.qbic.portal.offermanager.dataresources.products.ProductsDbConnector
     private ArchiveProductDataSource archiveProductDataSource
     private CreateProductDataSource createProductDataSource
@@ -200,6 +206,7 @@ class DependencyManager {
             createAffiliationDataSource = affiliationDbConnector
             updateAffiliationDataSource = affiliationDbConnector
             listAffiliationsDataSource = affiliationDbConnector
+            archiveAffiliationDataSource = affiliationDbConnector
 
             ProductsDbConnector productsDbConnector = new ProductsDbConnector(DatabaseSession.getInstance())
             archiveProductDataSource = productsDbConnector
@@ -333,9 +340,11 @@ class DependencyManager {
     private SearchAffiliationView createSearchAffiliationView() {
         ResourcesService<Affiliation> affiliationResourcesService = this.affiliationService
         SearchAffiliationViewModel searchAffiliationViewModel = new SearchAffiliationViewModel(affiliationResourcesService)
-
+        ArchiveAffiliationOutput archiveAffiliationOutput = new ArchiveAffiliationPresenter(affiliationResourcesService, this.viewModel)
+        ArchiveAffiliation archiveAffiliation = new ArchiveAffiliation(archiveAffiliationOutput, archiveAffiliationDataSource)
         UpdateAffiliationView updateAffiliationView = createUpdateAffiliationView()
-        SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel, updateAffiliationView)
+        ArchiveAffiliationController controller = new ArchiveAffiliationController(archiveAffiliation)
+        SearchAffiliationView searchAffiliationView = new SearchAffiliationView(searchAffiliationViewModel, updateAffiliationView, controller)
         return searchAffiliationView
     }
 

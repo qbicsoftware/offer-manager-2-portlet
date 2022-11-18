@@ -264,6 +264,7 @@ public class RefactorConverter {
     affiliationDtoBuilder.setId(affiliation.getId());
     affiliationDtoBuilder.category(toAffiliationCategoryDto(affiliation.getCategory()));
     affiliationDtoBuilder.country(affiliation.getCountry());
+    affiliationDtoBuilder.setActive(affiliation.isActive());
     if (affiliation.getAddressAddition() != null && !affiliation.getAddressAddition().isEmpty()) {
       affiliationDtoBuilder.setAddressAddition(affiliation.getAddressAddition());
     }
@@ -282,6 +283,9 @@ public class RefactorConverter {
         affiliationDto.getCountry(),
         affiliationCategory);
     affiliation.setId(affiliationDto.getId());
+    if (!affiliationDto.isActive()) {
+      affiliation.archive();
+    }
     return affiliation;
   }
 

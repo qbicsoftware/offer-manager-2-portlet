@@ -4,6 +4,7 @@ import groovy.transform.ToString
 import life.qbic.business.persons.affiliation.Affiliation
 
 import javax.persistence.*
+import java.util.stream.Collectors
 
 /**
  * <b><class short description - 1 Line!></b>
@@ -53,7 +54,11 @@ class Person {
 
     @PostLoad
     protected void onPostLoad() {
-        this.getAffiliations()
+        loadAffiliations()
+    }
+
+    private List<Affiliation> loadAffiliations(){
+        return this.affiliations
     }
 
     static create(String userId, String firstName, String lastName, String title, String email, List<Affiliation> affiliations) {
@@ -135,8 +140,15 @@ class Person {
         this.email = email
     }
 
+    /**
+     * Returns active affiliations of a person
+     * @return
+     * @since 1.6.0
+     */
     List<Affiliation> getAffiliations() {
-        return affiliations
+        List<Affiliation> activeAffiliations = affiliations.stream()
+                .filter(affiliation -> affiliation.isActive()).collect(Collectors.toList())
+        return activeAffiliations
     }
 
     void setAffiliations(List<Affiliation> affiliations) {

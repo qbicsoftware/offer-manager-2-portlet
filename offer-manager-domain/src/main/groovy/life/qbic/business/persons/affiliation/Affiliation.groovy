@@ -39,6 +39,9 @@ class Affiliation {
     @Column(name = "country")
     String country
 
+    @Column(name = "active", columnDefinition = "TINYINT(1)")
+    boolean active
+
     @Column(name = "category")
     @Convert(converter = AffiliationCategoryConverter.class)
     AffiliationCategory category
@@ -51,6 +54,7 @@ class Affiliation {
         this.city = city
         this.country = country
         this.category = category
+        this.active = true // default setting is the affiliation to be active
     }
 
     Affiliation() {
@@ -119,5 +123,21 @@ class Affiliation {
 
     void setCategory(AffiliationCategory category) {
         this.category = category
+    }
+
+    private setActive(boolean value) {
+        this.active = value
+    }
+
+    private boolean getActive() {
+        return active
+    }
+
+    Boolean isActive() {
+        return active
+    }
+
+    void archive() {
+        this.active = false
     }
 }
