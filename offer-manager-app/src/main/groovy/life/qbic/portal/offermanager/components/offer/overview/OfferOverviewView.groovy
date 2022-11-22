@@ -55,6 +55,10 @@ class OfferOverviewView extends VerticalLayout implements Observer {
 
     private FormLayout defaultContent
 
+    private Button toggleOverview
+
+    private Button toggleVersions
+
     OfferOverviewView(OfferOverviewModel model,
                       OfferOverviewController offerOverviewController,
                       CreateProjectView createProjectView) {
@@ -65,6 +69,8 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         this.downloadBtn = new Button("Download Offer", VaadinIcons.DOWNLOAD)
         this.updateOfferBtn = new Button("Update Offer", VaadinIcons.EDIT)
         this.createProjectButton = new Button("Create Project", VaadinIcons.PLUS_CIRCLE)
+        this.toggleOverview = new Button("Overview")
+        this.toggleVersions = new Button("Versions")
         this.downloadSpinner = new ProgressBar()
         this.createProjectView = createProjectView
         // Register this view to be notified on updates in the model
@@ -76,6 +82,25 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         configureOverviewVersionsGrid()
 
         setupListeners()
+        setupToggleView()
+    }
+
+    void setupToggleView() {
+        this.overviewVersionsGrid.setVisible(false)
+        this.toggleVersions.setEnabled(false)
+        this.toggleOverview.setEnabled(true)
+        this.toggleVersions.addClickListener(  {
+            overviewGrid.setVisible(false)
+            overviewVersionsGrid.setVisible(true)
+            toggleVersions.setEnabled(false)
+            toggleOverview.setEnabled(true)
+        })
+        this.toggleOverview.addClickListener({
+            overviewGrid.setVisible(true)
+            overviewVersionsGrid.setVisible(false)
+            toggleVersions.setEnabled(true)
+            toggleOverview.setEnabled(false)
+        })
     }
 
     void configureOverviewGrid() {
@@ -136,6 +161,8 @@ class OfferOverviewView extends VerticalLayout implements Observer {
                 downloadBtn,
                 updateOfferBtn,
                 createProjectButton,
+                toggleOverview,
+                toggleVersions,
                 downloadSpinner)
 
         activityContainer.setMargin(false)
@@ -232,6 +259,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         updateOfferBtn.setEnabled(false)
         downloadBtn.setEnabled(false)
         createProjectButton.setEnabled(false)
+        toggleVersions.setEnabled(false)
     }
 
     private void selectOfferOverview(OfferOverview overview) {
@@ -242,6 +270,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         new LoadOfferInfoThread(UI.getCurrent(), overview).start()
         downloadBtn.setEnabled(true)
         updateOfferBtn.setEnabled(true)
+        toggleVersions.setEnabled(true)
         checkProjectCreationAllowed(overview)
     }
 
