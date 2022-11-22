@@ -25,12 +25,18 @@ import java.util.stream.Collectors
  *
  * @since 1.0.0
  */
-class OfferOverviewModel {
+class OfferOverviewModel extends Observable {
 
     /**
      * A list with all available offer overviews
      */
-    ObservableList offerOverviewList
+    ObservableList latestOfferOverviewList
+
+    List<OfferOverview> offerVersionsForSelected
+
+    List<OfferOverview> allOfferVersions
+
+    OfferOverview selectedOverview
 
     Optional<Offer> offer = Optional.empty()
 
@@ -49,8 +55,9 @@ class OfferOverviewModel {
                        AppViewModel viewModel,
                        EventEmitter<Offer> offerEventEmitter) {
         this.service = service
-        this.offerOverviewList = new ObservableList(filterForLatest(new ArrayList(service.iterator().toList())))
-        //this.latestOverviews = new ObserableList(new ArrayList(service.iterator().toList()))
+        this.allOfferVersions = new ArrayList<>(service.iterator().toList())
+        this.latestOfferOverviewList = new ObservableList(filterForLatest(allOfferVersions))
+        this.offerVersionsForSelected = new ArrayList<>()
         this.offerContent = Optional.empty()
         this.viewModel = viewModel
         this.displaySpinner = false
@@ -60,9 +67,9 @@ class OfferOverviewModel {
 
     private void subscribeToOverviewService() {
         service.subscribe({
-            offerOverviewList.clear()
+            latestOfferOverviewList.clear()
             Iterator<OfferOverview> iterator = service.iterator()
-            offerOverviewList.addAll(iterator)
+            latestOfferOverviewList.addAll(iterator)
         })
     }
 
@@ -72,6 +79,22 @@ class OfferOverviewModel {
         } else {
             throw new RuntimeException("No offer is currently selected.")
         }
+    }
+
+    void setSelectedOverview(OfferOverview offerOverview) {
+        this.selectedOverview = offerOverview
+        Predicate<OfferOverview> belongsToSameOffer = new IsVersionOfOffer(offerOverview)
+        this.offerVersionsForSelected.clear()
+        this.offerVersionsForSelected.addAll((List<OfferOverview>) this.allOfferVersions.stream()
+                .filter(belongsToSameOffer)
+                .sorted(new Comparator<OfferOverview>() {
+                    @Override
+                    int compare(OfferOverview o1, OfferOverview o2) {
+                        return Integer.parseInt(o2.getOfferId().getVersion()) - Integer.parseInt(o1.getOfferId().getVersion())
+                    }
+                }).collect(Collectors.toList()))
+        this.setChanged()
+        this.notifyObservers()
     }
 
     /**
@@ -113,6 +136,15 @@ class OfferOverviewModel {
         return latestOnly
     }
 
+    /**
+     * Searches a list of offer overview and returns an overview with the highest version number.
+     *
+     * Note: Only the version number in the referenced offer id is taken into account!
+     *
+     * @param offerOverview
+     * @param overviewList
+     * @return
+     */
     private OfferOverview findLatest(OfferOverview offerOverview, List<OfferOverview> overviewList) {
         OfferOverview latest = offerOverview
         for (OfferOverview currentOverview : overviewList) {

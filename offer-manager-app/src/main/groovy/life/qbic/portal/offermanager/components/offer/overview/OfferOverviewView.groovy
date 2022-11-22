@@ -31,13 +31,15 @@ import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
  * @since 1.0.0
  */
 @Log4j2
-class OfferOverviewView extends VerticalLayout {
+class OfferOverviewView extends VerticalLayout implements Observer {
 
     final private OfferOverviewModel model
 
     final private OfferOverviewController offerOverviewController
 
     final private Grid<OfferOverview> overviewGrid
+
+    final private Grid<OfferOverview> overviewVersionsGrid
 
     final private Button downloadBtn
 
@@ -59,15 +61,33 @@ class OfferOverviewView extends VerticalLayout {
         this.model = model
         this.offerOverviewController = offerOverviewController
         this.overviewGrid = new Grid<>()
+        this.overviewVersionsGrid = new Grid<>()
         this.downloadBtn = new Button("Download Offer", VaadinIcons.DOWNLOAD)
         this.updateOfferBtn = new Button("Update Offer", VaadinIcons.EDIT)
         this.createProjectButton = new Button("Create Project", VaadinIcons.PLUS_CIRCLE)
         this.downloadSpinner = new ProgressBar()
         this.createProjectView = createProjectView
+        // Register this view to be notified on updates in the model
+        this.model.addObserver(this)
 
         initLayout()
-        setupGrid()
+
+        configureOverviewGrid()
+        configureOverviewVersionsGrid()
+
         setupListeners()
+    }
+
+    void configureOverviewGrid() {
+        DataProvider<OfferOverview, ?> dataProvider = new ListDataProvider(model.latestOfferOverviewList)
+        setupGrid(this.overviewGrid, dataProvider)
+        setupFilters(dataProvider, this.overviewGrid)
+    }
+
+    void configureOverviewVersionsGrid() {
+        DataProvider<OfferOverview, ?> dataProvider = new ListDataProvider(model.offerVersionsForSelected)
+        setupGrid(this.overviewVersionsGrid, dataProvider)
+        setupFilters(dataProvider, this.overviewVersionsGrid)
     }
 
     private void initLayout() {
@@ -120,7 +140,7 @@ class OfferOverviewView extends VerticalLayout {
 
         activityContainer.setMargin(false)
         activityContainer.setComponentAlignment(downloadSpinner, Alignment.MIDDLE_CENTER)
-        headerRow.addComponents(activityContainer, overviewGrid)
+        headerRow.addComponents(activityContainer, overviewGrid, overviewVersionsGrid)
         headerRow.setSizeFull()
 
         defaultContent.setMargin(false)
@@ -130,63 +150,54 @@ class OfferOverviewView extends VerticalLayout {
         return defaultContent
     }
 
-
-    private DataProvider setupDataProvider() {
-        def dataProvider = new ListDataProvider(model.offerOverviewList)
-        overviewGrid.setDataProvider(dataProvider)
-        return dataProvider
-    }
-
-    private void setupGrid() {
-        Column<OfferOverview, Date> dateColumn = overviewGrid.addColumn({ overview ->
+    private static void setupGrid(Grid<? extends OfferOverview> grid, DataProvider dataProvider) {
+        Column<OfferOverview, Date> dateColumn = grid.addColumn({ overview ->
             overview
                     .getModificationDate()
         }).setCaption("Creation Date").setId("CreationDate")
         dateColumn.setRenderer(date -> date, new DateRenderer('%1$tY-%1$tm-%1$td'))
-        overviewGrid.addColumn({ overview -> OfferIdFormatter.formatAsOfferId(overview.offerId) })
+        grid.addColumn({ overview -> OfferIdFormatter.formatAsOfferId(overview.offerId) })
                 .setCaption("Offer ID").setId("OfferId")
-        overviewGrid.addColumn({ overview -> overview.getProjectTitle() })
+        grid.addColumn({ overview -> overview.getProjectTitle() })
                 .setCaption("Project Title").setId("ProjectTitle")
-        overviewGrid.addColumn({ overview -> overview.getCustomer() })
+        grid.addColumn({ overview -> overview.getCustomer() })
                 .setCaption("Customer").setId("Customer")
-        overviewGrid.addColumn({ overview -> overview.getProjectManager() })
+        grid.addColumn({ overview -> overview.getProjectManager() })
                 .setCaption("ProjectManager").setId("ProjectManager")
-        overviewGrid.addColumn({ overview -> overview.getAssociatedProject() })
+        grid.addColumn({ overview -> overview.getAssociatedProject() })
                 .setCaption("Project ID").setId("ProjectID")
                 .setRenderer({ maybeIdentifier -> maybeIdentifier.isPresent() ? maybeIdentifier.get().toString() : "-" }, new TextRenderer())
 
         // Format price by using a column renderer. This way the sorting will happen on the underlying double values, leading to expected behaviour.
-        Column<OfferOverview, Double> priceColumn = overviewGrid.addColumn({ overview -> overview.getTotalPrice() }).setCaption("Total Price")
+        Column<OfferOverview, Double> priceColumn = grid.addColumn({ overview -> overview.getTotalPrice() }).setCaption("Total Price")
         priceColumn.setRenderer(price -> Currency.getFormatterWithSymbol().format(price), new TextRenderer())
 
-        overviewGrid.sort(dateColumn, SortDirection.DESCENDING)
-        overviewGrid.setWidthFull()
+        grid.setDataProvider(dataProvider)
 
-        def offerOverviewDataProvider = setupDataProvider()
-
-        setupFilters(offerOverviewDataProvider)
+        grid.sort(dateColumn, SortDirection.DESCENDING)
+        grid.setWidthFull()
     }
 
-    private void setupFilters(ListDataProvider<OfferOverview> offerOverviewDataProvider) {
-        HeaderRow headerFilterRow = overviewGrid.appendHeaderRow()
+    private static void setupFilters(ListDataProvider<OfferOverview> offerOverviewDataProvider, Grid<? extends  OfferOverview> grid) {
+        HeaderRow headerFilterRow = grid.appendHeaderRow()
 
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
-                overviewGrid.getColumn("OfferId"),
+                grid.getColumn("OfferId"),
                 headerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
-                overviewGrid.getColumn("ProjectTitle"),
+                grid.getColumn("ProjectTitle"),
                 headerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
-                overviewGrid.getColumn("Customer"),
+                grid.getColumn("Customer"),
                 headerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
-                overviewGrid.getColumn("ProjectManager"),
+                grid.getColumn("ProjectManager"),
                 headerFilterRow)
         GridUtils.setupDateColumnFilter(offerOverviewDataProvider,
-                overviewGrid.getColumn("CreationDate"),
+                grid.getColumn("CreationDate"),
                 headerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
-                overviewGrid.getColumn("ProjectID"), new ProjectIdContainsString(),
+                grid.getColumn("ProjectID"), new ProjectIdContainsString(),
                 headerFilterRow)
     }
 
@@ -206,6 +217,8 @@ class OfferOverviewView extends VerticalLayout {
     private void setupGridListeners() {
         overviewGrid.addSelectionListener({ selection ->handleSelection(selection)}
         )
+        overviewVersionsGrid.addSelectionListener({ selection ->handleSelection(selection)}
+        )
     }
 
     private void handleSelection(SelectionEvent<OfferOverview> selection) {
@@ -222,6 +235,8 @@ class OfferOverviewView extends VerticalLayout {
     }
 
     private void selectOfferOverview(OfferOverview overview) {
+        // Inform the model about the selection
+        model.setSelectedOverview(overview)
         UI.getCurrent().setPollInterval(50)
         downloadSpinner.setVisible(true)
         new LoadOfferInfoThread(UI.getCurrent(), overview).start()
@@ -255,6 +270,12 @@ class OfferOverviewView extends VerticalLayout {
                 downloadBtn.removeExtension(fileDownloader)
             }
         })
+    }
+
+    @Override
+    void update(Observable o, Object arg) {
+        this.overviewVersionsGrid.getDataProvider().refreshAll()
+        this.overviewGrid.getDataProvider().refreshAll()
     }
 
     private class LoadOfferInfoThread extends Thread {
