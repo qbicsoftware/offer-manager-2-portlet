@@ -156,18 +156,29 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         // Makes the progress bar a spinner
         downloadSpinner.setIndeterminate(true)
         downloadSpinner.setVisible(false)
+
+        HorizontalLayout toggleLayout = new HorizontalLayout(toggleOverview,
+                toggleVersions)
+
+        styleToggleLayout(toggleLayout)
+        styleToggleButtons()
+
         // Add a button to create a project from an offer
         activityContainer.addComponents(
                 downloadBtn,
                 updateOfferBtn,
                 createProjectButton,
-                toggleOverview,
-                toggleVersions,
                 downloadSpinner)
 
         activityContainer.setMargin(false)
         activityContainer.setComponentAlignment(downloadSpinner, Alignment.MIDDLE_CENTER)
-        headerRow.addComponents(activityContainer, overviewGrid, overviewVersionsGrid)
+
+        HorizontalLayout wrapperLayout = new HorizontalLayout(activityContainer,toggleLayout)
+
+        wrapperLayout.setComponentAlignment(toggleLayout, Alignment.MIDDLE_RIGHT)
+        wrapperLayout.setWidthFull()
+
+        headerRow.addComponents(wrapperLayout, overviewGrid, overviewVersionsGrid)
         headerRow.setSizeFull()
 
         defaultContent.setMargin(false)
@@ -175,6 +186,16 @@ class OfferOverviewView extends VerticalLayout implements Observer {
 
         defaultContent.setWidthFull()
         return defaultContent
+    }
+
+    private void styleToggleLayout(HorizontalLayout toggleLayout) {
+        toggleLayout.setSpacing(false)
+        toggleLayout.setStyleName("card")
+    }
+
+    private void styleToggleButtons() {
+        toggleOverview.setStyleName(ValoTheme.BUTTON_PRIMARY)
+        toggleVersions.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
     }
 
     private static void setupGrid(Grid<? extends OfferOverview> grid, DataProvider dataProvider) {
@@ -239,6 +260,17 @@ class OfferOverviewView extends VerticalLayout implements Observer {
             createProjectView.model.startedFromView = Optional.of(defaultContent)
             createProjectView.model.selectedOffer = Optional.of(model.selectedOffer)
         })
+
+        toggleOverview.addClickListener({
+            toggleOverview.setStyleName(ValoTheme.BUTTON_PRIMARY)
+            toggleVersions.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+        })
+
+        toggleVersions.addClickListener({
+            toggleVersions.setStyleName(ValoTheme.BUTTON_PRIMARY)
+            toggleOverview.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+        })
+
     }
 
     private void setupGridListeners() {
