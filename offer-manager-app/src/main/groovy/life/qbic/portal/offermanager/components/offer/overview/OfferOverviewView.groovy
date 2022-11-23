@@ -88,7 +88,8 @@ class OfferOverviewView extends VerticalLayout implements Observer {
     void setupToggleView() {
         this.overviewVersionsGrid.setVisible(false)
         this.toggleVersions.setEnabled(false)
-        this.toggleOverview.setEnabled(true)
+        this.toggleOverview.setEnabled(false)
+
         this.toggleVersions.addClickListener(  {
             overviewGrid.setVisible(false)
             overviewVersionsGrid.setVisible(true)
@@ -194,8 +195,8 @@ class OfferOverviewView extends VerticalLayout implements Observer {
     }
 
     private void styleToggleButtons() {
-        toggleOverview.setStyleName(ValoTheme.BUTTON_PRIMARY)
-        toggleVersions.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+        toggleVersions.setStyleName(ValoTheme.BUTTON_PRIMARY)
+        toggleOverview.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
     }
 
     private static void setupGrid(Grid<? extends OfferOverview> grid, DataProvider dataProvider) {
@@ -262,13 +263,13 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         })
 
         toggleOverview.addClickListener({
-            toggleOverview.setStyleName(ValoTheme.BUTTON_PRIMARY)
-            toggleVersions.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+            toggleVersions.setStyleName(ValoTheme.BUTTON_PRIMARY)
+            toggleOverview.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
         })
 
         toggleVersions.addClickListener({
-            toggleVersions.setStyleName(ValoTheme.BUTTON_PRIMARY)
-            toggleOverview.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+            toggleOverview.setStyleName(ValoTheme.BUTTON_PRIMARY)
+            toggleVersions.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
         })
 
     }
