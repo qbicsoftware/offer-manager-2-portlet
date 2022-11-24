@@ -336,6 +336,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
 
     @Override
     void update(Observable o, Object arg) {
+        //todo
         this.overviewVersionsGrid.getDataProvider().refreshAll()
         this.overviewGrid.getDataProvider().refreshAll()
     }

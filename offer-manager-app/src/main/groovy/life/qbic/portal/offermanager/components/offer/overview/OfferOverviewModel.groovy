@@ -11,6 +11,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
 import java.util.function.Predicate
+import java.util.stream.Collector
 import java.util.stream.Collectors
 
 /**
@@ -67,9 +68,17 @@ class OfferOverviewModel extends Observable {
 
     private void subscribeToOverviewService() {
         service.subscribe({
+            allOfferVersions.clear()
+            allOfferVersions.addAll(service.iterator())
+
             latestOfferOverviewList.clear()
-            Iterator<OfferOverview> iterator = service.iterator()
-            latestOfferOverviewList.addAll(iterator)
+            List<OfferOverview> filteredList = filterForLatest(allOfferVersions)
+            latestOfferOverviewList.addAll(filteredList)
+
+            this.offerVersionsForSelected.clear()
+            this.offerVersionsForSelected.addAll(filterOfferVersionID(this.selectedOverview, allOfferVersions))
+            this.setChanged()
+            this.notifyObservers()
         })
     }
 
@@ -83,18 +92,19 @@ class OfferOverviewModel extends Observable {
 
     void setSelectedOverview(OfferOverview offerOverview) {
         this.selectedOverview = offerOverview
-        Predicate<OfferOverview> belongsToSameOffer = new IsVersionOfOffer(offerOverview)
         this.offerVersionsForSelected.clear()
-        this.offerVersionsForSelected.addAll((List<OfferOverview>) this.allOfferVersions.stream()
-                .filter(belongsToSameOffer)
-                .sorted(new Comparator<OfferOverview>() {
-                    @Override
-                    int compare(OfferOverview o1, OfferOverview o2) {
-                        return Integer.parseInt(o2.getOfferId().getVersion()) - Integer.parseInt(o1.getOfferId().getVersion())
-                    }
-                }).collect(Collectors.toList()))
+        this.offerVersionsForSelected.addAll(filterOfferVersionID(this.selectedOverview, allOfferVersions))
         this.setChanged()
         this.notifyObservers()
+    }
+
+    private List<OfferOverview> filterOfferVersionID(OfferOverview offerOverview, List<OfferOverview> allOverviews) {
+        Predicate<OfferOverview> belongsToSameOffer = new IsVersionOfOffer(offerOverview)
+        return allOverviews.stream()
+                .filter(belongsToSameOffer)
+                .sorted((o1, o2) ->
+                        Integer.parseInt(o2.getOfferId().getVersion()) - Integer.parseInt(o1.getOfferId().getVersion()))
+                .collect(Collectors.toList())
     }
 
     /**
