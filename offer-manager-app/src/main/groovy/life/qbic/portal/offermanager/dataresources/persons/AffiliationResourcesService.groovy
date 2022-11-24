@@ -7,6 +7,8 @@ import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
+import java.util.stream.Collectors
+
 /**
  * Customer service that holds resources about available affiliations
  *
@@ -32,7 +34,7 @@ class AffiliationResourcesService implements ResourcesService<Affiliation> {
         this.eventEmitter = new EventEmitter<>()
     }
 
-    private static Collection fetchAllAffiliations(ListAffiliationsDataSource listAffiliationsDataSource) {
+    private static List<Affiliation> fetchAllAffiliations(ListAffiliationsDataSource listAffiliationsDataSource) {
         RefactorConverter refactorConverter = new RefactorConverter()
         return listAffiliationsDataSource.listAllAffiliations().stream()
                 .map(refactorConverter::toAffiliationDto)
@@ -73,6 +75,8 @@ class AffiliationResourcesService implements ResourcesService<Affiliation> {
 
     @Override
     Iterator<Affiliation> iterator() {
-        return new ArrayList(availableAffiliations).iterator()
+        return new ArrayList<>(availableAffiliations).stream()
+                .filter(affiliation -> affiliation.isActive())
+                .collect(Collectors.toList()).iterator()
     }
 }

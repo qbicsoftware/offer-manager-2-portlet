@@ -33,7 +33,7 @@ class CreateOfferSpec extends Specification {
         OfferV2 offer = new OfferV2(
                 new Affiliation("", "", "", "", "", "Germany", AffiliationCategory.INTERNAL),
                 offerId)
-        offer.setCustomer(new Person("","","lastname","","",[]))
+        offer.setCustomer(new Person("","","lastname","","",[], UUID.randomUUID().toString()))
         return offer;
     }
 

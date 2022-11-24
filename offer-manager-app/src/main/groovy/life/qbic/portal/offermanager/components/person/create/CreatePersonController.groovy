@@ -48,9 +48,16 @@ class CreatePersonController {
         }
 
         try {
-            life.qbic.business.persons.Person person = refactorConverter.toPerson(new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build())
+            life.qbic.business.persons.Person person
+            if (affiliations) {
+                person = refactorConverter.toPerson(new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations(affiliations).build())
+            } else {
+                person = refactorConverter.toPerson(new Customer.Builder(firstName, lastName, email).title(academicTitle).affiliations([]).build())
+            }
             this.useCaseInput.createPerson(person)
-        } catch(Exception ignored) {
+        } catch(Exception exception) {
+            log.error(exception.class.getName())
+            log.error(exception.getMessage())
             throw new IllegalArgumentException("Could not create customer from provided arguments.")
         }
     }

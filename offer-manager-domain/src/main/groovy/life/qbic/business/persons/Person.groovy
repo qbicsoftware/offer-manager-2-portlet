@@ -4,6 +4,7 @@ import groovy.transform.ToString
 import life.qbic.business.persons.affiliation.Affiliation
 
 import javax.persistence.*
+import java.util.stream.Collectors
 
 /**
  * <b><class short description - 1 Line!></b>
@@ -41,32 +42,46 @@ class Person {
     @Column(name = "active", columnDefinition = "tinyint", nullable = false)
     boolean isActive = true
 
-    @Column(name = "reference_id", nullable = false)
-    private String referenceId
-
-    @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH])
+    @ManyToMany(cascade = [CascadeType.DETACH, CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH], fetch = FetchType.EAGER)
     @JoinTable(name = "person_affiliation", joinColumns = [ @JoinColumn(name = "person_id") ],
-            inverseJoinColumns = [ @JoinColumn(name = "affiliation_id")])
+            inverseJoinColumns = [ @JoinColumn(name = "affiliation_id")] )
     List<Affiliation> affiliations = []
+
+    @Column(name = "reference_id", nullable = false)
+    String referenceId
 
     Person() {}
 
     @PostLoad
     protected void onPostLoad() {
-        this.getAffiliations()
-        if (affiliations.isEmpty()) {
-            throw new IllegalStateException("Person $this was loaded without affiliations. Illegal State: A person must have at least one affiliation.")
-        }
+        loadAffiliations()
     }
 
-    Person(String userId, String firstName, String lastName, String title, String email, List<Affiliation> affiliations) {
+    private List<Affiliation> loadAffiliations(){
+        return this.affiliations
+    }
+
+    static create(String userId, String firstName, String lastName, String title, String email, List<Affiliation> affiliations) {
+        return new Person(userId, firstName, lastName, title, email, affiliations, UUID.randomUUID().toString())
+    }
+
+    Person(String userId, String firstName, String lastName, String title, String email, List<Affiliation> affiliations, String referenceId) {
         this.userId = userId
         this.firstName = firstName
         this.lastName = lastName
         this.title = title
         this.email = email
         this.affiliations = affiliations
-        this.referenceId = UUID.randomUUID().toString()
+        UUID.fromString(referenceId)
+        this.referenceId = referenceId
+    }
+
+    private setReferenceId(String id) {
+        this.referenceId = id
+    }
+
+    String getReferenceId() {
+        return referenceId
     }
 
     Integer getId() {
@@ -125,14 +140,18 @@ class Person {
         this.email = email
     }
 
+    /**
+     * Returns active affiliations of a person
+     * @return
+     * @since 1.6.0
+     */
     List<Affiliation> getAffiliations() {
-        return affiliations
+        List<Affiliation> activeAffiliations = affiliations.stream()
+                .filter(affiliation -> affiliation.isActive()).collect(Collectors.toList())
+        return activeAffiliations
     }
 
     void setAffiliations(List<Affiliation> affiliations) {
-        if (affiliations.isEmpty()) {
-            throw new IllegalArgumentException("A person must have at least one affiliation.")
-        }
         this.affiliations.clear()
         this.affiliations.addAll(affiliations)
     }
@@ -144,9 +163,6 @@ class Person {
 
     void removeAffiliation(Affiliation affiliation) {
         if (affiliation in affiliations) {
-            if (affiliations.size() == 1) {
-                throw new IllegalArgumentException("Cannot remove the last remaining affiliation: $affiliation")
-            }
             affiliations.remove(affiliation)
         }
     }
