@@ -199,21 +199,21 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         this.overviewGrid = new Grid<>("Overview:")
 
         amountSequencing = new TextField("Quantity:")
-        amountSequencing.setPlaceholder("e.g. 1")
+        amountSequencing.setPlaceholder("e.g. 1.5")
         amountPrimaryAnalysis = new TextField("Quantity:")
-        amountPrimaryAnalysis.setPlaceholder("e.g. 1")
+        amountPrimaryAnalysis.setPlaceholder("e.g. 1.5")
         amountSecondaryAnalysis = new TextField("Quantity:")
-        amountSecondaryAnalysis.setPlaceholder("e.g. 1")
+        amountSecondaryAnalysis.setPlaceholder("e.g. 1.5")
         amountProteomicAnalysis = new TextField("Quantity:")
-        amountProteomicAnalysis.setPlaceholder("e.g. 1")
+        amountProteomicAnalysis.setPlaceholder("e.g. 1.5")
         amountMetabolomicAnalysis = new TextField("Quantity:")
-        amountMetabolomicAnalysis.setPlaceholder("e.g. 1")
+        amountMetabolomicAnalysis.setPlaceholder("e.g. 1.5")
         amountProjectManagement = new TextField("Quantity:")
         amountProjectManagement.setPlaceholder("e.g. 1.5")
         amountDataStorage = new TextField("Quantity:")
-        amountDataStorage.setPlaceholder("e.g. 1.6")
+        amountDataStorage.setPlaceholder("e.g. 1.5")
         amountExternalService = new TextField("Quantity:")
-        amountExternalService.setPlaceholder("e.g. 1.6")
+        amountExternalService.setPlaceholder("e.g. 1.5")
 
         this.next = new Button(VaadinIcons.CHEVRON_CIRCLE_RIGHT)
         next.setEnabled(false)
@@ -465,11 +465,10 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         })
 
         Validator<String> nonEmptyStringValidator = Validator.from({ String value -> (value && !value.trim().empty) }, "Please provide a number as input.")
-        Validator<String> atomicValidator = new RegexpValidator("Please provide an integer Input", ProductTypeRegex.ATOMIC.regex)
         Validator<String> partialValidator = new RegexpValidator("Please provide a decimal Input", ProductTypeRegex.PARTIAL.regex)
         this.amountSequencing.addValueChangeListener({ event ->
             ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountSequencing))
-            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountSequencing))
+            ValidationResult numberResult = partialValidator.apply(event.getValue(), new ValueContext(amountSequencing))
             UserError error
             if (emptyResult.isError()) {
                 error = new UserError(emptyResult.getErrorMessage())
@@ -492,7 +491,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                 try {
                     if (amount != null && amount.isNumber()) {
                         sequencingGrid.getSelectedItems().each {
-                            def amountParsed = Integer.parseInt(amount)
+                            def amountParsed = Double.parseDouble(amount)
                             if (amountParsed >= 0) {
                                 ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
                                 updateOverviewGrid(offerItem)
@@ -500,10 +499,8 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                         }
                         sequencingGrid.getDataProvider().refreshAll()
                     }
-                } catch (NumberFormatException e) {
-                    viewModel.failureNotifications.add("The quantity must be an integer value bigger than 0")
                 } catch (Exception e) {
-                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
+                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
                 }
             }
             amountSequencing.clear()
@@ -518,7 +515,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
 
         this.amountPrimaryAnalysis.addValueChangeListener({ event ->
             ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountPrimaryAnalysis))
-            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountPrimaryAnalysis))
+            ValidationResult numberResult = partialValidator.apply(event.getValue(), new ValueContext(amountPrimaryAnalysis))
             UserError error
             if (emptyResult.isError()) {
                 error = new UserError(emptyResult.getErrorMessage())
@@ -541,7 +538,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                 try {
                     if (amount != null && amount.isNumber()) {
                         primaryAnalyseGrid.getSelectedItems().each {
-                            def amountParsed = Integer.parseInt(amount)
+                            def amountParsed = Double.parseDouble(amount)
                             if (amountParsed >= 0) {
                                 ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
                                 updateOverviewGrid(offerItem)
@@ -550,10 +547,8 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                         primaryAnalyseGrid.getDataProvider().refreshAll()
 
                     }
-                } catch (NumberFormatException e) {
-                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
                 } catch (Exception e) {
-                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
+                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
                 }
             }
             amountPrimaryAnalysis.clear()
@@ -568,7 +563,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
 
         this.amountSecondaryAnalysis.addValueChangeListener({ event ->
             ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountSecondaryAnalysis))
-            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountSecondaryAnalysis))
+            ValidationResult numberResult = partialValidator.apply(event.getValue(), new ValueContext(amountSecondaryAnalysis))
             UserError error
             if (emptyResult.isError()) {
                 error = new UserError(emptyResult.getErrorMessage())
@@ -591,7 +586,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                 try {
                     if (amount != null && amount.isNumber()) {
                         secondaryAnalyseGrid.getSelectedItems().each {
-                            def amountParsed = Integer.parseInt(amount)
+                            def amountParsed = Double.parseDouble(amount)
                             if (amountParsed >= 0) {
                                 ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
                                 updateOverviewGrid(offerItem)
@@ -600,10 +595,8 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                         secondaryAnalyseGrid.getDataProvider().refreshAll()
                     }
                 }
-                catch (NumberFormatException e) {
-                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
-                } catch (Exception e) {
-                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
+                catch (Exception e) {
+                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
                 }
             }
             amountSecondaryAnalysis.clear()
@@ -618,7 +611,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
 
         this.amountProteomicAnalysis.addValueChangeListener({ event ->
             ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountProteomicAnalysis))
-            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountProteomicAnalysis))
+            ValidationResult numberResult = partialValidator.apply(event.getValue(), new ValueContext(amountProteomicAnalysis))
             UserError error
             if (emptyResult.isError()) {
                 error = new UserError(emptyResult.getErrorMessage())
@@ -640,7 +633,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                 try {
                     if (amount != null && amount.isNumber()) {
                         proteomicsAnalysisGrid.getSelectedItems().each {
-                            def amountParsed = Integer.parseInt(amount)
+                            def amountParsed = Double.parseDouble(amount)
                             if (amountParsed >= 0) {
                                 ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
                                 updateOverviewGrid(offerItem)
@@ -648,10 +641,8 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                         }
                         proteomicsAnalysisGrid.getDataProvider().refreshAll()
                     }
-                } catch (NumberFormatException e) {
-                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
                 } catch (Exception e) {
-                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
+                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
                 }
             }
             amountProteomicAnalysis.clear()
@@ -666,7 +657,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
 
         this.amountMetabolomicAnalysis.addValueChangeListener({ event ->
             ValidationResult emptyResult = nonEmptyStringValidator.apply(event.getValue(), new ValueContext(amountMetabolomicAnalysis))
-            ValidationResult numberResult = atomicValidator.apply(event.getValue(), new ValueContext(amountMetabolomicAnalysis))
+            ValidationResult numberResult = partialValidator.apply(event.getValue(), new ValueContext(amountMetabolomicAnalysis))
             UserError error
             if (emptyResult.isError()) {
                 error = new UserError(emptyResult.getErrorMessage())
@@ -688,7 +679,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                 try {
                     if (amount != null && amount.isNumber()) {
                         metabolomicsAnalysisGrid.getSelectedItems().each {
-                            def amountParsed = Integer.parseInt(amount)
+                            def amountParsed = Double.parseDouble(amount)
                             if (amountParsed >= 0) {
                                 ProductItemViewModel offerItem = new ProductItemViewModel(amountParsed, it)
                                 updateOverviewGrid(offerItem)
@@ -696,10 +687,8 @@ class SelectItemsView extends VerticalLayout implements Resettable {
                         }
                         metabolomicsAnalysisGrid.getDataProvider().refreshAll()
                     }
-                } catch (NumberFormatException e) {
-                    viewModel.failureNotifications.add("The quantity must be an integer number bigger than 0")
                 } catch (Exception e) {
-                    viewModel.failureNotifications.add("Ups, something went wrong. Please contact support@qbic.zendesk.com")
+                    viewModel.failureNotifications.add("The quantity must be a number bigger than 0")
                 }
             }
             amountMetabolomicAnalysis.clear()
