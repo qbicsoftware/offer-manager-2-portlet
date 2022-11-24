@@ -47,7 +47,7 @@ class Person {
             inverseJoinColumns = [ @JoinColumn(name = "affiliation_id")] )
     List<Affiliation> affiliations = []
 
-    @Column(name = "reference_id")
+    @Column(name = "reference_id", nullable = false)
     String referenceId
 
     Person() {}
