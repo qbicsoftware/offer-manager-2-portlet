@@ -196,7 +196,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         this.projectManagementGrid = new Grid<>()
         this.externalServiceGrid = new Grid<>()
         this.storageGrid = new Grid<>()
-        this.overviewGrid = new ItemsGrid()
+        this.overviewGrid = new ItemsGrid(createOfferViewModel)
 
         amountSequencing = new TextField("Quantity:")
         amountSequencing.setPlaceholder("e.g. 1")
@@ -841,13 +841,13 @@ class SelectItemsView extends VerticalLayout implements Resettable {
             applyExternalService.setEnabled(createOfferViewModel.externalServiceGridSelected && createOfferViewModel.externalServiceQuantityValid)
         })
 
-//        overviewGrid.addSelectionListener({
-//            if (it.allSelectedItems) {
-//                removeItemsButton.setEnabled(true)
-//            } else {
-//                removeItemsButton.setEnabled(false)
-//            }
-//        })
+        overviewGrid.addSelectionListener({
+            if (it.allSelectedItems) {
+                removeItemsButton.setEnabled(true)
+            } else {
+                removeItemsButton.setEnabled(false)
+            }
+        })
 
         removeItemsButton.addClickListener({
             def selectedItems = overviewGrid.getSelectedItems()

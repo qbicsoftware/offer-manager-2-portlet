@@ -26,7 +26,7 @@ public class ItemsGrid extends Grid<ProductItemViewModel> {
 
   private final TextField editorComponent;
 
-  public ItemsGrid() {
+  public ItemsGrid(CreateOfferViewModel createOfferViewModel) {
 
     editorComponent = new TextField();
     Binder<ProductItemViewModel> binder = getEditor().getBinder();
@@ -37,10 +37,16 @@ public class ItemsGrid extends Grid<ProductItemViewModel> {
         .withValidator(validatorCombination)
         .withNullRepresentation(editorComponent.getEmptyValue())
         .bind(
+            //toDo duplicate values in createofferviewmodel and null values something breaks during update?
             (model) -> String.valueOf(model.getQuantity()),
             (model, value) -> model.setQuantity(Double.parseDouble(value)));
     getEditor().setEnabled(true);
-    getEditor().addSaveListener(it -> getDataProvider().refreshAll());
+    getEditor().addSaveListener(it -> {
+      ProductItemViewModel selectedProductItem = it.getBean();
+      createOfferViewModel.updateItem(selectedProductItem);
+      getDataProvider().refreshAll();
+      deselectAll();
+    });
 
     this.addColumn(ProductItemViewModel::getQuantity)
         .setEditorBinding(binding)

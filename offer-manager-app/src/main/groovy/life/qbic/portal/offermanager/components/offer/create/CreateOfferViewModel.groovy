@@ -156,6 +156,18 @@ class CreateOfferViewModel {
         productItems.removeAll(alreadyExistingItems)
     }
 
+    void updateItem(ProductItemViewModel item) {
+        // we don't do anything when the amount is equal or smaller zero
+        if (item.quantity <= 0.0) {
+            return
+        }
+        List<ProductItemViewModel> alreadyExistingItems =
+                productItems.findAll { it -> it.product.productId.equals(item.product.productId) } as List<ProductItemViewModel>
+        double totalAmount = item.quantity
+        productItems.removeAll(alreadyExistingItems)
+        productItems.add(new ProductItemViewModel(totalAmount, item.product))
+    }
+
     protected void resetModel() {
         offerCreatedSuccessfully = false
 
