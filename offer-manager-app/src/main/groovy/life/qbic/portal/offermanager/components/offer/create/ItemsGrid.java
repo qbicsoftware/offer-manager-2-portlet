@@ -9,6 +9,7 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.components.grid.GridRowDragger;
 import com.vaadin.ui.renderers.NumberRenderer;
 import groovy.util.ObservableList;
+import java.util.Collection;
 import java.util.Objects;
 import life.qbic.business.offers.Currency;
 import life.qbic.portal.offermanager.components.GridUtils;
@@ -24,11 +25,8 @@ import life.qbic.portal.offermanager.components.ValidatorCombination;
 public class ItemsGrid extends Grid<ProductItemViewModel> {
 
 
-  private final TextField editorComponent;
-
   public ItemsGrid(CreateOfferViewModel createOfferViewModel) {
-
-    editorComponent = new TextField();
+    TextField editorComponent = new TextField();
     Binder<ProductItemViewModel> binder = getEditor().getBinder();
     ValidatorCombination<String> validatorCombination = new ValidatorCombination<>();
     validatorCombination.addValidator(
@@ -37,16 +35,11 @@ public class ItemsGrid extends Grid<ProductItemViewModel> {
         .withValidator(validatorCombination)
         .withNullRepresentation(editorComponent.getEmptyValue())
         .bind(
-            //toDo duplicate values in createofferviewmodel and null values something breaks during update?
             (model) -> String.valueOf(model.getQuantity()),
             (model, value) -> model.setQuantity(Double.parseDouble(value)));
     getEditor().setEnabled(true);
-    getEditor().addSaveListener(it -> {
-      ProductItemViewModel selectedProductItem = it.getBean();
-      createOfferViewModel.updateItem(selectedProductItem);
-      getDataProvider().refreshAll();
-      deselectAll();
-    });
+    getEditor().addSaveListener(it -> this.setItems(
+        (Collection<ProductItemViewModel>) createOfferViewModel.getProductItems()));
 
     this.addColumn(ProductItemViewModel::getQuantity)
         .setEditorBinding(binding)
