@@ -9,7 +9,6 @@ import com.vaadin.ui.TextField;
 import com.vaadin.ui.components.grid.GridRowDragger;
 import com.vaadin.ui.renderers.NumberRenderer;
 import groovy.util.ObservableList;
-import java.util.Collection;
 import java.util.Objects;
 import life.qbic.business.offers.Currency;
 import life.qbic.portal.offermanager.components.GridUtils;
@@ -25,7 +24,7 @@ import life.qbic.portal.offermanager.components.ValidatorCombination;
 public class ItemsGrid extends Grid<ProductItemViewModel> {
 
 
-  public ItemsGrid(CreateOfferViewModel createOfferViewModel) {
+  public ItemsGrid() {
     TextField editorComponent = new TextField();
     Binder<ProductItemViewModel> binder = getEditor().getBinder();
     ValidatorCombination<String> validatorCombination = new ValidatorCombination<>();
@@ -38,9 +37,6 @@ public class ItemsGrid extends Grid<ProductItemViewModel> {
             (model) -> String.valueOf(model.getQuantity()),
             (model, value) -> model.setQuantity(Double.parseDouble(value)));
     getEditor().setEnabled(true);
-    getEditor().addSaveListener(it -> this.setItems(
-        (Collection<ProductItemViewModel>) createOfferViewModel.getProductItems()));
-
     this.addColumn(ProductItemViewModel::getQuantity)
         .setEditorBinding(binding)
         .setEditable(true)

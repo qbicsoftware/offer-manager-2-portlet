@@ -196,7 +196,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         this.projectManagementGrid = new Grid<>()
         this.externalServiceGrid = new Grid<>()
         this.storageGrid = new Grid<>()
-        this.overviewGrid = new ItemsGrid(createOfferViewModel)
+        this.overviewGrid = new ItemsGrid()
 
         amountSequencing = new TextField("Quantity:")
         amountSequencing.setPlaceholder("e.g. 1")
@@ -849,6 +849,10 @@ class SelectItemsView extends VerticalLayout implements Resettable {
             }
         })
 
+        overviewGrid.getEditor().addSaveListener({
+            refreshOverviewGrid()
+        })
+
         removeItemsButton.addClickListener({
             def selectedItems = overviewGrid.getSelectedItems()
             if (selectedItems) {
@@ -874,6 +878,28 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         } else {
             next.setEnabled(false)
         }
+    }
+
+    private void refreshOverviewGrid() {
+        this.overviewGrid.setItems(createOfferViewModel.getProductItems())
+        def provider = overviewGrid.getDataProvider() as ListDataProvider<ProductItemViewModel>
+        refreshFilters(provider, overviewGrid)
+        overviewGrid.setDataProvider(provider)
+        overviewGrid.getDataProvider().refreshAll()
+        refreshNavButtons()
+    }
+
+    private static void refreshFilters(ListDataProvider<ProductItemViewModel> productItemViewModeDataProvider, ItemsGrid grid) {
+        HeaderRow productFilterRow = grid.getHeaderRow(1)
+        GridUtils.setupColumnFilter(productItemViewModeDataProvider,
+                grid.getColumn("ProductId"), new ProductIdContainsString(),
+                productFilterRow)
+        GridUtils.setupColumnFilter(productItemViewModeDataProvider,
+                grid.getColumn("ProductName"),
+                productFilterRow)
+        GridUtils.setupColumnFilter(productItemViewModeDataProvider,
+                grid.getColumn("ProductDescription"),
+                productFilterRow)
     }
 
 }
