@@ -841,11 +841,6 @@ class SelectItemsView extends VerticalLayout implements Resettable {
             }
         })
 
-        overviewGrid.getEditor().addSaveListener({
-            refreshOverviewGrid()
-            overviewGrid.clearSortOrder()
-        })
-
         removeItemsButton.addClickListener({
             def selectedItems = overviewGrid.getSelectedItems()
             if (selectedItems) {
@@ -872,26 +867,4 @@ class SelectItemsView extends VerticalLayout implements Resettable {
             next.setEnabled(false)
         }
     }
-
-    private void refreshOverviewGrid() {
-        this.overviewGrid.setItems(createOfferViewModel.getProductItems())
-        def provider = overviewGrid.getDataProvider() as ListDataProvider<ProductItemViewModel>
-        refreshFilters(provider, overviewGrid)
-        overviewGrid.setDataProvider(provider)
-        overviewGrid.getDataProvider().refreshAll()
-    }
-
-    private static void refreshFilters(ListDataProvider<ProductItemViewModel> productItemViewModeDataProvider, ItemsGrid grid) {
-        HeaderRow productFilterRow = grid.getHeaderRow(1)
-        GridUtils.setupColumnFilter(productItemViewModeDataProvider,
-                grid.getColumn("ProductId"), new ProductIdContainsString(),
-                productFilterRow)
-        GridUtils.setupColumnFilter(productItemViewModeDataProvider,
-                grid.getColumn("ProductName"),
-                productFilterRow)
-        GridUtils.setupColumnFilter(productItemViewModeDataProvider,
-                grid.getColumn("ProductDescription"),
-                productFilterRow)
-    }
-
 }

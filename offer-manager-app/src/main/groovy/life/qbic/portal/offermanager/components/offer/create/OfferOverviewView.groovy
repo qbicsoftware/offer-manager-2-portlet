@@ -34,7 +34,6 @@ class OfferOverviewView extends VerticalLayout {
         this.createOfferViewModel = viewModel
         initLayout()
         setUpGrid()
-        addListeners()
     }
 
     private void setUpGrid() {
@@ -44,14 +43,6 @@ class OfferOverviewView extends VerticalLayout {
         def provider = itemGrid.getDataProvider() as ListDataProvider<ProductItemViewModel>
         setupFilters(provider, itemGrid)
     }
-
-    private void addListeners() {
-        itemGrid.getEditor().addSaveListener({
-            refreshItemGrid()
-            itemGrid.clearSortOrder()
-        })
-    }
-
 
     private static <T> void setupFilters(ListDataProvider<T> productListDataProvider,
                                          Grid targetGrid) {
@@ -184,24 +175,6 @@ class OfferOverviewView extends VerticalLayout {
         panel.setContent(gridLayout)
 
         return panel
-    }
-
-    private void refreshItemGrid() {
-        this.itemGrid.setItems(createOfferViewModel.getProductItems())
-        def provider = itemGrid.getDataProvider() as ListDataProvider<ProductItemViewModel>
-        refreshFilters(provider, itemGrid)
-        itemGrid.setDataProvider(provider)
-        itemGrid.getDataProvider().refreshAll()
-    }
-
-    private static void refreshFilters(ListDataProvider<ProductItemViewModel> productItemViewModeDataProvider, ItemsGrid grid) {
-        HeaderRow productFilterRow = grid.getHeaderRow(1)
-        GridUtils.setupColumnFilter(productItemViewModeDataProvider,
-                grid.getColumn("ProductName"),
-                productFilterRow)
-        GridUtils.setupColumnFilter(productItemViewModeDataProvider,
-                grid.getColumn("ProductDescription"),
-                productFilterRow)
     }
 
     /*

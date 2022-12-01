@@ -37,6 +37,7 @@ public class ItemsGrid extends Grid<ProductItemViewModel> {
             (model) -> String.valueOf(model.getQuantity()),
             (model, value) -> model.setQuantity(Double.parseDouble(value)));
     getEditor().setEnabled(true);
+    getEditor().setBuffered(false);
     this.addColumn(ProductItemViewModel::getQuantity)
         .setEditorBinding(binding)
         .setEditable(true)
