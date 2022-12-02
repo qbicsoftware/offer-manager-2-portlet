@@ -184,6 +184,11 @@ class UpdateOfferView extends FormLayout {
                     viewModel.customerAffiliation,
                     viewModel.experimentalDesign)
         })
+        this.overviewView.itemGrid.getEditor().addSaveListener(it -> {
+            controller.calculatePriceForItems(getProductItems(viewModel.productItems),
+                    viewModel.customerAffiliation)
+            this.overviewView.refreshPricePanel()
+        })
         this.viewModel.addPropertyChangeListener("offerCreatedSuccessfully", {
             resetViewContent()
         })

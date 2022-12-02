@@ -24,7 +24,7 @@ import life.qbic.portal.offermanager.components.ValidatorCombination;
 public class ItemsGrid extends Grid<ProductItemViewModel> {
 
 
-  public ItemsGrid() {
+  public ItemsGrid(CreateOfferViewModel createOfferViewModel) {
     TextField editorComponent = new TextField();
     Binder<ProductItemViewModel> binder = getEditor().getBinder();
     ValidatorCombination<String> validatorCombination = new ValidatorCombination<>();
@@ -37,7 +37,10 @@ public class ItemsGrid extends Grid<ProductItemViewModel> {
             (model) -> String.valueOf(model.getQuantity()),
             (model, value) -> model.setQuantity(Double.parseDouble(value)));
     getEditor().setEnabled(true);
-    getEditor().setBuffered(false);
+    getEditor().addSaveListener(editorSaveEvent -> {
+      createOfferViewModel.updateItem(editorSaveEvent.getBean());
+      this.getDataProvider().refreshAll();
+    });
     this.addColumn(ProductItemViewModel::getQuantity)
         .setEditorBinding(binding)
         .setEditable(true)

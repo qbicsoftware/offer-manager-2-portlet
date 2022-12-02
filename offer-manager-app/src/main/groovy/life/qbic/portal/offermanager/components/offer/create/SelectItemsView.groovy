@@ -188,7 +188,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         this.projectManagementGrid = new Grid<>()
         this.externalServiceGrid = new Grid<>()
         this.storageGrid = new Grid<>()
-        this.overviewGrid = new ItemsGrid()
+        this.overviewGrid = new ItemsGrid(createOfferViewModel)
 
         amountSequencing = new TextField("Quantity:")
         amountSequencing.setPlaceholder("e.g. 1.5")

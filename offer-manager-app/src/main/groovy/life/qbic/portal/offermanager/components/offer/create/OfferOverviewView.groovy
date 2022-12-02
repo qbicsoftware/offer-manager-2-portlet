@@ -29,6 +29,7 @@ class OfferOverviewView extends VerticalLayout {
     ItemsGrid itemGrid
     Button previous
     Button save
+    Grid priceFieldGrid
 
     OfferOverviewView(CreateOfferViewModel viewModel) {
         this.createOfferViewModel = viewModel
@@ -42,6 +43,7 @@ class OfferOverviewView extends VerticalLayout {
         this.itemGrid.setItems(createOfferViewModel.getProductItems())
         def provider = itemGrid.getDataProvider() as ListDataProvider<ProductItemViewModel>
         setupFilters(provider, itemGrid)
+        addListeners()
     }
 
     private static <T> void setupFilters(ListDataProvider<T> productListDataProvider,
@@ -74,7 +76,7 @@ class OfferOverviewView extends VerticalLayout {
 
         this.offerOverview = new Panel("Offer Details:")
 
-        this.itemGrid = new ItemsGrid()
+        this.itemGrid = new ItemsGrid(createOfferViewModel)
         this.itemGrid.setCaption("Selected Items:")
 
         this.addComponents(offerOverview, buttonLayout)
@@ -135,7 +137,7 @@ class OfferOverviewView extends VerticalLayout {
         on the left and a basic cost overview on the right
          */
         header.addComponent(projectInfoForm)
-        Component costOverview = createCostOverview()
+        Panel costOverview = createCostOverview()
         header.addComponent(costOverview)
         header.setWidthFull()
         header.setComponentAlignment(costOverview, Alignment.TOP_CENTER)
@@ -156,25 +158,36 @@ class OfferOverviewView extends VerticalLayout {
     private Panel createCostOverview() {
         final Panel panel = new Panel("Cost Overview")
         panel.setSizeUndefined()
-        Grid<PriceField> gridLayout = new Grid<>()
-        gridLayout.setHeightByRows(5)
-        gridLayout.setItems([
+        priceFieldGrid = new Grid<>()
+        priceFieldGrid.setHeightByRows(5)
+        priceFieldGrid.setItems([
                 new PriceField("Net Price (incl. discount)", createOfferViewModel.netPrice),
                 new PriceField("Overheads", createOfferViewModel.overheads),
                 new PriceField("Taxes", createOfferViewModel.taxes),
-                new PriceField("Total Discount (considered)", createOfferViewModel.totalDiscountAmount*-1),
+                new PriceField("Total Discount (considered)", createOfferViewModel.totalDiscountAmount * -1),
                 new PriceField("Total Price", createOfferViewModel.totalPrice)
         ])
-        gridLayout.addColumn(PriceField::getName)
-        gridLayout.addColumn({
+        priceFieldGrid.addColumn(PriceField::getName)
+        priceFieldGrid.addColumn({
             costs -> costs.value
         },
                 new NumberRenderer(Currency.getFormatterWithSymbol()))
 
-        gridLayout.headerVisible = false
-        panel.setContent(gridLayout)
+        priceFieldGrid.headerVisible = false
+        panel.setContent(priceFieldGrid)
 
         return panel
+    }
+
+    void refreshPricePanel() {
+        if (priceFieldGrid)
+            priceFieldGrid.setItems([
+                    new PriceField("Net Price (incl. discount)", createOfferViewModel.totalPrice),
+                    new PriceField("Overheads", createOfferViewModel.overheads),
+                    new PriceField("Taxes", createOfferViewModel.taxes),
+                    new PriceField("Total Discount (considered)", createOfferViewModel.totalDiscountAmount * -1),
+                    new PriceField("Total Price", createOfferViewModel.totalPrice)
+            ])
     }
 
     /*

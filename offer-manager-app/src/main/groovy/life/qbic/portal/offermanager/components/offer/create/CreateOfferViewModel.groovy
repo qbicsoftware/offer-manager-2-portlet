@@ -152,8 +152,19 @@ class CreateOfferViewModel {
         for (ProductItemViewModel currentItem : alreadyExistingItems) {
             totalAmount = totalAmount + currentItem.quantity
         }
-        productItems.add(new ProductItemViewModel(totalAmount, item.product))
         productItems.removeAll(alreadyExistingItems)
+        productItems.add(new ProductItemViewModel(totalAmount, item.product))
+    }
+
+    void updateItem(ProductItemViewModel item) {
+        if (item.quantity <= 0.0) {
+            productItems.remove(item)
+            return
+        }
+        ProductItemViewModel existingItem = productItems.find { it.product.productId.equals(item.product.productId) } as ProductItemViewModel
+        int index = productItems.findIndexOf { it.product.productId.equals(item.product.productId) }
+        productItems.remove(existingItem)
+        productItems.add(index, item)
     }
 
     protected void resetModel() {

@@ -189,6 +189,11 @@ class CreateOfferView extends FormLayout{
         this.viewModel.resetViewRequired.register({
             resetViewContent()
         })
+        this.overviewView.itemGrid.getEditor().addSaveListener(it -> {
+            controller.calculatePriceForItems(getProductItems(viewModel.productItems),
+                    viewModel.customerAffiliation)
+            this.overviewView.refreshPricePanel()
+        })
     }
 
     /**
