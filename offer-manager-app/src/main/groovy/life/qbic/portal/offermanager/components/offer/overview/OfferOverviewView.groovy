@@ -31,13 +31,15 @@ import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
  * @since 1.0.0
  */
 @Log4j2
-class OfferOverviewView extends VerticalLayout {
+class OfferOverviewView extends VerticalLayout implements Observer {
 
     final private OfferOverviewModel model
 
     final private OfferOverviewController offerOverviewController
 
     final private Grid<OfferOverview> overviewGrid
+
+    final private Grid<OfferOverview> overviewVersionsGrid
 
     final private Button downloadBtn
 
@@ -53,21 +55,65 @@ class OfferOverviewView extends VerticalLayout {
 
     private FormLayout defaultContent
 
+    private Button toggleOverview
+
+    private Button toggleVersions
+
     OfferOverviewView(OfferOverviewModel model,
                       OfferOverviewController offerOverviewController,
                       CreateProjectView createProjectView) {
         this.model = model
         this.offerOverviewController = offerOverviewController
         this.overviewGrid = new Grid<>()
+        this.overviewVersionsGrid = new Grid<>()
         this.downloadBtn = new Button("Download Offer", VaadinIcons.DOWNLOAD)
         this.updateOfferBtn = new Button("Update Offer", VaadinIcons.EDIT)
         this.createProjectButton = new Button("Create Project", VaadinIcons.PLUS_CIRCLE)
+        this.toggleOverview = new Button("Overview")
+        this.toggleVersions = new Button("Versions")
         this.downloadSpinner = new ProgressBar()
         this.createProjectView = createProjectView
+        // Register this view to be notified on updates in the model
+        this.model.addObserver(this)
 
         initLayout()
-        setupGrid()
+
+        configureOverviewGrid()
+        configureOverviewVersionsGrid()
+
         setupListeners()
+        setupToggleView()
+    }
+
+    void setupToggleView() {
+        this.overviewVersionsGrid.setVisible(false)
+        this.toggleVersions.setEnabled(false)
+        this.toggleOverview.setEnabled(false)
+
+        this.toggleVersions.addClickListener(  {
+            overviewGrid.setVisible(false)
+            overviewVersionsGrid.setVisible(true)
+            toggleVersions.setEnabled(false)
+            toggleOverview.setEnabled(true)
+        })
+        this.toggleOverview.addClickListener({
+            overviewGrid.setVisible(true)
+            overviewVersionsGrid.setVisible(false)
+            toggleVersions.setEnabled(true)
+            toggleOverview.setEnabled(false)
+        })
+    }
+
+    void configureOverviewGrid() {
+        DataProvider<OfferOverview, ?> dataProvider = new ListDataProvider(model.latestOfferOverviewList)
+        setupGrid(this.overviewGrid, dataProvider)
+        setupFilters(dataProvider, this.overviewGrid)
+    }
+
+    void configureOverviewVersionsGrid() {
+        DataProvider<OfferOverview, ?> dataProvider = new ListDataProvider(model.offerVersionsForSelected)
+        setupGrid(this.overviewVersionsGrid, dataProvider)
+        setupFilters(dataProvider, this.overviewVersionsGrid)
     }
 
     private void initLayout() {
@@ -111,6 +157,13 @@ class OfferOverviewView extends VerticalLayout {
         // Makes the progress bar a spinner
         downloadSpinner.setIndeterminate(true)
         downloadSpinner.setVisible(false)
+
+        HorizontalLayout toggleLayout = new HorizontalLayout(toggleOverview,
+                toggleVersions)
+
+        styleToggleLayout(toggleLayout)
+        styleToggleButtons()
+
         // Add a button to create a project from an offer
         activityContainer.addComponents(
                 downloadBtn,
@@ -120,7 +173,13 @@ class OfferOverviewView extends VerticalLayout {
 
         activityContainer.setMargin(false)
         activityContainer.setComponentAlignment(downloadSpinner, Alignment.MIDDLE_CENTER)
-        headerRow.addComponents(activityContainer, overviewGrid)
+
+        HorizontalLayout wrapperLayout = new HorizontalLayout(activityContainer,toggleLayout)
+
+        wrapperLayout.setComponentAlignment(toggleLayout, Alignment.MIDDLE_RIGHT)
+        wrapperLayout.setWidthFull()
+
+        headerRow.addComponents(wrapperLayout, overviewGrid, overviewVersionsGrid)
         headerRow.setSizeFull()
 
         defaultContent.setMargin(false)
@@ -130,63 +189,64 @@ class OfferOverviewView extends VerticalLayout {
         return defaultContent
     }
 
-
-    private DataProvider setupDataProvider() {
-        def dataProvider = new ListDataProvider(model.offerOverviewList)
-        overviewGrid.setDataProvider(dataProvider)
-        return dataProvider
+    private void styleToggleLayout(HorizontalLayout toggleLayout) {
+        toggleLayout.setSpacing(false)
+        toggleLayout.setStyleName("card")
     }
 
-    private void setupGrid() {
-        Column<OfferOverview, Date> dateColumn = overviewGrid.addColumn({ overview ->
+    private void styleToggleButtons() {
+        toggleVersions.setStyleName(ValoTheme.BUTTON_PRIMARY)
+        toggleOverview.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+    }
+
+    private static void setupGrid(Grid<? extends OfferOverview> grid, DataProvider dataProvider) {
+        Column<OfferOverview, Date> dateColumn = grid.addColumn({ overview ->
             overview
                     .getModificationDate()
         }).setCaption("Creation Date").setId("CreationDate")
         dateColumn.setRenderer(date -> date, new DateRenderer('%1$tY-%1$tm-%1$td'))
-        overviewGrid.addColumn({ overview -> OfferIdFormatter.formatAsOfferId(overview.offerId) })
+        grid.addColumn({ overview -> OfferIdFormatter.formatAsOfferId(overview.offerId) })
                 .setCaption("Offer ID").setId("OfferId")
-        overviewGrid.addColumn({ overview -> overview.getProjectTitle() })
+        grid.addColumn({ overview -> overview.getProjectTitle() })
                 .setCaption("Project Title").setId("ProjectTitle")
-        overviewGrid.addColumn({ overview -> overview.getCustomer() })
+        grid.addColumn({ overview -> overview.getCustomer() })
                 .setCaption("Customer").setId("Customer")
-        overviewGrid.addColumn({ overview -> overview.getProjectManager() })
+        grid.addColumn({ overview -> overview.getProjectManager() })
                 .setCaption("ProjectManager").setId("ProjectManager")
-        overviewGrid.addColumn({ overview -> overview.getAssociatedProject() })
+        grid.addColumn({ overview -> overview.getAssociatedProject() })
                 .setCaption("Project ID").setId("ProjectID")
                 .setRenderer({ maybeIdentifier -> maybeIdentifier.isPresent() ? maybeIdentifier.get().toString() : "-" }, new TextRenderer())
 
         // Format price by using a column renderer. This way the sorting will happen on the underlying double values, leading to expected behaviour.
-        Column<OfferOverview, Double> priceColumn = overviewGrid.addColumn({ overview -> overview.getTotalPrice() }).setCaption("Total Price")
+        Column<OfferOverview, Double> priceColumn = grid.addColumn({ overview -> overview.getTotalPrice() }).setCaption("Total Price")
         priceColumn.setRenderer(price -> Currency.getFormatterWithSymbol().format(price), new TextRenderer())
 
-        overviewGrid.sort(dateColumn, SortDirection.DESCENDING)
-        overviewGrid.setWidthFull()
+        grid.setDataProvider(dataProvider)
 
-        def offerOverviewDataProvider = setupDataProvider()
-
-        setupFilters(offerOverviewDataProvider)
+        grid.sort(dateColumn, SortDirection.DESCENDING)
+        grid.setWidthFull()
     }
 
-    private void setupFilters(ListDataProvider<OfferOverview> offerOverviewDataProvider) {
-        HeaderRow headerFilterRow = overviewGrid.appendHeaderRow()
+    private static void setupFilters(ListDataProvider<OfferOverview> offerOverviewDataProvider, Grid<? extends  OfferOverview> grid) {
+        HeaderRow headerFilterRow = grid.appendHeaderRow()
 
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
-                overviewGrid.getColumn("OfferId"),
+                grid.getColumn("OfferId"),
                 headerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
-                overviewGrid.getColumn("ProjectTitle"),
+                grid.getColumn("ProjectTitle"),
                 headerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
-                overviewGrid.getColumn("Customer"),
+                grid.getColumn("Customer"),
                 headerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
-                overviewGrid.getColumn("ProjectManager"),
+                grid.getColumn("ProjectManager"),
                 headerFilterRow)
         GridUtils.setupDateColumnFilter(offerOverviewDataProvider,
-                overviewGrid.getColumn("CreationDate"),
+                grid.getColumn("CreationDate"),
                 headerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
-                overviewGrid.getColumn("ProjectID"), new ProjectIdContainsString(),
+                grid.getColumn("ProjectID"), new ProjectIdContainsString(),
                 headerFilterRow)
     }
 
@@ -201,10 +261,23 @@ class OfferOverviewView extends VerticalLayout {
             createProjectView.model.startedFromView = Optional.of(defaultContent)
             createProjectView.model.selectedOffer = Optional.of(model.selectedOffer)
         })
+
+        toggleOverview.addClickListener({
+            toggleVersions.setStyleName(ValoTheme.BUTTON_PRIMARY)
+            toggleOverview.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+        })
+
+        toggleVersions.addClickListener({
+            toggleOverview.setStyleName(ValoTheme.BUTTON_PRIMARY)
+            toggleVersions.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
+        })
+
     }
 
     private void setupGridListeners() {
         overviewGrid.addSelectionListener({ selection ->handleSelection(selection)}
+        )
+        overviewVersionsGrid.addSelectionListener({ selection ->handleSelection(selection)}
         )
     }
 
@@ -219,14 +292,18 @@ class OfferOverviewView extends VerticalLayout {
         updateOfferBtn.setEnabled(false)
         downloadBtn.setEnabled(false)
         createProjectButton.setEnabled(false)
+        toggleVersions.setEnabled(false)
     }
 
     private void selectOfferOverview(OfferOverview overview) {
+        // Inform the model about the selection
+        model.setSelectedOverview(overview)
         UI.getCurrent().setPollInterval(50)
         downloadSpinner.setVisible(true)
         new LoadOfferInfoThread(UI.getCurrent(), overview).start()
         downloadBtn.setEnabled(true)
         updateOfferBtn.setEnabled(true)
+        toggleVersions.setEnabled(true)
         checkProjectCreationAllowed(overview)
     }
 
@@ -255,6 +332,13 @@ class OfferOverviewView extends VerticalLayout {
                 downloadBtn.removeExtension(fileDownloader)
             }
         })
+    }
+
+    @Override
+    void update(Observable o, Object arg) {
+        //todo
+        this.overviewVersionsGrid.getDataProvider().refreshAll()
+        this.overviewGrid.getDataProvider().refreshAll()
     }
 
     private class LoadOfferInfoThread extends Thread {

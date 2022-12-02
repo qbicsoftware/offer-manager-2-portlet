@@ -11,7 +11,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * @since 1.0.0
  */
-class SearchAffiliationViewModel {
+class SearchAffiliationViewModel extends Observable {
 
     /**
      * A list of available affiliations. All items are of class {@link Affiliation}
@@ -41,6 +41,9 @@ class SearchAffiliationViewModel {
         selectedAffiliation = Optional.empty()
 
         affiliations.addAll(affiliationResourcesService.iterator())
+
+        setChanged()
+        notifyObservers()
     }
 
     /**
@@ -53,4 +56,6 @@ class SearchAffiliationViewModel {
             resetAffiliations()
         })
     }
+
+
 }

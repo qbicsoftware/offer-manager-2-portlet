@@ -90,7 +90,7 @@ public class RefactorConverter {
         productItem.getProduct().getUnit(),
         productItem.getListPrice().doubleValue(),
         productItem.getSalePrice().doubleValue()
-    ).build();
+    ).setPosition(productItem.offerPosition()).build();
   }
 
   public static life.qbic.datamodel.dtos.business.Offer toOfferDto(OfferV2 offer) {
@@ -214,6 +214,7 @@ public class RefactorConverter {
     String emailAddress = personDto.getEmailAddress();
     String firstName = personDto.getFirstName();
     String lastName = personDto.getLastName();
+    String referenceId = personDto.getReferenceId();
     String title =
         personDto.getTitle() != AcademicTitle.NONE ? personDto.getTitle().getValue() : "";
     List<Affiliation> affiliations = personDto.getAffiliations().stream()
@@ -224,7 +225,8 @@ public class RefactorConverter {
         lastName,
         title,
         emailAddress,
-        affiliations);
+        affiliations,
+        referenceId);
     person.setId(personDto.getId());
     return person;
   }
@@ -246,6 +248,7 @@ public class RefactorConverter {
       personBuilder.title(new AcademicTitleFactory().getForString(person.getTitle()));
     }
     personBuilder.setId(person.getId());
+    personBuilder.setReferenceId(person.getReferenceId());
     return personBuilder.build();
   }
 
@@ -261,6 +264,7 @@ public class RefactorConverter {
     affiliationDtoBuilder.setId(affiliation.getId());
     affiliationDtoBuilder.category(toAffiliationCategoryDto(affiliation.getCategory()));
     affiliationDtoBuilder.country(affiliation.getCountry());
+    affiliationDtoBuilder.setActive(affiliation.isActive());
     if (affiliation.getAddressAddition() != null && !affiliation.getAddressAddition().isEmpty()) {
       affiliationDtoBuilder.setAddressAddition(affiliation.getAddressAddition());
     }
@@ -279,6 +283,9 @@ public class RefactorConverter {
         affiliationDto.getCountry(),
         affiliationCategory);
     affiliation.setId(affiliationDto.getId());
+    if (!affiliationDto.isActive()) {
+      affiliation.archive();
+    }
     return affiliation;
   }
 

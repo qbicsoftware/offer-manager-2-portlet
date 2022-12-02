@@ -14,7 +14,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<artifactId>offer-manager</artifactId>
-	<version>1.5.4</version> <!-- <<QUBE_FORCE_BUMP>> -->
+	<version>1.6.1</version> <!-- <<QUBE_FORCE_BUMP>> -->
 	<groupId>life.qbic</groupId>
 	<name>The new offer manager</name>
 	<url>https://github.com/qbicsoftware/offer-manager-2-portlet</url>
@@ -127,7 +127,7 @@
 			<dependency>
 				<groupId>life.qbic</groupId>
 				<artifactId>data-model-lib</artifactId>
-				<version>2.22.0</version>
+				<version>2.23.0</version>
 			</dependency>
 			<dependency>
 				<groupId>com.vaadin</groupId>
