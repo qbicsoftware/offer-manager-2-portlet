@@ -43,7 +43,6 @@ class OfferOverviewView extends VerticalLayout {
         this.itemGrid.setItems(createOfferViewModel.getProductItems())
         def provider = itemGrid.getDataProvider() as ListDataProvider<ProductItemViewModel>
         setupFilters(provider, itemGrid)
-        addListeners()
     }
 
     private static <T> void setupFilters(ListDataProvider<T> productListDataProvider,
