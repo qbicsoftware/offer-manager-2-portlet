@@ -20,7 +20,7 @@ import life.qbic.portal.offermanager.components.person.update.UpdatePersonView
  * @since: 0.1.0
  *
  */
-class CreateOfferView extends FormLayout{
+class CreateOfferView extends FormLayout implements Observer {
 
     final private AppViewModel sharedViewModel
     final CreateOfferViewModel viewModel
@@ -189,11 +189,8 @@ class CreateOfferView extends FormLayout{
         this.viewModel.resetViewRequired.register({
             resetViewContent()
         })
-        this.overviewView.itemGrid.getEditor().addSaveListener(it -> {
-            controller.calculatePriceForItems(getProductItems(viewModel.productItems),
-                    viewModel.customerAffiliation)
-            this.overviewView.refreshPricePanel()
-        })
+        // Register for changes in the productItems list
+        this.viewModel.addObserver(this)
     }
 
     /**
@@ -245,10 +242,17 @@ class CreateOfferView extends FormLayout{
         selectItemsView.reset()
     }
 
-    /*
+    @Override
+    void update(Observable o, Object arg) {
+        controller.calculatePriceForItems(getProductItems(viewModel.productItems),
+                viewModel.customerAffiliation)
+        this.overviewView.refreshPricePanel()
+    }
+/*
      * Small helper class that assists us keeping track of the view components
      * history.
      */
+
     private class ViewHistory {
 
         private List<Component> history

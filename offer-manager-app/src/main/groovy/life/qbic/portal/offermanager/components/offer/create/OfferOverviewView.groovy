@@ -35,6 +35,7 @@ class OfferOverviewView extends VerticalLayout {
         this.createOfferViewModel = viewModel
         initLayout()
         setUpGrid()
+        addListeners()
     }
 
     private void setUpGrid() {
@@ -80,6 +81,16 @@ class OfferOverviewView extends VerticalLayout {
 
         this.addComponents(offerOverview, buttonLayout)
         this.setMargin(false)
+    }
+
+    private void addListeners() {
+        createOfferViewModel.productItems.addPropertyChangeListener({
+            if (createOfferViewModel.productItems) {
+                save.setEnabled(true)
+            } else {
+                save.setEnabled(false)
+            }
+        })
     }
 
     /**

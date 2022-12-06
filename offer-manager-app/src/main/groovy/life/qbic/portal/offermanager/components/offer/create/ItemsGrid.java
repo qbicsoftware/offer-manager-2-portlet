@@ -26,6 +26,12 @@ public class ItemsGrid extends Grid<ProductItemViewModel> {
 
   public ItemsGrid(CreateOfferViewModel createOfferViewModel) {
     TextField editorComponent = new TextField();
+    //We want to refresh the dataprovider as soon as the user focus outside the editor component
+    editorComponent.addBlurListener(it -> {
+      //We need to explicitly cancel the focus on the editor component since vaadin only cancels it if you click on product(
+      this.getEditor().cancel();
+      this.getDataProvider().refreshAll();
+    });
     Binder<ProductItemViewModel> binder = getEditor().getBinder();
     ValidatorCombination<String> validatorCombination = new ValidatorCombination<>();
     validatorCombination.addValidator(
@@ -35,12 +41,12 @@ public class ItemsGrid extends Grid<ProductItemViewModel> {
         .withNullRepresentation(editorComponent.getEmptyValue())
         .bind(
             (model) -> String.valueOf(model.getQuantity()),
-            (model, value) -> model.setQuantity(Double.parseDouble(value)));
+            (model, value) -> {
+              model.setQuantity(Double.parseDouble(value));
+              createOfferViewModel.updateItem(model);
+            });
     getEditor().setEnabled(true);
-    getEditor().addSaveListener(editorSaveEvent -> {
-      createOfferViewModel.updateItem(editorSaveEvent.getBean());
-      this.getDataProvider().refreshAll();
-    });
+    getEditor().setBuffered(false);
     this.addColumn(ProductItemViewModel::getQuantity)
         .setEditorBinding(binding)
         .setEditable(true)

@@ -22,7 +22,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * @since 0.1.0
  */
-class CreateOfferViewModel {
+class CreateOfferViewModel extends Observable {
 
     List<Product> sequencingProducts = new ObservableList(new ArrayList<Product>())
     List<Product> primaryAnalysisProducts = new ObservableList(new ArrayList<Product>())
@@ -159,12 +159,16 @@ class CreateOfferViewModel {
     void updateItem(ProductItemViewModel item) {
         if (item.quantity <= 0.0) {
             productItems.remove(item)
+            setChanged()
+            notifyObservers()
             return
         }
         ProductItemViewModel existingItem = productItems.find { it.product.productId.equals(item.product.productId) } as ProductItemViewModel
         int index = productItems.findIndexOf { it.product.productId.equals(item.product.productId) }
         productItems.remove(existingItem)
         productItems.add(index, item)
+        setChanged()
+        notifyObservers()
     }
 
     protected void resetModel() {
