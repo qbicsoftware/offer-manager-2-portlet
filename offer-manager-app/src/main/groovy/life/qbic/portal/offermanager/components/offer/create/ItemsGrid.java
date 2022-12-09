@@ -26,12 +26,6 @@ public class ItemsGrid extends Grid<ProductItemViewModel> {
 
   public ItemsGrid(CreateOfferViewModel createOfferViewModel) {
     TextField editorComponent = new TextField();
-    //We want to refresh the dataprovider as soon as the user focus outside the editor component
-    editorComponent.addBlurListener(it -> {
-      //We need to explicitly cancel the focus on the editor component since vaadin only cancels it if you click on product(
-      this.getEditor().cancel();
-      this.getDataProvider().refreshAll();
-    });
     Binder<ProductItemViewModel> binder = getEditor().getBinder();
     ValidatorCombination<String> validatorCombination = new ValidatorCombination<>();
     validatorCombination.addValidator(
@@ -41,10 +35,28 @@ public class ItemsGrid extends Grid<ProductItemViewModel> {
         .withNullRepresentation(editorComponent.getEmptyValue())
         .bind(
             (model) -> String.valueOf(model.getQuantity()),
-            (model, value) -> {
-              model.setQuantity(Double.parseDouble(value));
-              createOfferViewModel.updateItem(model);
+            (model, value) -> { //We implement the actual logic for setting the quantity in the blurlistener of the editcomponent
             });
+
+    editorComponent.addBlurListener(it -> {
+      String inputQuantity = editorComponent.getValue();
+      double quantity;
+      //If the user clicks outside of the editor while it's empty it should be treated the same as if a user input 0
+      if (editorComponent.getEmptyValue().equals(String.valueOf(inputQuantity))) {
+        quantity = 0;
+      } else {
+        if (binder.isValid()) {
+          quantity = Double.parseDouble(inputQuantity);
+        } else {
+          //If the user clicks outside of the editor while the input is invalid then the original value should be set
+          quantity = binder.getBean().getQuantity();
+        }
+      }
+      createOfferViewModel.updateItem(binder.getBean(), quantity);
+      //We need to explicitly cancel the focus on the editor component since vaadin only cancels it if you click on a different product in the table
+      this.getEditor().cancel();
+      this.getDataProvider().refreshAll();
+    });
     getEditor().setEnabled(true);
     getEditor().setBuffered(false);
     this.addColumn(ProductItemViewModel::getQuantity)
