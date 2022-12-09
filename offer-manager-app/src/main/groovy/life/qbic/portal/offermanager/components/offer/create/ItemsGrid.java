@@ -15,14 +15,10 @@ import life.qbic.portal.offermanager.components.GridUtils;
 import life.qbic.portal.offermanager.components.ValidatorCombination;
 
 /**
- * <b>short description</b>
- *
- * <p>detailed description</p>
- *
- * @since <version tag>
+ * This class generates a GridComponent in which the user can in-line edit the quantity of
+ * productItems associated with an offer during the creation and update process of an offer
  */
 public class ItemsGrid extends Grid<ProductItemViewModel> {
-
 
   public ItemsGrid(CreateOfferViewModel createOfferViewModel) {
     TextField editorComponent = new TextField();

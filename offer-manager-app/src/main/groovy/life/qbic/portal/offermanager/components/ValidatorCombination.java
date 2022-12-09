@@ -8,11 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * <b>short description</b>
- *
- * <p>detailed description</p>
- *
- * @since <version tag>
+ * This class enables the application of multiple validators to a provided and valueContext
  */
 public class ValidatorCombination<T> implements Validator<T> {
 
