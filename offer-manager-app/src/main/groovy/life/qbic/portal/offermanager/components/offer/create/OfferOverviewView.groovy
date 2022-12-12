@@ -3,13 +3,11 @@ package life.qbic.portal.offermanager.components.offer.create
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.icons.VaadinIcons
 import com.vaadin.ui.*
-import com.vaadin.ui.components.grid.GridRowDragger
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.offers.Currency
-import life.qbic.datamodel.dtos.business.services.Product
 import life.qbic.portal.offermanager.components.GridUtils
 
 /**
@@ -28,27 +26,28 @@ class OfferOverviewView extends VerticalLayout {
     private final CreateOfferViewModel createOfferViewModel
 
     Panel offerOverview
-    Grid<ProductItemViewModel> itemGrid
+    ItemsGrid itemGrid
     Button previous
     Button save
+    Grid priceFieldGrid
 
     OfferOverviewView(CreateOfferViewModel viewModel) {
         this.createOfferViewModel = viewModel
         initLayout()
         setUpGrid()
+        addListeners()
     }
 
     private void setUpGrid() {
-        generateProductGrid(itemGrid)
-        ListDataProvider<ProductItemViewModel> dataProvider =
-                new ListDataProvider(createOfferViewModel.getProductItems())
-        itemGrid.setDataProvider(dataProvider)
-        enableDraggable(itemGrid)
-        setupFilters(dataProvider, itemGrid)
+        itemGrid.setHeightByRows(6)
+        itemGrid.enableDragAndDrop()
+        this.itemGrid.setItems(createOfferViewModel.getProductItems())
+        def provider = itemGrid.getDataProvider() as ListDataProvider<ProductItemViewModel>
+        setupFilters(provider, itemGrid)
     }
 
-    private static void setupFilters(ListDataProvider<Product> productListDataProvider,
-                                     Grid targetGrid) {
+    private static <T> void setupFilters(ListDataProvider<T> productListDataProvider,
+                                         Grid targetGrid) {
         HeaderRow customerFilterRow = targetGrid.appendHeaderRow()
         GridUtils.setupColumnFilter(productListDataProvider,
                 targetGrid.getColumn("ProductName"),
@@ -56,13 +55,6 @@ class OfferOverviewView extends VerticalLayout {
         GridUtils.setupColumnFilter(productListDataProvider,
                 targetGrid.getColumn("ProductDescription"),
                 customerFilterRow)
-    }
-
-    static void enableDraggable(Grid<ProductItemViewModel> grid) {
-        new GridRowDragger<>(grid)
-        grid.setStyleGenerator(row -> {
-            return "draggable-row-grab"
-        })
     }
 
     /**
@@ -84,39 +76,21 @@ class OfferOverviewView extends VerticalLayout {
 
         this.offerOverview = new Panel("Offer Details:")
 
-        this.itemGrid = new Grid<>("Selected Items:")
+        this.itemGrid = new ItemsGrid(createOfferViewModel)
+        this.itemGrid.setCaption("Selected Items:")
 
         this.addComponents(offerOverview, buttonLayout)
         this.setMargin(false)
     }
 
-    /**
-     * Method which generates the grid and populates the columns with the set product information from the setupDataProvider Method
-     *
-     * This Method is responsible for setting up the grid and setting the product information to the individual grid columns.
-     */
-    private static void generateProductGrid(Grid<ProductItemViewModel> grid) {
-        try {
-
-            grid.addColumn({ productItem -> productItem.quantity }).setCaption("Quantity")
-            grid.addColumn({ productItem -> productItem.product.productName })
-                    .setCaption("Product Name").setId("ProductName")
-            Grid.Column<ProductItemViewModel,String> descriptionColumn = grid.addColumn({ productItem -> productItem.product.description })
-                    .setCaption("Product Description").setId("ProductDescription").setDescriptionGenerator({it.product.description})
-            grid.addColumn({ productItem -> productItem.product.internalUnitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol())).setCaption("Internal Unit Price")
-            grid.addColumn({ productItem -> productItem.product.externalUnitPrice }, new NumberRenderer(Currency.getFormatterWithSymbol())).setCaption("External Unit Price")
-            grid.addColumn({ productItem -> productItem.product.serviceProvider.fullName }).setCaption("Facility")
-            grid.addColumn({ productItem -> productItem.product.unit }).setCaption("Product Unit")
-
-
-            //specify size of grid and layout
-            grid.setWidthFull()
-            descriptionColumn.setWidth(GridUtils.DESCRIPTION_MAX_WIDTH)
-            grid.setHeightByRows(6)
-
-        } catch (Exception e) {
-            new Exception("Unexpected exception in building the product item grid", e)
-        }
+    private void addListeners() {
+        createOfferViewModel.productItems.addPropertyChangeListener({
+            if (createOfferViewModel.productItems) {
+                save.setEnabled(true)
+            } else {
+                save.setEnabled(false)
+            }
+        })
     }
 
     /**
@@ -173,7 +147,7 @@ class OfferOverviewView extends VerticalLayout {
         on the left and a basic cost overview on the right
          */
         header.addComponent(projectInfoForm)
-        Component costOverview = createCostOverview()
+        Panel costOverview = createCostOverview()
         header.addComponent(costOverview)
         header.setWidthFull()
         header.setComponentAlignment(costOverview, Alignment.TOP_CENTER)
@@ -194,31 +168,43 @@ class OfferOverviewView extends VerticalLayout {
     private Panel createCostOverview() {
         final Panel panel = new Panel("Cost Overview")
         panel.setSizeUndefined()
-        Grid<PriceField> gridLayout = new Grid<>()
-        gridLayout.setHeightByRows(5)
-        gridLayout.setItems([
+        priceFieldGrid = new Grid<>()
+        priceFieldGrid.setHeightByRows(5)
+        priceFieldGrid.setItems([
                 new PriceField("Net Price (incl. discount)", createOfferViewModel.netPrice),
                 new PriceField("Overheads", createOfferViewModel.overheads),
                 new PriceField("Taxes", createOfferViewModel.taxes),
-                new PriceField("Total Discount (considered)", createOfferViewModel.totalDiscountAmount*-1),
+                new PriceField("Total Discount (considered)", createOfferViewModel.totalDiscountAmount * -1),
                 new PriceField("Total Price", createOfferViewModel.totalPrice)
         ])
-        gridLayout.addColumn(PriceField::getName)
-        gridLayout.addColumn({
+        priceFieldGrid.addColumn(PriceField::getName)
+        priceFieldGrid.addColumn({
             costs -> costs.value
         },
                 new NumberRenderer(Currency.getFormatterWithSymbol()))
 
-        gridLayout.headerVisible = false
-        panel.setContent(gridLayout)
+        priceFieldGrid.headerVisible = false
+        panel.setContent(priceFieldGrid)
 
         return panel
+    }
+
+    void refreshPricePanel() {
+        if (priceFieldGrid)
+            priceFieldGrid.setItems([
+                    new PriceField("Net Price (incl. discount)", createOfferViewModel.totalPrice),
+                    new PriceField("Overheads", createOfferViewModel.overheads),
+                    new PriceField("Taxes", createOfferViewModel.taxes),
+                    new PriceField("Total Discount (considered)", createOfferViewModel.totalDiscountAmount * -1),
+                    new PriceField("Total Price", createOfferViewModel.totalPrice)
+            ])
     }
 
     /*
     Small helper object, that will display information
     about individual price positions for offer overviews.
      */
+
     private class PriceField {
 
         String name

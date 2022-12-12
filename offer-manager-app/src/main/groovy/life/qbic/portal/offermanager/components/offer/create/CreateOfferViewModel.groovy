@@ -22,7 +22,7 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
  *
  * @since 0.1.0
  */
-class CreateOfferViewModel {
+class CreateOfferViewModel extends Observable {
 
     List<Product> sequencingProducts = new ObservableList(new ArrayList<Product>())
     List<Product> primaryAnalysisProducts = new ObservableList(new ArrayList<Product>())
@@ -152,8 +152,31 @@ class CreateOfferViewModel {
         for (ProductItemViewModel currentItem : alreadyExistingItems) {
             totalAmount = totalAmount + currentItem.quantity
         }
-        productItems.add(new ProductItemViewModel(totalAmount, item.product))
         productItems.removeAll(alreadyExistingItems)
+        productItems.add(new ProductItemViewModel(totalAmount, item.product))
+    }
+
+    void updateItem(ProductItemViewModel currentProductItem, double newQuantity) {
+        ProductItemViewModel productItemViewModel =
+                productItems.find { it -> it.product.productId.equals(currentProductItem.getProduct().getProductId()) } as ProductItemViewModel
+        if (productItemViewModel) {
+            //Only change quantity and notify observer if quantity was removed or changed
+            if (newQuantity <= 0.0) {
+                productItems.remove(productItemViewModel)
+                markAsDirty()
+            }
+            if (productItemViewModel.getQuantity() != newQuantity) {
+                productItemViewModel.setQuantity(newQuantity)
+                markAsDirty()
+            }
+        } else {
+            throw new RuntimeException("Tried to update non-existent ProductItem ${currentProductItem.getProduct().getProductId()}")
+        }
+    }
+
+    void markAsDirty() {
+        setChanged()
+        notifyObservers()
     }
 
     protected void resetModel() {

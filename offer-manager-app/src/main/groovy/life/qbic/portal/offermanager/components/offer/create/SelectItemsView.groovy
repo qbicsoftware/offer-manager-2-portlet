@@ -10,7 +10,6 @@ import com.vaadin.server.UserError
 import com.vaadin.shared.data.sort.SortDirection
 import com.vaadin.shared.ui.grid.HeightMode
 import com.vaadin.ui.*
-import com.vaadin.ui.components.grid.GridRowDragger
 import com.vaadin.ui.components.grid.HeaderRow
 import com.vaadin.ui.renderers.NumberRenderer
 import com.vaadin.ui.themes.ValoTheme
@@ -54,7 +53,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
     Grid<Product> metabolomicsAnalysisGrid
     Grid<Product> externalServiceGrid
 
-    Grid<ProductItemViewModel> overviewGrid
+    ItemsGrid overviewGrid
 
     Button applySequencing
     Button applyProjectManagement
@@ -78,13 +77,6 @@ class SelectItemsView extends VerticalLayout implements Resettable {
     TextField amountExternalService
 
     TabSheet packageAccordion
-
-    static void enableDraggable(Grid<ProductItemViewModel> grid) {
-        new GridRowDragger<>(grid)
-        grid.setStyleGenerator(row -> {
-            return "draggable-row-grab"
-        })
-    }
 
     /**
      * Contains regex for filtering the different product types
@@ -196,7 +188,7 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         this.projectManagementGrid = new Grid<>()
         this.externalServiceGrid = new Grid<>()
         this.storageGrid = new Grid<>()
-        this.overviewGrid = new Grid<>("Overview:")
+        this.overviewGrid = new ItemsGrid(createOfferViewModel)
 
         amountSequencing = new TextField("Quantity:")
         amountSequencing.setPlaceholder("e.g. 1.5")
@@ -319,8 +311,8 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         generateProductGrid(projectManagementGrid)
         generateProductGrid(externalServiceGrid)
         // This grid summarises product items selected for this specific offer, so we set quantity = true
-        generateItemGrid(overviewGrid)
-        enableDraggable(overviewGrid)
+        this.overviewGrid.setCaption("Overview")
+        overviewGrid.enableDragAndDrop()
 
         packageAccordion = new TabSheet()
         packageAccordion.addTab(seqLayout, "Sequencing")
@@ -374,13 +366,13 @@ class SelectItemsView extends VerticalLayout implements Resettable {
         this.externalServiceGrid.setDataProvider(externalServiceProvider)
         setupFilters(externalServiceProvider, externalServiceGrid)
 
-        ListDataProvider<ProductItemViewModel> selectedItemsDataProvider =
-                new ListDataProvider(createOfferViewModel.getProductItems())
-        this.overviewGrid.setDataProvider(selectedItemsDataProvider)
-        setupFilters(selectedItemsDataProvider, overviewGrid)
+        this.overviewGrid.setItems(createOfferViewModel.getProductItems())
+        def provider = overviewGrid.getDataProvider() as ListDataProvider<ProductItemViewModel>
+        setupFilters(provider, overviewGrid)
+        overviewGrid.setDataProvider(provider)
     }
 
-    private static void setupFilters(ListDataProvider<Product> productListDataProvider,
+    private static <T> void setupFilters(ListDataProvider<T> productListDataProvider,
                                      Grid targetGrid) {
         HeaderRow productFilterRow = targetGrid.appendHeaderRow()
         GridUtils.setupColumnFilter(productListDataProvider,
@@ -421,36 +413,6 @@ class SelectItemsView extends VerticalLayout implements Resettable {
             descriptionColumn.setWidth(GridUtils.DESCRIPTION_MAX_WIDTH)
             grid.setHeightMode(HeightMode.ROW)
             grid.sort("ProductId", SortDirection.ASCENDING)
-        } catch (Exception e) {
-            new Exception("Unexpected exception in building the product item grid", e)
-        }
-    }
-
-    private static void generateItemGrid(Grid<ProductItemViewModel> grid) {
-        try {
-            grid.addColumn({ it.quantity })
-                    .setCaption("Quantity").setId("Quantity")
-            grid.addColumn({ it.product.productId })
-                    .setCaption("Product Id").setId("ProductId")
-            grid.addColumn({ it.product.productName })
-                    .setCaption("Product Name").setId("ProductName")
-            Grid.Column<ProductItemViewModel,String> descriptionColumn = grid.addColumn({ it.product.description })
-                    .setCaption("Product Description").setId("ProductDescription").setDescriptionGenerator({it.product.description})
-            grid.addColumn({ it.product.internalUnitPrice }, new NumberRenderer(Currency
-                    .getFormatterWithSymbol()))
-                    .setCaption("Internal Unit Price").setId("InternalUnitPrice")
-            grid.addColumn({ it.product.externalUnitPrice }, new NumberRenderer(Currency
-                    .getFormatterWithSymbol()))
-                    .setCaption("External Unit Price").setId("ExternalUnitPrice")
-            grid.addColumn({ it.product.serviceProvider.fullName})
-                    .setCaption("Facility").setId("Facility")
-            grid.addColumn({ it.product.unit.value })
-                    .setCaption("Product Unit").setId("ProductUnit")
-
-            //specify size of grid and layout
-            grid.setWidthFull()
-            descriptionColumn.setWidth(GridUtils.DESCRIPTION_MAX_WIDTH)
-            grid.setHeightMode(HeightMode.ROW)
         } catch (Exception e) {
             new Exception("Unexpected exception in building the product item grid", e)
         }
@@ -894,5 +856,4 @@ class SelectItemsView extends VerticalLayout implements Resettable {
             next.setEnabled(false)
         }
     }
-
 }
