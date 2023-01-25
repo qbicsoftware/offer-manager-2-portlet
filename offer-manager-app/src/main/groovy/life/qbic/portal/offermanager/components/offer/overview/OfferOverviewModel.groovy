@@ -11,7 +11,6 @@ import life.qbic.portal.offermanager.dataresources.ResourcesService
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
 import java.util.function.Predicate
-import java.util.stream.Collector
 import java.util.stream.Collectors
 
 /**
@@ -76,7 +75,9 @@ class OfferOverviewModel extends Observable {
             latestOfferOverviewList.addAll(filteredList)
 
             this.offerVersionsForSelected.clear()
-            this.offerVersionsForSelected.addAll(filterOfferVersionID(this.selectedOverview, allOfferVersions))
+            if (this.selectedOverview != null) {
+                this.offerVersionsForSelected.addAll(filterOfferVersionID(this.selectedOverview, allOfferVersions))
+            }
             this.setChanged()
             this.notifyObservers()
         })
