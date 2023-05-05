@@ -18,6 +18,7 @@ public enum ProductCategory {
   METABOLOMIC("Metabolomics", "ME"),
   EXTERNAL_SERVICE("External Service", "EXT");
 
+
   /**
    * Label describing the enum type with a string
    */
