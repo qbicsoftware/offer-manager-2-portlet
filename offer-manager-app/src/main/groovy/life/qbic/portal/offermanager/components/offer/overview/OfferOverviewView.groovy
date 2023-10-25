@@ -287,10 +287,6 @@ class OfferOverviewView extends VerticalLayout implements Observer {
             toggleVersions.setStyleName(ValoTheme.BUTTON_BORDERLESS_COLORED)
         })
 
-        exportAllOffersToTsvButton.addClickListener(clickEvent -> {
-
-        })
-
     }
 
     private void setupGridListeners() {
