@@ -139,6 +139,7 @@ class DependencyManager {
     private FetchOfferDataSource fetchOfferDataSource
     private OfferOverviewDataSource offerOverviewDataSource
     private ProjectAssistant projectAssistant
+    private ExportOffersDataSource exportOffersDataSource
     // Implemented by life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
     private CreateAffiliationDataSource createAffiliationDataSource
     private CreatePersonDataSource createPersonDataSource
@@ -224,6 +225,7 @@ class DependencyManager {
             fetchOfferDataSource = offerDbConnector
             projectAssistant = offerDbConnector
             offerOverviewDataSource = offerDbConnector
+            exportOffersDataSource = offerDbConnector
 
             /* Currently life.qbic.portal.offermanager.dataresources.projects.ProjectDbConnector
              *  cannot be decoupled by interfaces from
@@ -497,13 +499,17 @@ class DependencyManager {
         FetchOffer fetchOffer = new FetchOffer(fetchOfferDataSource, offerOverviewPresenter)
         OfferOverviewController offerOverviewController = new OfferOverviewController(fetchOffer)
 
+        ExportOffersDataSource exportOffersDataSource = this.exportOffersDataSource
+        ExportAllOffers exportAllOffers = new ExportAllOffers(exportOffersDataSource)
+
+
         CreateProjectViewModel createProjectViewModel = new CreateProjectViewModel(projectSpaceResourcesService, projectResourcesService)
         CreateProjectPresenter createProjectPresenter = new CreateProjectPresenter(createProjectViewModel, sharedViewModel, projectCreatedEvent)
         CreateProject createProject = new CreateProject(createProjectPresenter, createProjectDataSource, createProjectSpaceDataSource)
         CreateProjectController createProjectController = new CreateProjectController(createProject)
         CreateProjectView createProjectView = new CreateProjectView(createProjectViewModel, createProjectController)
 
-        OfferOverviewView offerOverviewView = new OfferOverviewView(offerOverviewViewModel, offerOverviewController, createProjectView)
+        OfferOverviewView offerOverviewView = new OfferOverviewView(offerOverviewViewModel, offerOverviewController, createProjectView, exportAllOffers)
         return offerOverviewView
     }
 
