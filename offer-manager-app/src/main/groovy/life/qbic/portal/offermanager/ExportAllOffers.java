@@ -92,7 +92,6 @@ public class ExportAllOffers implements StreamSource {
     allOffers.stream()
         .map(this::toTsvLine)
         .forEach(fileContent::append);
-    System.out.println(fileContent);
     return new ByteArrayInputStream(fileContent.toString().getBytes());
   }
 
