@@ -82,4 +82,8 @@ class OfferId implements Comparable<OfferId>{
     String toString() {
         return String.format("O_%s_%s_%s", projectPart, randomPart, version)
     }
+
+    String toStringWithoutVersion() {
+        return String.format("O_%s_%s", projectPart, randomPart)
+    }
 }
