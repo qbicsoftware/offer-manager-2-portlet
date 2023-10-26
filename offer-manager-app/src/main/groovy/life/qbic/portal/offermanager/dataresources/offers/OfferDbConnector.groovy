@@ -9,6 +9,7 @@ import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.fetch.FetchOfferDataSource
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
+import life.qbic.portal.offermanager.ExportOffersDataSource
 import life.qbic.portal.offermanager.dataresources.database.ConnectionProvider
 import life.qbic.portal.offermanager.dataresources.database.SessionProvider
 import life.qbic.portal.offermanager.dataresources.persons.PersonDbConnector
@@ -30,7 +31,7 @@ import java.util.stream.Collectors
  *
  */
 @Log4j2
-class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant, OfferOverviewDataSource {
+class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, ProjectAssistant, OfferOverviewDataSource, ExportOffersDataSource {
 
     SessionProvider sessionProvider
 
@@ -195,6 +196,18 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             List<OfferV2> result = query.list()
             Optional<OfferV2> firstOffer = result ? Optional.ofNullable(result.get(0)) : Optional.empty() as Optional<OfferV2>
             return firstOffer
+        }
+    }
+
+    @Override
+    List<OfferV2> findAllOffers() {
+        try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            List<OfferV2> offerV2List = session.createQuery("Select offer FROM OfferV2 offer", OfferV2.class).list()
+            session.getTransaction().commit()
+            return offerV2List
+        } catch (HibernateException e) {
+            throw new DatabaseQueryException("Unable to load offer overviews.", e)
         }
     }
 }

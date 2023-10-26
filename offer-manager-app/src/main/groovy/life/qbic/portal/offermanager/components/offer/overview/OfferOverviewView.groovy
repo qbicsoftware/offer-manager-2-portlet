@@ -16,11 +16,15 @@ import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.offers.Currency
 import life.qbic.business.offers.identifier.OfferIdFormatter
+import life.qbic.portal.offermanager.ExportAllOffers
 import life.qbic.portal.offermanager.OfferFileNameFormatter
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.components.project.ProjectIdContainsString
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
+
+import java.time.LocalDate
+import java.util.function.Supplier
 
 /**
  * A basic offer overview user interface.
@@ -41,13 +45,13 @@ class OfferOverviewView extends VerticalLayout implements Observer {
 
     final private Grid<OfferOverview> overviewVersionsGrid
 
-    final private Button downloadBtn
+    final private Button downloadOfferBtn
 
     final Button updateOfferBtn
 
     final private ProgressBar downloadSpinner
 
-    private FileDownloader fileDownloader
+    private FileDownloader offerFileDownloader
 
     private CreateProjectView createProjectView
 
@@ -59,14 +63,18 @@ class OfferOverviewView extends VerticalLayout implements Observer {
 
     private Button toggleVersions
 
+    private final Button exportAllOffersToTsvButton
+
+
     OfferOverviewView(OfferOverviewModel model,
                       OfferOverviewController offerOverviewController,
-                      CreateProjectView createProjectView) {
+                      CreateProjectView createProjectView,
+                      ExportAllOffers exportAllOffers) {
         this.model = model
         this.offerOverviewController = offerOverviewController
         this.overviewGrid = new Grid<>()
         this.overviewVersionsGrid = new Grid<>()
-        this.downloadBtn = new Button("Download Offer", VaadinIcons.DOWNLOAD)
+        this.downloadOfferBtn = new Button("Download Offer", VaadinIcons.DOWNLOAD)
         this.updateOfferBtn = new Button("Update Offer", VaadinIcons.EDIT)
         this.createProjectButton = new Button("Create Project", VaadinIcons.PLUS_CIRCLE)
         this.toggleOverview = new Button("Overview")
@@ -75,6 +83,9 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         this.createProjectView = createProjectView
         // Register this view to be notified on updates in the model
         this.model.addObserver(this)
+
+        this.exportAllOffersToTsvButton = new Button("Export to TSV", VaadinIcons.DOWNLOAD)
+        downloadStreamWhenClickingButton(exportAllOffersToTsvButton, exportAllOffers::exportOffersToTsv)
 
         initLayout()
 
@@ -90,7 +101,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         this.toggleVersions.setEnabled(false)
         this.toggleOverview.setEnabled(false)
 
-        this.toggleVersions.addClickListener(  {
+        this.toggleVersions.addClickListener({
             overviewGrid.setVisible(false)
             overviewVersionsGrid.setVisible(true)
             toggleVersions.setEnabled(false)
@@ -146,9 +157,12 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         right component will be the offer download button.
          */
         final HorizontalLayout activityContainer = new HorizontalLayout()
-        downloadBtn.setStyleName(ValoTheme.BUTTON_LARGE)
-        downloadBtn.setEnabled(false)
-        downloadBtn.setDescription("Download offer")
+        exportAllOffersToTsvButton.setStyleName(ValoTheme.BUTTON_LARGE)
+        exportAllOffersToTsvButton.setEnabled(true)
+        exportAllOffersToTsvButton.setDescription("Download Offers as TSV")
+        downloadOfferBtn.setStyleName(ValoTheme.BUTTON_LARGE)
+        downloadOfferBtn.setEnabled(false)
+        downloadOfferBtn.setDescription("Download offer")
         updateOfferBtn.setStyleName(ValoTheme.BUTTON_LARGE)
         updateOfferBtn.setEnabled(false)
         updateOfferBtn.setDescription("Update offer")
@@ -166,15 +180,16 @@ class OfferOverviewView extends VerticalLayout implements Observer {
 
         // Add a button to create a project from an offer
         activityContainer.addComponents(
-                downloadBtn,
+                downloadOfferBtn,
                 updateOfferBtn,
                 createProjectButton,
+                exportAllOffersToTsvButton,
                 downloadSpinner)
 
         activityContainer.setMargin(false)
         activityContainer.setComponentAlignment(downloadSpinner, Alignment.MIDDLE_CENTER)
 
-        HorizontalLayout wrapperLayout = new HorizontalLayout(activityContainer,toggleLayout)
+        HorizontalLayout wrapperLayout = new HorizontalLayout(activityContainer, toggleLayout)
 
         wrapperLayout.setComponentAlignment(toggleLayout, Alignment.MIDDLE_RIGHT)
         wrapperLayout.setWidthFull()
@@ -227,7 +242,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         grid.setWidthFull()
     }
 
-    private static void setupFilters(ListDataProvider<OfferOverview> offerOverviewDataProvider, Grid<? extends  OfferOverview> grid) {
+    private static void setupFilters(ListDataProvider<OfferOverview> offerOverviewDataProvider, Grid<? extends OfferOverview> grid) {
         HeaderRow headerFilterRow = grid.appendHeaderRow()
 
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
@@ -275,9 +290,9 @@ class OfferOverviewView extends VerticalLayout implements Observer {
     }
 
     private void setupGridListeners() {
-        overviewGrid.addSelectionListener({ selection ->handleSelection(selection)}
+        overviewGrid.addSelectionListener({ selection -> handleSelection(selection) }
         )
-        overviewVersionsGrid.addSelectionListener({ selection ->handleSelection(selection)}
+        overviewVersionsGrid.addSelectionListener({ selection -> handleSelection(selection) }
         )
     }
 
@@ -290,7 +305,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
 
     private void deselectOfferOverview() {
         updateOfferBtn.setEnabled(false)
-        downloadBtn.setEnabled(false)
+        downloadOfferBtn.setEnabled(false)
         createProjectButton.setEnabled(false)
         toggleVersions.setEnabled(false)
     }
@@ -301,7 +316,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         UI.getCurrent().setPollInterval(50)
         downloadSpinner.setVisible(true)
         new LoadOfferInfoThread(UI.getCurrent(), overview).start()
-        downloadBtn.setEnabled(true)
+        downloadOfferBtn.setEnabled(true)
         updateOfferBtn.setEnabled(true)
         toggleVersions.setEnabled(true)
         checkProjectCreationAllowed(overview)
@@ -315,21 +330,29 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         }
     }
 
-    private void createResourceForDownload() {
-        removeExistingResources()
+    private void createResourceForOfferPdfDownload() {
+        removeExistingResourcesForOfferPdfDownload()
 
         StreamResource offerResource =
                 new StreamResource((StreamResource.StreamSource res) -> {
                     return model.getOfferAsPdf()
                 }, OfferFileNameFormatter.getFileNameForOffer(model.getSelectedOffer()))
-        fileDownloader = new FileDownloader(offerResource)
-        fileDownloader.extend(downloadBtn)
+        offerFileDownloader = new FileDownloader(offerResource)
+        offerFileDownloader.extend(downloadOfferBtn)
     }
 
-    private void removeExistingResources() {
-        Optional.ofNullable(fileDownloader).ifPresent({
-            if (downloadBtn.extensions.contains(fileDownloader)) {
-                downloadBtn.removeExtension(fileDownloader)
+    private static void downloadStreamWhenClickingButton(AbstractComponent button, Supplier<InputStream> inputStreamSupplier) {
+        StreamResource offerTsvResource = new StreamResource((resource) -> inputStreamSupplier.get(),
+                LocalDate.now().toString() + ".offer-export" + ".tsv")
+        // avoid browser caching file by name
+        offerTsvResource.setCacheTime(0)
+        new FileDownloader(offerTsvResource).extend(button)
+    }
+
+    private void removeExistingResourcesForOfferPdfDownload() {
+        Optional.ofNullable(offerFileDownloader).ifPresent({
+            if (downloadOfferBtn.extensions.contains(offerFileDownloader)) {
+                downloadOfferBtn.removeExtension(offerFileDownloader)
             }
         })
     }
@@ -362,7 +385,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
                 selectedOffer = overviewGrid.getSelectionModel().getFirstSelectedItem()
             })
             offerOverviewController.fetchOffer(offerOverview.offerId)
-            createResourceForDownload()
+            createResourceForOfferPdfDownload()
 
             ui.access(() -> {
                 downloadSpinner.setVisible(false)
