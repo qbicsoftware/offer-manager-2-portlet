@@ -1,5 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
+import life.qbic.business.RefactorConverter
 import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.portal.offermanager.communication.EventEmitter
@@ -57,7 +58,7 @@ class OverviewService implements ResourcesService<OfferOverview> {
                         affectedOffer.customer.toString(),
                         affectedOffer.projectManager.toString(),
                         affectedOffer.totalPrice,
-                        project.projectId)
+                        project.projectId, affectedOffer.affiliation)
                 this.addToResource(updatedOverview)
             }
         })
@@ -82,7 +83,8 @@ class OverviewService implements ResourcesService<OfferOverview> {
                 "",
                 "${offer.customer.firstName} ${offer.customer.lastName}",
                 "${offer.projectManager.firstName} ${offer.projectManager.lastName}",
-                offer.totalPrice
+                offer.totalPrice as double,
+                RefactorConverter.toAffiliation(offer.selectedCustomerAffiliation)
         )
     }
 

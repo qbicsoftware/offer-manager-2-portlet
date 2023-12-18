@@ -43,7 +43,7 @@ public class ExportAllOffers implements StreamSource {
         offerV2 -> offerV2.getSelectedCustomerAffiliation().getOrganization()));
     columns.add(new Column("affiliationAddressAddition",
         offerV2 -> offerV2.getSelectedCustomerAffiliation().getAddressAddition()));
-    columns.add(new Column("affiliationCategory",
+    columns.add(new Column("affiliation",
         offerV2 -> offerV2.getSelectedCustomerAffiliation().getCategory().getLabel()));
     columns.add(new Column("projectmanagerName",
         offerV2 -> offerV2.getProjectManager().getFirstName() + " " + offerV2.getProjectManager()
