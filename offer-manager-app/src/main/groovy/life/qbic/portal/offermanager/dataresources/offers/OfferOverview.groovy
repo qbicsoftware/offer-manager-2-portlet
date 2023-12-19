@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.dataresources.offers
 
 import groovy.transform.EqualsAndHashCode
 import life.qbic.business.offers.OfferV2
+import life.qbic.business.persons.affiliation.Affiliation
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 
@@ -27,6 +28,8 @@ class OfferOverview {
 
     final String customer
 
+    final Affiliation affiliation
+
     final String projectManager
 
     final Date modificationDate
@@ -39,13 +42,14 @@ class OfferOverview {
 
     static OfferOverview from(OfferV2 offer) {
         return new OfferOverview(
-                new OfferId(offer.identifier.getProjectPart(),offer.identifier.getRandomPart(), offer.identifier.getVersion() as String),
+                new OfferId(offer.identifier.getProjectPart(), offer.identifier.getRandomPart(), offer.identifier.getVersion() as String),
                 offer.getCreationDate().toDate(),
                 offer.getProjectTitle(),
                 String.format("%s %s", offer.getCustomer().firstName, offer.getCustomer().lastName),
                 String.format("%s %s", offer.getProjectManager().firstName, offer.getProjectManager().lastName),
                 offer.getPriceAfterTax().doubleValue(),
-                offer.getAssociatedProject().orElse(null)
+                offer.getAssociatedProject().orElse(null),
+                offer.selectedCustomerAffiliation
         )
     }
 
@@ -56,7 +60,7 @@ class OfferOverview {
             String projectId,
             String customer,
             String projectManager,
-            double totalPrice) {
+            double totalPrice, Affiliation affiliation) {
         this.offerId = offerId
         this.modificationDate = modificationDate
         this.projectId = projectId
@@ -65,6 +69,7 @@ class OfferOverview {
         this.projectManager = projectManager
         this.totalPrice = totalPrice
         this.associatedProject = Optional.empty()
+        this.affiliation = affiliation
     }
 
     OfferOverview(
@@ -74,7 +79,7 @@ class OfferOverview {
             String customer,
             String projectManager,
             double totalPrice,
-            ProjectIdentifier associatedProject) {
+            ProjectIdentifier associatedProject, Affiliation affiliation) {
         this.offerId = offerId
         this.modificationDate = modificationDate
         this.projectId = ""
@@ -83,5 +88,6 @@ class OfferOverview {
         this.projectManager = projectManager
         this.totalPrice = totalPrice
         this.associatedProject = Optional.ofNullable(associatedProject)
+        this.affiliation = affiliation
     }
 }
