@@ -21,6 +21,7 @@ class CreatePersonController {
 
     private final CreatePersonInput useCaseInput
     private final RefactorConverter refactorConverter = new RefactorConverter()
+    private static final AcademicTitleFactory ACADEMIC_TITLE_FACTORY = new AcademicTitleFactory()
 
     CreatePersonController(CreatePersonInput useCaseInput) {
         this.useCaseInput = useCaseInput
@@ -39,12 +40,16 @@ class CreatePersonController {
      * @since 1.0.0
      */
     void createNewPerson(String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations) {
-        AcademicTitleFactory academicTitleFactory = new AcademicTitleFactory()
+
+        firstName = sanitized(firstName)
+        lastName = sanitized(lastName)
+        email = sanitized(email)
+
         AcademicTitle academicTitle
         if (!title || title?.isEmpty()) {
             academicTitle = AcademicTitle.NONE
         } else {
-            academicTitle = academicTitleFactory.getForString(title)
+            academicTitle = ACADEMIC_TITLE_FACTORY.getForString(title)
         }
 
         try {
@@ -74,12 +79,15 @@ class CreatePersonController {
      *
      */
     void updatePerson(Person oldEntry, String firstName, String lastName, String title, String email, List<? extends Affiliation> affiliations){
-        AcademicTitleFactory academicTitleFactory = new AcademicTitleFactory()
+
+        firstName = sanitized(firstName)
+        lastName = sanitized(lastName)
+        email = sanitized(email)
         AcademicTitle academicTitle
         if (!title || title?.isEmpty()) {
             academicTitle = AcademicTitle.NONE
         } else {
-            academicTitle = academicTitleFactory.getForString(title)
+            academicTitle = ACADEMIC_TITLE_FACTORY.getForString(title)
         }
 
         try{
@@ -89,5 +97,9 @@ class CreatePersonController {
         }catch(Exception ignored) {
             throw new IllegalArgumentException("Could not update customer from provided arguments.")
         }
+    }
+
+    private static String sanitized(final String input) {
+        return input.replaceAll("\t", " ").trim()
     }
 }
