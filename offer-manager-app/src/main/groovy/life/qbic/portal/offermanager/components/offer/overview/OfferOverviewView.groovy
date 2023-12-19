@@ -226,6 +226,12 @@ class OfferOverviewView extends VerticalLayout implements Observer {
                 .setCaption("Project Title").setId("ProjectTitle")
         grid.addColumn({ overview -> overview.getCustomer() })
                 .setCaption("Customer").setId("Customer")
+        grid.addColumn({ overview -> overview.getAffiliation().getCategory().getLabel() })
+                .setCaption("Affiliation Category").setId("AffiliationCategory")
+        grid.addColumn({ overview -> overview.getAffiliation().getOrganization() })
+                .setCaption("Organisation").setId("Organisation")
+        grid.addColumn({ overview -> overview.getAffiliation().getAddressAddition() })
+                .setCaption("Address Addition").setId("AddressAddition")
         grid.addColumn({ overview -> overview.getProjectManager() })
                 .setCaption("ProjectManager").setId("ProjectManager")
         grid.addColumn({ overview -> overview.getAssociatedProject() })
@@ -253,6 +259,15 @@ class OfferOverviewView extends VerticalLayout implements Observer {
                 headerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
                 grid.getColumn("Customer"),
+                headerFilterRow)
+        GridUtils.setupColumnFilter(offerOverviewDataProvider,
+                grid.getColumn("AffiliationCategory"),
+                headerFilterRow)
+        GridUtils.setupColumnFilter(offerOverviewDataProvider,
+                grid.getColumn("Organisation"),
+                headerFilterRow)
+        GridUtils.setupColumnFilter(offerOverviewDataProvider,
+                grid.getColumn("AddressAddition"),
                 headerFilterRow)
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
                 grid.getColumn("ProjectManager"),

@@ -302,7 +302,7 @@ public class RefactorConverter {
     return life.qbic.datamodel.dtos.business.AffiliationCategory.EXTERNAL;
   }
 
-  static private AffiliationCategory toAffiliationCategory(
+  public static AffiliationCategory toAffiliationCategory(
       life.qbic.datamodel.dtos.business.AffiliationCategory affiliationCategoryDto) {
     switch (affiliationCategoryDto) {
       case INTERNAL:
