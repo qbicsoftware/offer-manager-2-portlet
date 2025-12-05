@@ -98,7 +98,7 @@ thead#page-header {
 }
 #page-footer-content .footer-columns {
     display: grid;
-    grid-template-columns: 20% 20% 20% 20% 20%;
+    grid-template-columns: 25% 25% 25% 25%;
 }
 #page-footer-content hr {
     size: 1;
