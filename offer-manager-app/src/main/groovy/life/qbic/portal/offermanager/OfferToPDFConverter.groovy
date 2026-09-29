@@ -143,6 +143,7 @@ class OfferToPDFConverter implements OfferExporter {
                     "--disable-gpu",
                     "--aggressive-cache-discard",
                     "--print-to-pdf-no-header",
+                    "--no-pdf-header-footer",
                     "--print-to-pdf=${output.toString()}",
                     "${sourceFile}")
             builder.directory(new File(sourceFile.getParent().toString()))
