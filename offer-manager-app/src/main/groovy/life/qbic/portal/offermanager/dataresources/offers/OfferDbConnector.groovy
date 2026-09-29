@@ -200,17 +200,18 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
     }
 
     /**
-     * Resolves the database ids of the latest version of each offer family using a MariaDB
-     * window function. The offerId has the form {@code O_<project>_<random>_<version>}, so the
-     * family is everything before the last underscore and the version is the trailing integer.
+     * Resolves the database ids of the latest version of each offer family. The offerId has the
+     * form {@code O_<project>_<random>_<version>}, so the family is everything before the last
+     * underscore and the version is the trailing integer.
      */
     private static Set<Integer> latestVersionIds(Session session) {
-        String sql = "SELECT id FROM (" +
-                "  SELECT id, ROW_NUMBER() OVER (" +
-                "    PARTITION BY SUBSTRING_INDEX(offerId, '_', 3)" +
-                "    ORDER BY CAST(SUBSTRING_INDEX(offerId, '_', -1) AS UNSIGNED) DESC" +
-                "  ) AS rn FROM offers" +
-                ") t WHERE t.rn = 1"
+        String sql = "SELECT o.id FROM offers o " +
+                "INNER JOIN (" +
+                "  SELECT SUBSTRING_INDEX(offerId, '_', 3) AS fam, " +
+                "         MAX(CAST(SUBSTRING_INDEX(offerId, '_', -1) AS UNSIGNED)) AS maxv " +
+                "  FROM offers GROUP BY SUBSTRING_INDEX(offerId, '_', 3)" +
+                ") g ON g.fam = SUBSTRING_INDEX(o.offerId, '_', 3) " +
+                "AND g.maxv = CAST(SUBSTRING_INDEX(o.offerId, '_', -1) AS UNSIGNED)"
         List<Number> ids = session.createNativeQuery(sql).list()
         return ids.stream().map(Number::intValue).collect(Collectors.toSet())
     }
