@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.components.offer.overview
 
 import com.vaadin.data.provider.DataProvider
+import com.vaadin.data.provider.ConfigurableFilterDataProvider
 import com.vaadin.data.provider.ListDataProvider
 import com.vaadin.event.selection.SelectionEvent
 import com.vaadin.icons.VaadinIcons
@@ -288,7 +289,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
      * Sets up header filter fields for the lazy overview grid. Filters are applied server-side by
      * rebuilding an {@link OfferFilter} and passing it to the lazy data provider.
      */
-    private static void setupServerSideFilters(DataProvider<OfferOverview, OfferFilter> dataProvider,
+    private static void setupServerSideFilters(ConfigurableFilterDataProvider<OfferOverview, Void, OfferFilter> dataProvider,
                                                Grid<? extends OfferOverview> grid) {
         HeaderRow headerFilterRow = grid.appendHeaderRow()
 
@@ -328,7 +329,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         projectIdField.addValueChangeListener({ applyFilter() })
     }
 
-    private static TextField addServerSideTextFilter(DataProvider<OfferOverview, OfferFilter> dataProvider,
+    private static TextField addServerSideTextFilter(ConfigurableFilterDataProvider<OfferOverview, Void, OfferFilter> dataProvider,
                                                      Grid<? extends OfferOverview> grid,
                                                      HeaderRow headerFilterRow, String columnId) {
         TextField filterTextField = new TextField()
@@ -339,7 +340,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         return filterTextField
     }
 
-    private static DateField addServerSideDateFilter(DataProvider<OfferOverview, OfferFilter> dataProvider,
+    private static DateField addServerSideDateFilter(ConfigurableFilterDataProvider<OfferOverview, Void, OfferFilter> dataProvider,
                                                      Grid<? extends OfferOverview> grid,
                                                      HeaderRow headerFilterRow) {
         DateField dateFilterField = new DateField()

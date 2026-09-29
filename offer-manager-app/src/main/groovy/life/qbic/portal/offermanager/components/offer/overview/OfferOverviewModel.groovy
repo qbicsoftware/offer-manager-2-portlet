@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.components.offer.overview
 
 import com.vaadin.data.provider.AbstractBackEndDataProvider
+import com.vaadin.data.provider.ConfigurableFilterDataProvider
 import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.Query
 import groovy.beans.Bindable
@@ -29,9 +30,9 @@ import java.util.stream.Stream
 class OfferOverviewModel extends Observable {
 
     /**
-     * A lazy data provider with all available latest offer overviews.
+     * A lazy, filterable data provider with all available latest offer overviews.
      */
-    final DataProvider<OfferOverview, OfferFilter> overviewDataProvider
+    final ConfigurableFilterDataProvider<OfferOverview, Void, OfferFilter> overviewDataProvider
 
     /**
      * The offer versions that belong to the currently selected offer.
@@ -62,7 +63,7 @@ class OfferOverviewModel extends Observable {
         this.viewModel = viewModel
         this.displaySpinner = false
         this.offerEventEmitter = offerEventEmitter
-        this.overviewDataProvider = new OfferOverviewDataProvider(service)
+        this.overviewDataProvider = new OfferOverviewDataProvider(service).withConfigurableFilter()
         subscribeToOverviewService()
     }
 
