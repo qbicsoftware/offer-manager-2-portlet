@@ -6,6 +6,7 @@ import life.qbic.datamodel.dtos.business.Offer
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.portal.offermanager.OfferToPDFConverter
 import life.qbic.portal.offermanager.communication.EventEmitter
+import life.qbic.portal.offermanager.communication.Observable
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview

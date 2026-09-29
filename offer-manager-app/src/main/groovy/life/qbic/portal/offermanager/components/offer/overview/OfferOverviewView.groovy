@@ -18,6 +18,8 @@ import life.qbic.business.offers.Currency
 import life.qbic.business.offers.identifier.OfferIdFormatter
 import life.qbic.portal.offermanager.ExportAllOffers
 import life.qbic.portal.offermanager.OfferFileNameFormatter
+import life.qbic.portal.offermanager.communication.Observable
+import life.qbic.portal.offermanager.communication.Observer
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.components.project.ProjectIdContainsString
@@ -373,7 +375,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
     }
 
     @Override
-    void update(Observable o, Object arg) {
+    void update(Observable observable) {
         //todo
         this.overviewVersionsGrid.getDataProvider().refreshAll()
         this.overviewGrid.getDataProvider().refreshAll()

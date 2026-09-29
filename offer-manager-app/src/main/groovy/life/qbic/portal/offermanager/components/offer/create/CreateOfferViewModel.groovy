@@ -7,6 +7,7 @@ import life.qbic.datamodel.dtos.business.*
 import life.qbic.datamodel.dtos.business.services.*
 import life.qbic.datamodel.dtos.general.Person
 import life.qbic.portal.offermanager.communication.EventEmitter
+import life.qbic.portal.offermanager.communication.Observable
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
