@@ -42,7 +42,7 @@ class SearchAffiliationViewModel extends Observable {
 
         affiliations.addAll(affiliationResourcesService.iterator())
 
-        setChanged()
+        this.setChanged()
         notifyObservers()
     }
 

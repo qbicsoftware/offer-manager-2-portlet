@@ -175,7 +175,7 @@ class CreateOfferViewModel extends Observable {
     }
 
     void markAsDirty() {
-        setChanged()
+        this.setChanged()
         notifyObservers()
     }
 
