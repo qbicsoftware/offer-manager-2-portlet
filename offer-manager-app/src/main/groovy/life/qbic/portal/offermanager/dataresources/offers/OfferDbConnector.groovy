@@ -8,6 +8,7 @@ import life.qbic.business.offers.OfferExistsException
 import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.fetch.FetchOfferDataSource
+import life.qbic.business.persons.affiliation.AffiliationCategory
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.portal.offermanager.ExportOffersDataSource
@@ -236,8 +237,18 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             parameters.put("customer", containsPattern(filter.customer))
         }
         if (filter.affiliationCategory) {
-            hql.append(" AND lower(offer.selectedCustomerAffiliation.category) LIKE :affiliationCategory")
-            parameters.put("affiliationCategory", containsPattern(filter.affiliationCategory))
+            List<AffiliationCategory> matchingCategories = AffiliationCategory.values().findAll {
+                it.getLabel().toLowerCase().contains(filter.affiliationCategory.toLowerCase())
+            }
+            if (matchingCategories) {
+                // The category column is persisted through an AttributeConverter, so we bind the
+                // resolved enums rather than a raw String to let Hibernate convert each one.
+                hql.append(" AND offer.selectedCustomerAffiliation.category IN :affiliationCategory")
+                parameters.put("affiliationCategory", matchingCategories)
+            } else {
+                // No category matches the given filter, so the result is empty.
+                hql.append(" AND 1 = 0")
+            }
         }
         if (filter.organisation) {
             hql.append(" AND lower(offer.selectedCustomerAffiliation.organization) LIKE :organisation")
@@ -252,7 +263,9 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             parameters.put("projectManager", containsPattern(filter.projectManager))
         }
         if (filter.projectId) {
-            hql.append(" AND lower(offer.associatedProject) LIKE :projectId")
+            // associatedProject is persisted through an AttributeConverter, so cast it to its
+            // raw string form to avoid applying the converter to the String parameter.
+            hql.append(" AND lower(cast(offer.associatedProject as string)) LIKE :projectId")
             parameters.put("projectId", containsPattern(filter.projectId))
         }
         if (filter.creationDate) {
