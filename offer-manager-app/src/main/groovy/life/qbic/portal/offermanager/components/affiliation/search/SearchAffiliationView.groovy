@@ -9,6 +9,8 @@ import com.vaadin.ui.themes.ValoTheme
 import groovy.util.logging.Log4j2
 import life.qbic.business.RefactorConverter
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.portal.offermanager.communication.Observable
+import life.qbic.portal.offermanager.communication.Observer
 import life.qbic.portal.offermanager.components.ConfirmationDialog
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.affiliation.update.UpdateAffiliationView
@@ -272,7 +274,7 @@ class SearchAffiliationView extends FormLayout implements Observer {
     }
 
     @Override
-    void update(Observable o, Object arg) {
+    void update(Observable observable) {
         // We want to refresh the grid, so that cached items are removed and the content
         // reflects the current content of available (active) affiliations
         this.affiliationGrid.getDataProvider().refreshAll()

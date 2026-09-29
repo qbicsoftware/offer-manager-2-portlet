@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.components.affiliation.search
 
 import groovy.beans.Bindable
 import life.qbic.datamodel.dtos.business.Affiliation
+import life.qbic.portal.offermanager.communication.Observable
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
@@ -42,7 +43,7 @@ class SearchAffiliationViewModel extends Observable {
 
         affiliations.addAll(affiliationResourcesService.iterator())
 
-        setChanged()
+        this.setChanged()
         notifyObservers()
     }
 

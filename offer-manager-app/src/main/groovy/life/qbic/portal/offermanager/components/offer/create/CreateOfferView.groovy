@@ -5,6 +5,8 @@ import com.vaadin.ui.FormLayout
 import com.vaadin.ui.Label
 import com.vaadin.ui.themes.ValoTheme
 import life.qbic.datamodel.dtos.business.ProductItem
+import life.qbic.portal.offermanager.communication.Observable
+import life.qbic.portal.offermanager.communication.Observer
 import life.qbic.portal.offermanager.components.AppViewModel
 import life.qbic.portal.offermanager.components.affiliation.create.CreateAffiliationView
 import life.qbic.portal.offermanager.components.person.create.CreatePersonView
@@ -243,7 +245,7 @@ class CreateOfferView extends FormLayout implements Observer {
     }
 
     @Override
-    void update(Observable o, Object arg) {
+    void update(Observable observable) {
         controller.calculatePriceForItems(getProductItems(viewModel.productItems),
                 viewModel.customerAffiliation)
         this.overviewView.refreshPricePanel()

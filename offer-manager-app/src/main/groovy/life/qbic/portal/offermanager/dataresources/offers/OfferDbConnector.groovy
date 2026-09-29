@@ -1,6 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
-
+import com.vaadin.data.provider.SortOrder
+import com.vaadin.shared.data.sort.SortDirection
 import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.OfferExistsException
@@ -110,18 +111,11 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
      * {@inheritDocs}
      */
     @Override
-    List<OfferOverview> listOfferOverviews() {
-        loadOfferOverview()
-    }
-
-    private static List<OfferOverview> createOverviewList(List<OfferV2> offerV2List) {
-        return offerV2List.stream().map(OfferOverview::from).collect() as List<OfferOverview>
-    }
-
-    private List<OfferOverview> loadOfferOverview() {
+    List<OfferOverview> fetchLatestOverviews(int offset, int limit, OfferFilter filter,
+                                             List<SortOrder<String>> sortOrders) {
         try (Session session = sessionProvider.getCurrentSession()) {
             session.beginTransaction()
-            List<OfferV2> offerV2List = session.createQuery("Select offer FROM OfferV2 offer", OfferV2.class).list()
+            List<OfferV2> offerV2List = loadLatestOfferPage(session, offset, limit, filter, sortOrders)
             List<OfferOverview> overviewList = createOverviewList(offerV2List)
             session.getTransaction().commit()
             return overviewList
@@ -129,6 +123,179 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             log.error(e.message, e)
             throw new DatabaseQueryException("Unable to load offer overviews.")
         }
+    }
+
+    /**
+     * {@inheritDocs}
+     */
+    @Override
+    int countLatestOverviews(OfferFilter filter) {
+        try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            int count = countLatestOverviews2(session, filter)
+            session.getTransaction().commit()
+            return count
+        } catch (HibernateException e) {
+            log.error(e.message, e)
+            throw new DatabaseQueryException("Unable to count offer overviews.")
+        }
+    }
+
+    /**
+     * {@inheritDocs}
+     */
+    @Override
+    List<OfferOverview> fetchVersionsOfOffer(OfferId familyId) {
+        String familyPrefix = "O_" + familyId.projectConservedPart + "_" + familyId.randomPart
+        try (Session session = sessionProvider.getCurrentSession()) {
+            session.beginTransaction()
+            org.hibernate.query.Query<OfferV2> query = session.createQuery(
+                    "SELECT offer FROM OfferV2 offer WHERE offer.offerId LIKE :family ORDER BY offer.creationDate DESC", OfferV2.class)
+            query.setParameter("family", familyPrefix + "_%")
+            List<OfferOverview> overviewList = createOverviewList(query.list())
+            session.getTransaction().commit()
+            return overviewList
+        } catch (HibernateException e) {
+            log.error(e.message, e)
+            throw new DatabaseQueryException("Unable to load offer versions for ${familyId}.")
+        }
+    }
+
+    private static List<OfferOverview> createOverviewList(List<OfferV2> offerV2List) {
+        return offerV2List.stream().map(OfferOverview::from).collect() as List<OfferOverview>
+    }
+
+    /**
+     * Loads a single page of the latest offer version for each offer, applying the given
+     * server-side filter and sort order.
+     */
+    private static List<OfferV2> loadLatestOfferPage(Session session, int offset, int limit,
+                                                     OfferFilter filter,
+                                                     List<SortOrder<String>> sortOrders) {
+        Set<Integer> latestIds = latestVersionIds(session)
+        StringBuilder hql = new StringBuilder("SELECT offer FROM OfferV2 offer WHERE offer.id IN (:latestIds)")
+        Map<String, Object> parameters = new LinkedHashMap<>()
+        applyFilters(hql, parameters, filter)
+        applySorting(hql, sortOrders)
+        org.hibernate.query.Query<OfferV2> query = session.createQuery(hql.toString(), OfferV2.class)
+        query.setParameterList("latestIds", latestIds)
+        parameters.forEach(query::setParameter)
+        query.setFirstResult(offset)
+        query.setMaxResults(limit)
+        return query.list()
+    }
+
+    /**
+     * Counts the latest offer versions that match the given filter.
+     */
+    private static int countLatestOverviews2(Session session, OfferFilter filter) {
+        Set<Integer> latestIds = latestVersionIds(session)
+        StringBuilder hql = new StringBuilder("SELECT COUNT(offer) FROM OfferV2 offer WHERE offer.id IN (:latestIds)")
+        Map<String, Object> parameters = new LinkedHashMap<>()
+        applyFilters(hql, parameters, filter)
+        org.hibernate.query.Query<Long> query = session.createQuery(hql.toString(), Long.class)
+        query.setParameterList("latestIds", latestIds)
+        parameters.forEach(query::setParameter)
+        return query.uniqueResult()?.intValue() ?: 0
+    }
+
+    /**
+     * Resolves the database ids of the latest version of each offer family using a MariaDB
+     * window function. The offerId has the form {@code O_<project>_<random>_<version>}, so the
+     * family is everything before the last underscore and the version is the trailing integer.
+     */
+    private static Set<Integer> latestVersionIds(Session session) {
+        String sql = "SELECT id FROM (" +
+                "  SELECT id, ROW_NUMBER() OVER (" +
+                "    PARTITION BY SUBSTRING_INDEX(offerId, '_', 3)" +
+                "    ORDER BY CAST(SUBSTRING_INDEX(offerId, '_', -1) AS UNSIGNED) DESC" +
+                "  ) AS rn FROM offers" +
+                ") t WHERE t.rn = 1"
+        List<Number> ids = session.createNativeQuery(sql).list()
+        return ids.stream().map(Number::intValue).collect(Collectors.toSet())
+    }
+
+    /**
+     * Appends the filter clauses to the HQL query and collects their parameters.
+     */
+    private static void applyFilters(StringBuilder hql, Map<String, Object> parameters, OfferFilter filter) {
+        if (!filter) {
+            return
+        }
+        if (filter.offerId) {
+            hql.append(" AND lower(offer.offerId) LIKE :offerId")
+            parameters.put("offerId", containsPattern(filter.offerId))
+        }
+        if (filter.projectTitle) {
+            hql.append(" AND lower(offer.projectTitle) LIKE :projectTitle")
+            parameters.put("projectTitle", containsPattern(filter.projectTitle))
+        }
+        if (filter.customer) {
+            hql.append(" AND lower(concat(offer.customer.firstName, ' ', offer.customer.lastName)) LIKE :customer")
+            parameters.put("customer", containsPattern(filter.customer))
+        }
+        if (filter.affiliationCategory) {
+            hql.append(" AND lower(offer.selectedCustomerAffiliation.category) LIKE :affiliationCategory")
+            parameters.put("affiliationCategory", containsPattern(filter.affiliationCategory))
+        }
+        if (filter.organisation) {
+            hql.append(" AND lower(offer.selectedCustomerAffiliation.organization) LIKE :organisation")
+            parameters.put("organisation", containsPattern(filter.organisation))
+        }
+        if (filter.addressAddition) {
+            hql.append(" AND lower(offer.selectedCustomerAffiliation.addressAddition) LIKE :addressAddition")
+            parameters.put("addressAddition", containsPattern(filter.addressAddition))
+        }
+        if (filter.projectManager) {
+            hql.append(" AND lower(concat(offer.projectManager.firstName, ' ', offer.projectManager.lastName)) LIKE :projectManager")
+            parameters.put("projectManager", containsPattern(filter.projectManager))
+        }
+        if (filter.projectId) {
+            hql.append(" AND lower(offer.associatedProject) LIKE :projectId")
+            parameters.put("projectId", containsPattern(filter.projectId))
+        }
+        if (filter.creationDate) {
+            hql.append(" AND offer.creationDate = :creationDate")
+            parameters.put("creationDate", filter.creationDate)
+        }
+    }
+
+    /**
+     * Appends the ORDER BY clause based on the given Vaadin sort orders.
+     */
+    private static void applySorting(StringBuilder hql, List<SortOrder<String>> sortOrders) {
+        if (!sortOrders) {
+            hql.append(" ORDER BY offer.creationDate DESC")
+            return
+        }
+        List<String> orderParts = sortOrders.collect { order ->
+            String property = sortProperty(order.sorted)
+            String direction = order.direction == SortDirection.ASCENDING ? "ASC" : "DESC"
+            "${property} ${direction}"
+        }
+        hql.append(" ORDER BY ").append(orderParts.join(", "))
+    }
+
+    /**
+     * Maps a Vaadin sort property id (the grid column id) to the corresponding HQL property path.
+     */
+    private static String sortProperty(String columnId) {
+        switch (columnId) {
+            case "OfferId": return "offer.offerId"
+            case "ProjectTitle": return "offer.projectTitle"
+            case "Customer": return "offer.customer.lastName"
+            case "AffiliationCategory": return "offer.selectedCustomerAffiliation.category"
+            case "Organisation": return "offer.selectedCustomerAffiliation.organization"
+            case "AddressAddition": return "offer.selectedCustomerAffiliation.addressAddition"
+            case "ProjectManager": return "offer.projectManager.lastName"
+            case "ProjectID": return "offer.associatedProject"
+            case "CreationDate": return "offer.creationDate"
+            default: return "offer.creationDate"
+        }
+    }
+
+    private static String containsPattern(String value) {
+        return "%${value.toLowerCase()}%"
     }
 
     /**
