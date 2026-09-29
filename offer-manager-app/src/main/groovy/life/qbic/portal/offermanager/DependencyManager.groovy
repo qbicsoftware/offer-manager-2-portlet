@@ -119,7 +119,7 @@ class DependencyManager {
     private ResourcesService<Affiliation> affiliationService
     private ResourcesService<Customer> customerResourceService
     private ResourcesService<Offer> offerService
-    private ResourcesService<OfferOverview> overviewService
+    private OverviewService overviewService
     private ResourcesService<Person> personResourceService
     private ResourcesService<Product> productsResourcesService
     private ResourcesService<ProjectIdentifier> projectResourceService
@@ -490,7 +490,7 @@ class DependencyManager {
         CreateProjectDataSource createProjectDataSource = this.createProjectDataSource
         CreateProjectSpaceDataSource createProjectSpaceDataSource = this.createProjectSpaceDataSource
         FetchOfferDataSource fetchOfferDataSource = this.fetchOfferDataSource
-        ResourcesService<OfferOverview> offerOverviewResourcesService = this.overviewService
+        OverviewService offerOverviewResourcesService = this.overviewService
         ResourcesService<ProjectIdentifier> projectResourcesService = this.projectResourceService
         ResourcesService<ProjectSpace> projectSpaceResourcesService = this.projectSpaceResourceService
 

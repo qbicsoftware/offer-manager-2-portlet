@@ -7,6 +7,7 @@ import com.vaadin.icons.VaadinIcons
 import com.vaadin.server.FileDownloader
 import com.vaadin.server.StreamResource
 import com.vaadin.shared.data.sort.SortDirection
+import com.vaadin.shared.ui.ValueChangeMode
 import com.vaadin.ui.*
 import com.vaadin.ui.Grid.Column
 import com.vaadin.ui.components.grid.HeaderRow
@@ -23,6 +24,7 @@ import life.qbic.portal.offermanager.communication.Observer
 import life.qbic.portal.offermanager.components.GridUtils
 import life.qbic.portal.offermanager.components.offer.overview.projectcreation.CreateProjectView
 import life.qbic.portal.offermanager.components.project.ProjectIdContainsString
+import life.qbic.portal.offermanager.dataresources.offers.OfferFilter
 import life.qbic.portal.offermanager.dataresources.offers.OfferOverview
 
 import java.time.LocalDate
@@ -118,15 +120,14 @@ class OfferOverviewView extends VerticalLayout implements Observer {
     }
 
     void configureOverviewGrid() {
-        DataProvider<OfferOverview, ?> dataProvider = new ListDataProvider(model.latestOfferOverviewList)
-        setupGrid(this.overviewGrid, dataProvider)
-        setupFilters(dataProvider, this.overviewGrid)
+        setupGrid(this.overviewGrid, model.overviewDataProvider)
+        setupServerSideFilters(model.overviewDataProvider, this.overviewGrid)
     }
 
     void configureOverviewVersionsGrid() {
         DataProvider<OfferOverview, ?> dataProvider = new ListDataProvider(model.offerVersionsForSelected)
         setupGrid(this.overviewVersionsGrid, dataProvider)
-        setupFilters(dataProvider, this.overviewVersionsGrid)
+        setupFilters(dataProvider as ListDataProvider, this.overviewVersionsGrid)
     }
 
     private void initLayout() {
@@ -220,27 +221,28 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         Column<OfferOverview, Date> dateColumn = grid.addColumn({ overview ->
             overview
                     .getModificationDate()
-        }).setCaption("Creation Date").setId("CreationDate")
+        }).setCaption("Creation Date").setId("CreationDate").setSortProperty("CreationDate")
         dateColumn.setRenderer(date -> date, new DateRenderer('%1$tY-%1$tm-%1$td'))
         grid.addColumn({ overview -> OfferIdFormatter.formatAsOfferId(overview.offerId) })
-                .setCaption("Offer ID").setId("OfferId")
+                .setCaption("Offer ID").setId("OfferId").setSortProperty("OfferId")
         grid.addColumn({ overview -> overview.getProjectTitle() })
-                .setCaption("Project Title").setId("ProjectTitle")
+                .setCaption("Project Title").setId("ProjectTitle").setSortProperty("ProjectTitle")
         grid.addColumn({ overview -> overview.getCustomer() })
-                .setCaption("Customer").setId("Customer")
+                .setCaption("Customer").setId("Customer").setSortProperty("Customer")
         grid.addColumn({ overview -> overview.getAffiliation().getCategory().getLabel() })
-                .setCaption("Affiliation Category").setId("AffiliationCategory")
+                .setCaption("Affiliation Category").setId("AffiliationCategory").setSortProperty("AffiliationCategory")
         grid.addColumn({ overview -> overview.getAffiliation().getOrganization() })
-                .setCaption("Organisation").setId("Organisation")
+                .setCaption("Organisation").setId("Organisation").setSortProperty("Organisation")
         grid.addColumn({ overview -> overview.getAffiliation().getAddressAddition() })
-                .setCaption("Address Addition").setId("AddressAddition")
+                .setCaption("Address Addition").setId("AddressAddition").setSortProperty("AddressAddition")
         grid.addColumn({ overview -> overview.getProjectManager() })
-                .setCaption("ProjectManager").setId("ProjectManager")
+                .setCaption("ProjectManager").setId("ProjectManager").setSortProperty("ProjectManager")
         grid.addColumn({ overview -> overview.getAssociatedProject() })
-                .setCaption("Project ID").setId("ProjectID")
+                .setCaption("Project ID").setId("ProjectID").setSortProperty("ProjectID")
                 .setRenderer({ maybeIdentifier -> maybeIdentifier.isPresent() ? maybeIdentifier.get().toString() : "-" }, new TextRenderer())
 
         // Format price by using a column renderer. This way the sorting will happen on the underlying double values, leading to expected behaviour.
+        // The total price is computed, not stored in the database, so it is not sortable server-side.
         Column<OfferOverview, Double> priceColumn = grid.addColumn({ overview -> overview.getTotalPrice() }).setCaption("Total Price")
         priceColumn.setRenderer(price -> Currency.getFormatterWithSymbol().format(price), new TextRenderer())
 
@@ -280,6 +282,76 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         GridUtils.setupColumnFilter(offerOverviewDataProvider,
                 grid.getColumn("ProjectID"), new ProjectIdContainsString(),
                 headerFilterRow)
+    }
+
+    /**
+     * Sets up header filter fields for the lazy overview grid. Filters are applied server-side by
+     * rebuilding an {@link OfferFilter} and passing it to the lazy data provider.
+     */
+    private static void setupServerSideFilters(DataProvider<OfferOverview, OfferFilter> dataProvider,
+                                               Grid<? extends OfferOverview> grid) {
+        HeaderRow headerFilterRow = grid.appendHeaderRow()
+
+        TextField offerIdField = addServerSideTextFilter(dataProvider, grid, headerFilterRow, "OfferId")
+        TextField projectTitleField = addServerSideTextFilter(dataProvider, grid, headerFilterRow, "ProjectTitle")
+        TextField customerField = addServerSideTextFilter(dataProvider, grid, headerFilterRow, "Customer")
+        TextField categoryField = addServerSideTextFilter(dataProvider, grid, headerFilterRow, "AffiliationCategory")
+        TextField organisationField = addServerSideTextFilter(dataProvider, grid, headerFilterRow, "Organisation")
+        TextField addressField = addServerSideTextFilter(dataProvider, grid, headerFilterRow, "AddressAddition")
+        TextField projectManagerField = addServerSideTextFilter(dataProvider, grid, headerFilterRow, "ProjectManager")
+        DateField creationDateField = addServerSideDateFilter(dataProvider, grid, headerFilterRow)
+        TextField projectIdField = addServerSideTextFilter(dataProvider, grid, headerFilterRow, "ProjectID")
+
+        Closure<Void> applyFilter = {
+            OfferFilter filter = new OfferFilter(
+                    offerId: valueOrNull(offerIdField),
+                    projectTitle: valueOrNull(projectTitleField),
+                    customer: valueOrNull(customerField),
+                    affiliationCategory: valueOrNull(categoryField),
+                    organisation: valueOrNull(organisationField),
+                    addressAddition: valueOrNull(addressField),
+                    projectManager: valueOrNull(projectManagerField),
+                    projectId: valueOrNull(projectIdField),
+                    creationDate: creationDateField.getValue()
+            )
+            dataProvider.setFilter(filter)
+        }
+
+        offerIdField.addValueChangeListener({ applyFilter() })
+        projectTitleField.addValueChangeListener({ applyFilter() })
+        customerField.addValueChangeListener({ applyFilter() })
+        categoryField.addValueChangeListener({ applyFilter() })
+        organisationField.addValueChangeListener({ applyFilter() })
+        addressField.addValueChangeListener({ applyFilter() })
+        projectManagerField.addValueChangeListener({ applyFilter() })
+        creationDateField.addValueChangeListener({ applyFilter() })
+        projectIdField.addValueChangeListener({ applyFilter() })
+    }
+
+    private static TextField addServerSideTextFilter(DataProvider<OfferOverview, OfferFilter> dataProvider,
+                                                     Grid<? extends OfferOverview> grid,
+                                                     HeaderRow headerFilterRow, String columnId) {
+        TextField filterTextField = new TextField()
+        filterTextField.setPlaceholder("Filter by ${grid.getColumn(columnId).getCaption()}")
+        filterTextField.setValueChangeMode(ValueChangeMode.EAGER)
+        filterTextField.setSizeFull()
+        headerFilterRow.getCell(grid.getColumn(columnId)).setComponent(filterTextField)
+        return filterTextField
+    }
+
+    private static DateField addServerSideDateFilter(DataProvider<OfferOverview, OfferFilter> dataProvider,
+                                                     Grid<? extends OfferOverview> grid,
+                                                     HeaderRow headerFilterRow) {
+        DateField dateFilterField = new DateField()
+        dateFilterField.addStyleName(ValoTheme.DATEFIELD_TINY)
+        dateFilterField.setSizeFull()
+        headerFilterRow.getCell(grid.getColumn("CreationDate")).setComponent(dateFilterField)
+        return dateFilterField
+    }
+
+    private static String valueOrNull(TextField field) {
+        String value = field.getValue()
+        return value ? value.trim() : null
     }
 
     private void setupListeners() {

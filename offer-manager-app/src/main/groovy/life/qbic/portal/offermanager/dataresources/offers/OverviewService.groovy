@@ -1,24 +1,24 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
+import com.vaadin.shared.data.sort.SortOrder
 import life.qbic.business.RefactorConverter
 import life.qbic.datamodel.dtos.business.Offer
+import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.projectmanagement.Project
 import life.qbic.portal.offermanager.communication.EventEmitter
 import life.qbic.portal.offermanager.communication.Subscription
 import life.qbic.portal.offermanager.dataresources.ResourcesService
 
 /**
- * Service that contains basic overview data about available offers.
+ * Service that provides paged access to basic overview data about available offers.
  *
- * This service offers an EventEmitter property that can be
- * used for inter component communication, when a new offer overview
- * source is available for download.
+ * <p>Offer overviews are loaded lazily from the underlying data source, so only the currently
+ * requested page is fetched. When a new offer is created or an offer is linked to a project, an
+ * event is emitted so that components can refresh their data.</p>
  *
  * @since 1.0.0
  */
 class OverviewService implements ResourcesService<OfferOverview> {
-
-    private List<OfferOverview> offerOverviewList
 
     private final OfferOverviewDataSource overviewDataSource
 
@@ -35,39 +35,23 @@ class OverviewService implements ResourcesService<OfferOverview> {
         this.updatedOverviewEvent = new EventEmitter<>()
         this.offerService = offerService
         this.projectCreatedEvent = projectCreatedEvent
-        this.offerOverviewList = overviewDataSource.listOfferOverviews()
         subscribeToNewOffers()
         subscribeToNewProjects()
     }
 
     private void subscribeToNewProjects() {
         /*
-        Whenever a new project is created, we want to update the associated
-        offer overview with the project identifier detail
+        Whenever a new project is created, the associated offer overview changes (it now points
+        to a project). Emitting an event lets lazy consumers refresh and fetch the updated data.
          */
         projectCreatedEvent.register({ Project project ->
-            OfferOverview affectedOffer = offerOverviewList.find {
-                it.offerId.equals(project.linkedOffer)
-            }
-            if (affectedOffer) {
-                offerOverviewList.remove(affectedOffer)
-                OfferOverview updatedOverview = new OfferOverview(
-                        affectedOffer.offerId,
-                        affectedOffer.modificationDate,
-                        affectedOffer.projectTitle,
-                        affectedOffer.customer.toString(),
-                        affectedOffer.projectManager.toString(),
-                        affectedOffer.totalPrice,
-                        project.projectId, affectedOffer.affiliation)
-                this.addToResource(updatedOverview)
-            }
+            updatedOverviewEvent.emit(null)
         })
     }
 
     private void subscribeToNewOffers() {
         /*
-        Whenever a new offer is created, we want
-        to update the offer overview content.
+        Whenever a new offer is created, we want to update the offer overview content.
          */
         offerService.subscribe({
             def newOfferOverview = createOverviewFromOffer(it)
@@ -88,26 +72,47 @@ class OverviewService implements ResourcesService<OfferOverview> {
         )
     }
 
+    /**
+     * Fetches a page of the latest offer version for each offer, applying the given server-side
+     * filter and sort order.
+     */
+    List<OfferOverview> fetchLatestOverviews(int offset, int limit, OfferFilter filter,
+                                             List<SortOrder<String>> sortOrders) {
+        return overviewDataSource.fetchLatestOverviews(offset, limit, filter, sortOrders)
+    }
+
+    /**
+     * Counts the latest offer versions that match the given filter.
+     */
+    int countLatestOverviews(OfferFilter filter) {
+        return overviewDataSource.countLatestOverviews(filter)
+    }
+
+    /**
+     * Fetches all offer versions that belong to the same offer family as the given offer id.
+     */
+    List<OfferOverview> fetchVersionsOfOffer(OfferId familyId) {
+        return overviewDataSource.fetchVersionsOfOffer(familyId)
+    }
+
     @Override
     void reloadResources() {
-
+        updatedOverviewEvent.emit(null)
     }
 
     @Override
     void addToResource(OfferOverview resourceItem) {
-        offerOverviewList.add(resourceItem)
         updatedOverviewEvent.emit(resourceItem)
     }
 
     @Override
     void removeFromResource(OfferOverview resourceItem) {
-        offerOverviewList.remove(resourceItem)
         updatedOverviewEvent.emit(resourceItem)
     }
 
     @Override
     Iterator<OfferOverview> iterator() {
-        return new ArrayList(offerOverviewList).iterator()
+        return Collections.emptyIterator()
     }
 
     @Override
