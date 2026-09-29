@@ -1,6 +1,6 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
-import com.vaadin.shared.data.sort.SortOrder
+import com.vaadin.data.provider.SortOrder
 import life.qbic.datamodel.dtos.business.OfferId
 
 /**

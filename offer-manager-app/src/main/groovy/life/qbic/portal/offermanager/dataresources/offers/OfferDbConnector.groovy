@@ -1,8 +1,7 @@
 package life.qbic.portal.offermanager.dataresources.offers
 
-
+import com.vaadin.data.provider.SortOrder
 import com.vaadin.shared.data.sort.SortDirection
-import com.vaadin.shared.data.sort.SortOrder
 import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
 import life.qbic.business.offers.OfferExistsException
@@ -133,7 +132,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
     int countLatestOverviews(OfferFilter filter) {
         try (Session session = sessionProvider.getCurrentSession()) {
             session.beginTransaction()
-            int count = countLatestOverviews(session, filter)
+            int count = countLatestOverviews2(session, filter)
             session.getTransaction().commit()
             return count
         } catch (HibernateException e) {
@@ -189,7 +188,7 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
     /**
      * Counts the latest offer versions that match the given filter.
      */
-    private static int countLatestOverviews(Session session, OfferFilter filter) {
+    private static int countLatestOverviews2(Session session, OfferFilter filter) {
         Set<Integer> latestIds = latestVersionIds(session)
         StringBuilder hql = new StringBuilder("SELECT COUNT(offer) FROM OfferV2 offer WHERE offer.id IN (:latestIds)")
         Map<String, Object> parameters = new LinkedHashMap<>()

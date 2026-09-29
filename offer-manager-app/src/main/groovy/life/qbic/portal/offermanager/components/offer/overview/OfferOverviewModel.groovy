@@ -3,7 +3,6 @@ package life.qbic.portal.offermanager.components.offer.overview
 import com.vaadin.data.provider.AbstractBackEndDataProvider
 import com.vaadin.data.provider.DataProvider
 import com.vaadin.data.provider.Query
-import com.vaadin.shared.data.sort.SortOrder
 import groovy.beans.Bindable
 import life.qbic.business.offers.OfferContent
 import life.qbic.datamodel.dtos.business.Offer
@@ -129,7 +128,7 @@ class OfferOverviewModel extends Observable {
         @Override
         protected Stream<OfferOverview> fetchFromBackEnd(Query<OfferOverview, OfferFilter> query) {
             OfferFilter filter = query.getFilter().orElse(null)
-            List<SortOrder<String>> sortOrders = query.getSortOrders()
+            List<com.vaadin.data.provider.SortOrder<String>> sortOrders = query.getSortOrders()
             return service.fetchLatestOverviews(query.getOffset(), query.getLimit(), filter, sortOrders).stream()
         }
 
@@ -137,6 +136,11 @@ class OfferOverviewModel extends Observable {
         protected int sizeInBackEnd(Query<OfferOverview, OfferFilter> query) {
             OfferFilter filter = query.getFilter().orElse(null)
             return service.countLatestOverviews(filter)
+        }
+
+        @Override
+        default boolean isInMemory() {
+            return false;
         }
     }
 
