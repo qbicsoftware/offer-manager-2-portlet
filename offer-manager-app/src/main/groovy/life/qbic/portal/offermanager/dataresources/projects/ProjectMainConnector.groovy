@@ -2,6 +2,7 @@ package life.qbic.portal.offermanager.dataresources.projects
 
 import ch.ethz.sis.openbis.generic.asapi.v3.IApplicationServerApi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.operation.IOperation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.common.search.SearchResult
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.entitytype.id.EntityTypePermId
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.CreateExperimentsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.create.ExperimentCreation
@@ -9,11 +10,16 @@ import ch.ethz.sis.openbis.generic.asapi.v3.dto.experiment.id.ExperimentIdentifi
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.operation.SynchronousOperationExecutionOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.CreateProjectsOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.create.ProjectCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.fetchoptions.ProjectFetchOptions
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.project.search.ProjectSearchCriteria
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.CreateSamplesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.sample.create.SampleCreation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.CreateSpacesOperation
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.create.SpaceCreation
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.fetchoptions.SpaceFetchOptions
 import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.id.SpacePermId
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.search.SpaceSearchCriteria
+import ch.ethz.sis.openbis.generic.asapi.v3.dto.space.Space
 import groovy.transform.CompileStatic
 import groovy.util.logging.Log4j2
 import life.qbic.business.exceptions.DatabaseQueryException
@@ -76,8 +82,11 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
 
     private void fetchExistingSpaces() {
         this.openbisSpaces = new ArrayList<>()
-        for (String spaceName : openbisClient.listSpaces()) {
-            this.openbisSpaces.add(new ProjectSpace(spaceName))
+        SpaceSearchCriteria criteria = new SpaceSearchCriteria()
+        SpaceFetchOptions fetchOptions = new SpaceFetchOptions()
+        SearchResult<Space> result = openbisClient.getV3().searchSpaces(openbisClient.getSessionToken(), criteria, fetchOptions)
+        for (Space space : result.getObjects()) {
+            this.openbisSpaces.add(new ProjectSpace(space.getCode()))
         }
     }
 
@@ -94,7 +103,14 @@ class ProjectMainConnector implements CreateProjectDataSource, CreateProjectSpac
         //projectDbConnector.fetchProjects() might be used at some point to fetch more metadata
 
         openbisProjects = []
-        for (ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project openbisProject : openbisClient.listProjects()) {
+        ProjectSearchCriteria criteria = new ProjectSearchCriteria()
+        // Only fetch the space a project belongs to, avoiding the heavy nested graph (experiments,
+        // data sets, history, attachments, persons) that the client library otherwise loads.
+        ProjectFetchOptions fetchOptions = new ProjectFetchOptions()
+        fetchOptions.withSpace()
+        SearchResult<ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project> result =
+                openbisClient.getV3().searchProjects(openbisClient.getSessionToken(), criteria, fetchOptions)
+        for (ch.ethz.sis.openbis.generic.asapi.v3.dto.project.Project openbisProject : result.getObjects()) {
             try {
                 ProjectSpace space = new ProjectSpace(openbisProject.getSpace().getCode())
                 ProjectCode code = new ProjectCode(openbisProject.getCode())
