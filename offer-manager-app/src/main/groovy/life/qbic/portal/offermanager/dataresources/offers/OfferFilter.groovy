@@ -7,7 +7,8 @@ import java.time.LocalDate
  *
  * <p>Each field corresponds to a grid column filter and is matched case-insensitively as a
  * substring against the corresponding column value. A {@code null} or empty field means the
- * filter is not applied. {@link #creationDate} matches the exact creation date.</p>
+ * filter is not applied. {@link #creationDateStart} and {@link #creationDateEnd} bound the
+ * creation date to an inclusive range (both dates included).</p>
  *
  * @since 1.0.0
  */
@@ -29,10 +30,12 @@ class OfferFilter {
 
     String projectId
 
-    LocalDate creationDate
+    LocalDate creationDateStart
+
+    LocalDate creationDateEnd
 
     boolean isEmpty() {
         !offerId && !projectTitle && !customer && !affiliationCategory && !organisation &&
-                !addressAddition && !projectManager && !projectId && !creationDate
+                !addressAddition && !projectManager && !projectId && !creationDateStart && !creationDateEnd
     }
 }

@@ -268,9 +268,13 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             hql.append(" AND lower(cast(offer.associatedProject as string)) LIKE :projectId")
             parameters.put("projectId", containsPattern(filter.projectId))
         }
-        if (filter.creationDate) {
-            hql.append(" AND offer.creationDate = :creationDate")
-            parameters.put("creationDate", filter.creationDate)
+        if (filter.creationDateStart) {
+            hql.append(" AND offer.creationDate >= :creationDateStart")
+            parameters.put("creationDateStart", filter.creationDateStart)
+        }
+        if (filter.creationDateEnd) {
+            hql.append(" AND offer.creationDate <= :creationDateEnd")
+            parameters.put("creationDateEnd", filter.creationDateEnd)
         }
     }
 
