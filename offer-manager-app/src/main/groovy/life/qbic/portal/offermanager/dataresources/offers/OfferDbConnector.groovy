@@ -8,6 +8,7 @@ import life.qbic.business.offers.OfferExistsException
 import life.qbic.business.offers.OfferV2
 import life.qbic.business.offers.create.CreateOfferDataSource
 import life.qbic.business.offers.fetch.FetchOfferDataSource
+import life.qbic.business.persons.affiliation.AffiliationCategory
 import life.qbic.datamodel.dtos.business.OfferId
 import life.qbic.datamodel.dtos.projectmanagement.ProjectIdentifier
 import life.qbic.portal.offermanager.ExportOffersDataSource
@@ -200,17 +201,18 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
     }
 
     /**
-     * Resolves the database ids of the latest version of each offer family using a MariaDB
-     * window function. The offerId has the form {@code O_<project>_<random>_<version>}, so the
-     * family is everything before the last underscore and the version is the trailing integer.
+     * Resolves the database ids of the latest version of each offer family. The offerId has the
+     * form {@code O_<project>_<random>_<version>}, so the family is everything before the last
+     * underscore and the version is the trailing integer.
      */
     private static Set<Integer> latestVersionIds(Session session) {
-        String sql = "SELECT id FROM (" +
-                "  SELECT id, ROW_NUMBER() OVER (" +
-                "    PARTITION BY SUBSTRING_INDEX(offerId, '_', 3)" +
-                "    ORDER BY CAST(SUBSTRING_INDEX(offerId, '_', -1) AS UNSIGNED) DESC" +
-                "  ) AS rn FROM offers" +
-                ") t WHERE t.rn = 1"
+        String sql = "SELECT o.id FROM offers o " +
+                "INNER JOIN (" +
+                "  SELECT SUBSTRING_INDEX(offerId, '_', 3) AS fam, " +
+                "         MAX(CAST(SUBSTRING_INDEX(offerId, '_', -1) AS UNSIGNED)) AS maxv " +
+                "  FROM offers GROUP BY SUBSTRING_INDEX(offerId, '_', 3)" +
+                ") g ON g.fam = SUBSTRING_INDEX(o.offerId, '_', 3) " +
+                "AND g.maxv = CAST(SUBSTRING_INDEX(o.offerId, '_', -1) AS UNSIGNED)"
         List<Number> ids = session.createNativeQuery(sql).list()
         return ids.stream().map(Number::intValue).collect(Collectors.toSet())
     }
@@ -235,8 +237,18 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             parameters.put("customer", containsPattern(filter.customer))
         }
         if (filter.affiliationCategory) {
-            hql.append(" AND lower(offer.selectedCustomerAffiliation.category) LIKE :affiliationCategory")
-            parameters.put("affiliationCategory", containsPattern(filter.affiliationCategory))
+            List<AffiliationCategory> matchingCategories = AffiliationCategory.values().findAll {
+                it.getLabel().toLowerCase().contains(filter.affiliationCategory.toLowerCase())
+            }
+            if (matchingCategories) {
+                // The category column is persisted through an AttributeConverter, so we bind the
+                // resolved enums rather than a raw String to let Hibernate convert each one.
+                hql.append(" AND offer.selectedCustomerAffiliation.category IN :affiliationCategory")
+                parameters.put("affiliationCategory", matchingCategories)
+            } else {
+                // No category matches the given filter, so the result is empty.
+                hql.append(" AND 1 = 0")
+            }
         }
         if (filter.organisation) {
             hql.append(" AND lower(offer.selectedCustomerAffiliation.organization) LIKE :organisation")
@@ -251,12 +263,18 @@ class OfferDbConnector implements CreateOfferDataSource, FetchOfferDataSource, P
             parameters.put("projectManager", containsPattern(filter.projectManager))
         }
         if (filter.projectId) {
-            hql.append(" AND lower(offer.associatedProject) LIKE :projectId")
+            // associatedProject is persisted through an AttributeConverter, so cast it to its
+            // raw string form to avoid applying the converter to the String parameter.
+            hql.append(" AND lower(cast(offer.associatedProject as string)) LIKE :projectId")
             parameters.put("projectId", containsPattern(filter.projectId))
         }
-        if (filter.creationDate) {
-            hql.append(" AND offer.creationDate = :creationDate")
-            parameters.put("creationDate", filter.creationDate)
+        if (filter.creationDateStart) {
+            hql.append(" AND offer.creationDate >= :creationDateStart")
+            parameters.put("creationDateStart", filter.creationDateStart)
+        }
+        if (filter.creationDateEnd) {
+            hql.append(" AND offer.creationDate <= :creationDateEnd")
+            parameters.put("creationDateEnd", filter.creationDateEnd)
         }
     }
 

@@ -300,7 +300,12 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         TextField organisationField = addServerSideTextFilter(dataProvider, grid, headerFilterRow, "Organisation")
         TextField addressField = addServerSideTextFilter(dataProvider, grid, headerFilterRow, "AddressAddition")
         TextField projectManagerField = addServerSideTextFilter(dataProvider, grid, headerFilterRow, "ProjectManager")
-        DateField creationDateField = addServerSideDateFilter(dataProvider, grid, headerFilterRow)
+        DateField creationDateStartField = createServerSideDateFilter("from")
+        DateField creationDateEndField = createServerSideDateFilter("to")
+        HorizontalLayout dateFilterLayout = new HorizontalLayout(creationDateStartField, creationDateEndField)
+        dateFilterLayout.setSpacing(false)
+        dateFilterLayout.setMargin(false)
+        headerFilterRow.getCell(grid.getColumn("CreationDate")).setComponent(dateFilterLayout)
         TextField projectIdField = addServerSideTextFilter(dataProvider, grid, headerFilterRow, "ProjectID")
 
         Closure<Void> applyFilter = {
@@ -313,7 +318,8 @@ class OfferOverviewView extends VerticalLayout implements Observer {
                     addressAddition: valueOrNull(addressField),
                     projectManager: valueOrNull(projectManagerField),
                     projectId: valueOrNull(projectIdField),
-                    creationDate: creationDateField.getValue()
+                    creationDateStart: creationDateStartField.getValue(),
+                    creationDateEnd: creationDateEndField.getValue()
             )
             dataProvider.setFilter(filter)
         }
@@ -325,7 +331,8 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         organisationField.addValueChangeListener({ applyFilter() })
         addressField.addValueChangeListener({ applyFilter() })
         projectManagerField.addValueChangeListener({ applyFilter() })
-        creationDateField.addValueChangeListener({ applyFilter() })
+        creationDateStartField.addValueChangeListener({ applyFilter() })
+        creationDateEndField.addValueChangeListener({ applyFilter() })
         projectIdField.addValueChangeListener({ applyFilter() })
     }
 
@@ -340,13 +347,12 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         return filterTextField
     }
 
-    private static DateField addServerSideDateFilter(ConfigurableFilterDataProvider<OfferOverview, Void, OfferFilter> dataProvider,
-                                                     Grid<? extends OfferOverview> grid,
-                                                     HeaderRow headerFilterRow) {
+    private static DateField createServerSideDateFilter(String placeholder) {
         DateField dateFilterField = new DateField()
         dateFilterField.addStyleName(ValoTheme.DATEFIELD_TINY)
-        dateFilterField.setSizeFull()
-        headerFilterRow.getCell(grid.getColumn("CreationDate")).setComponent(dateFilterField)
+        dateFilterField.setPlaceholder(placeholder)
+        dateFilterField.setDateFormat("yyyy-MM-dd")
+        dateFilterField.setWidth("100%")
         return dateFilterField
     }
 
