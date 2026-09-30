@@ -108,7 +108,7 @@ class OfferV2 {
      * based on the customer's affiliation.
      *  e.g. 0.4 or a 40% markup for external customers
      */
-    @Transient
+    @Column(name = "overheadRatio")
     private double overheadRatio
 
 
@@ -133,33 +133,33 @@ class OfferV2 {
     @Transient
     private ItemGroup externalServiceItems = new ItemGroup()
 
-    @Transient
+    @Column(name = "dataAnalysisOverhead")
     private BigDecimal dataAnalysisOverhead = BigDecimal.ZERO
-    @Transient
+    @Column(name = "dataGenerationOverhead")
     private BigDecimal dataGenerationOverhead = BigDecimal.ZERO
-    @Transient
+    @Column(name = "dataManagementOverhead")
     private BigDecimal dataManagementOverhead = BigDecimal.ZERO
-    @Transient
+    @Column(name = "externalServiceOverhead")
     private BigDecimal externalServiceOverhead = BigDecimal.ZERO
-    @Transient
+    @Column(name = "dataAnalysisSalePrice")
     private BigDecimal dataAnalysisSalePrice = BigDecimal.ZERO
-    @Transient
+    @Column(name = "dataGenerationSalePrice")
     private BigDecimal dataGenerationSalePrice = BigDecimal.ZERO
-    @Transient
+    @Column(name = "dataManagementSalePrice")
     private BigDecimal dataManagementSalePrice = BigDecimal.ZERO
-    @Transient
+    @Column(name = "externalServiceSalePrice")
     private BigDecimal externalServiceSalePrice = BigDecimal.ZERO
-    @Transient
+    @Column(name = "salePrice")
     private BigDecimal salePrice = BigDecimal.ZERO
-    @Transient
+    @Column(name = "vatRatio")
     private BigDecimal vatRatio = BigDecimal.ZERO
-    @Transient
+    @Column(name = "priceAfterTax")
     private BigDecimal priceAfterTax = BigDecimal.ZERO
-    @Transient
+    @Column(name = "taxAmount")
     private BigDecimal taxAmount = BigDecimal.ZERO
-    @Transient
+    @Column(name = "priceBeforeTax")
     private BigDecimal priceBeforeTax = BigDecimal.ZERO
-    @Transient
+    @Column(name = "discountAmount")
     private BigDecimal discountAmount = BigDecimal.ZERO
 
     OfferV2() {}
@@ -467,14 +467,19 @@ class OfferV2 {
 
     /**
      * This method is executed after loading the offer from the database.
-     * It is responsible to update all the prices
+     *
+     * <p>The item groups and per-item prices are recomputed for display purposes. The offer-level
+     * prices are frozen once the offer has been created, so they are only recomputed for legacy
+     * rows whose persisted prices are still {@code null}.</p>
      */
     @PostLoad
     protected void onPostLoad() {
         loadFields()
         items.forEach(ProductItem::refresh)
         items.forEach(this::addItemToGroup)
-        aggregateCosts()
+        if (priceAfterTax == null) {
+            aggregateCosts()
+        }
     }
 
     private void loadFields() {
@@ -533,6 +538,24 @@ class OfferV2 {
 
         //fields
         offerCopy.setItems(this.getItems())
+
+        //frozen, computed prices are carried over so a new version keeps the computed values
+        offerCopy.overhead = this.overhead
+        offerCopy.overheadRatio = this.overheadRatio
+        offerCopy.dataAnalysisOverhead = this.dataAnalysisOverhead
+        offerCopy.dataGenerationOverhead = this.dataGenerationOverhead
+        offerCopy.dataManagementOverhead = this.dataManagementOverhead
+        offerCopy.externalServiceOverhead = this.externalServiceOverhead
+        offerCopy.dataAnalysisSalePrice = this.dataAnalysisSalePrice
+        offerCopy.dataGenerationSalePrice = this.dataGenerationSalePrice
+        offerCopy.dataManagementSalePrice = this.dataManagementSalePrice
+        offerCopy.externalServiceSalePrice = this.externalServiceSalePrice
+        offerCopy.salePrice = this.salePrice
+        offerCopy.vatRatio = this.vatRatio
+        offerCopy.priceAfterTax = this.priceAfterTax
+        offerCopy.taxAmount = this.taxAmount
+        offerCopy.priceBeforeTax = this.priceBeforeTax
+        offerCopy.discountAmount = this.discountAmount
 
         return offerCopy
     }
