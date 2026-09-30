@@ -109,7 +109,7 @@ class OfferV2 {
      *  e.g. 0.4 or a 40% markup for external customers
      */
     @Column(name = "overheadRatio")
-    private double overheadRatio
+    private Double overheadRatio
 
 
     //Note Currently all offer checksums are updated during the offerOverview loading process
