@@ -9,7 +9,7 @@
 	<portlet>
 		<description>${project.description}</description>
 		<portlet-name>${project.artifactId}</portlet-name>
-		<display-name>${project.name}</display-name>
+		<display-name>${project.name} ${project.version}</display-name>
 
 		<portlet-class>com.vaadin.server.VaadinPortlet</portlet-class>
 
@@ -30,7 +30,7 @@
 
 
 		<portlet-info>
-			<title>${project.name}</title>
+			<title>${project.name} ${project.version}</title>
 			<short-title>${project.description}</short-title>
 			<keywords>Vaadin 7, QBiC, Big Data, Bioinformatics</keywords>
 		</portlet-info>
