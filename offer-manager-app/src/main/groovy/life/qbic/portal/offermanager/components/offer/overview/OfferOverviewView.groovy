@@ -351,6 +351,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         DateField dateFilterField = new DateField()
         dateFilterField.addStyleName(ValoTheme.DATEFIELD_TINY)
         dateFilterField.setPlaceholder(placeholder)
+        dateFilterField.setDateFormat("yyyy-MM-dd")
         dateFilterField.setWidth("100%")
         return dateFilterField
     }
