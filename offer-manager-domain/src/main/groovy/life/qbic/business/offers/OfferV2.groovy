@@ -475,7 +475,6 @@ class OfferV2 {
         items.forEach(ProductItem::refresh)
         items.forEach(this::addItemToGroup)
         aggregateCosts()
-        expireThirtyDaysAfterCreation()
     }
 
     private void loadFields() {
@@ -521,10 +520,11 @@ class OfferV2 {
 
         //sorted alphabetically
         offerCopy.setAssociatedProject(this.getAssociatedProject()?.orElse(null))
+        // The new version's expiration date is derived from its creation date via setCreationDate,
+        // so the previous version's expiration date is intentionally not copied.
         offerCopy.setCreationDate(this.getCreationDate())
         offerCopy.setCustomer(this.getCustomer())
         offerCopy.setExperimentalDesign(this.getExperimentalDesign())
-        offerCopy.setExpirationDate(this.getExpirationDate())
         offerCopy.setIdentifier(this.getIdentifier())
         offerCopy.setProjectManager(this.getProjectManager())
         offerCopy.setProjectObjective(this.getProjectObjective())
