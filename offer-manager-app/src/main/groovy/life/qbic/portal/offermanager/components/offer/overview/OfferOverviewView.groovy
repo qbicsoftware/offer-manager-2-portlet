@@ -302,7 +302,7 @@ class OfferOverviewView extends VerticalLayout implements Observer {
         TextField projectManagerField = addServerSideTextFilter(dataProvider, grid, headerFilterRow, "ProjectManager")
         DateField creationDateStartField = createServerSideDateFilter("from")
         DateField creationDateEndField = createServerSideDateFilter("to")
-        VerticalLayout dateFilterLayout = new VerticalLayout(creationDateStartField, creationDateEndField)
+        HorizontalLayout dateFilterLayout = new HorizontalLayout(creationDateStartField, creationDateEndField)
         dateFilterLayout.setSpacing(false)
         dateFilterLayout.setMargin(false)
         headerFilterRow.getCell(grid.getColumn("CreationDate")).setComponent(dateFilterLayout)
