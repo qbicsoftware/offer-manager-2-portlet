@@ -8,7 +8,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Index;
-import javax.persistence.Lob;
 import javax.persistence.Table;
 
 @Entity
@@ -22,7 +21,6 @@ public class Product {
   @Column(name = "id", nullable = false)
   private Integer id;
 
-  @Lob
   @Column(name = "category")
   private String category;
 
