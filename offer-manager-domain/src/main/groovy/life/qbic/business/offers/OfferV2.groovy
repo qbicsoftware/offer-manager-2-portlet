@@ -292,7 +292,7 @@ class OfferV2 {
 
     void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate
-        expireNinetyDaysAfterCreation()
+        expireThirtyDaysAfterCreation()
     }
 
     LocalDate getExpirationDate() {
@@ -475,7 +475,7 @@ class OfferV2 {
         items.forEach(ProductItem::refresh)
         items.forEach(this::addItemToGroup)
         aggregateCosts()
-        expireNinetyDaysAfterCreation()
+        expireThirtyDaysAfterCreation()
     }
 
     private void loadFields() {
@@ -568,8 +568,8 @@ class OfferV2 {
                 .add(externalServiceItems.discountAmount)
     }
 
-    private void expireNinetyDaysAfterCreation() {
-        expirationDate = creationDate.plusDays(90)
+    private void expireThirtyDaysAfterCreation() {
+        expirationDate = creationDate.plusDays(30)
     }
 
     private static class ItemGroup extends ArrayList<ProductItem> {
