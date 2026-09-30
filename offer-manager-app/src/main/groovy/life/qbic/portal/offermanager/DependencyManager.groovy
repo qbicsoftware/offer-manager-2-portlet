@@ -194,9 +194,7 @@ class DependencyManager {
             String sqlDatabase = Objects.requireNonNull(configurationManager.getMysqlDB(), "Mysql database name missing.")
 
             // Setup Hibernate session
-            // tinyInt1isBit=false makes the JDBC driver report tinyint(1) columns as TINYINT
-            // instead of BIT, so that hbm2ddl.auto=validate matches the boolean entity fields.
-            String dbFullUrl = "jdbc:mysql://" + host + ":" + port + "/" + sqlDatabase + "?tinyInt1isBit=false"
+            String dbFullUrl = "jdbc:mysql://" + host + ":" + port + "/" + sqlDatabase
             sessionProvider = new DatabaseSessionV2(dbFullUrl, user, password, "com.mysql.cj.jdbc.Driver", "org.hibernate.dialect.MariaDBDialect")
 
             DatabaseSession.init(user, password, host, port, sqlDatabase)

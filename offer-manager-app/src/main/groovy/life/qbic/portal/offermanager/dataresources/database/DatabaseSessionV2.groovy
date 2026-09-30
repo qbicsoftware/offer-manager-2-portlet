@@ -33,7 +33,6 @@ class DatabaseSessionV2 implements SessionProvider{
         properties.setProperty(Environment.DIALECT, dialect)
         properties.setProperty(Environment.POOL_SIZE, "5")
         properties.setProperty(Environment.CURRENT_SESSION_CONTEXT_CLASS, "thread")
-        properties.setProperty(Environment.HBM2DDL_AUTO, "validate")
 
         configureHibernate(properties)
     }
